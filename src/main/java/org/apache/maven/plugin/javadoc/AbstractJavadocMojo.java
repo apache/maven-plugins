@@ -1661,6 +1661,13 @@ public abstract class AbstractJavadocMojo
     @Parameter
     private List<String> sourceFileExcludes;
 
+    /**
+     * To apply the security fix on generated javadoc see http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1571
+     * @since 2.10
+     */
+    @Parameter(defaultValue = "true", property = "maven.javadoc.securityfix.apply")
+    private boolean applyJavadocSecurityFix = true;
+
     // ----------------------------------------------------------------------
     // static
     // ----------------------------------------------------------------------
@@ -2018,21 +2025,27 @@ public abstract class AbstractJavadocMojo
                 scriptFile.delete();
             }
         }
-
-        // finally, patch the Javadoc vulnerability in older Javadoc tools (CVE-2013-1571):
-        try
+        if ( applyJavadocSecurityFix )
         {
-            final int patched = fixFrameInjectionBug( javadocOutputDirectory, getDocencoding() );
-            if ( patched > 0 )
+            // finally, patch the Javadoc vulnerability in older Javadoc tools (CVE-2013-1571):
+            try
             {
-                getLog().info(
-                    String.format( "Fixed Javadoc frame injection vulnerability (CVE-2013-1571) in %d files.",
-                                   patched ) );
+                final int patched = fixFrameInjectionBug( javadocOutputDirectory, getDocencoding() );
+                if ( patched > 0 )
+                {
+                    getLog().info(
+                        String.format( "Fixed Javadoc frame injection vulnerability (CVE-2013-1571) in %d files.",
+                                       patched ) );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( "Failed to patch javadocs vulnerability: " + e.getMessage(), e );
             }
         }
-        catch ( IOException e )
+        else
         {
-            throw new MavenReportException( "Failed to patch javadocs vulnerability: " + e.getMessage(), e );
+          getLog().info( "applying javadoc security fix has been disabled" );
         }
     }
 
