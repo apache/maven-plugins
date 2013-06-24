@@ -59,8 +59,8 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
-    <sitePluginVersion>3.1</sitePluginVersion>
-    <projectInfoReportsPluginVersion>2.5.1</projectInfoReportsPluginVersion>
+    <sitePluginVersion>3.3</sitePluginVersion>
+    <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
