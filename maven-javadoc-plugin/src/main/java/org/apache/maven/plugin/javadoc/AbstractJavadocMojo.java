@@ -2018,13 +2018,16 @@ public abstract class AbstractJavadocMojo
                 scriptFile.delete();
             }
         }
-        
+
         // finally, patch the Javadoc vulnerability in older Javadoc tools (CVE-2013-1571):
         try
         {
-            final int patched = fixFrameInjectionBug(javadocOutputDirectory, getDocencoding());
-            if (patched > 0) {
-                getLog().info(String.format("Fixed Javadoc frame injection vulnerability (CVE-2013-1571) in %d files.", patched));
+            final int patched = fixFrameInjectionBug( javadocOutputDirectory, getDocencoding() );
+            if ( patched > 0 )
+            {
+                getLog().info(
+                    String.format( "Fixed Javadoc frame injection vulnerability (CVE-2013-1571) in %d files.",
+                                   patched ) );
             }
         }
         catch ( IOException e )
@@ -5089,41 +5092,52 @@ public abstract class AbstractJavadocMojo
     /**
      * Patches the given Javadoc output directory to work around CVE-2013-1571
      * (see http://www.kb.cert.org/vuls/id/225657).
+     *
      * @param javadocOutputDirectory directory to scan for vulnerabilities
-     * @param outputEncoding encoding used by the javadoc tool (-docencoding parameter).
-     *     If {@code null}, the platform's default encoding is used (like javadoc does).
+     * @param outputEncoding         encoding used by the javadoc tool (-docencoding parameter).
+     *                               If {@code null}, the platform's default encoding is used (like javadoc does).
      * @return the number of patched files
      */
-    private int fixFrameInjectionBug(File javadocOutputDirectory, String outputEncoding) throws IOException {
+    private int fixFrameInjectionBug( File javadocOutputDirectory, String outputEncoding )
+        throws IOException
+    {
         final String fixData;
-        final InputStream in = this.getClass().getResourceAsStream("frame-injection-fix.txt");
-        if (in == null) {
-            throw new FileNotFoundException("Missing resource 'frame-injection-fix.txt' in classpath.");
+        final InputStream in = this.getClass().getResourceAsStream( "frame-injection-fix.txt" );
+        if ( in == null )
+        {
+            throw new FileNotFoundException( "Missing resource 'frame-injection-fix.txt' in classpath." );
         }
-        try {
-            fixData = StringUtils.unifyLineSeparators(IOUtil.toString(in, "US-ASCII")).trim();
-        } finally {
-            IOUtil.close(in);
+        try
+        {
+            fixData = StringUtils.unifyLineSeparators( IOUtil.toString( in, "US-ASCII" ) ).trim();
+        }
+        finally
+        {
+            IOUtil.close( in );
         }
 
         final DirectoryScanner ds = new DirectoryScanner();
-        ds.setBasedir(javadocOutputDirectory);
-        ds.setCaseSensitive(false);
-        ds.setIncludes(new String[] { "**/index.html", "**/index.htm", "**/toc.html", "**/toc.htm" });
+        ds.setBasedir( javadocOutputDirectory );
+        ds.setCaseSensitive( false );
+        ds.setIncludes( new String[]{ "**/index.html", "**/index.htm", "**/toc.html", "**/toc.htm" } );
         ds.addDefaultExcludes();
         ds.scan();
         int patched = 0;
-        for (String f : ds.getIncludedFiles()) {
-            final File file = new File(javadocOutputDirectory, f);
+        for ( String f : ds.getIncludedFiles() )
+        {
+            final File file = new File( javadocOutputDirectory, f );
             // we load the whole file as one String (toc/index files are
             // generally small, because they only contain frameset declaration):
-            final String fileContents = FileUtils.fileRead(file, outputEncoding);
+            final String fileContents = FileUtils.fileRead( file, outputEncoding );
             // check if file may be vulnerable because it was not patched with "validURL(url)":
-            if (!StringUtils.contains(fileContents, "function validURL(url) {")) {
+            if ( !StringUtils.contains( fileContents, "function validURL(url) {" ) )
+            {
                 // we need to patch the file!
-                final String patchedFileContents = StringUtils.replaceOnce(fileContents, "function loadFrames() {", fixData);
-                if (!patchedFileContents.equals(fileContents)) {
-                    FileUtils.fileWrite(file, outputEncoding, patchedFileContents);
+                final String patchedFileContents =
+                    StringUtils.replaceOnce( fileContents, "function loadFrames() {", fixData );
+                if ( !patchedFileContents.equals( fileContents ) )
+                {
+                    FileUtils.fileWrite( file, outputEncoding, patchedFileContents );
                     patched++;
                 }
             }
