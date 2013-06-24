@@ -33,7 +33,7 @@ under the License.
   <version>2.9.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Javadoc Plugin</name>
+  <name>Apache Maven Javadoc Plugin</name>
   <description>
     The Maven Javadoc Plugin is a plugin that uses the javadoc tool for
     generating javadocs for the specified project.
