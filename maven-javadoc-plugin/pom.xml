@@ -433,7 +433,7 @@ under the License.
               <!-- For JIRA-report -->
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
               <onlyCurrentVersion>true</onlyCurrentVersion>
-              <resolutionIds>Closed</resolutionIds>
+              <resolutionIds>Fixed</resolutionIds>
               <sortColumnNames>Type,Key</sortColumnNames>
               <maxEntries>1000</maxEntries> <!-- MCHANGES-124 -->
             </configuration>
