@@ -33,9 +33,9 @@ under the License.
   <version>2.9.1</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Javadoc Plugin</name>
+  <name>Apache Maven Javadoc Plugin</name>
   <description>
-    The Maven Javadoc Plugin is a plugin that uses the javadoc tool for
+    The Apache Maven Javadoc Plugin is a plugin that uses the javadoc tool for
     generating javadocs for the specified project.
   </description>
   <inceptionYear>2004</inceptionYear>
@@ -374,6 +374,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.8</version>
             <configuration>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
