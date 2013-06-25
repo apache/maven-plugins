@@ -1663,7 +1663,7 @@ public abstract class AbstractJavadocMojo
 
     /**
      * To apply the security fix on generated javadoc see http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1571
-     * @since 2.10
+     * @since 2.9.1
      */
     @Parameter(defaultValue = "true", property = "maven.javadoc.applyJavadocSecurityFix")
     private boolean applyJavadocSecurityFix = true;
