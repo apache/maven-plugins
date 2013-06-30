@@ -326,7 +326,7 @@ public abstract class AbstractWarMojo
      * use jvmChmod rather that cli chmod and forking process
      * @since 2.4
      */
-    @Parameter(property = "maven.war.useJvmChmod", defaultValue = "useJvmChmod" )
+    @Parameter(property = "maven.war.useJvmChmod", defaultValue = "true" )
     private boolean useJvmChmod;
 
 
