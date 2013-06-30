@@ -19,6 +19,9 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,10 +30,6 @@ import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Handles the project own resources, that is:
@@ -94,9 +93,9 @@ public class WarProjectPackagingTask
         // Debug mode: dump the path set for the current build
         PathSet pathSet = context.getWebappStructure().getStructure( "currentBuild" );
         context.getLog().debug( "Dump of the current build pathSet content -->" );
-        for ( Iterator iterator = pathSet.iterator(); iterator.hasNext(); )
+        for ( String path : pathSet )
         {
-            context.getLog().debug( "" + iterator.next() );
+            context.getLog().debug( path );
         }
         context.getLog().debug( "-- end of dump --" );
 
@@ -189,6 +188,7 @@ public class WarProjectPackagingTask
     protected void handleArtifacts( WarPackagingContext context )
         throws MojoExecutionException
     {
+        @SuppressWarnings( "unchecked" )
         ArtifactsPackagingTask task = new ArtifactsPackagingTask( context.getProject().getArtifacts(),
                                                                   currentProjectOverlay );
         task.performPackaging( context );

@@ -148,7 +148,7 @@ public interface WarPackagingContext
      *
      * @return a list of filter files
      */
-    List getFilters();
+    List<String> getFilters();
 
     /**
      * Returns the {@link WebappStructure}.
@@ -160,12 +160,12 @@ public interface WarPackagingContext
     /**
      * Returns the list of registered overlays for this session. This list might
      * differ from the one returned by the cache; in this case, it means that the
-     * project's configuration has changed. The plugin will handle thos cases nicely
+     * project's configuration has changed. The plugin will handle those cases nicely
      * but it would be better in general to invoke the clean goal.
      *
      * @return the list of registered overlays, including the current project
      */
-    List getOwnerIds();
+    List<String> getOwnerIds();
     
     /**
      * Returns the {@link MavenFileFilter} instance to use.
@@ -179,7 +179,7 @@ public interface WarPackagingContext
      * @return {@link List} of {@link FilterWrapper}
      * @since 2.1-alpha-2
      */
-    List getFilterWrappers();
+    List<FilterWrapper> getFilterWrappers();
     
     /**
      * Specify if the given <tt>fileName</tt> belongs to the list of extensions
