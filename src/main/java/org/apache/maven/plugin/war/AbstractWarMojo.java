@@ -66,10 +66,10 @@ import java.util.List;
 public abstract class AbstractWarMojo
     extends AbstractMojo
 {
-    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{version}@.@{extension}@";
+    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{baseVersion}@.@{extension}@";
 
     public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
-        "@{artifactId}@-@{version}@-@{classifier}@.@{extension}@";
+        "@{artifactId}@-@{baseVersion}@-@{classifier}@.@{extension}@";
 
     private static final String[] EMPTY_STRING_ARRAY = {};
 
