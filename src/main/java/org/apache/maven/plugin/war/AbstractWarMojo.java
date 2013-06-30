@@ -19,6 +19,13 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.execution.MavenSession;
@@ -40,7 +47,6 @@ import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.filtering.AbstractMavenFilteringRequest;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
@@ -50,13 +56,6 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Contains common jobs for WAR mojos.
@@ -453,7 +452,6 @@ public abstract class AbstractWarMojo
      * @throws MojoFailureException   if an unexpected error occurred while packaging the webapp
      * @throws IOException            if an error occurred while copying the files
      */
-    @SuppressWarnings( "unchecked" )
     public void buildWebapp( MavenProject project, File webappDirectory )
         throws MojoExecutionException, MojoFailureException, IOException
     {
