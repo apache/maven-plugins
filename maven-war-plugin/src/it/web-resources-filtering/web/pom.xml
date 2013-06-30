@@ -53,6 +53,7 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <escapeString>\</escapeString>
+          <supportMultiLineFiltering>true</supportMultiLineFiltering>
           <webResources>
             <resource>
               <directory>${basedir}/src/main/webresources</directory>
