@@ -323,6 +323,14 @@ public abstract class AbstractWarMojo
     private boolean supportMultiLineFiltering = false;
 
     /**
+     * use jvmChmod rather that cli chmod and forking process
+     * @since 2.4
+     */
+    @Parameter(property = "maven.war.useJvmChmod", defaultValue = "useJvmChmod" )
+    private boolean useJvmChmod;
+
+
+    /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      */
@@ -486,7 +494,8 @@ public abstract class AbstractWarMojo
                                                                             defaultFilterWrappers,
                                                                             getNonFilteredFileExtensions(),
                                                                             filteringDeploymentDescriptors,
-                                                                            this.artifactFactory, resourceEncoding);
+                                                                            this.artifactFactory, resourceEncoding,
+                                                                            useJvmChmod);
         for ( WarPackagingTask warPackagingTask : packagingTasks )
         {
             warPackagingTask.performPackaging( context );
@@ -576,10 +585,12 @@ public abstract class AbstractWarMojo
 
         private boolean filteringDeploymentDescriptors;
 
+        private boolean useJvmChmod = true;
+
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
                                            final OverlayManager overlayManager, List<FileUtils.FilterWrapper> filterWrappers,
                                            List<String> nonFilteredFileExtensions, boolean filteringDeploymentDescriptors,
-                                           ArtifactFactory artifactFactory, String resourceEncoding )
+                                           ArtifactFactory artifactFactory, String resourceEncoding, boolean useJvmChmod )
         {
             this.webappDirectory = webappDirectory;
             this.webappStructure = webappStructure;
@@ -596,6 +607,7 @@ public abstract class AbstractWarMojo
             {
                 webappStructure.getStructure( overlayId );
             }
+            this.useJvmChmod = useJvmChmod;
         }
 
         public MavenProject getProject()
@@ -711,6 +723,11 @@ public abstract class AbstractWarMojo
         public String getResourceEncoding()
         {
             return resourceEncoding;
+        }
+
+        public boolean isUseJvmChmod()
+        {
+            return useJvmChmod;
         }
     }
 

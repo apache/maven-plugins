@@ -259,6 +259,7 @@ public abstract class AbstractWarPackagingTask
         {
             UnArchiver unArchiver = context.getArchiverManager().getUnArchiver( archiveExt );
             unArchiver.setSourceFile( file );
+            unArchiver.setUseJvmChmod( context.isUseJvmChmod() );
             unArchiver.setDestDirectory( unpackDirectory );
             unArchiver.setOverwrite( true );
             unArchiver.extract();
