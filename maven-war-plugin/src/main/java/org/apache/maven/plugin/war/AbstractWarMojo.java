@@ -317,7 +317,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Stop searching endToken at the end of line
-     *
+     * @since 2.4
      */
     @Parameter(property = "maven.war.supportMultiLineFiltering", defaultValue = "false" )
     private boolean supportMultiLineFiltering = false;
