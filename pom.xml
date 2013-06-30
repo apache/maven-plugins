@@ -55,6 +55,7 @@ under the License.
     <mavenFilteringVersion>1.1</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <contributors>
