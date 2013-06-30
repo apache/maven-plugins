@@ -166,7 +166,7 @@ public class WarProjectPackagingTask
             context.getLog().info( "Copying webapp resources [" + context.getWebappSourceDirectory() + "]" );
             final PathSet sources =
                 getFilesToIncludes( context.getWebappSourceDirectory(), context.getWebappSourceIncludes(),
-                                    context.getWebappSourceExcludes() );
+                                    context.getWebappSourceExcludes(), context.isWebappSourceIncludeEmptyDirectories() );
 
             try
             {
