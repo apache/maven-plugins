@@ -283,17 +283,16 @@ public class Overlay
         final List<String> result = new ArrayList<String>();
         if ( s == null )
         {
-            return (String[]) result.toArray( new String[result.size()] );
+            return result.toArray( new String[result.size()] );
         }
         else
         {
             String[] tokens = s.split( "," );
-            for ( int i = 0; i < tokens.length; i++ )
+            for ( String token : tokens )
             {
-                String token = tokens[i];
                 result.add( token.trim() );
             }
-            return (String[]) result.toArray( new String[result.size()] );
+            return result.toArray( new String[result.size()] );
         }
     }
 

@@ -503,7 +503,7 @@ public abstract class AbstractWarMojo
 
         // Post packaging
         final List<WarPostPackagingTask> postPackagingTasks = getPostPackagingTasks();
-        for( WarPostPackagingTask task  : postPackagingTasks )
+        for ( WarPostPackagingTask task : postPackagingTasks )
         {
             task.performPostPackaging( context );
         }

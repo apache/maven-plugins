@@ -46,7 +46,7 @@ public class PathSet
     /**
      * Set of normalized paths
      */
-    private Set/* <String> */pathsSet = new LinkedHashSet();
+    private Set<String> pathsSet = new LinkedHashSet<String>();
 
     /**
      * The method normalizes the path.
@@ -80,7 +80,7 @@ public class PathSet
      *
      * @param paths to be added
      */
-    public PathSet( Collection/*String>*/ paths )
+    public PathSet( Collection<String> paths )
     {
         addAll( paths );
     }
@@ -113,11 +113,11 @@ public class PathSet
      * @param paths  - collection of strings to be added
      * @param prefix added to all given paths
      */
-    public void addAll( Collection/*<String>*/ paths, String prefix )
+    public void addAll( Collection<String> paths, String prefix )
     {
-        for ( Iterator iter = paths.iterator(); iter.hasNext(); )
+        for ( String val : paths )
         {
-            add( prefix + iter.next() );
+            add( prefix + val );
         }
     }
 
@@ -130,9 +130,9 @@ public class PathSet
      */
     public void addAll( String[] paths, String prefix )
     {
-        for ( int i = 0; i < paths.length; i++ )
+        for ( String val : paths )
         {
-            add( prefix + paths[i] );
+            add( prefix + val );
         }
     }
 
@@ -157,7 +157,7 @@ public class PathSet
      *
      * @param paths - collection of strings to be added
      */
-    public void addAll( Collection/*<String>*/ paths )
+    public void addAll( Collection<String> paths )
     {
         addAll( paths, "" );
     }
@@ -214,9 +214,14 @@ public class PathSet
      *
      * @return iterator of normalized paths (strings)
      */
-    public Iterator iterator()
+    public Iterator<String> iterator()
     {
         return pathsSet.iterator();
+    }
+
+    public Collection<String> paths()
+    {
+        return pathsSet;
     }
 
     /**
@@ -228,10 +233,9 @@ public class PathSet
      */
     public void addPrefix( String prefix )
     {
-        final Set/*<String>*/ newSet = new HashSet();
-        for ( Iterator iter = pathsSet.iterator(); iter.hasNext(); )
+        final Set<String> newSet = new HashSet();
+        for ( String path : pathsSet )
         {
-            String path = (String) iter.next();
             newSet.add( normalizeFilePath( prefix + path ) );
         }
         pathsSet = newSet;
