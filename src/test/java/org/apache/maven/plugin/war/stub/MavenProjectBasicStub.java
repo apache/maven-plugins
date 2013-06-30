@@ -19,6 +19,7 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Organization;
 import org.apache.maven.project.MavenProject;
 
@@ -108,4 +109,13 @@ public class MavenProjectBasicStub
         };
     }
 
+    @Override
+    public Build getBuild()
+    {
+        Build build = super.getBuild();
+
+        build.setDirectory( System.getProperty( "project.build.directory" ) );
+
+        return build;
+    }
 }
