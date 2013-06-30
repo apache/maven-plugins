@@ -52,7 +52,7 @@ under the License.
 
   <properties>
     <mavenArchiverVersion>2.5</mavenArchiverVersion>
-    <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
+    <mavenFilteringVersion>1.1</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>

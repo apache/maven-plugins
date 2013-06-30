@@ -40,6 +40,7 @@ import org.apache.maven.plugin.war.util.WebappStructureSerializer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.AbstractMavenFilteringRequest;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
@@ -315,6 +316,13 @@ public abstract class AbstractWarMojo
     private boolean recompressZippedFiles;
 
     /**
+     * Stop searching endToken at the end of line
+     *
+     */
+    @Parameter(property = "maven.war.supportMultiLineFiltering", defaultValue = "false" )
+    private boolean supportMultiLineFiltering = false;
+
+    /**
      * The archive configuration to use.
      * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      */
@@ -457,10 +465,15 @@ public abstract class AbstractWarMojo
         {
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
             mavenResourcesExecution.setEscapeString( escapeString );
+            mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
+            mavenResourcesExecution.setMavenProject( project );
+            mavenResourcesExecution.setFilters( filters );
+            mavenResourcesExecution.setEscapedBackslashesInFilePath( escapedBackslashesInFilePath );
+            mavenResourcesExecution.setMavenSession( this.session );
+            mavenResourcesExecution.setEscapeString( this.escapeString );
+            mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
 
-            defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
-                                                                              escapedBackslashesInFilePath,
-                                                                              this.session, mavenResourcesExecution );
+            defaultFilterWrappers = mavenFileFilter.getDefaultFilterWrappers( mavenResourcesExecution );
 
         }
         catch ( MavenFilteringException e )
