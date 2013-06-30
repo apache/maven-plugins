@@ -40,6 +40,12 @@ public abstract class AbstractArtifactStub
         return "0.0-Test";
     }
 
+    @Override
+    public String getBaseVersion()
+    {
+        return getVersion();
+    }
+
     public String getScope()
     {
         return Artifact.SCOPE_RUNTIME;
