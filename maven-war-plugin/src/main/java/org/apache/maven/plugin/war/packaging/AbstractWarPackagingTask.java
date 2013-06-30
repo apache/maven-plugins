@@ -144,45 +144,53 @@ public abstract class AbstractWarPackagingTask
         throws IOException
     {
         final File targetFile = new File( context.getWebappDirectory(), targetFilename );
-        context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
+        
+        if( file.isFile() )
         {
-            public void registered( String ownerId, String targetFilename )
-                throws IOException
+            context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
             {
-                copyFile( context, file, targetFile, targetFilename, false );
-            }
+                public void registered( String ownerId, String targetFilename )
+                    throws IOException
+                {
+                    copyFile( context, file, targetFile, targetFilename, false );
+                }
 
-            public void alreadyRegistered( String ownerId, String targetFilename )
-                throws IOException
-            {
-                copyFile( context, file, targetFile, targetFilename, true );
-            }
+                public void alreadyRegistered( String ownerId, String targetFilename )
+                    throws IOException
+                {
+                    copyFile( context, file, targetFile, targetFilename, true );
+                }
 
-            public void refused( String ownerId, String targetFilename, String actualOwnerId )
-                throws IOException
-            {
-                context.getLog().debug( " - " + targetFilename + " wasn't copied because it has "
-                    + "already been packaged for overlay [" + actualOwnerId + "]." );
-            }
+                public void refused( String ownerId, String targetFilename, String actualOwnerId )
+                    throws IOException
+                {
+                    context.getLog().debug( " - " + targetFilename + " wasn't copied because it has "
+                        + "already been packaged for overlay [" + actualOwnerId + "]." );
+                }
 
-            public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
-                throws IOException
-            {
-                context.getLog().info( "File [" + targetFilename + "] belonged to overlay [" + deprecatedOwnerId
-                    + "] so it will be overwritten." );
-                copyFile( context, file, targetFile, targetFilename, false );
-            }
+                public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
+                    throws IOException
+                {
+                    context.getLog().info( "File [" + targetFilename + "] belonged to overlay [" + deprecatedOwnerId
+                        + "] so it will be overwritten." );
+                    copyFile( context, file, targetFile, targetFilename, false );
+                }
 
-            public void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
-                throws IOException
-            {
-                context.getLog()
-                    .warn( "File [" + targetFilename + "] belonged to overlay [" + unknownOwnerId
-                        + "] which does not exist anymore in the current project. It is recommended to invoke "
-                        + "clean if the dependencies of the project changed." );
-                copyFile( context, file, targetFile, targetFilename, false );
-            }
-        } );
+                public void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
+                    throws IOException
+                {
+                    context.getLog()
+                        .warn( "File [" + targetFilename + "] belonged to overlay [" + unknownOwnerId
+                            + "] which does not exist anymore in the current project. It is recommended to invoke "
+                            + "clean if the dependencies of the project changed." );
+                    copyFile( context, file, targetFile, targetFilename, false );
+                }
+            } );
+        }
+        else if ( !targetFile.exists() && !targetFile.mkdirs() )
+        {
+            context.getLog().info( "Failed to create directory " + targetFile.getAbsolutePath() );
+        }
     }
 
     /**
@@ -353,7 +361,7 @@ public abstract class AbstractWarPackagingTask
             IOUtil.close( xmlReader );
         }
     }
-
+    
     /**
      * Returns the file to copy. If the includes are <tt>null</tt> or empty, the
      * default includes are used.
@@ -364,6 +372,20 @@ public abstract class AbstractWarPackagingTask
      * @return the files to copy
      */
     protected PathSet getFilesToIncludes( File baseDir, String[] includes, String[] excludes )
+    {
+        return getFilesToIncludes( baseDir, includes, excludes, false );
+    }
+
+    /**
+     * Returns the file to copy. If the includes are <tt>null</tt> or empty, the
+     * default includes are used.
+     *
+     * @param baseDir  the base directory to start from
+     * @param includes the includes
+     * @param excludes the excludes
+     * @return the files to copy
+     */
+    protected PathSet getFilesToIncludes( File baseDir, String[] includes, String[] excludes, boolean includeDirectories )
     {
         final DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( baseDir );
@@ -385,8 +407,14 @@ public abstract class AbstractWarPackagingTask
 
         scanner.scan();
 
-        return new PathSet( scanner.getIncludedFiles() );
-
+        PathSet pathSet = new PathSet( scanner.getIncludedFiles() );
+        
+        if ( includeDirectories )
+        {
+            pathSet.addAll( scanner.getIncludedDirectories() );
+        }
+        
+        return pathSet;
     }
 
     /**

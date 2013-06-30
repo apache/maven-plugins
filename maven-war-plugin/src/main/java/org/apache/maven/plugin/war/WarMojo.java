@@ -232,6 +232,8 @@ public class WarMojo
         }
 
         warArchiver.setRecompressAddedZips( isRecompressZippedFiles()  );
+        
+        warArchiver.setIncludeEmptyDirs( isIncludeEmptyDirectories() );
 
         if ( !failOnMissingWebXml )
         {

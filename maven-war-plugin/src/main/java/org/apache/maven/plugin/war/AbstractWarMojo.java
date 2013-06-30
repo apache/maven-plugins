@@ -314,6 +314,12 @@ public abstract class AbstractWarMojo
      */
     @Parameter( defaultValue = "true" )
     private boolean recompressZippedFiles;
+    
+    /**
+     * @since 2.4
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean includeEmptyDirectories;
 
     /**
      * Stop searching endToken at the end of line
@@ -649,6 +655,11 @@ public abstract class AbstractWarMojo
         {
             return getExcludes();
         }
+        
+        public boolean isWebappSourceIncludeEmptyDirectories()
+        {
+            return includeEmptyDirectories;
+        }
 
         public boolean archiveClasses()
         {
@@ -940,5 +951,10 @@ public abstract class AbstractWarMojo
     protected boolean isRecompressZippedFiles()
     {
         return recompressZippedFiles;
+    }
+    
+    protected boolean isIncludeEmptyDirectories()
+    {
+        return includeEmptyDirectories;
     }
 }
