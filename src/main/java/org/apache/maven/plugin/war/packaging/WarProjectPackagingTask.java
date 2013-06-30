@@ -117,9 +117,8 @@ public class WarProjectPackagingTask
     protected void handleWebResources( WarPackagingContext context )
         throws MojoExecutionException
     {
-        for ( int i = 0; i < webResources.length; i++ )
+        for ( Resource resource : webResources )
         {
-            Resource resource = webResources[i];
 
             // MWAR-246
             if ( resource.getDirectory() == null )

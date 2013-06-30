@@ -80,9 +80,8 @@ public abstract class AbstractWarPackagingTask
                               String targetPrefix, boolean filtered )
         throws IOException, MojoExecutionException
     {
-        for ( Iterator iter = sourceFilesSet.iterator(); iter.hasNext(); )
+        for ( String fileToCopyName : sourceFilesSet.paths() )
         {
-            final String fileToCopyName = (String) iter.next();
             final File sourceFile = new File( sourceBaseDir, fileToCopyName );
 
             String destinationFileName;
