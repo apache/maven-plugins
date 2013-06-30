@@ -19,17 +19,16 @@ package org.apache.maven.plugin.war.packaging;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.Overlay;
 import org.codehaus.plexus.interpolation.InterpolationException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Handles the artifacts that needs to be packaged in the web application.
@@ -50,12 +49,12 @@ public class ArtifactsPackagingTask
 
     public static final String EXTENSIONS_PATH = "WEB-INF/extensions/";
 
-    private final Set artifacts;
+    private final Set<Artifact> artifacts;
 
     private final String id;
 
 
-    public ArtifactsPackagingTask( Set artifacts, Overlay currentProjectOverlay )
+    public ArtifactsPackagingTask( Set<Artifact> artifacts, Overlay currentProjectOverlay )
     {
         this.artifacts = artifacts;
         this.id = currentProjectOverlay.getId();
@@ -68,11 +67,10 @@ public class ArtifactsPackagingTask
         try
         {
         final ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-        final List duplicates = findDuplicates( context, artifacts );
+        final List<String> duplicates = findDuplicates( context, artifacts );
 
-        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             String targetFileName = getArtifactFinalName( context, artifact );
 
             context.getLog().debug( "Processing: " + targetFileName );
@@ -153,14 +151,13 @@ public class ArtifactsPackagingTask
      * @param artifacts set of artifacts
      * @return List of duplicated artifacts as bundling file names
      */
-    private List findDuplicates( WarPackagingContext context, Set artifacts ) 
+    private List<String> findDuplicates( WarPackagingContext context, Set<Artifact> artifacts )
         throws InterpolationException
     {
-        List duplicates = new ArrayList();
-        List identifiers = new ArrayList();
-        for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+        List<String> duplicates = new ArrayList<String>();
+        List<String> identifiers = new ArrayList<String>();
+        for ( Artifact artifact : artifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             String candidate = getArtifactFinalName( context, artifact );
             if ( identifiers.contains( candidate ) )
             {

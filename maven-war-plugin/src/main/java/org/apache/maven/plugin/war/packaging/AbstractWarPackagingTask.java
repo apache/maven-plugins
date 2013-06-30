@@ -21,8 +21,8 @@ package org.apache.maven.plugin.war.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.AbstractWarMojo;
@@ -38,7 +38,6 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.apache.commons.io.input.XmlStreamReader;
 
 /**
  * @author Stephane Nicoll
