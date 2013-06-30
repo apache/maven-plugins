@@ -40,7 +40,7 @@ import java.util.Set;
  * @version $Id$
  */
 
-public class PathSet
+public class PathSet implements Iterable<String>
 {
 
     /**
@@ -145,9 +145,9 @@ public class PathSet
      */
     public void addAll( PathSet paths, String prefix )
     {
-        for ( Iterator iter = paths.iterator(); iter.hasNext(); )
+        for ( String path : paths )
         {
-            add( prefix + iter.next() );
+            add( prefix + path );
         }
     }
 
@@ -233,7 +233,7 @@ public class PathSet
      */
     public void addPrefix( String prefix )
     {
-        final Set<String> newSet = new HashSet();
+        final Set<String> newSet = new HashSet<String>();
         for ( String path : pathsSet )
         {
             newSet.add( normalizeFilePath( prefix + path ) );
