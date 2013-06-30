@@ -67,6 +67,7 @@ public abstract class AbstractWarMojoTest
         setVariableValueToObject( mojo, "filters", filters );
         setVariableValueToObject( mojo, "useCache", Boolean.FALSE );
         setVariableValueToObject( mojo, "mavenFileFilter", lookup( MavenFileFilter.class.getName() ) );
+        setVariableValueToObject( mojo, "useJvmChmod", Boolean.TRUE );
         MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.setClassesDirectory( classesDir );
