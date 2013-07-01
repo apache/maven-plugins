@@ -200,10 +200,10 @@ under the License.
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
     <!-- for ITs -->
-    <javadocPluginVersion>2.8.1</javadocPluginVersion>
-    <projectInfoReportsPluginVersion>2.4</projectInfoReportsPluginVersion>
-    <checkstylePluginVersion>2.5</checkstylePluginVersion>
-    <pmdPluginVersion>2.7.1</pmdPluginVersion>
+    <javadocPluginVersion>2.9.1</javadocPluginVersion>
+    <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
+    <checkstylePluginVersion>2.9.1</checkstylePluginVersion>
+    <pmdPluginVersion>3.0.1</pmdPluginVersion>
   </properties>
 
   <dependencies>
