@@ -42,6 +42,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <format>none</format>
+          <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
     </plugins>

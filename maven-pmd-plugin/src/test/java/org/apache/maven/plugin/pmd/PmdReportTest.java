@@ -224,6 +224,32 @@ public class PmdReportTest
         assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
+    public void testSkipEmptyReportConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/skip-empty-report-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // verify the generated files do not exist because PMD was skipped
+        File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    public void testEmptyReportConfiguration()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/empty-report-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // verify the generated files do exist, even if there are no violations
+        File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" ) );
+        assertTrue( str.toLowerCase().indexOf( "Hello.java".toLowerCase() ) == -1 );
+    }
+
     public void testInvalidFormat()
         throws Exception
     {

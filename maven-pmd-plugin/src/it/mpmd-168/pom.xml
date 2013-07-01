@@ -22,35 +22,52 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.maven.its.pmd.mm</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+  <groupId>org.apache.maven.plugin.pmd.its</groupId>
+  <artifactId>mpmd-168-empty-report-skipped</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-  <artifactId>mod-1</artifactId>
-
-  <name>Module 1</name>
+  <name>MPMD-168 skip empty report</name>
   <description>
-    Test proper report generation in a multi-module build.
+    Verify the "skipEmptyReport" parameter.
   </description>
 
-  <properties>
-    <project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
-  </properties>
-
-  <reporting>
+  <build>
     <plugins>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+              <goal>cpd-check</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
-          <rulesets>
-            <ruleset>src/main/config/pmd/utf-8.xml</ruleset>
-            <ruleset>src/main/config/pmd/latin-1.xml</ruleset>
-          </rulesets>
-          <skipEmptyReport>false</skipEmptyReport>
+          <verbose>true</verbose>
+          <minimumTokens>25</minimumTokens>
+          <sourceEncoding>UTF-8</sourceEncoding>
+          <failOnViolation>false</failOnViolation> <!-- force execution of both goals, will be checked with verify-script -->
         </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+<!--           <skipEmptyReport>true</skipEmptyReport> it's by default true -->
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
