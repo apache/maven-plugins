@@ -33,7 +33,7 @@ under the License.
   <version>3.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven PMD Plugin</name>
+  <name>Apache Maven PMD Plugin</name>
   <description>
     A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
     fragments,
