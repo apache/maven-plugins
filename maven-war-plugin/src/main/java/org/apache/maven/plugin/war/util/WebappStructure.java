@@ -46,9 +46,9 @@ import java.util.Set;
 public class WebappStructure
 {
 
-    private Map registeredFiles;
+    private Map<String, PathSet> registeredFiles;
 
-    private List dependenciesInfo;
+    private List<DependencyInfo> dependenciesInfo;
 
     private transient PathSet allFiles = new PathSet();
 
@@ -59,12 +59,11 @@ public class WebappStructure
      *
      * @param dependencies the dependencies of the project
      */
-    public WebappStructure( List dependencies )
+    public WebappStructure( List<Dependency> dependencies )
     {
         this.dependenciesInfo = createDependenciesInfoList( dependencies );
-        this.registeredFiles = new HashMap();
+        this.registeredFiles = new HashMap<String, PathSet>();
         this.cache = null;
-
     }
 
     /**
@@ -73,14 +72,13 @@ public class WebappStructure
      * @param dependencies the dependencies of the project
      * @param cache        the cache
      */
-    public WebappStructure( List dependencies, WebappStructure cache )
+    public WebappStructure( List<Dependency> dependencies, WebappStructure cache )
     {
         this.dependenciesInfo = createDependenciesInfoList( dependencies );
-        this.registeredFiles = new HashMap();
+        this.registeredFiles = new HashMap<String, PathSet>();
         if ( cache == null )
         {
             this.cache = new WebappStructure( dependencies );
-
         }
         else
         {
@@ -93,7 +91,7 @@ public class WebappStructure
      *
      * @return the dependencies information of the project
      */
-    public List getDependenciesInfo()
+    public List<DependencyInfo> getDependenciesInfo()
     {
         return dependenciesInfo;
     }
@@ -103,17 +101,15 @@ public class WebappStructure
      *
      * @return the dependencies of the project
      */
-    public List getDependencies()
+    public List<Dependency> getDependencies()
     {
-        final List result = new ArrayList();
+        final List<Dependency> result = new ArrayList<Dependency>();
         if ( dependenciesInfo == null )
         {
             return result;
         }
-        final Iterator it = dependenciesInfo.iterator();
-        while ( it.hasNext() )
+        for ( DependencyInfo dependencyInfo : dependenciesInfo )
         {
-            DependencyInfo dependencyInfo = (DependencyInfo) it.next();
             result.add( dependencyInfo.getDependency() );
         }
         return result;
@@ -241,10 +237,8 @@ public class WebappStructure
         }
         else
         {
-            final Iterator it = registeredFiles.keySet().iterator();
-            while ( it.hasNext() )
+            for ( final String owner : registeredFiles.keySet() )
             {
-                final String owner = (String) it.next();
                 final PathSet structure = getStructure( owner );
                 if ( structure.contains( path ) )
                 {
@@ -269,7 +263,7 @@ public class WebappStructure
      *
      * @return the list of owners
      */
-    public Set getOwners()
+    public Set<String> getOwners()
     {
         return registeredFiles.keySet();
     }
@@ -319,12 +313,12 @@ public class WebappStructure
             return;
         }
 
-        final List currentDependencies = new ArrayList( getDependencies() );
-        final List previousDependencies = new ArrayList( cache.getDependencies() );
-        final Iterator it = currentDependencies.listIterator();
+        final List<Dependency> currentDependencies = new ArrayList<Dependency>( getDependencies() );
+        final List<Dependency> previousDependencies = new ArrayList<Dependency>( cache.getDependencies() );
+        final Iterator<Dependency> it = currentDependencies.listIterator();
         while ( it.hasNext() )
         {
-            Dependency dependency = (Dependency) it.next();
+            Dependency dependency = it.next();
             // Check if the dependency is there "as is"
 
             final Dependency matchingDependency = matchDependency( previousDependencies, dependency );
@@ -370,10 +364,8 @@ public class WebappStructure
                 }
             }
         }
-        final Iterator previousDepIt = previousDependencies.iterator();
-        while ( previousDepIt.hasNext() )
+        for ( Dependency dependency : previousDependencies )
         {
-            Dependency dependency = (Dependency) previousDepIt.next();
             callback.removedDependency( dependency );
         }
     }
@@ -388,10 +380,8 @@ public class WebappStructure
     {
         if ( dependenciesInfo != null )
         {
-            final Iterator it = dependenciesInfo.iterator();
-            while ( it.hasNext() )
+            for ( DependencyInfo dependencyInfo  : dependenciesInfo )
             {
-                DependencyInfo dependencyInfo = (DependencyInfo) it.next();
                 if ( WarUtils.isRelated( artifact, dependencyInfo.getDependency() ) )
                 {
                     dependencyInfo.setTargetFileName( targetFileName );
@@ -416,10 +406,8 @@ public class WebappStructure
         {
             return null;
         }
-        final Iterator it = cache.getDependenciesInfo().iterator();
-        while ( it.hasNext() )
+        for ( DependencyInfo dependencyInfo  : cache.getDependenciesInfo() )
         {
-            DependencyInfo dependencyInfo = (DependencyInfo) it.next();
             final Dependency dependency2 = dependencyInfo.getDependency();
             if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() )
                 && StringUtils.equals( dependency.getArtifactId(), dependency2.getArtifactId() )
@@ -449,18 +437,14 @@ public class WebappStructure
      * @param dependencies a list of dependencies
      * @return a similar dependency or <tt>null</tt> if no similar dependency is found
      */
-    private Dependency findDependency( Dependency dependency, List dependencies )
+    private Dependency findDependency( Dependency dependency, List<Dependency> dependencies )
     {
-        final Iterator it = dependencies.iterator();
-        while ( it.hasNext() )
+        for ( Dependency dep : dependencies )
         {
-            Dependency dep = (Dependency) it.next();
             if ( dependency.getGroupId().equals( dep.getGroupId() )
                 && dependency.getArtifactId().equals( dep.getArtifactId() )
                 && dependency.getType().equals( dep.getType() )
-                && ( ( dependency.getClassifier() == null && dep.getClassifier() == null )
-                    || ( dependency.getClassifier() != null
-                        && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
+                && ( ( dependency.getClassifier() == null && dep.getClassifier() == null ) || ( dependency.getClassifier() != null && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
             {
                 return dep;
             }
@@ -468,12 +452,10 @@ public class WebappStructure
         return null;
     }
 
-    private Dependency matchDependency( List dependencies, Dependency dependency )
+    private Dependency matchDependency( List<Dependency> dependencies, Dependency dependency )
     {
-        final Iterator it = dependencies.iterator();
-        while ( it.hasNext() )
+        for ( Dependency dep : dependencies)
         {
-            Dependency dep = (Dependency) it.next();
             if ( WarUtils.dependencyEquals( dep, dependency ) )
             {
                 return dep;
@@ -484,17 +466,15 @@ public class WebappStructure
     }
 
 
-    private List createDependenciesInfoList( List dependencies )
+    private List<DependencyInfo> createDependenciesInfoList( List<Dependency> dependencies )
     {
         if ( dependencies == null )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
-        final List result = new ArrayList();
-        final Iterator it = dependencies.iterator();
-        while ( it.hasNext() )
+        final List<DependencyInfo> result = new ArrayList<DependencyInfo>();
+        for ( Dependency dependency  : dependencies )
         {
-            Dependency dependency = (Dependency) it.next();
             result.add( new DependencyInfo( dependency ) );
         }
         return result;
@@ -505,10 +485,8 @@ public class WebappStructure
     {
         // the full structure should be resolved so let's rebuild it
         this.allFiles = new PathSet();
-        final Iterator it = registeredFiles.values().iterator();
-        while ( it.hasNext() )
+        for ( PathSet pathSet : registeredFiles.values() )
         {
-            PathSet pathSet = (PathSet) it.next();
             this.allFiles.addAll( pathSet );
         }
         return this;
