@@ -209,6 +209,33 @@ public class CpdReportTest
         assertNotNull( pmdCpdDocument );
     }
 
+    public void testSkipEmptyReportConfiguration()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/cpd-skip-empty-report-plugin-config.xml" );
+        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        mojo.execute();
+
+        // verify the generated files do not exist because PMD was skipped
+        File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    public void testEmptyReportConfiguration()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/cpd-empty-report-plugin-config.xml" );
+        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        mojo.execute();
+
+        // verify the generated files do exist, even if there are no violations
+        File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" ) );
+        assertTrue( str.toLowerCase().indexOf( "Hello.java".toLowerCase() ) == -1 );
+    }
+
+
     public static class MockCpd
         extends CPD
     {

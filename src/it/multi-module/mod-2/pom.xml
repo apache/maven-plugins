@@ -43,8 +43,9 @@ under the License.
         <configuration>
           <rulesets>
             <!-- NOTE: Clashes with classpath resource, check resolution -->
-            <ruleset>rulesets/basic.xml</ruleset>
+            <ruleset>rulesets/java/basic.xml</ruleset>
           </rulesets>
+          <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
     </plugins>

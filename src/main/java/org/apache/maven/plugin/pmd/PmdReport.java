@@ -58,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -135,6 +134,9 @@ public class PmdReport
     @Component
     private ResourceManager locator;
 
+    /** The PMD report listener for collecting violations. */
+    private PmdReportListener reportListener;
+
     /**
      * {@inheritDoc}
      */
@@ -178,11 +180,6 @@ public class PmdReport
     private void execute( Locale locale )
         throws MavenReportException
     {
-        //configure ResourceManager
-        locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
-        locator.addSearchPath( "url", "" );
-        locator.setOutputDirectory( targetDirectory );
-
         if ( !skip && canGenerateReport() )
         {
             ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
@@ -192,7 +189,7 @@ public class PmdReport
 
                 Report report = generateReport( locale );
 
-                if ( !isHtml() )
+                if ( !isHtml() && !isXml() )
                 {
                     writeNonHtml( report );
                 }
@@ -204,16 +201,65 @@ public class PmdReport
         }
     }
 
-    private Report generateReport( Locale locale )
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result )
+        {
+            try
+            {
+                executePmdWithClassloader();
+                if ( skipEmptyReport )
+                {
+                    result = reportListener.hasViolations();
+                    if ( result )
+                    {
+                        getLog().debug("Skipping Report as skipEmptyReport is true and there are no PMD violations.");
+                    }
+                }
+            }
+            catch ( MavenReportException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        return result;
+    }
+
+    private void executePmdWithClassloader()
         throws MavenReportException
     {
-        Sink sink = getSink();
+        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+            executePmd();
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( origLoader );
+        }
+    }
 
+    private void executePmd()
+        throws MavenReportException
+    {
+        if ( reportListener != null )
+        {
+            // PMD has already been run
+            getLog().debug( "PMD has already been run - skipping redundant execution." );
+            return;
+        }
+
+        //configure ResourceManager
+        locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+        locator.addSearchPath( "url", "" );
+        locator.setOutputDirectory( targetDirectory );
+
+        reportListener = new PmdReportListener();
         PMDConfiguration pmdConfiguration = getPMDConfiguration();
-        final PmdReportListener reportSink = new PmdReportListener( getLog(), sink, getBundle( locale ), aggregate );
         RuleContext ruleContext = new RuleContext();
-        ruleContext.getReport().addListener( reportSink );
-        reportSink.beginDocument();
+        ruleContext.getReport().addListener( reportListener );
 
         RuleSetFactory ruleSetFactory = new RuleSetFactory();
         ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
@@ -243,14 +289,17 @@ public class PmdReport
         }
         pmdConfiguration.setRuleSets( StringUtils.join( sets, "," ) );
 
-        Map<File, PmdFileInfo> files;
         try
         {
-            files = getFilesToProcess();
-            if ( files.isEmpty() && !"java".equals( language ) )
+            if ( filesToProcess == null )
+            {
+                filesToProcess = getFilesToProcess();
+            }
+
+            if ( filesToProcess.isEmpty() && !"java".equals( language ) )
             {
                 getLog().warn(
-                    "No files found to process. Did you add your additional source folders like javascript? (see also build-helper-maven-plugin)" );
+                        "No files found to process. Did you add your additional source folders like javascript? (see also build-helper-maven-plugin)" );
             }
         }
         catch ( IOException e )
@@ -259,7 +308,7 @@ public class PmdReport
         }
 
         String encoding = getSourceEncoding();
-        if ( StringUtils.isEmpty( encoding ) && !files.isEmpty() )
+        if ( StringUtils.isEmpty( encoding ) && !filesToProcess.isEmpty() )
         {
             getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
                                + ", i.e. build is platform dependent!" );
@@ -267,32 +316,56 @@ public class PmdReport
         }
         pmdConfiguration.setSourceEncoding( encoding );
 
-        reportSink.setFiles( files );
-        List<DataSource> dataSources = new ArrayList<DataSource>( files.size() );
-        for ( File f : files.keySet() )
+        List<DataSource> dataSources = new ArrayList<DataSource>( filesToProcess.size() );
+        for ( File f : filesToProcess.keySet() )
         {
             dataSources.add( new FileDataSource( f ) );
         }
 
         try
         {
+            getLog().debug( "Executing PMD..." );
+
             PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext, Collections.<Renderer> emptyList() );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "PMD finished. Found " + reportListener.getViolations().size() + " violations." );
+            }
         }
         catch ( Exception e )
         {
             getLog().warn( "Failure executing PMD: " + e.getLocalizedMessage(), e );
         }
 
+        // if format is XML, we need to output it even if the file list is empty or we have no violations
+        // so the "check" goals can check for violations
+        if ( isXml() && reportListener != null )
+        {
+            writeNonHtml( reportListener.asReport() );
+        }
+    }
+
+    private Report generateReport( Locale locale )
+        throws MavenReportException
+    {
+        Sink sink = getSink();
+        PmdReportGenerator renderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
+        renderer.setFiles( filesToProcess );
+        renderer.setViolations( reportListener.getViolations() );
+
         try
         {
-            reportSink.endDocument();
+            renderer.beginDocument();
+            renderer.render();
+            renderer.endDocument();
         }
         catch ( IOException e )
         {
             getLog().warn( "Failure creating the report: " + e.getLocalizedMessage(), e );
         }
 
-        return reportSink.asReport();
+        return reportListener.asReport();
     }
 
     /**
