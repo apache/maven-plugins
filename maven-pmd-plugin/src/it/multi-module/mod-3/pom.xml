@@ -46,6 +46,7 @@ under the License.
             <ruleset>src/main/config/pmd/rel.xml</ruleset>
             <ruleset>${basedir}/src/main/config/pmd/abs.xml</ruleset>
           </rulesets>
+          <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
     </plugins>
