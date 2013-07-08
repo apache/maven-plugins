@@ -275,13 +275,14 @@ public class ProcessRemoteResourcesMojo
      * project - the current MavenProject <br/>
      * projects - the list of dependency projects<br/>
      * projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
+     * locator - the ResourceManager that can be used to retrieve additional resources<br/>
      * <p/>
      * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
      * the javadoc for MavenProject</a> for information about the properties on the MavenProject.
      */
     @Parameter
-    private Map<String, String> properties = new HashMap<String, String>();
-
+    private Map<String, Object> properties = new HashMap<String, Object>();
+    
     /**
      * Whether to include properties defined in the project when filtering resources.
      *
@@ -943,8 +944,8 @@ public class ProcessRemoteResourcesMojo
         List<MavenProject> projects = getProjects();
         context.put( "projects", projects );
         context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
-
         context.put( "presentYear", year );
+        context.put( "locator", locator);
 
         if ( inceptionYear.equals( year ) )
         {
