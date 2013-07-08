@@ -58,9 +58,13 @@ import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.log.LogChute;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
@@ -70,7 +74,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.velocity.VelocityComponent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -124,7 +127,7 @@ import java.util.TreeMap;
 // @requiresDependencyResolution test
 @Mojo( name = "process", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true )
 public class ProcessRemoteResourcesMojo
-    extends AbstractMojo
+    extends AbstractMojo implements LogChute
 {
 
     private static final String TEMPLATE_SUFFIX = ".vm";
@@ -304,12 +307,6 @@ public class ProcessRemoteResourcesMojo
     private ArtifactResolver artifactResolver;
 
     /**
-     * Velocity component.
-     */
-    @Component
-    private VelocityComponent velocity;
-
-    /**
      * Filtering support, for local resources that override those in the remote bundle.
      */
     @Component
@@ -400,6 +397,9 @@ public class ProcessRemoteResourcesMojo
     @Component( hint = "default" )
     protected ProjectDependenciesResolver dependencyResolver;
 
+    
+    private VelocityEngine velocity;
+    
     @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
@@ -414,6 +414,12 @@ public class ProcessRemoteResourcesMojo
             getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
             return;
         }
+        
+        velocity = new VelocityEngine();
+        velocity.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, this);
+        velocity.setProperty("resource.loader", "classpath");
+        velocity.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+        velocity.init();
 
         if ( supplementalModels == null )
         {
@@ -788,8 +794,8 @@ public class ProcessRemoteResourcesMojo
                             writer = WriterFactory.newPlatformWriter( file );
                         }
 
-                        velocity.getEngine().evaluate( context, writer, "", reader );
-                        velocity.getEngine().evaluate( context, writer, "", reader );
+                        velocity.evaluate( context, writer, "", reader );
+                        velocity.evaluate( context, writer, "", reader );
                     }
                     catch ( ParseErrorException e )
                     {
@@ -1084,12 +1090,12 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     if ( bundle.getSourceEncoding() == null )
                                     {
-                                        velocity.getEngine().mergeTemplate( bundleResource, "ISO-8859-1",
+                                        velocity.mergeTemplate( bundleResource, "ISO-8859-1",
                                                                             context, writer );
                                     }
                                     else
                                     {
-                                        velocity.getEngine().mergeTemplate( bundleResource, bundle.getSourceEncoding(),
+                                        velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(),
                                                                             context, writer );
 
                                     }
@@ -1350,6 +1356,62 @@ public class ProcessRemoteResourcesMojo
         {
             return p1.getArtifact().equals( p2.getArtifact() );
         }
+    }
+
+    /* LogChute methods */
+    public void init(RuntimeServices rs) throws Exception 
+    {
+    }
+
+    public void log(int level, String message) 
+    {
+        switch ( level )
+        {
+            case LogChute.WARN_ID:
+                getLog().warn( message );
+                break;
+            case LogChute.INFO_ID:
+                // velocity info messages are too verbose, just consider them as debug messages...
+                getLog().debug( message );
+                break;
+            case LogChute.DEBUG_ID:
+                getLog().debug( message );
+                break;
+            case LogChute.ERROR_ID:
+                getLog().error( message );
+                break;
+            default:
+                getLog().debug( message );
+                break;
+        }       
+    }
+
+    public void log(int level, String message, Throwable t) 
+    {
+        switch ( level )
+        {
+            case LogChute.WARN_ID:
+                getLog().warn( message, t );
+                break;
+            case LogChute.INFO_ID:
+                // velocity info messages are too verbose, just consider them as debug messages...
+                getLog().debug( message, t );
+                break;
+            case LogChute.DEBUG_ID:
+                getLog().debug( message, t );
+                break;
+            case LogChute.ERROR_ID:
+                getLog().error( message, t );
+                break;
+            default:
+                getLog().debug( message, t );
+                break;
+        }        
+    }
+
+    public boolean isLevelEnabled(int level) 
+    {
+        return false;
     }
 
 }
