@@ -575,18 +575,21 @@ public class ProcessRemoteResourcesMojo
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
 
-        Set<Artifact> depArtifacts;
         Set<Artifact> artifacts = resolveProjectArtifacts();
-        if ( runOnlyAtExecutionRoot )
+        if ( this.excludeTransitive )
         {
-            depArtifacts = aggregateProjectDependencyArtifacts();
-        }
-        else
-        {
-            depArtifacts = project.getDependencyArtifacts();
+            Set<Artifact> depArtifacts;
+            if ( runOnlyAtExecutionRoot )
+            {
+                depArtifacts = aggregateProjectDependencyArtifacts();
+            }
+            else
+            {
+                depArtifacts = project.getDependencyArtifacts();
+            }
+            filter.addFilter( new ProjectTransitivityFilter( depArtifacts, true ) );
         }
 
-        filter.addFilter( new ProjectTransitivityFilter( depArtifacts, this.excludeTransitive ) );
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
         filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
@@ -701,11 +704,21 @@ public class ProcessRemoteResourcesMojo
                 try
                 {
                     Set<Artifact> depArtifacts = p.createArtifacts( artifactFactory, null, null );
-                    p.setDependencyArtifacts( depArtifacts );
 
                     if ( depArtifacts != null && !depArtifacts.isEmpty() )
                     {
-                        artifacts.addAll( depArtifacts );
+                        for ( Artifact artifact : depArtifacts )
+                        {
+                            if ( artifact.getVersion() == null && artifact.getVersionRange() != null )
+                            {
+                                // Version is required for equality comparison between artifacts,
+                                // but it is not needed for our purposes of filtering out
+                                // transitive dependencies (which requires only groupId/artifactId).
+                                // Therefore set an arbitrary version if missing.
+                                artifact.setResolvedVersion( Artifact.LATEST_VERSION );
+                            }
+                            artifacts.add( artifact );
+                        }  
                     }
                 }
                 catch ( InvalidDependencyVersionException e )
