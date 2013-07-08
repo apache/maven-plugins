@@ -427,9 +427,9 @@ public class ProcessRemoteResourcesMojo
             getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
             return;
         }
-        if (resolveScopes == null) 
+        if ( resolveScopes == null )
         {
-            if (excludeScope == null || "".equals(excludeScope)) 
+            if ( excludeScope == null || "".equals( excludeScope ) )
             {
                 resolveScopes = new String[] { this.includeScope };
             }
@@ -439,9 +439,9 @@ public class ProcessRemoteResourcesMojo
             }
         }
         velocity = new VelocityEngine();
-        velocity.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, this);
-        velocity.setProperty("resource.loader", "classpath");
-        velocity.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+        velocity.setProperty( VelocityEngine.RUNTIME_LOG_LOGSYSTEM, this );
+        velocity.setProperty( "resource.loader", "classpath" );
+        velocity.setProperty( "classpath.resource.loader.class", ClasspathResourceLoader.class.getName() );
         velocity.init();
 
         if ( supplementalModels == null )
@@ -660,7 +660,7 @@ public class ProcessRemoteResourcesMojo
 
                 if ( supplementModels.containsKey( supplementKey ) )
                 {
-                    Model mergedModel = mergeModels( p.getModel(), (Model) supplementModels.get( supplementKey ) );
+                    Model mergedModel = mergeModels( p.getModel(), supplementModels.get( supplementKey ) );
                     MavenProject mergedProject = new MavenProject( mergedModel );
                     projects.add( mergedProject );
                     mergedProject.setArtifact( artifact );
@@ -1086,7 +1086,7 @@ public class ProcessRemoteResourcesMojo
             for ( Enumeration<URL> e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
                   e.hasMoreElements(); )
             {
-                URL url = (URL) e.nextElement();
+                URL url = e.nextElement();
 
                 try
                 {
@@ -1096,7 +1096,7 @@ public class ProcessRemoteResourcesMojo
 
                     RemoteResourcesBundle bundle = bundleReader.read( reader );
 
-                    for ( String bundleResource : (List<String>) bundle.getRemoteResources() )
+                    for ( String bundleResource : bundle.getRemoteResources() )
                     {
                         String projectResource = bundleResource;
 
@@ -1187,7 +1187,6 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f, true ),
                                                                                       bundle.getSourceEncoding() ) );
-
                                 }
 
                                 try
@@ -1402,11 +1401,12 @@ public class ProcessRemoteResourcesMojo
     }
 
     /* LogChute methods */
-    public void init(RuntimeServices rs) throws Exception 
+    public void init( RuntimeServices rs )
+        throws Exception
     {
     }
 
-    public void log(int level, String message) 
+    public void log( int level, String message )
     {
         switch ( level )
         {
@@ -1429,7 +1429,7 @@ public class ProcessRemoteResourcesMojo
         }       
     }
 
-    public void log(int level, String message, Throwable t) 
+    public void log( int level, String message, Throwable t )
     {
         switch ( level )
         {
@@ -1452,7 +1452,7 @@ public class ProcessRemoteResourcesMojo
         }        
     }
 
-    public boolean isLevelEnabled(int level) 
+    public boolean isLevelEnabled( int level )
     {
         return false;
     }

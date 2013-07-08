@@ -37,7 +37,7 @@ public class RemoteResourcesClassLoader
     {
         super.addURL( url );
     }
-    
+
     // don't check the parents for the resources.   Just check the jars
     // that we have provided.   Thus, we don't pull junk from the
     // system classpath jars and stuff instead of the jars
@@ -51,5 +51,5 @@ public class RemoteResourcesClassLoader
         }
         return url;
     }
-    
+
 }
