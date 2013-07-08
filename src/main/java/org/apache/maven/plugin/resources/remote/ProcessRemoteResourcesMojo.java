@@ -1021,7 +1021,14 @@ public class ProcessRemoteResourcesMojo
                         if ( s[0].equals( p.getGroupId() ) && s[1].equals( p.getArtifactId() ) &&
                             s[2].equals( p.getVersion() ) )
                         {
-                            artifactFile = new File( p.getBuild().getOutputDirectory() );
+                            if ( s.length >= 4 && "test-jar".equals( s[3] ) ) 
+                            {
+                                artifactFile = new File( p.getBuild().getTestOutputDirectory() );
+                            } 
+                            else 
+                            {
+                                artifactFile = new File( p.getBuild().getOutputDirectory() );
+                            }
                         }
                     }
                 }
