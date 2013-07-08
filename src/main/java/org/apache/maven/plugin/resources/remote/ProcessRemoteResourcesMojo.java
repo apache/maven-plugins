@@ -93,6 +93,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -337,7 +338,7 @@ public class ProcessRemoteResourcesMojo
 
 
     /**
-     * Scope to include. An Empty string indicates all scopes (default).
+     * Scope to include. An Empty string indicates all scopes (default is "runtime").
      *
      * @since 1.0
      */
@@ -351,6 +352,18 @@ public class ProcessRemoteResourcesMojo
      */
     @Parameter( property = "excludeScope", defaultValue = "" )
     protected String excludeScope;
+    
+    
+    /**
+     * When resolving project dependencies, specify the scopes to include.
+     * The default is the same as "includeScope" if there are no exclude scopes set.
+     * Otherwise, it defaults to "test" to grab all the dependencies so the
+     * exclude filters can filter out what is not needed.
+     * @since 1.5 
+     */
+    @Parameter
+    private String[] resolveScopes;
+    
 
     /**
      * Comma separated list of Artifact names too exclude.
@@ -414,7 +427,17 @@ public class ProcessRemoteResourcesMojo
             getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
             return;
         }
-        
+        if (resolveScopes == null) 
+        {
+            if (excludeScope == null || "".equals(excludeScope)) 
+            {
+                resolveScopes = new String[] { this.includeScope };
+            }
+            else
+            {
+                resolveScopes = new String[] { Artifact.SCOPE_TEST };
+            }
+        }
         velocity = new VelocityEngine();
         velocity.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, this);
         velocity.setProperty("resource.loader", "classpath");
@@ -667,12 +690,12 @@ public class ProcessRemoteResourcesMojo
             if ( runOnlyAtExecutionRoot )
             {
                 List<MavenProject> projects = mavenSession.getSortedProjects();
-                return dependencyResolver.resolve( projects, Collections.singleton( Artifact.SCOPE_TEST ),
+                return dependencyResolver.resolve( projects, Arrays.asList( resolveScopes ),
                                                    mavenSession );
             }
             else
             {
-                return dependencyResolver.resolve( project, Collections.singleton( Artifact.SCOPE_TEST ),
+                return dependencyResolver.resolve( project, Arrays.asList( resolveScopes ),
                                                    mavenSession );
             }
         }
