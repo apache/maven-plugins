@@ -172,9 +172,9 @@ public class ArtifactStub
 
     }
 
-    public Collection getMetadataList()
+    public Collection<ArtifactMetadata> getMetadataList()
     {
-        return new LinkedList();
+        return new LinkedList<ArtifactMetadata>();
     }
 
     public void setRepository( ArtifactRepository remoteRepository )
@@ -217,12 +217,12 @@ public class ArtifactStub
         return artifactHandler;
     }
 
-    public List getDependencyTrail()
+    public List<String> getDependencyTrail()
     {
-        return new LinkedList();
+        return new LinkedList<String>();
     }
 
-    public void setDependencyTrail( List dependencyTrail )
+    public void setDependencyTrail(List<String> dependencyTrail)
     {
 
     }
@@ -293,12 +293,12 @@ public class ArtifactStub
         release = _release;
     }
 
-    public List getAvailableVersions()
+    public List<ArtifactVersion> getAvailableVersions()
     {
-        return new LinkedList();
+        return new LinkedList<ArtifactVersion>();
     }
 
-    public void setAvailableVersions( List versions )
+    public void setAvailableVersions(List<ArtifactVersion> versions)
     {
 
     }
@@ -325,8 +325,13 @@ public class ArtifactStub
         return true;
     }
 
-    public int compareTo( Object object )
-    {
+    public int compareTo(Artifact o) {
         return 0;
     }
+
+    public ArtifactMetadata getMetadata(Class<?> metadataClass) {
+        return null;
+    }
+
+
 }
