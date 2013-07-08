@@ -51,8 +51,8 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFilter;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
-import org.apache.maven.shared.artifact.filter.collection.TransitivityFilter;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
@@ -421,7 +421,7 @@ public class ProcessRemoteResourcesMojo
             {
                 try
                 {
-                    supplementalModels = new String[]{ sups.toURL().toString() };
+                    supplementalModels = new String[]{ sups.toURI().toURL().toString() };
                 }
                 catch ( MalformedURLException e )
                 {
@@ -546,7 +546,7 @@ public class ProcessRemoteResourcesMojo
                 {
                     try
                     {
-                        locator.addSearchPath( "jar", "jar:" + artifact.toURL().toExternalForm() );
+                        locator.addSearchPath( "jar", "jar:" + artifact.toURI().toURL().toExternalForm() );
                     }
                     catch ( MalformedURLException e )
                     {
@@ -579,7 +579,7 @@ public class ProcessRemoteResourcesMojo
             depArtifacts = project.getDependencyArtifacts();
         }
 
-        filter.addFilter( new TransitivityFilter( depArtifacts, this.excludeTransitive ) );
+        filter.addFilter( new ProjectTransitivityFilter( depArtifacts, this.excludeTransitive ) );
         filter.addFilter( new ScopeFilter( this.includeScope, this.excludeScope ) );
         filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
         filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
@@ -649,7 +649,6 @@ public class ProcessRemoteResourcesMojo
         return projects;
     }
 
-    @SuppressWarnings( "unchecked" )
     private Set<Artifact> resolveProjectArtifacts()
         throws MojoExecutionException
     {
@@ -838,7 +837,6 @@ public class ProcessRemoteResourcesMojo
         return false;
     }
 
-    @SuppressWarnings( "unchecked" )
     private MavenFileFilterRequest setupRequest( Resource resource, File source, File file )
     {
         MavenFileFilterRequest req = new MavenFileFilterRequest();
@@ -958,7 +956,6 @@ public class ProcessRemoteResourcesMojo
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     private List<File> downloadBundles( List<String> bundles )
         throws MojoExecutionException
     {
@@ -1086,7 +1083,8 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     if ( bundle.getSourceEncoding() == null )
                                     {
-                                        velocity.getEngine().mergeTemplate( bundleResource, context, writer );
+                                        velocity.getEngine().mergeTemplate( bundleResource, "ISO-8859-1",
+                                                                            context, writer );
                                     }
                                     else
                                     {
@@ -1342,7 +1340,6 @@ public class ProcessRemoteResourcesMojo
     class ProjectComparator
         implements Comparator<MavenProject>
     {
-        @SuppressWarnings( "unchecked" )
         public int compare( MavenProject p1, MavenProject p2 )
         {
             return p1.getArtifact().compareTo( p2.getArtifact() );

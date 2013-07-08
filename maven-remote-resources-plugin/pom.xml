@@ -43,7 +43,7 @@ under the License.
   </description>
 
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>2.2.1</maven>
   </prerequisites>
 
   <scm>
@@ -57,9 +57,8 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <mavenFilteringVersion>1.1</mavenFilteringVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
     <sitePluginVersion>3.2</sitePluginVersion>
   </properties>
 
@@ -104,7 +103,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -117,7 +115,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.0</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -128,23 +126,8 @@ under the License.
     <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-interpolation</artifactId>
-      <version>1.12</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-resources</artifactId>
-      <version>1.0-alpha-5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.5.12</version>
+      <version>1.0-alpha-7</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -157,6 +140,11 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interpolation</artifactId>
+      <version>1.12</version>
+    </dependency>    
 
     <!-- other -->
     <dependency>
@@ -205,7 +193,6 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>

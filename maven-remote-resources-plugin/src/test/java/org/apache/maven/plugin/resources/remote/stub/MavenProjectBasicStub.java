@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
@@ -44,7 +43,7 @@ public class MavenProjectBasicStub
 
     protected String description;
 
-    protected ModelStub model;
+    protected ModelStub modelStub;
 
     protected File file;
 
@@ -56,7 +55,7 @@ public class MavenProjectBasicStub
         // most values are hardcoded to have a controlled environment
         super( new ModelStub() );
 
-        model = (ModelStub) getModel();
+        modelStub = (ModelStub) getModel();
         properties = new Properties();
         artifact = new ArtifactStub();
         identifier = id;
@@ -84,11 +83,6 @@ public class MavenProjectBasicStub
     public void setDescription( String desc )
     {
         description = desc;
-    }
-
-    public Model getModel()
-    {
-        return model;
     }
 
     public String getDescription()
@@ -150,15 +144,15 @@ public class MavenProjectBasicStub
     {
         // the pom should be located in the isolated dummy root         
         super.setFile( new File( getBasedir(), "pom.xml" ) );
-        super.setDependencyArtifacts( new HashSet() );
-        super.setArtifacts( new HashSet() );
-        super.setPluginArtifacts( new HashSet() );
-        super.setReportArtifacts( new HashSet() );
-        super.setExtensionArtifacts( new HashSet() );
-        super.setRemoteArtifactRepositories( new LinkedList() );
-        super.setPluginArtifactRepositories( new LinkedList() );
-        super.setCollectedProjects( new LinkedList() );
-        super.setActiveProfiles( new LinkedList() );
+        super.setDependencyArtifacts( new HashSet<Object>() );
+        super.setArtifacts( new HashSet<Object>() );
+        super.setPluginArtifacts( new HashSet<Object>() );
+        super.setReportArtifacts( new HashSet<Object>() );
+        super.setExtensionArtifacts( new HashSet<Object>() );
+        super.setRemoteArtifactRepositories( new LinkedList<Object>() );
+        super.setPluginArtifactRepositories( new LinkedList<Object>() );
+        super.setCollectedProjects( new LinkedList<Object>() );
+        super.setActiveProfiles( new LinkedList<Object>() );
         super.setOriginalModel( null );
         super.setExecutionProject( this );
         super.setArtifact( artifact );

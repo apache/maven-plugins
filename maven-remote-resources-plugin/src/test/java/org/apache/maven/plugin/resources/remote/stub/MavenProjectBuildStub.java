@@ -63,17 +63,17 @@ public class MavenProjectBuildStub
 
     protected String targetTestResourcesDirectory;
 
-    protected ArrayList targetClassesList;
+    protected ArrayList<String> targetClassesList;
 
-    protected ArrayList sourceFileList;
+    protected ArrayList<String> sourceFileList;
 
-    protected ArrayList resourcesFileList;
+    protected ArrayList<String> resourcesFileList;
 
-    protected ArrayList rootFileList;
+    protected ArrayList<String> rootFileList;
 
-    protected ArrayList directoryList;
+    protected ArrayList<String> directoryList;
 
-    protected HashMap dataMap;
+    protected HashMap<String, String> dataMap;
 
     public MavenProjectBuildStub( String key )
         throws Exception
@@ -81,12 +81,12 @@ public class MavenProjectBuildStub
         super( key );
 
         build = new Build();
-        resourcesFileList = new ArrayList();
-        sourceFileList = new ArrayList();
-        rootFileList = new ArrayList();
-        directoryList = new ArrayList();
-        targetClassesList = new ArrayList();
-        dataMap = new HashMap();
+        resourcesFileList = new ArrayList<String>();
+        sourceFileList = new ArrayList<String>();
+        rootFileList = new ArrayList<String>();
+        directoryList = new ArrayList<String>();
+        targetClassesList = new ArrayList<String>();
+        dataMap = new HashMap<String, String>();
         setupBuild();
     }
 
@@ -108,7 +108,7 @@ public class MavenProjectBuildStub
     {
         if ( isValidPath( name ) )
         {
-            List list = getList( type );
+            List<String> list = getList( type );
 
             list.add( name );
         }
@@ -242,9 +242,9 @@ public class MavenProjectBuildStub
         }
     }
 
-    private List getList( int type )
+    private List<String> getList( int type )
     {
-        ArrayList retVal = null;
+        ArrayList<String> retVal = null;
 
         switch ( type )
         {
@@ -268,7 +268,7 @@ public class MavenProjectBuildStub
     private void createFiles( String parent, int type )
     {
         File currentFile;
-        ArrayList list = (ArrayList) getList( type );
+        List<String> list = getList( type );
 
         // guard
         if ( list == null )

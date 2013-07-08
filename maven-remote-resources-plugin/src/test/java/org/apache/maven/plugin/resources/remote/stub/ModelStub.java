@@ -19,8 +19,6 @@ package org.apache.maven.plugin.resources.remote.stub;
  * under the License.
  */
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.model.Model;
@@ -32,6 +30,8 @@ import org.apache.maven.model.Parent;
 public class ModelStub
     extends Model
 {
+    private static final long serialVersionUID = 1L;
+
     public ModelStub()
     {
 
@@ -78,13 +78,4 @@ public class ModelStub
         return new Properties();
     }
 
-    public List getPackages()
-    {
-        return new LinkedList();
-    }
-
-    public List getProfiles()
-    {
-        return new LinkedList();
-    }
 }

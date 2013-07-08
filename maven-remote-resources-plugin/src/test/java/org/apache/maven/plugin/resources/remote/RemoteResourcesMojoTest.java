@@ -479,11 +479,11 @@ public class RemoteResourcesMojoTest
                                                                  String bundles[] )
         throws Exception
     {
-        return lookupProcessMojoWithSettings( project, new ArrayList( Arrays.asList( bundles ) ) );
+        return lookupProcessMojoWithSettings( project, new ArrayList<String>( Arrays.asList( bundles ) ) );
     }
 
     protected ProcessRemoteResourcesMojo lookupProcessMojoWithSettings( final MavenProject project,
-                                                                 ArrayList bundles )
+                                                                 ArrayList<String> bundles )
         throws Exception
     {
         final ProcessRemoteResourcesMojo mojo = lookupProcessMojo();
@@ -492,7 +492,7 @@ public class RemoteResourcesMojoTest
                                     null, //Settings settings,
                                     null, //ArtifactRepository localRepository,
                                     null, //EventDispatcher eventDispatcher,
-                                    new ReactorManager(new ArrayList()),
+                                    new ReactorManager(new ArrayList<MavenProject>()),
                                     Arrays.asList( new String[] {"install"} ),
                                     project.getBasedir().toString(),
                                     new Properties(),
@@ -510,6 +510,6 @@ public class RemoteResourcesMojoTest
     protected ProcessRemoteResourcesMojo lookupProcessMojoWithDefaultSettings( final MavenProject project )
         throws Exception
     {
-        return lookupProcessMojoWithSettings( project, new ArrayList() );
+        return lookupProcessMojoWithSettings( project, new ArrayList<String>() );
     }
 }
