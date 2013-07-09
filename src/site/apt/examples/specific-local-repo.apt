@@ -28,7 +28,7 @@
 
 Installing an artifact to a specific local repository path
 
-  By default, Maven Install Plugin uses the local repository defined in the settings.xml to install an artifact.
+  By default, the Apache Maven Install Plugin uses the local repository defined in the settings.xml to install an artifact.
 
   You could install an artifact on a specific local repository  by setting the <<<localRepositoryPath>>>
   parameter when installing.

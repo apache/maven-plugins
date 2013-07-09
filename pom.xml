@@ -33,7 +33,7 @@ under the License.
   <version>2.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Install Plugin</name>
+  <name>Apache Maven Install Plugin</name>
   <description>Copies the project artifacts to the user's local repository.</description>
   <inceptionYear>2004</inceptionYear>
 
