@@ -56,5 +56,6 @@ public class MavenProject4CopyConstructor
         super.setActiveProfiles( new LinkedList() );
         super.setOriginalModel( null );
         super.setExecutionProject( this );
+        super.setBuild( getBuild() );
     }
 }
