@@ -19,6 +19,21 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
@@ -41,16 +56,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-
 /**
  * Installs a file in the local repository.
  *
@@ -63,25 +68,25 @@ public class InstallFileMojo
 {
 
     /**
-     * GroupId of the artifact to be installed. Retrieved from POM file if one is specified.
+     * GroupId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
     @Parameter( property = "groupId" )
     protected String groupId;
 
     /**
-     * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified.
+     * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
     @Parameter( property = "artifactId" )
     protected String artifactId;
 
     /**
-     * Version of the artifact to be installed. Retrieved from POM file if one is specified.
+     * Version of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
     @Parameter( property = "version" )
     protected String version;
 
     /**
-     * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified.
+     * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
     @Parameter( property = "packaging" )
     protected String packaging;
@@ -203,6 +208,59 @@ public class InstallFileMojo
         {
             processModel( readModel( pomFile ) );
         }
+        else
+        {
+            boolean foundPom = false;
+            
+            try
+            {
+                Pattern pomEntry = Pattern.compile( "META-INF/maven/.*/pom\\.xml" );
+                
+                JarFile jarFile = new JarFile( file );
+                
+                Enumeration<JarEntry> jarEntries = jarFile.entries();
+                
+                while( jarEntries.hasMoreElements() )
+                {
+                    JarEntry entry = jarEntries.nextElement();
+                    
+                    if( pomEntry.matcher( entry.getName() ).matches() )
+                    {
+                        getLog().debug( "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
+                        
+                        foundPom = true;
+                        
+                        InputStream pomInputStream = null;
+                        
+                        try
+                        {
+                            pomInputStream = jarFile.getInputStream( entry );
+                            
+                            processModel( readModel( pomInputStream ) );
+                            
+                            break;
+                        }
+                        finally
+                        {
+                            if ( pomInputStream != null )
+                            {
+                                pomInputStream.close();
+                            }
+                        }
+                    }
+                }
+                
+                if ( !foundPom )
+                {
+                    getLog().info( "pom.xml not found in " + file.getName() );
+                }
+            }
+            catch ( IOException e )
+            {
+                // ignore, artifact not packaged by Maven
+            }
+
+        }
 
         validateArtifactInformation();
 
@@ -308,6 +366,40 @@ public class InstallFileMojo
      * @throws MojoExecutionException If the POM could not be parsed.
      */
     private Model readModel( File pomFile )
+        throws MojoExecutionException
+    {
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( pomFile );
+            return new MavenXpp3Reader().read( reader );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoExecutionException( "File not found " + pomFile, e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error reading POM " + pomFile, e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Error parsing POM " + pomFile, e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+    }
+
+    /**
+     * Parses a POM.
+     *
+     * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
+     * @return The model from the POM file, never <code>null</code>.
+     * @throws MojoExecutionException If the POM could not be parsed.
+     */
+    private Model readModel( InputStream pomFile )
         throws MojoExecutionException
     {
         Reader reader = null;
