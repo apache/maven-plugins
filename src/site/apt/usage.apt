@@ -60,8 +60,8 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
 +---+
 
   * the groupId, artifactId, version and packaging of the file to install. These can
-    be taken from the specified pomFile, and overridden or specified using the
-    command line. When the pomFile contains a <parent> section, the parent's
+    be taken from the specified pomFile, extracted from the pom.xml inside the artifact, and overridden or specified 
+    using the command line. When the pomFile contains a <parent> section, the parent's
     groupId can be considered if the groupId is not specified further for the
     current project or on the command line.
 
