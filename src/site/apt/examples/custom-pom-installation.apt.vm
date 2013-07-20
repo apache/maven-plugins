@@ -33,5 +33,14 @@ Installing an artifact with a custom POM
   to the path of the custom POM.
 
 +---+
-mvn install:install-file -Dfile=path-to-your-artifact-jar -DpomFile=path-to-pom
+mvn ${project.groupId}:${project.artifactId}:${project.version}:install-file -Dfile=path-to-your-artifact-jar -DpomFile=path-to-pom
 +---+
+
+  If the JAR was built by Apache Maven, it'll contain a pom.xml in a subfolder of the META-INF directory, which will be read by default. In that case, all you need to do is:
+
++---+
+mvn ${project.groupId}:${project.artifactId}:${project.version}:install-file -Dfile=<path-to-file>
++---+
+
+  <<Note>>: By using the fully qualified path of a goal, you're ensured to be using the preferred version of the maven-install-plugin. When using <<<mvn install:install-file>>> 
+  its version depends on its specification in the pom or the version of Apache Maven.
