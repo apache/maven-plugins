@@ -31,8 +31,8 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Installing a Custom POM" href="examples/custom-pom-installation.html"/>
-      <item name="Generating a Generic POM" href="examples/generic-pom-generation.html"/>
+      <item name="Installing Artifact with Custom POM" href="examples/custom-pom-installation.html"/>
+      <item name="Generating Generic POM" href="examples/generic-pom-generation.html"/>
       <item name="Creating Checksums" href="examples/installing-checksums.html"/>
       <item name="Updating Release Info" href="examples/update-release-info.html"/>
       <item name="Installing to a Specific Local Repository Path" href="examples/specific-local-repo.html"/>
