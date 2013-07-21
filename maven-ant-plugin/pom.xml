@@ -33,7 +33,7 @@ under the License.
   <version>2.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Ant Plugin</name>
+  <name>Apache Maven Ant Plugin</name>
   <description>Generates an Ant build file from a POM.</description>
 
   <prerequisites>

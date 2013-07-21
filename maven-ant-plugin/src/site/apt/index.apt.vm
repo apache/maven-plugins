@@ -3,7 +3,7 @@
  ------
  Vincent Siveton
  ------
- September 2006
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven Ant Plugin
+${project.name}
 
  The Ant Plugin generates build files for {{{http://ant.apache.org/}Ant}} 1.6.2 or above from the POM.
 
