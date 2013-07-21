@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2010-12-16
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven Changes Plugin
+${project.name}
 
   This plugin is used to inform your users of the changes that have occured
   between different releases of your project. The plugin can extract these

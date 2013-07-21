@@ -33,7 +33,7 @@ under the License.
   <version>2.10-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Changes Report Plugin</name>
+  <name>Apache Maven Changes Plugin</name>
   <description>Creates a release history for inclusion into the site and assists in generating an announcement mail.</description>
 
   <contributors>
