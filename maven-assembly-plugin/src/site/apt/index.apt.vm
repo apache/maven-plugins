@@ -4,7 +4,7 @@
   John Casey
   Edwin Punzalan
   ---
-  2012-10-27
+  2013-07-22
   ---
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Assembly Plugin
+${project.name}
 
 * Introduction
 
