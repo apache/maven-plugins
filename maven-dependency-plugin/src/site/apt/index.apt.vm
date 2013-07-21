@@ -21,10 +21,10 @@
   Allan Ramirez
   Brian Fox
   ------
-  2009-04-08
+  2013-07-22
   ------
 
-Maven Dependency Plugin
+${project.name}
 
   The dependency plugin provides the capability to manipulate artifacts. It
   can copy and/or unpack artifacts from local or remote repositories to a
