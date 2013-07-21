@@ -33,7 +33,7 @@ under the License.
   <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Changelog Plugin</name>
+  <name>Apache Maven Changelog Plugin</name>
   <description>Produce SCM changelog reports.</description>
 
   <developers>
