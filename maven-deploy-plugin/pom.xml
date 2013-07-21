@@ -33,7 +33,7 @@ under the License.
   <version>2.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Deploy Plugin</name>
+  <name>Apache Maven Deploy Plugin</name>
   <description>Uploads the project artifacts to the internal remote repository.</description>
   <inceptionYear>2004</inceptionYear>
 
