@@ -4,7 +4,7 @@
  Stephane Nicoll
  <snicoll@apache.org>
  ------
- 2011-03-26
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven ACR Plugin
+${project.name}
 
   This plugin generates J2EE Application Client file.
 
