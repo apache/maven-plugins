@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2011-08-01
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven Checkstyle Plugin
+${project.name}
 
   The Checkstyle Plugin generates a report regarding the code style used by the developers. For more information about Checkstyle,
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}.
