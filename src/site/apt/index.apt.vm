@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 31 July 2006
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven Changelog Plugin
+${project.name}
 
  The Maven Changelog Plugin generates reports regarding the recent changes in your Software Configuration Management or SCM.
  These reports include the changelog report, developer activity report and the file activity report.
