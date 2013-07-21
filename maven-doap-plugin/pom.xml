@@ -33,8 +33,8 @@ under the License.
   <version>1.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven DOAP Plugin</name>
-  <description>Plugins which generate a DOAP file from information in a POM.</description>
+  <name>Apache Maven DOAP Plugin</name>
+  <description>Plugin which generates a DOAP file from information in a POM.</description>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
