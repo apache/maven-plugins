@@ -4,7 +4,7 @@
  Maria Odea Ching
  Vincent Siveton
  ------
- 2009-07-26
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -39,8 +39,7 @@ Maven Javadoc Plugin
  and calls the Javadoc tool as follow:
 
 +-----+
-#${project.reporting.outputDirectory}/apidocs/javadoc.exe(or .sh) \
-    @options @packages | @argfile
+javadoc.exe(or .sh) @options @packages | @argfile
 +-----+
 
  When no configuration values are set, the plugin sets default values instead and then executes the Javadoc tool.
