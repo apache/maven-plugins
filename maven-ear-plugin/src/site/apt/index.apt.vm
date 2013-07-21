@@ -5,7 +5,7 @@
  Stephane Nicoll
  Dennis Lundberg
  ------
- 2011-12-09
+ 2013-07-22
  ------
 
 ~~ Copyright 2006 The Apache Software Foundation.
@@ -26,7 +26,7 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven EAR Plugin
+${project.name}
 
   This plugin generates J2EE Enterprise Archive (EAR) file. It can also generate
   the deployment descriptor file (e.g. application.xml).
