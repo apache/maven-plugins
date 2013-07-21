@@ -33,7 +33,7 @@ under the License.
   <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Documentation Checker Plugin</name>
+  <name>Apache Maven Documentation Checker Plugin</name>
   <description>Checks for violations of the Plugin Documentation Standard.</description>
 
   <prerequisites>
