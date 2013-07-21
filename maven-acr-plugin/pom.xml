@@ -33,7 +33,7 @@ under the License.
   <version>1.0.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven ACR Plugin</name>
+  <name>Apache Maven ACR Plugin</name>
   <description>Generates a J2EE Application Client file.</description>
 
   <prerequisites>
