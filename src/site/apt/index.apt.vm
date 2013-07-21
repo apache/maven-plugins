@@ -3,7 +3,7 @@
  ------
  Kenney Westerhof, Franz Allan Valencia See
  ------
- September 2006
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven AntRun Plugin
+${project.name}
 
   This plugin provides the ability to run Ant tasks from within Maven. You can
   even embed your Ant scripts in the POM!
