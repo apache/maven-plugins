@@ -33,7 +33,7 @@ under the License.
   <version>2.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Assembly Plugin</name>
+  <name>Apache Maven Assembly Plugin</name>
   <description>A Maven plugin to create archives of your project's sources, classes, dependencies etc. from flexible assembly descriptors.</description>
 
   <prerequisites>
