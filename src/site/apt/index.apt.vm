@@ -3,7 +3,7 @@
   ------
   Jerome Lacoste
   ------
-  January 29 2006
+  2013-07-22
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Deploy Plugin
+${project.name}
 
   The deploy plugin is primarily used during the deploy phase, to add your
   artifact(s) to a remote repository for sharing with other developers and
