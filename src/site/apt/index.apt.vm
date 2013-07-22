@@ -3,7 +3,7 @@
  ------
  Jason van Zyl
  ------
- 2011-01-09
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven Remote Resources Plugin
+${project.name}
 
   This plugin is used to retrieve JARs of resources from remote repositories,
   process those resources, and incorporate them into JARs you build with
@@ -36,7 +36,7 @@ Maven Remote Resources Plugin
 
   * {{{./bundle-mojo.html}remote-resources:bundle}} creates the resource bundle manifest required
     by the remote resource bundle processing. The manifest file,
-    <<<${basedir}/target/classes/META-INF/maven/remote-resources.xml>>>, is created from the contents of the
+    <<<$\{basedir\}/target/classes/META-INF/maven/remote-resources.xml>>>, is created from the contents of the
     <<<src/main/resources>>> directory.
 
   * {{{./process-mojo.html}remote-resources:process}} retrieves the specified

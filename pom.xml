@@ -33,7 +33,7 @@ under the License.
   <version>1.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Remote Resources Plugin</name>
+  <name>Apache Maven Remote Resources Plugin</name>
   <description>
     Process resources packaged in JARs that have been deployed to
     a remote repository. The primary use case being satisfied is the consistent
