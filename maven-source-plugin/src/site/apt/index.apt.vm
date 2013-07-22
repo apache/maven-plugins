@@ -3,11 +3,10 @@
  ------
  Maria Odea Ching
  ------
- 11 July 2006
+ 2013-07-22
  ------
 
-
-Maven Source Plugin
+${project.name}
 
  The Source Plugin creates a jar archive of the source files of the current project. The jar file is, by default,
  created in the project's target directory.
