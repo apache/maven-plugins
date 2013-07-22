@@ -20,10 +20,10 @@
   ------
   Milos Kleint
   ------
-  Oct 2007
+  2013-07-22
   ------
 
-Maven Toolchains Plugin
+${project.name}
 
     The Toolchains Plugins allows to share configuration across plugins. For example to make sure the plugins like compiler, surefire, javadoc, webstart etc. all use the same JDK for execution.
 Similarly to maven-enforcer-plugin, it allows to control environmental constraints in the build.

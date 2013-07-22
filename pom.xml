@@ -33,7 +33,7 @@ under the License.
   <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Toolchains Plugin</name>
+  <name>Apache Maven Toolchains Plugin</name>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
