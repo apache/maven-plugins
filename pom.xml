@@ -33,7 +33,7 @@ under the License.
   <version>2.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Source Plugin</name>
+  <name>Apache Maven Source Plugin</name>
   <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
 
   <properties>
