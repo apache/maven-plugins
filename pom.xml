@@ -33,7 +33,7 @@ under the License.
   <version>2.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Shade Plugin</name>
+  <name>Apache Maven Shade Plugin</name>
   <description>
     Repackages the project classes together with their dependencies into a single uber-jar, optionally renaming classes
     or removing unused classes.
