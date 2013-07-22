@@ -33,7 +33,7 @@ under the License.
   <version>1.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven GPG Plugin</name>
+  <name>Apache Maven GPG Plugin</name>
   <description>Signs the project artifacts with GnuPG.</description>
 
   <prerequisites>

@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 10 December 2006
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven GPG Plugin
+${project.name}
 
   This plugin signs all of the project's attached artifacts with GnuPG.
 
