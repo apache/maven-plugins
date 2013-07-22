@@ -3,7 +3,7 @@
  ------
  Jason van Zyl
  ------
- 2006-11-27
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Invoker Plugin
+${project.name}
 
   The Invoker Plugin is used to run a set of Maven projects.  The plugin can determine whether each project execution
   is successful, and optionally can verify the output generated from a given project execution.

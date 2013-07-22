@@ -33,7 +33,7 @@ under the License.
   <version>1.9-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Invoker Plugin</name>
+  <name>Apache Maven Invoker Plugin</name>
   <description>
     The Maven Invoker Plugin is used to run a set of Maven projects. The plugin can determine whether each project
     execution is successful, and optionally can verify the output generated from a given project execution.
