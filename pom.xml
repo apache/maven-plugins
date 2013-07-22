@@ -33,7 +33,7 @@ under the License.
   <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Reactor Plugin</name>
+  <name>Apache Maven Reactor Plugin</name>
   <description>Build a subset of interdependent projects in a reactor</description>
 
   <developers>
