@@ -33,7 +33,7 @@ under the License.
   <version>2.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven RAR Plugin</name>
+  <name>Apache Maven RAR Plugin</name>
   <description>Builds a Resource Adapter Archive (RAR) from the project output for deployment to a J2EE server.</description>
   <inceptionYear>2004</inceptionYear>
 

@@ -3,7 +3,7 @@
   ------
   Allan Ramirez
   ------
-  July 2006
+  2013-07-22
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven RAR Plugin
+${project.name}
 
   A resource adapter is a system-level software driver that a Java application
   uses to connect to an enterprise information system (EIS). The RAR plugin
