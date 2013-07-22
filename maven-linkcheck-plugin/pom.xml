@@ -33,7 +33,7 @@ under the License.
   <version>1.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Linkcheck Plugin</name>
+  <name>Apache Maven Linkcheck Plugin</name>
   <description>This plugin allows you to generate a linkcheck report of your project's documentation.</description>
 
   <prerequisites>
