@@ -128,7 +128,7 @@ mvn scm:changelog
           <code>&lt;systemProperties&gt;</code> element of this plugin's
           &lt;configuration&gt; element.
 <source>
-      <plugin>
+<![CDATA[      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
         <configuration>
@@ -139,7 +139,7 @@ mvn scm:changelog
             </property>
           </systemProperties>
         </configuration>
-      </plugin>
+      </plugin>]]>
 </source>
         </p>
       </answer>
