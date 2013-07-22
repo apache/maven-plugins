@@ -33,7 +33,7 @@ under the License.
   <version>2.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Project Info Reports Plugin</name>
+  <name>Apache Maven Project Info Reports Plugin</name>
   <description>
     The Maven Project Info Reports Plugin is a plugin that generates standard reports
     for the specified project.
