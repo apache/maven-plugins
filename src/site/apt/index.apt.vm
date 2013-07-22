@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2008-06-17
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven Repository Plugin
+${project.name}
 
   This plugin is used to create bundles of artifacts that can be uploaded to the
   central repository.

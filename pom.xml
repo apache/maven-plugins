@@ -33,7 +33,7 @@ under the License.
   <version>2.3.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Repository Plugin</name>
+  <name>Apache Maven Repository Plugin</name>
   <description>Creates bundles of artifacts that should be manually uploaded to the central Maven repository.</description>
 
   <prerequisites>
