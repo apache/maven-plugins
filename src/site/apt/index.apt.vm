@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2012-01-04
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,7 @@
  ~~ specific language governing permissions and limitations
  ~~ under the License.
 
-Apache Maven PMD Plugin
+${project.name}
 
   The PMD Plugin allows you to automatically run the {{{http://pmd.sourceforge.net/}PMD}} code analysis tool
   on your project's source code and generate a site report with its results. It also supports the separate
