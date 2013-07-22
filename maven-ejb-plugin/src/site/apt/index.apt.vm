@@ -5,7 +5,7 @@
  <snicoll@apache.org>
  Pete Marvin King
  ------
- 2010-09-15
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven EJB Plugin
+${project.name}
 
   This plugin generates J2EE Enterprise Javabean (EJB) file as well as the associated client jar.
 
