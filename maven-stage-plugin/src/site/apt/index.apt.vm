@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2007-08-25
+ 2013-07-22
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Maven Stage Plugin
+${project.name}
 
   The Maven Stage Plugin copies artifacts from one repository to another. Its
   main use is for copying artifacts from a staging repository to the real
