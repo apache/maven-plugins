@@ -3,7 +3,7 @@
  ------
  Franz Allan See
  ------
- 2008-10-11
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Resources Plugin
+${project.name}
 
  The Resources Plugin handles the copying of project resources to the output
  directory. There are two different kinds of resources: main resources and test resources. The

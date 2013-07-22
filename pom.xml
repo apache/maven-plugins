@@ -33,7 +33,7 @@ under the License.
   <version>2.7-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Resources Plugin</name>
+  <name>Apache Maven Resources Plugin</name>
   <description>
     The Resources Plugin handles the copying of project resources to the output
     directory. There are two different kinds of resources: main resources and test resources. The
