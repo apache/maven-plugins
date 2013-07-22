@@ -3,7 +3,7 @@
  ------
  Dan Fabulich
  ------
- 2008-08-15
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven Reactor Plugin
+${project.name}
 
  This plugin can build a subset of interdependent projects in a
  reactor.  It should be useful in large reactor builds that include
