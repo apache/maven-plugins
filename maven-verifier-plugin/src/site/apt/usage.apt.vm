@@ -10,7 +10,7 @@ Usage
 
   To verify file system resources during your build, add the Verifier Plugin in
   your <<<pom.xml>>> under the <<<build>>> section. You will also need to
-  create a {{{verifications.html}<<<verifications.xml>>>}} file that contains
+  create a {{{./verifications.html}<<<verifications.xml>>>}} file that contains
   the verification rules. Add the path to that file to the
   <<<verificationFile>>> configuration element.
 
@@ -46,4 +46,4 @@ Usage
   fail your build you can set the configuration element <<<\<failOnError\>>>>
   to <<<false>>>.
 
-  For a sample verifications file, see {{{examples/sample-verifications.html}Sample Verifications}}.
+  For a sample verifications file, see {{{./examples/sample-verifications.html}Sample Verifications}}.
