@@ -138,7 +138,6 @@ under the License.
     <maven-scm.version>1.8</maven-scm.version>
     <doxiaVersion>1.1.4</doxiaVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <sitePluginVersion>3.0</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
@@ -320,11 +319,6 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>${sitePluginVersion}</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
