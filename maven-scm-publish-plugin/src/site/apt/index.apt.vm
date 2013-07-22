@@ -39,7 +39,7 @@ ${project.name}
     The plugin has been tested with git scm too and by example can push content for github pages too.
 
 
-Implementation
+* Implementation
 
     The plugin works from staged website.
 
@@ -58,7 +58,7 @@ Implementation
     This allows you to visit <<<target/scmpublish-checkout>>>, and validate
     its contents before submitting to the SCM.
 
-Publishing any content to SCM
+* Publishing any content to SCM
 
     Even without any pom.xml/Maven project, you can update SCM content with
     a local content:
@@ -75,7 +75,7 @@ mvn scm-publish:publish-scm -Dscmpublish.pubScmUrl=scm:... -Dscmpublish.content=
 
     <<See {{{./various-tips.html}Some Tips}}.>>
 
-Known Limitations
+* Known Limitations
 
     There are 2 known limitations:
     
@@ -89,7 +89,7 @@ Known Limitations
 
     []
 
-Future Dreams
+* Future Dreams
 
     Ideally, scm urls would be supported in <<<\<distributionManagement>>>> section of the POM, then
     publishing would simply be <<<mvn site-deploy>>>, without any problems for non-flat multi-modules
