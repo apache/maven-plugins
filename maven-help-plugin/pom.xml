@@ -33,7 +33,7 @@ under the License.
   <version>2.2.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Help Plugin</name>
+  <name>Apache Maven Help Plugin</name>
   <description>
     The Maven Help plugin provides goals aimed at helping to make sense out of
     the build environment. It includes the ability to view the effective
