@@ -33,7 +33,7 @@ under the License.
   <version>1.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Patch Plugin</name>
+  <name>Apache Maven Patch Plugin</name>
   <description>The Patch Plugin is used to apply patches to source files.</description>
 
   <prerequisites>
