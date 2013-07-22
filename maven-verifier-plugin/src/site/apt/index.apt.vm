@@ -3,7 +3,7 @@
  ------
  Denis Cabasson
  ------
- 2010-01-18
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Verifier Plugin
+${project.name}
 
   Useful for integration tests - verifies the existence of certain conditions.
 

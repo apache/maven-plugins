@@ -33,7 +33,7 @@ under the License.
   <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Verifier Plugin</name>
+  <name>Apache Maven Verifier Plugin</name>
   <description>Assists in integration testing by means of evaluating success/error conditions read from a configuration file.</description>
 
   <prerequisites>
