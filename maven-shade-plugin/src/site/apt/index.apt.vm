@@ -3,7 +3,7 @@
  ------
  Mauro Talevi
  ------
- 2008-07-21
+ 2013-07-22
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Maven Shade Plugin
+${project.name}
 
  This plugin provides the capability to package the artifact in an uber-jar, including its dependencies and
  to <shade> - i.e. rename - the packages of some of the dependencies.
