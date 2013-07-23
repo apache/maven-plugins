@@ -151,5 +151,5 @@ mvn one:convert
   of <<<mavenOneRemoteRepository>>>. This can be overridden using the
   <<<remoteRepositoryId>>> configuration element.
 
-  For more information, see the {{{plugin-info.html} Goal Reference}}.
+  For more information, see the {{{./plugin-info.html} Goal Reference}}.
 
