@@ -28,6 +28,8 @@
 
 ${project.name}
 
+  <<Note: This plugin is retired. It is no longer maintained.>>
+
   This plugin provides some integration tasks with Maven 1.x:
 
    * Helps you to switch your project from Maven 1 to Maven 2 by converting your <<<project.xml>>> to a <<<pom.xml>>>

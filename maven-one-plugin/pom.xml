@@ -33,7 +33,7 @@ under the License.
   <version>1.3-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Apache Maven One Plugin</name>
+  <name>Apache Maven One Plugin (RETIRED)</name>
   <description>Eases the migration from Maven 1.x to Maven 2.x by providing a POM converter etc.</description>
 
   <prerequisites>
