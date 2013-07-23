@@ -3,7 +3,7 @@
  ------
  Edwin Punzalan
  ------
- 05 July 2006
+ 2013-07-23
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -24,7 +24,7 @@
 ~~ under the License.
 
 
-Maven IDEA Plugin
+${project.name}
 
   The IDEA Plugin is used to generate files (ipr, iml, and iws) for a project
   so you can work on it using the IDE, IntelliJ IDEA.
