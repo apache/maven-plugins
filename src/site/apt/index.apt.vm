@@ -26,6 +26,8 @@
 
 ${project.name}
 
+  <<Note: This plugin is retired. It is no longer maintained.>>
+
   The IDEA Plugin is used to generate files (ipr, iml, and iws) for a project
   so you can work on it using the IDE, IntelliJ IDEA.
 
