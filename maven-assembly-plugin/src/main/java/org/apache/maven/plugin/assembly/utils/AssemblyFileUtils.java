@@ -22,11 +22,12 @@ package org.apache.maven.plugin.assembly.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
-import java.io.Reader;
 import java.nio.channels.FileChannel;
 
 import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
@@ -134,46 +135,86 @@ public final class AssemblyFileUtils
     }
 
     /**
-     * NOTE: It is the responsibility of the caller to close the source Reader instance.
-     * The file content is written using platform encoding.
+     * Converts the line endings of a file, writing a new file.
+     * The encoding of reading and writing can be specified.
+     * 
+     * @param source The source file, not null
+     * @param dest The destination file, not null
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
-     *   line-ending characters.
+     *   line-ending characters, not null.
+     * @param atEndOfFile The end-of-file line ending,
+     *  if true then the resulting file will have a new line at the end even if the input didn't have one,
+     *  if false then the resulting file will have no new line at the end even if the input did have one,
+     *  null to determine whether to have a new line at the end of the file based on the input file
+     * @param encoding The encoding to use, null for platform encoding
      */
-    public static void convertLineEndings( @Nonnull Reader source, File dest, String lineEndings, String encoding )
+    public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, String lineEndings, Boolean atEndOfFile, String encoding )
         throws IOException
     {
+        // MASSEMBLY-637, MASSEMBLY-96
+        // find characters at the end of the file
+        // needed to preserve the last line ending
+        // only check for LF (as CRLF also ends in LF)
+        String eofChars = "";
+        if ( atEndOfFile == null) {
+            RandomAccessFile raf = null;
+            try {
+                if ( source.length() >= 1 ) {
+                    raf = new RandomAccessFile( source, "r" );
+                    raf.seek( source.length() - 1 );
+                    byte last = raf.readByte();
+                    if ( last == '\n' ) {
+                      eofChars = lineEndings;
+                    }
+                }
+            }
+            finally
+            {
+                if ( raf != null ) {
+                    try {
+                        raf.close();
+                    }
+                    catch ( IOException ex )
+                    {
+                        // ignore
+                    }
+                }
+            }
+        } else if ( atEndOfFile.booleanValue() == true ) {
+            eofChars = lineEndings;
+        }
+
+        BufferedReader in = null;
         BufferedWriter out = null;
-        BufferedReader bufferedSource;
         try
         {
-            if ( source instanceof BufferedReader )
-            {
-                bufferedSource = (BufferedReader) source;
-            }
-            else
-            {
-                bufferedSource = new BufferedReader( source );
-            }
-
             if ( encoding == null )
             {
-                out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( dest ) ) ); // platform encoding
+                // platform encoding
+                in = new BufferedReader( new InputStreamReader( new FileInputStream( source ) ) );
+                out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( dest ) ) );
             }
             else
             {
+                // MASSEMBLY-371
+                in = new BufferedReader( new InputStreamReader( new FileInputStream( source ), encoding ) );
                 out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( dest ), encoding ) );
             }
 
             String line;
 
-            line = bufferedSource.readLine();
+            line = in.readLine();
             while ( line != null )
             {
                 out.write( line );
-                line = bufferedSource.readLine();
+                line = in.readLine();
                 if ( line != null )
                 {
                     out.write( lineEndings );
+                }
+                else
+                {
+                    out.write( eofChars );
                 }
             }
 
@@ -181,6 +222,7 @@ public final class AssemblyFileUtils
         }
         finally
         {
+            IOUtil.close( in );
             IOUtil.close( out );
         }
     }
