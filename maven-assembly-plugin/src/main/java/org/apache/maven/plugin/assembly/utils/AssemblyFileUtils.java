@@ -48,16 +48,22 @@ public final class AssemblyFileUtils
 {
 
     public static final String LINE_ENDING_KEEP = "keep";
+
     public static final String LINE_ENDING_DOS = "dos";
+
     public static final String LINE_ENDING_WINDOWS = "windows";
+
     public static final String LINE_ENDING_UNIX = "unix";
+
     public static final String LINE_ENDING_CRLF = "crlf";
+
     public static final String LINE_ENDING_LF = "lf";
 
     private AssemblyFileUtils()
     {
+        // no op
     }
-    
+
     public static String makePathRelativeTo( String path, final File basedir )
     {
         if ( basedir == null )
@@ -83,7 +89,7 @@ public final class AssemblyFileUtils
                     path = path.substring( 1 );
                 }
             }
-            
+
             if ( path.length() == 0 )
             {
                 path = ".";
@@ -110,10 +116,8 @@ public final class AssemblyFileUtils
     /**
      * Unpacks the archive file.
      *
-     * @param source
-     *            File to be unpacked.
-     * @param destDir
-     *            Location where to put the unpacked files.
+     * @param source  File to be unpacked.
+     * @param destDir Location where to put the unpacked files.
      */
     public static void unpack( File source, File destDir, ArchiverManager archiverManager )
         throws ArchiveExpansionException, NoSuchArchiverException
@@ -137,18 +141,19 @@ public final class AssemblyFileUtils
     /**
      * Converts the line endings of a file, writing a new file.
      * The encoding of reading and writing can be specified.
-     * 
-     * @param source The source file, not null
-     * @param dest The destination file, not null
+     *
+     * @param source      The source file, not null
+     * @param dest        The destination file, not null
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
-     *   line-ending characters, not null.
+     *                    line-ending characters, not null.
      * @param atEndOfFile The end-of-file line ending,
-     *  if true then the resulting file will have a new line at the end even if the input didn't have one,
-     *  if false then the resulting file will have no new line at the end even if the input did have one,
-     *  null to determine whether to have a new line at the end of the file based on the input file
-     * @param encoding The encoding to use, null for platform encoding
+     *                    if true then the resulting file will have a new line at the end even if the input didn't have one,
+     *                    if false then the resulting file will have no new line at the end even if the input did have one,
+     *                    null to determine whether to have a new line at the end of the file based on the input file
+     * @param encoding    The encoding to use, null for platform encoding
      */
-    public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, String lineEndings, Boolean atEndOfFile, String encoding )
+    public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, String lineEndings,
+                                           Boolean atEndOfFile, String encoding )
         throws IOException
     {
         // MASSEMBLY-637, MASSEMBLY-96
@@ -156,22 +161,28 @@ public final class AssemblyFileUtils
         // needed to preserve the last line ending
         // only check for LF (as CRLF also ends in LF)
         String eofChars = "";
-        if ( atEndOfFile == null) {
+        if ( atEndOfFile == null )
+        {
             RandomAccessFile raf = null;
-            try {
-                if ( source.length() >= 1 ) {
+            try
+            {
+                if ( source.length() >= 1 )
+                {
                     raf = new RandomAccessFile( source, "r" );
                     raf.seek( source.length() - 1 );
                     byte last = raf.readByte();
-                    if ( last == '\n' ) {
-                      eofChars = lineEndings;
+                    if ( last == '\n' )
+                    {
+                        eofChars = lineEndings;
                     }
                 }
             }
             finally
             {
-                if ( raf != null ) {
-                    try {
+                if ( raf != null )
+                {
+                    try
+                    {
                         raf.close();
                     }
                     catch ( IOException ex )
@@ -180,7 +191,9 @@ public final class AssemblyFileUtils
                     }
                 }
             }
-        } else if ( atEndOfFile.booleanValue() == true ) {
+        }
+        else if ( atEndOfFile.booleanValue() == true )
+        {
             eofChars = lineEndings;
         }
 
@@ -227,7 +240,8 @@ public final class AssemblyFileUtils
         }
     }
 
-    @Nullable public static String getLineEndingCharacters( @Nullable String lineEnding )
+    @Nullable
+    public static String getLineEndingCharacters( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
         String value = lineEnding;
@@ -237,7 +251,8 @@ public final class AssemblyFileUtils
             {
                 value = null;
             }
-            else if ( LINE_ENDING_DOS.equals( lineEnding ) || LINE_ENDING_WINDOWS.equals( lineEnding ) || LINE_ENDING_CRLF.equals( lineEnding ) )
+            else if ( LINE_ENDING_DOS.equals( lineEnding ) || LINE_ENDING_WINDOWS.equals( lineEnding )
+                || LINE_ENDING_CRLF.equals( lineEnding ) )
             {
                 value = "\r\n";
             }
@@ -263,14 +278,17 @@ public final class AssemblyFileUtils
         long tCount = 0, size = c1.size();
         //noinspection StatementWithEmptyBody
         while ( ( tCount += c2.transferFrom( c1, 0, size - tCount ) ) < size )
+        {
             ;
+        }
 
         c1.close();
         c2.force( true );
         c2.close();
     }
 
-    @Nonnull public static String normalizePath( @Nonnull String path )
+    @Nonnull
+    public static String normalizePath( @Nonnull String path )
     {
         return path.replace( '\\', '/' );
     }
