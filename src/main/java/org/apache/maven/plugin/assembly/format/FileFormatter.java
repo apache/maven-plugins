@@ -57,21 +57,21 @@ public class FileFormatter
     public File format( File source, boolean filter, String lineEnding, String encoding )
         throws AssemblyFormattingException
     {
-        return format ( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
+        return format( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
     }
 
-    public File format( @Nonnull File source, boolean filter, String lineEnding, @Nullable File tempRoot, String encoding )
+    public File format( @Nonnull File source, boolean filter, String lineEnding, @Nullable File tempRoot,
+                        String encoding )
         throws AssemblyFormattingException
     {
         AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot );
 
         File result = source;
-        
+
         if ( StringUtils.isEmpty( encoding ) && filter )
         {
-            logger.warn(
-                           "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                               + ", i.e. build is platform dependent!" );
+            logger.warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                             + ", i.e. build is platform dependent!" );
         }
 
         if ( filter )
@@ -88,8 +88,7 @@ public class FileFormatter
         return result;
     }
 
-    private File doFileFilter( @Nonnull File source,
-                               @Nullable File tempRoot, String encoding, String escapeString )
+    private File doFileFilter( @Nonnull File source, @Nullable File tempRoot, String encoding, String escapeString )
         throws AssemblyFormattingException
     {
         try
@@ -99,8 +98,9 @@ public class FileFormatter
             //@todo this test can be improved
             boolean isPropertiesFile = source.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
 
-            MavenFileFilterRequest filterRequest = new MavenFileFilterRequest( source, target, true, configSource.getProject(),
-                    configSource.getFilters(), isPropertiesFile, encoding, configSource.getMavenSession(), null );
+            MavenFileFilterRequest filterRequest =
+                new MavenFileFilterRequest( source, target, true, configSource.getProject(), configSource.getFilters(),
+                                            isPropertiesFile, encoding, configSource.getMavenSession(), null );
             filterRequest.setEscapeString( escapeString );
             filterRequest.setInjectProjectBuildFilters( true );
             configSource.getMavenFileFilter().copyFile( filterRequest );
@@ -131,7 +131,8 @@ public class FileFormatter
         }
         catch ( IOException e )
         {
-            throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(), e );
+            throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(),
+                                                   e );
         }
         finally
         {
