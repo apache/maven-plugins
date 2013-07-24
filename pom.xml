@@ -32,7 +32,7 @@ under the License.
   <version>25-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Maven Plugins</name>
+  <name>Apache Maven Plugins</name>
   <description>Maven Plugins</description>
   <url>http://maven.apache.org/plugins/</url>
 

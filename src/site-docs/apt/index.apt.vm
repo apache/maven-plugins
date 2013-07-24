@@ -1,9 +1,9 @@
  -----
- Maven Plugins Parent POM
+ Introduction
  -----
  Hervé Boutemy
  -----
- 2012-05-03
+ 2013-07-24
  -----
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Plugins Parent POM
+${project.name}
 
     This POM is the common parent of all of the {{{/plugins/}Maven plugins}}
     in the Apache Maven project.
