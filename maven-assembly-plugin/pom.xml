@@ -59,6 +59,12 @@ under the License.
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Stephen Colebourne</name>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
