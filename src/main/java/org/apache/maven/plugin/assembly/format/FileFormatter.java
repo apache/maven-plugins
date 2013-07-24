@@ -31,11 +31,10 @@ import org.codehaus.plexus.util.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Locale;
 
@@ -120,20 +119,9 @@ public class FileFormatter
         Reader contentReader = null;
         try
         {
-            if ( encoding == null )
-            {
-                // Use default encoding
-                contentReader = new InputStreamReader( new FileInputStream( source ) );
-            }
-            else
-            {
-                //  MASSEMBLY-371
-                contentReader = new InputStreamReader( new FileInputStream( source ), encoding );
-            }
-
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
-            AssemblyFileUtils.convertLineEndings( contentReader, target, lineEndingChars, encoding );
+            AssemblyFileUtils.convertLineEndings( source, target, lineEndingChars, null, encoding );
 
             return target;
         }

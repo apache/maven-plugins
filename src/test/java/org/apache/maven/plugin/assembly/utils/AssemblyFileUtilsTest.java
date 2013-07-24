@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.utils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -100,6 +101,7 @@ public class AssemblyFileUtilsTest
     public void testGetLineEndingChars_ShouldReturnDosLineEnding()
         throws AssemblyFormattingException
     {
+        assertEquals( "\r\n", AssemblyFileUtils.getLineEndingCharacters( "windows" ) );
         assertEquals( "\r\n", AssemblyFileUtils.getLineEndingCharacters( "dos" ) );
         assertEquals( "\r\n", AssemblyFileUtils.getLineEndingCharacters( "crlf" ) );
     }
@@ -136,7 +138,16 @@ public class AssemblyFileUtilsTest
         String test = "This is a \ntest.";
         String check = "This is a \r\ntest.";
 
-        testConversion( test, check, "\r\n" );
+        testConversion( test, check, "\r\n", null );
+    }
+
+    public void testConvertLineEndings_ShouldReplaceLFWithCRLFAtEOF()
+        throws IOException
+    {
+        String test = "This is a \ntest.\n";
+        String check = "This is a \r\ntest.\r\n";
+
+        testConversion( test, check, "\r\n", null );
     }
 
     public void testConvertLineEndings_ShouldReplaceCRLFWithLF()
@@ -145,7 +156,16 @@ public class AssemblyFileUtilsTest
         String test = "This is a \r\ntest.";
         String check = "This is a \ntest.";
 
-        testConversion( test, check, "\n" );
+        testConversion( test, check, "\n", null );
+    }
+
+    public void testConvertLineEndings_ShouldReplaceCRLFWithLFAtEOF()
+        throws IOException
+    {
+        String test = "This is a \r\ntest.\r\n";
+        String check = "This is a \ntest.\n";
+
+        testConversion( test, check, "\n", null );
     }
 
     public void testConvertLineEndings_ShouldReplaceLFWithLF()
@@ -154,7 +174,16 @@ public class AssemblyFileUtilsTest
         String test = "This is a \ntest.";
         String check = "This is a \ntest.";
 
-        testConversion( test, check, "\n" );
+        testConversion( test, check, "\n", null );
+    }
+
+    public void testConvertLineEndings_ShouldReplaceLFWithLFAtEOF()
+        throws IOException
+    {
+        String test = "This is a \ntest.\n";
+        String check = "This is a \ntest.\n";
+
+        testConversion( test, check, "\n", null );
     }
 
     public void testConvertLineEndings_ShouldReplaceCRLFWithCRLF()
@@ -163,33 +192,128 @@ public class AssemblyFileUtilsTest
         String test = "This is a \r\ntest.";
         String check = "This is a \r\ntest.";
 
-        testConversion( test, check, "\r\n" );
+        testConversion( test, check, "\r\n", null );
     }
 
-    private void testConversion( String test, String check, String lineEndingChars )
+    public void testConvertLineEndings_ShouldReplaceCRLFWithCRLFAtEOF()
         throws IOException
     {
-        File dest = File.createTempFile( "line-conversion-test.", "" );
+        String test = "This is a \r\ntest.\r\n";
+        String check = "This is a \r\ntest.\r\n";
+
+        testConversion( test, check, "\r\n", null );
+    }
+
+    public void testConvertLineEndings_LFToCRLFNoEOFForceEOF()
+        throws IOException
+    {
+        String test = "This is a \ntest.";
+        String check = "This is a \r\ntest.\r\n";
+
+        testConversion( test, check, "\r\n", true );
+    }
+
+    public void testConvertLineEndings_LFToCRLFWithEOFForceEOF()
+        throws IOException
+    {
+        String test = "This is a \ntest.\n";
+        String check = "This is a \r\ntest.\r\n";
+
+        testConversion( test, check, "\r\n", true );
+    }
+
+    public void testConvertLineEndings_LFToCRLFNoEOFStripEOF()
+        throws IOException
+    {
+        String test = "This is a \ntest.";
+        String check = "This is a \r\ntest.";
+
+        testConversion( test, check, "\r\n", false );
+    }
+
+    public void testConvertLineEndings_LFToCRLFWithEOFStripEOF()
+        throws IOException
+    {
+        String test = "This is a \ntest.\n";
+        String check = "This is a \r\ntest.";
+
+        testConversion( test, check, "\r\n", false );
+    }
+
+    public void testConvertLineEndings_CRLFToLFNoEOFForceEOF()
+        throws IOException
+    {
+        String test = "This is a \r\ntest.";
+        String check = "This is a \ntest.\n";
+
+        testConversion( test, check, "\n", true );
+    }
+
+    public void testConvertLineEndings_CRLFToLFWithEOFForceEOF()
+        throws IOException
+    {
+        String test = "This is a \r\ntest.\r\n";
+        String check = "This is a \ntest.\n";
+
+        testConversion( test, check, "\n", true );
+    }
+
+    public void testConvertLineEndings_CRLFToLFNoEOFStripEOF()
+        throws IOException
+    {
+        String test = "This is a \r\ntest.";
+        String check = "This is a \ntest.";
+
+        testConversion( test, check, "\n", false );
+    }
+
+    public void testConvertLineEndings_CRLFToLFWithEOFStripEOF()
+        throws IOException
+    {
+        String test = "This is a \r\ntest.\r\n";
+        String check = "This is a \ntest.";
+
+        testConversion( test, check, "\n", false );
+    }
+
+    private void testConversion( String test, String check, String lineEndingChars, Boolean eof )
+        throws IOException
+    {
+        File source = File.createTempFile( "line-conversion-test-in.", "" );
+        source.deleteOnExit();
+        File dest = File.createTempFile( "line-conversion-test-out.", "" );
         dest.deleteOnExit();
-
-        // Using platform encoding for the conversion tests in this class is OK
-        AssemblyFileUtils.convertLineEndings( new StringReader( test ), dest, lineEndingChars, null );
-
-        FileReader reader = null;
-        StringWriter writer = new StringWriter();
-
+        
+        FileWriter sourceWriter = null;
+        StringReader sourceReader = new StringReader( test );
         try
         {
-            reader = new FileReader( dest );
+            sourceWriter = new FileWriter( source );
 
-            IOUtil.copy( reader, writer );
+            IOUtil.copy( sourceReader, sourceWriter );
         }
         finally
         {
-            IOUtil.close( reader );
+            IOUtil.close( sourceWriter );
         }
 
-        assertEquals( check, writer.toString() );
+        // Using platform encoding for the conversion tests in this class is OK
+        AssemblyFileUtils.convertLineEndings( source, dest, lineEndingChars, eof, null );
+
+        FileReader destReader = null;
+        StringWriter destWriter = new StringWriter();
+        try
+        {
+            destReader = new FileReader( dest );
+
+            IOUtil.copy( destReader, destWriter );
+        }
+        finally
+        {
+            IOUtil.close( destReader );
+        }
+
+        assertEquals( check, destWriter.toString() );
     }
 
 }
