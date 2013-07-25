@@ -153,7 +153,7 @@ public class InstallFileMojo
      * Map that contains the repository layouts.
      */
     @Component( role = ArtifactRepositoryLayout.class )
-    private Map repositoryLayouts;
+    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * The path for a specific local repository directory. If not specified the local repository path configured in the
@@ -305,7 +305,7 @@ public class InstallFileMojo
             artifact.setRelease( true );
         }
 
-        Collection metadataFiles = new LinkedHashSet();
+        Collection<File> metadataFiles = new LinkedHashSet<File>();
 
         // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id,
         // we don't
