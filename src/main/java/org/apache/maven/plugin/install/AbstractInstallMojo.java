@@ -19,6 +19,10 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
@@ -31,11 +35,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.digest.Digester;
 import org.codehaus.plexus.digest.DigesterException;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Common fields for installation mojos.
@@ -126,7 +125,7 @@ public abstract class AbstractInstallMojo
      *            must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Artifact artifact, Collection metadataFiles )
+    protected void installChecksums( Artifact artifact, Collection<File> metadataFiles )
         throws MojoExecutionException
     {
         if ( !createChecksum )
@@ -137,12 +136,12 @@ public abstract class AbstractInstallMojo
         File artifactFile = getLocalRepoFile( artifact );
         installChecksums( artifactFile );
 
-        Collection metadatas = artifact.getMetadataList();
+        @SuppressWarnings( "unchecked" )
+        Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
         if ( metadatas != null )
         {
-            for ( Iterator it = metadatas.iterator(); it.hasNext(); )
+            for ( ArtifactMetadata metadata : metadatas )
             {
-                ArtifactMetadata metadata = (ArtifactMetadata) it.next();
                 File metadataFile = getLocalRepoFile( metadata );
                 metadataFiles.add( metadataFile );
             }
@@ -155,12 +154,11 @@ public abstract class AbstractInstallMojo
      * @param metadataFiles The collection of metadata files to install checksums for, must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Collection metadataFiles )
+    protected void installChecksums( Collection<File> metadataFiles )
         throws MojoExecutionException
     {
-        for ( Iterator it = metadataFiles.iterator(); it.hasNext(); )
+        for ( File metadataFile : metadataFiles )
         {
-            File metadataFile = (File) it.next();
             installChecksums( metadataFile );
         }
     }

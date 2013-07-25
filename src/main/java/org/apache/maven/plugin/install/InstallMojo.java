@@ -21,7 +21,6 @@ package org.apache.maven.plugin.install;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -95,7 +94,7 @@ public class InstallMojo
      * @deprecated either use project.getAttachedArtifacts() or reactorProjects.get(i).getAttachedArtifacts()
      */
     @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
-    private List attachedArtifacts;
+    private List<Artifact> attachedArtifacts;
 
     public void execute()
         throws MojoExecutionException
@@ -134,7 +133,8 @@ public class InstallMojo
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        List attachedArtifacts = project.getAttachedArtifacts();
+        @SuppressWarnings( "unchecked" )
+        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
         
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
@@ -148,7 +148,7 @@ public class InstallMojo
 
         try
         {
-            Collection metadataFiles = new LinkedHashSet();
+            Collection<File> metadataFiles = new LinkedHashSet<File>();
 
             if ( isPomArtifact )
             {
@@ -192,10 +192,8 @@ public class InstallMojo
                 }
             }
 
-            for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
+            for ( Artifact attached : attachedArtifacts )
             {
-                Artifact attached = (Artifact) i.next();
-
                 installer.install( attached.getFile(), attached, localRepository );
                 installChecksums( attached, metadataFiles );
             }
