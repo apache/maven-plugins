@@ -64,7 +64,6 @@ under the License.
     <module>maven-ejb-plugin</module>
     <module>maven-gpg-plugin</module>
     <module>maven-help-plugin</module>
-    <module>maven-idea-plugin</module>
     <module>maven-install-plugin</module>
     <!--Moved to maven-3 profile as a workaround for MNG-3814
     <module>maven-invoker-plugin</module>-->
