@@ -78,7 +78,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-model-converter</artifactId>
-      <version>2.3-SNAPSHOT</version>
+      <version>2.3</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
