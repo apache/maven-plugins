@@ -30,7 +30,7 @@ try
      * This IT is run with maven.repo.local but the Invoker Plugin passes settings.localRepository down to the sub build
      * so these paths must match.
      */
-    if ( !localRepoPathOfThisBuild.equals( localRepoPathOfSubBuild ) )
+    if ( !localRepoPathOfThisBuild.getCanonicalPath().equals( localRepoPathOfSubBuild.getCanonicalPath() ) )
     {
         System.out.println( "Sub build used wrong local repository: " + localRepoPathOfSubBuild );
         return false;
