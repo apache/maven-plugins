@@ -265,12 +265,32 @@ public class ProcessRemoteResourcesMojo
     private boolean skip;
 
     /**
-     * Attaches the resource to the project as a resource directory
+     * Attaches the resources to the project as a resource directory.
      *
      * @since 1.0-beta-1
+     * @deprecated Please use {@link #attachToMain} and {@link #attachToTest} instead.
      */
+    @Deprecated
     @Parameter( defaultValue = "true" )
     private boolean attached = true;
+
+    /**
+     * Attaches the resources to the main build of the project as a resource
+     * directory.
+     *
+     * @since 1.5
+     */
+    @Parameter( defaultValue = "true", property = "attachToMain" )
+    private boolean attachToMain;
+
+    /**
+     * Attaches the resources to the test build of the project as a resource
+     * directory.
+     *
+     * @since 1.5
+     */
+    @Parameter( defaultValue = "true", property = "attachToTest" )
+    private boolean attachToTest;
 
     /**
      * Additional properties to be passed to velocity.
@@ -507,12 +527,15 @@ public class ProcessRemoteResourcesMojo
                     // Push our newly generated resources directory into the MavenProject so that
                     // these resources can be picked up by the process-resources phase.
                     // ----------------------------------------------------------------------------
-                    if ( attached )
+                    Resource resource = new Resource();
+                    resource.setDirectory( outputDirectory.getAbsolutePath() );
+                    // MRRESOURCES-61 handle main and test resources separately
+                    if ( attached && attachToMain )
                     {
-                        Resource resource = new Resource();
-                        resource.setDirectory( outputDirectory.getAbsolutePath() );
-
                         project.getResources().add( resource );
+                    }
+                    if ( attached && attachToTest )
+                    {
                         project.getTestResources().add( resource );
                     }
 

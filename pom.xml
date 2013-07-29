@@ -134,6 +134,11 @@ under the License.
       <artifactId>plexus-interpolation</artifactId>
       <version>1.12</version>
     </dependency>    
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.15</version>
+    </dependency>
 
     <!-- other -->
     <dependency>
@@ -147,6 +152,12 @@ under the License.
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-9-stable-1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -197,6 +208,21 @@ under the License.
             <includes>
               <include>**/*Test.java</include>
             </includes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.9</version>
+          <configuration>
+            <excludes>
+              <!--
+                These files cannot contain a license header as that would break
+                the tests.
+              -->
+              <exclude>src/test/resources/ISO-8859-1.bin.vm</exclude>
+              <exclude>src/test/resources/UTF-8.bin.vm</exclude>
+            </excludes>
           </configuration>
         </plugin>
       </plugins>
