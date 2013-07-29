@@ -210,6 +210,21 @@ under the License.
             </includes>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.9</version>
+          <configuration>
+            <excludes>
+              <!--
+                These files cannot contain a license header as that would break
+                the tests.
+              -->
+              <exclude>src/test/resources/ISO-8859-1.bin.vm</exclude>
+              <exclude>src/test/resources/UTF-8.bin.vm</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
