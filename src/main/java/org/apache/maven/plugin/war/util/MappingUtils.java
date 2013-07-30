@@ -19,16 +19,10 @@ package org.apache.maven.plugin.war.util;
  * under the License.
  */
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
-import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
-import org.codehaus.plexus.interpolation.ValueSource;
 
 /**
  * Utilities used to evaluate expression.
@@ -79,38 +73,4 @@ public class MappingUtils
 
         return value;
     }
-
-    /**
-     * Internal implementation of {@link ValueSource}
-     */
-    static class PropertiesInterpolationValueSource
-        implements ValueSource
-    {
-
-        private final Properties properties;
-
-        public PropertiesInterpolationValueSource( Properties properties )
-        {
-            this.properties = properties;
-        }
-
-        public Object getValue( String key )
-        {
-            return properties.getProperty( key );
-        }
-
-        public void clearFeedback()
-        {
-            // nothing here
-            
-        }
-
-        public List getFeedback()
-        {
-            // nothing here just NPE free
-            return Collections.EMPTY_LIST;
-        }
-
-    }
-
 }
