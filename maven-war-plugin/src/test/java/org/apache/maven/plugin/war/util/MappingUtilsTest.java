@@ -21,8 +21,10 @@ package org.apache.maven.plugin.war.util;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.war.stub.AbstractArtifactStub;
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.codehaus.plexus.interpolation.InterpolationException;
 
 /**
@@ -124,55 +126,35 @@ public class MappingUtilsTest
 
     // A very dumb stub used to test the mappings
     class TestArtifactStub
-        extends AbstractArtifactStub
+        extends ArtifactStub
     {
-
-        protected String groupId;
-
-        protected String artifactId;
-
-        protected String version;
-
+        /**
+         * Override in this class because there is no setter in ArtifactStub.
+         */
         protected String classifier;
-
-        protected String type = "jar";
 
         public TestArtifactStub()
         {
-            super( null );
+            super();
+            setType( "jar" );
         }
 
-
-        public String getGroupId()
+        /**
+         * Override in this class because ArtifactStub always returns null.
+         */
+        @Override
+        public ArtifactHandler getArtifactHandler()
         {
-            return groupId;
+            return new DefaultArtifactHandler( getType() );
         }
 
-        public void setGroupId( String groupId )
+        @Override
+        public String getBaseVersion()
         {
-            this.groupId = groupId;
+          return getVersion();
         }
 
-        public String getArtifactId()
-        {
-            return artifactId;
-        }
-
-        public void setArtifactId( String artifactId )
-        {
-            this.artifactId = artifactId;
-        }
-
-        public String getVersion()
-        {
-            return version;
-        }
-
-        public void setVersion( String version )
-        {
-            this.version = version;
-        }
-
+        @Override
         public String getClassifier()
         {
             return classifier;
@@ -181,17 +163,6 @@ public class MappingUtilsTest
         public void setClassifier( String classifier )
         {
             this.classifier = classifier;
-        }
-
-
-        public String getType()
-        {
-            return type;
-        }
-
-        public void setType( String type )
-        {
-            this.type = type;
         }
     }
 }
