@@ -65,35 +65,20 @@ public class MappingUtils
         String value = expression;
 
         // FIXME: This is BAD! Accessors SHOULD NOT change the behavior of the object.
+        // [dennisl; 2013-07-30] This was fixed in Maven 2.0.8
         artifact.isSnapshot();
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator( "\\@\\{(", ")?([^}]+)\\}@" );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact ) );
         interpolator.addValueSource( new ObjectBasedValueSource( artifact.getArtifactHandler() ) );
 
-        Properties classifierMask = new Properties();
-        classifierMask.setProperty( "classifier", "" );
-
         // Support for special expressions, like @{dashClassifier?}@, see MWAR-212
-        String classifier = artifact.getClassifier();
-        if ( classifier != null )
-        {
-            classifierMask.setProperty( "dashClassifier?", "-" + classifier );
-            classifierMask.setProperty( "dashClassifier", "-" + classifier );
-        }
-        else
-        {
-            classifierMask.setProperty( "dashClassifier?", "" );
-            classifierMask.setProperty( "dashClassifier", "" );
-        }
-
-        interpolator.addValueSource( new PropertiesBasedValueSource ( classifierMask ) );
+        interpolator.addValueSource( new DashClassifierValueSource( artifact.getClassifier() ) );
 
         value = interpolator.interpolate( value, "__artifact" );
 
         return value;
     }
-
 
     /**
      * Internal implementation of {@link ValueSource}
