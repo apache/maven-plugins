@@ -81,6 +81,18 @@ public class MappingUtilsTest
                       MappingUtils.evaluateFileNameMapping( MappingUtils.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, jar ) );
     }
 
+    public void testMappingWithNullClassifier()
+        throws MojoExecutionException, InterpolationException
+    {
+        TestArtifactStub jar = new TestArtifactStub();
+        jar.setGroupId( "org.apache.sample" );
+        jar.setArtifactId( "maven-test-lib" );
+        jar.setVersion( "1.0" );
+        jar.setClassifier( null );
+        assertEquals( "maven-test-lib-1.0-.jar",
+                      MappingUtils.evaluateFileNameMapping( MappingUtils.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, jar ) );
+    }
+
     /**
      * Test for MWAR-212.
      */

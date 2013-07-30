@@ -47,7 +47,6 @@ public class DashClassifierValueSource
     private static Properties createDashClassifierProperties( String classifier )
     {
         Properties classifierMask = new Properties();
-        classifierMask.setProperty( "classifier", "" );
 
         if ( classifier != null )
         {
@@ -58,6 +57,8 @@ public class DashClassifierValueSource
         {
             classifierMask.setProperty( "dashClassifier?", "" );
             classifierMask.setProperty( "dashClassifier", "" );
+            // Make sure that the classifier property is usable, if it is null
+            classifierMask.setProperty( "classifier", "" );
         }
         return classifierMask;
     }
