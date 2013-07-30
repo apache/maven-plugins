@@ -26,7 +26,7 @@ import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
 import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.maven.shared.utils.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;

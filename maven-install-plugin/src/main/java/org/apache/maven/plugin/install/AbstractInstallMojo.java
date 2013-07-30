@@ -32,9 +32,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.digest.Digester;
-import org.codehaus.plexus.digest.DigesterException;
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.maven.shared.utils.io.FileUtils;
 
 /**
  * Common fields for installation mojos.
@@ -75,17 +73,9 @@ public abstract class AbstractInstallMojo
     @Parameter( property = "updateReleaseInfo", defaultValue = "false" )
     protected boolean updateReleaseInfo;
 
-    /**
-     * Digester for MD5.
-     */
-    @Component( hint = "md5" )
-    protected Digester md5Digester;
+    protected final SimpleDigester md5Digester = SimpleDigester.md5();
 
-    /**
-     * Digester for SHA-1.
-     */
-    @Component( hint = "sha1" )
-    protected Digester sha1Digester;
+    protected final SimpleDigester sha1Digester = SimpleDigester.sha1();
 
     /**
      * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
@@ -192,32 +182,24 @@ public abstract class AbstractInstallMojo
      *            <code>null</code>.
      * @throws MojoExecutionException If the checksum could not be installed.
      */
-    private void installChecksum( File originalFile, File installedFile, Digester digester, String ext )
+    private void installChecksum( File originalFile, File installedFile, SimpleDigester digester, String ext )
         throws MojoExecutionException
     {
         String checksum;
         getLog().debug( "Calculating " + digester.getAlgorithm() + " checksum for " + originalFile );
-        try
-        {
-            checksum = digester.calc( originalFile );
-        }
-        catch ( DigesterException e )
-        {
-            throw new MojoExecutionException( "Failed to calculate " + digester.getAlgorithm() + " checksum for "
-                + originalFile, e );
-        }
+        checksum = digester.calc(originalFile);
 
         File checksumFile = new File( installedFile.getAbsolutePath() + ext );
         getLog().debug( "Installing checksum to " + checksumFile );
         try
         {
+            //noinspection ResultOfMethodCallIgnored
             checksumFile.getParentFile().mkdirs();
-            FileUtils.fileWrite( checksumFile.getAbsolutePath(), "UTF-8", checksum );
+            FileUtils.fileWrite(checksumFile.getAbsolutePath(), "UTF-8", checksum);
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Failed to install checksum to " + checksumFile, e );
         }
     }
-
 }
