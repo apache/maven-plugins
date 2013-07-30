@@ -28,6 +28,10 @@ under the License.
   <version>1.0-SNAPSHOT</version>
   <name>testmaven3</name>
   <url>http://maven.apache.org</url>
+  <properties>
+    <!-- JUnit sources contain accents, causing failure with JDK 7 if using UTF-8 source encoding -->
+    <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
