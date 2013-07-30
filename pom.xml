@@ -71,7 +71,6 @@ under the License.
     <module>maven-jarsigner-plugin</module>
     <module>maven-javadoc-plugin</module>
     <module>maven-linkcheck-plugin</module>
-    <module>maven-one-plugin</module>
     <module>maven-patch-plugin</module>
     <module>maven-pdf-plugin</module>
     <module>maven-pmd-plugin</module>
