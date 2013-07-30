@@ -99,7 +99,7 @@ public class SiteStageDeployMojo
         if ( StringUtils.isNotEmpty( stagingSiteURL ) )
         {
             // We need to calculate the first project that supplied same stagingSiteURL
-            return getSite( getTopMostParentWithSameStagingSiteURL( project ) ).getUrl();
+            return getSite( getTopMostParentWithSameStagingSiteURL() ).getUrl();
         }
 
         return super.determineTopDistributionManagementSiteUrl();
@@ -124,33 +124,28 @@ public class SiteStageDeployMojo
 
     /**
      * Extract the distributionManagement.site of the top most project in the
-     * hierarchy that specifies a stagingSiteURL, starting at the given
-     * MavenProject.
+     * hierarchy that specifies a stagingSiteURL, starting at the actual MavenProject.
      * <p/>
      * This climbs up the project hierarchy and returns the site of the top most
      * project for which
      * {@link #getStagingSiteURL(org.apache.maven.project.MavenProject)} returns
      * same URL as actual.
      *
-     * @param project the MavenProject. Not null.
      * @return the site for the top most project that has a stagingSiteURL. Not null.
      */
-    private MavenProject getTopMostParentWithSameStagingSiteURL( MavenProject project )
+    private MavenProject getTopMostParentWithSameStagingSiteURL()
     {
-        String actualStagingSiteURL = getStagingSiteURL( project );
+        MavenProject current = project;
+        MavenProject parent;
 
-        MavenProject parent = project;
-
-        while ( parent != null
-                && actualStagingSiteURL.equals( getStagingSiteURL( parent ) ) )
+        while (   // MSITE-585, MNG-1943
+                ( parent = siteTool.getParentProject( current, reactorProjects, localRepository ) ) != null
+                && stagingSiteURL.equals( getStagingSiteURL( parent ) ) )
         {
-            project = parent;
- 
-            // MSITE-585, MNG-1943
-            parent = siteTool.getParentProject( parent, reactorProjects, localRepository );
+            current = parent;
         }
 
-        return project;
+        return current;
     }
 
     /**
