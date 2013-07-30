@@ -25,7 +25,6 @@ import java.io.IOException;
 import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.war.AbstractWarMojo;
 import org.apache.maven.plugin.war.util.MappingUtils;
 import org.apache.maven.plugin.war.util.PathSet;
 import org.apache.maven.plugin.war.util.WebappStructure;
@@ -437,12 +436,12 @@ public abstract class AbstractWarPackagingTask
         String classifier = artifact.getClassifier();
         if ( ( classifier != null ) && !( "".equals( classifier.trim() ) ) )
         {
-            return MappingUtils.evaluateFileNameMapping( AbstractWarMojo.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER,
+            return MappingUtils.evaluateFileNameMapping( MappingUtils.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER,
                                                          artifact );
         }
         else
         {
-            return MappingUtils.evaluateFileNameMapping( AbstractWarMojo.DEFAULT_FILE_NAME_MAPPING, artifact );
+            return MappingUtils.evaluateFileNameMapping( MappingUtils.DEFAULT_FILE_NAME_MAPPING, artifact );
         }
 
     }
