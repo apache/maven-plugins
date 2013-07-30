@@ -65,11 +65,6 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractWarMojo
     extends AbstractMojo
 {
-    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{baseVersion}@.@{extension}@";
-
-    public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
-        "@{artifactId}@-@{baseVersion}@-@{classifier}@.@{extension}@";
-
     private static final String[] EMPTY_STRING_ARRAY = {};
 
     private static final String META_INF = "META-INF";

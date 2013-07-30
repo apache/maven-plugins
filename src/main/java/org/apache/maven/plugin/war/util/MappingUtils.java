@@ -48,6 +48,9 @@ import org.codehaus.plexus.interpolation.ValueSource;
  */
 public class MappingUtils
 {
+    public static final String DEFAULT_FILE_NAME_MAPPING = "@{artifactId}@-@{baseVersion}@.@{extension}@";
+    public static final String DEFAULT_FILE_NAME_MAPPING_CLASSIFIER =
+        "@{artifactId}@-@{baseVersion}@-@{classifier}@.@{extension}@";
 
     /**
      * Evaluates the specified expression for the given artifact.
