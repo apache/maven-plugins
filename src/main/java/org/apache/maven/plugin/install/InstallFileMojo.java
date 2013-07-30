@@ -51,10 +51,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.WriterFactory;
+import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.apache.maven.shared.utils.ReaderFactory;
+import org.apache.maven.shared.utils.WriterFactory;
 
 /**
  * Installs a file in the local repository.
