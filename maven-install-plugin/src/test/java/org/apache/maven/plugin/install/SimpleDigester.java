@@ -26,7 +26,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.*;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,15 +38,7 @@ public class SimpleDigester {
     private static final int bufsize = 65536;
 
     public SimpleDigester(String algorithm) {
-        try
-        {
-            messageDigest = MessageDigest.getInstance( algorithm );
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            throw new RuntimeException( "Unable to initialize digest " + algorithm + " : "
-                    + e.getMessage() );
-        }
+        messageDigest = DualDigester.getDigester( algorithm );
     }
 
     public static SimpleDigester md5(){
@@ -56,10 +47,6 @@ public class SimpleDigester {
 
     public static SimpleDigester sha1(){
         return new SimpleDigester("SHA-1");
-    }
-
-    public String getAlgorithm() {
-        return messageDigest.getAlgorithm();
     }
 
     public String calculate( File file ) throws MojoExecutionException {

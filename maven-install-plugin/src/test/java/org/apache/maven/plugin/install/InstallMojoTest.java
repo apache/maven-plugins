@@ -248,12 +248,14 @@ public class InstallMojoTest
         assertTrue( pom.exists() );
 
         //get the actual checksum of the pom
-        String actualPomMd5Sum = mojo.md5Digester.calculate( pom );
-        String actualPomSha1Sum = mojo.sha1Digester.calculate( pom );
+        mojo.digester.calculate( pom );
+        String actualPomMd5Sum = mojo.digester.getMd5();
+        String actualPomSha1Sum = mojo.digester.getSha1( );
 
         //get the actual checksum of the artifact
-        String actualMd5Sum = mojo.md5Digester.calculate( file );
-        String actualSha1Sum = mojo.sha1Digester.calculate( file );
+        mojo.digester.calculate( file );
+        String actualMd5Sum = mojo.digester.getMd5();
+        String actualSha1Sum = mojo.digester.getSha1();
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 
