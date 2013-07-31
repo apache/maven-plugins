@@ -107,12 +107,11 @@ public abstract class AbstractInstallMojo
      * the original POM file (cf. MNG-2820). While the plugin currently requires Maven 2.0.6, we continue to hash the
      * installed POM for robustness with regard to future changes like re-introducing some kind of POM filtering.
      * 
+     *
      * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
-     * @param metadataFiles The set where additional metadata files will be registered for later checksum installation,
-     *            must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Artifact artifact, Collection<File> metadataFiles )
+    protected void installChecksums( Artifact artifact )
         throws MojoExecutionException
     {
         if ( !createChecksum )
@@ -122,6 +121,14 @@ public abstract class AbstractInstallMojo
 
         File artifactFile = getLocalRepoFile( artifact );
         installChecksums( artifactFile );
+    }
+
+    protected void addMetaDataFilesForArtifact( Artifact artifact, Collection<File> targetMetadataFiles )
+    {
+        if ( !createChecksum )
+        {
+            return;
+        }
 
         @SuppressWarnings( "unchecked" )
         Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
@@ -130,7 +137,7 @@ public abstract class AbstractInstallMojo
             for ( ArtifactMetadata metadata : metadatas )
             {
                 File metadataFile = getLocalRepoFile( metadata );
-                metadataFiles.add( metadataFile );
+                targetMetadataFiles.add( metadataFile );
             }
         }
     }

@@ -314,7 +314,9 @@ public class InstallFileMojo
         try
         {
             installer.install( file, artifact, localRepository );
-            installChecksums( artifact, metadataFiles );
+            installChecksums( artifact );
+            addMetaDataFilesForArtifact( artifact, metadataFiles );
+
         }
         catch ( ArtifactInstallationException e )
         {
@@ -336,7 +338,9 @@ public class InstallFileMojo
             try
             {
                 installer.install( sources, artifact, localRepository );
-                installChecksums( artifact, metadataFiles );
+                installChecksums( artifact );
+                addMetaDataFilesForArtifact( artifact, metadataFiles );
+
             }
             catch ( ArtifactInstallationException e )
             {
@@ -350,7 +354,9 @@ public class InstallFileMojo
             try
             {
                 installer.install( javadoc, artifact, localRepository );
-                installChecksums( artifact, metadataFiles );
+                installChecksums( artifact );
+                addMetaDataFilesForArtifact( artifact, metadataFiles );
+
             }
             catch ( ArtifactInstallationException e )
             {
