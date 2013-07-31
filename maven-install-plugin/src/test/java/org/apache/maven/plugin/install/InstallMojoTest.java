@@ -29,7 +29,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.FileUtils;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -112,11 +111,11 @@ public class InstallMojoTest
 
         String packaging = project.getPackaging();
 
-        String groupId = "";
+        String groupId;
 
-        for ( Iterator iter = attachedArtifacts.iterator(); iter.hasNext(); )
+        for ( Object attachedArtifact1 : attachedArtifacts )
         {
-            AttachedArtifactStub0 attachedArtifact = (AttachedArtifactStub0) iter.next();
+            AttachedArtifactStub0 attachedArtifact = (AttachedArtifactStub0) attachedArtifact1;
 
             groupId = dotToSlashReplacer( attachedArtifact.getGroupId() );
 
@@ -223,7 +222,7 @@ public class InstallMojoTest
 
         artifact = (InstallArtifactStub) project.getArtifact();
         
-        boolean createChecksum = ( (Boolean) getVariableValueFromObject( mojo, "createChecksum" ) ).booleanValue();
+        boolean createChecksum = (Boolean) getVariableValueFromObject( mojo, "createChecksum" );
 
         assertTrue( createChecksum );
 
@@ -232,9 +231,9 @@ public class InstallMojoTest
         mojo.execute();
 
         ArtifactMetadata metadata = null;
-        for ( Iterator iter = artifact.getMetadataList().iterator(); iter.hasNext(); )
+        for ( Object o : artifact.getMetadataList() )
         {
-            metadata = (ArtifactMetadata) iter.next();
+            metadata = (ArtifactMetadata) o;
             if ( metadata.getRemoteFilename().endsWith( "pom" ) )
             {
                 break;
@@ -250,7 +249,7 @@ public class InstallMojoTest
         //get the actual checksum of the pom
         mojo.digester.calculate( pom );
         String actualPomMd5Sum = mojo.digester.getMd5();
-        String actualPomSha1Sum = mojo.digester.getSha1( );
+        String actualPomSha1Sum = mojo.digester.getSha1();
 
         //get the actual checksum of the artifact
         mojo.digester.calculate( file );

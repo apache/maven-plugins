@@ -51,6 +51,7 @@ public class InstallMojo
     @Component
     private MavenProject project;
     
+    @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
     
@@ -139,7 +140,7 @@ public class InstallMojo
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
 
-        ArtifactMetadata metadata = null;
+        ArtifactMetadata metadata;
 
         if ( updateReleaseInfo )
         {
