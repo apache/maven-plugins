@@ -154,7 +154,8 @@ public class InstallMojo
             if ( isPomArtifact )
             {
                 installer.install( pomFile, artifact, localRepository );
-                installChecksums( artifact, metadataFiles );
+                installChecksums( artifact );
+                addMetaDataFilesForArtifact( artifact, metadataFiles );
             }
             else
             {
@@ -168,7 +169,8 @@ public class InstallMojo
                 if ( file != null && file.isFile() )
                 {
                     installer.install( file, artifact, localRepository );
-                    installChecksums( artifact, metadataFiles );
+                    installChecksums( artifact );
+                    addMetaDataFilesForArtifact( artifact, metadataFiles );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -184,7 +186,8 @@ public class InstallMojo
                     }
 
                     installer.install( pomFile, pomArtifact, localRepository );
-                    installChecksums( pomArtifact, metadataFiles );
+                    installChecksums( pomArtifact );
+                    addMetaDataFilesForArtifact( pomArtifact, metadataFiles );
                 }
                 else
                 {
@@ -196,7 +199,8 @@ public class InstallMojo
             for ( Artifact attached : attachedArtifacts )
             {
                 installer.install( attached.getFile(), attached, localRepository );
-                installChecksums( attached, metadataFiles );
+                installChecksums( attached );
+                addMetaDataFilesForArtifact( attached, metadataFiles );
             }
 
             installChecksums( metadataFiles );
