@@ -34,7 +34,7 @@ import java.util.Map;
 public class InstallArtifactStub
     extends ArtifactStub
 {
-    private Map metadataMap;
+    private Map<Object,ArtifactMetadata> metadataMap;
 
     private File file;
 
@@ -85,10 +85,10 @@ public class InstallArtifactStub
     {
         if ( metadataMap == null )
         {
-            metadataMap = new HashMap();
+            metadataMap = new HashMap<Object, ArtifactMetadata>();
         }
 
-        ArtifactMetadata m = (ArtifactMetadata) metadataMap.get( metadata.getKey() );
+        ArtifactMetadata m = metadataMap.get( metadata.getKey() );
         if ( m != null )
         {
             m.merge( metadata );

@@ -152,6 +152,7 @@ public class InstallFileMojo
     /**
      * Map that contains the repository layouts.
      */
+    @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
@@ -191,9 +192,10 @@ public class InstallFileMojo
         {
             try
             {
-                ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( repositoryLayout );
+                ArtifactRepositoryLayout layout = repositoryLayouts.get( repositoryLayout );
                 getLog().debug( "Layout: " + layout.getClass() );
 
+                //noinspection deprecation
                 localRepository =
                     new DefaultArtifactRepository( localRepository.getId(), localRepositoryPath.toURL().toString(),
                                                    layout );
@@ -323,6 +325,7 @@ public class InstallFileMojo
         {
             if ( generatedPomFile != null )
             {
+                //noinspection ResultOfMethodCallIgnored
                 generatedPomFile.delete();
             }
         }
@@ -536,6 +539,7 @@ public class InstallFileMojo
     /**
      * @return the localRepositoryPath
      */
+    @SuppressWarnings( "UnusedDeclaration" )
     public File getLocalRepositoryPath()
     {
         return this.localRepositoryPath;

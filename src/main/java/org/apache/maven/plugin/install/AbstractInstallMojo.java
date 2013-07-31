@@ -180,7 +180,7 @@ public abstract class AbstractInstallMojo
      *            file extension, must not be <code>null</code>.
      * @param ext The file extension (including the leading dot) to use for the checksum file, must not be
      *            <code>null</code>.
-     * @param checksum
+     * @param checksum  the checksum to write
      * @throws MojoExecutionException If the checksum could not be installed.
      */
     private void installChecksum( File installedFile, String ext, String checksum )

@@ -148,7 +148,7 @@ public class InstallFileMojoTest
         File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
             artifactId + "-" + version + "." + packaging );
 
-        assertTrue( ( (Boolean) getVariableValueFromObject( mojo, "generatePom" ) ).booleanValue() );
+        assertTrue( (Boolean) getVariableValueFromObject( mojo, "generatePom" ) );
 
         assertTrue( installedArtifact.exists() );
 
@@ -242,7 +242,7 @@ public class InstallFileMojoTest
 
         assignValuesForParameter( mojo );
 
-        boolean createChecksum = ( (Boolean) getVariableValueFromObject( mojo, "createChecksum" ) ).booleanValue();
+        boolean createChecksum = (Boolean) getVariableValueFromObject( mojo, "createChecksum" );
 
         assertTrue( createChecksum );
 
@@ -250,7 +250,7 @@ public class InstallFileMojoTest
 
         //get the actual checksum of the artifact
         mojo.digester.calculate( file );
-        String actualMd5Sum = mojo.digester.getMd5( );
+        String actualMd5Sum = mojo.digester.getMd5();
         String actualSha1Sum = mojo.digester.getSha1();
 
         String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
