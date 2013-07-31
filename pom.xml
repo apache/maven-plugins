@@ -393,6 +393,20 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.9</version>
+          <configuration>
+            <excludes>
+              <!--
+                This file should not contain a license header as it represents
+                real data downloaded from a JIRA server.
+              -->
+              <exclude>src/test/resources/org/apache/maven/plugin/jira/unicode-jira-results.xml</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
