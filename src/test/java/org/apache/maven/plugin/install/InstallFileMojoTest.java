@@ -249,8 +249,9 @@ public class InstallFileMojoTest
         mojo.execute();
 
         //get the actual checksum of the artifact
-        String actualMd5Sum = mojo.md5Digester.calculate( file );
-        String actualSha1Sum = mojo.sha1Digester.calculate( file );
+        mojo.digester.calculate( file );
+        String actualMd5Sum = mojo.digester.getMd5( );
+        String actualSha1Sum = mojo.digester.getSha1();
 
         String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
             artifactId + "-" + version;

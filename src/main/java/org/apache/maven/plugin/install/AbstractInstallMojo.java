@@ -73,10 +73,7 @@ public abstract class AbstractInstallMojo
     @Parameter( property = "updateReleaseInfo", defaultValue = "false" )
     protected boolean updateReleaseInfo;
 
-    protected final SimpleDigester md5Digester = SimpleDigester.md5();
-
-    protected final SimpleDigester sha1Digester = SimpleDigester.sha1();
-
+    protected final DualDigester digester = new DualDigester();
     /**
      * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
      * (yet).
@@ -166,40 +163,41 @@ public abstract class AbstractInstallMojo
         boolean signatureFile = installedFile.getName().endsWith( ".asc" );
         if ( installedFile.isFile() && !signatureFile )
         {
-            installChecksum( installedFile, installedFile, md5Digester, ".md5" );
-            installChecksum( installedFile, installedFile, sha1Digester, ".sha1" );
+
+            getLog().debug( "Calculating checksums for " + installedFile );
+            digester.calculate( installedFile );
+            installChecksum( installedFile, ".md5", digester.getMd5() );
+            installChecksum( installedFile, ".sha1", digester.getSha1() );
         }
     }
 
     /**
      * Installs a checksum for the specified file.
      *
-     * @param originalFile The path to the file from which the checksum is generated, must not be <code>null</code>.
+     *
+     *
      * @param installedFile The base path from which the path to the checksum files is derived by appending the given
      *            file extension, must not be <code>null</code>.
-     * @param digester The checksum algorithm to use, must not be <code>null</code>.
      * @param ext The file extension (including the leading dot) to use for the checksum file, must not be
      *            <code>null</code>.
+     * @param checksum
      * @throws MojoExecutionException If the checksum could not be installed.
      */
-    private void installChecksum( File originalFile, File installedFile, SimpleDigester digester, String ext )
+    private void installChecksum( File installedFile, String ext, String checksum )
         throws MojoExecutionException
     {
-        String checksum;
-        getLog().debug( "Calculating " + digester.getAlgorithm() + " checksum for " + originalFile );
-        checksum = digester.calculate( originalFile );
-
         File checksumFile = new File( installedFile.getAbsolutePath() + ext );
         getLog().debug( "Installing checksum to " + checksumFile );
         try
         {
             //noinspection ResultOfMethodCallIgnored
             checksumFile.getParentFile().mkdirs();
-            FileUtils.fileWrite(checksumFile.getAbsolutePath(), "UTF-8", checksum);
+            FileUtils.fileWrite(checksumFile.getAbsolutePath(), "UTF-8", checksum );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Failed to install checksum to " + checksumFile, e );
         }
     }
+
 }
