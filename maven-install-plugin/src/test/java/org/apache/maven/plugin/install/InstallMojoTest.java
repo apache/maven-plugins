@@ -29,7 +29,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -249,12 +248,12 @@ public class InstallMojoTest
         assertTrue( pom.exists() );
 
         //get the actual checksum of the pom
-        String actualPomMd5Sum = mojo.md5Digester.calc( pom );
-        String actualPomSha1Sum = mojo.sha1Digester.calc( pom );
+        String actualPomMd5Sum = mojo.md5Digester.calculate( pom );
+        String actualPomSha1Sum = mojo.sha1Digester.calculate( pom );
 
         //get the actual checksum of the artifact
-        String actualMd5Sum = mojo.md5Digester.calc( file );
-        String actualSha1Sum = mojo.sha1Digester.calc( file );
+        String actualMd5Sum = mojo.md5Digester.calculate( file );
+        String actualSha1Sum = mojo.sha1Digester.calculate( file );
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 

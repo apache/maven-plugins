@@ -187,7 +187,7 @@ public abstract class AbstractInstallMojo
     {
         String checksum;
         getLog().debug( "Calculating " + digester.getAlgorithm() + " checksum for " + originalFile );
-        checksum = digester.calc(originalFile);
+        checksum = digester.calculate( originalFile );
 
         File checksumFile = new File( installedFile.getAbsolutePath() + ext );
         getLog().debug( "Installing checksum to " + checksumFile );
