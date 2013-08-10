@@ -107,12 +107,11 @@ public abstract class AbstractGpgMojo
     @Parameter( property = "gpg.publicKeyring" )
     private String publicKeyring;
 
-    GpgSigner newSigner( MavenProject project )
+    AbstractGpgSigner newSigner( MavenProject project )
         throws MojoExecutionException, MojoFailureException
     {
-        GpgSigner signer = new GpgSigner();
+        AbstractGpgSigner signer = new GpgSigner( executable );
 
-        signer.setExecutable( executable );
         signer.setInteractive( interactive );
         signer.setKeyName( keyname );
         signer.setUseAgent( useAgent );
