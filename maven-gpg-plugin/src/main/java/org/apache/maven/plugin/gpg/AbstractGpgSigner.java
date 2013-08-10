@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -46,6 +47,8 @@ public abstract class AbstractGpgSigner
 
     protected String keyname;
 
+    private Log log;
+
     protected String passphrase;
 
     private File outputDir;
@@ -59,6 +62,11 @@ public abstract class AbstractGpgSigner
     protected String secretKeyring;
 
     protected String publicKeyring;
+
+    public Log getLog()
+    {
+        return log;
+    }
 
     public void setInteractive( boolean b )
     {
@@ -78,6 +86,11 @@ public abstract class AbstractGpgSigner
     public void setKeyName( String s )
     {
         keyname = s;
+    }
+
+    public void setLog( Log log )
+    {
+        this.log = log;
     }
 
     public void setPassPhrase( String s )
