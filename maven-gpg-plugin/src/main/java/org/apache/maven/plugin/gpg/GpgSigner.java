@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 
 /**
- * An implementation that uses the GnuPG command line executable to sign files.
+ * A signer implementation that uses the GnuPG command line executable.
  *
  * @version $Revision$ $Date$
  */
