@@ -112,6 +112,7 @@ public abstract class AbstractGpgMojo
     {
         AbstractGpgSigner signer = new GpgSigner( executable );
 
+        signer.setLog( getLog() );
         signer.setInteractive( interactive );
         signer.setKeyName( keyname );
         signer.setUseAgent( useAgent );
