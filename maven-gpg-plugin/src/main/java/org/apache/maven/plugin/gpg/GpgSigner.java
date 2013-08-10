@@ -179,6 +179,26 @@ public class GpgSigner
         }
 
         // ----------------------------------------------------------------------------
+        // Generate the signature file
+        // ----------------------------------------------------------------------------
+
+        generateSignatureForFile( file, signature );
+
+        return signature;
+    }
+
+    /**
+     * Generate the detached signature file for the provided file.
+     *
+     * @param file The file to sign
+     * @param signature The file in which the generate signature will be put
+     * @return A reference to the generated signature file
+     * @throws MojoExecutionException
+     */
+    protected void generateSignatureForFile( File file, File signature )
+        throws MojoExecutionException
+    {
+        // ----------------------------------------------------------------------------
         // Set up the command line
         // ----------------------------------------------------------------------------
 
@@ -277,8 +297,6 @@ public class GpgSigner
         {
             throw new MojoExecutionException( "Unable to execute gpg command", e );
         }
-
-        return signature;
     }
 
     private MavenProject findReactorProject( MavenProject prj )
