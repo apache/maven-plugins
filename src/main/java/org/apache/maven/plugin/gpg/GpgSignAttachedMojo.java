@@ -112,7 +112,7 @@ public class GpgSignAttachedMojo
         }
         excludes = newExcludes;
 
-        GpgSigner signer = newSigner( project );
+        AbstractGpgSigner signer = newSigner( project );
 
         // ----------------------------------------------------------------------------
         // What we need to generateSignatureForArtifact here

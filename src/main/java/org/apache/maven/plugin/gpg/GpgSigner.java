@@ -41,7 +41,7 @@ public class GpgSigner
 {
     private String executable;
 
-    public void setExecutable( String executable )
+    public GpgSigner( String executable )
     {
         this.executable = executable;
     }

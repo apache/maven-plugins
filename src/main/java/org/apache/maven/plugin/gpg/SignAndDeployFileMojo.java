@@ -288,7 +288,7 @@ public class SignAndDeployFileMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        GpgSigner signer = newSigner( null );
+        AbstractGpgSigner signer = newSigner( null );
         signer.setOutputDirectory( ascDirectory );
         signer.setBaseDirectory( new File( "" ).getAbsoluteFile() );
 
