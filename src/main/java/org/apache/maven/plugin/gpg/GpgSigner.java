@@ -19,15 +19,11 @@ package org.apache.maven.plugin.gpg;
  * under the License.
  */
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -35,166 +31,25 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 
+/**
+ * An implementation that uses the GnuPG command line executable to sign files.
+ *
+ * @version $Revision$ $Date$
+ */
 public class GpgSigner
+    extends AbstractGpgSigner
 {
-
-    public static final String SIGNATURE_EXTENSION = ".asc";
-
     private String executable;
- 
-    private boolean useAgent;
-
-    private boolean isInteractive = true;
-
-    private boolean defaultKeyring = true;
-
-    private String keyname;
-
-    private String passphrase;
-
-    private File outputDir;
-
-    private File buildDir;
-
-    private File baseDir;
-
-    private File homeDir;
-
-    private String secretKeyring;
-
-    private String publicKeyring;
 
     public void setExecutable( String executable )
     {
         this.executable = executable;
     }
 
-    public void setInteractive( boolean b )
-    {
-        isInteractive = b;
-    }
-
-    public void setUseAgent( boolean b )
-    {
-        useAgent = b;
-    }
-
-    public void setDefaultKeyring( boolean enabled )
-    {
-        defaultKeyring = enabled;
-    }
-
-    public void setKeyName( String s )
-    {
-        keyname = s;
-    }
-
-    public void setPassPhrase( String s )
-    {
-        passphrase = s;
-    }
-
-    public void setOutputDirectory( File out )
-    {
-        outputDir = out;
-    }
-
-    public void setBuildDirectory( File out )
-    {
-        buildDir = out;
-    }
-
-    public void setBaseDirectory( File out )
-    {
-        baseDir = out;
-    }
-
-    public void setHomeDirectory( File homeDirectory )
-    {
-        homeDir = homeDirectory;
-    }
-
-    public void setSecretKeyring( String path )
-    {
-        secretKeyring = path;
-    }
-
-    public void setPublicKeyring( String path )
-    {
-        publicKeyring = path;
-    }
-
     /**
-     * Create a detached signature file for the provided file.
-     *
-     * @param file The file to sign
-     * @return A reference to the generated signature file
-     * @throws MojoExecutionException
+     * {@inheritDoc}
      */
-    public File generateSignatureForArtifact( File file )
-        throws MojoExecutionException
-    {
-        // ----------------------------------------------------------------------------
-        // Set up the file and directory for the signature file
-        // ----------------------------------------------------------------------------
-
-        File signature = new File( file + SIGNATURE_EXTENSION );
-
-        boolean isInBuildDir = false;
-        if ( buildDir != null )
-        {
-            File parent = signature.getParentFile();
-            if ( buildDir.equals( parent ) )
-            {
-                isInBuildDir = true;
-            }
-        }
-        if ( !isInBuildDir && outputDir != null )
-        {
-            String fileDirectory = "";
-            File signatureDirectory = signature;
-
-            while ( ( signatureDirectory = signatureDirectory.getParentFile() ) != null )
-            {
-                if ( !signatureDirectory.equals( baseDir ) )
-                {
-                    fileDirectory = signatureDirectory.getName() + File.separatorChar + fileDirectory;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            signatureDirectory = new File( outputDir, fileDirectory );
-            if ( !signatureDirectory.exists() )
-            {
-                signatureDirectory.mkdirs();
-            }
-            signature = new File( signatureDirectory, file.getName() + SIGNATURE_EXTENSION );
-        }
-
-        if ( signature.exists() )
-        {
-            signature.delete();
-        }
-
-        // ----------------------------------------------------------------------------
-        // Generate the signature file
-        // ----------------------------------------------------------------------------
-
-        generateSignatureForFile( file, signature );
-
-        return signature;
-    }
-
-    /**
-     * Generate the detached signature file for the provided file.
-     *
-     * @param file The file to sign
-     * @param signature The file in which the generate signature will be put
-     * @return A reference to the generated signature file
-     * @throws MojoExecutionException
-     */
+    @Override
     protected void generateSignatureForFile( File file, File signature )
         throws MojoExecutionException
     {
@@ -296,109 +151,6 @@ public class GpgSigner
         catch ( CommandLineException e )
         {
             throw new MojoExecutionException( "Unable to execute gpg command", e );
-        }
-    }
-
-    private MavenProject findReactorProject( MavenProject prj )
-    {
-        if ( prj.getParent() != null && prj.getParent().getBasedir() != null && prj.getParent().getBasedir().exists() )
-        {
-            return findReactorProject( prj.getParent() );
-        }
-        return prj;
-    }
-
-    public String getPassphrase( MavenProject project )
-        throws IOException
-    {
-        String pass = null;
-
-        if ( project != null )
-        {
-            pass = project.getProperties().getProperty( "gpg.passphrase" );
-            if ( pass == null )
-            {
-                MavenProject prj2 = findReactorProject( project );
-                pass = prj2.getProperties().getProperty( "gpg.passphrase" );
-            }
-        }
-        if ( pass == null )
-        {
-            // TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
-
-            BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
-            while ( System.in.available() != 0 )
-            {
-                // there's some junk already on the input stream, consume it
-                // so we can get the real passphrase
-                System.in.read();
-            }
-
-            System.out.print( "GPG Passphrase:  " );
-            MaskingThread thread = new MaskingThread();
-            thread.start();
-
-            pass = in.readLine();
-
-            // stop masking
-            thread.stopMasking();
-        }
-        if ( project != null )
-        {
-            findReactorProject( project ).getProperties().setProperty( "gpg.passphrase", pass );
-        }
-        return pass;
-    }
-
-    // based on ideas from http://java.sun.com/developer/technicalArticles/Security/pwordmask/
-    class MaskingThread
-        extends Thread
-    {
-        private volatile boolean stop;
-
-        /**
-         * Begin masking until asked to stop.
-         */
-        public void run()
-        {
-            // this needs to be high priority to make sure the characters don't
-            // really get to the screen.
-
-            int priority = Thread.currentThread().getPriority();
-            Thread.currentThread().setPriority( Thread.MAX_PRIORITY );
-
-            try
-            {
-                stop = false;
-                while ( !stop )
-                {
-                    // print a backspace + * to overwrite anything they type
-                    System.out.print( "\010*" );
-                    try
-                    {
-                        // attempt masking at this rate
-                        Thread.sleep( 1 );
-                    }
-                    catch ( InterruptedException iex )
-                    {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
-                }
-            }
-            finally
-            {
-                // restore the original priority
-                Thread.currentThread().setPriority( priority );
-            }
-        }
-
-        /**
-         * Instruct the thread to stop masking.
-         */
-        public void stopMasking()
-        {
-            this.stop = true;
         }
     }
 
