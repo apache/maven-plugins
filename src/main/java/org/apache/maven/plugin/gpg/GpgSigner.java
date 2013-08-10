@@ -124,9 +124,20 @@ public class GpgSigner
         publicKeyring = path;
     }
 
+    /**
+     * Create a detached signature file for the provided file.
+     *
+     * @param file The file to sign
+     * @return A reference to the generated signature file
+     * @throws MojoExecutionException
+     */
     public File generateSignatureForArtifact( File file )
         throws MojoExecutionException
     {
+        // ----------------------------------------------------------------------------
+        // Set up the file and directory for the signature file
+        // ----------------------------------------------------------------------------
+
         File signature = new File( file + SIGNATURE_EXTENSION );
 
         boolean isInBuildDir = false;
@@ -166,6 +177,10 @@ public class GpgSigner
         {
             signature.delete();
         }
+
+        // ----------------------------------------------------------------------------
+        // Set up the command line
+        // ----------------------------------------------------------------------------
 
         Commandline cmd = new Commandline();
 
@@ -244,6 +259,10 @@ public class GpgSigner
         cmd.createArg().setFile( signature );
 
         cmd.createArg().setFile( file );
+
+        // ----------------------------------------------------------------------------
+        // Execute the command line
+        // ----------------------------------------------------------------------------
 
         try
         {
