@@ -32,7 +32,7 @@ under the License.
   <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Maven Plugins Aggregator</name>
+  <name>Apache Maven Plugins Aggregator</name>
   <description>Maven Plugins Aggregator</description>
 
   <scm>
