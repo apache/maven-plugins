@@ -33,8 +33,6 @@ import org.codehaus.plexus.util.cli.DefaultConsumer;
 
 /**
  * A signer implementation that uses the GnuPG command line executable.
- *
- * @version $Revision$ $Date$
  */
 public class GpgSigner
     extends AbstractGpgSigner

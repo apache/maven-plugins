@@ -32,7 +32,6 @@ import org.apache.maven.project.MavenProject;
  * A base class for all classes that implements signing of files.
  *
  * @author Dennis Lundberg
- * @version $Revision$ $Date$
  * @since 1.5
  */
 public abstract class AbstractGpgSigner
