@@ -80,6 +80,8 @@ public class EclipseToMavenMojo
     extends AbstractMojo
     implements Contextualizable
 {
+	
+	public final static String	ECLIPSE_SOURCEBUNDLE					= "Eclipse-SourceBundle";
 
     /**
      * A pattern the <code>deployTo</code> param should match.
@@ -215,6 +217,7 @@ public class EclipseToMavenMojo
 
         Map plugins = new HashMap();
         Map models = new HashMap();
+        Map sources = new HashMap();
 
         for ( int j = 0; j < files.length; j++ )
         {
@@ -223,7 +226,7 @@ public class EclipseToMavenMojo
             getLog().info(
                 Messages.getString( "EclipseToMavenMojo.processingfile", file.getAbsolutePath() ) ); //$NON-NLS-1$
 
-            processFile( file, plugins, models );
+            processFile( file, plugins, models, sources );
         }
 
         int i = 1;
@@ -235,11 +238,12 @@ public class EclipseToMavenMojo
             String key = (String) it.next();
             EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
             Model model = (Model) models.get( key );
-            writeArtifact( plugin, model, remoteRepo );
+            EclipseOsgiPlugin sourcePlugin = (EclipseOsgiPlugin) sources.get(key);
+            writeArtifact( plugin, model, sourcePlugin, remoteRepo );
         }
     }
 
-    protected void processFile( File file, Map plugins, Map models )
+    protected void processFile( File file, Map plugins, Map models, Map sources )
         throws MojoExecutionException, MojoFailureException
     {
         EclipseOsgiPlugin plugin = getEclipsePlugin( file );
@@ -258,7 +262,34 @@ public class EclipseToMavenMojo
             return;
         }
 
-        processPlugin( plugin, model, plugins, models );
+        String sourceBundle;
+		try
+		{
+		sourceBundle = plugin.getManifestAttribute(ECLIPSE_SOURCEBUNDLE);
+		}
+		catch ( IOException e )
+		{
+            throw new MojoExecutionException(
+                                              Messages.getString( "EclipseToMavenMojo.errorprocessingplugin", plugin ), e ); //$NON-NLS-1$
+        }
+        if (sourceBundle != null)
+        {
+        	getLog().debug("SourceBundle for: " + sourceBundle);
+        	int sep = sourceBundle.indexOf(';');
+        	if (sep != -1) {
+        		sourceBundle = sourceBundle.substring(0, sep);
+        	}
+        
+            String groupId = createGroupId( sourceBundle );
+            String artifactId = createArtifactId( sourceBundle );
+            model.setGroupId(groupId);
+            model.setArtifactId(artifactId);
+            sources.put( getKey( model ), plugin);
+        }
+        else
+        {
+         processPlugin( plugin, model, plugins, models );
+        }
     }
 
     protected void processPlugin( EclipseOsgiPlugin plugin, Model model, Map plugins, Map models )
@@ -441,8 +472,8 @@ public class EclipseToMavenMojo
      * @param remoteRepo remote repository (if set)
      * @throws MojoExecutionException
      */
-    private void writeArtifact( EclipseOsgiPlugin plugin, Model model, ArtifactRepository remoteRepo )
-        throws MojoExecutionException
+    private void writeArtifact( EclipseOsgiPlugin plugin, Model model, EclipseOsgiPlugin sourcePlugin, 
+    		ArtifactRepository remoteRepo ) throws MojoExecutionException
     {
         Writer fw = null;
         ArtifactMetadata metadata = null;
@@ -453,6 +484,12 @@ public class EclipseToMavenMojo
         Artifact artifact =
             artifactFactory.createArtifact( model.getGroupId(), model.getArtifactId(), model.getVersion(), null,
                                             Constants.PROJECT_PACKAGING_JAR );
+        
+        boolean hasSource = sourcePlugin != null;
+        Artifact sourceArtifact =
+                artifactFactory.createArtifactWithClassifier( model.getGroupId(), model.getArtifactId(), model.getVersion(),
+                                                Constants.PROJECT_PACKAGING_JAR, "sources" );
+        
         try
         {
             pomFile = File.createTempFile( "pom-", ".xml" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -479,16 +516,26 @@ public class EclipseToMavenMojo
         try
         {
             File jarFile = plugin.getJarFile();
+            File sourceFile = null;
+            if (hasSource) {
+             sourceFile = sourcePlugin.getJarFile();
+            }
 
             if ( remoteRepo != null )
             {
                 deployer.deploy( pomFile, pomArtifact, remoteRepo, localRepository );
                 deployer.deploy( jarFile, artifact, remoteRepo, localRepository );
+                if (hasSource) {
+                    deployer.deploy( sourceFile, sourceArtifact, remoteRepo, localRepository );
+                }
             }
             else
             {
                 installer.install( pomFile, pomArtifact, localRepository );
                 installer.install( jarFile, artifact, localRepository );
+                if (hasSource) {
+                    installer.install( sourceFile, sourceArtifact, localRepository );
+                }
             }
         }
         catch ( ArtifactDeploymentException e )
