@@ -30,6 +30,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -215,7 +216,7 @@ public class ComponentsXmlArchiverFileFilter
                     stream = fileInfo.getContents();
                     // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
                     reader = new InputStreamReader( stream, "UTF-8" );
-                    addComponentsXml( reader );
+                    addComponentsXml( new BufferedReader( reader, 8192 ));
                 }
                 catch ( final XmlPullParserException e )
                 {
