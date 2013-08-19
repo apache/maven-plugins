@@ -19,6 +19,7 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -76,7 +77,9 @@ public class ChangeLog
 
         List<ChangeLogSet> changeLogSets = new ArrayList<ChangeLogSet>();
 
-        parser.parse( new InputSource( reader ), new ChangeLogHandler( changeLogSets ) );
+        BufferedReader br = new BufferedReader( reader, 8192 );
+
+        parser.parse( new InputSource( br ), new ChangeLogHandler( changeLogSets ) );
 
         return changeLogSets;
     }
