@@ -130,7 +130,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.12</version>
+      <version>1.19</version>
     </dependency>
 
     <!-- plexus -->
