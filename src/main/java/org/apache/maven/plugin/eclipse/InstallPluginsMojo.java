@@ -407,10 +407,6 @@ public class InstallPluginsMojo
             {
                 throw new MojoExecutionException( "Could not extract: " + artifactFile, e );
             }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not extract: " + artifactFile, e );
-            }
         }
     }
 
