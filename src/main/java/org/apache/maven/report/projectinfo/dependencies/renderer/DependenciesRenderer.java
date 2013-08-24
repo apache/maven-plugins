@@ -66,7 +66,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Renderer the dependencies report.
- * 
+ *
  * @version $Id$
  * @since 2.1
  */
@@ -177,7 +177,7 @@ public class DependenciesRenderer
 
     /**
      * Default constructor.
-     * 
+     *
      * @param sink
      * @param locale
      * @param i18n
@@ -284,7 +284,7 @@ public class DependenciesRenderer
 
     /**
      * Start section with a name and a specific anchor.
-     * 
+     *
      * @param anchor not null
      * @param name not null
      */
@@ -1188,7 +1188,7 @@ public class DependenciesRenderer
 
     /**
      * Get the repos that can be hidden behind a mirror.
-     * 
+     *
      * @param repo the repo used to download artifacts
      * @return the mirrored repositories or a singleton with actual repo if it is not a mirror
      */
@@ -1469,9 +1469,8 @@ public class DependenciesRenderer
     /**
      * Formats file length with the associated <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing">SI</a> unit
      * (GB, MB, kB) and using the pattern <code>########.00</code> by default.
-     * 
-     * @see <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing>
-     *      http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
+     *
+     * @see <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing"> http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
      * @see <a href="http://en.wikipedia.org/wiki/Binary_prefix"> http://en.wikipedia.org/wiki/Binary_prefix</a>
      * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)"> http://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
@@ -1486,7 +1485,7 @@ public class DependenciesRenderer
 
         /**
          * Default constructor
-         * 
+         *
          * @param i18n
          * @param locale
          */
