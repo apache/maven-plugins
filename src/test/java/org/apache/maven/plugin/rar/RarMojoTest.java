@@ -27,12 +27,12 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
+@SuppressWarnings("ConstantConditions")
 public class RarMojoTest
     extends AbstractMojoTestCase
 {
@@ -63,7 +63,7 @@ public class RarMojoTest
 
         Boolean includeJar = (Boolean) getVariableValueFromObject( mojo, "includeJar" );
 
-        assertTrue( includeJar.booleanValue() );
+        assertTrue(includeJar);
 
         //include the project jar to the rar
         File projectJar = new File( getBasedir(), "src/test/resources/unit/basic-rar-test/target/test-rar.jar" );
@@ -81,7 +81,7 @@ public class RarMojoTest
 
         File[] fileNames = workDirectory.listFiles();
 
-        List expectedFiles = new ArrayList();
+        List<String> expectedFiles = new ArrayList<String>();
 
         expectedFiles.add( "maven-artifact01-1.0-SNAPSHOT.jar" );
         expectedFiles.add( "maven-artifact02-1.0-SNAPSHOT.jar" );
@@ -89,20 +89,16 @@ public class RarMojoTest
 
         assertEquals( "Files in working directory", expectedFiles.size(), fileNames.length );
 
-        for ( int i = 0; i < fileNames.length; i++ )
-        {
-            String fileName = fileNames[i].getName();
+        for (File fileName1 : fileNames) {
+            String fileName = fileName1.getName();
 
-            assertTrue( expectedFiles.contains( fileName ) );
+            assertTrue(expectedFiles.contains(fileName));
 
-            if ( expectedFiles.contains( fileName ) )
-            {
-                expectedFiles.remove( fileName );
-                assertFalse( expectedFiles.contains( fileName ) );
-            }
-            else
-            {
-                fail( fileName + " is not included in expected files." );
+            if (expectedFiles.contains(fileName)) {
+                expectedFiles.remove(fileName);
+                assertFalse(expectedFiles.contains(fileName));
+            } else {
+                fail(fileName + " is not included in expected files.");
             }
         }
 
@@ -114,7 +110,7 @@ public class RarMojoTest
         assertTrue( rarFile.exists() );
 
         //expected files/directories inside the rar file
-        expectedFiles = new ArrayList();
+        expectedFiles = new ArrayList<String>();
 
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.properties" );
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.xml" );
@@ -162,12 +158,11 @@ public class RarMojoTest
 
         File[] fileNames = workDirectory.listFiles();
 
-        List expectedFiles = new ArrayList();
-        List fileList = new ArrayList();
+        List<String> expectedFiles = new ArrayList<String>();
+        List<String> fileList = new ArrayList<String>();
 
-        for ( int i = 0; i < fileNames.length; i++ )
-        {
-            addFileToList( fileNames[i], fileList );
+        for (File fileName : fileNames) {
+            addFileToList(fileName, fileList);
         }
 
         expectedFiles.add( "ra.xml" );
@@ -185,7 +180,7 @@ public class RarMojoTest
         assertTrue( rarFile.exists() );
 
         //expected files/directories inside the rar file
-        expectedFiles = new ArrayList();
+        expectedFiles = new ArrayList<String>();
 
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.properties" );
         expectedFiles.add( "META-INF/maven/org.apache.maven.test/maven-rar-test/pom.xml" );
@@ -300,24 +295,20 @@ public class RarMojoTest
 
     private int getSizeOfExpectedFiles( List fileList, List expectedFiles )
     {
-        for ( Iterator iter = fileList.iterator(); iter.hasNext(); )
-        {
-            String fileName = (String) iter.next();
+        for (Object aFileList : fileList) {
+            String fileName = (String) aFileList;
 
-            if ( expectedFiles.contains( fileName ) )
-            {
-                expectedFiles.remove( fileName );
-                assertFalse( expectedFiles.contains( fileName ) );
-            }
-            else
-            {
-                fail( fileName + " is not included in the expected files" );
+            if (expectedFiles.contains(fileName)) {
+                expectedFiles.remove(fileName);
+                assertFalse(expectedFiles.contains(fileName));
+            } else {
+                fail(fileName + " is not included in the expected files");
             }
         }
         return expectedFiles.size();
     }
 
-    private void addFileToList( File file, List fileList )
+    private void addFileToList( File file, List<String> fileList )
     {
         if ( !file.isDirectory() )
         {
@@ -329,9 +320,8 @@ public class RarMojoTest
 
             File[] files = file.listFiles();
 
-            for ( int i = 0; i < files.length; i++ )
-            {
-                addFileToList( files[i], fileList );
+            for (File file1 : files) {
+                addFileToList(file1, fileList);
             }
         }
     }
