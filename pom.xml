@@ -118,7 +118,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -257,7 +256,6 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.4</version>
         <executions>
           <execution>
             <id>standard</id>
