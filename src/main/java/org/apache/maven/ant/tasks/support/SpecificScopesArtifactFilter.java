@@ -50,27 +50,17 @@ public class SpecificScopesArtifactFilter
     public SpecificScopesArtifactFilter( String scopes )
     {
         String [] scopeList = scopes.split( "," );
-        
-        for ( int i=0; i<scopeList.length; ++i )
-        {
-            if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_COMPILE) )
-            {
+
+        for (String aScopeList : scopeList) {
+            if (aScopeList.trim().equals(DefaultArtifact.SCOPE_COMPILE)) {
                 compileScope = true;
-            }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_PROVIDED) )
-            {
+            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_PROVIDED)) {
                 providedScope = true;
-            }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_RUNTIME) )
-            {
+            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_RUNTIME)) {
                 runtimeScope = true;
-            }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_SYSTEM) )
-            {
+            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_SYSTEM)) {
                 systemScope = true;
-            }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_TEST) )
-            {
+            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_TEST)) {
                 testScope = true;
             }
         }
