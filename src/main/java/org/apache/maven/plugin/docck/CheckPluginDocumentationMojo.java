@@ -150,22 +150,22 @@ public class CheckPluginDocumentationMojo
 
                 String siteHtml = IOUtil.toString( streamReader );
 
-                if ( siteHtml.indexOf( "href=\"index.html\"" ) < 0 )
+                if (!siteHtml.contains("href=\"index.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: index.html \"Introduction\"." );
                 }
 
-                if ( siteHtml.indexOf( "href=\"usage.html\"" ) < 0 )
+                if (!siteHtml.contains("href=\"usage.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: usage.html \"Usage\"." );
                 }
 
-                if ( siteHtml.indexOf( "href=\"plugin-info.html\"" ) < 0 )
+                if (!siteHtml.contains("href=\"plugin-info.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: plugin-info.html \"Goals\"." );
                 }
 
-                if ( siteHtml.indexOf( "href=\"faq.html\"" ) < 0 )
+                if (!siteHtml.contains("href=\"faq.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: faq.html \"FAQ\"." );
                 }
