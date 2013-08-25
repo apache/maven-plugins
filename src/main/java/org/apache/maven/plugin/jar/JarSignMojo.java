@@ -273,9 +273,8 @@ public class JarSignMojo
 
         addArgIf( arguments, alias != null, this.alias );
 
-        for ( Iterator it = arguments.iterator(); it.hasNext(); )
-        {
-            commandLine.createArgument().setValue( it.next().toString() );
+        for (Object argument : arguments) {
+            commandLine.createArgument().setValue(argument.toString());
         }
 
         commandLine.setWorkingDirectory( workingDirectory.getAbsolutePath() );
@@ -352,7 +351,7 @@ public class JarSignMojo
     private String purgePassword( Commandline commandLine )
     {
         String out = commandLine.toString();
-        if ( keypass != null && out.indexOf( keypass ) != -1 )
+        if ( keypass != null && out.contains(keypass))
         {
             out = StringUtils.replace( out, keypass, "******" );
         }
