@@ -158,7 +158,7 @@ public abstract class AbstractLineAggregatingHandler
         {
             reader = new BufferedReader( new InputStreamReader( fileInfo.getContents(), getEncoding() ) );
 
-            String line = null;
+            String line;
             while ( ( line = reader.readLine() ) != null )
             {
                 if ( !lines.contains( line ) )

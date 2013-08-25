@@ -59,62 +59,49 @@ public class FileItemAssemblyPhase
         final File basedir = configSource.getBasedir();
 
         final FileFormatter fileFormatter = new FileFormatter( configSource, getLogger() );
-        for ( final Iterator<FileItem> i = fileList.iterator(); i.hasNext(); )
-        {
-            final FileItem fileItem = i.next();
-
+        for (final FileItem fileItem : fileList) {
             final String sourcePath = fileItem.getSource();
 
             // ensure source file is in absolute path for reactor build to work
-            File source = new File( sourcePath );
+            File source = new File(sourcePath);
 
             // save the original sourcefile's name, because filtration may
             // create a temp file with a different name.
             final String sourceName = source.getName();
 
-            if ( !source.isAbsolute() )
-            {
-                source = new File( basedir, sourcePath );
+            if (!source.isAbsolute()) {
+                source = new File(basedir, sourcePath);
             }
 
             source =
-                fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
-                                      configSource.getEncoding() );
+                    fileFormatter.format(source, fileItem.isFiltered(), fileItem.getLineEnding(),
+                            configSource.getEncoding());
 
             String destName = fileItem.getDestName();
 
-            if ( destName == null )
-            {
+            if (destName == null) {
                 destName = sourceName;
             }
 
             final String outputDirectory =
-                AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getProject(), null,
-                                                        configSource.getFinalName(), configSource );
+                    AssemblyFormatUtils.getOutputDirectory(fileItem.getOutputDirectory(), configSource.getProject(), null,
+                            configSource.getFinalName(), configSource);
 
             String target;
 
             // omit the last char if ends with / or \\
-            if ( outputDirectory.endsWith( "/" ) || outputDirectory.endsWith( "\\" ) )
-            {
+            if (outputDirectory.endsWith("/") || outputDirectory.endsWith("\\")) {
                 target = outputDirectory + destName;
-            }
-            else if ( outputDirectory.length() < 1 )
-            {
+            } else if (outputDirectory.length() < 1) {
                 target = destName;
-            }
-            else
-            {
+            } else {
                 target = outputDirectory + "/" + destName;
             }
 
-            try
-            {
-                archiver.addFile( source, target, TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
-            }
-            catch ( final ArchiverException e )
-            {
-                throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
+            try {
+                archiver.addFile(source, target, TypeConversionUtils.modeToInt(fileItem.getFileMode(), getLogger()));
+            } catch (final ArchiverException e) {
+                throw new ArchiveCreationException("Error adding file to archive: " + e.getMessage(), e);
             }
         }
     }

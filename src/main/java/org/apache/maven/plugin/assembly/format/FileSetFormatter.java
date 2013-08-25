@@ -85,32 +85,24 @@ public class FileSetFormatter
                 formattedDir.mkdirs();
 
                 FileFormatter fileFormatter = new FileFormatter( configSource, logger );
-                for ( int i = 0; i < files.length; i++ )
-                {
-                    String file = files[i];
-                    
-                    logger.debug( "Filtering: " + file );
+                for (String file : files) {
+                    logger.debug("Filtering: " + file);
 
-                    File targetFile = new File( formattedDir, file );
+                    File targetFile = new File(formattedDir, file);
 
                     targetFile.getParentFile().mkdirs();
 
-                    File sourceFile = new File( fileSetDir, file );
-                    try
-                    {
+                    File sourceFile = new File(fileSetDir, file);
+                    try {
                         sourceFile =
-                            fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
-                                                  configSource.getEncoding() );
-                        AssemblyFileUtils.copyFile( sourceFile, targetFile );
-                    }
-                    catch ( AssemblyFormattingException e )
-                    {
-                        deleteDirectory( formattedDir );
+                                fileFormatter.format(sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
+                                        configSource.getEncoding());
+                        AssemblyFileUtils.copyFile(sourceFile, targetFile);
+                    } catch (AssemblyFormattingException e) {
+                        deleteDirectory(formattedDir);
                         throw e;
-                    }
-                    catch ( IOException e )
-                    {
-                        deleteDirectory( formattedDir );
+                    } catch (IOException e) {
+                        deleteDirectory(formattedDir);
                         throw e;
                     }
                 }

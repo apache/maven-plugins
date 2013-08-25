@@ -414,96 +414,72 @@ public abstract class AbstractAssemblyMojo
         // TODO: how, might we plug this into an installer, such as NSIS?
 
         boolean warnedAboutMainProjectArtifact = false;
-        for ( final Iterator<Assembly> assemblyIterator = assemblies.iterator(); assemblyIterator.hasNext(); )
-        {
-            final Assembly assembly = assemblyIterator.next();
-            try
-            {
-                final String fullName = AssemblyFormatUtils.getDistributionName( assembly, this );
-                
+        for (final Assembly assembly : assemblies) {
+            try {
+                final String fullName = AssemblyFormatUtils.getDistributionName(assembly, this);
+
                 List<String> effectiveFormats = formats;
-                if ( effectiveFormats == null || effectiveFormats.size() == 0 )
-                {
+                if (effectiveFormats == null || effectiveFormats.size() == 0) {
                     effectiveFormats = assembly.getFormats();
                 }
-                if ( effectiveFormats == null || effectiveFormats.size() == 0 ) 
-                {
-                    throw new MojoFailureException( "No formats specified in the execution parameters or the assembly descriptor." );
+                if (effectiveFormats == null || effectiveFormats.size() == 0) {
+                    throw new MojoFailureException("No formats specified in the execution parameters or the assembly descriptor.");
                 }
 
-                for ( final String format : effectiveFormats )
-                {
+                for (final String format : effectiveFormats) {
                     final File destFile =
-                        assemblyArchiver.createArchive( assembly, fullName, format, this, isRecompressZippedFiles() );
+                            assemblyArchiver.createArchive(assembly, fullName, format, this, isRecompressZippedFiles());
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
                     final String type = project.getArtifact()
-                                               .getType();
+                            .getType();
 
-                    if ( attach && destFile.isFile() )
-                    {
-                        if ( isAssemblyIdAppended() )
-                        {
-                            projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
-                        }
-                        else if ( classifier != null )
-                        {
-                            projectHelper.attachArtifact( project, format, classifier, destFile );
-                        }
-                        else if ( !"pom".equals( type ) && format.equals( type ) )
-                        {
-                            if ( !warnedAboutMainProjectArtifact )
-                            {
+                    if (attach && destFile.isFile()) {
+                        if (isAssemblyIdAppended()) {
+                            projectHelper.attachArtifact(project, format, assembly.getId(), destFile);
+                        } else if (classifier != null) {
+                            projectHelper.attachArtifact(project, format, classifier, destFile);
+                        } else if (!"pom".equals(type) && format.equals(type)) {
+                            if (!warnedAboutMainProjectArtifact) {
                                 final StringBuilder message = new StringBuilder();
 
-                                message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
-                                message.append( "\nInstead of attaching the assembly file: " )
-                                       .append( destFile )
-                                       .append( ", it will become the file for main project artifact." );
-                                message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
+                                message.append("Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing.");
+                                message.append("\nInstead of attaching the assembly file: ")
+                                        .append(destFile)
+                                        .append(", it will become the file for main project artifact.");
+                                message.append("\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!");
 
-                                getLog().warn( message );
+                                getLog().warn(message);
                                 warnedAboutMainProjectArtifact = true;
                             }
 
                             final File existingFile = project.getArtifact()
-                                                             .getFile();
-                            if ( ( existingFile != null ) && existingFile.exists() )
-                            {
-                                getLog().warn( "Replacing pre-existing project main-artifact file: " + existingFile
-                                                               + "\nwith assembly file: " + destFile );
+                                    .getFile();
+                            if ((existingFile != null) && existingFile.exists()) {
+                                getLog().warn("Replacing pre-existing project main-artifact file: " + existingFile
+                                        + "\nwith assembly file: " + destFile);
                             }
 
                             project.getArtifact()
-                                   .setFile( destFile );
+                                    .setFile(destFile);
+                        } else {
+                            projectHelper.attachArtifact(project, format, null, destFile);
                         }
-                        else
-                        {
-                            projectHelper.attachArtifact( project, format, null, destFile );
-                        }
-                    }
-                    else if ( attach )
-                    {
-                        getLog().warn( "Assembly file: "
-                                                       + destFile
-                                                       + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
+                    } else if (attach) {
+                        getLog().warn("Assembly file: "
+                                + destFile
+                                + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment.");
                     }
                 }
-            }
-            catch ( final ArchiveCreationException e )
-            {
-                throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
-            }
-            catch ( final AssemblyFormattingException e )
-            {
-                throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
-            }
-            catch ( final InvalidAssemblerConfigurationException e )
-            {
-                throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(),
-                                                "Assembly: " + assembly.getId() + " is not configured correctly: "
-                                                                + e.getMessage() );
+            } catch (final ArchiveCreationException e) {
+                throw new MojoExecutionException("Failed to create assembly: " + e.getMessage(), e);
+            } catch (final AssemblyFormattingException e) {
+                throw new MojoExecutionException("Failed to create assembly: " + e.getMessage(), e);
+            } catch (final InvalidAssemblerConfigurationException e) {
+                throw new MojoFailureException(assembly, "Assembly is incorrectly configured: " + assembly.getId(),
+                        "Assembly: " + assembly.getId() + " is not configured correctly: "
+                                + e.getMessage());
             }
         }
     }

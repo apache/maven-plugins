@@ -244,7 +244,7 @@ public class ArtifactMock
             artifact.isSnapshot();
             artifactCtl.setReturnValue( snapshot, MockControl.ZERO_OR_MORE );
 
-            isSnapshot = Boolean.valueOf( snapshot );
+            isSnapshot = snapshot;
         }
     }
 

@@ -87,11 +87,8 @@ public class AddFileSetsTask
             }
         }
 
-        for ( final Iterator<FileSet> i = fileSets.iterator(); i.hasNext(); )
-        {
-            final FileSet fileSet = i.next();
-
-            addFileSet( fileSet, archiver, configSource, archiveBaseDir );
+        for (final FileSet fileSet : fileSets) {
+            addFileSet(fileSet, archiver, configSource, archiveBaseDir);
         }
     }
 
@@ -193,7 +190,7 @@ public class AddFileSetsTask
             sourceDirectory = basedir.getAbsolutePath();
         }
 
-        File fileSetDir = null;
+        File fileSetDir;
 
         if ( archiveBaseDir == null )
         {

@@ -63,7 +63,7 @@ public final class TestUtils
 
         BufferedReader reader = new BufferedReader( new FileReader( file ) ); // platform encoding
 
-        String line = null;
+        String line;
 
         while( ( line = reader.readLine() ) != null )
         {

@@ -503,7 +503,7 @@ public final class AssemblyFormatUtils
                 finalSep = sep;
             }
             
-            if ( value.indexOf( "." + sep ) > -1 )
+            if (value.contains("." + sep))
             {
                 List<String> parts = new ArrayList<String>();
                 parts.addAll( Arrays.asList( value.split( sep ) ) );

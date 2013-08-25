@@ -76,29 +76,22 @@ public class ComponentsXmlArchiverFileFilter
         {
             final Xpp3Dom[] children = newDom.getChildren();
 
-            for ( int i = 0; i < children.length; i++ )
-            {
-                final Xpp3Dom component = children[i];
-
-                if ( components == null )
-                {
+            for (final Xpp3Dom component : children) {
+                if (components == null) {
                     components = new LinkedHashMap<String, Xpp3Dom>();
                 }
 
-                final String role = component.getChild( "role" )
-                                             .getValue();
-                final Xpp3Dom child = component.getChild( "role-hint" );
+                final String role = component.getChild("role")
+                        .getValue();
+                final Xpp3Dom child = component.getChild("role-hint");
                 final String roleHint = child != null ? child.getValue() : "";
 
                 final String key = role + roleHint;
-                if ( !components.containsKey( key ) )
-                {
-                    System.out.println( "Adding " + key );
-                    components.put( key, component );
-                }
-                else
-                {
-                    System.out.println( "Component: " + key + " is already defined. Skipping." );
+                if (!components.containsKey(key)) {
+                    System.out.println("Adding " + key);
+                    components.put(key, component);
+                } else {
+                    System.out.println("Component: " + key + " is already defined. Skipping.");
                 }
             }
         }
@@ -135,11 +128,8 @@ public class ComponentsXmlArchiverFileFilter
                 final Xpp3Dom componentDom = new Xpp3Dom( "components" );
                 dom.addChild( componentDom );
 
-                for ( final Iterator<Xpp3Dom> i = components.values()
-                                                            .iterator(); i.hasNext(); )
-                {
-                    final Xpp3Dom component = i.next();
-                    componentDom.addChild( component );
+                for (final Xpp3Dom component : components.values()) {
+                    componentDom.addChild(component);
                 }
 
                 Xpp3DomWriter.write( fileWriter, dom );

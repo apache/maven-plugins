@@ -594,11 +594,8 @@ public class DefaultDependencyResolverTest
         else
         {
             boolean found = false;
-            for ( final Iterator<ArtifactRepository> it = repos.iterator(); it.hasNext(); )
-            {
-                final ArtifactRepository repo = it.next();
-                if ( repoId.equals( repo.getId() ) )
-                {
+            for (final ArtifactRepository repo : repos) {
+                if (repoId.equals(repo.getId())) {
                     found = true;
                     break;
                 }

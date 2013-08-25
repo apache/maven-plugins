@@ -109,11 +109,8 @@ public class SimpleAggregatingDescriptorHandler
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
-            for ( final Iterator<String> it = filenames.iterator(); it.hasNext(); )
-            {
-                final String filename = it.next();
-
-                writer.write( "\n" + commentChars + " " + filename );
+            for (final String filename : filenames) {
+                writer.write("\n" + commentChars + " " + filename);
             }
 
             writer.write( "\n\n" );

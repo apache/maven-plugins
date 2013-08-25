@@ -132,11 +132,8 @@ public class AssemblyInterpolator
 
             @SuppressWarnings( "unchecked" )
             final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
-            for ( final Iterator<ObjectInterpolationWarning> it = warnings.iterator(); it.hasNext(); )
-            {
-                final ObjectInterpolationWarning warning = it.next();
-
-                sb.append( '\n' ).append( warning );
+            for (final ObjectInterpolationWarning warning : warnings) {
+                sb.append('\n').append(warning);
             }
 
             sb.append( "\n\nThese values were SKIPPED, but the assembly process will continue.\n" );
