@@ -224,34 +224,28 @@ public class DocumentModelBuilder
 
         final List<DocumentAuthor> ret = new ArrayList<DocumentAuthor>( 4 );
 
-        for ( final Iterator it = project.getDevelopers().iterator(); it.hasNext(); )
-        {
-            final Developer developer = (Developer) it.next();
+        for (Object o : project.getDevelopers()) {
+            final Developer developer = (Developer) o;
 
             final DocumentAuthor author = new DocumentAuthor();
-            author.setName( developer.getName() );
-            author.setEmail( developer.getEmail() );
-            author.setCompanyName( developer.getOrganization() );
+            author.setName(developer.getName());
+            author.setEmail(developer.getEmail());
+            author.setCompanyName(developer.getOrganization());
             StringBuilder roles = null;
 
-            for ( final String role : developer.getRoles() )
-            {
-                if ( roles == null )
-                {
-                    roles = new StringBuilder( 32 );
+            for (final String role : developer.getRoles()) {
+                if (roles == null) {
+                    roles = new StringBuilder(32);
+                } else {
+                    roles.append(',').append(' ');
                 }
-                else
-                {
-                    roles.append( ',' ).append( ' ' );
-                }
-                roles.append( role );
+                roles.append(role);
             }
-            if ( roles != null )
-            {
-                author.setPosition( roles.toString() );
+            if (roles != null) {
+                author.setPosition(roles.toString());
             }
 
-            ret.add( author );
+            ret.add(author);
         }
 
         return ret;
