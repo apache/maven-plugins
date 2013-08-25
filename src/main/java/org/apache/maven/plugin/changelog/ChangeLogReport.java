@@ -1565,7 +1565,7 @@ public class ChangeLogReport
      */
     protected void generateLinks( String connection, String name, String revision, Sink sink )
     {
-        String linkFile = null;
+        String linkFile;
         String linkRev = null;
 
         if ( revision != null )
