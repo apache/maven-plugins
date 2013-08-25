@@ -101,9 +101,8 @@ public class EclipseCleanMojo
 
         if ( additionalConfig != null )
         {
-            for ( int i = 0; i < additionalConfig.length; i++ )
-            {
-                delete( new File( basedir, additionalConfig[i].getName() ) );
+            for (EclipseConfigFile anAdditionalConfig : additionalConfig) {
+                delete(new File(basedir, anAdditionalConfig.getName()));
             }
         }
 

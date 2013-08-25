@@ -150,12 +150,9 @@ public abstract class AbstractEclipsePluginIT
         {
             String path = System.getProperty( "java.library.path" );
             String[] paths = StringUtils.split( path, System.getProperty( "path.separator" ) );
-            for ( int j = 0; j < paths.length; j++ )
-            {
-                String pt = paths[j];
-                if ( new File( pt, "mvn" ).exists() )
-                {
-                    System.setProperty( "maven.home", new File( pt ).getAbsoluteFile().getParent() );
+            for (String pt : paths) {
+                if (new File(pt, "mvn").exists()) {
+                    System.setProperty("maven.home", new File(pt).getAbsoluteFile().getParent());
                     break;
                 }
 
@@ -209,19 +206,16 @@ public abstract class AbstractEclipsePluginIT
 
         containers.add( getContainer() );
 
-        for ( Iterator iter = containers.iterator(); iter.hasNext(); )
-        {
-            PlexusContainer container = (PlexusContainer) iter.next();
+        for (Object container1 : containers) {
+            PlexusContainer container = (PlexusContainer) container1;
 
-            if ( container != null )
-            {
+            if (container != null) {
                 container.dispose();
 
                 ClassRealm realm = container.getContainerRealm();
 
-                if ( realm != null )
-                {
-                    realm.getWorld().disposeRealm( realm.getId() );
+                if (realm != null) {
+                    realm.getWorld().disposeRealm(realm.getId());
                 }
             }
         }
@@ -440,17 +434,13 @@ public abstract class AbstractEclipsePluginIT
 
         File buildLog = null;
 
-        for ( int i = 0; i < trace.length; i++ )
-        {
-            StackTraceElement element = trace[i];
-
+        for (StackTraceElement element : trace) {
             String methodName = element.getMethodName();
 
-            if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
-            {
+            if (methodName.startsWith("test") && !methodName.equals("testProject")) {
                 String classname = element.getClassName();
 
-                buildLog = new File( BUILD_OUTPUT_DIRECTORY, classname + "_" + element.getMethodName() + ".build.log" );
+                buildLog = new File(BUILD_OUTPUT_DIRECTORY, classname + "_" + element.getMethodName() + ".build.log");
 
                 break;
             }
@@ -530,17 +520,13 @@ public abstract class AbstractEclipsePluginIT
     {
         File[] expectedDirectories = getExpectedDirectories( basedir );
 
-        for ( int i = 0; i < expectedDirectories.length; i++ )
-        {
-            File expectedDirectory = expectedDirectories[i];
-            File[] expectedFilesToCompare = getExpectedFilesToCompare( expectedDirectory );
+        for (File expectedDirectory : expectedDirectories) {
+            File[] expectedFilesToCompare = getExpectedFilesToCompare(expectedDirectory);
 
-            for ( int j = 0; j < expectedFilesToCompare.length; j++ )
-            {
-                File expectedFile = expectedFilesToCompare[j];
-                File actualFile = getActualFile( projectOutputDir, basedir, expectedFile );
+            for (File expectedFile : expectedFilesToCompare) {
+                File actualFile = getActualFile(projectOutputDir, basedir, expectedFile);
 
-                assertFileEquals( expectedFile, actualFile );
+                assertFileEquals(expectedFile, actualFile);
             }
         }
     }
@@ -654,7 +640,7 @@ public abstract class AbstractEclipsePluginIT
     private String preprocess( File file, Map variables )
         throws MojoExecutionException
     {
-        String result = null;
+        String result;
         try
         {
             result = FileUtils.fileRead( file, "UTF-8" );
@@ -709,13 +695,11 @@ public abstract class AbstractEclipsePluginIT
         String result = str;
         if ( variables != null && !variables.isEmpty() )
         {
-            Iterator iter = variables.entrySet().iterator();
-            while ( iter.hasNext() )
-            {
-                Map.Entry entry = (Entry) iter.next();
+            for (Object o : variables.entrySet()) {
+                Entry entry = (Entry) o;
                 String variable = (String) entry.getKey();
                 String replacement = (String) entry.getValue();
-                result = StringUtils.replace( result, variable, replacement );
+                result = StringUtils.replace(result, variable, replacement);
             }
         }
 
@@ -741,7 +725,7 @@ public abstract class AbstractEclipsePluginIT
 
     protected void assertDoesNotContain( String message, String full, String substring )
     {
-        if ( full == null || full.indexOf( substring ) != -1 )
+        if ( full == null || full.contains(substring))
         {
             StringBuilder buf = new StringBuilder();
             if ( message != null )
@@ -795,29 +779,22 @@ public abstract class AbstractEclipsePluginIT
         File[] allFiles = basedir.listFiles();
         if ( allFiles != null )
         {
-            for ( int i = 0; i < allFiles.length; i++ )
-            {
-                File currentFile = allFiles[i];
-                if ( currentFile.isDirectory() )
-                {
-                    if ( currentFile.getName().equals( EXPECTED_DIRECTORY_NAME ) )
-                    {
-                        expectedDirectories.add( currentFile );
-                    }
-                    else
-                    {
-                        subdirectories.add( currentFile );
+            for (File currentFile : allFiles) {
+                if (currentFile.isDirectory()) {
+                    if (currentFile.getName().equals(EXPECTED_DIRECTORY_NAME)) {
+                        expectedDirectories.add(currentFile);
+                    } else {
+                        subdirectories.add(currentFile);
                     }
                 }
             }
         }
         if ( !subdirectories.isEmpty() )
         {
-            for ( Iterator iter = subdirectories.iterator(); iter.hasNext(); )
-            {
-                File subdirectory = (File) iter.next();
-                File[] subdirectoryFiles = getExpectedDirectories( subdirectory );
-                expectedDirectories.addAll( Arrays.asList( subdirectoryFiles ) );
+            for (Object subdirectory1 : subdirectories) {
+                File subdirectory = (File) subdirectory1;
+                File[] subdirectoryFiles = getExpectedDirectories(subdirectory);
+                expectedDirectories.addAll(Arrays.asList(subdirectoryFiles));
             }
         }
         return (File[]) expectedDirectories.toArray( new File[expectedDirectories.size()] );
@@ -835,26 +812,20 @@ public abstract class AbstractEclipsePluginIT
         File[] allFiles = expectedDirectory.listFiles();
         if ( allFiles != null )
         {
-            for ( int i = 0; i < allFiles.length; i++ )
-            {
-                File currentFile = allFiles[i];
-                if ( currentFile.isDirectory() )
-                {
-                    subdirectories.add( currentFile );
-                }
-                else
-                {
-                    expectedFiles.add( currentFile );
+            for (File currentFile : allFiles) {
+                if (currentFile.isDirectory()) {
+                    subdirectories.add(currentFile);
+                } else {
+                    expectedFiles.add(currentFile);
                 }
             }
         }
         if ( !subdirectories.isEmpty() )
         {
-            for ( Iterator iter = subdirectories.iterator(); iter.hasNext(); )
-            {
-                File subdirectory = (File) iter.next();
-                File[] subdirectoryFiles = getExpectedFilesToCompare( subdirectory );
-                expectedFiles.addAll( Arrays.asList( subdirectoryFiles ) );
+            for (Object subdirectory1 : subdirectories) {
+                File subdirectory = (File) subdirectory1;
+                File[] subdirectoryFiles = getExpectedFilesToCompare(subdirectory);
+                expectedFiles.addAll(Arrays.asList(subdirectoryFiles));
             }
         }
 

@@ -176,11 +176,10 @@ public class RadCleanMojo
         {
             String[] oldFiles =
                 FileUtils.getFilesFromExtension( directory.getAbsolutePath(), new String[] { packagingType } );
-            for ( int index = 0; index < oldFiles.length; index++ )
-            {
-                File f = new File( oldFiles[index] );
+            for (String oldFile : oldFiles) {
+                File f = new File(oldFile);
 
-                delete( f );
+                delete(f);
             }
         }
     }

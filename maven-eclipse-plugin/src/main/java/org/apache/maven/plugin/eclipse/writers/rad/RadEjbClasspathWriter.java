@@ -103,11 +103,9 @@ public class RadEjbClasspathWriter
             }
             Xpp3Dom classpath = readXMLFile( classpathFile );
             Xpp3Dom[] children = classpath.getChildren();
-            for ( int index = 0; index < children.length; index++ )
-            {
-                if ( LIB.equals( children[index].getAttribute( KIND ) )
-                    && TARGET_WEBSPHERE_CLASSES.equals( children[index].getAttribute( "path" ) ) )
-                {
+            for (Xpp3Dom aChildren : children) {
+                if (LIB.equals(aChildren.getAttribute(KIND))
+                        && TARGET_WEBSPHERE_CLASSES.equals(aChildren.getAttribute("path"))) {
                     return; // nothing to do!
                 }
             }
@@ -219,9 +217,8 @@ public class RadEjbClasspathWriter
             }
         } );
         Xpp3Dom resultClasspath = new Xpp3Dom( CLASSPATH );
-        for ( int index = 0; index < children.length; index++ )
-        {
-            resultClasspath.addChild( children[index] );
+        for (Xpp3Dom aChildren : children) {
+            resultClasspath.addChild(aChildren);
         }
         return resultClasspath;
     }

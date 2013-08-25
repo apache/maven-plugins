@@ -192,35 +192,28 @@ public class InstallPluginsMojo
             eclipseDir.mkdirs();
         }
 
-        for ( Iterator it = artifacts.iterator(); it.hasNext(); )
-        {
-            Artifact artifact = (Artifact) it.next();
+        for (Object artifact1 : artifacts) {
+            Artifact artifact = (Artifact) artifact1;
 
-            if ( pluginDependencyTypes.indexOf( artifact.getType() ) > -1 )
-            {
-                getLog().debug( "Processing Eclipse plugin dependency: " + artifact.getId() );
+            if (pluginDependencyTypes.contains(artifact.getType())) {
+                getLog().debug("Processing Eclipse plugin dependency: " + artifact.getId());
 
                 MavenProject project;
 
-                try
-                {
+                try {
                     project =
-                        projectBuilder.buildFromRepository( artifact, Collections.EMPTY_LIST, localRepository, true );
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    throw new MojoExecutionException( "Failed to load project metadata (POM) for: " + artifact.getId(),
-                                                      e );
+                            projectBuilder.buildFromRepository(artifact, Collections.EMPTY_LIST, localRepository, true);
+                } catch (ProjectBuildingException e) {
+                    throw new MojoExecutionException("Failed to load project metadata (POM) for: " + artifact.getId(),
+                            e);
                 }
 
-                install( artifact, project );
-            }
-            else
-            {
+                install(artifact, project);
+            } else {
                 getLog().debug(
-                                "Skipping dependency: "
-                                    + artifact.getId()
-                                    + ". Set pluginDependencyTypes with a comma-separated list of types to change this." );
+                        "Skipping dependency: "
+                                + artifact.getId()
+                                + ". Set pluginDependencyTypes with a comma-separated list of types to change this.");
             }
         }
     }
@@ -268,10 +261,10 @@ public class InstallPluginsMojo
         Properties properties = project.getProperties();
         if ( properties != null )
         {
-            installAsJar = !Boolean.valueOf( properties.getProperty( PROP_UNPACK_PLUGIN, "false" ) ).booleanValue();
+            installAsJar = !Boolean.valueOf(properties.getProperty(PROP_UNPACK_PLUGIN, "false"));
         }
 
-        Attributes attributes = null;
+        Attributes attributes;
         try
         {
             // don't verify, plugins zipped by eclipse:make-artifacts could have a bad signature

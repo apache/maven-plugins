@@ -159,14 +159,13 @@ public class EclipseWtpComponentWriter
             Xpp3Dom[] webResources =
                 IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                     new String[] { "webResources", "resource" } );
-            for ( int index = 0; index < webResources.length; index++ )
-            {
-                File webResourceDirectory = new File( webResources[index].getChild( "directory" ).getValue() );
-                writer.startElement( ELT_WB_RESOURCE );
-                writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
-                writer.addAttribute( ATTR_SOURCE_PATH,
-                                     IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                                                                         webResourceDirectory, false ) );
+            for (Xpp3Dom webResource : webResources) {
+                File webResourceDirectory = new File(webResource.getChild("directory").getValue());
+                writer.startElement(ELT_WB_RESOURCE);
+                writer.addAttribute(ATTR_DEPLOY_PATH, "/"); //$NON-NLS-1$
+                writer.addAttribute(ATTR_SOURCE_PATH,
+                        IdeUtils.toRelativeAndFixSeparator(config.getEclipseProjectDirectory(),
+                                webResourceDirectory, false));
                 writer.endElement();
             }
 
@@ -204,16 +203,13 @@ public class EclipseWtpComponentWriter
 
         }
 
-        for ( int j = 0; j < sourceDirs.length; j++ )
-        {
-            EclipseSourceDir dir = sourceDirs[j];
+        for (EclipseSourceDir dir : sourceDirs) {
             // test src/resources are not added to wtpmodules
-            if ( !dir.isTest() )
-            {
+            if (!dir.isTest()) {
                 // <wb-resource deploy-path="/" source-path="/src/java" />
-                writer.startElement( ELT_WB_RESOURCE );
-                writer.addAttribute( ATTR_DEPLOY_PATH, target );
-                writer.addAttribute( ATTR_SOURCE_PATH, dir.getPath() );
+                writer.startElement(ELT_WB_RESOURCE);
+                writer.addAttribute(ATTR_DEPLOY_PATH, target);
+                writer.addAttribute(ATTR_SOURCE_PATH, dir.getPath());
                 writer.endElement();
             }
         }

@@ -71,10 +71,9 @@ public abstract class AbstractEclipseManifestWriter
         String[] entries = newValue.split( " " );
         Arrays.sort( entries );
         StringBuilder buffer = new StringBuilder( newValue.length() );
-        for ( int index = 0; index < entries.length; index++ )
-        {
-            buffer.append( entries[index] );
-            buffer.append( ' ' );
+        for (String entry : entries) {
+            buffer.append(entry);
+            buffer.append(' ');
         }
         return buffer.toString();
     }
@@ -161,24 +160,20 @@ public abstract class AbstractEclipseManifestWriter
         Attributes newMap = manifest.getMainAttributes();
         keys.addAll( existingMap.keySet() );
         keys.addAll( newMap.keySet() );
-        Iterator iterator = keys.iterator();
-        while ( iterator.hasNext() )
-        {
-            Attributes.Name key = (Attributes.Name) iterator.next();
-            String newValue = (String) newMap.get( key );
-            String existingValue = (String) existingMap.get( key );
+        for (Object key1 : keys) {
+            Attributes.Name key = (Attributes.Name) key1;
+            String newValue = (String) newMap.get(key);
+            String existingValue = (String) existingMap.get(key);
             // special case classpath... they are equal when there entries
             // are equal
-            if ( Attributes.Name.CLASS_PATH.equals( key ) )
-            {
-                newValue = orderClasspath( newValue );
-                existingValue = orderClasspath( existingValue );
+            if (Attributes.Name.CLASS_PATH.equals(key)) {
+                newValue = orderClasspath(newValue);
+                existingValue = orderClasspath(existingValue);
             }
-            if ( ( newValue == null || !newValue.equals( existingValue ) )
-                && ( existingValue == null || !existingValue.equals( newValue ) ) )
-            {
-                log.info( "@@@ FALSE - Manifest are not equal because key = " + key + " has existing value = "
-                    + existingValue + " and new value = " + newValue + " are different" );
+            if ((newValue == null || !newValue.equals(existingValue))
+                    && (existingValue == null || !existingValue.equals(newValue))) {
+                log.info("@@@ FALSE - Manifest are not equal because key = " + key + " has existing value = "
+                        + existingValue + " and new value = " + newValue + " are different");
                 return false;
             }
         }
@@ -196,9 +191,8 @@ public abstract class AbstractEclipseManifestWriter
         StringBuilder StringBuilder = new StringBuilder();
         IdeDependency[] deps = this.config.getDeps();
 
-        for ( int index = 0; index < deps.length; index++ )
-        {
-            addDependencyToClassPath( StringBuilder, deps[index] );
+        for (IdeDependency dep : deps) {
+            addDependencyToClassPath(StringBuilder, dep);
         }
 
         return StringBuilder.toString();

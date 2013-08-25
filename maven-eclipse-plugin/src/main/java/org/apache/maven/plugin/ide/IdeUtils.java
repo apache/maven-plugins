@@ -288,16 +288,11 @@ public class IdeUtils
      */
     public static ArtifactVersion getArtifactVersion( String[] artifactIds, List /*<Dependency>*/ dependencies )
     {
-        for ( int j = 0; j < artifactIds.length; j++ )
-        {
-            String id = artifactIds[j];
-            Iterator depIter = dependencies.iterator();
-            while ( depIter.hasNext() )
-            {
-                Dependency dep = (Dependency) depIter.next();
-                if ( id.equals( dep.getArtifactId() ) )
-                {
-                    return VersionRange.createFromVersion( dep.getVersion() ).getRecommendedVersion();
+        for (String id : artifactIds) {
+            for (Object dependency : dependencies) {
+                Dependency dep = (Dependency) dependency;
+                if (id.equals(dep.getArtifactId())) {
+                    return VersionRange.createFromVersion(dep.getVersion()).getRecommendedVersion();
                 }
 
             }
@@ -365,15 +360,12 @@ public class IdeUtils
                 && index < subConfiguration.length; index++ )
             {
                 ArrayList newConfigurationDomList = new ArrayList();
-                for ( Iterator childElement = configurationDomList.iterator(); childElement.hasNext(); )
-                {
-                    Xpp3Dom child = (Xpp3Dom) childElement.next();
-                    Xpp3Dom[] deeperChild = child.getChildren( subConfiguration[index] );
-                    for ( int deeperIndex = 0; deeperIndex < deeperChild.length; deeperIndex++ )
-                    {
-                        if ( deeperChild[deeperIndex] != null )
-                        {
-                            newConfigurationDomList.add( deeperChild[deeperIndex] );
+                for (Object aConfigurationDomList : configurationDomList) {
+                    Xpp3Dom child = (Xpp3Dom) aConfigurationDomList;
+                    Xpp3Dom[] deeperChild = child.getChildren(subConfiguration[index]);
+                    for (Xpp3Dom aDeeperChild : deeperChild) {
+                        if (aDeeperChild != null) {
+                            newConfigurationDomList.add(aDeeperChild);
                         }
                     }
                 }
@@ -525,7 +517,7 @@ public class IdeUtils
                                                          String depClassifier, String inClassifier,
                                                          ArtifactFactory artifactFactory )
     {
-        String type = null;
+        String type;
 
         // the "sources" classifier maps to the "java-source" type
         if ( "sources".equals( inClassifier ) )
@@ -537,7 +529,7 @@ public class IdeUtils
             type = inClassifier;
         }
 
-        String finalClassifier = null;
+        String finalClassifier;
         if ( depClassifier == null )
         {
             finalClassifier = inClassifier;
@@ -590,7 +582,7 @@ public class IdeUtils
         String basedirPath = getCanonicalPath( basedir );
         String absolutePath = getCanonicalPath( fileToAdd );
 
-        String relative = null;
+        String relative;
 
         if ( absolutePath.equals( basedirPath ) )
         {
@@ -663,34 +655,29 @@ public class IdeUtils
     {
         String value = null;
 
-        for ( Iterator it = plugins.iterator(); it.hasNext(); )
-        {
-            Plugin plugin = (Plugin) it.next();
+        for (Object plugin1 : plugins) {
+            Plugin plugin = (Plugin) plugin1;
 
-            if ( plugin.getArtifactId().equals( ARTIFACT_MAVEN_COMPILER_PLUGIN ) )
-            {
+            if (plugin.getArtifactId().equals(ARTIFACT_MAVEN_COMPILER_PLUGIN)) {
                 // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
                 // this is the default setting
-                if ( o != null && o.getChild( optionName ) != null )
-                {
-                    value = o.getChild( optionName ).getValue();
+                if (o != null && o.getChild(optionName) != null) {
+                    value = o.getChild(optionName).getValue();
                 }
 
                 List executions = plugin.getExecutions();
 
                 // a different source/target version can be configured for test sources compilation
-                for ( Iterator iter = executions.iterator(); iter.hasNext(); )
-                {
-                    PluginExecution execution = (PluginExecution) iter.next();
+                for (Object execution1 : executions) {
+                    PluginExecution execution = (PluginExecution) execution1;
 
                     // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                     o = (Xpp3Dom) execution.getConfiguration();
 
-                    if ( o != null && o.getChild( optionName ) != null )
-                    {
-                        value = o.getChild( optionName ).getValue();
+                    if (o != null && o.getChild(optionName) != null) {
+                        value = o.getChild(optionName).getValue();
                     }
                 }
             }

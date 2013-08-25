@@ -133,7 +133,7 @@ public class ReadWorkspaceLocations
                 {
                     String id = (String) idIterator.next();
                     String name = (String) servers.get( id );
-                    if ( id.indexOf( wtpDefaultServer ) >= 0 || name.indexOf( wtpDefaultServer ) >= 0 )
+                    if (id.contains(wtpDefaultServer) || name.contains(wtpDefaultServer))
                     {
                         workspaceConfiguration.setDefaultDeployServerId( id );
                         workspaceConfiguration.setDefaultDeployServerName( name );
@@ -161,7 +161,7 @@ public class ReadWorkspaceLocations
      */
     private String getContainerFromExecutable( String rawExecutable, Map jreMap, Log logger )
     {
-        String foundContainer = null;
+        String foundContainer;
         if ( rawExecutable != null )
         {
             String executable;
@@ -451,54 +451,42 @@ public class ReadWorkspaceLocations
         jreMap.put( "6", jreMap.get( "1.6" ) );
         String defaultJRE = vms.getAttribute( "defaultVM" ).trim();
         Xpp3Dom[] vmTypes = vms.getChildren( "vmType" );
-        for ( int vmTypeIndex = 0; vmTypeIndex < vmTypes.length; vmTypeIndex++ )
-        {
-            String typeId = vmTypes[vmTypeIndex].getAttribute( "id" );
-            Xpp3Dom[] vm = vmTypes[vmTypeIndex].getChildren( "vm" );
-            for ( int vmIndex = 0; vmIndex < vm.length; vmIndex++ )
-            {
-                try
-                {
-                    String path = vm[vmIndex].getAttribute( "path" );
-                    String name = vm[vmIndex].getAttribute( "name" );
-                    String vmId = vm[vmIndex].getAttribute( "id" ).trim();
+        for (Xpp3Dom vmType : vmTypes) {
+            String typeId = vmType.getAttribute("id");
+            Xpp3Dom[] vm = vmType.getChildren("vm");
+            for (Xpp3Dom aVm : vm) {
+                try {
+                    String path = aVm.getAttribute("path");
+                    String name = aVm.getAttribute("name");
+                    String vmId = aVm.getAttribute("id").trim();
                     String classpathEntry =
-                        MessageFormat.format( ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT,
-                                              new Object[] { typeId, name } );
-                    String jrePath = new File( path ).getCanonicalPath();
-                    File rtJarFile = new File( new File( jrePath ), "jre/lib/rt.jar" );
-                    if ( !rtJarFile.exists() )
-                    {
-                        logger.warn( Messages.getString( "EclipsePlugin.invalidvminworkspace", jrePath ) );
+                            MessageFormat.format(ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT,
+                                    new Object[]{typeId, name});
+                    String jrePath = new File(path).getCanonicalPath();
+                    File rtJarFile = new File(new File(jrePath), "jre/lib/rt.jar");
+                    if (!rtJarFile.exists()) {
+                        logger.warn(Messages.getString("EclipsePlugin.invalidvminworkspace", jrePath));
                         continue;
                     }
-                    JarFile rtJar = new JarFile( rtJarFile );
-                    String version = rtJar.getManifest().getMainAttributes().getValue( "Specification-Version" );
-                    if ( defaultJRE.endsWith( "," + vmId ) )
-                    {
-                        jreMap.put( jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
-                        jreMap.put( version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
-                        logger.debug( "Default Classpath Container version: " + version + "  location: " + jrePath );
-                    }
-                    else if ( !jreMap.containsKey( jrePath ) )
-                    {
-                        if ( !jreMap.containsKey( version ) )
-                        {
-                            jreMap.put( version, classpathEntry );
+                    JarFile rtJar = new JarFile(rtJarFile);
+                    String version = rtJar.getManifest().getMainAttributes().getValue("Specification-Version");
+                    if (defaultJRE.endsWith("," + vmId)) {
+                        jreMap.put(jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT);
+                        jreMap.put(version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT);
+                        logger.debug("Default Classpath Container version: " + version + "  location: " + jrePath);
+                    } else if (!jreMap.containsKey(jrePath)) {
+                        if (!jreMap.containsKey(version)) {
+                            jreMap.put(version, classpathEntry);
                         }
-                        jreMap.put( jrePath, classpathEntry );
-                        logger.debug( "Additional Classpath Container version: " + version + " " + classpathEntry
-                            + " location: " + jrePath );
+                        jreMap.put(jrePath, classpathEntry);
+                        logger.debug("Additional Classpath Container version: " + version + " " + classpathEntry
+                                + " location: " + jrePath);
+                    } else {
+                        logger.debug("Ignored (duplicated) additional Classpath Container version: " + version + " "
+                                + classpathEntry + " location: " + jrePath);
                     }
-                    else
-                    {
-                        logger.debug( "Ignored (duplicated) additional Classpath Container version: " + version + " "
-                            + classpathEntry + " location: " + jrePath );
-                    }
-                }
-                catch ( IOException e )
-                {
-                    logger.warn( "Could not interpret entry: " + vm[vmIndex].toString() );
+                } catch (IOException e) {
+                    logger.warn("Could not interpret entry: " + aVm.toString());
                 }
             }
         }

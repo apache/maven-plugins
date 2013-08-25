@@ -113,7 +113,7 @@ public class EclipseProjectWriterTest
         IOUtil.close( w );
         // parse the file we just created in order to keep manually-added linkedResources
         // pre setup
-        Reader reader = null;
+        Reader reader;
         reader = new InputStreamReader( new FileInputStream( dotProject ), "UTF-8" );
         Xpp3Dom dom = Xpp3DomBuilder.build( reader );
         Xpp3Dom linkedResourcesElement = dom.getChild( "linkedResources" );

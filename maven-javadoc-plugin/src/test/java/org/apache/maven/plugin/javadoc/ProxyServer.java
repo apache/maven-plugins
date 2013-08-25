@@ -221,7 +221,7 @@ class ProxyServer
                             // nop
                         }
                     }
-                    String authPass = this.authentications.get( user ).toString();
+                    String authPass = this.authentications.get(user);
                     if ( password.equals( authPass ) )
                     {
                         // could throw exceptions...

@@ -288,7 +288,7 @@ public class InstallPluginsMojoTest
 
     private File locateArtifact( Artifact artifact )
     {
-        URL resource = null;
+        URL resource;
 
         String sourcepath =
             artifact.getGroupId().replace( '.', '/' ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion()
@@ -318,8 +318,8 @@ public class InstallPluginsMojoTest
         String type = artifact.getType();
 
         ArtifactRepository localRepo = createLocalRepository();
-        MavenProjectBuilder projectBuilder = createProjectBuilder( typeList.indexOf( type ) > -1, installAsJar );
-        ArchiverManager archiverManager = createArchiverManager( typeList.indexOf( type ) > -1, installAsJar );
+        MavenProjectBuilder projectBuilder = createProjectBuilder(typeList.contains(type), installAsJar );
+        ArchiverManager archiverManager = createArchiverManager(typeList.contains(type), installAsJar );
         InputHandler inputHandler = createInputHandler();
 
         Log log = new SystemStreamLog();
@@ -415,7 +415,7 @@ public class InstallPluginsMojoTest
 
                 if ( installAsJar != null )
                 {
-                    model.addProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, "" + ( !installAsJar.booleanValue() ) );
+                    model.addProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, "" + ( !installAsJar) );
                 }
 
                 MavenProject project = new MavenProject( model );

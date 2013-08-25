@@ -124,11 +124,9 @@ public class MyEclipsePlugin
                                                "/src/main/webapp" ); //$NON-NLS-1$
 
                 EclipseSourceDir[] sourceDirs = config.getSourceDirs();
-                for ( int i = 0; i < sourceDirs.length; i++ )
-                {
-                    if ( !sourceDirs[i].isTest() )
-                    {
-                        sourceDirs[i].setOutput( warSourceDirectory + "/WEB-INF/classes" );
+                for (EclipseSourceDir sourceDir : sourceDirs) {
+                    if (!sourceDir.isTest()) {
+                        sourceDir.setOutput(warSourceDirectory + "/WEB-INF/classes");
                     }
                 }
             }

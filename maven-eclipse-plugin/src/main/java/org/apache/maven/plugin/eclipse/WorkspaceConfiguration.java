@@ -130,23 +130,23 @@ public class WorkspaceConfiguration
     {
         if ( getDefaultDeployServerId() != null && getDefaultDeployServerId().startsWith( "was." ) )
         {
-            if ( getDefaultDeployServerId().indexOf( "v7" ) >= 0 )
+            if (getDefaultDeployServerId().contains("v7"))
             {
                 return "7.0";
             }
-            if ( getDefaultDeployServerId().indexOf( "v61" ) >= 0 )
+            if (getDefaultDeployServerId().contains("v61"))
             {
                 return "6.1";
             }
-            if ( getDefaultDeployServerId().indexOf( "v6" ) >= 0 )
+            if (getDefaultDeployServerId().contains("v6"))
             {
                 return "6.0";
             }
-            if ( getDefaultDeployServerId().indexOf( "v51" ) >= 0 )
+            if (getDefaultDeployServerId().contains("v51"))
             {
                 return "5.1";
             }
-            if ( getDefaultDeployServerId().indexOf( "v5" ) >= 0 )
+            if (getDefaultDeployServerId().contains("v5"))
             {
                 return "5.0";
             }

@@ -179,16 +179,15 @@ public class BuildCommand
 
             writer.startElement( "dictionary" );
 
-            for ( Iterator it = arguments.keySet().iterator(); it.hasNext(); )
-            {
-                String key = (String) it.next();
+            for (Object o : arguments.keySet()) {
+                String key = (String) o;
 
-                writer.startElement( "key" );
-                writer.writeText( key );
+                writer.startElement("key");
+                writer.writeText(key);
                 writer.endElement();
 
-                writer.startElement( "value" );
-                writer.writeText( (String) arguments.get( key ) );
+                writer.startElement("value");
+                writer.writeText((String) arguments.get(key));
                 writer.endElement();
             }
 

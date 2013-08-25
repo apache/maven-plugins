@@ -158,9 +158,8 @@ public class RadApplicationXMLWriter
                                                     new String[] { "modules", "webModule" } );
 
             IdeDependency[] deps = config.getDeps();
-            for ( int index = 0; index < deps.length; index++ )
-            {
-                updateApplicationXml( applicationXmlDom, modulemapsXmlDom, deps[index] );
+            for (IdeDependency dep : deps) {
+                updateApplicationXml(applicationXmlDom, modulemapsXmlDom, dep);
             }
 
             removeUnusedEntries( applicationXmlDom, modulemapsXmlDom );
@@ -231,12 +230,10 @@ public class RadApplicationXMLWriter
     {
         String id = getIdFromMapping( mapping );
         Xpp3Dom[] children = applicationXmlDom.getChildren();
-        for ( int index = 0; index < children.length; index++ )
-        {
-            String childId = children[index].getAttribute( ID );
-            if ( childId != null && childId.equals( id ) )
-            {
-                return children[index];
+        for (Xpp3Dom aChildren : children) {
+            String childId = aChildren.getAttribute(ID);
+            if (childId != null && childId.equals(id)) {
+                return aChildren;
             }
         }
         return null;
@@ -395,32 +392,24 @@ public class RadApplicationXMLWriter
      */
     private void removeUnusedEntries( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapsXmlDom )
     {
-        for ( int index = 0; index < this.modulemapsXmlDomChildren.length; index++ )
-        {
-            if ( this.modulemapsXmlDomChildren[index] != null )
-            {
+        for (Xpp3Dom aModulemapsXmlDomChildren : this.modulemapsXmlDomChildren) {
+            if (aModulemapsXmlDomChildren != null) {
                 Xpp3Dom[] newModulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
-                for ( int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++ )
-                {
-                    if ( ( newModulemapsXmlDomChildren[newIndex] != null )
-                        && ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] ) )
-                    {
-                        modulemapsXmlDom.removeChild( newIndex );
+                for (int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++) {
+                    if ((newModulemapsXmlDomChildren[newIndex] != null)
+                            && (newModulemapsXmlDomChildren[newIndex] == aModulemapsXmlDomChildren)) {
+                        modulemapsXmlDom.removeChild(newIndex);
                         break;
                     }
                 }
             }
         }
-        for ( int index = 0; index < this.applicationXmlDomChildren.length; index++ )
-        {
-            if ( this.applicationXmlDomChildren[index] != null )
-            {
+        for (Xpp3Dom anApplicationXmlDomChildren : this.applicationXmlDomChildren) {
+            if (anApplicationXmlDomChildren != null) {
                 Xpp3Dom[] newApplicationXmlDomChildren = applicationXmlDom.getChildren();
-                for ( int newIndex = 0; newIndex < newApplicationXmlDomChildren.length; newIndex++ )
-                {
-                    if ( newApplicationXmlDomChildren[newIndex] == this.applicationXmlDomChildren[index] )
-                    {
-                        applicationXmlDom.removeChild( newIndex );
+                for (int newIndex = 0; newIndex < newApplicationXmlDomChildren.length; newIndex++) {
+                    if (newApplicationXmlDomChildren[newIndex] == anApplicationXmlDomChildren) {
+                        applicationXmlDom.removeChild(newIndex);
                         break;
                     }
                 }
@@ -503,10 +492,9 @@ public class RadApplicationXMLWriter
      */
     private String getContextRootFor( String artifactId )
     {
-        for ( int index = 0; index < webModulesFromPoms.length; index++ )
-        {
-            if ( webModulesFromPoms[index].getChild( "artifactId" ).getValue().equals( artifactId ) )
-                return new File( webModulesFromPoms[index].getChild( "contextRoot" ).getValue() ).getName();
+        for (Xpp3Dom webModulesFromPom : webModulesFromPoms) {
+            if (webModulesFromPom.getChild("artifactId").getValue().equals(artifactId))
+                return new File(webModulesFromPom.getChild("contextRoot").getValue()).getName();
         }
         return artifactId;
     }
@@ -527,7 +515,7 @@ public class RadApplicationXMLWriter
             log.info( Messages.getString( "EclipsePlugin.unchangedmanifest", xmlFile.getAbsolutePath() ) );
             return;
         }
-        Writer w = null;
+        Writer w;
         xmlFile.getParentFile().mkdirs();
         try
         {

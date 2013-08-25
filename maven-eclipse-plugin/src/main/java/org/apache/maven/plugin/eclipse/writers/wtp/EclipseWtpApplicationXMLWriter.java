@@ -147,9 +147,8 @@ public class EclipseWtpApplicationXMLWriter
                                                     new String[] { "modules", "webModule" } );
 
             IdeDependency[] deps = this.config.getDeps();
-            for ( int index = 0; index < deps.length; index++ )
-            {
-                updateApplicationXml( applicationXmlDom, modulemapsXmlDom, deps[index] );
+            for (IdeDependency dep : deps) {
+                updateApplicationXml(applicationXmlDom, modulemapsXmlDom, dep);
             }
 
             removeUnusedEntries( applicationXmlDom, modulemapsXmlDom );
@@ -205,31 +204,24 @@ public class EclipseWtpApplicationXMLWriter
 
         String sourcePath = sourceDirectory.getAbsolutePath();
 
-        for ( int i = 0; i < files.length; i++ )
-        {
-            File file = files[i];
-
+        for (File file : files) {
             String dest = file.getAbsolutePath();
 
-            dest = dest.substring( sourcePath.length() + 1 );
+            dest = dest.substring(sourcePath.length() + 1);
 
-            File destination = new File( destinationDirectory, dest );
+            File destination = new File(destinationDirectory, dest);
 
-            if ( file.isFile() )
-            {
+            if (file.isFile()) {
                 destination = destination.getParentFile();
 
-                FileUtils.copyFileToDirectory( file, destination );
-            }
-            else if ( file.isDirectory() && !file.getName().equals( ".svn" ) && !file.getName().equals( "CVS" ) )
-            {
-                if ( !destination.exists() && !destination.mkdirs() )
-                {
-                    throw new IOException( "Could not create destination directory '" + destination.getAbsolutePath()
-                        + "'." );
+                FileUtils.copyFileToDirectory(file, destination);
+            } else if (file.isDirectory() && !file.getName().equals(".svn") && !file.getName().equals("CVS")) {
+                if (!destination.exists() && !destination.mkdirs()) {
+                    throw new IOException("Could not create destination directory '" + destination.getAbsolutePath()
+                            + "'.");
                 }
 
-                copyDirectoryStructure( file, destination );
+                copyDirectoryStructure(file, destination);
             }
         }
     }
@@ -294,12 +286,10 @@ public class EclipseWtpApplicationXMLWriter
     {
         String id = getIdFromMapping( mapping );
         Xpp3Dom[] children = applicationXmlDom.getChildren();
-        for ( int index = 0; index < children.length; index++ )
-        {
-            String childId = children[index].getAttribute( EclipseWtpApplicationXMLWriter.ID );
-            if ( childId != null && childId.equals( id ) )
-            {
-                return children[index];
+        for (Xpp3Dom aChildren : children) {
+            String childId = aChildren.getAttribute(EclipseWtpApplicationXMLWriter.ID);
+            if (childId != null && childId.equals(id)) {
+                return aChildren;
             }
         }
         return null;
@@ -468,31 +458,23 @@ public class EclipseWtpApplicationXMLWriter
      */
     private void removeUnusedEntries( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapsXmlDom )
     {
-        for ( int index = 0; index < this.modulemapsXmlDomChildren.length; index++ )
-        {
-            if ( this.modulemapsXmlDomChildren[index] != null )
-            {
+        for (Xpp3Dom aModulemapsXmlDomChildren : this.modulemapsXmlDomChildren) {
+            if (aModulemapsXmlDomChildren != null) {
                 Xpp3Dom[] newModulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
-                for ( int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++ )
-                {
-                    if ( newModulemapsXmlDomChildren[newIndex] == this.modulemapsXmlDomChildren[index] )
-                    {
-                        modulemapsXmlDom.removeChild( newIndex );
+                for (int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++) {
+                    if (newModulemapsXmlDomChildren[newIndex] == aModulemapsXmlDomChildren) {
+                        modulemapsXmlDom.removeChild(newIndex);
                         break;
                     }
                 }
             }
         }
-        for ( int index = 0; index < this.applicationXmlDomChildren.length; index++ )
-        {
-            if ( this.applicationXmlDomChildren[index] != null )
-            {
+        for (Xpp3Dom anApplicationXmlDomChildren : this.applicationXmlDomChildren) {
+            if (anApplicationXmlDomChildren != null) {
                 Xpp3Dom[] newApplicationXmlDomChildren = applicationXmlDom.getChildren();
-                for ( int newIndex = 0; newIndex < newApplicationXmlDomChildren.length; newIndex++ )
-                {
-                    if ( newApplicationXmlDomChildren[newIndex] == this.applicationXmlDomChildren[index] )
-                    {
-                        applicationXmlDom.removeChild( newIndex );
+                for (int newIndex = 0; newIndex < newApplicationXmlDomChildren.length; newIndex++) {
+                    if (newApplicationXmlDomChildren[newIndex] == anApplicationXmlDomChildren) {
+                        applicationXmlDom.removeChild(newIndex);
                         break;
                     }
                 }
@@ -578,15 +560,13 @@ public class EclipseWtpApplicationXMLWriter
     {
         String artifactId = dependency.getArtifactId();
         String groupId = dependency.getGroupId();
-        for ( int index = 0; index < this.webModulesFromPoms.length; index++ )
-        {
-            Xpp3Dom webGroupId = this.webModulesFromPoms[index].getChild( "groupId" );
-            Xpp3Dom webArtifactId = this.webModulesFromPoms[index].getChild( "artifactId" );
-            Xpp3Dom webContextRoot = this.webModulesFromPoms[index].getChild( "contextRoot" );
+        for (Xpp3Dom webModulesFromPom : this.webModulesFromPoms) {
+            Xpp3Dom webGroupId = webModulesFromPom.getChild("groupId");
+            Xpp3Dom webArtifactId = webModulesFromPom.getChild("artifactId");
+            Xpp3Dom webContextRoot = webModulesFromPom.getChild("contextRoot");
 
-            if ( webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals( artifactId )
-                && webGroupId != null && webGroupId.getValue().equals( groupId ) )
-            {
+            if (webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals(artifactId)
+                    && webGroupId != null && webGroupId.getValue().equals(groupId)) {
                 return webContextRoot.getValue();
             }
         }
@@ -610,7 +590,7 @@ public class EclipseWtpApplicationXMLWriter
             this.log.info( "Rad6CleanMojo.unchanged" + xmlFile.getAbsolutePath() );
             return;
         }
-        Writer w = null;
+        Writer w;
         xmlFile.getParentFile().mkdirs();
         try
         {

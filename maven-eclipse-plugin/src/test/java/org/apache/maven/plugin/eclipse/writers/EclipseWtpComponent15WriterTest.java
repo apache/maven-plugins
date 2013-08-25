@@ -110,14 +110,13 @@ public class EclipseWtpComponent15WriterTest
         XPath archiveNames = XPath.newInstance( "//dependent-module/@archiveName" );
 
         assertEquals( "Must be 2 modules", 2, archiveNames.selectNodes( doc ).size() );
-        for ( Iterator it = archiveNames.selectNodes( doc ).iterator(); it.hasNext(); )
-        {
-            Attribute attribute = (Attribute) it.next();
+        for (Object o : archiveNames.selectNodes(doc)) {
+            Attribute attribute = (Attribute) o;
 
             String archiveName = attribute.getValue();
-            String extension = archiveName.substring( archiveName.lastIndexOf( "." ) + 1 ).toLowerCase();
+            String extension = archiveName.substring(archiveName.lastIndexOf(".") + 1).toLowerCase();
 
-            assertEquals( "Must be of type jar", "jar", extension );
+            assertEquals("Must be of type jar", "jar", extension);
         }
 
     }

@@ -805,7 +805,7 @@ public class JavadocReportTest
 
         // real proxy
         ProxyServer proxyServer = null;
-        AuthAsyncProxyServlet proxyServlet = null;
+        AuthAsyncProxyServlet proxyServlet;
         try
         {
             proxyServlet = new AuthAsyncProxyServlet();

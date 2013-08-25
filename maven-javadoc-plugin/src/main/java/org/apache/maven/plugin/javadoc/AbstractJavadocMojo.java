@@ -2841,7 +2841,7 @@ public abstract class AbstractJavadocMojo
                                + " or <doclets/>." );
         }
 
-        return path.toString();
+        return path;
     }
 
     /**
@@ -4206,7 +4206,7 @@ public abstract class AbstractJavadocMojo
                     currentSourcePath += "/";
                 }
 
-                if ( currentFile.indexOf( currentSourcePath ) != -1 )
+                if (currentFile.contains(currentSourcePath))
                 {
                     String packagename = currentFile.substring( currentSourcePath.length() + 1 );
 
@@ -4214,7 +4214,7 @@ public abstract class AbstractJavadocMojo
                      * Remove the miscellaneous files
                      * http://docs.oracle.com/javase/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed
                      */
-                    if ( packagename.indexOf( "doc-files" ) != -1 )
+                    if (packagename.contains("doc-files"))
                     {
                         continue;
                     }
@@ -4258,7 +4258,7 @@ public abstract class AbstractJavadocMojo
         File optionsFile = new File( javadocOutputDirectory, OPTIONS_FILE_NAME );
 
         StringBuilder options = new StringBuilder();
-        options.append( StringUtils.join( arguments.toArray( new String[0] ), SystemUtils.LINE_SEPARATOR ) );
+        options.append( StringUtils.join(arguments.toArray(new String[arguments.size()]), SystemUtils.LINE_SEPARATOR ) );
 
         try
         {
@@ -4837,19 +4837,14 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        for ( int i = 0; i < taglets.length; i++ )
-        {
-            if ( ( taglets[i] == null ) || ( StringUtils.isEmpty( taglets[i].getTagletClass() ) ) )
-            {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn( "A taglet option is empty. Ignore this option." );
+        for (Taglet taglet1 : taglets) {
+            if ((taglet1 == null) || (StringUtils.isEmpty(taglet1.getTagletClass()))) {
+                if (getLog().isWarnEnabled()) {
+                    getLog().warn("A taglet option is empty. Ignore this option.");
                 }
-            }
-            else
-            {
-                addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglets[i].getTagletClass() ),
-                                  SINCE_JAVADOC_1_4 );
+            } else {
+                addArgIfNotEmpty(arguments, "-taglet", JavadocUtil.quotedArgument(taglet1.getTagletClass()),
+                        SINCE_JAVADOC_1_4);
             }
         }
     }
