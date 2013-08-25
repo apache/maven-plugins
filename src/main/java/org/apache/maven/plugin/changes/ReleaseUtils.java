@@ -192,10 +192,9 @@ public class ReleaseUtils
 
         // Loop through the List of releases from changes.xml and casting each
         // release to a Release
-        for ( Iterator iterator = changesReleases.iterator(); iterator.hasNext(); )
-        {
-            Release release = (Release) iterator.next();
-            releases.add( release );
+        for (Object changesRelease : changesReleases) {
+            Release release = (Release) changesRelease;
+            releases.add(release);
         }
         return releases;
     }
@@ -225,28 +224,25 @@ public class ReleaseUtils
 
         if ( releases != null )
         {
-            for ( Iterator iterator = releases.iterator(); iterator.hasNext(); )
-            {
-                final Release release = (Release) iterator.next();
-                final Release componentRelease = getRelease( componentReleases, release.getVersion() );
-                if ( componentRelease != null ) {
-                    release.addComponent( componentName, componentRelease );
+            for (Object release1 : releases) {
+                final Release release = (Release) release1;
+                final Release componentRelease = getRelease(componentReleases, release.getVersion());
+                if (componentRelease != null) {
+                    release.addComponent(componentName, componentRelease);
                 }
-                mergedReleases.add( release );
+                mergedReleases.add(release);
             }
         }
 
-        for ( Iterator iterator = componentReleases.iterator(); iterator.hasNext(); )
-        {
-            final Release release = (Release) iterator.next();
-            final Release mergedRelease = getRelease( mergedReleases, release.getVersion() );
-            if ( mergedRelease == null )
-            {
+        for (Object componentRelease1 : componentReleases) {
+            final Release release = (Release) componentRelease1;
+            final Release mergedRelease = getRelease(mergedReleases, release.getVersion());
+            if (mergedRelease == null) {
                 final Release componentRelease = new Release();
-                componentRelease.setVersion( release.getVersion() );
-                componentRelease.setDateRelease( release.getDateRelease() );
-                componentRelease.addComponent( componentName, release );
-                mergedReleases.add( componentRelease );
+                componentRelease.setVersion(release.getVersion());
+                componentRelease.setDateRelease(release.getDateRelease());
+                componentRelease.addComponent(componentName, release);
+                mergedReleases.add(componentRelease);
             }
         }
 

@@ -56,20 +56,20 @@ public class JiraMojo
 
     static
     {
-        JIRA_COLUMNS.put( "Assignee",  Integer.valueOf( IssuesReportHelper.COLUMN_ASSIGNEE ) );
-        JIRA_COLUMNS.put( "Component", Integer.valueOf( IssuesReportHelper.COLUMN_COMPONENT ) );
-        JIRA_COLUMNS.put( "Created", Integer.valueOf( IssuesReportHelper.COLUMN_CREATED ) );
-        JIRA_COLUMNS.put( "Fix Version", Integer.valueOf( IssuesReportHelper.COLUMN_FIX_VERSION ) );
-        JIRA_COLUMNS.put( "Id", Integer.valueOf( IssuesReportHelper.COLUMN_ID ) );
-        JIRA_COLUMNS.put( "Key", Integer.valueOf( IssuesReportHelper.COLUMN_KEY ) );
-        JIRA_COLUMNS.put( "Priority", Integer.valueOf( IssuesReportHelper.COLUMN_PRIORITY ) );
-        JIRA_COLUMNS.put( "Reporter", Integer.valueOf( IssuesReportHelper.COLUMN_REPORTER ) );
-        JIRA_COLUMNS.put( "Resolution", Integer.valueOf( IssuesReportHelper.COLUMN_RESOLUTION ) );
-        JIRA_COLUMNS.put( "Status", Integer.valueOf( IssuesReportHelper.COLUMN_STATUS ) );
-        JIRA_COLUMNS.put( "Summary", Integer.valueOf( IssuesReportHelper.COLUMN_SUMMARY ) );
-        JIRA_COLUMNS.put( "Type", Integer.valueOf( IssuesReportHelper.COLUMN_TYPE ) );
-        JIRA_COLUMNS.put( "Updated", Integer.valueOf( IssuesReportHelper.COLUMN_UPDATED ) );
-        JIRA_COLUMNS.put( "Version", Integer.valueOf( IssuesReportHelper.COLUMN_VERSION ) );
+        JIRA_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE);
+        JIRA_COLUMNS.put( "Component", IssuesReportHelper.COLUMN_COMPONENT);
+        JIRA_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED);
+        JIRA_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION);
+        JIRA_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID);
+        JIRA_COLUMNS.put( "Key", IssuesReportHelper.COLUMN_KEY);
+        JIRA_COLUMNS.put( "Priority", IssuesReportHelper.COLUMN_PRIORITY);
+        JIRA_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER);
+        JIRA_COLUMNS.put( "Resolution", IssuesReportHelper.COLUMN_RESOLUTION);
+        JIRA_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS);
+        JIRA_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY);
+        JIRA_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE);
+        JIRA_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED);
+        JIRA_COLUMNS.put( "Version", IssuesReportHelper.COLUMN_VERSION);
     }
 
     /**

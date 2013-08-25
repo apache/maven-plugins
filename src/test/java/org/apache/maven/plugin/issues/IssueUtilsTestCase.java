@@ -51,7 +51,7 @@ public class IssueUtilsTestCase
         issueList.add( issue_1 );
         issueList.add( issue_2 );
 
-        List filteredIssues = null;
+        List filteredIssues;
         try
         {
             filteredIssues = IssueUtils.filterIssuesWithVersionPrefix( issueList, null );

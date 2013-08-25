@@ -266,33 +266,27 @@ public class AnnouncementMailMojo
             mailMsg.setContentType( this.mailContentType );
             mailMsg.setFrom( fromAddress, fromName );
 
-            final Iterator it = getToAddresses().iterator();
-            while ( it.hasNext() )
-            {
-                email = it.next().toString();
-                getLog().info( "Sending mail to " + email + "..." );
-                mailMsg.addTo( email, "" );
+            for (Object o1 : getToAddresses()) {
+                email = o1.toString();
+                getLog().info("Sending mail to " + email + "...");
+                mailMsg.addTo(email, "");
             }
 
             if ( getCcAddresses() != null )
             {
-                final Iterator it2 = getCcAddresses().iterator();
-                while ( it2.hasNext() )
-                {
-                    email = it2.next().toString();
-                    getLog().info( "Sending cc mail to " + email + "..." );
-                    mailMsg.addCc( email, "" );
+                for (Object o : getCcAddresses()) {
+                    email = o.toString();
+                    getLog().info("Sending cc mail to " + email + "...");
+                    mailMsg.addCc(email, "");
                 }
             }
 
             if ( getBccAddresses() != null )
             {
-                final Iterator it3 = getBccAddresses().iterator();
-                while ( it3.hasNext() )
-                {
-                    email = it3.next().toString();
-                    getLog().info( "Sending bcc mail to " + email + "..." );
-                    mailMsg.addBcc( email, "" );
+                for (Object o : getBccAddresses()) {
+                    email = o.toString();
+                    getLog().info("Sending bcc mail to " + email + "...");
+                    mailMsg.addBcc(email, "");
                 }
             }
 
@@ -375,14 +369,11 @@ public class AnnouncementMailMojo
         }
         else
         {
-            final Iterator it = from.iterator();
-            while ( it.hasNext() )
-            {
-                Developer developer = (Developer) it.next();
+            for (Object aFrom : from) {
+                Developer developer = (Developer) aFrom;
 
-                if ( fromDeveloperId.equals( developer.getId() ) )
-                {
-                    return new MailSender( developer.getName(), developer.getEmail() );
+                if (fromDeveloperId.equals(developer.getId())) {
+                    return new MailSender(developer.getName(), developer.getEmail());
                 }
             }
             throw new MojoExecutionException(

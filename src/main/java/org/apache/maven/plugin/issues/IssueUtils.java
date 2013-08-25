@@ -49,20 +49,16 @@ public class IssueUtils
     {
         List<Issue> filteredIssues = new ArrayList<Issue>();
         boolean isFound = false;
-        Issue issue = null;
+        Issue issue;
 
-        for ( int i = 0; i < issues.size(); i++ )
-        {
-            issue = (Issue) issues.get( i );
+        for (Issue issue1 : issues) {
+            issue = (Issue) issue1;
 
-            if ( issue.getFixVersions() != null )
-            {
-                for ( String fixVersion : issue.getFixVersions() )
-                {
-                    if ( prefix == null || fixVersion.startsWith( prefix ) )
-                    {
+            if (issue.getFixVersions() != null) {
+                for (String fixVersion : issue.getFixVersions()) {
+                    if (prefix == null || fixVersion.startsWith(prefix)) {
                         isFound = true;
-                        filteredIssues.add( issue );
+                        filteredIssues.add(issue);
                         break;
                     }
                 }
@@ -94,7 +90,7 @@ public class IssueUtils
     {
         List<Issue> issuesForVersion = new ArrayList<Issue>();
         boolean isFound = false;
-        Issue issue = null;
+        Issue issue;
         String releaseVersion = version;
 
         // Remove "-SNAPSHOT" from the end of the version, if it's there
@@ -103,14 +99,12 @@ public class IssueUtils
             releaseVersion = version.substring( 0, version.length() - SNAPSHOT_SUFFIX.length() );
         }
 
-        for ( int i = 0; i < issues.size(); i++ )
-        {
-            issue = (Issue) issues.get( i );
+        for (Issue issue1 : issues) {
+            issue = (Issue) issue1;
 
-            if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
-            {
+            if (issue.getFixVersions() != null && issue.getFixVersions().contains(releaseVersion)) {
                 isFound = true;
-                issuesForVersion.add( issue );
+                issuesForVersion.add(issue);
             }
         }
 

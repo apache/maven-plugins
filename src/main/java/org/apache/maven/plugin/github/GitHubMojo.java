@@ -55,15 +55,15 @@ public class GitHubMojo
 
     static
     {
-        GITHUB_COLUMNS.put( "Assignee", Integer.valueOf( IssuesReportHelper.COLUMN_ASSIGNEE ) );
-        GITHUB_COLUMNS.put( "Created", Integer.valueOf( IssuesReportHelper.COLUMN_CREATED ) );
-        GITHUB_COLUMNS.put( "Fix Version", Integer.valueOf( IssuesReportHelper.COLUMN_FIX_VERSION ) );
-        GITHUB_COLUMNS.put( "Id", Integer.valueOf( IssuesReportHelper.COLUMN_ID ) );
-        GITHUB_COLUMNS.put( "Reporter", Integer.valueOf( IssuesReportHelper.COLUMN_REPORTER ) );
-        GITHUB_COLUMNS.put( "Status", Integer.valueOf( IssuesReportHelper.COLUMN_STATUS ) );
-        GITHUB_COLUMNS.put( "Summary", Integer.valueOf( IssuesReportHelper.COLUMN_SUMMARY ) );
-        GITHUB_COLUMNS.put( "Type", Integer.valueOf( IssuesReportHelper.COLUMN_TYPE ) );
-        GITHUB_COLUMNS.put( "Updated", Integer.valueOf( IssuesReportHelper.COLUMN_UPDATED ) );
+        GITHUB_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE);
+        GITHUB_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED);
+        GITHUB_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION);
+        GITHUB_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID);
+        GITHUB_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER);
+        GITHUB_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS);
+        GITHUB_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY);
+        GITHUB_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE);
+        GITHUB_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED);
     }
 
     /**
