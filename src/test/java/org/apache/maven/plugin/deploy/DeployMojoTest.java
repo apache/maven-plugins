@@ -154,10 +154,9 @@ public class DeployMojoTest
         File localRepo = new File( LOCAL_REPO, "" );
         
         File[] files = localRepo.listFiles();
-        
-        for( int i=0; i<files.length; i++ )
-        {
-            addFileToList( files[i], fileList );
+
+        for (File file2 : files) {
+            addFileToList(file2, fileList);
         }
         
         assertEquals( expectedFiles.size(), fileList.size() );
@@ -191,10 +190,9 @@ public class DeployMojoTest
         remoteRepo = new File( remoteRepo, "basic-deploy-test" );
         
         files = remoteRepo.listFiles();
-        
-        for( int i=0; i<files.length; i++ )
-        {
-            addFileToList( files[i], fileList );
+
+        for (File file1 : files) {
+            addFileToList(file1, fileList);
         }
         
         assertEquals( expectedFiles.size(), fileList.size() );
@@ -302,10 +300,9 @@ public class DeployMojoTest
         remoteRepo = new File( remoteRepo, "basic-deploy-pom" );
         
         File[] files = remoteRepo.listFiles();
-        
-        for( int i=0; i<files.length; i++ )
-        {
-            addFileToList( files[i], fileList );
+
+        for (File file : files) {
+            addFileToList(file, fileList);
         }
         
         assertEquals( expectedFiles.size(), fileList.size() );
@@ -323,7 +320,7 @@ public class DeployMojoTest
         
         assertNotNull( mojo );
         
-        boolean updateReleaseInfo = ( ( Boolean ) getVariableValueFromObject( mojo, "updateReleaseInfo" ) ).booleanValue();
+        boolean updateReleaseInfo = (Boolean) getVariableValueFromObject(mojo, "updateReleaseInfo");
         
         assertTrue( updateReleaseInfo );
         
@@ -454,10 +451,9 @@ public class DeployMojoTest
         remoteRepo = new File( remoteRepo, "basic-deploy-with-attached-artifacts" );
         
         File[] files = remoteRepo.listFiles();
-        
-        for( int i=0; i<files.length; i++ )
-        {
-            addFileToList( files[i], fileList );
+
+        for (File file1 : files) {
+            addFileToList(file1, fileList);
         }
         
         assertEquals( expectedFiles.size(), fileList.size() );
@@ -543,9 +539,8 @@ public class DeployMojoTest
 
             File[] files = file.listFiles();
 
-            for( int i=0; i<files.length; i++ )
-            {
-                addFileToList( files[i], fileList );
+            for (File file1 : files) {
+                addFileToList(file1, fileList);
             }
         }
     }    
