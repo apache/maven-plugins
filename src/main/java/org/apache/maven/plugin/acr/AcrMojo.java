@@ -183,7 +183,7 @@ public class AcrMojo
             if ( excludes != null && !excludes.isEmpty() )
             {
                 excludes.add( APP_CLIENT_XML );
-                mainJarExcludes = excludes.toArray( EMPTY_STRING_ARRAY );
+                mainJarExcludes = excludes.toArray(new String[excludes.size()]);
             }
 
             if ( !outputDirectory.exists() )
