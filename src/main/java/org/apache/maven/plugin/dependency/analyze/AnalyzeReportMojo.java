@@ -130,7 +130,7 @@ public class AnalyzeReportMojo
         }
 
         // Step 1: Analyze the project
-        ProjectDependencyAnalysis analysis = null;
+        ProjectDependencyAnalysis analysis;
         try
         {
             analysis = analyzer.analyze( project );

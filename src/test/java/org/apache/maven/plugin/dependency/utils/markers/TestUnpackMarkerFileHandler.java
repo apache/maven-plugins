@@ -59,7 +59,8 @@ public class TestUnpackMarkerFileHandler
 
         stubFactory = new DependencyArtifactStubFactory( this.testDir, false );
         Artifact artifact = stubFactory.createArtifact( "test", "test", "1" );
-        ArtifactItem artifactItem = stubFactory.getArtifactItem( artifact );
+        ArtifactItem artifactItem;
+        stubFactory.getArtifactItem(artifact);
         artifactItems.add( stubFactory.getArtifactItem( stubFactory.createArtifact( "test", "test", "1" ) ) );
         artifact = stubFactory.createArtifact( "test2", "test2", "2" );
         artifactItem = new ArtifactItem( artifact );
@@ -218,8 +219,8 @@ public class TestUnpackMarkerFileHandler
         handler.setMarker();
         assertTrue( handler.isMarkerSet() );
         assertTrue( handle.exists() );
-        String hashCode = "" + ( 0 + "**/*.xml".hashCode() );
-        assertTrue( handle.getName().indexOf( hashCode ) > -1 );
+        String hashCode = "" + ("**/*.xml".hashCode());
+        assertTrue(handle.getName().contains(hashCode));
 
         handle.delete();
         assertFalse( handler.isMarkerSet() );
@@ -242,8 +243,8 @@ public class TestUnpackMarkerFileHandler
 	    handler.setMarker();
 	    assertTrue( handler.isMarkerSet() );
 	    assertTrue( handle.exists() );
-	    String hashCode = "" + ( 0 + "**/*.class".hashCode() );
-	    assertTrue( handle.getName().indexOf( hashCode ) > -1 );
+	    String hashCode = "" + ("**/*.class".hashCode());
+	    assertTrue(handle.getName().contains(hashCode));
 	
 	    handle.delete();
 	    assertFalse( handler.isMarkerSet() );
@@ -267,7 +268,7 @@ public class TestUnpackMarkerFileHandler
 	    assertTrue( handler.isMarkerSet() );
 	    assertTrue( handle.exists() );
 	    String hashCode = "" + ( 0 + "**/*.class".hashCode() + "**/*.xml".hashCode() );
-	    assertTrue( handle.getName().indexOf( hashCode ) > -1 );
+	    assertTrue(handle.getName().contains(hashCode));
 	
 	    handle.delete();
 	    assertFalse( handler.isMarkerSet() );

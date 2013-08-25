@@ -166,7 +166,7 @@ public class TestSkip
         mojo.setLog( log );
         mojo.execute();
 
-        assertTrue( log.getContent().indexOf( "Skipping plugin execution" ) != -1 );
+        assertTrue(log.getContent().contains("Skipping plugin execution"));
     }
 
     class CapturingLog

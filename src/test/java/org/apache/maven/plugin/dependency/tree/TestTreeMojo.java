@@ -173,7 +173,7 @@ public class TestTreeMojo
         BufferedReader fp1 = new BufferedReader( new FileReader( outputFileName ) );
         List<String> contents = new ArrayList<String>();
 
-        String line = null;
+        String line;
         while ( ( line = fp1.readLine() ) != null )
         {
             contents.add( line );
@@ -192,7 +192,7 @@ public class TestTreeMojo
     {
         for ( String line : contents )
         {
-            if ( line.indexOf( str ) != -1 )
+            if (line.contains(str))
             {
                 // if match then return here
                 return true;

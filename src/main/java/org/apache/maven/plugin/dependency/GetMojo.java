@@ -320,7 +320,7 @@ public class GetMojo
         String url = repo;
 
         // if it's an extended repo URL of the form id::layout::url
-        if ( repo.indexOf( "::" ) >= 0 )
+        if (repo.contains("::"))
         {
             Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( repo );
             if ( !matcher.matches() )

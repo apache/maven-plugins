@@ -125,7 +125,7 @@ public final class DependencyUtil
             destFileName.append( artifact.getGroupId() ).append( "." );
         }
         
-        String versionString = null;
+        String versionString;
         if ( !removeVersion )
         {
             if ( useBaseVersion )

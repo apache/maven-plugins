@@ -45,10 +45,9 @@ public class TestAnalyzeDuplicateMojo
         mojo.setLog( log );
         mojo.execute();
 
-        assertTrue( log.getContent().indexOf(
-                                              "List of duplicate dependencies defined in <dependencies/> in "
-                                                  + "your pom.xml" ) != -1 );
-        assertTrue( log.getContent().indexOf( "junit:junit:jar" ) != -1 );
+        assertTrue(log.getContent().contains("List of duplicate dependencies defined in <dependencies/> in "
+                + "your pom.xml"));
+        assertTrue(log.getContent().contains("junit:junit:jar"));
     }
 
     public void testDuplicate2()
@@ -62,10 +61,9 @@ public class TestAnalyzeDuplicateMojo
         mojo.setLog( log );
         mojo.execute();
 
-        assertTrue( log.getContent().indexOf(
-                                              "List of duplicate dependencies defined in <dependencyManagement/> in "
-                                                  + "your pom.xml" ) != -1 );
-        assertTrue( log.getContent().indexOf( "junit:junit:jar" ) != -1 );
+        assertTrue(log.getContent().contains("List of duplicate dependencies defined in <dependencyManagement/> in "
+                + "your pom.xml"));
+        assertTrue(log.getContent().contains("junit:junit:jar"));
     }
 
     class DuplicateLog

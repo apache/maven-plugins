@@ -52,7 +52,7 @@ public class UnpackFileMarkerHandler
          * parameters, this will allow an artifact to be included multiple
          * times with different include/exclude parameters
          */
-        File markerFile = null;
+        File markerFile;
         if ( this.artifactItem == null || ( StringUtils.isEmpty( this.artifactItem.getIncludes() )
             && StringUtils.isEmpty( this.artifactItem.getExcludes() ) ) )
         {

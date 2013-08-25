@@ -310,7 +310,7 @@ public abstract class AbstractDependencyFilterMojo
         }
 
         // transform artifacts if classifier is set
-        DependencyStatusSets status = null;
+        DependencyStatusSets status;
         if ( StringUtils.isNotEmpty( classifier ) )
         {
             status = getClassifierTranslatedDependencies( artifacts, stopOnFailure );

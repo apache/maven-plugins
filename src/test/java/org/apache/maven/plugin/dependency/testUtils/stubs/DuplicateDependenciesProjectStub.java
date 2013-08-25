@@ -37,7 +37,7 @@ public class DuplicateDependenciesProjectStub
     {
         File pom = new File( getBasedir(), "plugin-config.xml" );
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        Model model;
 
         try
         {

@@ -56,7 +56,7 @@ public class ClassifierTypeTranslator
      */
     public Set<Artifact> translate( Set<Artifact> artifacts, Log log )
     {
-        Set<Artifact> results = artifacts;
+        Set<Artifact> results;
 
         log.debug( "Translating Artifacts using Classifier: " + this.classifier + " and Type: " + this.type );
         results = new HashSet<Artifact>();
@@ -65,7 +65,7 @@ public class ClassifierTypeTranslator
             // this translator must pass both type and classifier here so we
             // will use the
             // base artifact value if null comes in
-            String useType = null;
+            String useType;
             if ( StringUtils.isNotEmpty( this.type ) )
             {
                 useType = this.type;
@@ -75,7 +75,7 @@ public class ClassifierTypeTranslator
                 useType = artifact.getType();
             }
 
-            String useClassifier = null;
+            String useClassifier;
             if ( StringUtils.isNotEmpty( this.classifier ) )
             {
                 useClassifier = this.classifier;
