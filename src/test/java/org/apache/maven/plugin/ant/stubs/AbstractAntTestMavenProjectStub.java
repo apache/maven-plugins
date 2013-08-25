@@ -56,7 +56,7 @@ public abstract class AbstractAntTestMavenProjectStub
         File antTestDir = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "/" );
 
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        Model model;
 
         try
         {

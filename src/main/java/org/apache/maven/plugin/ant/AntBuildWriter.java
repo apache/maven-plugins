@@ -160,7 +160,8 @@ public class AntBuildWriter
         // src/main/java
         if ( !project.getCompileSourceRoots().isEmpty() )
         {
-            String[] compileSourceRoots = (String[]) project.getCompileSourceRoots().toArray( new String[0] );
+            List var = project.getCompileSourceRoots();
+            String[] compileSourceRoots = (String[]) var.toArray(new String[var.size()]);
             for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
                 addProperty( properties, "maven.build.srcDir." + i, AntBuildWriterUtil.toRelative( project.getBasedir(),
@@ -170,7 +171,8 @@ public class AntBuildWriter
         // src/main/resources
         if ( project.getBuild().getResources() != null )
         {
-            Resource[] array = (Resource[]) project.getBuild().getResources().toArray( new Resource[0] );
+            List<Resource> var = project.getBuild().getResources();
+            Resource[] array = (Resource[]) var.toArray(new Resource[var.size()]);
             for ( int i = 0; i < array.length; i++ )
             {
                 addProperty( properties, "maven.build.resourceDir." + i, AntBuildWriterUtil.toRelative( project.getBasedir(),
@@ -185,7 +187,8 @@ public class AntBuildWriter
         // src/test/java
         if ( !project.getTestCompileSourceRoots().isEmpty() )
         {
-            String[] compileSourceRoots = (String[]) project.getTestCompileSourceRoots().toArray( new String[0] );
+            List var = project.getTestCompileSourceRoots();
+            String[] compileSourceRoots = (String[]) var.toArray(new String[var.size()]);
             for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
                 addProperty( properties, "maven.build.testDir." + i, AntBuildWriterUtil.toRelative( project.getBasedir(),
@@ -195,7 +198,8 @@ public class AntBuildWriter
         // src/test/resources
         if ( project.getBuild().getTestResources() != null )
         {
-            Resource[] array = (Resource[]) project.getBuild().getTestResources().toArray( new Resource[0] );
+            List<Resource> var = project.getBuild().getTestResources();
+            Resource[] array = (Resource[]) var.toArray(new Resource[var.size()]);
             for ( int i = 0; i < array.length; i++ )
             {
                 addProperty( properties, "maven.build.testResourceDir." + i, AntBuildWriterUtil
@@ -221,10 +225,9 @@ public class AntBuildWriter
 
         if ( project.getProperties() != null )
         {
-            for ( Iterator it = project.getProperties().entrySet().iterator(); it.hasNext(); )
-            {
-                Map.Entry property = (Map.Entry) it.next();
-                addProperty( properties, property.getKey().toString(), property.getValue().toString() );
+            for (Map.Entry<Object, Object> objectObjectEntry : project.getProperties().entrySet()) {
+                Map.Entry property = (Map.Entry) objectObjectEntry;
+                addProperty(properties, property.getKey().toString(), property.getValue().toString());
             }
         }
 
@@ -602,22 +605,18 @@ public class AntBuildWriter
         writer.startElement( "path" );
         writer.addAttribute( "id", id );
 
-        for ( Iterator i = artifacts.iterator(); i.hasNext(); )
-        {
-            Artifact artifact = (Artifact) i.next();
+        for (Object artifact1 : artifacts) {
+            Artifact artifact = (Artifact) artifact1;
 
-            writer.startElement( "pathelement" );
+            writer.startElement("pathelement");
 
             String path;
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
-                path = getUninterpolatedSystemPath( artifact );
+            if (Artifact.SCOPE_SYSTEM.equals(artifact.getScope())) {
+                path = getUninterpolatedSystemPath(artifact);
+            } else {
+                path = "${maven.repo.local}/" + artifactResolverWrapper.getLocalArtifactPath(artifact);
             }
-            else
-            {
-                path = "${maven.repo.local}/" + artifactResolverWrapper.getLocalArtifactPath( artifact );
-            }
-            writer.addAttribute( "location", path );
+            writer.addAttribute("location", path);
 
             writer.endElement(); // pathelement
         }
@@ -629,23 +628,16 @@ public class AntBuildWriter
     {
         String managementKey = artifact.getDependencyConflictId();
 
-        for ( Iterator it = project.getOriginalModel().getDependencies().iterator(); it.hasNext(); )
-        {
-            Dependency dependency = (Dependency) it.next();
-            if ( managementKey.equals( dependency.getManagementKey() ) )
-            {
+        for (Dependency dependency : project.getOriginalModel().getDependencies()) {
+            if (managementKey.equals(dependency.getManagementKey())) {
                 return dependency.getSystemPath();
             }
         }
 
-        for ( Iterator itp = project.getOriginalModel().getProfiles().iterator(); itp.hasNext(); )
-        {
-            Profile profile = (Profile) itp.next();
-            for ( Iterator it = profile.getDependencies().iterator(); it.hasNext(); )
-            {
+        for (Profile profile : project.getOriginalModel().getProfiles()) {
+            for (Iterator it = profile.getDependencies().iterator(); it.hasNext(); ) {
                 Dependency dependency = (Dependency) it.next();
-                if ( managementKey.equals( dependency.getManagementKey() ) )
-                {
+                if (managementKey.equals(dependency.getManagementKey())) {
                     return dependency.getSystemPath();
                 }
             }
@@ -660,13 +652,11 @@ public class AntBuildWriter
         props.put( "basedir", project.getBasedir().getAbsolutePath() );
 
         SortedMap candidateProperties = new TreeMap();
-        for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
-        {
-            String key = (String) it.next();
-            String value = new File( props.getProperty( key ) ).getPath();
-            if ( path.startsWith( value ) && value.length() > 0 )
-            {
-                candidateProperties.put( value, key );
+        for (Object o : props.keySet()) {
+            String key = (String) o;
+            String value = new File(props.getProperty(key)).getPath();
+            if (path.startsWith(value) && value.length() > 0) {
+                candidateProperties.put(value, key);
             }
         }
         if ( !candidateProperties.isEmpty() )
@@ -698,10 +688,9 @@ public class AntBuildWriter
         {
             if ( project.getModules() != null )
             {
-                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-                {
-                    String moduleSubPath = (String) it.next();
-                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "clean" );
+                for (Object o : project.getModules()) {
+                    String moduleSubPath = (String) o;
+                    AntBuildWriterUtil.writeAntTask(writer, project, moduleSubPath, "clean");
                 }
             }
         }
@@ -736,10 +725,9 @@ public class AntBuildWriter
             writer.addAttribute( "description", "Compile the code" );
             if ( project.getModules() != null )
             {
-                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-                {
-                    String moduleSubPath = (String) it.next();
-                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "compile" );
+                for (Object o : project.getModules()) {
+                    String moduleSubPath = (String) o;
+                    AntBuildWriterUtil.writeAntTask(writer, project, moduleSubPath, "compile");
                 }
             }
             writer.endElement(); // target
@@ -779,10 +767,9 @@ public class AntBuildWriter
             writer.addAttribute( "description", "Compile the test code" );
             if ( project.getModules() != null )
             {
-                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-                {
-                    String moduleSubPath = (String) it.next();
-                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "compile-tests" );
+                for (Object o : project.getModules()) {
+                    String moduleSubPath = (String) o;
+                    AntBuildWriterUtil.writeAntTask(writer, project, moduleSubPath, "compile-tests");
                 }
             }
             writer.endElement(); // target
@@ -822,10 +809,9 @@ public class AntBuildWriter
             writer.addAttribute( "description", "Run the test cases" );
             if ( project.getModules() != null )
             {
-                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-                {
-                    String moduleSubPath = (String) it.next();
-                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "test" );
+                for (Object o : project.getModules()) {
+                    String moduleSubPath = (String) o;
+                    AntBuildWriterUtil.writeAntTask(writer, project, moduleSubPath, "test");
                 }
             }
             writer.endElement(); // target
@@ -1040,10 +1026,9 @@ public class AntBuildWriter
         {
             if ( project.getModules() != null )
             {
-                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-                {
-                    String moduleSubPath = (String) it.next();
-                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "javadoc" );
+                for (Object o : project.getModules()) {
+                    String moduleSubPath = (String) o;
+                    AntBuildWriterUtil.writeAntTask(writer, project, moduleSubPath, "javadoc");
                 }
             }
         }
@@ -1082,10 +1067,9 @@ public class AntBuildWriter
         {
             if ( project.getModules() != null )
             {
-                for ( Iterator it = project.getModules().iterator(); it.hasNext(); )
-                {
-                    String moduleSubPath = (String) it.next();
-                    AntBuildWriterUtil.writeAntTask( writer, project, moduleSubPath, "package" );
+                for (Object o : project.getModules()) {
+                    String moduleSubPath = (String) o;
+                    AntBuildWriterUtil.writeAntTask(writer, project, moduleSubPath, "package");
                 }
             }
         }
@@ -1306,54 +1290,45 @@ public class AntBuildWriter
         String basedir = project.getBasedir().getAbsolutePath();
 
         // TODO: proxy - probably better to use wagon!
-        for ( Iterator i = project.getTestArtifacts().iterator(); i.hasNext(); )
-        {
-            Artifact artifact = (Artifact) i.next();
+        for (Object o : project.getTestArtifacts()) {
+            Artifact artifact = (Artifact) o;
 
-            if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-            {
+            if (Artifact.SCOPE_SYSTEM.equals(artifact.getScope())) {
                 continue;
             }
 
-            String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
+            String path = artifactResolverWrapper.getLocalArtifactPath(artifact);
 
-            if ( !new File( path ).exists() )
-            {
-                File parentDirs = new File( path ).getParentFile();
-                if ( parentDirs != null )
-                {
-                    writer.startElement( "mkdir" );
+            if (!new File(path).exists()) {
+                File parentDirs = new File(path).getParentFile();
+                if (parentDirs != null) {
+                    writer.startElement("mkdir");
                     // Replace \ with / in the parent dir path
-                    writer.addAttribute( "dir", "${maven.repo.local}/" + parentDirs.getPath().replace( '\\', '/' ) );
+                    writer.addAttribute("dir", "${maven.repo.local}/" + parentDirs.getPath().replace('\\', '/'));
                     writer.endElement(); // mkdir
                 }
 
-                for ( Iterator j = project.getRepositories().iterator(); j.hasNext(); )
-                {
+                for (Iterator j = project.getRepositories().iterator(); j.hasNext(); ) {
                     Repository repository = (Repository) j.next();
                     String url = repository.getUrl();
 
-                    String localDir = getProjectRepoDirectory( url, basedir );
-                    if ( localDir != null )
-                    {
-                        if ( localDir.length() > 0 && !localDir.endsWith( "/" ) )
-                        {
+                    String localDir = getProjectRepoDirectory(url, basedir);
+                    if (localDir != null) {
+                        if (localDir.length() > 0 && !localDir.endsWith("/")) {
                             localDir += '/';
                         }
 
-                        writer.startElement( "copy" );
-                        writer.addAttribute( "file", localDir + path );
-                        AntBuildWriterUtil.addWrapAttribute( writer, "copy", "tofile", "${maven.repo.local}/" + path, 3 );
-                        AntBuildWriterUtil.addWrapAttribute( writer, "copy", "failonerror", "false", 3 );
+                        writer.startElement("copy");
+                        writer.addAttribute("file", localDir + path);
+                        AntBuildWriterUtil.addWrapAttribute(writer, "copy", "tofile", "${maven.repo.local}/" + path, 3);
+                        AntBuildWriterUtil.addWrapAttribute(writer, "copy", "failonerror", "false", 3);
                         writer.endElement(); // copy
-                    }
-                    else
-                    {
-                        writer.startElement( "get" );
-                        writer.addAttribute( "src", url + '/' + path );
-                        AntBuildWriterUtil.addWrapAttribute( writer, "get", "dest", "${maven.repo.local}/" + path, 3 );
-                        AntBuildWriterUtil.addWrapAttribute( writer, "get", "usetimestamp", "false", 3 );
-                        AntBuildWriterUtil.addWrapAttribute( writer, "get", "ignoreerrors", "true", 3 );
+                    } else {
+                        writer.startElement("get");
+                        writer.addAttribute("src", url + '/' + path);
+                        AntBuildWriterUtil.addWrapAttribute(writer, "get", "dest", "${maven.repo.local}/" + path, 3);
+                        AntBuildWriterUtil.addWrapAttribute(writer, "get", "usetimestamp", "false", 3);
+                        AntBuildWriterUtil.addWrapAttribute(writer, "get", "ignoreerrors", "true", 3);
                         writer.endElement(); // get
                     }
                 }
@@ -1489,10 +1464,8 @@ public class AntBuildWriter
         List list = new ArrayList();
         if ( options != null && options.length > 0 )
         {
-            for ( int i = 0; i < options.length; i++ )
-            {
-                Map option = options[i];
-                list.addAll( option.values() );
+            for (Map option : options) {
+                list.addAll(option.values());
             }
         }
         return list;

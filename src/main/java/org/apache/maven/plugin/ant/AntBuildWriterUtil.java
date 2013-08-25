@@ -64,12 +64,10 @@ public class AntBuildWriterUtil
         if ( compileSourceRoots != null )
         {
             // copy as I may be modifying it
-            for ( Iterator i = compileSourceRoots.iterator(); i.hasNext(); )
-            {
-                String srcDir = (String) i.next();
-                if ( new File( srcDir ).exists() )
-                {
-                    newCompileSourceRootsList.add( srcDir );
+            for (Object compileSourceRoot : compileSourceRoots) {
+                String srcDir = (String) compileSourceRoot;
+                if (new File(srcDir).exists()) {
+                    newCompileSourceRootsList.add(srcDir);
                 }
             }
         }
@@ -88,21 +86,19 @@ public class AntBuildWriterUtil
     {
         if ( includes != null )
         {
-            for ( Iterator i = includes.iterator(); i.hasNext(); )
-            {
-                String include = (String) i.next();
-                writer.startElement( "include" );
-                writer.addAttribute( "name", include );
+            for (Object include1 : includes) {
+                String include = (String) include1;
+                writer.startElement("include");
+                writer.addAttribute("name", include);
                 writer.endElement(); // include
             }
         }
         if ( excludes != null )
         {
-            for ( Iterator i = excludes.iterator(); i.hasNext(); )
-            {
-                String exclude = (String) i.next();
-                writer.startElement( "exclude" );
-                writer.addAttribute( "name", exclude );
+            for (Object exclude1 : excludes) {
+                String exclude = (String) exclude1;
+                writer.startElement("exclude");
+                writer.addAttribute("name", exclude);
                 writer.endElement(); // exclude
             }
         }
@@ -173,13 +169,11 @@ public class AntBuildWriterUtil
         throws IOException
     {
         List sources = new ArrayList();
-        for ( Iterator it = project.getCompileSourceRoots().iterator(); it.hasNext(); )
-        {
-            String source = (String) it.next();
+        for (Object o : project.getCompileSourceRoots()) {
+            String source = (String) o;
 
-            if ( new File( source ).exists() )
-            {
-                sources.add( source );
+            if (new File(source).exists()) {
+                sources.add(source);
             }
         }
 
@@ -307,10 +301,9 @@ public class AntBuildWriterUtil
         Map[] links = getMavenJavadocPluginOptions( project, "links", null );
         if ( links != null )
         {
-            for ( int i = 0; i < links.length; i++ )
-            {
-                writer.startElement( "link" );
-                writer.addAttribute( "href", (String) links[i].get( "link" ) );
+            for (Map link : links) {
+                writer.startElement("link");
+                writer.addAttribute("href", (String) link.get("link"));
                 writer.endElement(); // link
             }
         }
@@ -318,11 +311,10 @@ public class AntBuildWriterUtil
         Map[] offlineLinks = getMavenJavadocPluginOptions( project, "offlineLinks", null );
         if ( offlineLinks != null )
         {
-            for ( int i = 0; i < offlineLinks.length; i++ )
-            {
-                writer.startElement( "link" );
-                writer.addAttribute( "href", (String) offlineLinks[i].get( "url" ) );
-                addWrapAttribute( writer, "javadoc", "offline", "true", 4 );
+            for (Map offlineLink : offlineLinks) {
+                writer.startElement("link");
+                writer.addAttribute("href", (String) offlineLink.get("url"));
+                addWrapAttribute(writer, "javadoc", "offline", "true", 4);
                 writer.endElement(); // link
             }
         }
@@ -330,12 +322,11 @@ public class AntBuildWriterUtil
         Map[] groups = getMavenJavadocPluginOptions( project, "groups", null );
         if ( groups != null )
         {
-            for ( int i = 0; i < groups.length; i++ )
-            {
-                Map group = (Map) groups[i].get( "group" );
-                writer.startElement( "group" );
-                writer.addAttribute( "title", (String) group.get( "title" ) );
-                addWrapAttribute( writer, "javadoc", "package", (String) group.get( "package" ), 4 );
+            for (Map group1 : groups) {
+                Map group = (Map) group1.get("group");
+                writer.startElement("group");
+                writer.addAttribute("title", (String) group.get("title"));
+                addWrapAttribute(writer, "javadoc", "package", (String) group.get("package"), 4);
                 writer.endElement(); // group
             }
         }
@@ -397,13 +388,12 @@ public class AntBuildWriterUtil
         Map[] tags = getMavenJavadocPluginOptions( project, "tags", null );
         if ( tags != null )
         {
-            for ( int i = 0; i < tags.length; i++ )
-            {
-                Map props = (Map) tags[i].get( "tag" );
-                writer.startElement( "tag" );
-                writer.addAttribute( "name", (String) props.get( "name" ) );
-                addWrapAttribute( writer, "javadoc", "scope", (String) props.get( "placement" ), 4 );
-                addWrapAttribute( writer, "javadoc", "description", (String) props.get( "head" ), 4 );
+            for (Map tag : tags) {
+                Map props = (Map) tag.get("tag");
+                writer.startElement("tag");
+                writer.addAttribute("name", (String) props.get("name"));
+                addWrapAttribute(writer, "javadoc", "scope", (String) props.get("placement"), 4);
+                addWrapAttribute(writer, "javadoc", "description", (String) props.get("head"), 4);
                 writer.endElement(); // tag
             }
         }
@@ -972,73 +962,59 @@ public class AntBuildWriterUtil
         throws IOException
     {
         List plugins = new ArrayList();
-        for ( Iterator it = project.getModel().getReporting().getPlugins().iterator(); it.hasNext(); )
-        {
-            plugins.add( it.next() );
+        for (ReportPlugin reportPlugin1 : project.getModel().getReporting().getPlugins()) {
+            plugins.add(reportPlugin1);
         }
-        for ( Iterator it = project.getModel().getBuild().getPlugins().iterator(); it.hasNext(); )
-        {
-            plugins.add( it.next() );
+        for (Plugin plugin1 : project.getModel().getBuild().getPlugins()) {
+            plugins.add(plugin1);
         }
         if ( project.getBuild().getPluginManagement() != null )
         {
-            for ( Iterator it = project.getBuild().getPluginManagement().getPlugins().iterator(); it.hasNext(); )
-            {
-                plugins.add( it.next() );
+            for (Plugin plugin : project.getBuild().getPluginManagement().getPlugins()) {
+                plugins.add(plugin);
             }
         }
 
-        for ( Iterator it = plugins.iterator(); it.hasNext(); )
-        {
-            Object next = it.next();
-
+        for (Object next : plugins) {
             Object pluginConf = null;
 
-            if ( next instanceof Plugin )
-            {
+            if (next instanceof Plugin) {
                 Plugin plugin = (Plugin) next;
 
                 // using out-of-box Maven plugins
-                if ( !( ( plugin.getGroupId().equals( "org.apache.maven.plugins" ) ) && ( plugin.getArtifactId()
-                    .equals( pluginArtifactId ) ) ) )
-                {
+                if (!((plugin.getGroupId().equals("org.apache.maven.plugins")) && (plugin.getArtifactId()
+                        .equals(pluginArtifactId)))) {
                     continue;
                 }
 
                 pluginConf = plugin.getConfiguration();
             }
 
-            if ( next instanceof ReportPlugin )
-            {
+            if (next instanceof ReportPlugin) {
                 ReportPlugin reportPlugin = (ReportPlugin) next;
 
                 // using out-of-box Maven plugins
-                if ( !( ( reportPlugin.getGroupId().equals( "org.apache.maven.plugins" ) ) && ( reportPlugin
-                    .getArtifactId().equals( pluginArtifactId ) ) ) )
-                {
+                if (!((reportPlugin.getGroupId().equals("org.apache.maven.plugins")) && (reportPlugin
+                        .getArtifactId().equals(pluginArtifactId)))) {
                     continue;
                 }
 
                 pluginConf = reportPlugin.getConfiguration();
             }
 
-            if ( pluginConf == null )
-            {
+            if (pluginConf == null) {
                 continue;
             }
 
-            try
-            {
+            try {
                 Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                    .parse( new ByteArrayInputStream( pluginConf.toString().getBytes( "UTF-8" ) ) );
+                        .parse(new ByteArrayInputStream(pluginConf.toString().getBytes("UTF-8")));
 
-                NodeList nodeList = XPathAPI.eval( doc, "//configuration/" + optionName ).nodelist();
-                if ( nodeList.getLength() > 0 )
-                {
-                    Node optionNode = nodeList.item( 0 );
+                NodeList nodeList = XPathAPI.eval(doc, "//configuration/" + optionName).nodelist();
+                if (nodeList.getLength() > 0) {
+                    Node optionNode = nodeList.item(0);
 
-                    if ( isList( optionNode ) )
-                    {
+                    if (isList(optionNode)) {
                         /*
                          * <optionNames>
                          *   <optionName>
@@ -1051,46 +1027,37 @@ public class AntBuildWriterUtil
 
                         List optionNames = new ArrayList();
                         NodeList childs = optionNode.getChildNodes();
-                        for ( int i = 0; i < childs.getLength(); i++ )
-                        {
-                            Node child = childs.item( i );
-                            if ( child.getNodeType() == Node.ELEMENT_NODE )
-                            {
+                        for (int i = 0; i < childs.getLength(); i++) {
+                            Node child = childs.item(i);
+                            if (child.getNodeType() == Node.ELEMENT_NODE) {
                                 Map option = new HashMap();
 
-                                if ( isElementContent( child ) )
-                                {
+                                if (isElementContent(child)) {
                                     Map properties = new HashMap();
                                     NodeList childs2 = child.getChildNodes();
-                                    if ( childs2.getLength() > 0 )
-                                    {
-                                        for ( int j = 0; j < childs2.getLength(); j++ )
-                                        {
-                                            Node child2 = childs2.item( j );
-                                            if ( child2.getNodeType() == Node.ELEMENT_NODE )
-                                            {
-                                                properties.put( child2.getNodeName(), getTextContent( child2 ) );
+                                    if (childs2.getLength() > 0) {
+                                        for (int j = 0; j < childs2.getLength(); j++) {
+                                            Node child2 = childs2.item(j);
+                                            if (child2.getNodeType() == Node.ELEMENT_NODE) {
+                                                properties.put(child2.getNodeName(), getTextContent(child2));
                                             }
                                         }
-                                        option.put( child.getNodeName(), properties );
+                                        option.put(child.getNodeName(), properties);
                                     }
-                                }
-                                else
-                                {
-                                    option.put( child.getNodeName(), getTextContent( child ) );
+                                } else {
+                                    option.put(child.getNodeName(), getTextContent(child));
                                 }
 
-                                optionNames.add( option );
+                                optionNames.add(option);
                             }
                         }
 
-                        options.put( optionName, optionNames.toArray( new Map[0] ) );
+                        options.put(optionName, optionNames.toArray(new Map[0]));
 
                         return options;
                     }
 
-                    if ( isElementContent( optionNode ) )
-                    {
+                    if (isElementContent(optionNode)) {
                         /*
                          * <optionName>
                          *  <param1>value1</param1>
@@ -1100,40 +1067,33 @@ public class AntBuildWriterUtil
                         Map option = new HashMap();
 
                         NodeList childs = optionNode.getChildNodes();
-                        if ( childs.getLength() > 1 )
-                        {
+                        if (childs.getLength() > 1) {
                             Map parameters = new HashMap();
 
-                            for ( int i = 0; i < childs.getLength(); i++ )
-                            {
-                                Node child = childs.item( i );
-                                if ( child.getNodeType() == Node.ELEMENT_NODE )
-                                {
-                                    parameters.put( child.getNodeName(), getTextContent( child ) );
+                            for (int i = 0; i < childs.getLength(); i++) {
+                                Node child = childs.item(i);
+                                if (child.getNodeType() == Node.ELEMENT_NODE) {
+                                    parameters.put(child.getNodeName(), getTextContent(child));
                                 }
                             }
 
-                            option.put( optionName, parameters );
+                            option.put(optionName, parameters);
                         }
 
                         return option;
-                    }
-                    else
-                    {
+                    } else {
                         /*
                          * <optionName>value1</optionName>
                          */
                         Map option = new HashMap();
 
-                        option.put( optionName, getTextContent( optionNode ) );
+                        option.put(optionName, getTextContent(optionNode));
 
                         return option;
                     }
                 }
-            }
-            catch ( Exception e )
-            {
-                throw new IOException( "Exception occured: " + e.getMessage() );
+            } catch (Exception e) {
+                throw new IOException("Exception occured: " + e.getMessage());
             }
         }
 
@@ -1161,22 +1121,19 @@ public class AntBuildWriterUtil
 
         if ( project.getArtifacts() != null )
         {
-            for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
-            {
-                Artifact artifact = (Artifact) i.next();
+            for (Object o : project.getArtifacts()) {
+                Artifact artifact = (Artifact) o;
 
-                if ( Artifact.SCOPE_COMPILE.equals( artifact.getScope() )
-                    || Artifact.SCOPE_RUNTIME.equals( artifact.getScope() ) )
-                {
-                    String path = artifactResolverWrapper.getLocalArtifactPath( artifact );
-                    if ( !new File( path ).isAbsolute() )
-                    {
+                if (Artifact.SCOPE_COMPILE.equals(artifact.getScope())
+                        || Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
+                    String path = artifactResolverWrapper.getLocalArtifactPath(artifact);
+                    if (!new File(path).isAbsolute()) {
                         path = "${maven.repo.local}/" + path;
                     }
 
-                    writer.startElement( "copy" );
-                    writer.addAttribute( "file", path );
-                    addWrapAttribute( writer, "copy", "todir", outputDir, 3 );
+                    writer.startElement("copy");
+                    writer.addAttribute("file", path);
+                    addWrapAttribute(writer, "copy", "todir", outputDir, 3);
                     writer.endElement(); // copy
                 }
             }
