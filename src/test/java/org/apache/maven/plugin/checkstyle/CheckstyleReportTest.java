@@ -190,7 +190,7 @@ public class CheckstyleReportTest
         File outputDir = reportMojo.getReportOutputDirectory();
 
         Boolean rss = (Boolean) getVariableValueFromObject( mojo, "enableRSS" );
-        if ( rss.booleanValue() )
+        if (rss)
         {
             File rssFile = new File( outputDir, "checkstyle.rss" );
             assertTrue( "Test rss file exists", rssFile.exists() );
@@ -216,7 +216,7 @@ public class CheckstyleReportTest
         boolean searchHeaderFound =
             ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.rules" ) ) > 0 );
         Boolean rules = (Boolean) getVariableValueFromObject( mojo, "enableRulesSummary" );
-        if ( rules.booleanValue() )
+        if (rules)
         {
             assertTrue( "Test for Rules Summary", searchHeaderFound );
         }
@@ -228,7 +228,7 @@ public class CheckstyleReportTest
         searchHeaderFound =
             ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.summary" )  ) > 0 );
         Boolean severity = (Boolean) getVariableValueFromObject( mojo, "enableSeveritySummary" );
-        if ( severity.booleanValue() )
+        if (severity)
         {
             assertTrue( "Test for Severity Summary", searchHeaderFound );
         }
@@ -240,7 +240,7 @@ public class CheckstyleReportTest
         searchHeaderFound =
             ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.files" ) ) > 0 );
         Boolean files = (Boolean) getVariableValueFromObject( mojo, "enableFilesSummary" );
-        if ( files.booleanValue() )
+        if (files)
         {
             assertTrue( "Test for Files Summary", searchHeaderFound );
         }

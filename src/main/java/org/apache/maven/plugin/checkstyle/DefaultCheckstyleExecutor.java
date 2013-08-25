@@ -306,32 +306,22 @@ public class DefaultCheckstyleExecutor
                 }
             }
             Configuration[] modules = config.getChildren();
-            for ( int i = 0; i < modules.length; i++ )
-            {
-                Configuration module = modules[i];
-                if ( "TreeWalker".equals( module.getName() )
-                    || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
-                {
-                    if ( module instanceof DefaultConfiguration )
-                    {
+            for (Configuration module : modules) {
+                if ("TreeWalker".equals(module.getName())
+                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals(module.getName())) {
+                    if (module instanceof DefaultConfiguration) {
                         //MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
-                        try
-                        {
-                            if ( ( (DefaultConfiguration) module ).getAttribute( "cacheFile" ) == null )
-                            {
-                                ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                        try {
+                            if (((DefaultConfiguration) module).getAttribute("cacheFile") == null) {
+                                ((DefaultConfiguration) module).addAttribute("cacheFile", request.getCacheFile());
                             }
-                        }
-                        catch ( CheckstyleException ex )
-                        {
+                        } catch (CheckstyleException ex) {
                             //MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if "cacheFile"
                             // doesn't exist
-                            ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                            ((DefaultConfiguration) module).addAttribute("cacheFile", request.getCacheFile());
                         }
-                    }
-                    else
-                    {
-                        request.getLog().warn( "Failed to configure cache file on module " + module );
+                    } else {
+                        request.getLog().warn("Failed to configure cache file on module " + module);
                     }
                 }
             }
@@ -487,14 +477,12 @@ public class DefaultCheckstyleExecutor
         }
 
         String[] defaultExcludes = FileUtils.getDefaultExcludes();
-        for ( int i = 0; i < defaultExcludes.length; i++ )
-        {
-            if ( excludesStr.length() > 0 )
-            {
-                excludesStr.append( "," );
+        for (String defaultExclude : defaultExcludes) {
+            if (excludesStr.length() > 0) {
+                excludesStr.append(",");
             }
 
-            excludesStr.append( defaultExcludes[i] );
+            excludesStr.append(defaultExclude);
         }
 
         File sourceDirectory = request.getSourceDirectory();
@@ -517,7 +505,7 @@ public class DefaultCheckstyleExecutor
 
         getLogger().debug( "Added " + files.size() + " files to process." );
 
-        return (File[]) files.toArray( EMPTY_FILE_ARRAY );
+        return (File[]) files.toArray(new File[files.size()]);
     }
 
     private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuilder excludesStr, File sourceDirectory,
