@@ -90,9 +90,8 @@ public class AntrunXmlPlexusConfigurationWriter
     {
         String[] names = c.getAttributeNames();
 
-        for ( int i = 0; i < names.length; i++ )
-        {
-            w.addAttribute( names[i], c.getAttribute( names[i], null ) );
+        for (String name : names) {
+            w.addAttribute(name, c.getAttribute(name, null));
         }
     }
 

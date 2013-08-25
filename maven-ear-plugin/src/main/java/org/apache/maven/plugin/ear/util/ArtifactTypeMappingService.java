@@ -70,39 +70,28 @@ public class ArtifactTypeMappingService
         // Inject users configuration
         final PlexusConfiguration[] artifactTypeMappings =
             plexusConfiguration.getChildren( ARTIFACT_TYPE_MAPPING_ELEMENT );
-        for ( int i = 0; i < artifactTypeMappings.length; i++ )
-        {
-            PlexusConfiguration artifactTypeMapping = artifactTypeMappings[i];
-            final String customType = artifactTypeMapping.getAttribute( TYPE_ATTRIBUTE );
-            final String mapping = artifactTypeMapping.getAttribute( MAPPING_ATTRIBUTE );
+        for (PlexusConfiguration artifactTypeMapping : artifactTypeMappings) {
+            final String customType = artifactTypeMapping.getAttribute(TYPE_ATTRIBUTE);
+            final String mapping = artifactTypeMapping.getAttribute(MAPPING_ATTRIBUTE);
 
-            if ( customType == null )
-            {
-                throw new EarPluginException( "Invalid artifact type mapping, type attribute should be set." );
-            }
-            else if ( mapping == null )
-            {
-                throw new EarPluginException( "Invalid artifact type mapping, mapping attribute should be set." );
-            }
-            else if ( !EarModuleFactory.isStandardArtifactType( mapping ) )
-            {
+            if (customType == null) {
+                throw new EarPluginException("Invalid artifact type mapping, type attribute should be set.");
+            } else if (mapping == null) {
+                throw new EarPluginException("Invalid artifact type mapping, mapping attribute should be set.");
+            } else if (!EarModuleFactory.isStandardArtifactType(mapping)) {
                 throw new EarPluginException(
-                    "Invalid artifact type mapping, mapping[" + mapping + "] must be a standard Ear artifact type["
-                        + EarModuleFactory.getStandardArtifactTypes() + "]" );
-            }
-            else if ( customMappings.containsKey( customType ) )
-            {
+                        "Invalid artifact type mapping, mapping[" + mapping + "] must be a standard Ear artifact type["
+                                + EarModuleFactory.getStandardArtifactTypes() + "]");
+            } else if (customMappings.containsKey(customType)) {
                 throw new EarPluginException(
-                    "Invalid artifact type mapping, type[" + customType + "] is already registered." );
-            }
-            else
-            {
+                        "Invalid artifact type mapping, type[" + customType + "] is already registered.");
+            } else {
                 // Add the custom mapping
-                customMappings.put( customType, mapping );
+                customMappings.put(customType, mapping);
 
                 // Register the custom mapping to its standard type
-                List<String> typeMapping = typeMappings.get( mapping );
-                typeMapping.add( customType );
+                List<String> typeMapping = typeMappings.get(mapping);
+                typeMapping.add(customType);
             }
         }
     }

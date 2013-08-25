@@ -235,32 +235,27 @@ public class DefaultAssemblyArchiver
 
         if ( ( requestedContainerDescriptorHandlers != null ) && !requestedContainerDescriptorHandlers.isEmpty() )
         {
-            for ( final Iterator<ContainerDescriptorHandlerConfig> it = requestedContainerDescriptorHandlers.iterator(); it.hasNext(); )
-            {
-                final ContainerDescriptorHandlerConfig config = it.next();
-
+            for (final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers) {
                 final String hint = config.getHandlerName();
-                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get( hint );
+                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get(hint);
 
-                if ( handler == null )
-                {
+                if (handler == null) {
                     throw new InvalidAssemblerConfigurationException(
-                                                                      "Cannot find ContainerDescriptorHandler with hint: "
-                                                                          + hint );
+                            "Cannot find ContainerDescriptorHandler with hint: "
+                                    + hint);
                 }
 
-                getLogger().debug( "Found container descriptor handler with hint: " + hint + " (component: " + handler
-                                       + ")" );
+                getLogger().debug("Found container descriptor handler with hint: " + hint + " (component: " + handler
+                        + ")");
 
-                if ( config.getConfiguration() != null )
-                {
-                    getLogger().debug( "Configuring handler with:\n\n" + config.getConfiguration() + "\n\n" );
+                if (config.getConfiguration() != null) {
+                    getLogger().debug("Configuring handler with:\n\n" + config.getConfiguration() + "\n\n");
 
-                    configureContainerDescriptorHandler( handler, (Xpp3Dom) config.getConfiguration(), configSource );
+                    configureContainerDescriptorHandler(handler, (Xpp3Dom) config.getConfiguration(), configSource);
                 }
 
-                handlers.add( handler );
-                hints.add( hint );
+                handlers.add(handler);
+                hints.add(hint);
             }
         }
 

@@ -185,20 +185,18 @@ public class GpgSignAttachedMojo
         // Attached artifacts
         // ----------------------------------------------------------------------------
 
-        for ( Iterator i = project.getAttachedArtifacts().iterator(); i.hasNext(); )
-        {
-            Artifact artifact = (Artifact) i.next();
+        for (Object o : project.getAttachedArtifacts()) {
+            Artifact artifact = (Artifact) o;
 
             File file = artifact.getFile();
 
-            getLog().debug( "Generating signature for " + file );
+            getLog().debug("Generating signature for " + file);
 
-            File signature = signer.generateSignatureForArtifact( file );
+            File signature = signer.generateSignatureForArtifact(file);
 
-            if ( signature != null )
-            {
-                signingBundles.add( new SigningBundle( artifact.getArtifactHandler().getExtension(),
-                                                       artifact.getClassifier(), signature ) );
+            if (signature != null) {
+                signingBundles.add(new SigningBundle(artifact.getArtifactHandler().getExtension(),
+                        artifact.getClassifier(), signature));
             }
         }
 
@@ -206,12 +204,11 @@ public class GpgSignAttachedMojo
         // Attach all the signatures
         // ----------------------------------------------------------------------------
 
-        for ( Iterator i = signingBundles.iterator(); i.hasNext(); )
-        {
-            SigningBundle bundle = (SigningBundle) i.next();
+        for (Object signingBundle : signingBundles) {
+            SigningBundle bundle = (SigningBundle) signingBundle;
 
-            projectHelper.attachArtifact( project, bundle.getExtension() + GpgSigner.SIGNATURE_EXTENSION,
-                                          bundle.getClassifier(), bundle.getSignature() );
+            projectHelper.attachArtifact(project, bundle.getExtension() + GpgSigner.SIGNATURE_EXTENSION,
+                    bundle.getClassifier(), bundle.getSignature());
         }
     }
 
@@ -224,10 +221,8 @@ public class GpgSignAttachedMojo
      */
     protected boolean isExcluded( String name )
     {
-        for ( int i = 0; i < excludes.length; i++ )
-        {
-            if ( SelectorUtils.matchPath( excludes[i], name ) )
-            {
+        for (String exclude : excludes) {
+            if (SelectorUtils.matchPath(exclude, name)) {
                 return true;
             }
         }

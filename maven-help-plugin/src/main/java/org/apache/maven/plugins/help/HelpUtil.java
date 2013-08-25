@@ -83,7 +83,7 @@ public class HelpUtil
             m.setAccessible( true );
             MojoDescriptor mojoDescriptor =
                 (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project, invokedVia,
-                    Boolean.valueOf( canUsePrefix ), Boolean.valueOf( isOptionalMojo ) } );
+                        canUsePrefix, isOptionalMojo} );
 
             if ( mojoDescriptor == null )
             {

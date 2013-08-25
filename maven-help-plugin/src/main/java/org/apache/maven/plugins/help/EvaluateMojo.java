@@ -267,9 +267,9 @@ public class EvaluateMojo
             throw new IllegalArgumentException( "artifact parameter could not be empty" );
         }
 
-        String groupId = null; // required
-        String artifactId = null; // required
-        String version = null; // optional
+        String groupId; // required
+        String artifactId; // required
+        String version; // optional
         String classifier = null; // optional
 
         String[] artifactParts = artifactString.split( ":" );
@@ -602,7 +602,7 @@ public class EvaluateMojo
                     String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
                     name = name.replaceAll( "/", "\\." );
 
-                    if ( name.indexOf( packageFilter ) != -1 )
+                    if (name.contains(packageFilter))
                     {
                         try
                         {

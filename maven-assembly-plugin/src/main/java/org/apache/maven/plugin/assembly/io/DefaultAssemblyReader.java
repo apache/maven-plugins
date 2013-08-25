@@ -112,19 +112,17 @@ public class DefaultAssemblyReader
         if ( ( descriptors != null ) && ( descriptors.length > 0 ) )
         {
             locator.setStrategies( strategies );
-            for ( int i = 0; i < descriptors.length; i++ )
-            {
-                getLogger().info( "Reading assembly descriptor: " + descriptors[i] );
-                addAssemblyFromDescriptor( descriptors[i], locator, configSource, assemblies );
+            for (String descriptor1 : descriptors) {
+                getLogger().info("Reading assembly descriptor: " + descriptor1);
+                addAssemblyFromDescriptor(descriptor1, locator, configSource, assemblies);
             }
         }
 
         if ( ( descriptorRefs != null ) && ( descriptorRefs.length > 0 ) )
         {
             locator.setStrategies( refStrategies );
-            for ( int i = 0; i < descriptorRefs.length; i++ )
-            {
-                addAssemblyForDescriptorReference( descriptorRefs[i], configSource, assemblies );
+            for (String descriptorRef : descriptorRefs) {
+                addAssemblyForDescriptorReference(descriptorRef, configSource, assemblies);
             }
         }
 
@@ -166,9 +164,8 @@ public class DefaultAssemblyReader
 
             if ( paths != null )
             {
-                for ( int i = 0; i < paths.length; i++ )
-                {
-                    addAssemblyFromDescriptor( paths[i], locator, configSource, assemblies );
+                for (String path : paths) {
+                    addAssemblyFromDescriptor(path, locator, configSource, assemblies);
                 }
             }
         }
@@ -187,12 +184,9 @@ public class DefaultAssemblyReader
 
         // check unique IDs
         final Set<String> ids = new HashSet<String>();
-        for ( final Iterator<Assembly> i = assemblies.iterator(); i.hasNext(); )
-        {
-            final Assembly assembly = i.next();
-            if ( !ids.add( assembly.getId() ) )
-            {
-                getLogger().warn( "The assembly id " + assembly.getId() + " is used more than once." );
+        for (final Assembly assembly : assemblies) {
+            if (!ids.add(assembly.getId())) {
+                getLogger().warn("The assembly id " + assembly.getId() + " is used more than once.");
             }
 
         }
@@ -467,50 +461,36 @@ public class DefaultAssemblyReader
 
         final List<String> componentLocations = assembly.getComponentDescriptors();
 
-        for ( final Iterator<String> it = componentLocations.iterator(); it.hasNext(); )
-        {
-            String location = it.next();
-
+        for (String location : componentLocations) {
             // allow expressions in path to component descriptor... MASSEMBLY-486
-            try
-            {
-                location = aee.evaluate( location ).toString();
-            }
-            catch ( final Exception eee )
-            {
-                getLogger().error( "Error interpolating componentDescriptor: " + location, eee );
+            try {
+                location = aee.evaluate(location).toString();
+            } catch (final Exception eee) {
+                getLogger().error("Error interpolating componentDescriptor: " + location, eee);
             }
 
-            final Location resolvedLocation = locator.resolve( location );
+            final Location resolvedLocation = locator.resolve(location);
 
-            if ( resolvedLocation == null )
-            {
-                throw new AssemblyReadException( "Failed to locate component descriptor: " + location );
+            if (resolvedLocation == null) {
+                throw new AssemblyReadException("Failed to locate component descriptor: " + location);
             }
 
             Component component = null;
             Reader reader = null;
-            try
-            {
-                reader = new InputStreamReader( resolvedLocation.getInputStream() );
-                component = new ComponentXpp3Reader().read( reader );
-            }
-            catch ( final IOException e )
-            {
-                throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                    + resolvedLocation.getSpecification() + ")", e );
-            }
-            catch ( final XmlPullParserException e )
-            {
-                throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                    + resolvedLocation.getSpecification() + ")", e );
-            }
-            finally
-            {
-                IOUtil.close( reader );
+            try {
+                reader = new InputStreamReader(resolvedLocation.getInputStream());
+                component = new ComponentXpp3Reader().read(reader);
+            } catch (final IOException e) {
+                throw new AssemblyReadException("Error reading component descriptor: " + location + " (resolved to: "
+                        + resolvedLocation.getSpecification() + ")", e);
+            } catch (final XmlPullParserException e) {
+                throw new AssemblyReadException("Error reading component descriptor: " + location + " (resolved to: "
+                        + resolvedLocation.getSpecification() + ")", e);
+            } finally {
+                IOUtil.close(reader);
             }
 
-            mergeComponentWithAssembly( component, assembly );
+            mergeComponentWithAssembly(component, assembly);
         }
     }
 
@@ -525,45 +505,32 @@ public class DefaultAssemblyReader
         final List<ContainerDescriptorHandlerConfig> containerHandlerDescriptors =
             component.getContainerDescriptorHandlers();
 
-        for ( final Iterator<ContainerDescriptorHandlerConfig> it = containerHandlerDescriptors.iterator(); it.hasNext(); )
-        {
-            final ContainerDescriptorHandlerConfig cfg = it.next();
-            assembly.addContainerDescriptorHandler( cfg );
+        for (final ContainerDescriptorHandlerConfig cfg : containerHandlerDescriptors) {
+            assembly.addContainerDescriptorHandler(cfg);
         }
 
         final List<DependencySet> dependencySetList = component.getDependencySets();
 
-        for ( final Iterator<DependencySet> it = dependencySetList.iterator(); it.hasNext(); )
-        {
-            final DependencySet dependencySet = it.next();
-            assembly.addDependencySet( dependencySet );
+        for (final DependencySet dependencySet : dependencySetList) {
+            assembly.addDependencySet(dependencySet);
         }
 
         final List<FileSet> fileSetList = component.getFileSets();
 
-        for ( final Iterator<FileSet> it = fileSetList.iterator(); it.hasNext(); )
-        {
-            final FileSet fileSet = it.next();
-
-            assembly.addFileSet( fileSet );
+        for (final FileSet fileSet : fileSetList) {
+            assembly.addFileSet(fileSet);
         }
 
         final List<FileItem> fileList = component.getFiles();
 
-        for ( final Iterator<FileItem> it = fileList.iterator(); it.hasNext(); )
-        {
-            final FileItem fileItem = it.next();
-
-            assembly.addFile( fileItem );
+        for (final FileItem fileItem : fileList) {
+            assembly.addFile(fileItem);
         }
 
         final List<Repository> repositoriesList = component.getRepositories();
 
-        for ( final Iterator<Repository> it = repositoriesList.iterator(); it.hasNext(); )
-        {
-            final Repository repository = it.next();
-
-            assembly.addRepository( repository );
+        for (final Repository repository : repositoriesList) {
+            assembly.addRepository(repository);
         }
 
         final List<ModuleSet> moduleSets = component.getModuleSets();

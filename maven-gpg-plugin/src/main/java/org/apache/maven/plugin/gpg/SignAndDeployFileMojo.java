@@ -459,20 +459,16 @@ public class SignAndDeployFileMojo
 
         List attachedArtifacts = project.getAttachedArtifacts();
 
-        for ( Iterator i = attachedArtifacts.iterator(); i.hasNext(); )
-        {
-            Artifact attached = (Artifact) i.next();
+        for (Object attachedArtifact : attachedArtifacts) {
+            Artifact attached = (Artifact) attachedArtifact;
 
-            fileSig = signer.generateSignatureForArtifact( attached.getFile() );
-            attached = new AttachedSignedArtifact(attached, new AscArtifactMetadata( attached, fileSig, false ) );
-            try
-            {
-                deploy( attached.getFile(), attached, deploymentRepository, localRepository );
-            }
-            catch ( ArtifactDeploymentException e )
-            {
+            fileSig = signer.generateSignatureForArtifact(attached.getFile());
+            attached = new AttachedSignedArtifact(attached, new AscArtifactMetadata(attached, fileSig, false));
+            try {
+                deploy(attached.getFile(), attached, deploymentRepository, localRepository);
+            } catch (ArtifactDeploymentException e) {
                 throw new MojoExecutionException(
-                    "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e );
+                        "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e);
             }
         }
 
@@ -657,10 +653,9 @@ public class SignAndDeployFileMojo
                         "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
                 }
                 deployer.deploy( source, artifact, deploymentRepository, localRepository );
-                for ( Iterator i = artifact.getMetadataList().iterator(); i.hasNext(); )
-                {
-                    ArtifactMetadata metadata = (ArtifactMetadata) i.next();
-                    getLog().info( "Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename());
+                for (Object o : artifact.getMetadataList()) {
+                    ArtifactMetadata metadata = (ArtifactMetadata) o;
+                    getLog().info("Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename());
                 }
                 exception = null;
                 break;

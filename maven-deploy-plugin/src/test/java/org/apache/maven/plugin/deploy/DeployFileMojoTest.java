@@ -137,9 +137,8 @@ public class DeployFileMojoTest
 
         File[] files = repo.listFiles();
 
-        for ( int i = 0; i < files.length; i++ )
-        {
-            addFileToList( files[i], fileList );
+        for (File file1 : files) {
+            addFileToList(file1, fileList);
         }
 
         expectedFiles.add( "org" );
@@ -296,9 +295,8 @@ public class DeployFileMojoTest
 
         File[] files = repo.listFiles();
 
-        for ( int i = 0; i < files.length; i++ )
-        {
-            addFileToList( files[i], fileList );
+        for (File file : files) {
+            addFileToList(file, fileList);
         }
 
         expectedFiles.add( "org.apache.maven.test" );
@@ -331,9 +329,8 @@ public class DeployFileMojoTest
 
             File[] files = file.listFiles();
 
-            for ( int i = 0; i < files.length; i++ )
-            {
-                addFileToList( files[i], fileList );
+            for (File file1 : files) {
+                addFileToList(file1, fileList);
             }
         }
     }

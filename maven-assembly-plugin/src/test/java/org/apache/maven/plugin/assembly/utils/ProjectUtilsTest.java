@@ -197,27 +197,21 @@ public class ProjectUtilsTest
 
         final List<MavenProject> unexpected = new ArrayList<MavenProject>();
 
-        for ( final Iterator<MavenProject> it = result.iterator(); it.hasNext(); )
-        {
-            final MavenProject project = it.next();
-
+        for (final MavenProject project : result) {
             boolean removed = false;
 
-            for ( final Iterator<MavenProject> verifyIterator = verifyCopy.iterator(); verifyIterator.hasNext(); )
-            {
+            for (final Iterator<MavenProject> verifyIterator = verifyCopy.iterator(); verifyIterator.hasNext(); ) {
                 final MavenProject verification = verifyIterator.next();
 
-                if ( verification.getId()
-                                 .equals( project.getId() ) )
-                {
+                if (verification.getId()
+                        .equals(project.getId())) {
                     verifyIterator.remove();
                     removed = true;
                 }
             }
 
-            if ( !removed )
-            {
-                unexpected.add( project );
+            if (!removed) {
+                unexpected.add(project);
             }
         }
 

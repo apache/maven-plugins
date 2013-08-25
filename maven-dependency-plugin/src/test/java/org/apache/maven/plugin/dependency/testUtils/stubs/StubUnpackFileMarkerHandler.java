@@ -35,7 +35,7 @@ public class StubUnpackFileMarkerHandler
 	
 	protected File getMarkerFile()
     {
-		File markerFile = null;
+		File markerFile;
 		if ( this.artifactItem == null 
 			|| ( StringUtils.isEmpty( this.artifactItem.getIncludes() )
 			&&	StringUtils.isEmpty( this.artifactItem.getExcludes() ) ) )

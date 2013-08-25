@@ -227,7 +227,7 @@ public class CleanMojoTest
     public void testCleanLockedFile()
         throws Exception
     {
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) == -1 )
+        if (!System.getProperty("os.name").toLowerCase().contains("windows"))
         {
             assertTrue( "Ignored this test on none Windows based systems", true );
             return;
@@ -282,7 +282,7 @@ public class CleanMojoTest
     public void testCleanLockedFileWithNoError()
         throws Exception
     {
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) == -1 )
+        if (!System.getProperty("os.name").toLowerCase().contains("windows"))
         {
             assertTrue( "Ignored this test on none Windows based systems", true );
             return;

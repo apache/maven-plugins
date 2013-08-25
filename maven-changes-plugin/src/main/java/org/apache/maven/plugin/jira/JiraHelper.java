@@ -204,8 +204,8 @@ public class JiraHelper
     {
         final int indexBrowse = issueManagementUrl.indexOf( "/browse/" );
 
-        String jiraUrl = "";
-        String project = "";
+        String jiraUrl;
+        String project;
 
         if ( indexBrowse != -1 )
         {

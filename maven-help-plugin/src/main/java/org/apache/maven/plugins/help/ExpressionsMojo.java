@@ -168,9 +168,8 @@ public class ExpressionsMojo
 
         StringBuilder sb = new StringBuilder();
         String[] lines = StringUtils.split( description, "\r\n" );
-        for ( int i = 0; i < lines.length; i++ )
-        {
-            sb.append( StringUtils.trim( lines[i] ) ).append( " " );
+        for (String line : lines) {
+            sb.append(StringUtils.trim(line)).append(" ");
         }
 
         return sb.toString();

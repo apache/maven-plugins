@@ -117,7 +117,7 @@ public class IssueAdapter
         action.setIssue( issue.getKey() );
 
         // Try to map the IMS-specific issue type to one that is used in a changes.xml file
-        IssueType type = null;
+        IssueType type;
         if ( getIssueTypeMap().containsKey( issue.getType() ) )
         {
             type = getIssueTypeMap().get( issue.getType() );

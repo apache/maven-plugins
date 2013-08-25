@@ -152,11 +152,9 @@ public class ParameterQueryBuilder
         {
             String[] fixVersions = fixVersionIds.split( "," );
 
-            for ( int i = 0; i < fixVersions.length; i++ )
-            {
-                if ( fixVersions[i].length() > 0 )
-                {
-                    query.append( "&fixfor=" ).append( fixVersions[i].trim() );
+            for (String fixVersion : fixVersions) {
+                if (fixVersion.length() > 0) {
+                    query.append("&fixfor=").append(fixVersion.trim());
                 }
             }
         }

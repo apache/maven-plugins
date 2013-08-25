@@ -534,7 +534,7 @@ public class PdfMojo
             context.put( "StringUtils", new StringUtils() );
             context.put( "i18n", i18n );
             context.put( "generateTOC", generateTOC );
-            context.put( "validate", Boolean.valueOf( validate ) );
+            context.put( "validate", validate);
 
             final DocumentModel model = aggregate ? getDocumentModel( locale ) : null;
 
@@ -1017,15 +1017,13 @@ public class PdfMojo
                 }
     
                 List mojoDescriptors = pluginDescriptor.getMojos();
-                for ( final Iterator it2 = mojoDescriptors.iterator(); it2.hasNext(); )
-                {
-                    final MojoDescriptor mojoDescriptor = (MojoDescriptor) it2.next();
-    
-                    if ( goals.isEmpty() || ( !goals.isEmpty() && goals.contains( mojoDescriptor.getGoal() ) ) )
-                    {
-                        MavenReport report = getMavenReport( mojoDescriptor );
-    
-                        generateMavenReport( report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(), locale );
+                for (Object mojoDescriptor1 : mojoDescriptors) {
+                    final MojoDescriptor mojoDescriptor = (MojoDescriptor) mojoDescriptor1;
+
+                    if (goals.isEmpty() || (!goals.isEmpty() && goals.contains(mojoDescriptor.getGoal()))) {
+                        MavenReport report = getMavenReport(mojoDescriptor);
+
+                        generateMavenReport(report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(), locale);
                     }
                 }
             }
@@ -1485,21 +1483,18 @@ public class PdfMojo
                 if ( pluginProject.getMailingLists() != null && !pluginProject.getMailingLists().isEmpty() )
                 {
                     boolean appended = false;
-                    for ( Iterator i = pluginProject.getMailingLists().iterator(); i.hasNext(); )
-                    {
-                        MailingList mailingList = (MailingList) i.next();
+                    for (Object o : pluginProject.getMailingLists()) {
+                        MailingList mailingList = (MailingList) o;
 
-                        if ( StringUtils.isNotEmpty( mailingList.getName() )
-                            && StringUtils.isNotEmpty( mailingList.getPost() ) )
-                        {
-                            if ( !appended )
-                            {
-                                sb.append( "  Mailing Lists:" ).append( EOL );
+                        if (StringUtils.isNotEmpty(mailingList.getName())
+                                && StringUtils.isNotEmpty(mailingList.getPost())) {
+                            if (!appended) {
+                                sb.append("  Mailing Lists:").append(EOL);
                                 appended = true;
                             }
-                            sb.append( "    " ).append( mailingList.getName() );
-                            sb.append( ": " ).append( mailingList.getPost() );
-                            sb.append( EOL );
+                            sb.append("    ").append(mailingList.getName());
+                            sb.append(": ").append(mailingList.getPost());
+                            sb.append(EOL);
                         }
                     }
                 }

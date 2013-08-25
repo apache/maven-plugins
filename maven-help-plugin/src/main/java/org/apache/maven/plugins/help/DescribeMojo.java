@@ -950,8 +950,8 @@ public class DescribeMojo
                                                              Integer.TYPE } );
             m.setAccessible( true );
             List<String> output = (List<String>) m.invoke( HelpMojo.class,
-                                           new Object[]{ text, Integer.valueOf( indent ), Integer.valueOf( indentSize ),
-                                               Integer.valueOf( lineLength ) } );
+                                           new Object[]{ text, indent, indentSize,
+                                                   lineLength} );
 
             if ( output == null )
             {

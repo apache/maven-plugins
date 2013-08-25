@@ -104,7 +104,7 @@ public final class ClassicJiraDownloader
             if ( ( isJiraAuthenticationConfigured() && jiraAuthenticationSuccessful )
                 || !isJiraAuthenticationConfigured() )
             {
-                String fullUrl = null;
+                String fullUrl;
 
                 if ( useJql )
                 {
@@ -255,7 +255,7 @@ public final class ClassicJiraDownloader
     private boolean doJiraAuthentication( HttpClient client, final String jiraUrl )
     {
         // log into JIRA if we have to
-        String loginUrl = null;
+        String loginUrl;
 
         StringBuilder loginLink = new StringBuilder( jiraUrl );
 
@@ -318,7 +318,7 @@ public final class ClassicJiraDownloader
     {
         final String loginFailureResponse = "your username and password are incorrect";
 
-        return loginGet.getResponseBodyAsString().indexOf( loginFailureResponse ) == -1;
+        return !loginGet.getResponseBodyAsString().contains(loginFailureResponse);
     }
 
     /**

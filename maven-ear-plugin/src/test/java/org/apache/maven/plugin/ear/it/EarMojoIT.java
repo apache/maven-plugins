@@ -487,9 +487,9 @@ public class EarMojoIT
         final File baseDir = doTestProject( "project-045", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-045" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue( "application name and version was not filtered properly", content.indexOf( "my-app 99.0" ) != -1 );
+        assertTrue( "application name and version was not filtered properly", content.contains("my-app 99.0"));
         assertTrue( "Escaping did not work properly",
-                    content.indexOf( "will not be filtered ${application.name}." ) != -1 );
+                content.contains("will not be filtered ${application.name}."));
     }
 
     /**
@@ -502,10 +502,10 @@ public class EarMojoIT
         final File baseDir = doTestProject( "project-046", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-046" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue( "application name and version was not filtered properly", content.indexOf( "my-app 99.0" ) != -1 );
-        assertTrue( "application build was not filtered properly", content.indexOf( "(Build 2)" ) != -1 );
+        assertTrue( "application name and version was not filtered properly", content.contains("my-app 99.0"));
+        assertTrue( "application build was not filtered properly", content.contains("(Build 2)"));
         assertTrue( "Unknown property should not have been filtered",
-                    content.indexOf( "will not be filtered ${application.unknown}." ) != -1 );
+                content.contains("will not be filtered ${application.unknown}."));
     }
 
     /**
@@ -518,9 +518,9 @@ public class EarMojoIT
         final File actualReadme = new File( getEarDirectory( baseDir, "project-047" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
         assertTrue( "application name and version should not have been filtered",
-                    content.indexOf( "my-app 99.0" ) == -1 );
+                !content.contains("my-app 99.0"));
         assertTrue( "original properties not found",
-                    content.indexOf( "${application.name} ${project.version}" ) != -1 );
+                content.contains("${application.name} ${project.version}"));
     }
 
     /**

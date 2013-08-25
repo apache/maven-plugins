@@ -234,7 +234,7 @@ public class TreeMojo
 
         try
         {
-            String dependencyTreeString = null;
+            String dependencyTreeString;
 
             // TODO: note that filter does not get applied due to MNG-3236
 

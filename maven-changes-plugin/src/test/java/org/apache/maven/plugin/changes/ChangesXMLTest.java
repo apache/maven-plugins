@@ -147,16 +147,14 @@ public class ChangesXMLTest
 
         List releases = changesXML.getReleaseList();
         assertEquals( 2, releases.size() );
-        for ( Iterator iterator = releases.iterator(); iterator.hasNext(); )
-        {
-            Release release = (Release) iterator.next();
-            if ( "1.0".equals( release.getVersion() ) )
-            {
-                Action action = (Action) release.getActions().get( 0 );
-                assertEquals( 2, action.getFixedIssues().size() );
-                assertEquals( "JIRA-XXX", ( (FixedIssue) action.getFixedIssues().get( 0 ) ).getIssue() );
-                assertEquals( "JIRA-YYY", ( (FixedIssue) action.getFixedIssues().get( 1 ) ).getIssue() );
-                assertEquals( 2, action.getDueTos().size() );
+        for (Object release1 : releases) {
+            Release release = (Release) release1;
+            if ("1.0".equals(release.getVersion())) {
+                Action action = (Action) release.getActions().get(0);
+                assertEquals(2, action.getFixedIssues().size());
+                assertEquals("JIRA-XXX", ((FixedIssue) action.getFixedIssues().get(0)).getIssue());
+                assertEquals("JIRA-YYY", ((FixedIssue) action.getFixedIssues().get(1)).getIssue());
+                assertEquals(2, action.getDueTos().size());
             }
         }
     }

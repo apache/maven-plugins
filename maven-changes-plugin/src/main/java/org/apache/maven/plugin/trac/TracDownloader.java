@@ -124,18 +124,17 @@ public class TracDownloader
         }
 
         Object[] params = new Object[] { new String( qstr ) };
-        Object[] queryResult = null;
+        Object[] queryResult;
         ArrayList<Issue> issueList = new ArrayList<Issue>();
         try
         {
             queryResult = (Object[]) client.execute( "ticket.query", params );
 
-            for ( int i = 0; i < queryResult.length; i++ )
-            {
-                params = new Object[] { queryResult[i] };
-                Object[] ticketGetResult = null;
-                ticketGetResult = (Object[]) client.execute( "ticket.get", params );
-                issueList.add( createIssue( ticketGetResult ) );
+            for (Object aQueryResult : queryResult) {
+                params = new Object[]{aQueryResult};
+                Object[] ticketGetResult;
+                ticketGetResult = (Object[]) client.execute("ticket.get", params);
+                issueList.add(createIssue(ticketGetResult));
             }
         }
         catch ( XmlRpcException e )

@@ -117,11 +117,8 @@ public class AddDependencySetsTask
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
         }
 
-        for ( final Iterator<DependencySet> i = dependencySets.iterator(); i.hasNext(); )
-        {
-            final DependencySet dependencySet = i.next();
-
-            addDependencySet( dependencySet, archiver, configSource );
+        for (final DependencySet dependencySet : dependencySets) {
+            addDependencySet(dependencySet, archiver, configSource);
         }
     }
 
@@ -152,38 +149,26 @@ public class AddDependencySetsTask
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
-        for ( final Iterator<Artifact> j = dependencyArtifacts.iterator(); j.hasNext(); )
-        {
-            final Artifact depArtifact = j.next();
-
+        for (final Artifact depArtifact : dependencyArtifacts) {
             MavenProject depProject;
-            try
-            {
+            try {
                 depProject =
-                    projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                        configSource.getLocalRepository() );
-            }
-            catch ( final ProjectBuildingException e )
-            {
-                logger.debug( "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: "
-                                + e.getMessage() + "\n\nBuilding stub project instance." );
+                        projectBuilder.buildFromRepository(depArtifact, configSource.getRemoteRepositories(),
+                                configSource.getLocalRepository());
+            } catch (final ProjectBuildingException e) {
+                logger.debug("Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: "
+                        + e.getMessage() + "\n\nBuilding stub project instance.");
 
-                depProject = buildProjectStub( depArtifact );
+                depProject = buildProjectStub(depArtifact);
             }
 
-            if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
-            {
-                addNonArchiveDependency( depArtifact, depProject, dependencySet, archiver, configSource );
-            }
-            else
-            {
-                if ( filterContents )
-                {
-                    addFilteredUnpackedArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
-                }
-                else
-                {
-                    addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
+            if (NON_ARCHIVE_DEPENDENCY_TYPES.contains(depArtifact.getType())) {
+                addNonArchiveDependency(depArtifact, depProject, dependencySet, archiver, configSource);
+            } else {
+                if (filterContents) {
+                    addFilteredUnpackedArtifact(dependencySet, depArtifact, depProject, archiver, configSource);
+                } else {
+                    addNormalArtifact(dependencySet, depArtifact, depProject, archiver, configSource);
                 }
             }
         }
@@ -203,7 +188,7 @@ public class AddDependencySetsTask
             mapping = defaultOutputFileNameMapping;
         }
 
-        if ( ( dir == null || dir.indexOf( "${" ) < 0 ) && ( mapping == null || mapping.indexOf( "${" ) < 0 ) )
+        if ( ( dir == null || !dir.contains("${")) && ( mapping == null || !mapping.contains("${")) )
         {
             logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
                             + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '"
@@ -396,18 +381,12 @@ public class AddDependencySetsTask
             final List<Artifact> attachments = project.getAttachedArtifacts();
             if ( attachments != null )
             {
-                for ( final Iterator<Artifact> attachmentIt = attachments.iterator(); attachmentIt.hasNext(); )
-                {
-                    final Artifact attachment = attachmentIt.next();
-
-                    if ( attachment.getFile() != null )
-                    {
-                        dependencyArtifacts.add( attachment );
-                    }
-                    else
-                    {
-                        logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: "
-                                        + project.getId() + "; it doesn't have an associated file or directory." );
+                for (final Artifact attachment : attachments) {
+                    if (attachment.getFile() != null) {
+                        dependencyArtifacts.add(attachment);
+                    } else {
+                        logger.warn("Cannot include attached artifact: " + project.getId() + " for project: "
+                                + project.getId() + "; it doesn't have an associated file or directory.");
                     }
                 }
             }

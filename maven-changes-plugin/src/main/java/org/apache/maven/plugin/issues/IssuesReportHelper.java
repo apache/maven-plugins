@@ -101,21 +101,16 @@ public class IssuesReportHelper
         }
 
         // Loop through the names of the columns, to validate each of them and add their id to the list
-        for ( int i = 0; i < columnNamesArray.length; i++ )
-        {
-            String columnName = columnNamesArray[i].trim();
-            if ( allColumns.containsKey( columnName ) )
-            {
-                columnIds.add( allColumns.get( columnName ) );
-            }
-            else if ( deprecatedColumns != null && deprecatedColumns.containsKey( columnName ) )
-            {
-                Integer columnId = deprecatedColumns.get( columnName );
-                columnIds.add( columnId );
-                if ( log != null )
-                {
-                    log.warn( "The columnName '" + columnName + "' has been deprecated." + " Please use "
-                        + "the columnName '" + bidiColumns.getKey( columnId ) + "' instead." );
+        for (String aColumnNamesArray : columnNamesArray) {
+            String columnName = aColumnNamesArray.trim();
+            if (allColumns.containsKey(columnName)) {
+                columnIds.add(allColumns.get(columnName));
+            } else if (deprecatedColumns != null && deprecatedColumns.containsKey(columnName)) {
+                Integer columnId = deprecatedColumns.get(columnName);
+                columnIds.add(columnId);
+                if (log != null) {
+                    log.warn("The columnName '" + columnName + "' has been deprecated." + " Please use "
+                            + "the columnName '" + bidiColumns.getKey(columnId) + "' instead.");
                 }
             }
         }
@@ -158,7 +153,7 @@ public class IssuesReportHelper
         int[] intArray = new int[list.size()];
         for ( int j = 0; j < intArray.length; j++ )
         {
-            intArray[j] = ( list.get( j ) ).intValue();
+            intArray[j] = list.get(j);
         }
         return intArray;
     }

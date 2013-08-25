@@ -266,14 +266,12 @@ public class ChangesMojo
             final String relativePath = absolutePath.substring( basePath.length() );
 
             List releaseList = changesXml.getReleaseList();
-            for ( Iterator iterator = project.getCollectedProjects().iterator(); iterator.hasNext(); )
-            {
-                final MavenProject childProject = (MavenProject) iterator.next();
-                final File changesFile = new File( childProject.getBasedir(), relativePath );
-                final ChangesXML childXml = getChangesFromFile( changesFile, childProject, additionalProperties );
-                if ( childXml != null )
-                {
-                    releaseList = releaseUtils.mergeReleases( releaseList, childProject.getName(), childXml.getReleaseList() );
+            for (Object o : project.getCollectedProjects()) {
+                final MavenProject childProject = (MavenProject) o;
+                final File changesFile = new File(childProject.getBasedir(), relativePath);
+                final ChangesXML childXml = getChangesFromFile(changesFile, childProject, additionalProperties);
+                if (childXml != null) {
+                    releaseList = releaseUtils.mergeReleases(releaseList, childProject.getName(), childXml.getReleaseList());
                 }
             }
             changesXml.setReleaseList( releaseList );
@@ -462,10 +460,9 @@ public class ChangesMojo
         try
         {
             getLog().debug( "Copying static resources." );
-            for ( int i = 0; i < resourceNames.length; i++ )
-            {
-                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
-                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceNames[i] ) );
+            for (String resourceName : resourceNames) {
+                URL url = this.getClass().getClassLoader().getResource(pluginResourcesBase + "/" + resourceName);
+                FileUtils.copyURLToFile(url, new File(getReportOutputDirectory(), resourceName));
             }
         }
         catch ( IOException e )
@@ -494,11 +491,9 @@ public class ChangesMojo
             }
             else
             {
-                Iterator iterator = issueLinkTemplatePerSystem.entrySet().iterator();
-                while ( iterator.hasNext() )
-                {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    getLog().debug( "issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue() );
+                for (Object o : issueLinkTemplatePerSystem.entrySet()) {
+                    Map.Entry entry = (Map.Entry) o;
+                    getLog().debug("issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue());
                 }
             }
         }

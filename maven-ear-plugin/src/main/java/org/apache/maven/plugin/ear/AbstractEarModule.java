@@ -236,7 +236,7 @@ public abstract class AbstractEarModule
      */
     public boolean isExcluded()
     {
-        return excluded.booleanValue();
+        return excluded;
     }
 
     public Boolean shouldUnpack()
@@ -276,7 +276,7 @@ public abstract class AbstractEarModule
         {
             writer.addAttribute( "id", getModuleId() );
         }
-        else if ( generateId.booleanValue() )
+        else if (generateId)
         {
             // No module id was specified but one should be generated.
             Artifact artifact = getArtifact();

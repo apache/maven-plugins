@@ -78,7 +78,7 @@ public class JarContentChecker
      */
     public boolean isOK( JarFile jarFile )
     {
-        boolean bRetVal = false;
+        boolean bRetVal;
         Enumeration zipentries = jarFile.entries();
         ZipEntry entry;
         File entryFile;

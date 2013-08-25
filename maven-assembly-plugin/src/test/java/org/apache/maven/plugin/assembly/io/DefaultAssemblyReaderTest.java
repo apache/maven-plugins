@@ -1022,7 +1022,7 @@ public class DefaultAssemblyReaderTest
         final List<String> files = writeAssembliesToFile( assemblies, basedir );
 
         final List<Assembly> results =
-            performReadAssemblies( basedir, null, null, files.toArray( new String[0] ), null, null );
+            performReadAssemblies( basedir, null, null, files.toArray(new String[files.size()]), null, null );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -1125,24 +1125,18 @@ public class DefaultAssemblyReaderTest
     {
         final List<String> files = new ArrayList<String>();
 
-        for ( final Iterator<Assembly> it = assemblies.iterator(); it.hasNext(); )
-        {
-            final Assembly assembly = it.next();
-
-            final File assemblyFile = new File( dir, assembly.getId() + ".xml" );
+        for (final Assembly assembly : assemblies) {
+            final File assemblyFile = new File(dir, assembly.getId() + ".xml");
 
             Writer writer = null;
-            try
-            {
-                writer = new OutputStreamWriter( new FileOutputStream( assemblyFile ), "UTF-8" );
-                new AssemblyXpp3Writer().write( writer, assembly );
-            }
-            finally
-            {
-                IOUtil.close( writer );
+            try {
+                writer = new OutputStreamWriter(new FileOutputStream(assemblyFile), "UTF-8");
+                new AssemblyXpp3Writer().write(writer, assembly);
+            } finally {
+                IOUtil.close(writer);
             }
 
-            files.add( assemblyFile.getAbsolutePath() );
+            files.add(assemblyFile.getAbsolutePath());
         }
 
         return files;

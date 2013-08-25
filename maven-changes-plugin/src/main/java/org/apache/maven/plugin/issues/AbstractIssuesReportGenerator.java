@@ -68,7 +68,7 @@ public abstract class AbstractIssuesReportGenerator
     {
         sink.head();
 
-        String title = null;
+        String title;
         if ( this.title != null )
         {
             title = this.title;

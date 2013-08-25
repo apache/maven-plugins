@@ -313,7 +313,7 @@ public class PurgeLocalRepositoryMojo
             return;
         }
 
-        Set<Artifact> dependencyArtifacts = null;
+        Set<Artifact> dependencyArtifacts;
 
         try
         {

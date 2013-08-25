@@ -111,12 +111,9 @@ public abstract class AbstractDependencyPluginITCase
         {
             String path = System.getProperty( "java.library.path" );
             String[] paths = StringUtils.split( path, System.getProperty( "path.separator" ) );
-            for ( int j = 0; j < paths.length; j++ )
-            {
-                String pt = paths[j];
-                if ( new File( pt, "mvn" ).exists() )
-                {
-                    System.setProperty( "maven.home", new File( pt ).getAbsoluteFile().getParent() );
+            for (String pt : paths) {
+                if (new File(pt, "mvn").exists()) {
+                    System.setProperty("maven.home", new File(pt).getAbsoluteFile().getParent());
                     break;
                 }
 

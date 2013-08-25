@@ -180,15 +180,14 @@ public abstract class AbstractEarMojo
             if ( modules != null && modules.length > 0 )
             {
                 // Let's validate user-defined modules
-                EarModule module = null;
+                EarModule module;
 
-                for ( int i = 0; i < modules.length; i++ )
-                {
-                    module = modules[i];
-                    getLog().debug( "Resolving ear module[" + module + "]" );
-                    module.setEarExecutionContext( earExecutionContext );
-                    module.resolveArtifact( project.getArtifacts() );
-                    allModules.add( module );
+                for (EarModule module1 : modules) {
+                    module = module1;
+                    getLog().debug("Resolving ear module[" + module + "]");
+                    module.setEarExecutionContext(earExecutionContext);
+                    module.resolveArtifact(project.getArtifacts());
+                    allModules.add(module);
                 }
             }
 
@@ -319,10 +318,8 @@ public abstract class AbstractEarMojo
 
                     final PlexusConfiguration[] dataSourcesConfig =
                         dataSourcesEl.getChildren( JbossConfiguration.DATASOURCE );
-                    for ( int i = 0; i < dataSourcesConfig.length; i++ )
-                    {
-                        PlexusConfiguration dataSourceConfig = dataSourcesConfig[i];
-                        dataSources.add( dataSourceConfig.getValue() );
+                    for (PlexusConfiguration dataSourceConfig : dataSourcesConfig) {
+                        dataSources.add(dataSourceConfig.getValue());
 
                     }
                 }

@@ -37,8 +37,7 @@ public class TypeConversionUtilsTest
 
     public void testModeToInt_InterpretAsOctalWithoutLeadingZero() throws AssemblyFormattingException
     {
-        final int check = Integer.decode( "0777" )
-                                 .intValue();
+        final int check = Integer.decode("0777");
         final int test = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         assertEquals( check, test );
@@ -46,8 +45,7 @@ public class TypeConversionUtilsTest
 
     public void testModeToInt_InterpretValuesWithLeadingZeroAsOctal() throws AssemblyFormattingException
     {
-        final int check = Integer.decode( "0777" )
-                                 .intValue();
+        final int check = Integer.decode("0777");
         final int test = TypeConversionUtils.modeToInt( "0777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         assertEquals( check, test );
@@ -117,11 +115,8 @@ public class TypeConversionUtilsTest
         {
             final String message = new String( baos.toByteArray() );
 
-            for ( final Iterator<String> it = messagesToCheckIfInsane.iterator(); it.hasNext(); )
-            {
-                final String checkMessage = it.next();
-
-                assertTrue( "\'" + checkMessage + "\' is not present in output.", message.indexOf( checkMessage ) > -1 );
+            for (final String checkMessage : messagesToCheckIfInsane) {
+                assertTrue("\'" + checkMessage + "\' is not present in output.", message.contains(checkMessage));
             }
         }
     }

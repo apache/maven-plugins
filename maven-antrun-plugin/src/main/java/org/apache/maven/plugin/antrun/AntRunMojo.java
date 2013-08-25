@@ -641,7 +641,7 @@ public class AntRunMojo
         try
         {
             reader = new LineNumberReader( ReaderFactory.newXmlReader( antFile ) );
-            String line = "";
+            String line;
             while ( ( line = reader.readLine() ) != null )
             {
                 if ( reader.getLineNumber() == buildException.getLocation().getLineNumber() )

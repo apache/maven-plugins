@@ -44,8 +44,8 @@ public class DescribeMojoTest
         try
         {
             PrivateAccessor.invoke( DescribeMojo.class, "toLines", new Class[] { String.class, Integer.TYPE,
-                Integer.TYPE, Integer.TYPE }, new Object[] { "", new Integer( 2 ), new Integer( 2 ),
-                new Integer( 80 ) } );
+                Integer.TYPE, Integer.TYPE }, new Object[] { "", 2, 2,
+                    80} );
             assertTrue( true );
         }
         catch ( Throwable e )

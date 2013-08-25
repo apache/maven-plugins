@@ -205,7 +205,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         }
 
         // If the %URL% token is used then the issue management system URL must be set.
-        if ( issueLink.indexOf( URL_TOKEN ) >= 0 && StringUtils.isBlank( getUrl() ) )
+        if (issueLink.contains(URL_TOKEN) && StringUtils.isBlank( getUrl() ) )
         {
             return false;
         }
@@ -328,10 +328,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             namesEmailMap.put(action.getDueTo(), action.getDueToEmail());
         }
 
-        for ( Iterator iterator = dueTos.iterator(); iterator.hasNext(); )
-        {
-            DueTo dueTo = (DueTo) iterator.next();
-            namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
+        for (Object dueTo1 : dueTos) {
+            DueTo dueTo = (DueTo) dueTo1;
+            namesEmailMap.put(dueTo.getName(), dueTo.getEmail());
         }
 
         if ( namesEmailMap.isEmpty() )
@@ -464,17 +463,16 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         sink.tableRow_();
 
-        for ( int idx = 0; idx < releaseList.size(); idx++ )
-        {
-            Release release = (Release) releaseList.get( idx );
+        for (Object aReleaseList : releaseList) {
+            Release release = (Release) aReleaseList;
 
             sink.tableRow();
 
-            sinkCellLink( sink, release.getVersion(), "#" + HtmlTools.encodeId( release.getVersion() ) );
+            sinkCellLink(sink, release.getVersion(), "#" + HtmlTools.encodeId(release.getVersion()));
 
-            sinkCell( sink, release.getDateRelease() );
+            sinkCell(sink, release.getDateRelease());
 
-            sinkCell( sink, release.getDescription() );
+            sinkCell(sink, release.getDescription());
 
             sink.tableRow_();
         }
@@ -505,10 +503,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
      */
     private void constructReleases( Sink sink, ResourceBundle bundle, List releaseList )
     {
-        for ( int idx = 0; idx < releaseList.size(); idx++ )
-        {
-            Release release = (Release) releaseList.get(idx);
-            constructRelease( sink, bundle, release );
+        for (Object aReleaseList : releaseList) {
+            Release release = (Release) aReleaseList;
+            constructRelease(sink, bundle, release);
         }
     }
 
@@ -642,7 +639,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         String parseLink;
         String issueLink = (String) this.issueLinksPerSystem.get( system );
         parseLink = issueLink.replaceFirst( ISSUE_TOKEN, issue );
-        if ( parseLink.indexOf( URL_TOKEN ) >= 0 )
+        if (parseLink.contains(URL_TOKEN))
         {
             String url = this.url.substring( 0, this.url.lastIndexOf( "/" ) );
             parseLink = parseLink.replaceFirst( URL_TOKEN, url );

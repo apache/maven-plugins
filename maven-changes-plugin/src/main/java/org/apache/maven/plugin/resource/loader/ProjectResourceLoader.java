@@ -71,9 +71,8 @@ public class ProjectResourceLoader
         
         int sz = paths.size();
 
-        for ( int i = 0; i < sz; i++ )
-        {
-            rsvc.getLog().info( "ProjectResourceLoader : adding path '" + paths.get( i ) + "'" );
+        for (String path1 : paths) {
+            rsvc.getLog().info("ProjectResourceLoader : adding path '" + path1 + "'");
         }
         rsvc.getLog().info( "ProjectResourceLoader : initialization complete." );
     }

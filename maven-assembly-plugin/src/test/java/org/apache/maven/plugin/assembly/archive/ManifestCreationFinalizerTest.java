@@ -109,7 +109,7 @@ public class ManifestCreationFinalizerTest
 
         IOUtil.copy( reader, writer );
 
-        assertTrue( writer.toString().indexOf( "Main-Class: Stuff" ) > -1 );
+        assertTrue(writer.toString().contains("Main-Class: Stuff"));
 
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
         ( (JarURLConnection) resource.openConnection() ).getJarFile().close();
@@ -149,7 +149,7 @@ public class ManifestCreationFinalizerTest
 
         System.out.println( "Test Manifest:\n\n" + writer );
 
-        assertTrue( writer.toString().indexOf( testKey + ": " + testValue ) > -1 );
+        assertTrue(writer.toString().contains(testKey + ": " + testValue));
 
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
         ( (JarURLConnection) resource.openConnection() ).getJarFile().close();

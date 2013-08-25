@@ -194,14 +194,13 @@ public class LinkcheckReportGenerator
         int totalValidLinks = 0;
         int totalErrorLinks = 0;
         int totalWarningLinks = 0;
-        for ( Iterator it = linkcheckFiles.iterator(); it.hasNext(); )
-        {
-            LinkcheckFile linkcheckFile = (LinkcheckFile) it.next();
+        for (Object linkcheckFile1 : linkcheckFiles) {
+            LinkcheckFile linkcheckFile = (LinkcheckFile) linkcheckFile1;
 
             totalLinks += linkcheckFile.getNumberOfLinks();
-            totalValidLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.VALID_LEVEL );
-            totalErrorLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.ERROR_LEVEL );
-            totalWarningLinks += linkcheckFile.getNumberOfLinks( LinkcheckFileResult.WARNING_LEVEL );
+            totalValidLinks += linkcheckFile.getNumberOfLinks(LinkcheckFileResult.VALID_LEVEL);
+            totalErrorLinks += linkcheckFile.getNumberOfLinks(LinkcheckFileResult.ERROR_LEVEL);
+            totalWarningLinks += linkcheckFile.getNumberOfLinks(LinkcheckFileResult.WARNING_LEVEL);
         }
 
         sink.section1();
@@ -403,109 +402,93 @@ public class LinkcheckReportGenerator
 
         // Content
         List linkcheckFiles = linkcheckModel.getFiles();
-        for ( Iterator it = linkcheckFiles.iterator(); it.hasNext(); )
-        {
-            LinkcheckFile linkcheckFile = (LinkcheckFile) it.next();
+        for (Object linkcheckFile1 : linkcheckFiles) {
+            LinkcheckFile linkcheckFile = (LinkcheckFile) linkcheckFile1;
 
             sink.tableRow();
 
             sink.tableCell();
-            if ( linkcheckFile.getUnsuccessful() == 0 )
-            {
-                iconValid( locale, sink );
-            }
-            else
-            {
-                iconError( locale, sink );
+            if (linkcheckFile.getUnsuccessful() == 0) {
+                iconValid(locale, sink);
+            } else {
+                iconError(locale, sink);
             }
             sink.tableCell_();
 
             // tableCell( createLinkPatternedText( linkcheckFile.getRelativePath(), "./"
             // + linkcheckFile.getRelativePath() ) );
             sink.tableCell();
-            sink.link( linkcheckFile.getRelativePath() );
-            sink.text( linkcheckFile.getRelativePath() );
+            sink.link(linkcheckFile.getRelativePath());
+            sink.text(linkcheckFile.getRelativePath());
             sink.link_();
             sink.tableCell_();
             sink.tableCell();
-            sink.text( String.valueOf( linkcheckFile.getNumberOfLinks() ) );
+            sink.text(String.valueOf(linkcheckFile.getNumberOfLinks()));
             sink.tableCell_();
             sink.tableCell();
-            sink.text( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.VALID_LEVEL ) ) );
+            sink.text(String.valueOf(linkcheckFile.getNumberOfLinks(LinkcheckFileResult.VALID_LEVEL)));
             sink.tableCell_();
             sink.tableCell();
-            sink.text( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.WARNING_LEVEL ) ) );
+            sink.text(String.valueOf(linkcheckFile.getNumberOfLinks(LinkcheckFileResult.WARNING_LEVEL)));
             sink.tableCell_();
             sink.tableCell();
-            sink.text( String.valueOf( linkcheckFile.getNumberOfLinks( LinkcheckFileResult.ERROR_LEVEL ) ) );
+            sink.text(String.valueOf(linkcheckFile.getNumberOfLinks(LinkcheckFileResult.ERROR_LEVEL)));
             sink.tableCell_();
 
             sink.tableRow_();
 
             // Detail error
-            if ( linkcheckFile.getUnsuccessful() != 0 )
-            {
+            if (linkcheckFile.getUnsuccessful() != 0) {
                 sink.tableRow();
 
                 sink.tableCell();
-                sink.text( "" );
+                sink.text("");
                 sink.tableCell_();
 
                 // TODO it is due to DOXIA-78
-                sink.rawText( "<td colspan=\"5\">" );
+                sink.rawText("<td colspan=\"5\">");
 
                 sink.table();
 
-                for ( Iterator it2 = linkcheckFile.getResults().iterator(); it2.hasNext(); )
-                {
-                    LinkcheckFileResult linkcheckFileResult = (LinkcheckFileResult) it2.next();
+                for (Object o : linkcheckFile.getResults()) {
+                    LinkcheckFileResult linkcheckFileResult = (LinkcheckFileResult) o;
 
-                    if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.VALID_LEVEL )
-                    {
+                    if (linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.VALID_LEVEL) {
                         continue;
                     }
 
                     sink.tableRow();
 
                     sink.tableCell();
-                    if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.WARNING_LEVEL )
-                    {
-                        iconWarning( locale, sink );
-                    }
-                    else if ( linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.ERROR_LEVEL )
-                    {
-                        iconError( locale, sink );
+                    if (linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.WARNING_LEVEL) {
+                        iconWarning(locale, sink);
+                    } else if (linkcheckFileResult.getStatusLevel() == LinkcheckFileResult.ERROR_LEVEL) {
+                        iconError(locale, sink);
                     }
                     sink.tableCell_();
 
                     sink.tableCell();
                     sink.italic();
-                    if ( linkcheckFileResult.getTarget().startsWith( "#" ) )
-                    {
-                        sink.link( linkcheckFile.getRelativePath() + linkcheckFileResult.getTarget() );
-                    }
-                    else if ( linkcheckFileResult.getTarget().startsWith( "." ) )
-                    {
+                    if (linkcheckFileResult.getTarget().startsWith("#")) {
+                        sink.link(linkcheckFile.getRelativePath() + linkcheckFileResult.getTarget());
+                    } else if (linkcheckFileResult.getTarget().startsWith(".")) {
                         // We need to calculate a correct absolute path here, because target is a relative path
-                        String absolutePath = FilenameUtils.getFullPath( linkcheckFile.getRelativePath() )
-                            + linkcheckFileResult.getTarget();
-                        String normalizedPath = FilenameUtils.normalize( absolutePath );
-                        if ( normalizedPath == null )
-                        {
+                        String absolutePath = FilenameUtils.getFullPath(linkcheckFile.getRelativePath())
+                                + linkcheckFileResult.getTarget();
+                        String normalizedPath = FilenameUtils.normalize(absolutePath);
+                        if (normalizedPath == null) {
                             normalizedPath = absolutePath;
                         }
-                        sink.link( normalizedPath );
-                    }
-                    else
-                    {
-                        sink.link( linkcheckFileResult.getTarget() );
+                        sink.link(normalizedPath);
+                    } else {
+                        sink.link(linkcheckFileResult.getTarget());
                     }
                     // Show the link as it was written to make it easy for
                     // the author to find it in the source document
-                    sink.text( linkcheckFileResult.getTarget() );
+                    sink.text(linkcheckFileResult.getTarget());
                     sink.link_();
-                    sink.text( ": " );
-                    sink.text( linkcheckFileResult.getErrorMessage() );
+                    sink.text(": ");
+                    sink.text(linkcheckFileResult.getErrorMessage());
                     sink.italic_();
                     sink.tableCell_();
 

@@ -281,7 +281,7 @@ public class DestFileFilter
                                                             removeVersion, this.outputFileDirectory, artifact );
         }
 
-        File destFile = null;
+        File destFile;
         if ( StringUtils.isEmpty( item.getDestFileName() ) )
         {
             destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, this.removeVersion ) );

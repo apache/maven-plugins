@@ -157,9 +157,8 @@ public class SiteInvoker
     {
         List profileIds = new ArrayList();
 
-        for ( Iterator it = clone.getActiveProfiles().iterator(); it.hasNext(); )
-        {
-            profileIds.add( ( (Profile) it.next() ).getId() );
+        for (Object o : clone.getActiveProfiles()) {
+            profileIds.add(((Profile) o).getId());
         }
 
         return profileIds;
@@ -233,7 +232,7 @@ public class SiteInvoker
         }
 
         if ( invokerLogContent != null
-            && invokerLogContent.indexOf( "Error occurred during initialization of VM" ) != -1 )
+            && invokerLogContent.contains("Error occurred during initialization of VM"))
         {
             getLog().info( "Error occurred during initialization of VM, try to use an empty MAVEN_OPTS." );
 

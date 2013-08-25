@@ -961,11 +961,8 @@ public class ModuleSetAssemblyPhaseTest
 
             System.out.println( "Unexpected projects in output: " );
 
-            for ( final Iterator<MavenProject> iter = checkTooMany.iterator(); iter.hasNext(); )
-            {
-                final MavenProject project = iter.next();
-
-                System.out.println( project.getId() );
+            for (final MavenProject project : checkTooMany) {
+                System.out.println(project.getId());
             }
         }
 
@@ -978,11 +975,8 @@ public class ModuleSetAssemblyPhaseTest
 
             System.out.println( "Expected projects missing from output: " );
 
-            for ( final Iterator<MavenProject> iter = checkTooMany.iterator(); iter.hasNext(); )
-            {
-                final MavenProject project = iter.next();
-
-                System.out.println( project.getId() );
+            for (final MavenProject project : checkTooMany) {
+                System.out.println(project.getId());
             }
         }
 

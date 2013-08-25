@@ -39,7 +39,7 @@ public class DefaultMavenProjectStub
     public DefaultMavenProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
+        Model model;
 
         try
         {

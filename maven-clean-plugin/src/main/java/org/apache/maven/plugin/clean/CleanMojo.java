@@ -210,7 +210,7 @@ public class CleanMojo
      */
     private boolean isVerbose()
     {
-        return ( verbose != null ) ? verbose.booleanValue() : getLog().isDebugEnabled();
+        return ( verbose != null ) ? verbose : getLog().isDebugEnabled();
     }
 
     /**

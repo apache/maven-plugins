@@ -134,9 +134,8 @@ public class JarSignVerifyMojo
 
         arguments.add( getJarFile() );
 
-        for ( Iterator it = arguments.iterator() ; it.hasNext() ; )
-        {
-            commandLine.createArgument().setValue( it.next().toString() );
+        for (Object argument : arguments) {
+            commandLine.createArgument().setValue(argument.toString());
         }
 
         commandLine.setWorkingDirectory( workingDirectory.getAbsolutePath() );

@@ -66,11 +66,10 @@ public class SystemMojo
         message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
 
         Properties systemProperties = System.getProperties();
-        for ( Iterator<?> it = systemProperties.keySet().iterator(); it.hasNext(); )
-        {
-            String key = it.next().toString();
-            message.append( "\n" );
-            message.append( key ).append( "=" ).append( systemProperties.get( key ) );
+        for (Object o1 : systemProperties.keySet()) {
+            String key = o1.toString();
+            message.append("\n");
+            message.append(key).append("=").append(systemProperties.get(key));
         }
 
         message.append( '\n' ).append( '\n' );
@@ -80,11 +79,10 @@ public class SystemMojo
         try
         {
             Properties envVars = CommandLineUtils.getSystemEnvVars();
-            for ( Iterator<?> it2 = envVars.keySet().iterator(); it2.hasNext(); )
-            {
-                String key = it2.next().toString();
-                message.append( "\n" );
-                message.append( key ).append( "=" ).append( envVars.get( key ) );
+            for (Object o : envVars.keySet()) {
+                String key = o.toString();
+                message.append("\n");
+                message.append(key).append("=").append(envVars.get(key));
             }
         }
         catch ( IOException e )
