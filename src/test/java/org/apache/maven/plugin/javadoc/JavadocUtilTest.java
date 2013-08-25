@@ -227,7 +227,7 @@ public class JavadocUtilTest
         + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
         + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
-        assertFalse( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
+        assertFalse(cmdLine.contains("-J-Dhttp.proxyPassword=\"****\""));
 
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
@@ -244,7 +244,7 @@ public class JavadocUtilTest
             + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
             + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
-        assertTrue( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
+        assertTrue(cmdLine.contains("-J-Dhttp.proxyPassword=\"****\""));
 
         settings = new Settings();
         proxy = new Proxy();
@@ -260,7 +260,7 @@ public class JavadocUtilTest
         + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
         + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
-        assertFalse( cmdLine.indexOf( "-J-Dhttp.proxyPassword=\"****\"" ) != -1 );
+        assertFalse(cmdLine.contains("-J-Dhttp.proxyPassword=\"****\""));
     }
 
     /**
@@ -272,10 +272,10 @@ public class JavadocUtilTest
         throws Exception
     {
         Settings settings = null;
-        Proxy proxy = null;
+        Proxy proxy;
 
         URL url = null;
-        URL wrongUrl = null;
+        URL wrongUrl;
         try
         {
             JavadocUtil.isValidPackageList( url, settings, false );
@@ -317,7 +317,7 @@ public class JavadocUtilTest
 
         // real proxy
         ProxyServer proxyServer = null;
-        AuthAsyncProxyServlet proxyServlet = null;
+        AuthAsyncProxyServlet proxyServlet;
         try
         {
             proxyServlet = new AuthAsyncProxyServlet();

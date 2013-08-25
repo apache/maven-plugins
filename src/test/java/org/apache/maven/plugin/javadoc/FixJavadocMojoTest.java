@@ -607,10 +607,8 @@ public class FixJavadocMojoTest
         File generatedDir = new File( testPomBasedir, "target/generated/fix/test" );
         assertTrue( generatedDir.exists() );
 
-        for ( int i = 0; i < clazzToCompare.length; i++ )
-        {
-            String className = clazzToCompare[i];
-            assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
+        for (String className : clazzToCompare) {
+            assertEquals(new File(expectedDir, className), new File(generatedDir, className));
         }
     }
 

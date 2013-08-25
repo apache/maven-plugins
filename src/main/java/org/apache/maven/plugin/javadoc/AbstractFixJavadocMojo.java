@@ -442,11 +442,8 @@ public abstract class AbstractFixJavadocMojo
 
             if ( javaClasses != null )
             {
-                for ( int i = 0; i < javaClasses.length; i++ )
-                {
-                    JavaClass javaClass = javaClasses[i];
-
-                    processFix( javaClass );
+                for (JavaClass javaClass : javaClasses) {
+                    processFix(javaClass);
                 }
             }
         }
@@ -535,19 +532,14 @@ public abstract class AbstractFixJavadocMojo
         {
             String[] split = StringUtils.split( fixTags, "," );
             List<String> filtered = new LinkedList<String>();
-            for ( int j = 0; j < split.length; j++ )
-            {
-                String s = split[j].trim();
-                if ( JavadocUtil.equalsIgnoreCase( s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
-                                                   THROWS_TAG, LINK_TAG ) )
-                {
-                    filtered.add( s );
-                }
-                else
-                {
-                    if ( getLog().isWarnEnabled() )
-                    {
-                        getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
+            for (String aSplit : split) {
+                String s = aSplit.trim();
+                if (JavadocUtil.equalsIgnoreCase(s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
+                        THROWS_TAG, LINK_TAG)) {
+                    filtered.add(s);
+                } else {
+                    if (getLog().isWarnEnabled()) {
+                        getLog().warn("Unrecognized '" + s + "' for fixTags parameter. Ignored it!");
                     }
                 }
             }
@@ -685,7 +677,7 @@ public abstract class AbstractFixJavadocMojo
                     StringUtils.unifyLineSeparators( FileUtils.fileRead( invokerLogFile, "UTF-8" ) );
                 // see org.codehaus.mojo.clirr.AbstractClirrMojo#getComparisonArtifact()
                 final String artifactNotFoundMsg = "Unable to find a previous version of the project in the repository";
-                if ( invokerLogContent.indexOf( artifactNotFoundMsg ) != -1 )
+                if (invokerLogContent.contains(artifactNotFoundMsg))
                 {
                     getLog().warn( "No previous artifact has been deployed, Clirr is ignored." );
                     return;
@@ -743,7 +735,7 @@ public abstract class AbstractFixJavadocMojo
         {
             reader = ReaderFactory.newReader( clirrTextOutputFile, "UTF-8" );
             input = new BufferedReader( reader );
-            String line = null;
+            String line;
             while ( ( line = input.readLine() ) != null )
             {
                 String[] split = StringUtils.split( line, ":" );
@@ -842,10 +834,8 @@ public abstract class AbstractFixJavadocMojo
             return true;
         }
 
-        for ( int i = 0; i < fixTagsSplitted.length; i++ )
-        {
-            if ( fixTagsSplitted[i].trim().equals( tag ) )
-            {
+        for (String aFixTagsSplitted : fixTagsSplitted) {
+            if (aFixTagsSplitted.trim().equals(tag)) {
                 return true;
             }
         }
@@ -1109,7 +1099,7 @@ public abstract class AbstractFixJavadocMojo
         String extraComment = javadocComment.substring( javadocComment.indexOf( END_JAVADOC ) + END_JAVADOC.length() );
         if ( StringUtils.isNotEmpty( extraComment ) )
         {
-            if ( extraComment.indexOf( EOL ) != -1 )
+            if (extraComment.contains(EOL))
             {
                 stringWriter.write( extraComment.substring( extraComment.indexOf( EOL ) + EOL.length() ) );
             }
@@ -1334,24 +1324,18 @@ public abstract class AbstractFixJavadocMojo
             {
                 StringBuilder value = new StringBuilder();
                 String[] lines = getLines( field.getInitializationExpression() );
-                for ( int i = 0; i < lines.length; i++ )
-                {
-                    String line = lines[i];
-
-                    StringTokenizer token = new StringTokenizer( line.trim(), "\"\n\r" );
-                    while ( token.hasMoreTokens() )
-                    {
+                for (String line : lines) {
+                    StringTokenizer token = new StringTokenizer(line.trim(), "\"\n\r");
+                    while (token.hasMoreTokens()) {
                         String s = token.nextToken();
 
-                        if ( s.trim().equals( "+" ) )
-                        {
+                        if (s.trim().equals("+")) {
                             continue;
                         }
-                        if ( s.trim().endsWith( "\\" ) )
-                        {
+                        if (s.trim().endsWith("\\")) {
                             s += "\"";
                         }
-                        value.append( s );
+                        value.append(s);
                     }
                 }
 
@@ -1717,10 +1701,9 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String[] lines = getLines( comment );
-        for ( int i = 0; i < lines.length; i++ )
-        {
-            sb.append( indent ).append( " " ).append( lines[i].trim() );
-            sb.append( EOL );
+        for (String line : lines) {
+            sb.append(indent).append(" ").append(line.trim());
+            sb.append(EOL);
         }
     }
 
@@ -1940,8 +1923,7 @@ public abstract class AbstractFixJavadocMojo
                     {
                         String originalJavadocTag = it.next();
 
-                        if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().indexOf(
-                            "@" + docletTag.getName() ) != -1 )
+                        if (StringUtils.removeDuplicateWhitespace(originalJavadocTag).trim().contains("@" + docletTag.getName()))
                         {
                             it.remove();
                             sb.append( originalJavadocTag );
@@ -1956,8 +1938,7 @@ public abstract class AbstractFixJavadocMojo
                 {
                     String originalJavadocTag = it.next();
 
-                    if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().indexOf(
-                        "@" + docletTag.getName() ) != -1 )
+                    if (StringUtils.removeDuplicateWhitespace(originalJavadocTag).trim().contains("@" + docletTag.getName()))
                     {
                         it.remove();
                         sb.append( originalJavadocTag );
@@ -1999,10 +1980,8 @@ public abstract class AbstractFixJavadocMojo
         {
             // is generic?
             TypeVariable[] typeParams = javaMethod.getTypeParameters();
-            for ( int i = 0; i < typeParams.length; i++ )
-            {
-                if ( typeParams[i].getGenericValue().equals( paramName ) )
-                {
+            for (TypeVariable typeParam : typeParams) {
+                if (typeParam.getGenericValue().equals(paramName)) {
                     found = true;
                 }
             }
@@ -3393,7 +3372,7 @@ public abstract class AbstractFixJavadocMojo
     private static String removeLastEmptyJavadocLines( final String content )
         throws IOException
     {
-        if ( content.indexOf( EOL ) == -1 )
+        if (!content.contains(EOL))
         {
             return content;
         }
@@ -3493,7 +3472,7 @@ public abstract class AbstractFixJavadocMojo
             line = reader.readLine();
         }
 
-        return (String[]) lines.toArray( new String[0] );
+        return (String[]) lines.toArray(new String[lines.size()]);
     }
 
     /**
@@ -3566,7 +3545,7 @@ public abstract class AbstractFixJavadocMojo
             l.remove( 0 );
             l.remove( 1 );
 
-            return (String[]) l.toArray( new String[0] );
+            return (String[]) l.toArray(new String[l.size()]);
         }
 
         return params;

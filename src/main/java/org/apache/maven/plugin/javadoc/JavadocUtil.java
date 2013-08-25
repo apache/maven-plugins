@@ -196,10 +196,9 @@ public class JavadocUtil
         List<String> excludedNames = new ArrayList<String>();
         for ( String path : sourcePaths )
         {
-            for ( int j = 0; j < subpackagesList.length; j++ )
-            {
-                List<String> excludes = getExcludedPackages( path, excludedPackages );
-                excludedNames.addAll( excludes );
+            for (String aSubpackagesList : subpackagesList) {
+                List<String> excludes = getExcludedPackages(path, excludedPackages);
+                excludedNames.addAll(excludes);
             }
         }
 
@@ -272,7 +271,7 @@ public class JavadocUtil
 
         if ( StringUtils.isNotEmpty( arg ) )
         {
-            if ( arg.indexOf( "'" ) != -1 )
+            if (arg.contains("'"))
             {
                 arg = StringUtils.replace( arg, "'", "\\'" );
             }
@@ -299,7 +298,7 @@ public class JavadocUtil
         if ( StringUtils.isNotEmpty( path ) )
         {
             path = path.replace( '\\', '/' );
-            if ( path.indexOf( "\'" ) != -1 )
+            if (path.contains("\'"))
             {
                 String split[] = path.split( "\'" );
                 path = "";
@@ -409,62 +408,46 @@ public class JavadocUtil
     {
         List<String> files = new ArrayList<String>();
 
-        for ( int j = 0; j < fileList.length; j++ )
-        {
+        for (String aFileList : fileList) {
             boolean include = true;
-            for ( int k = 0; k < excludePackages.length && include; k++ )
-            {
+            for (int k = 0; k < excludePackages.length && include; k++) {
                 // handle wildcards (*) in the excludePackageNames
-                String[] excludeName = excludePackages[k].split( "[*]" );
+                String[] excludeName = excludePackages[k].split("[*]");
 
-                if ( excludeName.length == 0 )
-                {
+                if (excludeName.length == 0) {
                     continue;
                 }
 
-                if ( excludeName.length > 1 )
-                {
+                if (excludeName.length > 1) {
                     int u = 0;
-                    while ( include && u < excludeName.length )
-                    {
-                        if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1 )
-                        {
+                    while (include && u < excludeName.length) {
+                        if (!"".equals(excludeName[u].trim()) && aFileList.indexOf(excludeName[u]) != -1) {
                             include = false;
                         }
                         u++;
                     }
-                }
-                else
-                {
-                    if ( fileList[j].startsWith( sourceDirectory.toString() + File.separatorChar + excludeName[0] ) )
-                    {
-                        if ( excludeName[0].endsWith( String.valueOf( File.separatorChar ) ) )
-                        {
-                            int i = fileList[j].lastIndexOf( File.separatorChar );
-                            String packageName = fileList[j].substring( 0, i + 1 );
-                            File currentPackage = new File( packageName );
-                            File excludedPackage = new File( sourceDirectory, excludeName[0] );
-                            if ( currentPackage.equals( excludedPackage )
-                                && fileList[j].substring( i ).indexOf( ".java" ) != -1 )
-                            {
+                } else {
+                    if (aFileList.startsWith(sourceDirectory.toString() + File.separatorChar + excludeName[0])) {
+                        if (excludeName[0].endsWith(String.valueOf(File.separatorChar))) {
+                            int i = aFileList.lastIndexOf(File.separatorChar);
+                            String packageName = aFileList.substring(0, i + 1);
+                            File currentPackage = new File(packageName);
+                            File excludedPackage = new File(sourceDirectory, excludeName[0]);
+                            if (currentPackage.equals(excludedPackage)
+                                    && aFileList.substring(i).indexOf(".java") != -1) {
                                 include = true;
-                            }
-                            else
-                            {
+                            } else {
                                 include = false;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             include = false;
                         }
                     }
                 }
             }
 
-            if ( include )
-            {
-                files.add( quotedPathArgument( fileList[j] ) );
+            if (include) {
+                files.add(quotedPathArgument(aFileList));
             }
         }
 
@@ -482,19 +465,15 @@ public class JavadocUtil
     protected static List<String> getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
     {
         List<String> files = new ArrayList<String>();
-        for ( int i = 0; i < excludePackagenames.length; i++ )
-        {
-            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
-            for ( int j = 0; j < fileList.length; j++ )
-            {
-                String[] excludeName = excludePackagenames[i].split( "[*]" );
+        for (String excludePackagename : excludePackagenames) {
+            String[] fileList = FileUtils.getFilesFromExtension(sourceDirectory, new String[]{"java"});
+            for (int j = 0; j < fileList.length; j++) {
+                String[] excludeName = excludePackagename.split("[*]");
                 int u = 0;
-                while ( u < excludeName.length )
-                {
-                    if ( !"".equals( excludeName[u].trim() ) && fileList[j].indexOf( excludeName[u] ) != -1
-                        && sourceDirectory.indexOf( excludeName[u] ) == -1 )
-                    {
-                        files.add( fileList[j] );
+                while (u < excludeName.length) {
+                    if (!"".equals(excludeName[u].trim()) && fileList[j].contains(excludeName[u])
+                            && !sourceDirectory.contains(excludeName[u])) {
+                        files.add(fileList[j]);
                     }
                     u++;
                 }
@@ -1009,8 +988,8 @@ public class JavadocUtil
             String invokerLogContent = readFile( invokerLog, "UTF-8" );
 
             // see DefaultMaven
-            if ( invokerLogContent != null && ( invokerLogContent.indexOf( "Scanning for projects..." ) == -1
-                || invokerLogContent.indexOf( OutOfMemoryError.class.getName() ) != -1 ) )
+            if ( invokerLogContent != null && (!invokerLogContent.contains("Scanning for projects...")
+                || invokerLogContent.contains(OutOfMemoryError.class.getName())) )
             {
                 if ( log != null )
                 {
@@ -1030,8 +1009,8 @@ public class JavadocUtil
             String invokerLogContent = readFile( invokerLog, "UTF-8" );
 
             // see DefaultMaven
-            if ( invokerLogContent != null && ( invokerLogContent.indexOf( "Scanning for projects..." ) == -1
-                || invokerLogContent.indexOf( OutOfMemoryError.class.getName() ) != -1 ) )
+            if ( invokerLogContent != null && (!invokerLogContent.contains("Scanning for projects...")
+                || invokerLogContent.contains(OutOfMemoryError.class.getName())) )
             {
                 throw new MavenInvocationException( ERROR_INIT_VM );
             }
@@ -1472,7 +1451,7 @@ public class JavadocUtil
         public String nextToken()
             throws NoSuchElementException
         {
-            String token = null;
+            String token;
             if ( lookahead != null )
             {
                 token = lookahead;
