@@ -280,7 +280,7 @@ public class EjbMojo
             if ( excludes != null && !excludes.isEmpty() )
             {
                 excludes.add( EJB_JAR_XML );
-                mainJarExcludes = (String[]) excludes.toArray( EMPTY_STRING_ARRAY );
+                mainJarExcludes = (String[]) excludes.toArray(new String[excludes.size()]);
             }
 
             archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
@@ -358,12 +358,12 @@ public class EjbMojo
 
             if ( clientIncludes != null && !clientIncludes.isEmpty() )
             {
-                includes = (String[]) clientIncludes.toArray( EMPTY_STRING_ARRAY );
+                includes = (String[]) clientIncludes.toArray(new String[clientIncludes.size()]);
             }
 
             if ( clientExcludes != null && !clientExcludes.isEmpty() )
             {
-                excludes = (String[]) clientExcludes.toArray( EMPTY_STRING_ARRAY );
+                excludes = (String[]) clientExcludes.toArray(new String[clientExcludes.size()]);
             }
 
             File clientJarFile = new File( basedir, clientJarName + "-client.jar" );

@@ -608,20 +608,16 @@ public class EjbMojoTest
             final JarContentChecker inclusionChecker = new JarContentChecker();
 
             // set expected jar contents
-            for ( int i = 0; i < expectedFiles.length; i++ )
-            {
-                String expectedFile = expectedFiles[i];
-                inclusionChecker.addFile( new File( expectedFile ) );
+            for (String expectedFile : expectedFiles) {
+                inclusionChecker.addFile(new File(expectedFile));
             }
             assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         }
         if ( unexpectedFiles != null )
         {
             final JarContentChecker exclusionChecker = new JarContentChecker();
-            for ( int i = 0; i < unexpectedFiles.length; i++ )
-            {
-                String unexpectedFile = unexpectedFiles[i];
-                exclusionChecker.addFile( new File( unexpectedFile ) );
+            for (String unexpectedFile : unexpectedFiles) {
+                exclusionChecker.addFile(new File(unexpectedFile));
             }
             assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         }
