@@ -33,7 +33,7 @@ under the License.
   <version>2.11-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Checkstyle Plugin</name>
+  <name>Apache Maven Checkstyle Plugin</name>
   <description>Generates a report on violations of code style and optionally fails the build if violations are detected.</description>
   <inceptionYear>2005</inceptionYear>
 
@@ -160,12 +160,12 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>2.0.5</version>
+      <version>3.0.15</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.13</version>
+      <version>1.19</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
