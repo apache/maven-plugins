@@ -42,7 +42,7 @@ public final class RelativizePath
      */
     static String convertToRelativePath( File thing, File relativeTo )
     {
-        StringBuilder relativePath = null;
+        StringBuilder relativePath;
 
         if ( thing.getParentFile().equals( relativeTo.getParentFile() ) )
         {

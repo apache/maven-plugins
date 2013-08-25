@@ -480,7 +480,7 @@ public abstract class AbstractProjectInfoReport
                 value = i18nOriginal.getString( bundleName, locale, key );
             }
 
-            if ( value.indexOf( "${" ) < 0 )
+            if (!value.contains("${"))
             {
                 return value;
             }

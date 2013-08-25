@@ -45,7 +45,7 @@ public class IT_GenerateFromOverride
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
         
-        assertTrue( content.indexOf( "Override:" ) > -1 );
+        assertTrue(content.contains("Override:"));
     }
 
 }

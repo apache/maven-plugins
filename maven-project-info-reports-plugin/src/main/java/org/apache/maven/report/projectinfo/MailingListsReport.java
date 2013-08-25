@@ -210,11 +210,11 @@ public class MailingListsReport
                 {
                     // For the first line
                     Iterator<String> it = mailingList.getOtherArchives().iterator();
-                    String otherArchive = it.next().toString();
+                    String otherArchive = it.next();
 
                     textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                    tableRow( textRow.toArray( EMPTY_STRING_ARRAY ) );
+                    tableRow(textRow.toArray(new String[textRow.size()]));
 
                     // Other lines...
                     while ( it.hasNext() )
@@ -241,7 +241,7 @@ public class MailingListsReport
 
                         textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                        tableRow( textRow.toArray( EMPTY_STRING_ARRAY ) );
+                        tableRow(textRow.toArray(new String[textRow.size()]));
                     }
                 }
                 else
@@ -251,7 +251,7 @@ public class MailingListsReport
                         textRow.add( null );
                     }
 
-                    tableRow( textRow.toArray( EMPTY_STRING_ARRAY ) );
+                    tableRow(textRow.toArray(new String[textRow.size()]));
                 }
             }
 

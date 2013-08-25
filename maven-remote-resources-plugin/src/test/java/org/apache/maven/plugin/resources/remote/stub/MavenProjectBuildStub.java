@@ -223,20 +223,17 @@ public class MavenProjectBuildStub
     {
         File currentDirectory;
 
-        for ( int nIndex = 0; nIndex < directoryList.size(); nIndex++ )
-        {
-            currentDirectory = new File( parent, "/" + (String) directoryList.get( nIndex ) );
+        for (String aDirectoryList : directoryList) {
+            currentDirectory = new File(parent, "/" + (String) aDirectoryList);
 
-            if ( !currentDirectory.exists() )
-            {
+            if (!currentDirectory.exists()) {
                 currentDirectory.mkdirs();
             }
 
             // duplicate dir structure in test resources
-            currentDirectory = new File( testparent, "/" + (String) directoryList.get( nIndex ) );
+            currentDirectory = new File(testparent, "/" + (String) aDirectoryList);
 
-            if ( !currentDirectory.exists() )
-            {
+            if (!currentDirectory.exists()) {
                 currentDirectory.mkdirs();
             }
         }
@@ -276,26 +273,20 @@ public class MavenProjectBuildStub
             return;
         }
 
-        for ( int nIndex = 0; nIndex < list.size(); nIndex++ )
-        {
-            currentFile = new File( parent, (String) list.get( nIndex ) );
+        for (String aList : list) {
+            currentFile = new File(parent, (String) aList);
 
             // create the necessary parent directories
             // before we create the files
-            if ( !currentFile.getParentFile().exists() )
-            {
+            if (!currentFile.getParentFile().exists()) {
                 currentFile.getParentFile().mkdirs();
             }
 
-            if ( !currentFile.exists() )
-            {
-                try
-                {
+            if (!currentFile.exists()) {
+                try {
                     currentFile.createNewFile();
-                    populateFile( currentFile, RESOURCES_FILE );
-                }
-                catch ( IOException io )
-                {
+                    populateFile(currentFile, RESOURCES_FILE);
+                } catch (IOException io) {
                     //TODO: handle exception
                 }
             }

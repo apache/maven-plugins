@@ -665,7 +665,7 @@ public class ProcessRemoteResourcesMojo
                 }
 
                 getLog().debug( "Building project for " + artifact );
-                MavenProject p = null;
+                MavenProject p;
                 try
                 {
                     p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepo, localRepository );
@@ -1304,36 +1304,29 @@ public class ProcessRemoteResourcesMojo
         }
 
         List<Supplement> supplements = new ArrayList<Supplement>();
-        for ( int idx = 0; idx < models.length; idx++ )
-        {
-            String set = models[idx];
-            getLog().debug( "Preparing ruleset: " + set );
-            try
-            {
-                File f = locator.getResourceAsFile( set, getLocationTemp( set ) );
+        for (String set : models) {
+            getLog().debug("Preparing ruleset: " + set);
+            try {
+                File f = locator.getResourceAsFile(set, getLocationTemp(set));
 
-                if ( null == f || !f.exists() )
-                {
-                    throw new MojoExecutionException( "Cold not resolve " + set );
+                if (null == f || !f.exists()) {
+                    throw new MojoExecutionException("Cold not resolve " + set);
                 }
-                if ( !f.canRead() )
-                {
-                    throw new MojoExecutionException( "Supplemental data models won't be loaded. " + "File " +
-                                                          f.getAbsolutePath() +
-                                                          " cannot be read, check permissions on the file." );
+                if (!f.canRead()) {
+                    throw new MojoExecutionException("Supplemental data models won't be loaded. " + "File " +
+                            f.getAbsolutePath() +
+                            " cannot be read, check permissions on the file.");
                 }
 
-                getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
+                getLog().debug("Loading supplemental models from " + f.getAbsolutePath());
 
                 SupplementalDataModelXpp3Reader reader = new SupplementalDataModelXpp3Reader();
-                SupplementalDataModel supplementalModel = reader.read( new FileReader( f ) );
-                supplements.addAll( supplementalModel.getSupplement() );
-            }
-            catch ( Exception e )
-            {
+                SupplementalDataModel supplementalModel = reader.read(new FileReader(f));
+                supplements.addAll(supplementalModel.getSupplement());
+            } catch (Exception e) {
                 String msg = "Error loading supplemental data models: " + e.getMessage();
-                getLog().error( msg, e );
-                throw new MojoExecutionException( msg, e );
+                getLog().error(msg, e);
+                throw new MojoExecutionException(msg, e);
             }
         }
 

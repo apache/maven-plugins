@@ -79,11 +79,7 @@ import org.jdom.output.XMLOutputter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class MavenJDOMWriter.
@@ -1137,45 +1133,33 @@ public class MavenJDOMWriter
         {
             Xpp3Dom[] childs = parentDom.getChildren();
             Collection domChilds = new ArrayList();
-            for ( int i = 0; i < childs.length; i++ )
-            {
-                domChilds.add( childs[i] );
-            }
+            Collections.addAll(domChilds, childs);
             // int domIndex = 0;
-            ListIterator it = parent.getChildren().listIterator();
-            while ( it.hasNext() )
-            {
-                Element elem = (Element) it.next();
+            for (Object o : parent.getChildren()) {
+                Element elem = (Element) o;
                 Iterator it2 = domChilds.iterator();
                 Xpp3Dom corrDom = null;
-                while ( it2.hasNext() )
-                {
+                while (it2.hasNext()) {
                     Xpp3Dom dm = (Xpp3Dom) it2.next();
-                    if ( dm.getName().equals( elem.getName() ) )
-                    {
+                    if (dm.getName().equals(elem.getName())) {
                         corrDom = dm;
                         break;
                     }
                 }
-                if ( corrDom != null )
-                {
-                    domChilds.remove( corrDom );
-                    replaceXpp3DOM( elem, corrDom, new Counter( counter.getDepth() + 1 ) );
+                if (corrDom != null) {
+                    domChilds.remove(corrDom);
+                    replaceXpp3DOM(elem, corrDom, new Counter(counter.getDepth() + 1));
                     counter.increaseCount();
-                }
-                else
-                {
-                    parent.removeContent( elem );
+                } else {
+                    parent.removeContent(elem);
                 }
             }
-            Iterator it2 = domChilds.iterator();
-            while ( it2.hasNext() )
-            {
-                Xpp3Dom dm = (Xpp3Dom) it2.next();
-                Element elem = factory.element( dm.getName(), parent.getNamespace() );
-                insertAtPreferredLocation( parent, elem, counter );
+            for (Object domChild : domChilds) {
+                Xpp3Dom dm = (Xpp3Dom) domChild;
+                Element elem = factory.element(dm.getName(), parent.getNamespace());
+                insertAtPreferredLocation(parent, elem, counter);
                 counter.increaseCount();
-                replaceXpp3DOM( elem, dm, new Counter( counter.getDepth() + 1 ) );
+                replaceXpp3DOM(elem, dm, new Counter(counter.getDepth() + 1));
             }
         }
         else if ( parentDom.getValue() != null )

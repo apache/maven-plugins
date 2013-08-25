@@ -58,8 +58,8 @@ public class IT_GetDependencyProjects
         File output = new File( dir, "project/target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
 
-        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.gdp:release:1.0" ) >= 0 );
-        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.gdp:snapshot:1.0-SNAPSHOT" ) >= 0 );
+        assertTrue(content.contains("Dependency Id: org.apache.maven.plugin.rresource.it.gdp:release:1.0"));
+        assertTrue(content.contains("Dependency Id: org.apache.maven.plugin.rresource.it.gdp:snapshot:1.0-SNAPSHOT"));
     }
 
 }

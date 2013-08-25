@@ -1299,7 +1299,7 @@ public class DependenciesRenderer
                     Integer old = totalByRepo.get( repokey );
                     if ( old == null )
                     {
-                        old = new Integer( 0 );
+                        old = 0;
                         totalByRepo.put( repokey, old );
                     }
 
@@ -1333,7 +1333,7 @@ public class DependenciesRenderer
                         sink.link_();
                         sink.tableCell_();
 
-                        totalByRepo.put( repokey, new Integer( old.intValue() + 1 ) );
+                        totalByRepo.put( repokey, old.intValue() + 1);
                     }
                     else
                     {

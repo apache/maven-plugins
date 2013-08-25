@@ -45,7 +45,7 @@ public class IT_GenerateFromBundleWithTypeAndClassifier
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
         
-        assertTrue( content.indexOf( "Built-In:" ) > -1 );
+        assertTrue(content.contains("Built-In:"));
     }
 
 }

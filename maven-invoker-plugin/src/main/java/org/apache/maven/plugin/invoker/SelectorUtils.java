@@ -46,17 +46,13 @@ class SelectorUtils
     {
         String[] tokens = ( list != null ) ? StringUtils.split( list, "," ) : new String[0];
 
-        for ( int i = 0; i < tokens.length; i++ )
-        {
-            String token = tokens[i].trim();
+        for (String token1 : tokens) {
+            String token = token1.trim();
 
-            if ( token.startsWith( "!" ) )
-            {
-                excludes.add( token.substring( 1 ) );
-            }
-            else
-            {
-                includes.add( token );
+            if (token.startsWith("!")) {
+                excludes.add(token.substring(1));
+            } else {
+                includes.add(token);
             }
         }
     }
@@ -247,9 +243,8 @@ class SelectorUtils
 
         List<Integer> numbers = new ArrayList<Integer>();
 
-        for ( int i = 0; i < tokens.length; i++ )
-        {
-            numbers.add( Integer.valueOf( tokens[i] ) );
+        for (String token : tokens) {
+            numbers.add(Integer.valueOf(token));
         }
 
         return numbers;

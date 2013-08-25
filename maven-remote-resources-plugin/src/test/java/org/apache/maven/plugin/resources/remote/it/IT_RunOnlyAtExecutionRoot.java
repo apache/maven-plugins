@@ -64,8 +64,8 @@ public class IT_RunOnlyAtExecutionRoot
         
         String content = FileUtils.fileRead( output );
 
-        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.mrr41:release:1.0" ) >= 0 );
-        assertTrue( content.indexOf( "Dependency Id: org.apache.maven.plugin.rresource.it.mrr41:snapshot:1.0-SNAPSHOT" ) >= 0 );
+        assertTrue(content.contains("Dependency Id: org.apache.maven.plugin.rresource.it.mrr41:release:1.0"));
+        assertTrue(content.contains("Dependency Id: org.apache.maven.plugin.rresource.it.mrr41:snapshot:1.0-SNAPSHOT"));
     }
 
 }

@@ -904,7 +904,7 @@ public abstract class AbstractInvokerMojo
             dirs.add( projectPath );
         }
 
-        boolean filter = false;
+        boolean filter;
 
         // clone project directories
         try
@@ -2208,7 +2208,7 @@ public abstract class AbstractInvokerMojo
             Map<String, Object> composite = getInterpolationValueSource();
             reader = new BufferedReader( new InterpolationFilterReader( newReader( tokenFile ), composite ) );
 
-            String line = null;
+            String line;
             while ( ( line = reader.readLine() ) != null )
             {
                 result.addAll( collectListFromCSV( line ) );

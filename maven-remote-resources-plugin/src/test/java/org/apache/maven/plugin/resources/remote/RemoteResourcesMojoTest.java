@@ -323,8 +323,8 @@ public class RemoteResourcesMojoTest
         assertTrue( file.exists() );
 
         String data = FileUtils.fileRead( file );
-        assertTrue( data.indexOf( "2007" ) != -1 );
-        assertTrue( data.indexOf( "default-filterbundles" ) != -1 );
+        assertTrue(data.contains("2007"));
+        assertTrue(data.contains("default-filterbundles"));
     }
 
     public void testFilteredBundlesWithProjectProperties()
@@ -359,8 +359,8 @@ public class RemoteResourcesMojoTest
         assertTrue( file.exists() );
 
         String data = FileUtils.fileRead( file );
-        assertTrue( data.indexOf( "maven" ) != -1 );
-        assertTrue( data.indexOf( "rules" ) != -1 );
+        assertTrue(data.contains("maven"));
+        assertTrue(data.contains("rules"));
     }
 
     protected void buildResourceBundle( String id,
@@ -376,12 +376,11 @@ public class RemoteResourcesMojoTest
 
         setupDefaultProject( project );
 
-        for ( int x = 0; x < resourceNames.length; x++ )
-        {
-            File resource = new File( resourceDir, resourceNames[x] );
-            URL source = getClass().getResource( "/" + resourceNames[x] );
+        for (String resourceName2 : resourceNames) {
+            File resource = new File(resourceDir, resourceName2);
+            URL source = getClass().getResource("/" + resourceName2);
 
-            FileUtils.copyURLToFile( source, resource );
+            FileUtils.copyURLToFile(source, resource);
         }
 
         mojo.execute();
@@ -390,9 +389,8 @@ public class RemoteResourcesMojoTest
         assertTrue( xmlFile.exists() );
 
         String data = FileUtils.fileRead( xmlFile );
-        for ( int x = 0; x < resourceNames.length; x++ )
-        {
-            assertTrue( data.indexOf( resourceNames[x] ) != -1 );
+        for (String resourceName1 : resourceNames) {
+            assertTrue(data.contains(resourceName1));
         }
 
         if ( null != jarName )
@@ -402,13 +400,12 @@ public class RemoteResourcesMojoTest
             jar.write( data.getBytes() );
             jar.closeEntry();
 
-            for ( int x = 0; x < resourceNames.length; x++ )
-            {
-                File resource = new File( resourceDir, resourceNames[x] );
-                InputStream in = new FileInputStream( resource );
-                jar.putNextEntry( new ZipEntry( resourceNames[x] ) );
-                IOUtil.copy( in, jar );
-                IOUtil.close( in );
+            for (String resourceName : resourceNames) {
+                File resource = new File(resourceDir, resourceName);
+                InputStream in = new FileInputStream(resource);
+                jar.putNextEntry(new ZipEntry(resourceName));
+                IOUtil.copy(in, jar);
+                IOUtil.close(in);
                 jar.closeEntry();
             }
             jar.close();

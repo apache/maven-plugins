@@ -87,47 +87,40 @@ public class ComponentsXmlResourceTransformer
 
         Xpp3Dom[] children = newDom.getChild( "components" ).getChildren( "component" );
 
-        for ( int i = 0; i < children.length; i++ )
-        {
-            Xpp3Dom component = children[i];
+        for (Xpp3Dom component : children) {
+            String role = getValue(component, "role");
+            role = getRelocatedClass(role, relocators);
+            setValue(component, "role", role);
 
-            String role = getValue( component, "role" );
-            role = getRelocatedClass( role, relocators );
-            setValue( component, "role", role );
+            String roleHint = getValue(component, "role-hint");
 
-            String roleHint = getValue( component, "role-hint" );
-
-            String impl = getValue( component, "implementation" );
-            impl = getRelocatedClass( impl, relocators );
-            setValue( component, "implementation", impl );
+            String impl = getValue(component, "implementation");
+            impl = getRelocatedClass(impl, relocators);
+            setValue(component, "implementation", impl);
 
             String key = role + ':' + roleHint;
-            if ( components.containsKey( key ) )
-            {
+            if (components.containsKey(key)) {
                 // TODO: use the tools in Plexus to merge these properly. For now, I just need an all-or-nothing
                 // configuration carry over
 
-                Xpp3Dom dom = components.get( key );
-                if ( dom.getChild( "configuration" ) != null )
-                {
-                    component.addChild( dom.getChild( "configuration" ) );
+                Xpp3Dom dom = components.get(key);
+                if (dom.getChild("configuration") != null) {
+                    component.addChild(dom.getChild("configuration"));
                 }
             }
 
-            Xpp3Dom requirements = component.getChild( "requirements" );
-            if ( requirements != null && requirements.getChildCount() > 0 )
-            {
-                for ( int r = requirements.getChildCount() - 1; r >= 0; r-- )
-                {
-                    Xpp3Dom requirement = requirements.getChild( r );
+            Xpp3Dom requirements = component.getChild("requirements");
+            if (requirements != null && requirements.getChildCount() > 0) {
+                for (int r = requirements.getChildCount() - 1; r >= 0; r--) {
+                    Xpp3Dom requirement = requirements.getChild(r);
 
-                    String requiredRole = getValue( requirement, "role" );
-                    requiredRole = getRelocatedClass( requiredRole, relocators );
-                    setValue( requirement, "role", requiredRole );
+                    String requiredRole = getValue(requirement, "role");
+                    requiredRole = getRelocatedClass(requiredRole, relocators);
+                    setValue(requirement, "role", requiredRole);
                 }
             }
 
-            components.put( key, component );
+            components.put(key, component);
         }
     }
 

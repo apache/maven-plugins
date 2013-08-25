@@ -52,8 +52,8 @@ public class IT_BadDependencyPoms
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
 
-        assertTrue( content.indexOf( "Dependency Id: test:missing:0.1" ) >= 0 );
-        assertTrue( content.indexOf( "Dependency Id: test:pom:0.2" ) >= 0 );
+        assertTrue(content.contains("Dependency Id: test:missing:0.1"));
+        assertTrue(content.contains("Dependency Id: test:pom:0.2"));
     }
 
 }
