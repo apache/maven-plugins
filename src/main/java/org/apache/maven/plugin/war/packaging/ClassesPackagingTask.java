@@ -91,7 +91,7 @@ public class ClassesPackagingTask
         ArtifactFactory factory = context.getArtifactFactory();
         Artifact artifact = factory.createBuildArtifact( project.getGroupId(), project.getArtifactId(),
                                                          project.getVersion(), "jar" );
-        String archiveName = null;
+        String archiveName;
         try
         {
             archiveName = getArtifactFinalName( context, artifact );

@@ -113,31 +113,29 @@ public class PathSetTest
         assertEquals( "Unexpected PathSet size", ps.size(), 2 );
 
         int i = 0;
-        for ( Iterator iter2 = ps.iterator(); iter2.hasNext(); )
-        {
+        for (String p1 : ps) {
             i++;
-            String pathstr = (String) iter2.next();
-            assertTrue( ps.contains( pathstr ) );
-            assertTrue( ps.contains( "/" + pathstr ) );
-            assertTrue( ps.contains( "/" + StringUtils.replace( pathstr, '/', '\\' ) ) );
-            assertFalse( ps.contains( "/" + StringUtils.replace( pathstr, '/', '\\' ) + "/a" ) );
-            assertFalse( ps.contains( "/a/" + StringUtils.replace( pathstr, '/', '\\' ) ) );
+            String pathstr = p1;
+            assertTrue(ps.contains(pathstr));
+            assertTrue(ps.contains("/" + pathstr));
+            assertTrue(ps.contains("/" + StringUtils.replace(pathstr, '/', '\\')));
+            assertFalse(ps.contains("/" + StringUtils.replace(pathstr, '/', '\\') + "/a"));
+            assertFalse(ps.contains("/a/" + StringUtils.replace(pathstr, '/', '\\')));
         }
         assertEquals( "Wrong count of iterations", 2, i );
 
         ps.addPrefix( "/ab/c/" );
         i = 0;
-        for ( Iterator iter2 = ps.iterator(); iter2.hasNext(); )
-        {
+        for (String p : ps) {
             i++;
-            String pathstr = (String) iter2.next();
-            assertTrue( pathstr.startsWith( "ab/c/" ) );
-            assertFalse( pathstr.startsWith( "ab/c//" ) );
-            assertTrue( ps.contains( pathstr ) );
-            assertTrue( ps.contains( "/" + pathstr ) );
-            assertTrue( ps.contains( "/" + StringUtils.replace( pathstr, '/', '\\' ) ) );
-            assertFalse( ps.contains( "/" + StringUtils.replace( pathstr, '/', '\\' ) + "/a" ) );
-            assertFalse( ps.contains( "/ab/" + StringUtils.replace( pathstr, '/', '\\' ) ) );
+            String pathstr = p;
+            assertTrue(pathstr.startsWith("ab/c/"));
+            assertFalse(pathstr.startsWith("ab/c//"));
+            assertTrue(ps.contains(pathstr));
+            assertTrue(ps.contains("/" + pathstr));
+            assertTrue(ps.contains("/" + StringUtils.replace(pathstr, '/', '\\')));
+            assertFalse(ps.contains("/" + StringUtils.replace(pathstr, '/', '\\') + "/a"));
+            assertFalse(ps.contains("/ab/" + StringUtils.replace(pathstr, '/', '\\')));
         }
         assertEquals( "Wrong count of iterations", 2, i );
     }
@@ -174,22 +172,18 @@ public class PathSetTest
         ps2.addAll( s1set );
         assertEquals( "Unexpected PathSet size", 5, ps2.size() );
 
-        for ( Iterator iter = ps1.iterator(); iter.hasNext(); )
-        {
-            String str = (String) iter.next();
-            assertTrue( str, ps2.contains( str ) );
-            assertTrue( ps2.contains( "/" + str ) );
-            assertTrue( ps1.contains( str ) );
-            assertTrue( ps1.contains( "/" + str ) );
+        for (String str : ps1) {
+            assertTrue(str, ps2.contains(str));
+            assertTrue(ps2.contains("/" + str));
+            assertTrue(ps1.contains(str));
+            assertTrue(ps1.contains("/" + str));
         }
 
-        for ( Iterator iter = ps2.iterator(); iter.hasNext(); )
-        {
-            String str = (String) iter.next();
-            assertTrue( ps1.contains( str ) );
-            assertTrue( ps1.contains( "/" + str ) );
-            assertTrue( ps2.contains( str ) );
-            assertTrue( ps2.contains( "/" + str ) );
+        for (String str : ps2) {
+            assertTrue(ps1.contains(str));
+            assertTrue(ps1.contains("/" + str));
+            assertTrue(ps2.contains(str));
+            assertTrue(ps2.contains("/" + str));
         }
 
         ps1.addAll( s2ar, "/pref/" );
@@ -198,22 +192,18 @@ public class PathSetTest
         ps2.addAll( s2ar, "/pref/" );
         assertEquals( "Unexpected PathSet size", 8, ps2.size() );
 
-        for ( Iterator iter = ps1.iterator(); iter.hasNext(); )
-        {
-            String str = (String) iter.next();
-            assertTrue( str, ps2.contains( str ) );
-            assertTrue( ps2.contains( "/" + str ) );
-            assertTrue( ps1.contains( str ) );
-            assertTrue( ps1.contains( "/" + str ) );
+        for (String str : ps1) {
+            assertTrue(str, ps2.contains(str));
+            assertTrue(ps2.contains("/" + str));
+            assertTrue(ps1.contains(str));
+            assertTrue(ps1.contains("/" + str));
         }
 
-        for ( Iterator iter = ps2.iterator(); iter.hasNext(); )
-        {
-            String str = (String) iter.next();
-            assertTrue( ps1.contains( str ) );
-            assertTrue( ps1.contains( "/" + str ) );
-            assertTrue( ps2.contains( str ) );
-            assertTrue( ps2.contains( "/" + str ) );
+        for (String str : ps2) {
+            assertTrue(ps1.contains(str));
+            assertTrue(ps1.contains("/" + str));
+            assertTrue(ps2.contains(str));
+            assertTrue(ps2.contains("/" + str));
         }
 
     }

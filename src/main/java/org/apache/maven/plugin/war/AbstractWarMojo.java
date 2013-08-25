@@ -373,7 +373,7 @@ public abstract class AbstractWarMojo
             excludeList.add( "**/" + META_INF + "/" + containerConfigXML.getName() );
         }
 
-        return (String[]) excludeList.toArray( EMPTY_STRING_ARRAY );
+        return (String[]) excludeList.toArray(new String[excludeList.size()]);
     }
 
     /**

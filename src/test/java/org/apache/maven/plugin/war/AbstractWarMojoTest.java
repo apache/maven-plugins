@@ -94,11 +94,9 @@ public abstract class AbstractWarMojoTest
 
         if ( xmlFiles != null )
         {
-            Iterator iterator = Arrays.asList( xmlFiles ).iterator();
-            while ( iterator.hasNext() )
-            {
-                XMLFile = new File( xmlConfigDir, (String) iterator.next() );
-                createFile( XMLFile );
+            for (String o : xmlFiles) {
+                XMLFile = new File(xmlConfigDir, o);
+                createFile(XMLFile);
             }
         }
 
@@ -255,9 +253,8 @@ public abstract class AbstractWarMojoTest
             "jsp/c.jsp", "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class",
             "WEB-INF/lib/a.jar", "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml"};
 
-        for ( int i = 0; i < filePaths.length; i++ )
-        {
-            createFile( new File( rootDir, filePaths[i] ), id + "-" + filePaths[i] );
+        for (String filePath : filePaths) {
+            createFile(new File(rootDir, filePath), id + "-" + filePath);
         }
 
         createArchive( rootDir, destFile );
