@@ -155,7 +155,7 @@ public class LicenseReport
     protected static URL getLicenseURL( MavenProject project, String url )
         throws IOException
     {
-        URL licenseUrl = null;
+        URL licenseUrl;
         UrlValidator urlValidator = new UrlValidator( UrlValidator.ALLOW_ALL_SCHEMES );
         // UrlValidator does not accept file URLs because the file
         // URLs do not contain a valid authority (no hostname).

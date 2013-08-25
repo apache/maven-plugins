@@ -539,19 +539,14 @@ public class DependencyConvergenceReport
 
         for ( MavenProject reactorProject : reactorProjects )
         {
-            @SuppressWarnings( "unchecked" )
-            Iterator<Dependency> itdep = reactorProject.getDependencies().iterator();
-            while ( itdep.hasNext() )
-            {
-                Dependency dep = itdep.next();
+            for (Dependency dep : (Iterable<Dependency>) reactorProject.getDependencies()) {
                 String key = dep.getGroupId() + ":" + dep.getArtifactId();
-                List<ReverseDependencyLink> depList = dependencyMap.get( key );
-                if ( depList == null )
-                {
+                List<ReverseDependencyLink> depList = dependencyMap.get(key);
+                if (depList == null) {
                     depList = new ArrayList<ReverseDependencyLink>();
                 }
-                depList.add( new ReverseDependencyLink( dep, reactorProject ) );
-                dependencyMap.put( key, depList );
+                depList.add(new ReverseDependencyLink(dep, reactorProject));
+                dependencyMap.put(key, depList);
             }
         }
 

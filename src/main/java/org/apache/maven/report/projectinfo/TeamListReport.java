@@ -313,7 +313,8 @@ public class TeamListReport
                 if ( member.getRoles() != null )
                 {
                     // Comma separated roles
-                    tableCell( StringUtils.join( member.getRoles().toArray( EMPTY_STRING_ARRAY ), ", " ) );
+                    List<String> var = member.getRoles();
+                    tableCell( StringUtils.join(var.toArray(new String[var.size()]), ", " ) );
                 }
                 else
                 {
