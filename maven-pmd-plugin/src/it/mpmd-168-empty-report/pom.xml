@@ -34,6 +34,10 @@ under the License.
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@sitePluginVersion@</version>
+      </plugin>
+      <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <executions>
