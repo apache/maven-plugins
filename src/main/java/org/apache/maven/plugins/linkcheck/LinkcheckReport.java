@@ -484,7 +484,7 @@ public class LinkcheckReport
         // Exclude this report
         pagesToExclude.add( getOutputName() + ".html" );
 
-        return (String[]) pagesToExclude.toArray( new String[0] );
+        return (String[]) pagesToExclude.toArray(new String[pagesToExclude.size()]);
     }
 
     // ----------------------------------------------------------------------
@@ -515,10 +515,9 @@ public class LinkcheckReport
         try
         {
             getLog().debug( "Copying static linkcheck resources." );
-            for ( int i = 0; i < resourceNames.length; i++ )
-            {
-                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceNames[i] );
-                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceNames[i] ) );
+            for (String resourceName : resourceNames) {
+                URL url = this.getClass().getClassLoader().getResource(pluginResourcesBase + "/" + resourceName);
+                FileUtils.copyURLToFile(url, new File(getReportOutputDirectory(), resourceName));
             }
         }
         catch ( IOException e )
@@ -539,7 +538,7 @@ public class LinkcheckReport
 
         for ( int i = 0; i < array.length; i++ )
         {
-            newArray[i] = array[i].intValue();
+            newArray[i] = array[i];
         }
 
         return newArray;
