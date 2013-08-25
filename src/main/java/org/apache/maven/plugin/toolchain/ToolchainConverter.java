@@ -74,25 +74,20 @@ public class ToolchainConverter
     {
         Map map = new HashMap();
         PlexusConfiguration[] tools = configuration.getChildren();
-        for ( int i = 0; i < tools.length; i++ )
-        {
-            String type = tools[i].getName();
-            PlexusConfiguration[] params = tools[i].getChildren();
+        for (PlexusConfiguration tool : tools) {
+            String type = tool.getName();
+            PlexusConfiguration[] params = tool.getChildren();
             Map parameters = new HashMap();
-            for ( int j = 0; j < params.length; j++ )
-            {
-                try
-                {
-                    String name = params[j].getName();
-                    String val = params[j].getValue();
-                    parameters.put( name, val );
-                }
-                catch ( PlexusConfigurationException ex )
-                {
-                    throw new ComponentConfigurationException( ex );
+            for (PlexusConfiguration param : params) {
+                try {
+                    String name = param.getName();
+                    String val = param.getValue();
+                    parameters.put(name, val);
+                } catch (PlexusConfigurationException ex) {
+                    throw new ComponentConfigurationException(ex);
                 }
             }
-            map.put( type, parameters );
+            map.put(type, parameters);
         }
         chain.toolchains = map;
     }
