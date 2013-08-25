@@ -57,24 +57,17 @@ final class BundleUtils
         {
             return result;
         }
-        
-        for ( int i = 0; i < projectFiles.length; i++ )
-        {
-            if ( projectFiles[i].getName().endsWith( ".pom" ) )
-            {
-                if ( !projectFiles[i].equals( pom ) )
-                {
-                    log.info( "Detected POM file will be excluded:\n" + projectFiles[i]
-                                                                                     + "\n\nInstead, the bundle will include the POM from:\n" + pom );
+
+        for (File projectFile : projectFiles) {
+            if (projectFile.getName().endsWith(".pom")) {
+                if (!projectFile.equals(pom)) {
+                    log.info("Detected POM file will be excluded:\n" + projectFile
+                            + "\n\nInstead, the bundle will include the POM from:\n" + pom);
                 }
-            }
-            else if ( projectFiles[i].getName().endsWith( "-bundle.jar" ) )
-            {
-                log.warn( "Skipping project file which collides with repository bundle filename:\n" + projectFiles[i] );
-            }
-            else
-            {
-                result.add( projectFiles[i] );
+            } else if (projectFile.getName().endsWith("-bundle.jar")) {
+                log.warn("Skipping project file which collides with repository bundle filename:\n" + projectFile);
+            } else {
+                result.add(projectFile);
             }
         }
         
@@ -131,7 +124,7 @@ final class BundleUtils
                     "comma (',').\n\nSelection: " );
             
             log.info( message );
-            String response = null;
+            String response;
             try
             {
                 response = inputHandler.readLine();
