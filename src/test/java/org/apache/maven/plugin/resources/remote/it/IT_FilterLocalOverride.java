@@ -45,7 +45,7 @@ public class IT_FilterLocalOverride
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
         
-        assertTrue( content.indexOf( "Override: filter-local-override" ) > -1 );
+        assertTrue(content.contains("Override: filter-local-override"));
     }
 
 }
