@@ -135,17 +135,13 @@ public class MinijarFilter
     @SuppressWarnings( "rawtypes" )
     private void removePackages( Set clazzes, Set<String> packageNames )
     {
-        Iterator it = clazzes.iterator();
-        while ( it.hasNext() )
-        {
-            Clazz clazz = (Clazz) it.next();
+        for (Object clazze : clazzes) {
+            Clazz clazz = (Clazz) clazze;
             String name = clazz.getName();
-            while ( name.contains( "." ) )
-            {
-                name = name.substring( 0, name.lastIndexOf( '.' ) );
-                if ( packageNames.add( name ) )
-                {
-                    removable.remove( new Clazz( name + ".package-info" ) );
+            while (name.contains(".")) {
+                name = name.substring(0, name.lastIndexOf('.'));
+                if (packageNames.add(name)) {
+                    removable.remove(new Clazz(name + ".package-info"));
                 }
             }
         }
