@@ -207,21 +207,18 @@ public abstract class AbstractJarsignerMojo
                         excludes.addAll( Arrays.asList( excludeClassifiers ) );
                     }
 
-                    for ( Iterator it = this.project.getAttachedArtifacts().iterator(); it.hasNext(); )
-                    {
-                        final Artifact artifact = (Artifact) it.next();
+                    for (Object o : this.project.getAttachedArtifacts()) {
+                        final Artifact artifact = (Artifact) o;
 
-                        if ( !includes.isEmpty() && !includes.contains( artifact.getClassifier() ) )
-                        {
+                        if (!includes.isEmpty() && !includes.contains(artifact.getClassifier())) {
                             continue;
                         }
 
-                        if ( excludes.contains( artifact.getClassifier() ) )
-                        {
+                        if (excludes.contains(artifact.getClassifier())) {
                             continue;
                         }
 
-                        processed += processArtifact( artifact ) ? 1 : 0;
+                        processed += processArtifact(artifact) ? 1 : 0;
                     }
                 }
                 else
@@ -252,17 +249,16 @@ public abstract class AbstractJarsignerMojo
                             "Failed to scan archive directory for JARs: " + e.getMessage(), e );
                     }
 
-                    for ( Iterator it = jarFiles.iterator(); it.hasNext(); )
-                    {
-                        File jarFile = (File) it.next();
+                    for (Object jarFile1 : jarFiles) {
+                        File jarFile = (File) jarFile1;
 
-                        processArchive( jarFile );
+                        processArchive(jarFile);
                         processed++;
                     }
                 }
             }
 
-            getLog().info( getMessage( "processed", Integer.valueOf( processed ) ) );
+            getLog().info( getMessage( "processed", processed) );
         }
         else
         {
@@ -403,7 +399,7 @@ public abstract class AbstractJarsignerMojo
             if ( resultCode != 0 )
             {
                 throw new MojoExecutionException(
-                    getMessage( "failure", getCommandlineInfo( commandLine ), new Integer( resultCode ) ) );
+                    getMessage( "failure", getCommandlineInfo( commandLine ), resultCode) );
             }
 
         }
