@@ -366,7 +366,7 @@ under the License.
         </file>
       </activation>
       <properties>
-        <sitePluginVersion>3.1</sitePluginVersion>
+        <sitePluginVersion>3.3</sitePluginVersion>
       </properties>
     </profile>
   </profiles>
