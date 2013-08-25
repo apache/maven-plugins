@@ -113,7 +113,7 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.8</scmVersion>
-    <sitePluginVersion>3.2</sitePluginVersion>
+    <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
