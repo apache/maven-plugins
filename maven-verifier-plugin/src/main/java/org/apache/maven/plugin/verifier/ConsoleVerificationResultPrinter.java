@@ -42,31 +42,28 @@ public class ConsoleVerificationResultPrinter
 
     private void printExistenceFailures( VerificationResult results )
     {
-        for ( Iterator i = results.getExistenceFailures().iterator(); i.hasNext(); )
-        {
-            org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) i.next();
+        for (Object o : results.getExistenceFailures()) {
+            org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) o;
 
-            printMessage( "File not found [" + file.getLocation() + "]" );
+            printMessage("File not found [" + file.getLocation() + "]");
         }
     }
 
     private void printNonExistenceFailures( VerificationResult results )
     {
-        for ( Iterator i = results.getNonExistenceFailures().iterator(); i.hasNext(); )
-        {
-            org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) i.next();
+        for (Object o : results.getNonExistenceFailures()) {
+            org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) o;
 
-            printMessage( "File should not exist [" + file.getLocation() + "]" );
+            printMessage("File should not exist [" + file.getLocation() + "]");
         }
     }
 
     private void printContentFailures( VerificationResult results )
     {
-        for ( Iterator i = results.getContentFailures().iterator(); i.hasNext(); )
-        {
-            org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) i.next();
+        for (Object o : results.getContentFailures()) {
+            org.apache.maven.plugin.verifier.model.File file = (org.apache.maven.plugin.verifier.model.File) o;
 
-            printMessage( "File [" + file.getLocation() + "] does not match regexp [" + file.getContains() + "]" );
+            printMessage("File [" + file.getLocation() + "] does not match regexp [" + file.getContains() + "]");
         }
     }
 

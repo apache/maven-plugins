@@ -61,9 +61,8 @@ public class RepositoryCopierTest
             "maven-script-beanshell",
             "maven-settings" };
 
-        for ( int i = 0; i < s.length; i++ )
-        {
-            testMavenArtifact( targetRepo, s[i] );
+        for (String value : s) {
+            testMavenArtifact(targetRepo, value);
         }
 
         // leave something behind to clean it up.

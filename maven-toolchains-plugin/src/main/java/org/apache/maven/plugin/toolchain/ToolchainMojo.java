@@ -83,12 +83,10 @@ public class ToolchainMojo
                     Map params = toolchains.getParams( type );
                     ToolchainPrivate[] tcs = getToolchains( type );
                     boolean matched = false;
-                    for ( int i = 0; i < tcs.length; i++ )
-                    {
-                        if ( tcs[i].matchesRequirements( params ) )
-                        {
-                            getLog().info( "Toolchain (" + type + ") matched:" + tcs[i] );
-                            toolchainManager.storeToolchainToBuildContext( tcs[i], session );
+                    for (ToolchainPrivate tc : tcs) {
+                        if (tc.matchesRequirements(params)) {
+                            getLog().info("Toolchain (" + type + ") matched:" + tc);
+                            toolchainManager.storeToolchainToBuildContext(tc, session);
                             matched = true;
                             break;
                         }
@@ -108,23 +106,19 @@ public class ToolchainMojo
                 //TODO add the default toolchain instance if defined??
                 StringBuilder buff = new StringBuilder();
                 buff.append( "Cannot find matching toolchain definitions for the following toolchain types:" );
-                Iterator it = nonMatchedTypes.iterator();
-                while ( it.hasNext() )
-                {
-                    String type = (String) it.next();
-                    buff.append( '\n' );
-                    buff.append( type );
-                    Map params = toolchains.getParams( type );
-                    if ( params.size() > 0 )
-                    {
+                for (Object nonMatchedType : nonMatchedTypes) {
+                    String type = (String) nonMatchedType;
+                    buff.append('\n');
+                    buff.append(type);
+                    Map params = toolchains.getParams(type);
+                    if (params.size() > 0) {
                         Iterator it2 = params.keySet().iterator();
-                        buff.append( " [" );
-                        while ( it2.hasNext() )
-                        {
+                        buff.append(" [");
+                        while (it2.hasNext()) {
                             String string = (String) it2.next();
-                            buff.append( " " + string + "='" + params.get( string ) + "' " );
+                            buff.append(" " + string + "='" + params.get(string) + "' ");
                         }
-                        buff.append( ']' );
+                        buff.append(']');
                     }
                 }
                 getLog().error( buff.toString() );

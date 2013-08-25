@@ -69,13 +69,13 @@ public class SiteMojoTest
 
         String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
         assertNotNull( siteDescriptorContent );
-        assertTrue( siteDescriptorContent.indexOf( "${project.name}" ) != -1 );
+        assertTrue(siteDescriptorContent.contains("${project.name}"));
 
         SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
         siteDescriptorContent =
             siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), siteMojo.project,
                                                            siteDescriptorContent, "UTF-8", "UTF-8" );
         assertNotNull( siteDescriptorContent );
-        assertTrue( siteDescriptorContent.indexOf( "${project.name}" ) == -1 );
+        assertTrue(!siteDescriptorContent.contains("${project.name}"));
     }
 }
