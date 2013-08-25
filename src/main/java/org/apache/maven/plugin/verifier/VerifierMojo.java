@@ -186,7 +186,7 @@ public class VerifierMojo
     private boolean verifyFileExistence( org.apache.maven.plugin.verifier.model.File fileCheck,
                                          VerificationResult results )
     {
-        boolean result = false;
+        boolean result;
 
         File physicalFile = new File( fileCheck.getLocation() );
         if ( fileCheck.isExists() )
