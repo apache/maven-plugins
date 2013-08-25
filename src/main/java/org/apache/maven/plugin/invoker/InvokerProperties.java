@@ -208,19 +208,19 @@ class InvokerProperties
         String nonRecursive = get( InvocationProperty.NON_RECURSIVE, index );
         if ( nonRecursive != null )
         {
-            request.setRecursive( !Boolean.valueOf( nonRecursive ).booleanValue() );
+            request.setRecursive( !Boolean.valueOf(nonRecursive));
         }
 
         String offline = get( InvocationProperty.OFFLINE, index );
         if ( offline != null )
         {
-            request.setOffline( Boolean.valueOf( offline ).booleanValue() );
+            request.setOffline(Boolean.valueOf(offline));
         }
         
         String debug = get( InvocationProperty.DEBUG, index );
         if ( debug != null )
         {
-            request.setDebug( Boolean.valueOf( debug ).booleanValue() );    
+            request.setDebug(Boolean.valueOf(debug));
         }
     }
 

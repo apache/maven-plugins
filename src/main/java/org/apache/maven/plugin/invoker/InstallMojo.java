@@ -595,12 +595,10 @@ public class InstallMojo
 
         Artifact originatingArtifact = project.getArtifact();
 
-        for ( int i = 0; i < extraArtifacts.length; i++ )
-        {
-            String[] gav = extraArtifacts[i].split( ":" );
-            if ( gav.length < 3 || gav.length > 5 )
-            {
-                throw new MojoExecutionException( "Invalid artifact " + extraArtifacts[i] );
+        for (String extraArtifact : extraArtifacts) {
+            String[] gav = extraArtifact.split(":");
+            if (gav.length < 3 || gav.length > 5) {
+                throw new MojoExecutionException("Invalid artifact " + extraArtifact);
             }
 
             String groupId = gav[0];
@@ -608,52 +606,42 @@ public class InstallMojo
             String version = gav[2];
 
             String type = "jar";
-            if ( gav.length > 3 )
-            {
+            if (gav.length > 3) {
                 type = gav[3];
             }
 
             String classifier = null;
-            if ( gav.length == 5 )
-            {
+            if (gav.length == 5) {
                 classifier = gav[4];
             }
 
             List<ArtifactRepository> remoteRepositories;
-            if ( "maven-plugin".equals( type ) )
-            {
+            if ("maven-plugin".equals(type)) {
                 remoteRepositories = this.remotePluginRepositories;
-            }
-            else
-            {
+            } else {
                 remoteRepositories = this.remoteArtifactRepositories;
             }
 
             Artifact artifact = null;
-            try
-            {
-                artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+            try {
+                artifact = artifactFactory.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
 
                 ArtifactResolutionResult arr =
-                    resolver.resolveTransitively( Collections.singleton( artifact ), originatingArtifact,
-                                                  remoteRepositories, localRepository, artifactMetadataSource );
+                        resolver.resolveTransitively(Collections.singleton(artifact), originatingArtifact,
+                                remoteRepositories, localRepository, artifactMetadataSource);
 
-                if ( !groupId.equals( artifact.getGroupId() ) || !artifactId.equals( artifact.getArtifactId() )
-                    || !version.equals( artifact.getVersion() ) )
-                {
+                if (!groupId.equals(artifact.getGroupId()) || !artifactId.equals(artifact.getArtifactId())
+                        || !version.equals(artifact.getVersion())) {
                     artifact =
-                        artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
-                    copyPoms( artifact, testRepository );
+                            artifactFactory.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
+                    copyPoms(artifact, testRepository);
                 }
 
-                for ( Artifact arrArtifact : (Set<Artifact>) arr.getArtifacts() )
-                {
-                    copyArtifact( arrArtifact, testRepository );
+                for (Artifact arrArtifact : (Set<Artifact>) arr.getArtifacts()) {
+                    copyArtifact(arrArtifact, testRepository);
                 }
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "Unable to resolve dependencies for: " + artifact, e );
+            } catch (Exception e) {
+                throw new MojoExecutionException("Unable to resolve dependencies for: " + artifact, e);
             }
         }
     }

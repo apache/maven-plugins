@@ -94,7 +94,7 @@ public class InterpolationTest
         throws Exception
     {
         Reader reader = null;
-        File interpolatedPomFile = null;
+        File interpolatedPomFile;
         try
         {
             InvokerMojo invokerMojo = new InvokerMojo();
