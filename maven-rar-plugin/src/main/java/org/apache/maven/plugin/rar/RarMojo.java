@@ -44,7 +44,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -283,7 +282,7 @@ public class RarMojo
         // Check if jar file is there and if requested, copy it
         try
         {
-            if ( includeJar.booleanValue() )
+            if (includeJar)
             {
                 File generatedJarFile = new File( outputDirectory, finalName + ".jar" );
                 if ( generatedJarFile.exists() )
@@ -301,18 +300,16 @@ public class RarMojo
         // Copy dependencies
         try
         {
-            Set artifacts = project.getArtifacts();
-            for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
-            {
-                Artifact artifact = (Artifact) iter.next();
+            @SuppressWarnings("unchecked")
+            Set<Artifact> artifacts = project.getArtifacts();
+            for (Artifact artifact : artifacts) {
 
-                ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-                if ( !artifact.isOptional() && filter.include( artifact )
-                    && artifact.getArtifactHandler().isAddedToClasspath() )
-                {
-                    getLog().info( "Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", "
-                                       + artifact.getScope() + "]" );
-                    FileUtils.copyFileToDirectory( artifact.getFile(), getBuildDir() );
+                ScopeArtifactFilter filter = new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME);
+                if (!artifact.isOptional() && filter.include(artifact)
+                        && artifact.getArtifactHandler().isAddedToClasspath()) {
+                    getLog().info("Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", "
+                            + artifact.getScope() + "]");
+                    FileUtils.copyFileToDirectory(artifact.getFile(), getBuildDir());
                 }
             }
         }
@@ -355,6 +352,7 @@ public class RarMojo
             LinkedHashSet<String> delims = new LinkedHashSet<String>();
             if ( useDefaultDelimiters )
             {
+                //noinspection unchecked
                 delims.addAll( mavenResourcesExecution.getDelimiters() );
             }
 
