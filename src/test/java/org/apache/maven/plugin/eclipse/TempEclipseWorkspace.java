@@ -100,10 +100,8 @@ public class TempEclipseWorkspace
 
         if ( projectsToLink != null && projectsToLink.length != 0 )
         {
-            for ( int i = 0; i < projectsToLink.length; i++ )
-            {
-                String projectToLink = projectsToLink[i];
-                writeLocationFile( projectToLink );
+            for (String projectToLink : projectsToLink) {
+                writeLocationFile(projectToLink);
             }
         }
 

@@ -182,27 +182,24 @@ public class RadWebSettingsWriter
         IdeDependency[] deps = config.getDeps();
         if ( deps != null )
         {
-            for ( int i = 0; i < deps.length; i++ )
-            {
-                final IdeDependency dependency = deps[i];
-                log.debug( "RadWebSettingsWriter: checking dependency " + dependency.toString() );
+            for (final IdeDependency dependency : deps) {
+                log.debug("RadWebSettingsWriter: checking dependency " + dependency.toString());
 
-                if ( dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided() )
-                {
-                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString()
-                        + " selected for inclusion as lib-module" );
+                if (dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided()) {
+                    log.debug("RadWebSettingsWriter: dependency " + dependency.toString()
+                            + " selected for inclusion as lib-module");
 
                     String depName = dependency.getEclipseProjectName();
                     String depJar = dependency.getArtifactId() + ".jar";
 
-                    writer.startElement( WEBSETTINGS_LIBMODULE );
+                    writer.startElement(WEBSETTINGS_LIBMODULE);
 
-                    writer.startElement( WEBSETTINGS_LM_JAR );
-                    writer.writeText( depJar );
+                    writer.startElement(WEBSETTINGS_LM_JAR);
+                    writer.writeText(depJar);
                     writer.endElement(); // jar
 
-                    writer.startElement( WEBSETTINGS_LM_PROJECT );
-                    writer.writeText( depName );
+                    writer.startElement(WEBSETTINGS_LM_PROJECT);
+                    writer.writeText(depName);
                     writer.endElement(); // project
 
                     writer.endElement(); // libmodule

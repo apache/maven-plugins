@@ -79,48 +79,40 @@ public class EclipseSettingsWriter
 			List compileSourceRoots = config.getProject().getCompileSourceRoots();
 			if ( compileSourceRoots != null )
 			{
-				Iterator it = compileSourceRoots.iterator();
-				while ( it.hasNext() )
-				{
-					String sourcePath = (String) it.next();
-                    String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, new File( sourcePath ), false );
-					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
-				}
+                for (Object compileSourceRoot : compileSourceRoots) {
+                    String sourcePath = (String) compileSourceRoot;
+                    String relativePath = IdeUtils.toRelativeAndFixSeparator(basedir, new File(sourcePath), false);
+                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                }
 			}
 			List testCompileSourceRoots = config.getProject().getTestCompileSourceRoots();
             if ( testCompileSourceRoots != null )
 			{
-				Iterator it = testCompileSourceRoots.iterator();
-				while ( it.hasNext() )
-				{
-					String sourcePath = (String) it.next();
-                    String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, new File( sourcePath ), false );
-					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
-				}
+                for (Object testCompileSourceRoot : testCompileSourceRoots) {
+                    String sourcePath = (String) testCompileSourceRoot;
+                    String relativePath = IdeUtils.toRelativeAndFixSeparator(basedir, new File(sourcePath), false);
+                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                }
 			}
 			List resources = config.getProject().getResources();
             if ( resources != null )
 			{
-				Iterator it = resources.iterator();
-				while ( it.hasNext() )
-				{
-					Resource resource = (Resource) it.next();
+                for (Object resource1 : resources) {
+                    Resource resource = (Resource) resource1;
                     String relativePath =
-                        IdeUtils.toRelativeAndFixSeparator( basedir, new File( resource.getDirectory() ), false );
-					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
-				}
+                            IdeUtils.toRelativeAndFixSeparator(basedir, new File(resource.getDirectory()), false);
+                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                }
 			}
 			List testResources = config.getProject().getTestResources();
             if ( testResources != null )
 			{
-				Iterator it = testResources.iterator();
-				while ( it.hasNext() )
-				{
-					Resource resource = (Resource) it.next();
+                for (Object testResource : testResources) {
+                    Resource resource = (Resource) testResource;
                     String relativePath =
-                        IdeUtils.toRelativeAndFixSeparator( basedir, new File( resource.getDirectory() ), false );
-					coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
-				}
+                            IdeUtils.toRelativeAndFixSeparator(basedir, new File(resource.getDirectory()), false);
+                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                }
 			}
         }
 

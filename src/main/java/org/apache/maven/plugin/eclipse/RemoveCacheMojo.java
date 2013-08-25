@@ -70,16 +70,12 @@ public class RemoveCacheMojo
      */
     private void deleteMarkerFiles( List/* <File> */notAvailableMarkerFiles )
     {
-        for ( Iterator iter = notAvailableMarkerFiles.iterator(); iter.hasNext(); )
-        {
-            File markerFile = (File) iter.next();
-            try
-            {
-                IdeUtils.delete( markerFile, getLog() );
-            }
-            catch ( MojoExecutionException e )
-            {
-                getLog().warn( e.getMessage(), e );
+        for (Object notAvailableMarkerFile : notAvailableMarkerFiles) {
+            File markerFile = (File) notAvailableMarkerFile;
+            try {
+                IdeUtils.delete(markerFile, getLog());
+            } catch (MojoExecutionException e) {
+                getLog().warn(e.getMessage(), e);
             }
         }
     }

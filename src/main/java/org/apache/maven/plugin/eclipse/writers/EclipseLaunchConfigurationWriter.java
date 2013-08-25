@@ -124,9 +124,8 @@ public abstract class EclipseLaunchConfigurationWriter
                 + " factoryID='org.eclipse.ui.internal.WorkingSetFactory'" + " label='workingSet'"
                 + " name='workingSet'>";
 
-        for ( Iterator it = getMonitoredResources().iterator(); it.hasNext(); )
-        {
-            MonitoredResource monitoredResource = (MonitoredResource) it.next();
+        for (Object o : getMonitoredResources()) {
+            MonitoredResource monitoredResource = (MonitoredResource) o;
 
             workingSet += monitoredResource.print();
         }
@@ -208,11 +207,9 @@ public abstract class EclipseLaunchConfigurationWriter
         writer.startElement( "listAttribute" );
         writer.addAttribute( "key", key );
 
-        for ( int i = 0; i < values.length; i++ )
-        {
-            String value = values[i];
-            writer.startElement( "listEntry" );
-            writer.addAttribute( "value", value );
+        for (String value : values) {
+            writer.startElement("listEntry");
+            writer.addAttribute("value", value);
             writer.endElement();
         }
 

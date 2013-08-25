@@ -82,16 +82,14 @@ public class RadManifestWriter
 
         if ( metaInfBaseDirectory == null )
         {
-            for ( Iterator iterator = project.getResources().iterator(); iterator.hasNext(); )
-            {
-                metaInfBaseDirectory = ( (Resource) iterator.next() ).getDirectory();
+            for (Object o : project.getResources()) {
+                metaInfBaseDirectory = ((Resource) o).getDirectory();
 
-                File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
+                File metaInfDirectoryFile = new File(metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY);
 
-                log.debug( "Checking for existence of META-INF directory: " + metaInfDirectoryFile );
+                log.debug("Checking for existence of META-INF directory: " + metaInfDirectoryFile);
 
-                if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
-                {
+                if (metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory()) {
                     metaInfBaseDirectory = null;
                 }
             }
@@ -119,12 +117,8 @@ public class RadManifestWriter
         {
             boolean foundMetaInfBaseDirectory = false;
 
-            for ( int i = 0; i < sourceDirs.length; i++ )
-            {
-                EclipseSourceDir esd = sourceDirs[i];
-
-                if ( esd.getPath().equals( metaInfBaseDirectory ) )
-                {
+            for (EclipseSourceDir esd : sourceDirs) {
+                if (esd.getPath().equals(metaInfBaseDirectory)) {
                     foundMetaInfBaseDirectory = true;
                     break;
                 }

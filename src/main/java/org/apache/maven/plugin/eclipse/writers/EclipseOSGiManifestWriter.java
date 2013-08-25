@@ -128,7 +128,7 @@ public class EclipseOSGiManifestWriter
             String line;
             while ( ( line = in.readLine() ) != null )
             {
-                if ( inBundleClasspathEntry && line.indexOf( ":" ) > -1 )
+                if ( inBundleClasspathEntry && line.contains(":"))
                 {
                     inBundleClasspathEntry = false;
                 }
@@ -243,16 +243,13 @@ public class EclipseOSGiManifestWriter
 
         IdeDependency[] deps = config.getDeps();
 
-        for ( int j = 0; j < deps.length; j++ )
-        {
-            IdeDependency dep = deps[j];
-            if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() && !dep.isOsgiBundle() )
-            {
-                bundleClasspathSb.append( "," + NEWLINE );
+        for (IdeDependency dep : deps) {
+            if (!dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() && !dep.isOsgiBundle()) {
+                bundleClasspathSb.append("," + NEWLINE);
 
-                log.debug( "Adding artifact to manifest: " + dep.getArtifactId() );
+                log.debug("Adding artifact to manifest: " + dep.getArtifactId());
 
-                bundleClasspathSb.append( " " + dep.getFile().getName() );
+                bundleClasspathSb.append(" " + dep.getFile().getName());
             }
         }
         // only insert the name of the property if there are local libraries

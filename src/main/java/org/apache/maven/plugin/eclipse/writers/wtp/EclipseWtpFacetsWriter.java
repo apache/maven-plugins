@@ -236,14 +236,12 @@ public class EclipseWtpFacetsWriter
             return;
         }
 
-        Iterator facetIterator = config.getProjectFacets().entrySet().iterator();
-        while ( facetIterator.hasNext() )
-        {
-            Entry facetEntry = (Entry) facetIterator.next();
+        for (Object o : config.getProjectFacets().entrySet()) {
+            Entry facetEntry = (Entry) o;
 
-            writer.startElement( ELT_INSTALLED );
-            writer.addAttribute( ATTR_FACET, (String) facetEntry.getKey() );
-            writer.addAttribute( ATTR_VERSION, (String) facetEntry.getValue() );
+            writer.startElement(ELT_INSTALLED);
+            writer.addAttribute(ATTR_FACET, (String) facetEntry.getKey());
+            writer.addAttribute(ATTR_VERSION, (String) facetEntry.getValue());
             writer.endElement(); // installed
         }
     }

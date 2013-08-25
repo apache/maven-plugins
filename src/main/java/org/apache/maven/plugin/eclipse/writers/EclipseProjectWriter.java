@@ -119,10 +119,9 @@ public class EclipseProjectWriter
                 if ( naturesElement != null )
                 {
                     Xpp3Dom[] existingNatures = naturesElement.getChildren( ELT_NATURE );
-                    for ( int j = 0; j < existingNatures.length; j++ )
-                    {
+                    for (Xpp3Dom existingNature : existingNatures) {
                         // adds all the existing natures
-                        projectnatures.add( existingNatures[j].getValue() );
+                        projectnatures.add(existingNature.getValue());
                     }
                 }
 
@@ -130,12 +129,10 @@ public class EclipseProjectWriter
                 if ( buildSpec != null )
                 {
                     Xpp3Dom[] existingBuildCommands = buildSpec.getChildren( ELT_BUILD_COMMAND );
-                    for ( int j = 0; j < existingBuildCommands.length; j++ )
-                    {
-                        Xpp3Dom buildCommandName = existingBuildCommands[j].getChild( ELT_NAME );
-                        if ( buildCommandName != null )
-                        {
-                            buildCommands.add( new BuildCommand( existingBuildCommands[j] ) );
+                    for (Xpp3Dom existingBuildCommand : existingBuildCommands) {
+                        Xpp3Dom buildCommandName = existingBuildCommand.getChild(ELT_NAME);
+                        if (buildCommandName != null) {
+                            buildCommands.add(new BuildCommand(existingBuildCommand));
                         }
                     }
                 }
@@ -144,14 +141,12 @@ public class EclipseProjectWriter
                 if ( linkedResourcesElement != null )
                 {
                     Xpp3Dom[] existingLinks = linkedResourcesElement.getChildren( ELT_LINK );
-                    for ( int j = 0; j < existingLinks.length; j++ )
-                    {
-                        Xpp3Dom linkName = existingLinks[j].getChild( ELT_NAME );
-                        if ( linkName != null )
-                        {
+                    for (Xpp3Dom existingLink : existingLinks) {
+                        Xpp3Dom linkName = existingLink.getChild(ELT_NAME);
+                        if (linkName != null) {
                             // add all the existing symbolic links
-                            linkNames.add( existingLinks[j].getChild( ELT_NAME ).getValue() );
-                            linkedResources.add( new LinkedResource( existingLinks[j] ) );
+                            linkNames.add(existingLink.getChild(ELT_NAME).getValue());
+                            linkedResources.add(new LinkedResource(existingLink));
                         }
                     }
                 }
@@ -172,19 +167,16 @@ public class EclipseProjectWriter
         }
 
         // adds new entries after the existing ones
-        for ( Iterator iter = config.getProjectnatures().iterator(); iter.hasNext(); )
-        {
-            projectnatures.add( iter.next() );
+        for (Object o2 : config.getProjectnatures()) {
+            projectnatures.add(o2);
         }
 
-        for ( Iterator iter = config.getBuildCommands().iterator(); iter.hasNext(); )
-        {
-            buildCommands.add( (BuildCommand) iter.next() );
+        for (Object o1 : config.getBuildCommands()) {
+            buildCommands.add((BuildCommand) o1);
         }
 
-        for ( Iterator iter = config.getLinkedResources().iterator(); iter.hasNext(); )
-        {
-            linkedResources.add( (LinkedResource) iter.next() );
+        for (Object o : config.getLinkedResources()) {
+            linkedResources.add((LinkedResource) o);
         }
 
         Writer w;
@@ -216,17 +208,14 @@ public class EclipseProjectWriter
         if ( !config.isPde() )
         {
             List duplicates = new ArrayList();
-            for ( int j = 0; j < dependencies.length; j++ )
-            {
-                IdeDependency dep = dependencies[j];
+            for (IdeDependency dep : dependencies) {
                 // Avoid duplicates entries when same project is refered using multiple types
                 // (ejb, test-jar ...)
-                if ( dep.isReferencedProject() && !duplicates.contains( dep.getEclipseProjectName() ) )
-                {
-                    writer.startElement( "project" ); //$NON-NLS-1$
-                    writer.writeText( dep.getEclipseProjectName() );
+                if (dep.isReferencedProject() && !duplicates.contains(dep.getEclipseProjectName())) {
+                    writer.startElement("project"); //$NON-NLS-1$
+                    writer.writeText(dep.getEclipseProjectName());
                     writer.endElement();
-                    duplicates.add( dep.getEclipseProjectName() );
+                    duplicates.add(dep.getEclipseProjectName());
                 }
             }
         }
@@ -235,19 +224,17 @@ public class EclipseProjectWriter
 
         writer.startElement( ELT_BUILD_SPEC );
 
-        for ( Iterator it = buildCommands.iterator(); it.hasNext(); )
-        {
-            ( (BuildCommand) it.next() ).print( writer );
+        for (Object buildCommand : buildCommands) {
+            ((BuildCommand) buildCommand).print(writer);
         }
 
         writer.endElement(); // buildSpec
 
         writer.startElement( ELT_NATURES );
 
-        for ( Iterator it = projectnatures.iterator(); it.hasNext(); )
-        {
-            writer.startElement( ELT_NATURE );
-            writer.writeText( (String) it.next() );
+        for (Object projectnature : projectnatures) {
+            writer.startElement(ELT_NATURE);
+            writer.writeText((String) projectnature);
             writer.endElement(); // name
         }
 
@@ -261,9 +248,8 @@ public class EclipseProjectWriter
             // preserve the symbolic links
             if ( linkedResources.size() > 0 )
             {
-                for ( Iterator it = linkedResources.iterator(); it.hasNext(); )
-                {
-                    ( (LinkedResource) it.next() ).print( writer );
+                for (Object linkedResource : linkedResources) {
+                    ((LinkedResource) linkedResource).print(writer);
                 }
             }
 
@@ -287,16 +273,12 @@ public class EclipseProjectWriter
 
             if ( config.isPde() )
             {
-                for ( int j = 0; j < dependencies.length; j++ )
-                {
-                    IdeDependency dep = dependencies[j];
-
-                    if ( dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
-                        && !dep.isTestDependency() && !dep.isOsgiBundle() )
-                    {
+                for (IdeDependency dep : dependencies) {
+                    if (dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
+                            && !dep.isTestDependency() && !dep.isOsgiBundle()) {
                         String name = dep.getFile().getName();
-                        addLink( writer, name, IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( dep.getFile() ) ),
-                                 LINK_TYPE_FILE );
+                        addLink(writer, name, IdeUtils.fixSeparator(IdeUtils.getCanonicalPath(dep.getFile())),
+                                LINK_TYPE_FILE);
                     }
                 }
             }
@@ -328,17 +310,15 @@ public class EclipseProjectWriter
     private void addSourceLinks( XMLWriter writer, File projectBaseDir, File basedir, List sourceRoots )
         throws MojoExecutionException
     {
-        for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
-        {
-            String sourceRootString = (String) it.next();
-            File sourceRoot = new File( sourceRootString );
+        for (Object sourceRoot1 : sourceRoots) {
+            String sourceRootString = (String) sourceRoot1;
+            File sourceRoot = new File(sourceRootString);
 
-            if ( sourceRoot.isDirectory() )
-            {
-                String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true );
-                String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( sourceRoot ) );
+            if (sourceRoot.isDirectory()) {
+                String name = IdeUtils.toRelativeAndFixSeparator(projectBaseDir, sourceRoot, true);
+                String location = IdeUtils.fixSeparator(IdeUtils.getCanonicalPath(sourceRoot));
 
-                addLink( writer, name, location, LINK_TYPE_DIRECTORY );
+                addLink(writer, name, location, LINK_TYPE_DIRECTORY);
             }
         }
     }
@@ -346,17 +326,15 @@ public class EclipseProjectWriter
     private void addResourceLinks( XMLWriter writer, File projectBaseDir, File basedir, List sourceRoots )
         throws MojoExecutionException
     {
-        for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
-        {
-            String resourceDirString = ( (Resource) it.next() ).getDirectory();
-            File resourceDir = new File( resourceDirString );
+        for (Object sourceRoot : sourceRoots) {
+            String resourceDirString = ((Resource) sourceRoot).getDirectory();
+            File resourceDir = new File(resourceDirString);
 
-            if ( resourceDir.isDirectory() )
-            {
-                String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true );
-                String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( resourceDir ) );
+            if (resourceDir.isDirectory()) {
+                String name = IdeUtils.toRelativeAndFixSeparator(projectBaseDir, resourceDir, true);
+                String location = IdeUtils.fixSeparator(IdeUtils.getCanonicalPath(resourceDir));
 
-                addLink( writer, name, location, LINK_TYPE_DIRECTORY );
+                addLink(writer, name, location, LINK_TYPE_DIRECTORY);
             }
         }
     }

@@ -308,24 +308,19 @@ public class RadPlugin
             && ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() )
                 || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
         {
-            for ( Iterator iter = this.reactorProjects.iterator(); iter.hasNext(); )
-            {
-                MavenProject reactorProject = (MavenProject) iter.next();
+            for (Object reactorProject1 : this.reactorProjects) {
+                MavenProject reactorProject = (MavenProject) reactorProject1;
 
-                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
-                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
-                {
-                    if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
-                    {
+                if (reactorProject.getGroupId().equals(artifact.getGroupId())
+                        && reactorProject.getArtifactId().equals(artifact.getArtifactId())) {
+                    if (reactorProject.getVersion().equals(artifact.getVersion())) {
                         return true;
-                    }
-                    else
-                    {
+                    } else {
                         getLog().info(
-                                       "Artifact "
-                                           + artifact.getId()
-                                           + " already available as a reactor project, but with different version. Expected: "
-                                           + artifact.getVersion() + ", found: " + reactorProject.getVersion() );
+                                "Artifact "
+                                        + artifact.getId()
+                                        + " already available as a reactor project, but with different version. Expected: "
+                                        + artifact.getVersion() + ", found: " + reactorProject.getVersion());
                     }
                 }
             }

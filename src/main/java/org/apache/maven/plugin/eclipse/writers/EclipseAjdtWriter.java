@@ -83,16 +83,13 @@ public class EclipseAjdtWriter
         IdeDependency[] deps = config.getDeps();
         int ajdtDepCount = 0;
         int ajdtWeaveDepCount = 0;
-        for ( int i = 0; i < deps.length; i++ )
-        {
-            if ( deps[i].isAjdtDependency() )
-            {
-                addDependency( ajdtSettings, deps[i], ASPECT_DEP_PROP, ++ajdtDepCount );
+        for (IdeDependency dep : deps) {
+            if (dep.isAjdtDependency()) {
+                addDependency(ajdtSettings, dep, ASPECT_DEP_PROP, ++ajdtDepCount);
             }
 
-            if ( deps[i].isAjdtWeaveDependency() )
-            {
-                addDependency( ajdtSettings, deps[i], WEAVE_DEP_PROP, ++ajdtWeaveDepCount );
+            if (dep.isAjdtWeaveDependency()) {
+                addDependency(ajdtSettings, dep, WEAVE_DEP_PROP, ++ajdtWeaveDepCount);
             }
         }
 

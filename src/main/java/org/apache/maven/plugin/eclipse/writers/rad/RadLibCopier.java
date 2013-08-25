@@ -79,19 +79,15 @@ public class RadLibCopier
         String[] oldFiles =
             FileUtils.getFilesFromExtension( destDir.getAbsolutePath(),
                                              new String[] { Constants.PROJECT_PACKAGING_JAR } );
-        for ( int index = 0; index < oldFiles.length; index++ )
-        {
-            if ( !new File( oldFiles[index] ).delete() )
-            {
-                log.error( Messages.getString( "Rad6LibCopier.cantdeletefile", new Object[] { oldFiles[index] } ) );
+        for (String oldFile : oldFiles) {
+            if (!new File(oldFile).delete()) {
+                log.error(Messages.getString("Rad6LibCopier.cantdeletefile", new Object[]{oldFile}));
             }
         }
-        for ( int index = 0; index < deps.length; index++ )
-        {
-            if ( !deps[index].isTestDependency() && !deps[index].isProvided() && !deps[index].isReferencedProject()
-                && !deps[index].isSystemScoped() )
-            {
-                copyFile( deps[index].getFile(), new File( destDir, deps[index].getFile().getName() ), log );
+        for (IdeDependency dep : deps) {
+            if (!dep.isTestDependency() && !dep.isProvided() && !dep.isReferencedProject()
+                    && !dep.isSystemScoped()) {
+                copyFile(dep.getFile(), new File(destDir, dep.getFile().getName()), log);
             }
         }
     }

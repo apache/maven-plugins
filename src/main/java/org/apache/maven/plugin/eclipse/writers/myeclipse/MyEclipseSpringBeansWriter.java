@@ -93,18 +93,15 @@ public class MyEclipseSpringBeansWriter
         // maven's cwd stays at the top of hierarchical projects so we
         // do this with full path so it works as we descend through various modules (projects)
         File basedir = config.getEclipseProjectDirectory();
-        Iterator onConfigFiles =
-            getConfigurationFilesList( new File( basedir, (String) springConfig.get( "basedir" ) ),
-                                       (String) springConfig.get( "file-pattern" ) ).iterator();
 
-        while ( onConfigFiles.hasNext() )
-        {
-            String onConfigFileName = (String) onConfigFiles.next();
-            File onConfigFile = new File( onConfigFileName );
-            String relativeFileName = IdeUtils.toRelativeAndFixSeparator( basedir, onConfigFile, false );
+        for (Object o : getConfigurationFilesList(new File(basedir, (String) springConfig.get("basedir")),
+                (String) springConfig.get("file-pattern"))) {
+            String onConfigFileName = (String) o;
+            File onConfigFile = new File(onConfigFileName);
+            String relativeFileName = IdeUtils.toRelativeAndFixSeparator(basedir, onConfigFile, false);
 
-            writer.startElement( MYECLIPSE_SPRING_CONFIG );
-            writer.writeText( relativeFileName );
+            writer.startElement(MYECLIPSE_SPRING_CONFIG);
+            writer.writeText(relativeFileName);
             writer.endElement();
         }
         writer.endElement();
@@ -150,9 +147,8 @@ public class MyEclipseSpringBeansWriter
 
                 if ( subdirs != null )
                 {
-                    for ( int i = 0; i < subdirs.length; i++ )
-                    {
-                        configFiles.addAll( getConfigurationFilesList( subdirs[i], pattern ) );
+                    for (File subdir : subdirs) {
+                        configFiles.addAll(getConfigurationFilesList(subdir, pattern));
                     }
                 }
 

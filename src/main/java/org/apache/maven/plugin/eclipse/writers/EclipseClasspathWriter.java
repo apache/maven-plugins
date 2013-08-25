@@ -286,24 +286,21 @@ public class EclipseClasspathWriter
                 buildXmlPrinter.addAttribute( NAME, "copy-resources" );
                 buildXmlPrinter.addAttribute( "depends", "init" );
 
-                for ( Iterator it = specialSources.iterator(); it.hasNext(); )
-                {
+                for (Object specialSource : specialSources) {
                     // TODO: merge source dirs on output path+filtering to reduce
                     // <copy> tags for speed.
-                    EclipseSourceDir dir = (EclipseSourceDir) it.next();
-                    buildXmlPrinter.startElement( "copy" );
-                    buildXmlPrinter.addAttribute( "todir", dir.getOutput() );
-                    buildXmlPrinter.addAttribute( "filtering", "" + dir.isFiltering() );
+                    EclipseSourceDir dir = (EclipseSourceDir) specialSource;
+                    buildXmlPrinter.startElement("copy");
+                    buildXmlPrinter.addAttribute("todir", dir.getOutput());
+                    buildXmlPrinter.addAttribute("filtering", "" + dir.isFiltering());
 
-                    buildXmlPrinter.startElement( "fileset" );
-                    buildXmlPrinter.addAttribute( "dir", dir.getPath() );
-                    if ( dir.getIncludeAsString() != null )
-                    {
-                        buildXmlPrinter.addAttribute( "includes", dir.getIncludeAsString() );
+                    buildXmlPrinter.startElement("fileset");
+                    buildXmlPrinter.addAttribute("dir", dir.getPath());
+                    if (dir.getIncludeAsString() != null) {
+                        buildXmlPrinter.addAttribute("includes", dir.getIncludeAsString());
                     }
-                    if ( dir.getExcludeAsString() != null )
-                    {
-                        buildXmlPrinter.addAttribute( "excludes", dir.getExcludeAsString() );
+                    if (dir.getExcludeAsString() != null) {
+                        buildXmlPrinter.addAttribute("excludes", dir.getExcludeAsString());
                     }
                     buildXmlPrinter.endElement();
 
@@ -354,16 +351,12 @@ public class EclipseClasspathWriter
         // be declared BEFORE all other dependencies so that container access rules don't fail
         // ----------------------------------------------------------------------
         IdeDependency[] depsToWrite = config.getDeps();
-        for ( int j = 0; j < depsToWrite.length; j++ )
-        {
-            IdeDependency dep = depsToWrite[j];
-            if ( dep.isJavaApi() )
-            {
-                String depId = getDependencyId( dep );
-                if ( !addedDependencies.contains( depId ) )
-                {
-                    addDependency( writer, dep );
-                    addedDependencies.add( depId );
+        for (IdeDependency dep : depsToWrite) {
+            if (dep.isJavaApi()) {
+                String depId = getDependencyId(dep);
+                if (!addedDependencies.contains(depId)) {
+                    addDependency(writer, dep);
+                    addedDependencies.add(depId);
                 }
             }
         }
@@ -377,18 +370,13 @@ public class EclipseClasspathWriter
         // ----------------------------------------------------------------------
         // The project's dependencies
         // ----------------------------------------------------------------------
-        for ( int j = 0; j < depsToWrite.length; j++ )
-        {
-            IdeDependency dep = depsToWrite[j];
-
-            if ( dep.isAddedToClasspath() )
-            {
-                String depId = getDependencyId( dep );
+        for (IdeDependency dep : depsToWrite) {
+            if (dep.isAddedToClasspath()) {
+                String depId = getDependencyId(dep);
                 /* avoid duplicates in the classpath for artifacts with different types (like ejbs or test-jars) */
-                if ( !addedDependencies.contains( depId ) )
-                {
-                    addDependency( writer, dep );
-                    addedDependencies.add( depId );
+                if (!addedDependencies.contains(depId)) {
+                    addDependency(writer, dep);
+                    addedDependencies.add(depId);
                 }
             }
         }
@@ -413,11 +401,10 @@ public class EclipseClasspathWriter
         // Container classpath entries
         // ----------------------------------------------------------------------
 
-        for ( Iterator it = config.getClasspathContainers().iterator(); it.hasNext(); )
-        {
-            writer.startElement( ELT_CLASSPATHENTRY );
-            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_PATH, (String) it.next() );
+        for (Object o : config.getClasspathContainers()) {
+            writer.startElement(ELT_CLASSPATHENTRY);
+            writer.addAttribute(ATTR_KIND, "con"); //$NON-NLS-1$
+            writer.addAttribute(ATTR_PATH, (String) o);
             writer.endElement(); // name
         }
     }

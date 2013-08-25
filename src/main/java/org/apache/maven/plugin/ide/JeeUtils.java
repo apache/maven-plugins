@@ -250,13 +250,10 @@ public class JeeUtils
         // if no version found try dependencies of referenced projects
         if ( version == null )
         {
-            Iterator it = project.getProjectReferences().keySet().iterator();
-            while ( it.hasNext() )
-            {
-                Object key = it.next();
-                MavenProject refProject = (MavenProject) project.getProjectReferences().get( key );
-                version = findEjbVersionInDependencies( refProject );
-                if ( version != null ) // version found in dependencies
+            for (Object key : project.getProjectReferences().keySet()) {
+                MavenProject refProject = (MavenProject) project.getProjectReferences().get(key);
+                version = findEjbVersionInDependencies(refProject);
+                if (version != null) // version found in dependencies
                 {
                     break;
                 }
@@ -281,13 +278,10 @@ public class JeeUtils
         // if no version found try dependencies of referenced projects
         if ( version == null )
         {
-            Iterator it = project.getProjectReferences().keySet().iterator();
-            while ( it.hasNext() )
-            {
-                Object key = it.next();
-                MavenProject refProject = (MavenProject) project.getProjectReferences().get( key );
-                version = findJeeVersionInDependencies( refProject );
-                if ( version != null ) // version found in dependencies
+            for (Object key : project.getProjectReferences().keySet()) {
+                MavenProject refProject = (MavenProject) project.getProjectReferences().get(key);
+                version = findJeeVersionInDependencies(refProject);
+                if (version != null) // version found in dependencies
                 {
                     break;
                 }
@@ -325,13 +319,10 @@ public class JeeUtils
         // if no version found try dependencies of referenced projects
         if ( version == null )
         {
-            Iterator it = project.getProjectReferences().keySet().iterator();
-            while ( it.hasNext() )
-            {
-                Object key = it.next();
-                MavenProject refProject = (MavenProject) project.getProjectReferences().get( key );
-                version = findServletVersionInDependencies( refProject );
-                if ( version != null ) // version found in dependencies
+            for (Object key : project.getProjectReferences().keySet()) {
+                MavenProject refProject = (MavenProject) project.getProjectReferences().get(key);
+                version = findServletVersionInDependencies(refProject);
+                if (version != null) // version found in dependencies
                 {
                     break;
                 }
