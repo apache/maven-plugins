@@ -306,28 +306,22 @@ public class WarProjectPackagingTask
         context.getLog().info( "Copying webapp webResources [" + resource.getDirectory() + "] to ["
             + context.getWebappDirectory().getAbsolutePath() + "]" );
         String[] fileNames = getFilesToCopy( resource );
-        for ( int i = 0; i < fileNames.length; i++ )
-        {
-            String targetFileName = fileNames[i];
-            if ( resource.getTargetPath() != null )
-            {
+        for (String fileName : fileNames) {
+            String targetFileName = fileName;
+            if (resource.getTargetPath() != null) {
                 //TODO make sure this thing is 100% safe
                 // MWAR-129 if targetPath is only a dot <targetPath>.</targetPath> or ./
                 // and the Resource is in a part of the warSourceDirectory the file from sources will override this
                 // that's we don't have to add the targetPath yep not nice but works
-                if ( !StringUtils.equals( ".", resource.getTargetPath() )
-                    && !StringUtils.equals( "./", resource.getTargetPath() ) )
-                {
+                if (!StringUtils.equals(".", resource.getTargetPath())
+                        && !StringUtils.equals("./", resource.getTargetPath())) {
                     targetFileName = resource.getTargetPath() + File.separator + targetFileName;
                 }
             }
-            if ( resource.isFiltering() && !context.isNonFilteredExtension( fileNames[i] ) )
-            {
-                copyFilteredFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
-            }
-            else
-            {
-                copyFile( id, context, new File( resource.getDirectory(), fileNames[i] ), targetFileName );
+            if (resource.isFiltering() && !context.isNonFilteredExtension(fileName)) {
+                copyFilteredFile(id, context, new File(resource.getDirectory(), fileName), targetFileName);
+            } else {
+                copyFile(id, context, new File(resource.getDirectory(), fileName), targetFileName);
             }
         }
     }

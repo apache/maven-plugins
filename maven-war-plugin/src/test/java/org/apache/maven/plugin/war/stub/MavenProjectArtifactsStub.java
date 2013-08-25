@@ -57,18 +57,16 @@ public class MavenProjectArtifactsStub
             return new ArrayList();
         }
         final List dependencies = new ArrayList();
-        final Iterator it = getArtifacts().iterator();
-        while ( it.hasNext() )
-        {
-            Artifact a = (Artifact) it.next();
+        for (Object o : getArtifacts()) {
+            Artifact a = (Artifact) o;
             Dependency dependency = new Dependency();
-            dependency.setArtifactId( a.getArtifactId() );
-            dependency.setGroupId( a.getGroupId() );
-            dependency.setVersion( a.getVersion() );
-            dependency.setScope( a.getScope() );
-            dependency.setType( a.getType() );
-            dependency.setClassifier( a.getClassifier() );
-            dependencies.add( dependency );
+            dependency.setArtifactId(a.getArtifactId());
+            dependency.setGroupId(a.getGroupId());
+            dependency.setVersion(a.getVersion());
+            dependency.setScope(a.getScope());
+            dependency.setType(a.getType());
+            dependency.setClassifier(a.getClassifier());
+            dependencies.add(dependency);
 
         }
         return dependencies;

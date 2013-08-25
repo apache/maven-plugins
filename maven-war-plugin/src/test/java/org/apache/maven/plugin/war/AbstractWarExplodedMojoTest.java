@@ -90,11 +90,9 @@ public abstract class AbstractWarExplodedMojoTest
         else
         {
             webAppSource = createWebAppSource( testId, false );
-            for ( int i = 0; i < sourceFiles.length; i++ )
-            {
-                String sourceFile = sourceFiles[i];
-                File sample = new File( webAppSource, sourceFile );
-                createFile( sample );
+            for (String sourceFile : sourceFiles) {
+                File sample = new File(webAppSource, sourceFile);
+                createFile(sample);
 
             }
 
@@ -106,10 +104,8 @@ public abstract class AbstractWarExplodedMojoTest
 
         if ( artifactStubs != null )
         {
-            for ( int i = 0; i < artifactStubs.length; i++ )
-            {
-                ArtifactStub artifactStub = artifactStubs[i];
-                project.addArtifact( artifactStub );
+            for (ArtifactStub artifactStub : artifactStubs) {
+                project.addArtifact(artifactStub);
             }
         }
 
@@ -203,19 +199,14 @@ public abstract class AbstractWarExplodedMojoTest
     protected List assertCustomContent( File webAppDirectory, String[] filePaths, String customMessage )
     {
         final List content = new ArrayList();
-        for ( int i = 0; i < filePaths.length; i++ )
-        {
-            String filePath = filePaths[i];
-            final File expectedFile = new File( webAppDirectory, filePath );
-            if ( customMessage != null )
-            {
-                assertTrue( customMessage + " - " + expectedFile.toString(), expectedFile.exists() );
+        for (String filePath : filePaths) {
+            final File expectedFile = new File(webAppDirectory, filePath);
+            if (customMessage != null) {
+                assertTrue(customMessage + " - " + expectedFile.toString(), expectedFile.exists());
+            } else {
+                assertTrue("source file not found: " + expectedFile.toString(), expectedFile.exists());
             }
-            else
-            {
-                assertTrue( "source file not found: " + expectedFile.toString(), expectedFile.exists() );
-            }
-            content.add( expectedFile );
+            content.add(expectedFile);
         }
         return content;
     }
@@ -261,20 +252,15 @@ public abstract class AbstractWarExplodedMojoTest
     {
         final File[] files = dir.listFiles();
 
-        for ( int i = 0; i < files.length; i++ )
-        {
-            File file = files[i];
-
+        for (File file : files) {
             // Add the file if the filter is ok with it
-            if ( filter.accept( file ) )
-            {
-                content.add( file );
+            if (filter.accept(file)) {
+                content.add(file);
             }
 
             // Even if the file is not accepted and is a directory, add it
-            if ( file.isDirectory() )
-            {
-                buildFilesList( file, filter, content );
+            if (file.isDirectory()) {
+                buildFilesList(file, filter, content);
             }
 
         }

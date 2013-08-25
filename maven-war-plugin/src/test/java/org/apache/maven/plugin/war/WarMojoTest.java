@@ -451,12 +451,9 @@ public class WarMojoTest
             }
         }
         if( mustNotBeInJar!=null )
-        {         
-            for ( int i = 0; i < mustNotBeInJar.length; i++ )
-            {
-                String file = mustNotBeInJar[i];
-
-                assertFalse( "File[" + file + "]  found in archive", jarContent.containsKey( file ) );
+        {
+            for (String file : mustNotBeInJar) {
+                assertFalse("File[" + file + "]  found in archive", jarContent.containsKey(file));
 
             }
         }
