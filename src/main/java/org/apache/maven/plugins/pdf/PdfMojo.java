@@ -734,7 +734,7 @@ public class PdfMojo
     private DocumentModel getDocumentModelFromDescriptor( Locale locale )
         throws MojoExecutionException
     {
-        DocumentModel model = null;
+        DocumentModel model;
 
         try
         {
@@ -793,7 +793,7 @@ public class PdfMojo
     {
         if ( this.defaultLocale == null )
         {
-            this.defaultLocale = (Locale) getAvailableLocales().get( 0 );
+            this.defaultLocale = getAvailableLocales().get( 0 );
         }
 
         return this.defaultLocale;
