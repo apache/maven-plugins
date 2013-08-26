@@ -78,12 +78,12 @@ public class DocumentModelBuilderTest
         assertEquals( "v. Test Version", cover.getCoverSubTitle() );
         assertEquals( "Test Organization", cover.getCompanyName() );
         assertEquals( 2, cover.getAuthors().size() );
-        assertFirstDocumentAuthor( (DocumentAuthor) cover.getAuthors().get( 0 ) );
+        assertFirstDocumentAuthor(cover.getAuthors().get( 0 ));
 
         DocumentMeta meta = model.getMeta();
         assertEquals( "Test Description", meta.getDescription() );
         assertEquals( 2, meta.getAuthors().size() );
-        assertFirstDocumentAuthor( (DocumentAuthor) meta.getAuthors().get( 0 ) );
+        assertFirstDocumentAuthor(meta.getAuthors().get( 0 ));
         assertEquals( "Test Name", meta.getSubject() );
         assertEquals( "Test Name", meta.getTitle() );
 
@@ -105,8 +105,8 @@ public class DocumentModelBuilderTest
 
         DocumentTOC toc = model.getToc();
         assertEquals( 1, toc.getItems().size() );
-        assertEquals( "Intro", ( (DocumentTOCItem) toc.getItems().get( 0 ) ).getName() );
-        assertEquals( "index.html", ( (DocumentTOCItem) toc.getItems().get( 0 ) ).getRef() );
+        assertEquals( "Intro", toc.getItems().get( 0 ).getName() );
+        assertEquals( "index.html", toc.getItems().get( 0 ).getRef() );
     }
 
     private void assertFirstDocumentAuthor( DocumentAuthor author )
