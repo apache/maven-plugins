@@ -5,8 +5,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven.plugins.shade</groupId>
-  <artifactId>test-artifact</artifactId>
+    <artifactId>test-artifact</artifactId>
   <name>test-artifact</name>
   <version>1.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>

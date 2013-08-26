@@ -180,7 +180,7 @@ public class ShadeMojoTest
         assertEquals( 1, filters.size() );
 
         // the filter must be able to filter the binary and the sources jar
-        Filter filter = (Filter) filters.get( 0 );
+        Filter filter = filters.get( 0 );
         assertTrue( filter.canFilter( new File( "myfaces-impl-2.0.1-SNAPSHOT.jar" ) ) ); // binary jar
         assertTrue( filter.canFilter( new File( "myfaces-impl-2.0.1-SNAPSHOT-sources.jar" ) ) ); // sources jar
     }
