@@ -38,7 +38,7 @@ public class TestInputHandler
     public String readLine()
         throws IOException
     {
-        return (String) ( lineResponses == null || lineResponses.isEmpty() ? null : lineResponses.pop() );
+        return lineResponses == null || lineResponses.isEmpty() ? null : lineResponses.pop();
     }
 
     public List<String> readMultipleLines()
@@ -50,7 +50,7 @@ public class TestInputHandler
     public String readPassword()
         throws IOException
     {
-        return (String) ( passwordResponses == null || passwordResponses.isEmpty() ? null : passwordResponses.pop() );
+        return passwordResponses == null || passwordResponses.isEmpty() ? null : passwordResponses.pop();
     }
 
     public void setLineResponses( Stack<String> responses )
