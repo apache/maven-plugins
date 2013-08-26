@@ -226,14 +226,14 @@ public class MavenProjectBuildStub
         File currentDirectory;
 
         for (Object aDirectoryList : directoryList) {
-            currentDirectory = new File(parent, "/" + (String) aDirectoryList);
+            currentDirectory = new File(parent, "/" + aDirectoryList);
 
             if (!currentDirectory.exists()) {
                 currentDirectory.mkdirs();
             }
 
             // duplicate dir structure in test resources
-            currentDirectory = new File(testparent, "/" + (String) aDirectoryList);
+            currentDirectory = new File(testparent, "/" + aDirectoryList);
 
             if (!currentDirectory.exists()) {
                 currentDirectory.mkdirs();
