@@ -177,7 +177,7 @@ public class EclipseOSGiManifestWriter
                 }
                 else
                 {
-                    manifestSb.append( line + NEWLINE );
+                    manifestSb.append(line).append(NEWLINE);
                 }
             }
 
@@ -249,7 +249,7 @@ public class EclipseOSGiManifestWriter
 
                 log.debug("Adding artifact to manifest: " + dep.getArtifactId());
 
-                bundleClasspathSb.append(" " + dep.getFile().getName());
+                bundleClasspathSb.append(" ").append(dep.getFile().getName());
             }
         }
         // only insert the name of the property if there are local libraries

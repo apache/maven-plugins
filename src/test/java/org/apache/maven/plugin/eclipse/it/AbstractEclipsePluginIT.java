@@ -27,7 +27,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -708,7 +707,7 @@ public abstract class AbstractEclipsePluginIT
 
     protected void assertContains( String message, String full, String substring )
     {
-        if ( full == null || full.indexOf( substring ) == -1 )
+        if ( full == null || !full.contains(substring))
         {
             StringBuilder buf = new StringBuilder();
             if ( message != null )

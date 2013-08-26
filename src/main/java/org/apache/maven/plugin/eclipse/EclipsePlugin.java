@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1265,7 +1264,6 @@ public class EclipsePlugin
                             // Repository Id should be ignored by Wagon ...
                             Repository repository = new Repository("additonal-configs", endPointUrl);
                             Wagon wagon = wagonManager.getWagon(repository);
-                            ;
                             if (logger.isDebugEnabled()) {
                                 Debug debug = new Debug();
                                 wagon.addSessionListener(debug);

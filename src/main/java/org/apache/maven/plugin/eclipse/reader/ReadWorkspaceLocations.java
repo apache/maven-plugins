@@ -461,7 +461,7 @@ public class ReadWorkspaceLocations
                     String vmId = aVm.getAttribute("id").trim();
                     String classpathEntry =
                             MessageFormat.format(ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT,
-                                    new Object[]{typeId, name});
+                                    typeId, name);
                     String jrePath = new File(path).getCanonicalPath();
                     File rtJarFile = new File(new File(jrePath), "jre/lib/rt.jar");
                     if (!rtJarFile.exists()) {
