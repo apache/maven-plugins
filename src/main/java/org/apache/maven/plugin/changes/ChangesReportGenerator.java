@@ -545,16 +545,13 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             }
             sink.tableRow_();
 
-            for (Iterator iterator = release.getActions().iterator(); iterator.hasNext();)
-            {
-                Action action = (Action) iterator.next();
+            for (Action action : release.getActions()) {
                 constructAction(sink, bundle, action);
             }
 
-            for (Iterator iterator = release.getComponents().iterator(); iterator.hasNext();)
-            {
-                Component component = (Component) iterator.next();
-                constructComponent( sink, bundle, component );
+            for (Object o : release.getComponents()) {
+                Component component = (Component) o;
+                constructComponent(sink, bundle, component);
             }
 
             sink.table_();
@@ -595,10 +592,8 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
             sink.tableRow_();
 
-            for ( Iterator iterator = component.getActions().iterator(); iterator.hasNext(); )
-            {
-                Action action = (Action) iterator.next();
-                constructAction( sink, bundle, action );
+            for (Action action : component.getActions()) {
+                constructAction(sink, bundle, action);
             }
         }
     }
@@ -615,11 +610,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             return false;
         }
 
-        for (Iterator iterator = release.getComponents().iterator(); iterator.hasNext();)
-        {
-            Component component = (Component) iterator.next();
-            if ( !component.getActions().isEmpty() )
-            {
+        for (Object o : release.getComponents()) {
+            Component component = (Component) o;
+            if (!component.getActions().isEmpty()) {
                 return false;
             }
         }

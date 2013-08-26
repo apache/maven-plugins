@@ -115,13 +115,12 @@ public class ReleaseUtils
     protected void logRelease( Release release )
     {
         Action action;
-        for ( Iterator iterator = release.getActions().iterator(); iterator.hasNext(); )
-        {
-            action = (Action) iterator.next();
-            getLog().debug( "o " + action.getType() );
-            getLog().debug( "issue : " + action.getIssue() );
-            getLog().debug( "action : " + action.getAction() );
-            getLog().debug( "dueTo : " + action.getDueTo() );
+        for (Action action1 : release.getActions()) {
+            action = action1;
+            getLog().debug("o " + action.getType());
+            getLog().debug("issue : " + action.getIssue());
+            getLog().debug("action : " + action.getAction());
+            getLog().debug("dueTo : " + action.getDueTo());
         }
     }
 

@@ -245,7 +245,7 @@ public class JqlQueryBuilder
                 query.append( " AND " );
             }
 
-            query.append( key + " in (" );
+            query.append(key).append(" in (");
 
             String[] valuesArr = values.split( "," );
 

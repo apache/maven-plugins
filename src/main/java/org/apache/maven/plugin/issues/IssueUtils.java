@@ -52,7 +52,7 @@ public class IssueUtils
         Issue issue;
 
         for (Issue issue1 : issues) {
-            issue = (Issue) issue1;
+            issue = issue1;
 
             if (issue.getFixVersions() != null) {
                 for (String fixVersion : issue.getFixVersions()) {
@@ -100,7 +100,7 @@ public class IssueUtils
         }
 
         for (Issue issue1 : issues) {
-            issue = (Issue) issue1;
+            issue = issue1;
 
             if (issue.getFixVersions() != null && issue.getFixVersions().contains(releaseVersion)) {
                 isFound = true;
