@@ -6,8 +6,7 @@
     <artifactId>parent-a</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
-  <groupId>org.apache.maven.its</groupId>
-  <artifactId>parent-b</artifactId>
+    <artifactId>parent-b</artifactId>
   <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
 </project>
