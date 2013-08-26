@@ -116,7 +116,7 @@ public class ToolchainMojo
                         buff.append(" [");
                         while (it2.hasNext()) {
                             String string = (String) it2.next();
-                            buff.append(" " + string + "='" + params.get(string) + "' ");
+                            buff.append(" ").append(string).append("='").append(params.get(string)).append("' ");
                         }
                         buff.append(']');
                     }
