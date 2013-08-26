@@ -553,8 +553,7 @@ public class JavadocUtil
      * @see #parseJavadocVersion(String)
      */
     protected static float getJavadocVersion( File javadocExe )
-        throws IOException, CommandLineException, IllegalArgumentException, PatternSyntaxException
-    {
+        throws IOException, CommandLineException, IllegalArgumentException {
         if ( ( javadocExe == null ) || ( !javadocExe.exists() ) || ( !javadocExe.isFile() ) )
         {
             throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. " );
@@ -632,8 +631,7 @@ public class JavadocUtil
      * @throws IllegalArgumentException if the output is null
      */
     protected static float parseJavadocVersion( String output )
-        throws IllegalArgumentException, PatternSyntaxException
-    {
+        throws IllegalArgumentException {
         if ( StringUtils.isEmpty( output ) )
         {
             throw new IllegalArgumentException( "The output could not be null." );
@@ -862,11 +860,11 @@ public class JavadocUtil
     {
         if ( file == null )
         {
-            throw new IOException( "The file " + file + " can't be null." );
+            throw new IOException( "The file can't be null." );
         }
         if ( url == null )
         {
-            throw new IOException( "The url " + url + " could not be null." );
+            throw new IOException( "The url could not be null." );
         }
 
         InputStream is = url.openStream();
@@ -1173,6 +1171,7 @@ public class JavadocUtil
             {
                 if ( !invokerLog.exists() )
                 {
+                    //noinspection ResultOfMethodCallIgnored
                     invokerLog.getParentFile().mkdirs();
                 }
                 os = new FileOutputStream( invokerLog );
@@ -1230,7 +1229,6 @@ public class JavadocUtil
         finally
         {
             IOUtil.close( os );
-            ps = null;
         }
     }
 
@@ -1432,12 +1430,8 @@ public class JavadocUtil
          */
         public boolean hasMoreTokens()
         {
-            if ( lookahead != null )
-            {
-                return true;
-            }
+            return lookahead != null || tokenizer.hasMoreTokens();
 
-            return tokenizer.hasMoreTokens();
         }
 
         /**
