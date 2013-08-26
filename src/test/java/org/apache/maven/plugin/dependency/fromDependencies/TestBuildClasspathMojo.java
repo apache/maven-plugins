@@ -68,7 +68,7 @@ public class TestBuildClasspathMojo
         String file;
         try
         {
-            file = mojo.readClasspathFile();
+            mojo.readClasspathFile();
 
             fail( "Expected an illegal Argument Exception" );
         }
