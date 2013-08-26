@@ -329,7 +329,6 @@ public final class ClassicJiraDownloader
     private void determineProxy( String jiraUrl, HttpClient client )
     {
         // see whether there is any proxy defined in maven
-        Proxy proxy = null;
 
         getProxyInfo( jiraUrl );
 

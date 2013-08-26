@@ -27,8 +27,7 @@
     <artifactId>maven-changes-plugin-test</artifactId>
     <version>99.0</version>
   </parent>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-changes-plugin-test1</artifactId>
+    <artifactId>maven-changes-plugin-test1</artifactId>
   <version>99.0</version>
   <name>Module1</name>
   <packaging>jar</packaging>

@@ -160,7 +160,7 @@ public class JiraHelper
         String tHost = targetHost;
         if ( tHost == null )
         {
-            tHost = new String();
+            tHost = "";
         }
         if ( proxy == null )
         {
