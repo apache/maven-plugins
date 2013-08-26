@@ -147,7 +147,7 @@ public class InterpolationTest
 
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
-        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( new String[] { "zloug" } ) );
+        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList("zloug") );
         setVariableValueToObject( invokerMojo, "profilesFile", "emptyProfiles.txt" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
         String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
@@ -163,7 +163,7 @@ public class InterpolationTest
     {
 
         InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( new String[] { "zloug" } ) );
+        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList("zloug") );
         setVariableValueToObject( invokerMojo, "profilesFile", "zorglubProfiles.txt" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
         String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
