@@ -9,7 +9,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<packaging>jar</packaging>
-	<groupId>eclipse.test</groupId>
-	<artifactId>project-rad-5_4</artifactId>
+    <artifactId>project-rad-5_4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 </project>

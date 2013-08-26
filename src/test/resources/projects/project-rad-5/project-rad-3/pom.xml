@@ -9,8 +9,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<packaging>ejb</packaging>
-	<groupId>eclipse.test</groupId>
-	<artifactId>project-rad-5_3</artifactId>
+    <artifactId>project-rad-5_3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>

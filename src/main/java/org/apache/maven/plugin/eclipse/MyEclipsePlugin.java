@@ -146,14 +146,6 @@ public class MyEclipsePlugin
         }
         if ( getHibernate() != null )
         {
-            // Only Spring configuration file is currently supported
-            String hbmCfgFile = (String) getHibernate().get( "config-file" );
-
-            if ( "".equals( hbmCfgFile ) )
-            {
-                hbmCfgFile = MYECLIPSE_DEFAULT_HIBERNATE_CFG_XML;
-            }
-
             new MyEclipseHibernateWriter( getHibernate() ).init( getLog(), config ).write();
         }
     }

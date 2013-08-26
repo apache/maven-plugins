@@ -6,9 +6,8 @@
     <groupId>eclipse</groupId>
     <artifactId>maven-eclipse-plugin-test-project-52</artifactId>
     <version>52</version>
-  </parent>  
-  <groupId>eclipse</groupId>
-  <artifactId>module-3</artifactId>
+  </parent>
+    <artifactId>module-3</artifactId>
   <version>52</version>
   <packaging>jar</packaging>
   <build>

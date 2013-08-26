@@ -98,9 +98,9 @@ public class ReadWorkspaceLocations
     /**
      * Detect WTP Default Server. Do nothing if tehre are no defined servers in the settings.
      * 
-     * @param workspaceConfiguration
-     * @param wtpDefaultServer
-     * @param log
+     * @param workspaceConfiguration the workspace configuration
+     * @param wtpDefaultServer Default server
+     * @param log the log
      */
     private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer, Log log )
     {
@@ -193,7 +193,7 @@ public class ReadWorkspaceLocations
     /**
      * Search the default JREContainer from eclipse for the current MavenProject
      * 
-     * @param workspaceLocation the location of the workspace.
+     * @param workspaceConfiguration the location of the workspace.
      * @param project the maven project the get the configuration
      * @param logger the logger for errors
      */
@@ -326,7 +326,7 @@ public class ReadWorkspaceLocations
      * @throws IOException
      */
     private IdeDependency readArtefact( File projectLocation, Log logger )
-        throws FileNotFoundException, XmlPullParserException, IOException
+        throws XmlPullParserException, IOException
     {
         File projectFile = new File( projectLocation, ".project" );
         String eclipseProjectName = projectLocation.getName();
@@ -361,9 +361,9 @@ public class ReadWorkspaceLocations
         }
     }
 
-    /* package */HashMap readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    /* package */HashMap<String,String> readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
-        HashMap detectedRuntimes = new HashMap();
+        HashMap<String,String> detectedRuntimes = new HashMap<String,String>();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
         {
             Xpp3Dom runtimesElement = null;
@@ -417,7 +417,7 @@ public class ReadWorkspaceLocations
      * @param logger the logger to error messages
      * @return the map with found jre's
      */
-    private HashMap readAvailableJREs( File workspaceLocation, Log logger )
+    private HashMap<String,String> readAvailableJREs( File workspaceLocation, Log logger )
     {
         Xpp3Dom vms;
         try
@@ -441,7 +441,7 @@ public class ReadWorkspaceLocations
             return null;
         }
 
-        HashMap jreMap = new HashMap();
+        HashMap<String,String> jreMap = new HashMap<String,String>();
         jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
         jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
         jreMap.put( "1.4", CLASSPATHENTRY_STANDARD + "J2SE-1.4" );
@@ -496,12 +496,12 @@ public class ReadWorkspaceLocations
     /**
      * Scan the eclipse workspace and create a array with {@link IdeDependency} for all found artifacts.
      * 
-     * @param workspaceLocation the location of the eclipse workspace.
+     * @param workspaceConfiguration the location of the eclipse workspace.
      * @param logger the logger to report errors and debug info.
      */
     private void readWorkspace( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
-        ArrayList dependencies = new ArrayList();
+        ArrayList<IdeDependency> dependencies = new ArrayList<IdeDependency>();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
         {
             File workspace =
@@ -536,6 +536,6 @@ public class ReadWorkspaceLocations
             }
         }
 		logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
-        workspaceConfiguration.setWorkspaceArtefacts( (IdeDependency[]) dependencies.toArray( new IdeDependency[dependencies.size()] ) );
+        workspaceConfiguration.setWorkspaceArtefacts(dependencies.toArray( new IdeDependency[dependencies.size()] ));
     }
 }

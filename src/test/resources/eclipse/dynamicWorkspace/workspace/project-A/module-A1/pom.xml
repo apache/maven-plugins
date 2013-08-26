@@ -6,8 +6,7 @@
     <artifactId>project-A</artifactId>
     <version>1</version>
   </parent>
-  <groupId>eclipse</groupId>
-  <artifactId>module-A1</artifactId>
+    <artifactId>module-A1</artifactId>
   <version>1</version>
   <name>Module A1</name>
   <packaging>jar</packaging>
