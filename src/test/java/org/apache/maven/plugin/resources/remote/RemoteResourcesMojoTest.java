@@ -490,7 +490,7 @@ public class RemoteResourcesMojoTest
                                     null, //ArtifactRepository localRepository,
                                     null, //EventDispatcher eventDispatcher,
                                     new ReactorManager(new ArrayList<MavenProject>()),
-                                    Arrays.asList( new String[] {"install"} ),
+                                    Arrays.asList("install"),
                                     project.getBasedir().toString(),
                                     new Properties(),
                                     Calendar.getInstance().getTime() );

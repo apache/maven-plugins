@@ -789,7 +789,7 @@ public class ProcessRemoteResourcesMojo
         {
             if ( p.getOrganization() != null && StringUtils.isNotEmpty( p.getOrganization().getName() ) )
             {
-                List<MavenProject> sortedProjects = (List<MavenProject>) organizations.get( p.getOrganization() );
+                List<MavenProject> sortedProjects = organizations.get( p.getOrganization() );
                 if ( sortedProjects == null )
                 {
                     sortedProjects = new ArrayList<MavenProject>();
