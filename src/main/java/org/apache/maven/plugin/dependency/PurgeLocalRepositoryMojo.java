@@ -421,7 +421,7 @@ public class PurgeLocalRepositoryMojo
 
         for ( int i = 1; i < pathComponents.length; ++i )
         {
-            path.append( "/" + pathComponents[i] );
+            path.append("/").append(pathComponents[i]);
         }
 
         return path.toString();

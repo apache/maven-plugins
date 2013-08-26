@@ -378,9 +378,7 @@ public abstract class AbstractAnalyzeMojo
                 // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
 
-                buf.append( scriptableFlag + ":" + pomFile + ":" + artifact.getDependencyConflictId() + ":"
-                                + artifact.getClassifier() + ":" + artifact.getBaseVersion() + ":" + artifact.getScope()
-                                + "\n" );
+                buf.append(scriptableFlag).append(":").append(pomFile).append(":").append(artifact.getDependencyConflictId()).append(":").append(artifact.getClassifier()).append(":").append(artifact.getBaseVersion()).append(":").append(artifact.getScope()).append("\n");
             }
             getLog().info( "\n" + buf );
         }
