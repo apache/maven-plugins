@@ -145,14 +145,14 @@ public class ToolchainMojo
                 Method newMethod =
                     managerClass.getMethod( "getToolchainsForType", new Class[] { String.class, MavenSession.class } );
 
-                return (ToolchainPrivate[]) newMethod.invoke( toolchainManager, new Object[] { type, session } );
+                return (ToolchainPrivate[]) newMethod.invoke( toolchainManager, type, session);
             }
             catch ( NoSuchMethodException e )
             {
                 // try 2.x style API
                 Method oldMethod = managerClass.getMethod( "getToolchainsForType", new Class[] { String.class } );
 
-                return (ToolchainPrivate[]) oldMethod.invoke( toolchainManager, new Object[] { type } );
+                return (ToolchainPrivate[]) oldMethod.invoke( toolchainManager, type);
             }
         }
         catch ( NoSuchMethodException e )
