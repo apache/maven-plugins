@@ -464,7 +464,8 @@ public class AntBuildWriter
 
         if ( !project.getCompileSourceRoots().isEmpty() )
         {
-            String[] compileSourceRoots = (String[]) project.getCompileSourceRoots().toArray( new String[0] );
+            List var = project.getCompileSourceRoots();
+            String[] compileSourceRoots = (String[]) var.toArray(new String[var.size()]);
             for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
                 writer.startElement( "property" );
@@ -476,7 +477,8 @@ public class AntBuildWriter
 
         if ( project.getBuild().getResources() != null )
         {
-            Resource[] array = project.getBuild().getResources().toArray( new Resource[0] );
+            List<Resource> var = project.getBuild().getResources();
+            Resource[] array = var.toArray(new Resource[var.size()]);
             for ( int i = 0; i < array.length; i++ )
             {
                 writer.startElement( "property" );
@@ -495,7 +497,8 @@ public class AntBuildWriter
 
         if ( !project.getTestCompileSourceRoots().isEmpty() )
         {
-            String[] compileSourceRoots = (String[]) project.getTestCompileSourceRoots().toArray( new String[0] );
+            List var = project.getTestCompileSourceRoots();
+            String[] compileSourceRoots = (String[]) var.toArray(new String[var.size()]);
             for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
                 writer.startElement( "property" );
@@ -507,7 +510,8 @@ public class AntBuildWriter
 
         if ( project.getBuild().getTestResources() != null )
         {
-            Resource[] array = project.getBuild().getTestResources().toArray( new Resource[0] );
+            List<Resource> var = project.getBuild().getTestResources();
+            Resource[] array = var.toArray(new Resource[var.size()]);
             for ( int i = 0; i < array.length; i++ )
             {
                 writer.startElement( "property" );
@@ -1157,7 +1161,7 @@ public class AntBuildWriter
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "source", AntBuildWriterUtil
                 .getMavenCompilerPluginBasicOption( project, "source", "1.3" ), 3 );
 
-            String[] compileSourceRootsArray = (String[]) compileSourceRoots.toArray( new String[0] );
+            String[] compileSourceRootsArray = (String[]) compileSourceRoots.toArray(new String[compileSourceRoots.size()]);
             for ( int i = 0; i < compileSourceRootsArray.length; i++ )
             {
                 writer.startElement( "src" );
@@ -1209,7 +1213,7 @@ public class AntBuildWriter
             writer.endElement(); // javac
         }
 
-        Resource[] array = (Resource[]) resources.toArray( new Resource[0] );
+        Resource[] array = (Resource[]) resources.toArray(new Resource[resources.size()]);
         for ( int i = 0; i < array.length; i++ )
         {
             Resource resource = array[i];
