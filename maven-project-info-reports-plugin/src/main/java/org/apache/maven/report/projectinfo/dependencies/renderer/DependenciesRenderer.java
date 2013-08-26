@@ -154,25 +154,7 @@ public class DependenciesRenderer
         jarSubtype.add( "ejb" );
         JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
 
-        StringBuilder sb = new StringBuilder();
-        sb.append( "<script language=\"javascript\" type=\"text/javascript\">" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "      function toggleDependencyDetail( divId, imgId )" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "      {" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        var div = document.getElementById( divId );" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        var img = document.getElementById( imgId );" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        if( div.style.display == '' )" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        {" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "          div.style.display = 'none';" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "          img.src='" + IMG_INFO_URL + "';" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        }" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        else" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        {" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "          div.style.display = '';" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "          img.src='" + IMG_CLOSE_URL + "';" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "        }" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "      }" ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "</script>" ).append( SystemUtils.LINE_SEPARATOR );
-        JAVASCRIPT = sb.toString();
+        JAVASCRIPT = "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {" + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );" + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );" + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>" + SystemUtils.LINE_SEPARATOR;
     }
 
     /**

@@ -74,8 +74,8 @@ public class ActiveProfilesMojo
         if ( output != null )
         {
             StringBuilder sb = new StringBuilder();
-            sb.append( "Created by: " + getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
+            sb.append("Created by: ").append(getClass().getName()).append("\n");
+            sb.append("Created on: ").append(new Date()).append("\n").append( "\n" );
             sb.append( message.toString() );
 
             try
@@ -139,7 +139,7 @@ public class ActiveProfilesMojo
 
         message.append( "\n" );
 
-        message.append( "Active Profiles for Project \'" + project.getId() + "\': \n\n" );
+        message.append("Active Profiles for Project \'").append(project.getId()).append("\': \n\n");
 
         if ( activeProfileIds.isEmpty() )
         {

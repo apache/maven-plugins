@@ -169,10 +169,7 @@ public class MyEclipseHibernateWriter
      */
     private String makePathToHibernateConfigFile( String configFile )
     {
-        StringBuilder sb = new StringBuilder( 64 );
 
-        sb.append( "/" ).append( config.getProject().getArtifactId() ).append( "/" ).append( configFile );
-
-        return sb.toString();
+        return "/" + config.getProject().getArtifactId() + "/" + configFile;
     }
 }

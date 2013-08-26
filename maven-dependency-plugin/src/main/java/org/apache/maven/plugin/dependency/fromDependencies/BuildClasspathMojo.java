@@ -230,7 +230,7 @@ public class BuildClasspathMojo
             while ( i.hasNext() )
             {
                 sb.append( isPathSepSet ? this.pathSeparator : File.pathSeparator );
-                appendArtifactPath( (Artifact) i.next(), sb );
+                appendArtifactPath(i.next(), sb );
             }
         }
 

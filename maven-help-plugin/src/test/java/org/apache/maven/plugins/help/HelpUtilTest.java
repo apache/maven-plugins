@@ -56,7 +56,7 @@ public class HelpUtilTest
                               describe.localRepository, // ArtifactRepository localRepository,
                               null, // EventDispatcher eventDispatcher,
                               null, // ReactorManager reactorManager,
-                              Arrays.asList( new String[] { "evaluate" } ),
+                              Arrays.asList("evaluate"),
                               describe.project.getBasedir().toString(), new Properties(),
                               Calendar.getInstance().getTime() );
         HelpUtil.getMojoDescriptor( "help:evaluate", session, describe.project, "help:evaluate", true, false );

@@ -5035,18 +5035,8 @@ public abstract class AbstractJavadocMojo
                 if ( StringUtils.isNotEmpty( output ) && StringUtils.isEmpty( err.getOutput() ) && isJavadocVMInitError(
                     output ) )
                 {
-                    StringBuilder msg = new StringBuilder();
-                    msg.append( output );
-                    msg.append( '\n' ).append( '\n' );
-                    msg.append( JavadocUtil.ERROR_INIT_VM ).append( '\n' );
-                    msg.append( "Or, try to reduce the Java heap size for the Javadoc goal using " );
-                    msg.append( "-Dminmemory=<size> and -Dmaxmemory=<size>." ).append( '\n' ).append( '\n' );
 
-                    msg.append( "Command line was: " ).append( cmdLine ).append( '\n' ).append( '\n' );
-                    msg.append( "Refer to the generated Javadoc files in '" ).append( javadocOutputDirectory ).append(
-                        "' dir.\n" );
-
-                    throw new MavenReportException( msg.toString() );
+                    throw new MavenReportException(output + '\n' + '\n' + JavadocUtil.ERROR_INIT_VM + '\n' + "Or, try to reduce the Java heap size for the Javadoc goal using " + "-Dminmemory=<size> and -Dmaxmemory=<size>." + '\n' + '\n' + "Command line was: " + cmdLine + '\n' + '\n' + "Refer to the generated Javadoc files in '" + javadocOutputDirectory + "' dir.\n");
                 }
 
                 if ( StringUtils.isNotEmpty( output ) )

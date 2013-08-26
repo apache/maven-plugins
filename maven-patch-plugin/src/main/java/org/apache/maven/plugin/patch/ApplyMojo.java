@@ -382,7 +382,7 @@ public class ApplyMojo
             {
                 StringBuilder extraFileBuffer = new StringBuilder();
 
-                extraFileBuffer.append( "Found " + limbo.size() + " unlisted patch files:" );
+                extraFileBuffer.append("Found ").append(limbo.size()).append(" unlisted patch files:");
 
                 for (Object foundPatchFile : foundPatchFiles) {
                     String patch = (String) foundPatchFile;

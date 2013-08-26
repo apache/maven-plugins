@@ -279,7 +279,6 @@ public final class AssemblyFileUtils
         //noinspection StatementWithEmptyBody
         while ( ( tCount += c2.transferFrom( c1, 0, size - tCount ) ) < size )
         {
-            ;
         }
 
         c1.close();

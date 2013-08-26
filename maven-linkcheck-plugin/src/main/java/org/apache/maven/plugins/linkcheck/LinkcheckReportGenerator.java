@@ -14,7 +14,6 @@
 
 package org.apache.maven.plugins.linkcheck;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 

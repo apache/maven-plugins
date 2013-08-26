@@ -82,8 +82,8 @@ public class HelpUtil
                                                                     Boolean.TYPE, Boolean.TYPE } );
             m.setAccessible( true );
             MojoDescriptor mojoDescriptor =
-                (MojoDescriptor) m.invoke( lifecycleExecutor, new Object[] { task, session, project, invokedVia,
-                        canUsePrefix, isOptionalMojo} );
+                (MojoDescriptor) m.invoke( lifecycleExecutor, task, session, project, invokedVia,
+                        canUsePrefix, isOptionalMojo);
 
             if ( mojoDescriptor == null )
             {

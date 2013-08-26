@@ -328,7 +328,7 @@ public class AntRunMojo
         catch ( BuildException e )
         {
             StringBuilder sb = new StringBuilder();
-            sb.append( "An Ant BuildException has occured: " + e.getMessage() );
+            sb.append("An Ant BuildException has occured: ").append(e.getMessage());
             String fragment = findFragment( e );
             if ( fragment != null )
             {
@@ -448,7 +448,7 @@ public class AntRunMojo
         StringBuilder versionsBuffer = new StringBuilder();
         for ( Artifact artifact : depArtifacts )
         {
-            versionsBuffer.append( artifact.getVersion() + File.pathSeparator );
+            versionsBuffer.append(artifact.getVersion()).append(File.pathSeparator);
         }
         antProject.setProperty( versionsPropertyName, versionsBuffer.toString() );
 

@@ -21,8 +21,6 @@ package org.apache.maven.plugin.verifier;
 
 import org.apache.maven.plugin.logging.Log;
 
-import java.util.Iterator;
-
 public class ConsoleVerificationResultPrinter
     implements VerificationResultPrinter
 {

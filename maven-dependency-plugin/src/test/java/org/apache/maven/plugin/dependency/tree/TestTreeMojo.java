@@ -207,7 +207,7 @@ public class TestTreeMojo
 
     private void assertChildNodeEquals( String expectedNode, DependencyNode actualParentNode, int actualChildIndex )
     {
-        DependencyNode actualNode = (DependencyNode) actualParentNode.getChildren().get( actualChildIndex );
+        DependencyNode actualNode = actualParentNode.getChildren().get( actualChildIndex );
 
         assertNodeEquals( expectedNode, actualNode );
     }

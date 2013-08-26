@@ -159,7 +159,7 @@ final class BundleUtils
                         continue;
                     }
                     
-                    File removed = (File) result.remove( idxs[k] -1 );
+                    File removed = result.remove( idxs[k] -1 );
                     log.info( "Removed: " + removed.getName() );
                 }
             }

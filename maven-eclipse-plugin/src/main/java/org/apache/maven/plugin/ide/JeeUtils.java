@@ -19,7 +19,6 @@
 package org.apache.maven.plugin.ide;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.maven.project.MavenProject;

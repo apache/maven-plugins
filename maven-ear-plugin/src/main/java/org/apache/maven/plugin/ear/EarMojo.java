@@ -480,7 +480,7 @@ public class EarMojo
             excludeList.add( "**/" + META_INF + "/application.xml" );
         }
 
-        return (String[]) excludeList.toArray( EMPTY_STRING_ARRAY );
+        return excludeList.toArray( EMPTY_STRING_ARRAY );
     }
 
     /**

@@ -83,7 +83,7 @@ public final class RelativizePath
             // now add down from the common point to the actual 'thing' item. 
             for ( index = lastCommonRoot + 1; index < thingDirectories.size(); index++ ) 
             {
-                relativePath.append( thingDirectories.get( index ) + '/' );
+                relativePath.append(thingDirectories.get(index)).append('/');
             }
             relativePath.append( thing.getName() );
             return relativePath.toString();

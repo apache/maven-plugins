@@ -81,7 +81,7 @@ public class ShadeMojoTest
 
         List<Relocator> relocators = new ArrayList<Relocator>();
         relocators.add( new SimpleRelocator( "org.codehaus.plexus.util", "hidden", null, Arrays.asList(
-            new String[]{ "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*" } ) ) );
+                "org.codehaus.plexus.util.xml.Xpp3Dom", "org.codehaus.plexus.util.xml.pull.*") ) );
 
         List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
 
@@ -174,7 +174,7 @@ public class ShadeMojoTest
         // invoke getFilters()
         Method getFilters = ShadeMojo.class.getDeclaredMethod( "getFilters", new Class[0] );
         getFilters.setAccessible( true );
-        List<Filter> filters = (List<Filter>) getFilters.invoke( mojo, new Object[0] );
+        List<Filter> filters = (List<Filter>) getFilters.invoke( mojo);
 
         // assertions - there must be one filter
         assertEquals( 1, filters.size() );
@@ -199,7 +199,7 @@ public class ShadeMojoTest
         List<Relocator> relocators = new ArrayList<Relocator>();
 
         relocators.add( new SimpleRelocator( "org/codehaus/plexus/util", shadedPattern, null, Arrays.asList(
-            new String[]{ "org/codehaus/plexus/util/xml/Xpp3Dom", "org/codehaus/plexus/util/xml/pull.*" } ) ) );
+                "org/codehaus/plexus/util/xml/Xpp3Dom", "org/codehaus/plexus/util/xml/pull.*") ) );
 
         List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
 

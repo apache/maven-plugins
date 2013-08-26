@@ -173,7 +173,7 @@ public class TestAnalyzeDepMgt
 
         assertEquals( 1, l.size() );
 
-        assertEquals( mojo.getExclusionKey( ex ), mojo.getExclusionKey(( Artifact) l.get( 0 ) ) );
+        assertEquals( mojo.getExclusionKey( ex ), mojo.getExclusionKey(l.get( 0 )) );
     }
 
     public void testGetMismatch()

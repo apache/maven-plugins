@@ -24,8 +24,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.Iterator;
-
 /**
  *
  * @author Stephane Nicoll

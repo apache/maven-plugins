@@ -206,7 +206,7 @@ public class MinijarFilter
     {
         int classesTotal = classesRemoved + classesKept;
         log.info(
-            "Minimized " + classesTotal + " -> " + classesKept + " (" + (int) ( 100 * classesKept / classesTotal )
+            "Minimized " + classesTotal + " -> " + classesKept + " (" + 100 * classesKept / classesTotal
                 + "%)" );
     }
 }

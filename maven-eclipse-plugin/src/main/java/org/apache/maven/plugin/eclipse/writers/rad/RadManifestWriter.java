@@ -19,7 +19,6 @@
 package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;

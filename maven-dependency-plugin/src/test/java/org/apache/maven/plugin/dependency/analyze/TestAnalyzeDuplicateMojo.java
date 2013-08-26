@@ -190,7 +190,7 @@ public class TestAnalyzeDuplicateMojo
 
         private void print( String prefix, CharSequence content )
         {
-            sb.append( "[" + prefix + "] " ).append( content.toString() ).append( "\n" );
+            sb.append("[").append(prefix).append("] ").append(content.toString()).append( "\n" );
         }
 
         private void print( String prefix, Throwable error )
@@ -200,7 +200,7 @@ public class TestAnalyzeDuplicateMojo
 
             error.printStackTrace( pWriter );
 
-            sb.append( "[" + prefix + "] " ).append( sWriter.toString() ).append( "\n" );
+            sb.append("[").append(prefix).append("] ").append(sWriter.toString()).append( "\n" );
         }
 
         private void print( String prefix, CharSequence content, Throwable error )
@@ -210,7 +210,7 @@ public class TestAnalyzeDuplicateMojo
 
             error.printStackTrace( pWriter );
 
-            sb.append( "[" + prefix + "] " ).append( content.toString() ).append( "\n\n" )
+            sb.append("[").append(prefix).append("] ").append(content.toString()).append( "\n\n" )
               .append( sWriter.toString() ).append( "\n" );
         }
 

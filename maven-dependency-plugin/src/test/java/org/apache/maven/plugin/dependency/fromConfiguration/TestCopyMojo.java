@@ -192,7 +192,7 @@ public class TestCopyMojo
         throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-        ArtifactItem item = (ArtifactItem) list.get( 0 );
+        ArtifactItem item = list.get( 0 );
         item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
 
         mojo.setArtifactItems( list );
@@ -206,7 +206,7 @@ public class TestCopyMojo
         throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-        ArtifactItem item = (ArtifactItem) list.get( 0 );
+        ArtifactItem item = list.get( 0 );
         item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
         mojo.setStripVersion( true );
 
@@ -222,7 +222,7 @@ public class TestCopyMojo
             throws Exception
         {
             List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-            ArtifactItem item = (ArtifactItem) list.get( 0 );
+            ArtifactItem item = list.get( 0 );
             item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
             mojo.setStripClassifier( true );
 

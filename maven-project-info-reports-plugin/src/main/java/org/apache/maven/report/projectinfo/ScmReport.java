@@ -443,10 +443,7 @@ public class ScmReport
 
                 paragraph( getI18nString( "accessbehindfirewall.svn.intro" ) );
 
-                StringBuilder sb = new StringBuilder();
-                sb.append( "$ svn checkout " ).append( svnRepo.getUrl() );
-                sb.append( " " ).append( checkoutDirectoryName );
-                verbatimText( sb.toString() );
+                verbatimText("$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName);
             }
             else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
@@ -476,12 +473,7 @@ public class ScmReport
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro2" ) );
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro3" ) );
 
-                StringBuilder sb = new StringBuilder();
-                sb.append( "[global]" );
-                sb.append( SystemUtils.LINE_SEPARATOR );
-                sb.append( "http-proxy-host = your.proxy.name" ).append( SystemUtils.LINE_SEPARATOR );
-                sb.append( "http-proxy-port = 3128" ).append( SystemUtils.LINE_SEPARATOR );
-                verbatimText( sb.toString() );
+                verbatimText("[global]" + SystemUtils.LINE_SEPARATOR + "http-proxy-host = your.proxy.name" + SystemUtils.LINE_SEPARATOR + "http-proxy-port = 3128" + SystemUtils.LINE_SEPARATOR);
 
                 endSection();
             }
@@ -498,10 +490,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "devaccess.clearcase.intro" ) );
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ cleartool checkout " );
-
-            verbatimText( command.toString() );
+            verbatimText("$ cleartool checkout ");
         }
 
         // CVS
@@ -519,13 +508,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.cvs.intro" ) );
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ cvs -d " ).append( cvsRepo.getCvsRoot() ).append( " login" );
-            command.append( SystemUtils.LINE_SEPARATOR );
-            command.append( "$ cvs -z3 -d " ).append( cvsRepo.getCvsRoot() );
-            command.append( " co " ).append( cvsRepo.getModule() );
-
-            verbatimText( command.toString() );
+            verbatimText("$ cvs -d " + cvsRepo.getCvsRoot() + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRepo.getCvsRoot() + " co " + cvsRepo.getModule());
         }
 
         // Git
@@ -543,10 +526,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.git.intro" ) );
             sink.paragraph_();
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ git clone " ).append( gitRepo.getFetchUrl() );
-
-            verbatimText( command.toString() );
+            verbatimText("$ git clone " + gitRepo.getFetchUrl());
         }
 
         // Mercurial
@@ -564,10 +544,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.hg.intro" ) );
             sink.paragraph_();
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ hg clone " ).append( hgRepo.getURI() );
-
-            verbatimText( command.toString() );
+            verbatimText("$ hg clone " + hgRepo.getURI());
         }
 
         /**
@@ -586,12 +563,7 @@ public class ScmReport
             // Safety: remove the username if present
             String cvsRoot = StringUtils.replace( cvsRepo.getCvsRoot(), cvsRepo.getUser(), "username" );
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ cvs -d " ).append( cvsRoot ).append( " login" );
-            command.append( SystemUtils.LINE_SEPARATOR );
-            command.append( "$ cvs -z3 -d " ).append( cvsRoot ).append( " co " ).append( cvsRepo.getModule() );
-
-            verbatimText( command.toString() );
+            verbatimText("$ cvs -d " + cvsRoot + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRoot + " co " + cvsRepo.getModule());
         }
 
         // Git
@@ -609,11 +581,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.git.intro" ) );
             sink.paragraph_();
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ git clone " );
-            command.append( gitRepo.getPushUrl() );
-
-            verbatimText( command.toString() );
+            verbatimText("$ git clone " + gitRepo.getPushUrl());
         }
 
         // Mercurial
@@ -631,11 +599,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.hg.intro" ) );
             sink.paragraph_();
 
-            StringBuilder command = new StringBuilder();
-            command.append( "$ hg clone " );
-            command.append( hgRepo.getURI() );
-
-            verbatimText( command.toString() );
+            verbatimText("$ hg clone " + hgRepo.getURI());
         }
 
         // Perforce
@@ -718,10 +682,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.svn.intro" ) );
 
-            StringBuilder sb = new StringBuilder();
-            sb.append( "$ svn checkout " ).append( svnRepo.getUrl() ).append( " " ).append( checkoutDirectoryName );
-
-            verbatimText( sb.toString() );
+            verbatimText("$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName);
         }
 
         /**
@@ -808,7 +769,7 @@ public class ScmReport
 
                     if ( !isIntroAdded )
                     {
-                        sb.append( "This SCM url '" + scmUrl + "' is invalid due to the following errors:" );
+                        sb.append("This SCM url '").append(scmUrl).append("' is invalid due to the following errors:");
                         sb.append( SystemUtils.LINE_SEPARATOR );
                         isIntroAdded = true;
                     }

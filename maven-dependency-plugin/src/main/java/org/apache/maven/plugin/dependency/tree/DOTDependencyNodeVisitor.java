@@ -64,13 +64,7 @@ public class DOTDependencyNodeVisitor
 
         for ( DependencyNode child : children )
         {
-            StringBuilder sb = new StringBuilder();
-            sb.append( "\t\"" );
-            sb.append( node.toNodeString() );
-            sb.append( "\" -> \"" );
-            sb.append( child.toNodeString() );
-            sb.append( "\" ; " );
-            writer.println( sb.toString() );
+            writer.println("\t\"" + node.toNodeString() + "\" -> \"" + child.toNodeString() + "\" ; ");
         }
 
         return true;

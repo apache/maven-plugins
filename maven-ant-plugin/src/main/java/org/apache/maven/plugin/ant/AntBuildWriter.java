@@ -172,7 +172,7 @@ public class AntBuildWriter
         if ( project.getBuild().getResources() != null )
         {
             List<Resource> var = project.getBuild().getResources();
-            Resource[] array = (Resource[]) var.toArray(new Resource[var.size()]);
+            Resource[] array = var.toArray(new Resource[var.size()]);
             for ( int i = 0; i < array.length; i++ )
             {
                 addProperty( properties, "maven.build.resourceDir." + i, AntBuildWriterUtil.toRelative( project.getBasedir(),
@@ -199,7 +199,7 @@ public class AntBuildWriter
         if ( project.getBuild().getTestResources() != null )
         {
             List<Resource> var = project.getBuild().getTestResources();
-            Resource[] array = (Resource[]) var.toArray(new Resource[var.size()]);
+            Resource[] array = var.toArray(new Resource[var.size()]);
             for ( int i = 0; i < array.length; i++ )
             {
                 addProperty( properties, "maven.build.testResourceDir." + i, AntBuildWriterUtil
@@ -476,7 +476,7 @@ public class AntBuildWriter
 
         if ( project.getBuild().getResources() != null )
         {
-            Resource[] array = (Resource[]) project.getBuild().getResources().toArray( new Resource[0] );
+            Resource[] array = project.getBuild().getResources().toArray( new Resource[0] );
             for ( int i = 0; i < array.length; i++ )
             {
                 writer.startElement( "property" );
@@ -507,7 +507,7 @@ public class AntBuildWriter
 
         if ( project.getBuild().getTestResources() != null )
         {
-            Resource[] array = (Resource[]) project.getBuild().getTestResources().toArray( new Resource[0] );
+            Resource[] array = project.getBuild().getTestResources().toArray( new Resource[0] );
             for ( int i = 0; i < array.length; i++ )
             {
                 writer.startElement( "property" );
@@ -635,8 +635,7 @@ public class AntBuildWriter
         }
 
         for (Profile profile : project.getOriginalModel().getProfiles()) {
-            for (Iterator it = profile.getDependencies().iterator(); it.hasNext(); ) {
-                Dependency dependency = (Dependency) it.next();
+            for (Dependency dependency : profile.getDependencies()) {
                 if (managementKey.equals(dependency.getManagementKey())) {
                     return dependency.getSystemPath();
                 }
@@ -1308,8 +1307,8 @@ public class AntBuildWriter
                     writer.endElement(); // mkdir
                 }
 
-                for (Iterator j = project.getRepositories().iterator(); j.hasNext(); ) {
-                    Repository repository = (Repository) j.next();
+                for (Object o1 : project.getRepositories()) {
+                    Repository repository = (Repository) o1;
                     String url = repository.getUrl();
 
                     String localDir = getProjectRepoDirectory(url, basedir);

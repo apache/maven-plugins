@@ -23,7 +23,6 @@ package org.apache.maven.plugins.pdf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.doxia.document.DocumentAuthor;

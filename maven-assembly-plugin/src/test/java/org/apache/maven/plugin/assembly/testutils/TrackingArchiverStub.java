@@ -305,21 +305,7 @@ public class TrackingArchiverStub
         @Override
         public String toString()
         {
-            final StringBuilder builder = new StringBuilder();
-            builder.append( "Addition (\n    resource= " );
-            builder.append( resource );
-            builder.append( "\n    directory= " );
-            builder.append( directory );
-            builder.append( "\n    destination= " );
-            builder.append( destination );
-            builder.append( "\n    permissions= " );
-            builder.append( permissions );
-            builder.append( "\n    includes= " );
-            builder.append( includes == null ? "-none-" : StringUtils.join( includes, ", " ) );
-            builder.append( "\n    excludes= " );
-            builder.append( excludes == null ? "-none-" : StringUtils.join( excludes, ", " ) );
-            builder.append( "\n)" );
-            return builder.toString();
+            return "Addition (\n    resource= " + resource + "\n    directory= " + directory + "\n    destination= " + destination + "\n    permissions= " + permissions + "\n    includes= " + (includes == null ? "-none-" : StringUtils.join(includes, ", ")) + "\n    excludes= " + (excludes == null ? "-none-" : StringUtils.join(excludes, ", ")) + "\n)";
         }
 
         public final Object resource;

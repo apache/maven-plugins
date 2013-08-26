@@ -397,19 +397,9 @@ public class DescribeMojo
         }
         else
         {
-            StringBuilder msg = new StringBuilder();
-            msg.append( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
-                            + " OR a 'cmd' parameter. For instance:\n" );
-            msg.append( "  # mvn help:describe -Dcmd=install\n" );
-            msg.append( "or\n" );
-            msg.append( "  # mvn help:describe -Dcmd=help:describe\n" );
-            msg.append( "or\n" );
-            msg.append( "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" );
-            msg.append( "or\n" );
-            msg.append( "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" );
-            msg.append( "Try 'mvn help:help -Ddetail=true' for more information." );
 
-            throw new MojoFailureException( msg.toString() );
+            throw new MojoFailureException(("You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
+                    + " OR a 'cmd' parameter. For instance:\n") + "  # mvn help:describe -Dcmd=install\n" + "or\n" + "  # mvn help:describe -Dcmd=help:describe\n" + "or\n" + "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" + "or\n" + "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" + "Try 'mvn help:help -Ddetail=true' for more information.");
         }
 
         if ( descriptor == null && forLookup != null )
@@ -840,7 +830,7 @@ public class DescribeMojo
 
                 if ( lifecycle.getDefaultPhases() == null )
                 {
-                    descriptionBuffer.append( "'" + cmd + "' is a phase corresponding to this plugin:\n" );
+                    descriptionBuffer.append("'").append(cmd).append("' is a phase corresponding to this plugin:\n");
                     for ( String key : phases )
                     {
                         if ( !key.equals( cmd ) )
@@ -856,13 +846,11 @@ public class DescribeMojo
                     }
 
                     descriptionBuffer.append( "\n" );
-                    descriptionBuffer.append(
-                        "It is a part of the lifecycle for the POM packaging '" + project.getPackaging()
-                            + "'. This lifecycle includes the following phases:" );
+                    descriptionBuffer.append("It is a part of the lifecycle for the POM packaging '").append(project.getPackaging()).append("'. This lifecycle includes the following phases:");
                     descriptionBuffer.append( "\n" );
                     for ( String key : phases )
                     {
-                        descriptionBuffer.append( "* " + key + ": " );
+                        descriptionBuffer.append("* ").append(key).append(": ");
                         String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
                         if ( StringUtils.isNotEmpty( value ) )
                         {
@@ -888,12 +876,12 @@ public class DescribeMojo
                 }
                 else
                 {
-                    descriptionBuffer.append( "'" + cmd + "' is a lifecycle with the following phases: " );
+                    descriptionBuffer.append("'").append(cmd).append("' is a lifecycle with the following phases: ");
                     descriptionBuffer.append( "\n" );
 
                     for ( String key : phases )
                     {
-                        descriptionBuffer.append( "* " + key + ": " );
+                        descriptionBuffer.append("* ").append(key).append(": ");
                         if ( lifecycle.getDefaultPhases().get( key ) != null )
                         {
                             descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( "\n" );
@@ -920,7 +908,7 @@ public class DescribeMojo
         // goals
         MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
 
-        descriptionBuffer.append( "'" + cmd + "' is a plugin goal (aka mojo)" ).append( ".\n" );
+        descriptionBuffer.append("'").append(cmd).append("' is a plugin goal (aka mojo)").append(".\n");
         plugin = mojoDescriptor.getPluginDescriptor().getId();
         goal = mojoDescriptor.getGoal();
 

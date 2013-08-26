@@ -21,7 +21,6 @@ package org.apache.maven.plugin.announcement.mailsender;
 
 import java.security.Security;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Properties;
 
 import javax.mail.Authenticator;

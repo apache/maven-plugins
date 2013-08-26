@@ -185,11 +185,8 @@ public class EvaluateMojo
     {
         if ( expression == null && !settings.isInteractiveMode() )
         {
-            StringBuilder msg = new StringBuilder();
-            msg.append( "Maven is configured to NOT interact with the user for input. " );
-            msg.append( "This Mojo requires that 'interactiveMode' in your settings file is flag to 'true'." );
 
-            getLog().error( msg.toString() );
+            getLog().error("Maven is configured to NOT interact with the user for input. " + "This Mojo requires that 'interactiveMode' in your settings file is flag to 'true'.");
             return;
         }
 

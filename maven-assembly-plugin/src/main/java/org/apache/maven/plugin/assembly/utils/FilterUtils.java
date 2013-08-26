@@ -82,7 +82,7 @@ public final class FilterUtils
 
         for (final PatternIncludesArtifactFilter f : allFilters) {
             if (f instanceof StatisticsReportingArtifactFilter) {
-                ((StatisticsReportingArtifactFilter) f).reportMissedCriteria(logger);
+                f.reportMissedCriteria(logger);
             }
         }
     }

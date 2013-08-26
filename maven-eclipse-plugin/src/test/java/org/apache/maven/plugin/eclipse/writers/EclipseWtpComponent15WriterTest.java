@@ -20,7 +20,6 @@ package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 

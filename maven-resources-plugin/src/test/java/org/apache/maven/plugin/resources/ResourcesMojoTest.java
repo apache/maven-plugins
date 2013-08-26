@@ -219,7 +219,6 @@ public class ResourcesMojoTest
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceExclude" );
         List resources = project.getBuild().getResources();
-        ;
 
         assertNotNull( mojo );
 

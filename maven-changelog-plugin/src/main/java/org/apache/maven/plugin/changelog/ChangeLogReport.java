@@ -776,7 +776,7 @@ public class ChangeLogReport
             Iterator<ChangeFile> iterator = files.iterator();
             while (iterator.hasNext())
             {
-                ChangeFile changeFile = (ChangeFile)iterator.next();
+                ChangeFile changeFile = iterator.next();
                 String name = changeFile.getName();
                 if(!isIncluded(includes,name) || isExcluded(excludes, name))
                 {
@@ -1452,11 +1452,11 @@ public class ChangeLogReport
      */
     protected void sinkAuthorDetails( Sink sink, String author )
     {
-        Developer developer = (Developer) developersById.get( author );
+        Developer developer = developersById.get( author );
 
         if ( developer == null )
         {
-            developer = (Developer) developersByName.get( author );
+            developer = developersByName.get( author );
         }
 
         if ( developer != null )

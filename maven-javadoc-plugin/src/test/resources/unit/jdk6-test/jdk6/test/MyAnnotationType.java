@@ -20,7 +20,7 @@ package jdk6.test;
  */
 
 import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**

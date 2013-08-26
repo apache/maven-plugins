@@ -294,7 +294,7 @@ public class MavenProjectBuildStub
     private void populateFile( File file )
     {
         FileOutputStream outputStream;
-        String data = (String) dataMap.get( file.getName() );
+        String data = dataMap.get( file.getName() );
 
         if ( ( data != null ) && file.exists() )
         {

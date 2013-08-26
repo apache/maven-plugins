@@ -224,14 +224,14 @@ public class MavenProjectBuildStub
         File currentDirectory;
 
         for (String aDirectoryList : directoryList) {
-            currentDirectory = new File(parent, "/" + (String) aDirectoryList);
+            currentDirectory = new File(parent, "/" + aDirectoryList);
 
             if (!currentDirectory.exists()) {
                 currentDirectory.mkdirs();
             }
 
             // duplicate dir structure in test resources
-            currentDirectory = new File(testparent, "/" + (String) aDirectoryList);
+            currentDirectory = new File(testparent, "/" + aDirectoryList);
 
             if (!currentDirectory.exists()) {
                 currentDirectory.mkdirs();
@@ -274,7 +274,7 @@ public class MavenProjectBuildStub
         }
 
         for (String aList : list) {
-            currentFile = new File(parent, (String) aList);
+            currentFile = new File(parent, aList);
 
             // create the necessary parent directories
             // before we create the files
@@ -312,7 +312,7 @@ public class MavenProjectBuildStub
     private void populateFile( File file, int type )
     {
         FileOutputStream outputStream;
-        String data = (String) dataMap.get( file.getName() );
+        String data = dataMap.get( file.getName() );
 
         if ( ( data != null ) && file.exists() )
         {

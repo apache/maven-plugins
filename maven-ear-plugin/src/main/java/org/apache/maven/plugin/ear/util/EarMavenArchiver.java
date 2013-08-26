@@ -122,7 +122,7 @@ public class EarMavenArchiver
             final Set<String> keys = config.getManifestEntries().keySet();
             for ( String key : keys )
             {
-                String value = (String) config.getManifestEntries().get( key );
+                String value = config.getManifestEntries().get( key );
                 if ( "Class-Path".equals( key ) && value != null )
                 {
                     return value;

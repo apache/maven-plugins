@@ -20,7 +20,6 @@ package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
