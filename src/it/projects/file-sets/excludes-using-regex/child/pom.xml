@@ -7,7 +7,6 @@
     <version>1.0</version>
   </parent>
   <name>Child</name>
-  <groupId>org.test</groupId>
-  <artifactId>child</artifactId>
+    <artifactId>child</artifactId>
   <version>1.0</version>
 </project>

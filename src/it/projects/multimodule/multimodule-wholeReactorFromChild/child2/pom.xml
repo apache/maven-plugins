@@ -5,8 +5,7 @@
     <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.test</groupId>
-  <artifactId>child2</artifactId>
+    <artifactId>child2</artifactId>
   <name>Child 2</name>
   <version>1.0</version>
   <url>http://maven.apache.org</url>

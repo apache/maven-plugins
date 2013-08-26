@@ -6,9 +6,8 @@
     <artifactId>it-project-parent</artifactId>
     <version>1</version>
   </parent>
-  
-  <groupId>org.apache.maven.plugin.assembly.test</groupId>
-  <artifactId>repo-with-snapshot-parents</artifactId>
+
+    <artifactId>repo-with-snapshot-parents</artifactId>
   <packaging>pom</packaging>
   <version>1-SNAPSHOT</version>
   

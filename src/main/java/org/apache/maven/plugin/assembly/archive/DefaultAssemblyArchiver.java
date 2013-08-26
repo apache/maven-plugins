@@ -233,7 +233,7 @@ public class DefaultAssemblyArchiver
         final List<ContainerDescriptorHandler> handlers = new ArrayList<ContainerDescriptorHandler>();
         final List<String> hints = new ArrayList<String>();
 
-        if ( ( requestedContainerDescriptorHandlers != null ) && !requestedContainerDescriptorHandlers.isEmpty() )
+        if (!requestedContainerDescriptorHandlers.isEmpty())
         {
             for (final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers) {
                 final String hint = config.getHandlerName();
