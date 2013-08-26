@@ -42,7 +42,8 @@ class RelativePather {
         int count = 0;
         Iterator contextChunker = contextChunks.iterator();
         Iterator destChunker = destChunks.iterator();
-        String contextChunk = (String) contextChunker.next();
+        String contextChunk;
+        contextChunker.next();
         String destChunk = (String) destChunker.next();
         boolean pathsDiffer = false;
         while (true) {

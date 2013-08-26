@@ -135,14 +135,14 @@ public class MakeMojo
             String[] artifacts = StringUtils.split( artifactList, "," );
             Set visited = new HashSet();
             Set out = new HashSet();
-            for (int i = 0; i < artifacts.length; i++) {
-                String project = artifacts[i];
-                if ( project.indexOf(':') == -1 ) {
+            for (String artifact : artifacts) {
+                String project = artifact;
+                if (project.indexOf(':') == -1) {
                     project = defaultGroup + ":" + project;
                 }
-                Vertex projectVertex = dag.getVertex( project );
-                if ( projectVertex == null ) throw new MissingProjectException(project);
-                gatherProjects( projectVertex, ps, visited, out );
+                Vertex projectVertex = dag.getVertex(project);
+                if (projectVertex == null) throw new MissingProjectException(project);
+                gatherProjects(projectVertex, ps, visited, out);
             }
             
             // sort them again
@@ -190,29 +190,24 @@ public class MakeMojo
             return;
         String[] folders = StringUtils.split( folderList, "," );
         Set pathSet = new HashSet();
-        for ( int i = 0; i < folders.length; i++ )
-        {
-            File file = new File( baseDir, folders[i] );
-            if ( !file.exists() )
-            {
-                throw new MojoFailureException("Folder doesn't exist: " + file.getAbsolutePath() );
+        for (String folder : folders) {
+            File file = new File(baseDir, folder);
+            if (!file.exists()) {
+                throw new MojoFailureException("Folder doesn't exist: " + file.getAbsolutePath());
             }
             String path = file.getAbsolutePath();
-            pathSet.add( path );
+            pathSet.add(path);
         }
         if (artifactList == null) artifactList = "";
         StringBuilder artifactBuffer = new StringBuilder(artifactList);
-        for ( int i = 0; i < collectedProjects.size(); i++ )
-        {
-            MavenProject mp = (MavenProject) collectedProjects.get( i );
-            if ( pathSet.contains( mp.getFile().getParentFile().getAbsolutePath() ) )
-            {
-                if ( artifactBuffer.length() > 0 )
-                {
-                    artifactBuffer.append( ',' );
+        for (Object collectedProject : collectedProjects) {
+            MavenProject mp = (MavenProject) collectedProject;
+            if (pathSet.contains(mp.getFile().getParentFile().getAbsolutePath())) {
+                if (artifactBuffer.length() > 0) {
+                    artifactBuffer.append(',');
                 }
-                String id = ArtifactUtils.versionlessKey( mp.getGroupId(), mp.getArtifactId() );
-                artifactBuffer.append( id );
+                String id = ArtifactUtils.versionlessKey(mp.getGroupId(), mp.getArtifactId());
+                artifactBuffer.append(id);
             }
         }
         if ( artifactBuffer.length() == 0 )
@@ -227,12 +222,11 @@ public class MakeMojo
         visited.add( v );
         out.add( ps.getProjectMap().get( v.getLabel() ) );
         List children = v.getChildren();
-        for ( int i = 0; i < children.size(); i++ )
-        {
-            Vertex child = (Vertex) children.get( i );
-            if ( visited.contains( child ) )
+        for (Object aChildren : children) {
+            Vertex child = (Vertex) aChildren;
+            if (visited.contains(child))
                 continue;
-            gatherProjects( child, ps, visited, out );
+            gatherProjects(child, ps, visited, out);
         }
         return out;
     }

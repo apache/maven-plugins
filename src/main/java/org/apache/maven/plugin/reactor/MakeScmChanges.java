@@ -77,7 +77,7 @@ public class MakeScmChanges
         {
             throw new MojoFailureException("No SCM connection specified.  You must specify an SCM connection by adding a <connection> element to your <scm> element in your POM");
         }
-        StatusScmResult result = null;
+        StatusScmResult result;
         try
         {
             ScmRepository repository = scmManager.makeScmRepository( scmConnection );
@@ -92,43 +92,36 @@ public class MakeScmChanges
         
         List projectDirectories = getProjectDirectories();
         Set changedDirectories = new HashSet();
-        for ( int i = 0; i < changedFiles.size(); i++ )
-        {
-            ScmFile changedScmFile = (ScmFile) changedFiles.get( i );
-            getLog().debug( changedScmFile.toString() );
+        for (Object changedFile1 : changedFiles) {
+            ScmFile changedScmFile = (ScmFile) changedFile1;
+            getLog().debug(changedScmFile.toString());
             ScmFileStatus status = changedScmFile.getStatus();
-            if ( !status.isStatus() )
-            {
-                getLog().debug( "Not a diff: " + status );
+            if (!status.isStatus()) {
+                getLog().debug("Not a diff: " + status);
                 continue;
             }
-            if ( ignoreUnknown && ScmFileStatus.UNKNOWN.equals( status ) )
-            {
-                getLog().debug( "Ignoring unknown" );
+            if (ignoreUnknown && ScmFileStatus.UNKNOWN.equals(status)) {
+                getLog().debug("Ignoring unknown");
                 continue;
             }
 
-            File changedFile = new File( changedScmFile.getPath() );
+            File changedFile = new File(changedScmFile.getPath());
             boolean found = false;
             // TODO There's a cleverer/faster way to code this, right?  This is O(n^2)
-            for ( int j = 0; j < projectDirectories.size(); j++ )
-            {
-                File projectDirectory = (File) projectDirectories.get( j );
-                if ( changedFile.getAbsolutePath().startsWith( projectDirectory.getAbsolutePath() + File.separator ) )
-                {
-                    String path = RelativePather.getRelativePath( baseDir, projectDirectory );
-                    if ( !changedDirectories.contains( path ) )
-                    {
-                        getLog().debug( "Including " + path );
+            for (Object projectDirectory1 : projectDirectories) {
+                File projectDirectory = (File) projectDirectory1;
+                if (changedFile.getAbsolutePath().startsWith(projectDirectory.getAbsolutePath() + File.separator)) {
+                    String path = RelativePather.getRelativePath(baseDir, projectDirectory);
+                    if (!changedDirectories.contains(path)) {
+                        getLog().debug("Including " + path);
                     }
-                    changedDirectories.add( path );
+                    changedDirectories.add(path);
                     found = true;
                     break;
                 }
             }
-            if ( !found )
-            {
-                getLog().debug( "Couldn't find file in any reactor root: " + changedFile.getAbsolutePath() );
+            if (!found) {
+                getLog().debug("Couldn't find file in any reactor root: " + changedFile.getAbsolutePath());
             }
         }
         folderList = StringUtils.join( changedDirectories.iterator(), "," );
@@ -140,10 +133,9 @@ public class MakeScmChanges
     private List getProjectDirectories()
     {
         List dirs = new ArrayList( collectedProjects.size() );
-        for ( int i = 0; i < collectedProjects.size(); i++ )
-        {
-            MavenProject mp = (MavenProject) collectedProjects.get( i );
-            dirs.add( mp.getFile().getParentFile() );
+        for (Object collectedProject : collectedProjects) {
+            MavenProject mp = (MavenProject) collectedProject;
+            dirs.add(mp.getFile().getParentFile());
         }
         return dirs;
     }
