@@ -421,7 +421,7 @@ public class JavadocUtil
                 if (excludeName.length > 1) {
                     int u = 0;
                     while (include && u < excludeName.length) {
-                        if (!"".equals(excludeName[u].trim()) && aFileList.indexOf(excludeName[u]) != -1) {
+                        if (!"".equals(excludeName[u].trim()) && aFileList.contains(excludeName[u])) {
                             include = false;
                         }
                         u++;
@@ -434,7 +434,7 @@ public class JavadocUtil
                             File currentPackage = new File(packageName);
                             File excludedPackage = new File(sourceDirectory, excludeName[0]);
                             if (currentPackage.equals(excludedPackage)
-                                    && aFileList.substring(i).indexOf(".java") != -1) {
+                                    && aFileList.substring(i).contains(".java")) {
                                 include = true;
                             } else {
                                 include = false;
@@ -467,13 +467,13 @@ public class JavadocUtil
         List<String> files = new ArrayList<String>();
         for (String excludePackagename : excludePackagenames) {
             String[] fileList = FileUtils.getFilesFromExtension(sourceDirectory, new String[]{"java"});
-            for (int j = 0; j < fileList.length; j++) {
+            for (String aFileList : fileList) {
                 String[] excludeName = excludePackagename.split("[*]");
                 int u = 0;
                 while (u < excludeName.length) {
-                    if (!"".equals(excludeName[u].trim()) && fileList[j].contains(excludeName[u])
+                    if (!"".equals(excludeName[u].trim()) && aFileList.contains(excludeName[u])
                             && !sourceDirectory.contains(excludeName[u])) {
-                        files.add(fileList[j]);
+                        files.add(aFileList);
                     }
                     u++;
                 }

@@ -61,11 +61,11 @@ public final class ResourceResolver
     public static final String TEST_SOURCES_CLASSIFIER = "test-sources";
 
     private static final List<String> SOURCE_VALID_CLASSIFIERS =
-        Arrays.asList( new String[] { SOURCES_CLASSIFIER, TEST_SOURCES_CLASSIFIER } );
+        Arrays.asList(SOURCES_CLASSIFIER, TEST_SOURCES_CLASSIFIER);
 
     private static final List<String> RESOURCE_VALID_CLASSIFIERS =
-        Arrays.asList( new String[] { AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
-            AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER } );
+        Arrays.asList(AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
+                AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER);
 
     private ResourceResolver()
     {

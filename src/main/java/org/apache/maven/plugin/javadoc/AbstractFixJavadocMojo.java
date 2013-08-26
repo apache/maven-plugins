@@ -497,12 +497,8 @@ public abstract class AbstractFixJavadocMojo
      */
     protected static String getJavaMethodAsString( JavaMethod javaMethod )
     {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append( javaMethod.getParentClass().getFullyQualifiedName() );
-        sb.append( "#" ).append( javaMethod.getCallSignature() );
-
-        return sb.toString();
+        return javaMethod.getParentClass().getFullyQualifiedName() + "#" + javaMethod.getCallSignature();
     }
 
     // ----------------------------------------------------------------------
@@ -2524,7 +2520,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-        sb.append( "<" + typeParameter.getName() + ">" );
+        sb.append("<").append(typeParameter.getName()).append(">");
         sb.append( " " );
         sb.append( getDefaultJavadocForType( typeParameter ) );
         sb.append( EOL );
@@ -3660,7 +3656,7 @@ public abstract class AbstractFixJavadocMojo
         private String getMessage( String paramName, String mapName )
         {
             StringBuilder msg = new StringBuilder();
-            msg.append( "No param '" ).append( paramName ).append( "' key found in " + mapName + " for the entity: " );
+            msg.append("No param '").append(paramName).append("' key found in ").append(mapName).append(" for the entity: ");
             if ( isJavaMethod )
             {
                 JavaMethod javaMethod = (JavaMethod) entity;
