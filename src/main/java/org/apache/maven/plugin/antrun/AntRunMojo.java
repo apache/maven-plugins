@@ -563,7 +563,7 @@ public class AntRunMojo
         if ( antTargetName == null )
         {
             antTargetName = DEFAULT_ANT_TARGET_NAME;
-            stringReplace( antProjectConfig, "<target", "<target name=\"" + antTargetName + "\"" );
+            stringReplace( antProjectConfig, "<target", "<target name=\"" + DEFAULT_ANT_TARGET_NAME + "\"" );
         }
 
         String xmlns = "";
