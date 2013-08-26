@@ -5,8 +5,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example</groupId>
-  <artifactId>mwar131-webapp2</artifactId>
+    <artifactId>mwar131-webapp2</artifactId>
   <packaging>war</packaging>
   <name>Maven Webapp Archetype</name>
 

@@ -171,11 +171,11 @@ public class EclipseProjectWriter
         }
 
         for (Object o1 : config.getBuildCommands()) {
-            buildCommands.add((BuildCommand) o1);
+            buildCommands.add(o1);
         }
 
         for (Object o : config.getLinkedResources()) {
-            linkedResources.add((LinkedResource) o);
+            linkedResources.add(o);
         }
 
         Writer w;

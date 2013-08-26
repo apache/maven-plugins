@@ -27,8 +27,7 @@ under the License.
     <artifactId>site-plugin-test11</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.apache.maven.plugin.site.test11</groupId>
-  <artifactId>framework</artifactId>
+    <artifactId>framework</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2005</inceptionYear>

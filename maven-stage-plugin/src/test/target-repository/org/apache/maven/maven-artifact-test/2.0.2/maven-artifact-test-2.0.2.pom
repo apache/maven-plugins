@@ -5,8 +5,7 @@
     <version>2.0.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven</groupId>
-  <artifactId>maven-artifact-test</artifactId>
+    <artifactId>maven-artifact-test</artifactId>
   <name>Maven Artifact Test Helper Library</name>
   <version>2.0.2</version>
   <dependencies>

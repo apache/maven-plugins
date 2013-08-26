@@ -306,12 +306,10 @@ public class JarSignMojo
                 getLog().info( line );
             }
         };
-        final StringBuilder errBuffer = new StringBuilder();
         StreamConsumer errConsumer = new StreamConsumer()
         {
             public void consumeLine( String line )
             {
-                errBuffer.append( line );
                 getLog().warn( line );
             }
         };

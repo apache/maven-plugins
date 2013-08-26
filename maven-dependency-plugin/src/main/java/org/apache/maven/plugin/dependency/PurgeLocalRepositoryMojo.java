@@ -417,7 +417,7 @@ public class PurgeLocalRepositoryMojo
 
         String[] pathComponents = gav.split( ":" );
 
-        StringBuffer path = new StringBuffer( pathComponents[0].replace( '.', '/' ) );
+        StringBuilder path = new StringBuilder( pathComponents[0].replace( '.', '/' ) );
 
         for ( int i = 1; i < pathComponents.length; ++i )
         {

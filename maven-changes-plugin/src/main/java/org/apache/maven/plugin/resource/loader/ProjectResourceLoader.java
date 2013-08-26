@@ -69,8 +69,6 @@ public class ProjectResourceLoader
 
         paths.add( path );
         
-        int sz = paths.size();
-
         for (String path1 : paths) {
             rsvc.getLog().info("ProjectResourceLoader : adding path '" + path1 + "'");
         }

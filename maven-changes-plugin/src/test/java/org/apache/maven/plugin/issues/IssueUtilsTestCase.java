@@ -70,7 +70,7 @@ public class IssueUtilsTestCase
 
         try
         {
-            filteredIssues = IssueUtils.filterIssuesWithVersionPrefix( issueList, "yourPrefix-" );
+            IssueUtils.filterIssuesWithVersionPrefix( issueList, "yourPrefix-" );
             fail("No issues should be found.");
         }
         catch ( MojoExecutionException e )

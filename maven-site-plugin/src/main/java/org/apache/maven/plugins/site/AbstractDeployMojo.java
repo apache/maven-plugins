@@ -620,10 +620,7 @@ public abstract class AbstractDeployMojo
                             proxyInfo.setUserName( proxy.getUsername() );
                             proxyInfo.setPassword( proxy.getPassword() );
 
-                            getLog().debug( "found proxyInfo " + ( proxyInfo == null
-                                ? "null"
-                                : "host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort() + ", "
-                                    + proxyInfo.getUserName() ) );
+                            getLog().debug("found proxyInfo " + ("host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort() + ", " + proxyInfo.getUserName()));
 
                             return proxyInfo;
                         }
@@ -719,7 +716,7 @@ public abstract class AbstractDeployMojo
         try
         {
             Method methodContainerRealm = container.getClass().getMethod( "getContainerRealm" );
-            ClassRealm realm = (ClassRealm) methodContainerRealm.invoke( container, null );
+            ClassRealm realm = (ClassRealm) methodContainerRealm.invoke( container );
 
             Method methodConfigure = componentConfigurator.getClass().getMethod( "configureComponent",
                                                                                  new Class[]{ Object.class,

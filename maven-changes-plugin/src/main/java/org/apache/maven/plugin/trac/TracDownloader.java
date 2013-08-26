@@ -123,7 +123,7 @@ public class TracDownloader
             qstr = query;
         }
 
-        Object[] params = new Object[] { new String( qstr ) };
+        Object[] params = new Object[] {qstr};
         Object[] queryResult;
         ArrayList<Issue> issueList = new ArrayList<Issue>();
         try

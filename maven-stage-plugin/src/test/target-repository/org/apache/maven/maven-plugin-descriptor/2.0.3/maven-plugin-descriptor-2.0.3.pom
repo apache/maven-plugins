@@ -5,8 +5,7 @@
     <version>2.0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven</groupId>
-  <artifactId>maven-plugin-descriptor</artifactId>
+    <artifactId>maven-plugin-descriptor</artifactId>
   <name>Maven Plugin Descriptor Model</name>
   <version>2.0.3</version>
   <build>

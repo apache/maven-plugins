@@ -463,7 +463,7 @@ public class AnnouncementMojo
                 {
                     ChangesXML changesXML = new ChangesXML( getXmlPath(), getLog() );
                     List<Release> changesReleases = releaseUtils.convertReleaseList( changesXML.getReleaseList() );
-                    releases = releaseUtils.mergeReleases( releases, changesReleases );
+                    releases = releaseUtils.mergeReleases( null, changesReleases );
                     getLog().info( "Including issues from file " + getXmlPath() + " in announcement..." );
                 }
                 else
@@ -626,7 +626,7 @@ public class AnnouncementMojo
      * @throws ResourceNotFoundException, VelocityException, IOException
      */
     public void processTemplate( Context context, File outputDirectory, String template, String announcementFile )
-        throws ResourceNotFoundException, VelocityException, MojoExecutionException
+        throws VelocityException, MojoExecutionException
     {
         File f;
 

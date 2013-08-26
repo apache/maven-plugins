@@ -41,8 +41,8 @@ public class MakeDependentsMojo
         visited.add(v);
         out.add(ps.getProjectMap().get(v.getLabel()));
         List parents = v.getParents();
-        for (int i = 0; i < parents.size(); i++) {
-            Vertex parent = (Vertex) parents.get(i);
+        for (Object parent1 : parents) {
+            Vertex parent = (Vertex) parent1;
             if (visited.contains(parent)) continue;
             gatherProjects(parent, ps, visited, out);
         }

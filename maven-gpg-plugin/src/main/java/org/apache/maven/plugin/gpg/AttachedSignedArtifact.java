@@ -274,14 +274,14 @@ public class AttachedSignedArtifact
         delegate.setOptional( optional );
     }
 
-    public Collection getMetadataList()
+    public Collection<ArtifactMetadata> getMetadataList()
     {
-        List result = new ArrayList( delegate.getMetadataList() );
+        List<ArtifactMetadata> result = new ArrayList<ArtifactMetadata>( delegate.getMetadataList() );
         boolean alreadySigned = false;
         for ( Iterator i = result.iterator(); i.hasNext() && !alreadySigned; )
         {
             ArtifactMetadata metadata = (ArtifactMetadata) i.next();
-            alreadySigned = alreadySigned | signature.getKey().equals( metadata.getKey() );
+            alreadySigned = signature.getKey().equals(metadata.getKey());
         }
         if ( !alreadySigned )
         {

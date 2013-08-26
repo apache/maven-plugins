@@ -467,7 +467,7 @@ public abstract class AbstractWarMojo
         final OverlayManager overlayManager =
             new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
         final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
-        List<FileUtils.FilterWrapper> defaultFilterWrappers = null;
+        List<FileUtils.FilterWrapper> defaultFilterWrappers;
         try
         {
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();

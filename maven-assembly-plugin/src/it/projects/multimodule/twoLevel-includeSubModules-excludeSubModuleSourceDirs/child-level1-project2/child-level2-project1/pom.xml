@@ -5,8 +5,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>test</groupId>
-  <artifactId>child-level2-project1</artifactId>
+    <artifactId>child-level2-project1</artifactId>
   <version>1.0-SNAPSHOT</version>
   <dependencies>
     <dependency>

@@ -8,8 +8,7 @@
 		<artifactId>project-rad-5</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>eclipse.test</groupId>
-	<artifactId>project-rad-5_1</artifactId>
+    <artifactId>project-rad-5_1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>ear</packaging>
 	<build>

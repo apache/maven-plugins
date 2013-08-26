@@ -187,7 +187,7 @@ public class AntBuildWriterUtil
         if ( sourcepath == null )
         {
             StringBuilder sb = new StringBuilder();
-            String[] compileSourceRoots = (String[]) sources.toArray( new String[0] );
+            String[] compileSourceRoots = (String[]) sources.toArray(new String[sources.size()]);
             for ( int i = 0; i < compileSourceRoots.length; i++ )
             {
                 sb.append( "${maven.build.srcDir." ).append( i ).append( "}" );
@@ -1051,7 +1051,7 @@ public class AntBuildWriterUtil
                             }
                         }
 
-                        options.put(optionName, optionNames.toArray(new Map[0]));
+                        options.put(optionName, optionNames.toArray(new Map[optionNames.size()]));
 
                         return options;
                     }

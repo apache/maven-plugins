@@ -111,13 +111,13 @@ public class TempEclipseWorkspace
      * Given the relative path from the workspace to the project to link use the basename as the project name and link
      * this project to the fully qualified path anchored at workspaceLocation.
      * 
-     * @param projectToLink
+     * @param projectToLink The project to link
      * @throws MalformedURLException
      * @throws FileNotFoundException
      * @throws IOException
      */
     private void writeLocationFile( String projectToLink )
-        throws MalformedURLException, FileNotFoundException, IOException
+        throws IOException
     {
         File projectToLinkAsRelativeFile = new File( projectToLink );
 
@@ -139,8 +139,7 @@ public class TempEclipseWorkspace
     }
 
     private static void preparePropertyFile( File jdkLocation, File propertyfile )
-        throws IOException, FileNotFoundException
-    {
+        throws IOException {
         Properties properties = new Properties();
         properties.load( new FileInputStream( propertyfile ) );
         properties.setProperty(

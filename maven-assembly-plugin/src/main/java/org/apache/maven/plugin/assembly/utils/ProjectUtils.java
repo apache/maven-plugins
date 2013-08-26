@@ -157,10 +157,7 @@ public final class ProjectUtils
 
         if ( moduleBasedir == null )
         {
-            if ( moduleFile != null )
-            {
-                moduleBasedir = moduleFile.getParentFile();
-            }
+            moduleBasedir = moduleFile.getParentFile();
 
             if ( moduleBasedir == null )
             {

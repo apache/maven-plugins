@@ -574,7 +574,7 @@ public class ChangeLogReport
     }
 
     private void writeChangelogXml( List<ChangeLogSet> changelogList )
-        throws FileNotFoundException, UnsupportedEncodingException, IOException
+        throws IOException
     {
         StringBuilder changelogXml = new StringBuilder();
 
@@ -1373,21 +1373,15 @@ public class ChangeLogReport
         }
         finally
         {
-            if ( br != null )
+            try
             {
-                try
-                {
-                    br.close();
-                }
-                catch ( IOException e )
-                {
-                    getLog().warn( "Unable to close a reader." );
-                }
+                br.close();
             }
-            if ( sr != null )
+            catch ( IOException e )
             {
-                sr.close();
+                getLog().warn( "Unable to close a reader." );
             }
+            sr.close();
         }
         sink.tableCell_();
 

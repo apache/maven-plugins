@@ -600,7 +600,6 @@ public class BundleCreateMojoTest
         {
             System.out.println( "Target directory not created." );
 
-            return;
         }
 
     }

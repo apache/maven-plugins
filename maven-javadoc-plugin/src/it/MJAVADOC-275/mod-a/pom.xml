@@ -28,8 +28,7 @@ under the License.
     <version>0.1</version>
   </parent>
 
-  <groupId>org.apache.maven.its.javadoc</groupId>
-  <artifactId>MJAVADOC-275-mod-a</artifactId>
+    <artifactId>MJAVADOC-275-mod-a</artifactId>
   <version>0.1</version>
   <packaging>jar</packaging>
 

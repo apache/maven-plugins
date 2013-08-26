@@ -3680,7 +3680,7 @@ public abstract class AbstractJavadocMojo
         {
             if ( isJavaDocVersionAtLeast( requiredJavaVersion ) )
             {
-                addArgIf( arguments, b, value );
+                addArgIf( arguments, true, value );
             }
             else
             {
@@ -5263,7 +5263,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        ClassLoader javadocClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
+        ClassLoader javadocClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
 
         return javadocClassLoader.getResource( resource );
     }

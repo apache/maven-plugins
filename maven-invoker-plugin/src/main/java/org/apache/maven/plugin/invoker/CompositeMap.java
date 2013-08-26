@@ -169,7 +169,7 @@ class CompositeMap
      */
     public boolean isEmpty()
     {
-        return this.mavenProject == null && this.mavenProject.getProperties().isEmpty() && this.properties.isEmpty();
+        return this.mavenProject.getProperties().isEmpty() && this.properties.isEmpty();
     }
 
     /**

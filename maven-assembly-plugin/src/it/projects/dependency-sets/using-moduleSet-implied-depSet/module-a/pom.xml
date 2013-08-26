@@ -5,8 +5,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>test</groupId>
-  <artifactId>module-a</artifactId>
+    <artifactId>module-a</artifactId>
   <name>Assembly Spike Module A</name>
   <version>1.0-SNAPSHOT</version>
   <dependencies>

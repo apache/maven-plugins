@@ -38,7 +38,7 @@ public class AntrunXmlPlexusConfigurationWriter
     public void write( PlexusConfiguration configuration, Writer writer )
         throws IOException
     {
-        int depth = 0;
+        final int depth = 0;
 
         PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
         write( configuration, xmlWriter, depth );

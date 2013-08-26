@@ -87,7 +87,7 @@ public class App
             }
         }
 
-        if ( "".equals( tmp ) || tmp == null )
+        if ("".equals( tmp ))
         {
                 tmp = "EMPTY";
         }

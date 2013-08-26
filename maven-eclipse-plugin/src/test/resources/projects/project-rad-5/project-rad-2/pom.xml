@@ -8,8 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<packaging>war</packaging>
-	<groupId>eclipse.test</groupId>
-	<artifactId>project-rad-5_2</artifactId>
+    <artifactId>project-rad-5_2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>

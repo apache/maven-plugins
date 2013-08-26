@@ -104,8 +104,6 @@ public class DefaultRepositoryCopier
 
         basedir.mkdirs();
 
-        String protocol = sourceRepository.getProtocol();
-
         Wagon sourceWagon = wagonManager.getWagon( sourceRepository );
         AuthenticationInfo sourceAuth = wagonManager.getAuthenticationInfo( sourceRepository.getId() );
 

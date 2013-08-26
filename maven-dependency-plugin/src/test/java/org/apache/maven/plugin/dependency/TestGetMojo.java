@@ -171,7 +171,7 @@ public class TestGetMojo
 
         try
         {
-            repo = mojo.parseRepository( "::::http://repo1.maven.apache.org/maven2", policy );
+            mojo.parseRepository( "::::http://repo1.maven.apache.org/maven2", policy );
             fail( "Exception expected" );
         }
         catch ( MojoFailureException e )
@@ -181,7 +181,7 @@ public class TestGetMojo
 
         try
         {
-            repo = mojo.parseRepository( "central::http://repo1.maven.apache.org/maven2", policy );
+            mojo.parseRepository( "central::http://repo1.maven.apache.org/maven2", policy );
             fail( "Exception expected" );
         }
         catch ( MojoFailureException e )

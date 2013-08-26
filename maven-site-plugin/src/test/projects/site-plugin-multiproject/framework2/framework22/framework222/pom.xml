@@ -28,8 +28,7 @@ under the License.
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven.plugin.site.multiproject</groupId>
-  <artifactId>site-framework222</artifactId>
+    <artifactId>site-framework222</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Framework222</name>

@@ -5,8 +5,7 @@
     <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.test</groupId>
-  <artifactId>child4</artifactId>
+    <artifactId>child4</artifactId>
   <name>Child 4 - Assembler</name>
   <version>1.0</version>
 

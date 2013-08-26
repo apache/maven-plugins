@@ -316,7 +316,7 @@ public abstract class AbstractEarModule
     {
         if ( bundleDir == null )
         {
-            return bundleDir;
+            return null;
         }
 
         // Using slashes

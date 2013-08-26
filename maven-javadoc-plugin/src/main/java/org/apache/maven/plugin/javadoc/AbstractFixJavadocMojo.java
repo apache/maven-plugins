@@ -611,7 +611,7 @@ public abstract class AbstractFixJavadocMojo
                     getLog().info( "OK, let's proceed..." );
                     break;
                 }
-                if ( userExpression == null || JavadocUtil.equalsIgnoreCase( userExpression, "N", "No" ) )
+                if (JavadocUtil.equalsIgnoreCase( userExpression, "N", "No" ))
                 {
                     getLog().info( "No changes in your sources occur." );
                     return false;
@@ -932,7 +932,7 @@ public abstract class AbstractFixJavadocMojo
                 }
             }
 
-            projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
+            projectClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
         }
 
         return projectClassLoader;
@@ -2219,7 +2219,7 @@ public abstract class AbstractFixJavadocMojo
                 }
                 else
                 {
-                    if ( sinceClasses != null && !sinceClassesContains( ( (JavaMethod) entity ).getParentClass() ) )
+                    if ( sinceClasses != null && !sinceClassesContains( entity.getParentClass() ) )
                     {
                         appendDefaultSinceTag( sb, indent );
                     }
@@ -3468,7 +3468,7 @@ public abstract class AbstractFixJavadocMojo
             line = reader.readLine();
         }
 
-        return (String[]) lines.toArray(new String[lines.size()]);
+        return lines.toArray(new String[lines.size()]);
     }
 
     /**
@@ -3541,7 +3541,7 @@ public abstract class AbstractFixJavadocMojo
             l.remove( 0 );
             l.remove( 1 );
 
-            return (String[]) l.toArray(new String[l.size()]);
+            return l.toArray(new String[l.size()]);
         }
 
         return params;
@@ -3623,7 +3623,7 @@ public abstract class AbstractFixJavadocMojo
 
         public String getJavadocParamTag( String paramName, boolean nullable )
         {
-            String originalJavadocTag = (String) tagParams.get( paramName );
+            String originalJavadocTag = tagParams.get( paramName );
             if ( !nullable && originalJavadocTag == null && getLog().isWarnEnabled() )
             {
                 getLog().warn( getMessage( paramName, "javaEntityTags.tagParams" ) );
@@ -3644,7 +3644,7 @@ public abstract class AbstractFixJavadocMojo
 
         public String getJavadocThrowsTag( String paramName, boolean nullable )
         {
-            String originalJavadocTag = (String) tagThrows.get( paramName );
+            String originalJavadocTag = tagThrows.get( paramName );
             if ( !nullable && originalJavadocTag == null && getLog().isWarnEnabled() )
             {
                 getLog().warn( getMessage( paramName, "javaEntityTags.tagThrows" ) );

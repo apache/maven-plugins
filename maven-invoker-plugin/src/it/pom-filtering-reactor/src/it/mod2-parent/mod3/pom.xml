@@ -29,8 +29,7 @@ under the License.
     <relativePath>../mod1-parent</relativePath>
   </parent>
 
-  <groupId>test</groupId>
-  <artifactId>mod3</artifactId>
+    <artifactId>mod3</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 

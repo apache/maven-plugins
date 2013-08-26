@@ -329,7 +329,7 @@ public class BuildClasspathMojo
         try
         {
             String oldCp = readClasspathFile();
-            return ( cpString == oldCp || ( cpString != null && cpString.equals( oldCp ) ) );
+            return (cpString.equals(oldCp) || ( cpString != null && cpString.equals( oldCp ) ) );
         }
         catch ( Exception ex )
         {

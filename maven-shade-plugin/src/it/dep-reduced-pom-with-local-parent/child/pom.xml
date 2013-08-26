@@ -28,8 +28,7 @@ under the License.
     <version>1.0</version>
   </parent>
 
-  <groupId>org.apache.maven.its.shade.drpwlp</groupId>
-  <artifactId>child</artifactId>
+    <artifactId>child</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 

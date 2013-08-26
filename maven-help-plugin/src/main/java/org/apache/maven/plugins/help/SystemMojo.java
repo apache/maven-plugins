@@ -97,8 +97,8 @@ public class SystemMojo
         if ( output != null )
         {
             StringBuilder sb = new StringBuilder();
-            sb.append( "Created by: " + getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " + new Date() ).append( "\n" ).append( "\n" );
+            sb.append("Created by: ").append(getClass().getName()).append("\n");
+            sb.append("Created on: ").append(new Date()).append("\n").append( "\n" );
             sb.append( message.toString() );
 
             try

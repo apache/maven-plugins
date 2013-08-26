@@ -8,8 +8,7 @@
     <version>1.0</version>
   </parent>
   <packaging>jar</packaging>
-  <groupId>eclipsetest</groupId>
-  <artifactId>multymodule-4</artifactId>
+    <artifactId>multymodule-4</artifactId>
   <version>1.0</version>
   <name>multymodule-4</name>
   <dependencies>
