@@ -124,7 +124,7 @@ public class OverlayManager
         final ListIterator<Overlay> it = overlays.listIterator();
         while ( it.hasNext() )
         {
-            Overlay overlay = (Overlay) it.next();
+            Overlay overlay = it.next();
             if ( overlay == null )
             {
                 throw new InvalidOverlayConfigurationException( "overlay could not be null." );

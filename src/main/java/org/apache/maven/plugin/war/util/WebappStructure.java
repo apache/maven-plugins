@@ -286,7 +286,7 @@ public class WebappStructure
      */
     public PathSet getStructure( String id )
     {
-        PathSet pathSet = (PathSet) registeredFiles.get( id );
+        PathSet pathSet = registeredFiles.get( id );
         if ( pathSet == null )
         {
             pathSet = new PathSet();
