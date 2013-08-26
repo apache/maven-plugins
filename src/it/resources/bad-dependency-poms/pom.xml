@@ -28,8 +28,7 @@ under the License.
     <relativePath>../it-parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.apache.maven.plugin.rresource.it</groupId>
-  <artifactId>test</artifactId>
+    <artifactId>test</artifactId>
   <version>1.0</version>
 
   <repositories>
