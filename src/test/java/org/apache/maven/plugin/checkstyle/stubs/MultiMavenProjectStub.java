@@ -20,7 +20,6 @@ package org.apache.maven.plugin.checkstyle.stubs;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

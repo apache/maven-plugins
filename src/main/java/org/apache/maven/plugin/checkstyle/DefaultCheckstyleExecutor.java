@@ -159,7 +159,7 @@ public class DefaultCheckstyleExecutor
             }
         }
 
-        URLClassLoader projectClassLoader = new URLClassLoader( (URL[]) urls.toArray( new URL[urls.size()] ), null );
+        URLClassLoader projectClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
         checker.setClassloader( projectClassLoader );
 
         checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
@@ -289,7 +289,7 @@ public class DefaultCheckstyleExecutor
                     // MCHECKSTYLE-173 Only add the "charset" attribute if it has not been set
                     try
                     {
-                        if ( ( (DefaultConfiguration) config ).getAttribute( "charset" ) == null )
+                        if ( config.getAttribute("charset") == null )
                         {
                             ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
                         }
@@ -312,7 +312,7 @@ public class DefaultCheckstyleExecutor
                     if (module instanceof DefaultConfiguration) {
                         //MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
                         try {
-                            if (((DefaultConfiguration) module).getAttribute("cacheFile") == null) {
+                            if (module.getAttribute("cacheFile") == null) {
                                 ((DefaultConfiguration) module).addAttribute("cacheFile", request.getCacheFile());
                             }
                         } catch (CheckstyleException ex) {
@@ -505,7 +505,7 @@ public class DefaultCheckstyleExecutor
 
         getLogger().debug( "Added " + files.size() + " files to process." );
 
-        return (File[]) files.toArray(new File[files.size()]);
+        return files.toArray(new File[files.size()]);
     }
 
     private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuilder excludesStr, File sourceDirectory,
