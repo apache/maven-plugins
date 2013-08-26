@@ -142,7 +142,7 @@ public class ArtifactTypeMappingService
         }
         else
         {
-            return (String) customMappings.get( type );
+            return customMappings.get( type );
         }
     }
 
