@@ -5,8 +5,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example</groupId>
-  <artifactId>mwar131-test</artifactId>
+    <artifactId>mwar131-test</artifactId>
   <name>Maven Quick Start Archetype</name>
 
   <description>
