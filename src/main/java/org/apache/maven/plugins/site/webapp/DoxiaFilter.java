@@ -141,7 +141,7 @@ public class DoxiaFilter
         {
             try
             {
-                DocumentRenderer renderer = (DocumentRenderer) documents.get( path );
+                DocumentRenderer renderer = documents.get( path );
                 renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
 
                 if ( renderer instanceof ReportDocumentRenderer )
@@ -175,7 +175,7 @@ public class DoxiaFilter
 
                 if ( locateDocuments.containsKey( path ) )
                 {
-                    DocumentRenderer renderer = (DocumentRenderer) locateDocuments.get( path );
+                    DocumentRenderer renderer = locateDocuments.get( path );
                     renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
                 }
             }
