@@ -9,9 +9,8 @@
     <version>1.0</version>
     <relativePath>../../it-parent/pom.xml</relativePath>
   </parent>
-  
-  <groupId>org.apache.maven.its.repository</groupId>
-  <artifactId>bundle-pack-target-no-scm</artifactId>
+
+    <artifactId>bundle-pack-target-no-scm</artifactId>
   <version>1.0</version>
   
   <name>bundle-pack Target without SCM</name>
