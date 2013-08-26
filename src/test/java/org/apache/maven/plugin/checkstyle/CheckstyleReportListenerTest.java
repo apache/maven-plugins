@@ -96,7 +96,7 @@ public class CheckstyleReportListenerTest
 
         fireAuditFinished( null );
 
-        CheckstyleReportListener listener = (CheckstyleReportListener) listenerMap.get( SeverityLevel.INFO );
+        CheckstyleReportListener listener = listenerMap.get( SeverityLevel.INFO );
         CheckstyleResults results = listener.getResults();
         assertEquals( "Test total files", 4, results.getFiles().size() );
         assertEquals( "Test file count", 4, results.getFileCount() );
@@ -106,7 +106,7 @@ public class CheckstyleReportListenerTest
         assertEquals( "test file severities", 0, results.getSeverityCount( "file1", SeverityLevel.ERROR ) );
         assertEquals( "test file severities", 0, results.getSeverityCount( "file1", SeverityLevel.IGNORE ) );
 
-        listener = (CheckstyleReportListener) listenerMap.get( SeverityLevel.WARNING );
+        listener = listenerMap.get( SeverityLevel.WARNING );
         results = listener.getResults();
         assertEquals( "Test total files", 4, results.getFiles().size() );
         assertEquals( "Test file count", 4, results.getFileCount() );
@@ -116,7 +116,7 @@ public class CheckstyleReportListenerTest
         assertEquals( "test file severities", 0, results.getSeverityCount( "file2", SeverityLevel.ERROR ) );
         assertEquals( "test file severities", 0, results.getSeverityCount( "file2", SeverityLevel.IGNORE ) );
 
-        listener = (CheckstyleReportListener) listenerMap.get( SeverityLevel.ERROR );
+        listener = listenerMap.get( SeverityLevel.ERROR );
         results = listener.getResults();
         assertEquals( "Test total files", 4, results.getFiles().size() );
         assertEquals( "Test file count", 4, results.getFileCount() );
@@ -126,7 +126,7 @@ public class CheckstyleReportListenerTest
         assertEquals( "test file severities", 3, results.getSeverityCount( "file3", SeverityLevel.ERROR ) );
         assertEquals( "test file severities", 0, results.getSeverityCount( "file3", SeverityLevel.IGNORE ) );
 
-        listener = (CheckstyleReportListener) listenerMap.get( SeverityLevel.IGNORE );
+        listener = listenerMap.get( SeverityLevel.IGNORE );
         results = listener.getResults();
         assertEquals( "Test total files", 4, results.getFiles().size() );
         assertEquals( "Test file count", 4, results.getFileCount() );

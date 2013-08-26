@@ -461,15 +461,7 @@ public class CheckstyleViolationCheckMojo
             {
                 if ( logViolationsToConsole )
                 {
-                    StringBuilder stb = new StringBuilder();
-                    stb.append( file );
-                    stb.append( '[' );
-                    stb.append( xpp.getAttributeValue( "", "line" ) );
-                    stb.append( ':' );
-                    stb.append( xpp.getAttributeValue( "", "column" ) );
-                    stb.append( "] " );
-                    stb.append( xpp.getAttributeValue( "", "message" ) );
-                    getLog().error( stb.toString() );
+                    getLog().error(file + '[' + xpp.getAttributeValue("", "line") + ':' + xpp.getAttributeValue("", "column") + "] " + xpp.getAttributeValue("", "message"));
                 }
                 count++;
             }

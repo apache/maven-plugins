@@ -381,7 +381,7 @@ public class CheckstyleReport
     {
         if ( "config/sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
         {
-            configLocation = (String) FORMAT_TO_CONFIG_LOCATION.get( format );
+            configLocation = FORMAT_TO_CONFIG_LOCATION.get( format );
         }
 
         if ( StringUtils.isEmpty( propertiesLocation ) )
