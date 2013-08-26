@@ -93,7 +93,7 @@ public final class TypeConversionUtils
     {
         final StringBuilder messages = new StringBuilder();
 
-        messages.append( "The mode: " + Integer.toString( mode, 8 ) + " contains nonsensical permissions:" );
+        messages.append("The mode: ").append(Integer.toString(mode, 8)).append(" contains nonsensical permissions:");
 
         boolean warn = false;
 

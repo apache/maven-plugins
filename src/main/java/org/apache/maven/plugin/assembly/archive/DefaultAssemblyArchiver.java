@@ -429,8 +429,8 @@ public class DefaultAssemblyArchiver
                     PlexusConfiguration.class, ExpressionEvaluator.class, (Class<?>) containerRealm[1],
                     ConfigurationListener.class } );
 
-            configureComponent.invoke( configurator, new Object[] { component, configuration, expressionEvaluator,
-                containerRealm[0], listener } );
+            configureComponent.invoke( configurator, component, configuration, expressionEvaluator,
+                    containerRealm[0], listener);
         }
         catch ( final NoSuchMethodException e )
         {

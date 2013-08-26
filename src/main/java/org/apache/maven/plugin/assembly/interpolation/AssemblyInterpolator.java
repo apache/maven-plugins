@@ -127,8 +127,7 @@ public class AssemblyInterpolator
         {
             final StringBuilder sb = new StringBuilder();
 
-            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: "
-                            + assembly.getId() + ":\n" );
+            sb.append("One or more minor errors occurred while interpolating the assembly with ID: ").append(assembly.getId()).append(":\n");
 
             @SuppressWarnings( "unchecked" )
             final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();

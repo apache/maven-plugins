@@ -117,8 +117,8 @@ public class FilterUtilsTest
                                  "artifact",
                                  "group:dependentArtifact",
                                  null,
-                                 Arrays.asList( new String[] { "current:project:jar:1.0",
-                                     "group:dependentArtifact:jar:version" } ), null );
+                                 Arrays.asList("current:project:jar:1.0",
+                                         "group:dependentArtifact:jar:version"), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
@@ -128,8 +128,8 @@ public class FilterUtilsTest
                                  "artifact",
                                  null,
                                  "group:dependentArtifact",
-                                 Arrays.asList( new String[] { "current:project:jar:1.0",
-                                     "group:dependentArtifact:jar:version" } ), null );
+                                 Arrays.asList("current:project:jar:1.0",
+                                         "group:dependentArtifact:jar:version"), null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
@@ -177,8 +177,8 @@ public class FilterUtilsTest
                                 "artifact",
                                 "group:dependentArtifact",
                                 null,
-                                Arrays.asList( new String[] { "current:project:jar:1.0",
-                                    "group:dependentArtifact:jar:version" } ) );
+                                Arrays.asList("current:project:jar:1.0",
+                                        "group:dependentArtifact:jar:version") );
     }
 
     public void testFilterProjects_ShouldRemoveProjectTransitivelyExcluded()
@@ -187,8 +187,8 @@ public class FilterUtilsTest
                                 "artifact",
                                 null,
                                 "group:dependentArtifact",
-                                Arrays.asList( new String[] { "current:project:jar:1.0",
-                                    "group:dependentArtifact:jar:version" } ) );
+                                Arrays.asList("current:project:jar:1.0",
+                                        "group:dependentArtifact:jar:version") );
     }
 
     public void testFilterProjects_ShouldRemoveProjectDirectlyExcluded()
