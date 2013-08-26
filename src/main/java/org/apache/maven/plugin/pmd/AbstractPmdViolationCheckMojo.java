@@ -118,7 +118,6 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
             if ( outputFile.exists() )
             {
-                final Reader reader = null;
                 try
                 {
                     final ViolationDetails<D> violations = getViolations( outputFile, failurePriority );
@@ -154,10 +153,6 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 {
                     throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
-                }
-                finally
-                {
-                    IOUtil.close( reader );
                 }
             }
             else
