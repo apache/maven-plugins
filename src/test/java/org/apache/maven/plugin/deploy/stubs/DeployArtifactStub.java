@@ -98,7 +98,7 @@ public class DeployArtifactStub
             metadataMap = new HashMap<Object, ArtifactMetadata>();
         }
 
-        ArtifactMetadata m = (ArtifactMetadata) metadataMap.get( metadata.getKey() );
+        ArtifactMetadata m = metadataMap.get( metadata.getKey() );
         if ( m != null )
         {
             m.merge( metadata );
