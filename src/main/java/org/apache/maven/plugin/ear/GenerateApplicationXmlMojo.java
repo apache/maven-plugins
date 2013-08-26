@@ -172,7 +172,6 @@ public class GenerateApplicationXmlMojo
         if ( getJbossConfiguration() == null )
         {
             getLog().debug( "Generation of jboss-app.xml is disabled" );
-            return;
         }
         else
         {
