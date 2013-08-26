@@ -180,7 +180,7 @@ public class CheckstyleReportTest
             assertTrue( "Test cache file exists", new File( cacheFile ).exists() );
         }
 
-        MavenReport reportMojo = (MavenReport) mojo;
+        MavenReport reportMojo = mojo;
         File outputDir = reportMojo.getReportOutputDirectory();
 
         Boolean rss = (Boolean) getVariableValueFromObject( mojo, "enableRSS" );
