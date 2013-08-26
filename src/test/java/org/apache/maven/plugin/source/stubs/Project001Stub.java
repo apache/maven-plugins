@@ -23,7 +23,6 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.util.List;
