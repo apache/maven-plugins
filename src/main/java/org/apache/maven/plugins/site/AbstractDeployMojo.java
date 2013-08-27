@@ -246,7 +246,8 @@ public abstract class AbstractDeployMojo
     protected String getDeployModuleDirectory()
         throws MojoExecutionException
     {
-        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getTopDistributionManagementSiteUrl() );
+        String relative =
+            siteTool.getRelativePath( getSite( project ).getUrl(), getTopDistributionManagementSiteUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -395,8 +396,9 @@ public abstract class AbstractDeployMojo
         throws MojoExecutionException
     {
         AuthenticationInfo authenticationInfo = wagonManager.getAuthenticationInfo( repository.getId() );
-        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': "
-                            + ( ( authenticationInfo == null ) ? "-" : authenticationInfo.getUserName() ) );
+        getLog().debug( "authenticationInfo with id '" + repository.getId() + "': " + ( ( authenticationInfo == null )
+            ? "-"
+            : authenticationInfo.getUserName() ) );
 
         try
         {
@@ -620,7 +622,9 @@ public abstract class AbstractDeployMojo
                             proxyInfo.setUserName( proxy.getUsername() );
                             proxyInfo.setPassword( proxy.getPassword() );
 
-                            getLog().debug("found proxyInfo " + ("host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort() + ", " + proxyInfo.getUserName()));
+                            getLog().debug(
+                                "found proxyInfo " + ( "host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort()
+                                    + ", " + proxyInfo.getUserName() ) );
 
                             return proxyInfo;
                         }
@@ -668,8 +672,7 @@ public abstract class AbstractDeployMojo
                         (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
                     if ( isMaven3OrMore() )
                     {
-                        componentConfigurator.configureComponent( wagon, plexusConf,
-                                                                  container.getContainerRealm() );
+                        componentConfigurator.configureComponent( wagon, plexusConf, container.getContainerRealm() );
                     }
                     else
                     {
@@ -684,8 +687,9 @@ public abstract class AbstractDeployMojo
                 }
                 catch ( ComponentConfigurationException e )
                 {
-                    throw new TransferFailedException( "While configuring wagon for \'" + repositoryId
-                                                           + "\': Unable to apply wagon configuration.", e );
+                    throw new TransferFailedException(
+                        "While configuring wagon for \'" + repositoryId + "\': Unable to apply wagon configuration.",
+                        e );
                 }
                 finally
                 {
@@ -763,14 +767,14 @@ public abstract class AbstractDeployMojo
 
         if ( site == null )
         {
-            throw new MojoExecutionException( "Missing site information in the distribution management of the project "
-                + getFullName( project ) );
+            throw new MojoExecutionException(
+                "Missing site information in the distribution management of the project " + getFullName( project ) );
         }
 
         if ( site.getUrl() == null || site.getId() == null )
         {
-            throw new MojoExecutionException( "Missing site data: specify url and id for project "
-                + getFullName( project ) );
+            throw new MojoExecutionException(
+                "Missing site data: specify url and id for project " + getFullName( project ) );
         }
 
         return site;
@@ -834,6 +838,7 @@ public abstract class AbstractDeployMojo
     private static class URIEncoder
     {
         private static final String MARK = "-_.!~*'()";
+
         private static final String RESERVED = ";/?:@&=+$,";
 
         public static String encodeURI( final String uriString )
@@ -844,7 +849,7 @@ public abstract class AbstractDeployMojo
             for ( char c : chars )
             {
                 if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
-                        || MARK.indexOf( c ) != -1  || RESERVED.indexOf( c ) != -1 )
+                    || MARK.indexOf( c ) != -1 || RESERVED.indexOf( c ) != -1 )
                 {
                     uri.append( c );
                 }
