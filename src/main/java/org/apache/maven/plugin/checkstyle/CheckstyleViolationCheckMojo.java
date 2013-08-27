@@ -308,7 +308,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
-     * <p/>
+     *
      * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
     @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
@@ -346,9 +346,7 @@ public class CheckstyleViolationCheckMojo
     private ByteArrayOutputStream stringOutputStream;
 
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -364,16 +362,15 @@ public class CheckstyleViolationCheckMojo
                 try
                 {
                     CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-                    request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput ).setExcludes(
-                        excludes ).setFailsOnError( failsOnError ).setIncludes(
-                        includes ).setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener(
-                        getListener() ).setLog( getLog() ).setProject( project ).setSourceDirectory(
-                        sourceDirectory ).setResources( resources ).setStringOutputStream(
-                        stringOutputStream ).setSuppressionsLocation( suppressionsLocation ).setTestSourceDirectory(
-                        testSourceDirectory ).setConfigLocation( configLocation ).setPropertyExpansion(
-                        propertyExpansion ).setHeaderLocation( headerLocation ).setCacheFile(
-                        cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression ).setEncoding(
-                        encoding ).setPropertiesLocation( propertiesLocation );
+                    request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
+                        .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
+                        .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
+                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
+                        .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
+                        .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+                        .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
+                        .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
+                        .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
 
                     checkstyleExecutor.executeCheckstyle( request );
 
@@ -395,14 +392,15 @@ public class CheckstyleViolationCheckMojo
             }
             if ( !"xml".equals( outputFileFormat ) )
             {
-                throw new MojoExecutionException(
-                    "Output format is '" + outputFileFormat + "', checkstyle:check requires format to be 'xml'." );
+                throw new MojoExecutionException( "Output format is '" + outputFileFormat
+                    + "', checkstyle:check requires format to be 'xml'." );
             }
 
             if ( !outputFile.exists() )
             {
                 getLog().info(
-                    "Unable to perform checkstyle:check, " + "unable to find checkstyle:checkstyle outputFile." );
+                               "Unable to perform checkstyle:check, "
+                                   + "unable to find checkstyle:checkstyle outputFile." );
                 return;
             }
 
@@ -418,9 +416,8 @@ public class CheckstyleViolationCheckMojo
                 {
                     if ( failOnViolation )
                     {
-                        String msg =
-                            "You have " + violations + " Checkstyle violation" + ( ( violations > 1 ) ? "s" : "" )
-                                + ".";
+                        String msg = "You have " + violations + " Checkstyle violation"
+                            + ( ( violations > 1 ) ? "s" : "" ) + ".";
                         if ( maxAllowedViolations > 0 )
                         {
                             msg += " The maximum number of allowed violations is " + maxAllowedViolations + ".";
@@ -433,13 +430,13 @@ public class CheckstyleViolationCheckMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                    "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(), e );
+                throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
+                    + outputFile.getAbsolutePath(), e );
             }
             catch ( XmlPullParserException e )
             {
-                throw new MojoExecutionException(
-                    "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(), e );
+                throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
+                    + outputFile.getAbsolutePath(), e );
             }
         }
     }
@@ -459,14 +456,12 @@ public class CheckstyleViolationCheckMojo
                 file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
             }
 
-            if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() ) && isViolation(
-                xpp.getAttributeValue( "", "severity" ) ) )
+            if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() )
+                && isViolation( xpp.getAttributeValue( "", "severity" ) ) )
             {
                 if ( logViolationsToConsole )
                 {
-                    getLog().error(
-                        file + '[' + xpp.getAttributeValue( "", "line" ) + ':' + xpp.getAttributeValue( "", "column" )
-                            + "] " + xpp.getAttributeValue( "", "message" ) );
+                    getLog().error(file + '[' + xpp.getAttributeValue("", "line") + ':' + xpp.getAttributeValue("", "column") + "] " + xpp.getAttributeValue("", "message"));
                 }
                 count++;
             }
@@ -486,8 +481,8 @@ public class CheckstyleViolationCheckMojo
     {
         if ( "error".equals( severity ) )
         {
-            return "error".equals( violationSeverity ) || "warning".equals( violationSeverity ) || "info".equals(
-                violationSeverity );
+            return "error".equals( violationSeverity ) || "warning".equals( violationSeverity )
+                || "info".equals( violationSeverity );
         }
         else if ( "warning".equals( severity ) )
         {
@@ -502,7 +497,6 @@ public class CheckstyleViolationCheckMojo
             return false;
         }
     }
-
     private DefaultLogger getConsoleListener()
         throws MojoExecutionException
     {
@@ -566,8 +560,8 @@ public class CheckstyleViolationCheckMojo
             }
             else
             {
-                throw new MojoFailureException(
-                    "Invalid output file format: (" + outputFileFormat + "). Must be 'plain' or 'xml'." );
+                throw new MojoFailureException( "Invalid output file format: (" + outputFileFormat
+                    + "). Must be 'plain' or 'xml'." );
             }
         }
 
