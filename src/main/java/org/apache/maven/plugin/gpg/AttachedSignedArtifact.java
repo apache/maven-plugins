@@ -281,7 +281,7 @@ public class AttachedSignedArtifact
         for ( Iterator i = result.iterator(); i.hasNext() && !alreadySigned; )
         {
             ArtifactMetadata metadata = (ArtifactMetadata) i.next();
-            alreadySigned = signature.getKey().equals(metadata.getKey());
+            alreadySigned = signature.getKey().equals( metadata.getKey() );
         }
         if ( !alreadySigned )
         {
