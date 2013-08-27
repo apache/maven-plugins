@@ -37,9 +37,7 @@ public class CheckstyleReportListenerTest
 {
     private Map<SeverityLevel, CheckstyleReportListener> listenerMap;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
@@ -68,8 +66,7 @@ public class CheckstyleReportListenerTest
 
         AuditEvent event = new AuditEvent( this, "/source/path/file1", null );
         fireFileStarted( event );
-        LocalizedMessage message =
-            new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.INFO, null, getClass(), null );
+        LocalizedMessage message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.INFO, null, getClass(), null );
         fireAddError( new AuditEvent( this, "/source/path/file1", message ) );
         fireFileFinished( event );
 

@@ -45,9 +45,7 @@ public class CheckstyleReportTest
 {
     private Locale oldLocale;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
@@ -57,9 +55,7 @@ public class CheckstyleReportTest
         Locale.setDefault( Locale.ENGLISH );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void tearDown()
         throws Exception
     {
@@ -150,8 +146,7 @@ public class CheckstyleReportTest
             if ( !( e.getCause().getCause().getCause() instanceof DependencyResolutionRequiredException ) )
             {
                 e.printStackTrace();
-                fail( "Must throw exception DependencyResolutionRequiredException on errors and not "
-                          + e.getClass().getName() + ", " + e.getMessage() );
+                fail( "Must throw exception DependencyResolutionRequiredException on errors and not " + e.getClass().getName() + ", " + e.getMessage() );
             }
         }
     }
@@ -189,7 +184,7 @@ public class CheckstyleReportTest
         File outputDir = reportMojo.getReportOutputDirectory();
 
         Boolean rss = (Boolean) getVariableValueFromObject( mojo, "enableRSS" );
-        if ( rss )
+        if (rss)
         {
             File rssFile = new File( outputDir, "checkstyle.rss" );
             assertTrue( "Test rss file exists", rssFile.exists() );
@@ -215,7 +210,7 @@ public class CheckstyleReportTest
         boolean searchHeaderFound =
             ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.rules" ) ) > 0 );
         Boolean rules = (Boolean) getVariableValueFromObject( mojo, "enableRulesSummary" );
-        if ( rules )
+        if (rules)
         {
             assertTrue( "Test for Rules Summary", searchHeaderFound );
         }
@@ -224,9 +219,10 @@ public class CheckstyleReportTest
             assertFalse( "Test for Rules Summary", searchHeaderFound );
         }
 
-        searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.summary" ) ) > 0 );
+        searchHeaderFound =
+            ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.summary" )  ) > 0 );
         Boolean severity = (Boolean) getVariableValueFromObject( mojo, "enableSeveritySummary" );
-        if ( severity )
+        if (severity)
         {
             assertTrue( "Test for Severity Summary", searchHeaderFound );
         }
@@ -235,9 +231,10 @@ public class CheckstyleReportTest
             assertFalse( "Test for Severity Summary", searchHeaderFound );
         }
 
-        searchHeaderFound = ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.files" ) ) > 0 );
+        searchHeaderFound =
+            ( htmlString.indexOf( "<h2>" + bundle.getString( "report.checkstyle.files" ) ) > 0 );
         Boolean files = (Boolean) getVariableValueFromObject( mojo, "enableFilesSummary" );
-        if ( files )
+        if (files)
         {
             assertTrue( "Test for Files Summary", searchHeaderFound );
         }
@@ -252,10 +249,10 @@ public class CheckstyleReportTest
     /**
      * Renderer the sink from the report mojo.
      *
-     * @param mojo       not null
+     * @param mojo not null
      * @param outputHtml not null
      * @throws RendererException if any
-     * @throws IOException       if any
+     * @throws IOException if any
      */
     private void renderer( CheckstyleReport mojo, File outputHtml )
         throws RendererException, Exception
@@ -270,9 +267,9 @@ public class CheckstyleReportTest
         {
             outputHtml.getParentFile().mkdirs();
             writer = WriterFactory.newXmlWriter( outputHtml );
-
+          
             mojo.execute();
-
+            
         }
         finally
         {

@@ -48,35 +48,27 @@ public class MultiMavenProjectStub
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<String> getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<String> getTestClasspathElements()
         throws DependencyResolutionRequiredException
     {
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( PlexusTestCase.getBasedir() );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<ReportPlugin> getReportPlugins()
     {
         ReportPlugin jxrPlugin = new ReportPlugin();
@@ -86,9 +78,7 @@ public class MultiMavenProjectStub
         return Collections.singletonList( jxrPlugin );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Organization getOrganization()
     {
         Organization organization = new Organization();
@@ -98,17 +88,13 @@ public class MultiMavenProjectStub
         return organization;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getInceptionYear()
     {
         return "2006";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Build getBuild()
     {
         Build build = new Build();
@@ -118,9 +104,7 @@ public class MultiMavenProjectStub
         return build;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public File getFile()
     {
         File file = new File( getBasedir(), "pom.xml" );
