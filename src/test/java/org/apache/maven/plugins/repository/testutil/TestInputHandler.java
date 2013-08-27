@@ -28,11 +28,11 @@ import java.util.Stack;
 public class TestInputHandler
     implements InputHandler
 {
-    
+
     private Stack<String> lineResponses;
-    
+
     private Stack<List<String>> lineListResponses;
-    
+
     private Stack<String> passwordResponses;
 
     public String readLine()

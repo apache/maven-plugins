@@ -50,7 +50,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test for repository plugin with project.packaging == pom
-     * 
+     *
      * @throws Exception
      */
     public void testDefaults_PomPackaging()
@@ -68,8 +68,7 @@ public class BundleCreateMojoTest
             e.printStackTrace();
         }
 
-        File bundleSource =
-            new File( getBasedir(), "target/test/unit/pom-only/target/pom-only-bundle.jar" );
+        File bundleSource = new File( getBasedir(), "target/test/unit/pom-only/target/pom-only-bundle.jar" );
         assertTrue( FileUtils.fileExists( bundleSource.getAbsolutePath() ) );
 
         Set<String> entryNames = new HashSet<String>();
@@ -82,7 +81,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test for repository plugin default configuration
-     * 
+     *
      * @throws Exception
      */
     public void testDefaultconfiguration()
@@ -91,8 +90,8 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "default-configuration", true, true, getBasedir()
-                + "/target/test/unit/default-configuration/target" );
+            createTestJars( "default-configuration", true, true,
+                            getBasedir() + "/target/test/unit/default-configuration/target" );
         }
         catch ( IOException ie )
         {
@@ -131,8 +130,8 @@ public class BundleCreateMojoTest
     {
         try
         {
-            createTestJars( "default-configuration", true, true, getBasedir()
-                + "/target/test/unit/default-configuration/target" );
+            createTestJars( "default-configuration", true, true,
+                            getBasedir() + "/target/test/unit/default-configuration/target" );
         }
         catch ( IOException ie )
         {
@@ -181,8 +180,8 @@ public class BundleCreateMojoTest
     {
         try
         {
-            createTestJars( "default-configuration", true, true, getBasedir()
-                + "/target/test/unit/default-configuration/target" );
+            createTestJars( "default-configuration", true, true,
+                            getBasedir() + "/target/test/unit/default-configuration/target" );
         }
         catch ( IOException ie )
         {
@@ -231,8 +230,8 @@ public class BundleCreateMojoTest
     {
         try
         {
-            createTestJars( "default-configuration", true, true, getBasedir()
-                + "/target/test/unit/default-configuration/target" );
+            createTestJars( "default-configuration", true, true,
+                            getBasedir() + "/target/test/unit/default-configuration/target" );
         }
         catch ( IOException ie )
         {
@@ -281,8 +280,8 @@ public class BundleCreateMojoTest
     {
         try
         {
-            createTestJars( "default-configuration", true, true, getBasedir()
-                + "/target/test/unit/default-configuration/target" );
+            createTestJars( "default-configuration", true, true,
+                            getBasedir() + "/target/test/unit/default-configuration/target" );
         }
         catch ( IOException ie )
         {
@@ -328,7 +327,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test repository plugin when there is no javadoc jar to be included in the bundle
-     * 
+     *
      * @throws Exception
      */
     public void testNoJavadocJar()
@@ -371,7 +370,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test repository plugin when there is no sources jar to be included in the bundle
-     * 
+     *
      * @throws Exception
      */
     public void testNoSourcesJar()
@@ -414,7 +413,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test repository plugin when there are no javadoc and sources jar files to be included in the bundle
-     * 
+     *
      * @throws Exception
      */
     public void testNoJavadocSourcesJars()
@@ -423,8 +422,8 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "no-javadoc-sources", false, false, getBasedir()
-                + "/target/test/unit/no-javadoc-sources/target" );
+            createTestJars( "no-javadoc-sources", false, false,
+                            getBasedir() + "/target/test/unit/no-javadoc-sources/target" );
         }
         catch ( IOException ie )
         {
@@ -462,7 +461,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test repository plugin when the scm element is null
-     * 
+     *
      * @throws Exception
      */
     public void testNullScm()
@@ -486,7 +485,7 @@ public class BundleCreateMojoTest
 
             // MREPOSITORY-2 project.scm.connection should not be required for bundle-create
             // MREPOSITORY-19 project.scm.{url|connection} are required for project materialization...
-             fail( "Must throw an exception on a project element scm is null" );
+            fail( "Must throw an exception on a project element scm is null" );
         }
         catch ( MojoExecutionException e )
         {
@@ -497,7 +496,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test repository plugin when license file does not exist
-     * 
+     *
      * @throws Exception
      */
     public void testNoLicense()
@@ -506,7 +505,8 @@ public class BundleCreateMojoTest
 
         try
         {
-            createTestJars( "no-license-file", false, false, getBasedir() + "/target/test/unit/no-license-file/target" );
+            createTestJars( "no-license-file", false, false,
+                            getBasedir() + "/target/test/unit/no-license-file/target" );
         }
         catch ( IOException ie )
         {
@@ -530,7 +530,7 @@ public class BundleCreateMojoTest
 
     /**
      * Test repository plugin when there is no project name specified in the pom
-     * 
+     *
      * @throws Exception
      */
     public void testNoProjectName()
@@ -538,7 +538,8 @@ public class BundleCreateMojoTest
     {
         try
         {
-            createTestJars( "no-project-name", false, false, getBasedir() + "/target/test/unit/no-project-name/target" );
+            createTestJars( "no-project-name", false, false,
+                            getBasedir() + "/target/test/unit/no-project-name/target" );
         }
         catch ( IOException ie )
         {
@@ -562,15 +563,11 @@ public class BundleCreateMojoTest
 
     /**
      * Method for creating the jar files that will be used in testing
-     * 
-     * @param fileName
-     *            the file name of the jar file(s) to be created
-     * @param createJavadocJar
-     *            specifies whether a javadoc jar file will be created or not
-     * @param createSourcesJar
-     *            specifies whether a sources jar file will be created or not
-     * @param destDir
-     *            the destination directory where the jar file(s) are to be created
+     *
+     * @param fileName         the file name of the jar file(s) to be created
+     * @param createJavadocJar specifies whether a javadoc jar file will be created or not
+     * @param createSourcesJar specifies whether a sources jar file will be created or not
+     * @param destDir          the destination directory where the jar file(s) are to be created
      * @throws IOException
      */
     private void createTestJars( String fileName, boolean createJavadocJar, boolean createSourcesJar, String destDir )
