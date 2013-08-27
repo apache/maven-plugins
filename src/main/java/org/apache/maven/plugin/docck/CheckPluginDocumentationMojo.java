@@ -80,7 +80,8 @@ public class CheckPluginDocumentationMojo
 
         if ( descriptor != null )
         {
-            @SuppressWarnings( "unchecked" ) List<MojoDescriptor> mojos = descriptor.getMojos();
+            @SuppressWarnings( "unchecked" )
+            List<MojoDescriptor> mojos = descriptor.getMojos();
 
             // ensure that all mojo classes are documented
             if ( mojos != null && !mojos.isEmpty() )
@@ -94,7 +95,8 @@ public class CheckPluginDocumentationMojo
                         reporter.error( "Mojo: \'" + mojo.getGoal() + "\' is missing a description." );
                     }
 
-                    @SuppressWarnings( "unchecked" ) List<Parameter> params = mojo.getParameters();
+                    @SuppressWarnings( "unchecked" )
+                    List<Parameter> params = mojo.getParameters();
 
                     // ensure that all parameters are documented
                     if ( params != null && !params.isEmpty() )
@@ -108,9 +110,8 @@ public class CheckPluginDocumentationMojo
                                 if ( paramDescription == null
                                     || paramDescription.trim().length() < MIN_DESCRIPTION_LENGTH )
                                 {
-                                    reporter.error(
-                                        "Parameter: \'" + param.getName() + "\' in mojo: \'" + mojo.getGoal()
-                                            + "\' is missing a description." );
+                                    reporter.error( "Parameter: \'" + param.getName() + "\' in mojo: \'"
+                                        + mojo.getGoal() + "\' is missing a description." );
                                 }
                             }
                         }
@@ -149,30 +150,30 @@ public class CheckPluginDocumentationMojo
 
                 String siteHtml = IOUtil.toString( streamReader );
 
-                if ( !siteHtml.contains( "href=\"index.html\"" ) )
+                if (!siteHtml.contains("href=\"index.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: index.html \"Introduction\"." );
                 }
 
-                if ( !siteHtml.contains( "href=\"usage.html\"" ) )
+                if (!siteHtml.contains("href=\"usage.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: usage.html \"Usage\"." );
                 }
 
-                if ( !siteHtml.contains( "href=\"plugin-info.html\"" ) )
+                if (!siteHtml.contains("href=\"plugin-info.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: plugin-info.html \"Goals\"." );
                 }
 
-                if ( !siteHtml.contains( "href=\"faq.html\"" ) )
+                if (!siteHtml.contains("href=\"faq.html\""))
                 {
                     reporter.error( "site.xml is missing the link to: faq.html \"FAQ\"." );
                 }
             }
             catch ( IOException e )
             {
-                reporter.error(
-                    "Unable to read site.xml file: \'" + siteXml.getAbsolutePath() + "\'.\nError: " + e.getMessage() );
+                reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath()
+                    + "\'.\nError: " + e.getMessage() );
             }
             finally
             {
@@ -193,11 +194,12 @@ public class CheckPluginDocumentationMojo
         }
 
         // check for **/examples/**.(apt|html|xml)[.vm] or **/example*.(apt|html|xml)[.vm] 
-        if ( !findFiles( projectSiteDirectory, "**/examples/*" ) && !findFiles( projectSiteDirectory, "**/example*" ) )
+        if ( !findFiles( projectSiteDirectory, "**/examples/*" )
+             && !findFiles( projectSiteDirectory, "**/example*" ) )
         {
             reporter.error( "There are no example files in your site directory (in apt|html|xml[.vm] format)."
-                                + " They should either be called \'example*.(apt|html|xml)[.vm]\'"
-                                + " or they should be located in the \'examples\' directory." );
+                + " They should either be called \'example*.(apt|html|xml)[.vm]\'"
+                + " or they should be located in the \'examples\' directory." );
         }
 
         if ( !findFiles( projectSiteDirectory, "faq" ) )
@@ -217,7 +219,8 @@ public class CheckPluginDocumentationMojo
     {
         List<String> expectedPlugins = getRequiredPlugins();
 
-        @SuppressWarnings( "unchecked" ) List<ReportPlugin> reportPlugins = project.getReportPlugins();
+        @SuppressWarnings( "unchecked" )
+        List<ReportPlugin> reportPlugins = project.getReportPlugins();
         if ( reportPlugins != null && reportPlugins.size() > 0 )
         {
             for ( ReportPlugin plugin : reportPlugins )
