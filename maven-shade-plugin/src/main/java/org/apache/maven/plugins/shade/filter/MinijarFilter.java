@@ -62,6 +62,7 @@ public class MinijarFilter
     }
 
     /**
+     *
      * @since 1.6
      */
     @SuppressWarnings( { "unchecked" } )
@@ -103,9 +104,9 @@ public class MinijarFilter
         catch ( ZipException e )
         {
             log.warn( dependency.getFile()
-                          + " could not be unpacked/read for minimization; dependency is probably malformed." );
-            IOException ioe = new IOException(
-                "Dependency " + dependency.toString() + " in file " + dependency.getFile()
+                + " could not be unpacked/read for minimization; dependency is probably malformed." );
+            IOException ioe =
+                new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile()
                     + " could not be unpacked. File is probably corrupt" );
             ioe.initCause( e );
             throw ioe;
@@ -113,17 +114,17 @@ public class MinijarFilter
         catch ( ArrayIndexOutOfBoundsException e )
         {
             //trap ArrayIndexOutOfBoundsExceptions caused by malformed dependency classes (MSHADE-107)
-            log.warn(
-                dependency.toString() + " could not be analyzed for minimization; dependency is probably malformed." );
+            log.warn( dependency.toString()
+                + " could not be analyzed for minimization; dependency is probably malformed." );
         }
         finally
         {
             IOUtil.close( is );
         }
-
+        
         return clazzpathUnit;
     }
-
+    
     private void removePackages( ClazzpathUnit artifactUnit )
     {
         Set<String> packageNames = new HashSet<String>();
@@ -134,16 +135,13 @@ public class MinijarFilter
     @SuppressWarnings( "rawtypes" )
     private void removePackages( Set clazzes, Set<String> packageNames )
     {
-        for ( Object clazze : clazzes )
-        {
+        for (Object clazze : clazzes) {
             Clazz clazz = (Clazz) clazze;
             String name = clazz.getName();
-            while ( name.contains( "." ) )
-            {
-                name = name.substring( 0, name.lastIndexOf( '.' ) );
-                if ( packageNames.add( name ) )
-                {
-                    removable.remove( new Clazz( name + ".package-info" ) );
+            while (name.contains(".")) {
+                name = name.substring(0, name.lastIndexOf('.'));
+                if (packageNames.add(name)) {
+                    removable.remove(new Clazz(name + ".package-info"));
                 }
             }
         }
@@ -170,8 +168,8 @@ public class MinijarFilter
                         {
                             Clazz clazz = j.next();
 
-                            if ( depClazzpathUnit.getClazzes().contains( clazz ) && simpleFilter.isSpecificallyIncluded(
-                                clazz.getName().replace( '.', '/' ) ) )
+                            if ( depClazzpathUnit.getClazzes().contains( clazz )
+                                && simpleFilter.isSpecificallyIncluded( clazz.getName().replace( '.', '/' ) ) )
                             {
                                 log.info( clazz.getName() + " not removed because it was specifically included" );
                                 j.remove();
@@ -207,6 +205,8 @@ public class MinijarFilter
     public void finished()
     {
         int classesTotal = classesRemoved + classesKept;
-        log.info( "Minimized " + classesTotal + " -> " + classesKept + " (" + 100 * classesKept / classesTotal + "%)" );
+        log.info(
+            "Minimized " + classesTotal + " -> " + classesKept + " (" + 100 * classesKept / classesTotal
+                + "%)" );
     }
 }

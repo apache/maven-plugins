@@ -339,9 +339,12 @@ public class DefaultAssemblyReaderTest
         assertNotNull( depSets );
         assertEquals( 3, depSets.size() );
 
-        assertEquals( Artifact.SCOPE_RUNTIME, depSets.get( 0 ).getScope() );
-        assertEquals( Artifact.SCOPE_COMPILE, depSets.get( 1 ).getScope() );
-        assertEquals( Artifact.SCOPE_SYSTEM, depSets.get( 2 ).getScope() );
+        assertEquals( Artifact.SCOPE_RUNTIME, depSets.get( 0 )
+                                                     .getScope() );
+        assertEquals( Artifact.SCOPE_COMPILE, depSets.get( 1 )
+                                                     .getScope() );
+        assertEquals( Artifact.SCOPE_SYSTEM, depSets.get( 2 )
+                                                    .getScope() );
     }
 
     public void testMergeComponentWithAssembly_ShouldAddOneRepositoryToExistingListOfTwo()
@@ -372,9 +375,12 @@ public class DefaultAssemblyReaderTest
         assertNotNull( depSets );
         assertEquals( 3, depSets.size() );
 
-        assertEquals( Artifact.SCOPE_RUNTIME, depSets.get( 0 ).getScope() );
-        assertEquals( Artifact.SCOPE_COMPILE, depSets.get( 1 ).getScope() );
-        assertEquals( Artifact.SCOPE_SYSTEM, depSets.get( 2 ).getScope() );
+        assertEquals( Artifact.SCOPE_RUNTIME, depSets.get( 0 )
+                                                     .getScope() );
+        assertEquals( Artifact.SCOPE_COMPILE, depSets.get( 1 )
+                                                     .getScope() );
+        assertEquals( Artifact.SCOPE_SYSTEM, depSets.get( 2 )
+                                                    .getScope() );
     }
 
     public void testMergeComponentWithAssembly_ShouldAddOneContainerDescriptorHandlerToExistingListOfTwo()
@@ -406,9 +412,12 @@ public class DefaultAssemblyReaderTest
         assertEquals( 3, result.size() );
 
         final Iterator<ContainerDescriptorHandlerConfig> it = result.iterator();
-        assertEquals( "one", it.next().getHandlerName() );
-        assertEquals( "two", it.next().getHandlerName() );
-        assertEquals( "three", it.next().getHandlerName() );
+        assertEquals( "one", it.next()
+                               .getHandlerName() );
+        assertEquals( "two", it.next()
+                               .getHandlerName() );
+        assertEquals( "three", it.next()
+                                 .getHandlerName() );
     }
 
     // FIXME: Deep merging should take place...
@@ -605,7 +614,8 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "/site", fileSets.get( 0 ).getOutputDirectory() );
+        assertEquals( "/site", fileSets.get( 0 )
+                                       .getOutputDirectory() );
 
         mockManager.verifyAll();
     }
@@ -656,7 +666,8 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "/site", fileSets.get( 0 ).getOutputDirectory() );
+        assertEquals( "/site", fileSets.get( 0 )
+                                       .getOutputDirectory() );
 
         mockManager.verifyAll();
     }
@@ -725,7 +736,8 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "/dir", fileSets.get( 0 ).getDirectory() );
+        assertEquals( "/dir", fileSets.get( 0 )
+                                      .getDirectory() );
 
         mockManager.verifyAll();
     }
@@ -795,7 +807,8 @@ public class DefaultAssemblyReaderTest
 
         assertEquals( 1, fileSets.size() );
 
-        assertEquals( "group-dir", fileSets.get( 0 ).getDirectory() );
+        assertEquals( "group-dir", fileSets.get( 0 )
+                                           .getDirectory() );
 
         mockManager.verifyAll();
     }
@@ -972,8 +985,7 @@ public class DefaultAssemblyReaderTest
         catch ( final AssemblyReadException e )
         {
             e.printStackTrace();
-            fail(
-                "Setting ignoreMissingDescriptor == true (true flag in performReadAssemblies, above) should NOT produce an exception." );
+            fail( "Setting ignoreMissingDescriptor == true (true flag in performReadAssemblies, above) should NOT produce an exception." );
         }
     }
 
@@ -1010,7 +1022,7 @@ public class DefaultAssemblyReaderTest
         final List<String> files = writeAssembliesToFile( assemblies, basedir );
 
         final List<Assembly> results =
-            performReadAssemblies( basedir, null, null, files.toArray( new String[files.size()] ), null, null );
+            performReadAssemblies( basedir, null, null, files.toArray(new String[files.size()]), null, null );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -1030,7 +1042,7 @@ public class DefaultAssemblyReaderTest
         final File basedir = fileManager.createTempDir();
 
         final List<Assembly> assemblies =
-            performReadAssemblies( basedir, null, null, null, new String[]{ "bin", "src" }, null );
+            performReadAssemblies( basedir, null, null, null, new String[] { "bin", "src" }, null );
 
         assertNotNull( assemblies );
         assertEquals( 2, assemblies.size() );
@@ -1113,22 +1125,18 @@ public class DefaultAssemblyReaderTest
     {
         final List<String> files = new ArrayList<String>();
 
-        for ( final Assembly assembly : assemblies )
-        {
-            final File assemblyFile = new File( dir, assembly.getId() + ".xml" );
+        for (final Assembly assembly : assemblies) {
+            final File assemblyFile = new File(dir, assembly.getId() + ".xml");
 
             Writer writer = null;
-            try
-            {
-                writer = new OutputStreamWriter( new FileOutputStream( assemblyFile ), "UTF-8" );
-                new AssemblyXpp3Writer().write( writer, assembly );
-            }
-            finally
-            {
-                IOUtil.close( writer );
+            try {
+                writer = new OutputStreamWriter(new FileOutputStream(assemblyFile), "UTF-8");
+                new AssemblyXpp3Writer().write(writer, assembly);
+            } finally {
+                IOUtil.close(writer);
             }
 
-            files.add( assemblyFile.getAbsolutePath() );
+            files.add(assemblyFile.getAbsolutePath());
         }
 
         return files;

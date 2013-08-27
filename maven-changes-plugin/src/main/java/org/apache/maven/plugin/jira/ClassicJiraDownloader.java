@@ -150,14 +150,23 @@ public final class ClassicJiraDownloader
         else
         {
             // create the URL for getting the proper issues from JIRA
-            String jqlQuery = new JqlQueryBuilder( log ).project( jiraProject ).fixVersion( getFixFor() ).fixVersionIds(
-                fixVersionIds ).statusIds( statusIds ).priorityIds( priorityIds ).resolutionIds(
-                resolutionIds ).components( component ).typeIds( typeIds ).sortColumnNames( sortColumnNames ).build();
+            String jqlQuery = new JqlQueryBuilder( log )
+                .project( jiraProject )
+                .fixVersion( getFixFor() )
+                .fixVersionIds( fixVersionIds )
+                .statusIds( statusIds )
+                .priorityIds( priorityIds )
+                .resolutionIds( resolutionIds )
+                .components( component )
+                .typeIds( typeIds )
+                .sortColumnNames( sortColumnNames )
+                .build();
 
-            String url =
-                new UrlBuilder( jiraUrl, "sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml" ).addParameter(
-                    "tempMax", nbEntriesMax ).addParameter( "reset", "true" ).addParameter( "jqlQuery",
-                                                                                            jqlQuery ).build();
+            String url = new UrlBuilder( jiraUrl, "sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml" )
+                .addParameter( "tempMax", nbEntriesMax )
+                .addParameter( "reset", "true" )
+                .addParameter( "jqlQuery", jqlQuery )
+                .build();
 
             return url;
         }
@@ -191,10 +200,16 @@ public final class ClassicJiraDownloader
                 fullURL += "&fixfor=" + getFixFor();
             }
 
-            String createdFilter =
-                new ParameterQueryBuilder( log ).fixVersionIds( fixVersionIds ).statusIds( statusIds ).priorityIds(
-                    priorityIds ).resolutionIds( resolutionIds ).components( component ).typeIds(
-                    typeIds ).sortColumnNames( sortColumnNames ).filter( filter ).build();
+            String createdFilter = new ParameterQueryBuilder( log )
+                .fixVersionIds( fixVersionIds )
+                .statusIds( statusIds )
+                .priorityIds( priorityIds )
+                .resolutionIds( resolutionIds )
+                .components( component )
+                .typeIds( typeIds )
+                .sortColumnNames( sortColumnNames )
+                .filter( filter )
+                .build();
 
             if ( createdFilter.charAt( 0 ) != '&' )
             {
@@ -233,8 +248,8 @@ public final class ClassicJiraDownloader
      * jiraPassword being set. You can check this by calling
      * isJiraAuthenticationConfigured().
      *
-     * @param client  the HttpClient
-     * @param jiraUrl the JIRA installation
+     * @param client    the HttpClient
+     * @param jiraUrl   the JIRA installation
      * @return <code>true</code> if the authentication was successful, otherwise <code>false</code>
      */
     private boolean doJiraAuthentication( HttpClient client, final String jiraUrl )
@@ -303,13 +318,13 @@ public final class ClassicJiraDownloader
     {
         final String loginFailureResponse = "your username and password are incorrect";
 
-        return !loginGet.getResponseBodyAsString().contains( loginFailureResponse );
+        return !loginGet.getResponseBodyAsString().contains(loginFailureResponse);
     }
 
     /**
      * Setup proxy access if we have to.
      *
-     * @param client the HttpClient
+     * @param client  the HttpClient
      */
     private void determineProxy( String jiraUrl, HttpClient client )
     {
@@ -328,7 +343,8 @@ public final class ClassicJiraDownloader
                 getLog().debug( "Using proxy user: " + proxyUser );
 
                 client.getState().setProxyCredentials(
-                    new AuthScope( null, AuthScope.ANY_PORT, null, AuthScope.ANY_SCHEME ),
+                    new AuthScope( null, AuthScope.ANY_PORT, null,
+                                   AuthScope.ANY_SCHEME ),
                     new UsernamePasswordCredentials( proxyUser, proxyPass ) );
             }
         }
@@ -337,8 +353,8 @@ public final class ClassicJiraDownloader
     /**
      * Downloads the given link using the configured HttpClient, possibly following redirects.
      *
-     * @param cl   the HttpClient
-     * @param link the URL to JIRA
+     * @param cl     the HttpClient
+     * @param link   the URL to JIRA
      */
     private void download( final HttpClient cl, final String link )
     {

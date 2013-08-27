@@ -71,7 +71,7 @@ public class IssueUtilsTestCase
         try
         {
             IssueUtils.filterIssuesWithVersionPrefix( issueList, "yourPrefix-" );
-            fail( "No issues should be found." );
+            fail("No issues should be found.");
         }
         catch ( MojoExecutionException e )
         {

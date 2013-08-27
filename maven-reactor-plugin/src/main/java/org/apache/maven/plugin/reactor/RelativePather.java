@@ -25,26 +25,20 @@ import java.util.LinkedList;
 
 /**
  * Calculates relative paths
- *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
+ *
  */
-class RelativePather
-{
+class RelativePather {
     /**
      * Calculates a relative path
-     *
      * @param context the "current" context directory
-     * @param dest    the directory to be described by a relative path
+     * @param dest the directory to be described by a relative path
      * @return a relative path from the context directory to the dest directory
      */
-    public static String getRelativePath( File context, File dest )
-    {
-        LinkedList contextChunks = getPathChunks( context );
-        LinkedList destChunks = getPathChunks( dest );
-        if ( !contextChunks.getFirst().equals( destChunks.getFirst() ) )
-        {
-            throw new DifferentRootsException( "Roots differ" );
-        }
+    public static String getRelativePath(File context, File dest) {
+        LinkedList contextChunks = getPathChunks(context);
+        LinkedList destChunks = getPathChunks(dest);
+        if (!contextChunks.getFirst().equals(destChunks.getFirst())) throw new DifferentRootsException("Roots differ");
         int count = 0;
         Iterator contextChunker = contextChunks.iterator();
         Iterator destChunker = destChunks.iterator();
@@ -52,99 +46,76 @@ class RelativePather
         contextChunker.next();
         String destChunk = (String) destChunker.next();
         boolean pathsDiffer = false;
-        while ( true )
-        {
+        while (true) {
             count++;
-            if ( !contextChunker.hasNext() )
-            {
-                break;
-            }
-            if ( !destChunker.hasNext() )
-            {
-                break;
-            }
+            if (!contextChunker.hasNext()) break;
+            if (!destChunker.hasNext()) break;
             contextChunk = (String) contextChunker.next();
             destChunk = (String) destChunker.next();
-            if ( !contextChunk.equals( destChunk ) )
-            {
+            if (!contextChunk.equals(destChunk)) {
                 pathsDiffer = true;
                 break;
             }
         }
-
+        
         // the paths agree for the first N chunks
-
+        
         StringBuilder relativePath = new StringBuilder();
-
-        if ( count < contextChunks.size() )
-        {
+        
+        if (count < contextChunks.size()) {
             int dotDotCount = contextChunks.size() - count;
-            for ( int i = 0; i < dotDotCount; i++ )
-            {
-                relativePath.append( ".." );
+            for (int i = 0; i < dotDotCount; i++) {
+                relativePath.append("..");
                 // omit trailing slash
-                if ( i < dotDotCount - 1 )
-                {
-                    relativePath.append( File.separatorChar );
+                if (i < dotDotCount -1) {
+                    relativePath.append(File.separatorChar);
                 }
             }
         }
-        if ( pathsDiffer )
-        {
-            if ( relativePath.length() > 0 )
-            {
-                relativePath.append( File.separatorChar );
+        if (pathsDiffer) {
+            if (relativePath.length() > 0) {
+                relativePath.append(File.separatorChar);
             }
-            relativePath.append( destChunk );
+            relativePath.append(destChunk);
         }
-        while ( destChunker.hasNext() )
-        {
-            if ( relativePath.length() > 0 )
-            {
-                relativePath.append( File.separatorChar );
+        while (destChunker.hasNext()) {
+            if (relativePath.length() > 0) {
+                relativePath.append(File.separatorChar);
             }
-            relativePath.append( destChunker.next() );
+            relativePath.append(destChunker.next());
         }
-
+        
         return relativePath.toString();
     }
-
-    private static LinkedList getPathChunks( File f )
-    {
+    
+    private static LinkedList getPathChunks(File f) {
         LinkedList l = new LinkedList();
-        while ( f.getParentFile() != null )
-        {
-            l.addFirst( f.getName() );
+        while (f.getParentFile() != null) {
+            l.addFirst(f.getName());
             f = f.getParentFile();
         }
-        l.addFirst( f.getAbsolutePath() );
+        l.addFirst(f.getAbsolutePath());
         return l;
     }
-
-    static class DifferentRootsException
-        extends RuntimeException
-    {
+    
+    static class DifferentRootsException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
-        public DifferentRootsException()
-        {
+        public DifferentRootsException() {
             super();
         }
 
-        public DifferentRootsException( String message, Throwable cause )
-        {
-            super( message, cause );
+        public DifferentRootsException(String message, Throwable cause) {
+            super(message, cause);
         }
 
-        public DifferentRootsException( String message )
-        {
-            super( message );
+        public DifferentRootsException(String message) {
+            super(message);
         }
 
-        public DifferentRootsException( Throwable cause )
-        {
-            super( cause );
+        public DifferentRootsException(Throwable cause) {
+            super(cause);
         }
-
+        
     }
 }

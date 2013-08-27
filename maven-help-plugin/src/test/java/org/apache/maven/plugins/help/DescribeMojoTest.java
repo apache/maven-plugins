@@ -43,9 +43,9 @@ public class DescribeMojoTest
     {
         try
         {
-            PrivateAccessor.invoke( DescribeMojo.class, "toLines",
-                                    new Class[]{ String.class, Integer.TYPE, Integer.TYPE, Integer.TYPE },
-                                    new Object[]{ "", 2, 2, 80 } );
+            PrivateAccessor.invoke( DescribeMojo.class, "toLines", new Class[] { String.class, Integer.TYPE,
+                Integer.TYPE, Integer.TYPE }, new Object[] { "", 2, 2,
+                    80} );
             assertTrue( true );
         }
         catch ( Throwable e )
@@ -53,7 +53,7 @@ public class DescribeMojoTest
             Assert.fail( "The API changes" );
         }
     }
-
+    
     public void testValidExpression()
         throws Exception
     {
@@ -63,24 +63,24 @@ public class DescribeMojoTest
         parameter.setName( "name" );
         parameter.setExpression( "${valid.expression}" );
         md.addParameter( parameter );
-
+        
         try
         {
-            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters",
-                                    new Class[]{ MojoDescriptor.class, StringBuilder.class }, new Object[]{ md, sb } );
-
+            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[] { MojoDescriptor.class,
+                StringBuilder.class }, new Object[] { md, sb } );
+            
             assertEquals( "  Available parameters:\n" +
-                              "\n" +
-                              "    name\n" +
-                              "      User property: valid.expression\n" +
-                              "      (no description available)\n", sb.toString() );
+            		      "\n" +
+            		      "    name\n" +
+            		      "      User property: valid.expression\n" +
+            		      "      (no description available)\n", sb.toString() );
         }
         catch ( Throwable e )
         {
             fail( e.getMessage() );
         }
     }
-
+    
     public void testInvalidExpression()
         throws Exception
     {
@@ -90,23 +90,23 @@ public class DescribeMojoTest
         parameter.setName( "name" );
         parameter.setExpression( "${project.build.directory}/generated-sources/foobar" ); //this is a defaultValue
         md.addParameter( parameter );
-
+        
         try
         {
-            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters",
-                                    new Class[]{ MojoDescriptor.class, StringBuilder.class }, new Object[]{ md, sb } );
-
+            PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[] { MojoDescriptor.class,
+                StringBuilder.class }, new Object[] { md, sb } );
+            
             assertEquals( "  Available parameters:\n" +
-                              "\n" +
-                              "    name\n" +
-                              "      Expression: ${project.build.directory}/generated-sources/foobar\n" +
-                              "      (no description available)\n", sb.toString() );
+                          "\n" +
+                          "    name\n" +
+                          "      Expression: ${project.build.directory}/generated-sources/foobar\n" +
+                          "      (no description available)\n", sb.toString() );
         }
         catch ( Throwable e )
         {
             fail( e.getMessage() );
         }
-
+        
     }
 
 }

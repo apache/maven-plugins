@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Goal to build a project X and all of the reactor projects that depend on X
+ * Goal to build a project X and all of the reactor projects that depend on X 
  *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
  */
@@ -38,17 +38,13 @@ public class MakeDependentsMojo
     // gather parents instead of children
     protected Set gatherProjects( Vertex v, SuperProjectSorter ps, Set visited, Set out )
     {
-        visited.add( v );
-        out.add( ps.getProjectMap().get( v.getLabel() ) );
+        visited.add(v);
+        out.add(ps.getProjectMap().get(v.getLabel()));
         List parents = v.getParents();
-        for ( Object parent1 : parents )
-        {
+        for (Object parent1 : parents) {
             Vertex parent = (Vertex) parent1;
-            if ( visited.contains( parent ) )
-            {
-                continue;
-            }
-            gatherProjects( parent, ps, visited, out );
+            if (visited.contains(parent)) continue;
+            gatherProjects(parent, ps, visited, out);
         }
         return out;
     }

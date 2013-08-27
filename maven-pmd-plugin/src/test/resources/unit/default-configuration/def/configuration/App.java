@@ -35,7 +35,7 @@ public class App
     /**
      * The main method
      *
-     * @param args an array of strings that contains the arguments
+     * @param args  an array of strings that contains the arguments
      */
     public static void main( String[] args )
     {
@@ -45,7 +45,7 @@ public class App
     /**
      * Sample method
      *
-     * @param str the value to be displayed
+     * @param str   the value to be displayed
      */
     protected void sampleMethod( String str )
     {
@@ -65,7 +65,7 @@ public class App
      * @param unusedParam1
      * @param unusedParam2
      */
-    public void testMethod( String unusedParam1, String unusedParam2 )
+    public void testMethod( String unusedParam1, String unusedParam2)
     {
         System.out.println( "Test method" );
     }
@@ -75,11 +75,11 @@ public class App
     {
         String tmp = "";
 
-        for ( int i = 0; i < str.length(); i++ )
+        for( int i = 0; i < str.length(); i++ )
         {
-            if ( i != ( str.length() - 1 ) )
+            if ( i != ( str.length() -1 ) )
             {
-                tmp = tmp + str.substring( i, i + 1 );
+                tmp = tmp + str.substring( i, i + 1);
             }
             else
             {
@@ -87,9 +87,9 @@ public class App
             }
         }
 
-        if ( "".equals( tmp ) )
+        if ("".equals( tmp ))
         {
-            tmp = "EMPTY";
+                tmp = "EMPTY";
         }
 
         System.out.println( "The value of tmp is " + tmp );

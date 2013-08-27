@@ -102,7 +102,7 @@ public class JarSignVerifyMojo
     /**
      * Is the jar signed ? output property set by the execute call. The value will be accessible
      * when execute() ends and if errorWhenNotSigned has been set to false.
-     */
+     **/
     private boolean signed;
 
     File getJarFile()
@@ -113,7 +113,7 @@ public class JarSignVerifyMojo
         }
         else
         {
-            return AbstractJarMojo.getJarFile( basedir, finalName, null );
+            return AbstractJarMojo.getJarFile( basedir, finalName, null);
         }
     }
 
@@ -133,24 +133,24 @@ public class JarSignVerifyMojo
 
         arguments.add( getJarFile() );
 
-        for ( Object argument : arguments )
-        {
-            commandLine.createArgument().setValue( argument.toString() );
+        for (Object argument : arguments) {
+            commandLine.createArgument().setValue(argument.toString());
         }
 
         commandLine.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
-        getLog().debug( "Executing: " + commandLine );
+        getLog().debug("Executing: " + commandLine );
 
         LineMatcherStreamConsumer outConsumer = new LineMatcherStreamConsumer( "jar verified." );
 
         StreamConsumer errConsumer = new StreamConsumer()
         {
-            public void consumeLine( String line )
+            public void consumeLine(String line)
             {
-                getLog().warn( line );
+                 getLog().warn( line );
             }
         };
+
 
         try
         {
@@ -158,7 +158,8 @@ public class JarSignVerifyMojo
 
             if ( result != 0 )
             {
-                throw new MojoExecutionException( "Result of " + commandLine + " execution is: \'" + result + "\'." );
+                throw new MojoExecutionException("Result of " + commandLine
+                    + " execution is: \'" + result + "\'." );
             }
 
             signed = outConsumer.matched;
@@ -180,21 +181,19 @@ public class JarSignVerifyMojo
         implements StreamConsumer
     {
         private String toMatch;
-
         private boolean matched;
-
         private String firstOutLine;
 
         LineMatcherStreamConsumer( String toMatch )
         {
-            this.toMatch = toMatch;
+             this.toMatch = toMatch;
         }
 
-        public void consumeLine( String line )
+        public void consumeLine(String line)
         {
             if ( firstOutLine == null )
             {
-                firstOutLine = line;
+                 firstOutLine = line;
             }
             matched = matched || toMatch.equals( line );
 
@@ -202,7 +201,7 @@ public class JarSignVerifyMojo
         }
     }
 
-    // taken from JavadocReport then slightly refactored
+  // taken from JavadocReport then slightly refactored
     // should probably share with other plugins that use $JAVA_HOME/bin tools
 
     /**
@@ -217,7 +216,7 @@ public class JarSignVerifyMojo
 
     private static String getJDKCommandPath( String command, Log logger )
     {
-        String path = getJDKCommandExe( command ).getAbsolutePath();
+        String path = getJDKCommandExe(command).getAbsolutePath();
         logger.debug( command + " executable=[" + path + "]" );
         return path;
     }
@@ -245,6 +244,7 @@ public class JarSignVerifyMojo
         return exe;
     }
 
+
     // Helper methods. Could/should be shared e.g. with JavadocReport
 
     /**
@@ -252,8 +252,8 @@ public class JarSignVerifyMojo
      * conditionally based on the given flag.
      *
      * @param arguments
-     * @param b         the flag which controls if the argument is added or not.
-     * @param value     the argument value to be added.
+     * @param b the flag which controls if the argument is added or not.
+     * @param value the argument value to be added.
      */
     private void addArgIf( List arguments, boolean b, String value )
     {
@@ -266,13 +266,13 @@ public class JarSignVerifyMojo
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
-     * <p/>
+     * <p>
      * Moreover, the value could be comma separated.
      *
      * @param arguments
-     * @param key       the argument name.
-     * @param value     the argument value to be added.
-     * @see #addArgIfNotEmpty(java.util.List, String, String, boolean)
+     * @param key the argument name.
+     * @param value the argument value to be added.
+     * @see #addArgIfNotEmpty(java.util.List,String,String,boolean)
      */
     private void addArgIfNotEmpty( List arguments, String key, String value )
     {
@@ -282,12 +282,12 @@ public class JarSignVerifyMojo
     /**
      * Convenience method to add an argument to the <code>command line</code>
      * if the the value is not null or empty.
-     * <p/>
+     * <p>
      * Moreover, the value could be comma separated.
      *
      * @param arguments
-     * @param key       the argument name.
-     * @param value     the argument value to be added.
+     * @param key the argument name.
+     * @param value the argument value to be added.
      * @param repeatKey repeat or not the key in the command line
      */
     private void addArgIfNotEmpty( List arguments, String key, String value, boolean repeatKey )
@@ -318,8 +318,8 @@ public class JarSignVerifyMojo
     // methods used for tests purposes - allow mocking and simulate automatic setters
     //
 
-    protected int executeCommandLine( Commandline commandLine, InputStream inputStream, StreamConsumer systemOut,
-                                      StreamConsumer systemErr )
+    protected int executeCommandLine( Commandline commandLine, InputStream inputStream,
+                                      StreamConsumer systemOut, StreamConsumer systemErr )
         throws CommandLineException
     {
         return CommandLineUtils.executeCommandLine( commandLine, inputStream, systemOut, systemErr );

@@ -28,7 +28,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-@Retention( RUNTIME )
+@Retention(RUNTIME)
 public @interface MyAnnotationType
 {
     public String value();

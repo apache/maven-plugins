@@ -48,14 +48,10 @@ import org.apache.commons.io.input.XmlStreamReader;
  */
 public class DocumentModelBuilder
 {
-    /**
-     * A MavenProject to extract the information.
-     */
+    /** A MavenProject to extract the information. */
     private final MavenProject project;
 
-    /**
-     * A DecorationModel to extract additional information.
-     */
+    /** A DecorationModel to extract additional information. */
     private final DecorationModel decorationModel;
 
     /**
@@ -71,7 +67,7 @@ public class DocumentModelBuilder
     /**
      * Constructor. Initialize a MavenProject and a DecorationModel to extract information from.
      *
-     * @param project         a MavenProject. May be null.
+     * @param project a MavenProject. May be null.
      * @param decorationModel a DecorationModel. May be null.
      */
     public DocumentModelBuilder( MavenProject project, DecorationModel decorationModel )
@@ -108,20 +104,22 @@ public class DocumentModelBuilder
     /**
      * Extract a DocumentModel from a MavenProject.
      *
-     * @param project         a MavenProject. May be null.
+     * @param project a MavenProject. May be null.
      * @param decorationModel a DecorationModel. May be null.
-     * @param date            the date of the TOC. May be null in which case the build date will be used.
+     * @param date the date of the TOC. May be null in which case the build date will be used.
+     *
      * @return a DocumentModel. Always non-null.
      */
-    private static DocumentModel getDocumentModel( MavenProject project, DecorationModel decorationModel, Date date )
+    private static DocumentModel getDocumentModel( MavenProject project,
+            DecorationModel decorationModel, Date date )
     {
         final Date now = ( date == null ? new Date() : date );
 
         final DocumentModel docModel = new DocumentModel();
 
         docModel.setModelEncoding( getProjectModelEncoding( project ) );
-        docModel.setOutputName(
-            project == null || project.getArtifactId() == null ? "unnamed" : project.getArtifactId() );
+        docModel.setOutputName( project == null || project.getArtifactId() == null
+                ? "unnamed" : project.getArtifactId() );
         docModel.setMeta( getDocumentMeta( project, now ) );
         docModel.setCover( getDocumentCover( project, now ) );
         docModel.setToc( getDocumentTOC( decorationModel ) );
@@ -141,7 +139,7 @@ public class DocumentModelBuilder
 
         if ( decorationModel != null && decorationModel.getMenus() != null )
         {
-            for ( final Menu menu : decorationModel.getMenus() )
+            for ( final Menu menu  : decorationModel.getMenus() )
             {
                 for ( final MenuItem item : menu.getItems() )
                 {
@@ -160,7 +158,8 @@ public class DocumentModelBuilder
      * Extract meta information from a MavenProject.
      *
      * @param project a MavenProject. May be null.
-     * @param date    the date to use in meta. May be null.
+     * @param date the date to use in meta. May be null.
+     *
      * @return a DocumentMeta object. Always non-null.
      */
     private static DocumentMeta getDocumentMeta( MavenProject project, Date date )
@@ -186,7 +185,8 @@ public class DocumentModelBuilder
      * Extract information for a DocumentCover from a MavenProject.
      *
      * @param project a MavenProject. May be null.
-     * @param date    the cover date. May be null.
+     * @param date the cover date. May be null.
+     *
      * @return a DocumentCover object. Always non-null.
      */
     private static DocumentCover getDocumentCover( MavenProject project, Date date )
@@ -212,7 +212,7 @@ public class DocumentModelBuilder
      *
      * @param project the MavenProject to extract the authors from.
      * @return a list of DocumentAuthors from the project developers.
-     *         Returns null if project is null or contains no developers.
+     * Returns null if project is null or contains no developers.
      */
     private static List<DocumentAuthor> getAuthors( MavenProject project )
     {
@@ -223,34 +223,28 @@ public class DocumentModelBuilder
 
         final List<DocumentAuthor> ret = new ArrayList<DocumentAuthor>( 4 );
 
-        for ( Object o : project.getDevelopers() )
-        {
+        for (Object o : project.getDevelopers()) {
             final Developer developer = (Developer) o;
 
             final DocumentAuthor author = new DocumentAuthor();
-            author.setName( developer.getName() );
-            author.setEmail( developer.getEmail() );
-            author.setCompanyName( developer.getOrganization() );
+            author.setName(developer.getName());
+            author.setEmail(developer.getEmail());
+            author.setCompanyName(developer.getOrganization());
             StringBuilder roles = null;
 
-            for ( final String role : developer.getRoles() )
-            {
-                if ( roles == null )
-                {
-                    roles = new StringBuilder( 32 );
+            for (final String role : developer.getRoles()) {
+                if (roles == null) {
+                    roles = new StringBuilder(32);
+                } else {
+                    roles.append(',').append(' ');
                 }
-                else
-                {
-                    roles.append( ',' ).append( ' ' );
-                }
-                roles.append( role );
+                roles.append(role);
             }
-            if ( roles != null )
-            {
-                author.setPosition( roles.toString() );
+            if (roles != null) {
+                author.setPosition(roles.toString());
             }
 
-            ret.add( author );
+            ret.add(author);
         }
 
         return ret;
@@ -262,8 +256,8 @@ public class DocumentModelBuilder
      */
     private static String getProjectOrganizationName( MavenProject project )
     {
-        if ( project != null && project.getOrganization() != null && StringUtils.isNotEmpty(
-            project.getOrganization().getName() ) )
+        if ( project != null && project.getOrganization() != null
+                && StringUtils.isNotEmpty( project.getOrganization().getName() ) )
         {
             return project.getOrganization().getName();
         }
@@ -276,7 +270,7 @@ public class DocumentModelBuilder
      *
      * @param project the MavenProject to extract the project name from.
      * @return the project name, or the project groupId and artifactId if
-     *         the project name is empty, or null if project is null.
+     * the project name is empty, or null if project is null.
      */
     private static String getProjectName( MavenProject project )
     {

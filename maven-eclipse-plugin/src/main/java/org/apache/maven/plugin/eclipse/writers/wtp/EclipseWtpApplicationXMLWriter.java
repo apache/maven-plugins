@@ -29,7 +29,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
  * This writer creates the application.xml and the .modulemaps files for RAD6 the the META-INF directory in the project
  * root. this is where RAD6 requires the files to be. These will be independent of the real application.xml witch will
  * be generated the stad. maven way.
- *
+ * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
 public class EclipseWtpApplicationXMLWriter
@@ -102,9 +102,9 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * write the application.xml and the .modulemaps file to the META-INF directory.
-     *
-     * @throws MojoExecutionException when writing the config files was not possible
+     * 
      * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
+     * @throws MojoExecutionException when writing the config files was not possible
      */
     public void write()
         throws MojoExecutionException
@@ -112,10 +112,10 @@ public class EclipseWtpApplicationXMLWriter
         String packaging = this.config.getProject().getPackaging();
         if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) )
         {
-            File applicationXmlFile = new File( this.config.getEclipseProjectDirectory(),
-                                                "target" + File.separator + "eclipseEar" + File.separator + "META-INF"
-                                                    + File.separator
-                                                    + EclipseWtpApplicationXMLWriter.APPLICATION_XML_FILENAME );
+            File applicationXmlFile =
+                new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar"
+                    + File.separator + "META-INF" + File.separator
+                    + EclipseWtpApplicationXMLWriter.APPLICATION_XML_FILENAME );
             // create the directory structiure for eclipse deployment
             applicationXmlFile.getParentFile().mkdirs();
             // copy all deployment files to the eclipse deployment
@@ -132,10 +132,9 @@ public class EclipseWtpApplicationXMLWriter
             this.applicationXmlDomChildren =
                 applicationXmlDom.getChildren( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE );
 
-            File modulemapsXmlFile = new File( this.config.getEclipseProjectDirectory(),
-                                               "target" + File.separator + "eclipseEar" + File.separator + "META-INF"
-                                                   + File.separator
-                                                   + EclipseWtpApplicationXMLWriter.MODULEMAPS_FILENAME );
+            File modulemapsXmlFile =
+                new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar"
+                    + File.separator + "META-INF" + File.separator + EclipseWtpApplicationXMLWriter.MODULEMAPS_FILENAME );
             Xpp3Dom modulemapsXmlDom = readXMLFile( modulemapsXmlFile );
             if ( modulemapsXmlDom == null )
             {
@@ -145,12 +144,11 @@ public class EclipseWtpApplicationXMLWriter
 
             this.webModulesFromPoms =
                 IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
-                                                    new String[]{ "modules", "webModule" } );
+                                                    new String[] { "modules", "webModule" } );
 
             IdeDependency[] deps = this.config.getDeps();
-            for ( IdeDependency dep : deps )
-            {
-                updateApplicationXml( applicationXmlDom, modulemapsXmlDom, dep );
+            for (IdeDependency dep : deps) {
+                updateApplicationXml(applicationXmlDom, modulemapsXmlDom, dep);
             }
 
             removeUnusedEntries( applicationXmlDom, modulemapsXmlDom );
@@ -162,7 +160,7 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * Copy all files from application directory to the target eclipseEar directory.
-     *
+     * 
      * @throws MojoExecutionException wenn an error occures during file copieing
      */
     private void copyApplicationFiles()
@@ -170,8 +168,9 @@ public class EclipseWtpApplicationXMLWriter
     {
         try
         {
-            File applicationDirectory = new File( this.config.getEclipseProjectDirectory(),
-                                                  "src" + File.separator + "main" + File.separator + "application" );
+            File applicationDirectory =
+                new File( this.config.getEclipseProjectDirectory(), "src" + File.separator + "main" + File.separator
+                    + "application" );
             File eclipseApplicationDirectory =
                 new File( this.config.getEclipseProjectDirectory(), "target" + File.separator + "eclipseEar" );
             copyDirectoryStructure( applicationDirectory, eclipseApplicationDirectory );
@@ -188,7 +187,7 @@ public class EclipseWtpApplicationXMLWriter
      * <li>It will include empty directories.
      * <li>The <code>sourceDirectory</code> must exists.
      * </ul>
-     *
+     * 
      * @param sourceDirectory
      * @param destinationDirectory
      * @throws IOException
@@ -205,36 +204,31 @@ public class EclipseWtpApplicationXMLWriter
 
         String sourcePath = sourceDirectory.getAbsolutePath();
 
-        for ( File file : files )
-        {
+        for (File file : files) {
             String dest = file.getAbsolutePath();
 
-            dest = dest.substring( sourcePath.length() + 1 );
+            dest = dest.substring(sourcePath.length() + 1);
 
-            File destination = new File( destinationDirectory, dest );
+            File destination = new File(destinationDirectory, dest);
 
-            if ( file.isFile() )
-            {
+            if (file.isFile()) {
                 destination = destination.getParentFile();
 
-                FileUtils.copyFileToDirectory( file, destination );
-            }
-            else if ( file.isDirectory() && !file.getName().equals( ".svn" ) && !file.getName().equals( "CVS" ) )
-            {
-                if ( !destination.exists() && !destination.mkdirs() )
-                {
-                    throw new IOException(
-                        "Could not create destination directory '" + destination.getAbsolutePath() + "'." );
+                FileUtils.copyFileToDirectory(file, destination);
+            } else if (file.isDirectory() && !file.getName().equals(".svn") && !file.getName().equals("CVS")) {
+                if (!destination.exists() && !destination.mkdirs()) {
+                    throw new IOException("Could not create destination directory '" + destination.getAbsolutePath()
+                            + "'.");
                 }
 
-                copyDirectoryStructure( file, destination );
+                copyDirectoryStructure(file, destination);
             }
         }
     }
 
     /**
      * there is no existing application.xml file so create a new one.
-     *
+     * 
      * @return the domtree representing the contents of application.xml
      */
     private Xpp3Dom createNewApplicationXml()
@@ -266,7 +260,7 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * there is no existing .modulemaps file so create a new one.
-     *
+     * 
      * @return the domtree representing the contents of the .modulemaps file
      */
     private Xpp3Dom createNewModulemaps()
@@ -276,28 +270,25 @@ public class EclipseWtpApplicationXMLWriter
         result.setAttribute( EclipseWtpApplicationXMLWriter.XMLNS_XMI, "http://www.omg.org/XMI" );
         result.setAttribute( EclipseWtpApplicationXMLWriter.XMLNS_APPLICATION, "application.xmi" );
         result.setAttribute( EclipseWtpApplicationXMLWriter.XMLNS_MODULEMAP, "modulemap.xmi" );
-        result.setAttribute( EclipseWtpApplicationXMLWriter.XMI_ID,
-                             "EARProjectMap_" + System.identityHashCode( this ) );
+        result.setAttribute( EclipseWtpApplicationXMLWriter.XMI_ID, "EARProjectMap_" + System.identityHashCode( this ) );
         return result;
     }
 
     /**
      * find an existing module entry in the application.xml file by looking up the id in the modulemaps file and then
      * using that to locate the entry in the application.xml file.
-     *
+     * 
      * @param applicationXmlDom application.xml dom tree
-     * @param mapping           .modulemaps dom tree
+     * @param mapping .modulemaps dom tree
      * @return dom tree representing the module
      */
     private Xpp3Dom findModuleInApplicationXml( Xpp3Dom applicationXmlDom, Xpp3Dom mapping )
     {
         String id = getIdFromMapping( mapping );
         Xpp3Dom[] children = applicationXmlDom.getChildren();
-        for ( Xpp3Dom aChildren : children )
-        {
-            String childId = aChildren.getAttribute( EclipseWtpApplicationXMLWriter.ID );
-            if ( childId != null && childId.equals( id ) )
-            {
+        for (Xpp3Dom aChildren : children) {
+            String childId = aChildren.getAttribute(EclipseWtpApplicationXMLWriter.ID);
+            if (childId != null && childId.equals(id)) {
                 return aChildren;
             }
         }
@@ -306,8 +297,8 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * find an artifact in the modulemaps dom tree, if it is missing create a new entry in the modulemaps dom tree.
-     *
-     * @param dependency      dependency to find
+     * 
+     * @param dependency dependency to find
      * @param modulemapXmlDom dom-tree of modulemaps
      * @return dom-tree representing the artifact
      */
@@ -318,27 +309,27 @@ public class EclipseWtpApplicationXMLWriter
         for ( int index = 0; index < children.length; index++ )
         {
             if ( children[index].getAttribute( EclipseWtpApplicationXMLWriter.MODULEMAPS_PROJECT_NAME ).equals(
-                dependency.getEclipseProjectName() ) )
+                                                                                                                dependency.getEclipseProjectName() ) )
             {
                 if ( ( dependency.getType().equals( Constants.PROJECT_PACKAGING_EJB ) || dependency.getType().equals(
-                    "ejb3" ) ) && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS )
+                                                                                                                      "ejb3" ) )
+                    && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS )
                     && children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
-                    EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
-                    EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_EJB_MODULE ) )
+                                                                                                                       EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
+                                                                                                                                                                         EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_EJB_MODULE ) )
                 {
                     return children[index];
                 }
                 else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_WAR )
                     && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_MAPPINGS )
                     && children[index].getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_MODULE ).getAttribute(
-                    EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
-                    EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_WEB_MODULE ) )
+                                                                                                                       EclipseWtpApplicationXMLWriter.XMI_TYPE ).equals(
+                                                                                                                                                                         EclipseWtpApplicationXMLWriter.MODULEMAPS_APPLICATION_WEB_MODULE ) )
                 {
                     return children[index];
                 }
                 else if ( dependency.getType().equals( Constants.PROJECT_PACKAGING_JAR )
-                    && children[index].getName().equals(
-                    EclipseWtpApplicationXMLWriter.MODULEMAPS_UTILITY_JARMAPPINGS ) )
+                    && children[index].getName().equals( EclipseWtpApplicationXMLWriter.MODULEMAPS_UTILITY_JARMAPPINGS ) )
                 {
                     return children[index];
                 }
@@ -386,8 +377,8 @@ public class EclipseWtpApplicationXMLWriter
             utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.XMI_ID, "UtilityJARMapping_" + id );
             utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.MODULEMAPS_PROJECT_NAME,
                                             dependency.getEclipseProjectName() );
-            utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.URI,
-                                            dependency.getEclipseProjectName() + ".jar" );
+            utilityJARMapping.setAttribute( EclipseWtpApplicationXMLWriter.URI, dependency.getEclipseProjectName()
+                + ".jar" );
             modulemapXmlDom.addChild( utilityJARMapping );
             return utilityJARMapping;
         }
@@ -395,7 +386,7 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * get the id from the href of a modulemap.
-     *
+     * 
      * @param mapping the dom-tree of modulemaps
      * @return module identifier
      */
@@ -412,7 +403,7 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * read an xml file (application.xml or .modulemaps).
-     *
+     * 
      * @param xmlFile an xmlfile
      * @return dom-tree representing the file contents
      */
@@ -438,7 +429,7 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * mark the domtree entry as handled (all not handled ones will be deleted).
-     *
+     * 
      * @param xpp3Dom dom element to mark handled
      */
     private void handled( Xpp3Dom xpp3Dom )
@@ -461,37 +452,29 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * delete all unused entries from the dom-trees.
-     *
+     * 
      * @param applicationXmlDom dom-tree of application.xml
-     * @param modulemapsXmlDom  dom-tree of modulemaps
+     * @param modulemapsXmlDom dom-tree of modulemaps
      */
     private void removeUnusedEntries( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapsXmlDom )
     {
-        for ( Xpp3Dom aModulemapsXmlDomChildren : this.modulemapsXmlDomChildren )
-        {
-            if ( aModulemapsXmlDomChildren != null )
-            {
+        for (Xpp3Dom aModulemapsXmlDomChildren : this.modulemapsXmlDomChildren) {
+            if (aModulemapsXmlDomChildren != null) {
                 Xpp3Dom[] newModulemapsXmlDomChildren = modulemapsXmlDom.getChildren();
-                for ( int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++ )
-                {
-                    if ( newModulemapsXmlDomChildren[newIndex] == aModulemapsXmlDomChildren )
-                    {
-                        modulemapsXmlDom.removeChild( newIndex );
+                for (int newIndex = 0; newIndex < newModulemapsXmlDomChildren.length; newIndex++) {
+                    if (newModulemapsXmlDomChildren[newIndex] == aModulemapsXmlDomChildren) {
+                        modulemapsXmlDom.removeChild(newIndex);
                         break;
                     }
                 }
             }
         }
-        for ( Xpp3Dom anApplicationXmlDomChildren : this.applicationXmlDomChildren )
-        {
-            if ( anApplicationXmlDomChildren != null )
-            {
+        for (Xpp3Dom anApplicationXmlDomChildren : this.applicationXmlDomChildren) {
+            if (anApplicationXmlDomChildren != null) {
                 Xpp3Dom[] newApplicationXmlDomChildren = applicationXmlDom.getChildren();
-                for ( int newIndex = 0; newIndex < newApplicationXmlDomChildren.length; newIndex++ )
-                {
-                    if ( newApplicationXmlDomChildren[newIndex] == anApplicationXmlDomChildren )
-                    {
-                        applicationXmlDom.removeChild( newIndex );
+                for (int newIndex = 0; newIndex < newApplicationXmlDomChildren.length; newIndex++) {
+                    if (newApplicationXmlDomChildren[newIndex] == anApplicationXmlDomChildren) {
+                        applicationXmlDom.removeChild(newIndex);
                         break;
                     }
                 }
@@ -503,15 +486,15 @@ public class EclipseWtpApplicationXMLWriter
      * update the application.xml and the .modulemaps file for a specified dependency.all WAR an EJB dependencies will
      * go in both files all others only in the modulemaps files. Webapplications contextroots are corrected to the
      * contextRoot specified in the pom.
-     *
+     * 
      * @param applicationXmlDom dom-tree of application.xml
-     * @param modulemapXmlDom   dom-tree of modulemaps
-     * @param dependency        the eclipse dependency to handle
+     * @param modulemapXmlDom dom-tree of modulemaps
+     * @param dependency the eclipse dependency to handle
      */
     private void updateApplicationXml( Xpp3Dom applicationXmlDom, Xpp3Dom modulemapXmlDom, IdeDependency dependency )
     {
-        if ( dependency.isTestDependency() || dependency.isProvided() || dependency.isSystemScopedOutsideProject(
-            this.config.getProject() ) )
+        if ( dependency.isTestDependency() || dependency.isProvided()
+            || dependency.isSystemScopedOutsideProject( this.config.getProject() ) )
         {
             return;
         }
@@ -557,17 +540,19 @@ public class EclipseWtpApplicationXMLWriter
             {
                 handled( module );
                 module.getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB ).getChild(
-                    EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB_URI ).setValue(
-                    dependency.getEclipseProjectName() + ".war" );
+                                                                                                EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB_URI ).setValue(
+                                                                                                                                                                   dependency.getEclipseProjectName()
+                                                                                                                                                                       + ".war" );
                 module.getChild( EclipseWtpApplicationXMLWriter.APPLICATION_XML_WEB ).getChild(
-                    EclipseWtpApplicationXMLWriter.APPLICATION_XML_CONTEXT_ROOT ).setValue( contextRootInPom );
+                                                                                                EclipseWtpApplicationXMLWriter.APPLICATION_XML_CONTEXT_ROOT ).setValue(
+                                                                                                                                                                        contextRootInPom );
             }
         }
     }
 
     /**
      * Find the contextRoot specified in the pom and convert it into contectroot for the application.xml.
-     *
+     * 
      * @param dependency the artifact to search
      * @return string with the context root
      */
@@ -575,15 +560,13 @@ public class EclipseWtpApplicationXMLWriter
     {
         String artifactId = dependency.getArtifactId();
         String groupId = dependency.getGroupId();
-        for ( Xpp3Dom webModulesFromPom : this.webModulesFromPoms )
-        {
-            Xpp3Dom webGroupId = webModulesFromPom.getChild( "groupId" );
-            Xpp3Dom webArtifactId = webModulesFromPom.getChild( "artifactId" );
-            Xpp3Dom webContextRoot = webModulesFromPom.getChild( "contextRoot" );
+        for (Xpp3Dom webModulesFromPom : this.webModulesFromPoms) {
+            Xpp3Dom webGroupId = webModulesFromPom.getChild("groupId");
+            Xpp3Dom webArtifactId = webModulesFromPom.getChild("artifactId");
+            Xpp3Dom webContextRoot = webModulesFromPom.getChild("contextRoot");
 
-            if ( webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals( artifactId )
-                && webGroupId != null && webGroupId.getValue().equals( groupId ) )
-            {
+            if (webContextRoot != null && webArtifactId != null && webArtifactId.getValue().equals(artifactId)
+                    && webGroupId != null && webGroupId.getValue().equals(groupId)) {
                 return webContextRoot.getValue();
             }
         }
@@ -593,8 +576,8 @@ public class EclipseWtpApplicationXMLWriter
 
     /**
      * write back a domtree to a xmlfile and use the pretty print for it so that it is human readable.
-     *
-     * @param xmlFile    file to write to
+     * 
+     * @param xmlFile file to write to
      * @param xmlDomTree dom-tree to write
      * @throws MojoExecutionException if the file could not be written
      */

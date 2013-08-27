@@ -113,7 +113,7 @@ public class ChangesCheckMojo
     /**
      * Use the pattern to try to parse a Date from the given string.
      *
-     * @param string  A date as text
+     * @param string A date as text
      * @param pattern A pattern that can be used by {@link SimpleDateFormat}
      * @return <code>true</code> if the string can be parsed as a date using the pattern, otherwise <code>false</code>
      */

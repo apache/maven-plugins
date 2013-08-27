@@ -202,9 +202,7 @@ public abstract class AbstractPmdReport
     @Parameter( defaultValue = "true" )
     protected boolean skipEmptyReport;
 
-    /**
-     * The files that are being analyzed.
-     */
+    /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
 
     /**
@@ -288,11 +286,9 @@ public abstract class AbstractPmdReport
 
         Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
 
-        for ( File file : excludeRoots )
-        {
-            if ( file.isDirectory() )
-            {
-                excludeRootFiles.add( file );
+        for (File file : excludeRoots) {
+            if (file.isDirectory()) {
+                excludeRootFiles.add(file);
             }
         }
 
@@ -359,9 +355,8 @@ public abstract class AbstractPmdReport
             {
                 @SuppressWarnings( "unchecked" ) List<File> newfiles =
                     FileUtils.getFiles( sourceDirectory, including, excluding );
-                for ( File newfile : newfiles )
-                {
-                    files.put( newfile.getCanonicalFile(), finfo );
+                for (File newfile : newfiles) {
+                    files.put(newfile.getCanonicalFile(), finfo);
                 }
             }
         }
@@ -408,7 +403,6 @@ public abstract class AbstractPmdReport
     {
         return "html".equals( format );
     }
-
     protected boolean isXml()
     {
         return "xml".equals( format );

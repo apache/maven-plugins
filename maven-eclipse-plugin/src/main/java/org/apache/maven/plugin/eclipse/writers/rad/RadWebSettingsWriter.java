@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
- *
+ * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
 public class RadWebSettingsWriter
@@ -84,7 +84,7 @@ public class RadWebSettingsWriter
 
     /**
      * required default constructor.
-     *
+     * 
      * @param warContextRoot the context root to use for this project
      */
     public RadWebSettingsWriter( String warContextRoot )
@@ -94,7 +94,7 @@ public class RadWebSettingsWriter
 
     /**
      * write the websettings file for RAD6 if needed.
-     *
+     * 
      * @throws MojoExecutionException when writing the config files was not possible
      */
     public void write()
@@ -105,14 +105,13 @@ public class RadWebSettingsWriter
         {
             try
             {
-                w = new OutputStreamWriter(
-                    new FileOutputStream( new File( config.getEclipseProjectDirectory(), WEBSETTINGS_FILENAME ) ),
-                    "UTF-8" );
+                w =
+                    new OutputStreamWriter( new FileOutputStream( new File( config.getEclipseProjectDirectory(),
+                                                                            WEBSETTINGS_FILENAME ) ), "UTF-8" );
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
-                                                  ex ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
             }
 
             XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -123,7 +122,7 @@ public class RadWebSettingsWriter
 
     /**
      * write the websettings file for RAD6.
-     *
+     * 
      * @param writer where to write to
      * @throws MojoExecutionException
      */
@@ -135,10 +134,10 @@ public class RadWebSettingsWriter
         writer.startElement( WEBSETTINGS_WEBCONTENT );
 
         // Generating web content settings based on war plug-in warSourceDirectory property
-        File warSourceDirectory = new File(
-            IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN, "warSourceDirectory",
-                                       //$NON-NLS-1$
-                                       config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
+        File warSourceDirectory =
+            new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                 "warSourceDirectory", //$NON-NLS-1$
+                                                 config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
         String webContentDir =
             IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
 
@@ -183,26 +182,24 @@ public class RadWebSettingsWriter
         IdeDependency[] deps = config.getDeps();
         if ( deps != null )
         {
-            for ( final IdeDependency dependency : deps )
-            {
-                log.debug( "RadWebSettingsWriter: checking dependency " + dependency.toString() );
+            for (final IdeDependency dependency : deps) {
+                log.debug("RadWebSettingsWriter: checking dependency " + dependency.toString());
 
-                if ( dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided() )
-                {
-                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString()
-                                   + " selected for inclusion as lib-module" );
+                if (dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided()) {
+                    log.debug("RadWebSettingsWriter: dependency " + dependency.toString()
+                            + " selected for inclusion as lib-module");
 
                     String depName = dependency.getEclipseProjectName();
                     String depJar = dependency.getArtifactId() + ".jar";
 
-                    writer.startElement( WEBSETTINGS_LIBMODULE );
+                    writer.startElement(WEBSETTINGS_LIBMODULE);
 
-                    writer.startElement( WEBSETTINGS_LM_JAR );
-                    writer.writeText( depJar );
+                    writer.startElement(WEBSETTINGS_LM_JAR);
+                    writer.writeText(depJar);
                     writer.endElement(); // jar
 
-                    writer.startElement( WEBSETTINGS_LM_PROJECT );
-                    writer.writeText( depName );
+                    writer.startElement(WEBSETTINGS_LM_PROJECT);
+                    writer.writeText(depName);
                     writer.endElement(); // project
 
                     writer.endElement(); // libmodule
@@ -217,7 +214,7 @@ public class RadWebSettingsWriter
 
     /**
      * Create the ContextRoot for this project, the default is the artifact id
-     *
+     * 
      * @param warContextRoot set as a configuration property.
      * @return the context root to use
      */

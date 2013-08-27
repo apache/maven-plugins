@@ -86,9 +86,8 @@ public class ClassifierTypeTranslator
             }
 
             // Create a new artifact
-            Artifact newArtifact =
-                factory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                      artifact.getVersion(), useType, useClassifier );
+            Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
+                .getArtifactId(), artifact.getVersion(), useType, useClassifier );
 
             // note the new artifacts will always have the scope set to null. We
             // should
@@ -110,7 +109,8 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param theType The type to set.
+     * @param theType
+     *            The type to set.
      */
     public void setType( String theType )
     {
@@ -126,7 +126,8 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param theClassifier The classifier to set.
+     * @param theClassifier
+     *            The classifier to set.
      */
     public void setClassifier( String theClassifier )
     {

@@ -34,7 +34,7 @@ import org.apache.maven.project.MavenProject;
  * ear these are just to get the runtime enviorment using the maven dependencies. WARNING: The manifest resources added
  * here will not have the benefit of the dependencies of the project, since that's not provided in the setup() apis, one
  * of the locations from which this writer is used in the RadPlugin.
- *
+ * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
 public class RadManifestWriter
@@ -46,7 +46,7 @@ public class RadManifestWriter
 
     /**
      * Search the project for the existing META-INF directory where the manifest should be located.
-     *
+     * 
      * @return the apsolute path to the META-INF directory
      * @throws MojoExecutionException
      */
@@ -58,10 +58,10 @@ public class RadManifestWriter
         if ( config.getProject().getPackaging().equals( Constants.PROJECT_PACKAGING_WAR ) )
         {
             // Generating web content settings based on war plug-in warSourceDirectory property
-            File warSourceDirectory = new File(
-                IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                                           "warSourceDirectory", //$NON-NLS-1$
-                                           DEFAULT_WEBAPP_RESOURCE_DIR ) );
+            File warSourceDirectory =
+                new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                     "warSourceDirectory", //$NON-NLS-1$
+                                                     DEFAULT_WEBAPP_RESOURCE_DIR ) );
 
             String webContentDir =
                 IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
@@ -81,16 +81,14 @@ public class RadManifestWriter
 
         if ( metaInfBaseDirectory == null )
         {
-            for ( Object o : project.getResources() )
-            {
-                metaInfBaseDirectory = ( (Resource) o ).getDirectory();
+            for (Object o : project.getResources()) {
+                metaInfBaseDirectory = ((Resource) o).getDirectory();
 
-                File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
+                File metaInfDirectoryFile = new File(metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY);
 
-                log.debug( "Checking for existence of META-INF directory: " + metaInfDirectoryFile );
+                log.debug("Checking for existence of META-INF directory: " + metaInfDirectoryFile);
 
-                if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
-                {
+                if (metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory()) {
                     metaInfBaseDirectory = null;
                 }
             }
@@ -118,10 +116,8 @@ public class RadManifestWriter
         {
             boolean foundMetaInfBaseDirectory = false;
 
-            for ( EclipseSourceDir esd : sourceDirs )
-            {
-                if ( esd.getPath().equals( metaInfBaseDirectory ) )
-                {
+            for (EclipseSourceDir esd : sourceDirs) {
+                if (esd.getPath().equals(metaInfBaseDirectory)) {
                     foundMetaInfBaseDirectory = true;
                     break;
                 }

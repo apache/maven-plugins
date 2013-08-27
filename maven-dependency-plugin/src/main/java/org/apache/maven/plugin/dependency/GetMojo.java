@@ -195,7 +195,7 @@ public class GetMojo
         if ( artifactId == null && artifact == null )
         {
             throw new MojoFailureException( "You must specify an artifact, "
-                                                + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
+                + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
         }
         if ( artifact != null )
         {
@@ -300,7 +300,7 @@ public class GetMojo
                 else
                 {
                     FileUtils.copyFile( src, dest );
-                }
+                } 
             }
             catch ( IOException e )
             {
@@ -320,7 +320,7 @@ public class GetMojo
         String url = repo;
 
         // if it's an extended repo URL of the form id::layout::url
-        if ( repo.contains( "::" ) )
+        if (repo.contains("::"))
         {
             Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( repo );
             if ( !matcher.matches() )
@@ -355,7 +355,7 @@ public class GetMojo
     public boolean isSkip()
     {
         return skip;
-    }
+}
 
     public void setSkip( boolean skip )
     {

@@ -47,8 +47,8 @@ public class Project005Stub
 
         try
         {
-            model = pomReader.read( ReaderFactory.newXmlReader(
-                new File( getBasedir(), "target/test-classes/unit/project-005/pom.xml" ) ) );
+            model = pomReader.read(
+                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-005/pom.xml" ) ) );
             setModel( model );
 
             setGroupId( model.getGroupId() );

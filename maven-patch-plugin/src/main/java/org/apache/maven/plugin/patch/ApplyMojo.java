@@ -232,7 +232,6 @@ public class ApplyMojo
 
     /**
      * apply --binary option to patch command line
-     *
      * @since 1.2
      */
     @Parameter( defaultValue = "false" )
@@ -275,8 +274,8 @@ public class ApplyMojo
             {
                 if ( !patchDirectory.isDirectory() )
                 {
-                    throw new FileNotFoundException(
-                        "The base directory for patch files does not exist: " + patchDirectory );
+                    throw new FileNotFoundException( "The base directory for patch files does not exist: "
+                        + patchDirectory );
                 }
 
                 List foundPatchFiles = FileUtils.getFileNames( patchDirectory, "*", null, false );
@@ -323,37 +322,30 @@ public class ApplyMojo
             throw new MojoFailureException( "unable to read patch tracking file: " + ioe.getMessage() );
         }
 
-        for ( Object patche : patches )
-        {
+        for (Object patche : patches) {
             String patch = (String) patche;
 
-            if ( !alreadyAppliedPatches.contains( patch ) )
-            {
-                File patchFile = new File( patchSourceDir, patch );
+            if (!alreadyAppliedPatches.contains(patch)) {
+                File patchFile = new File(patchSourceDir, patch);
 
-                getLog().debug( "Looking for patch: " + patch + " in: " + patchFile );
+                getLog().debug("Looking for patch: " + patch + " in: " + patchFile);
 
-                if ( !patchFile.exists() )
-                {
-                    if ( strictPatching )
-                    {
-                        throw new MojoFailureException( this, "Patch operation cannot proceed.",
-                                                        "Cannot find specified patch: \'" + patch
-                                                            + "\' in patch-source directory: \'" + patchSourceDir
-                                                            + "\'.\n\nEither fix this error, "
-                                                            + "or relax strictPatching." );
-                    }
-                    else
-                    {
+                if (!patchFile.exists()) {
+                    if (strictPatching) {
+                        throw new MojoFailureException(this, "Patch operation cannot proceed.",
+                                "Cannot find specified patch: \'" + patch
+                                        + "\' in patch-source directory: \'" + patchSourceDir
+                                        + "\'.\n\nEither fix this error, "
+                                        + "or relax strictPatching.");
+                    } else {
                         getLog().info(
-                            "Skipping patch: " + patch + " listed in the parameter \"patches\"; " + "it is missing." );
+                                "Skipping patch: " + patch + " listed in the parameter \"patches\"; "
+                                        + "it is missing.");
                     }
-                }
-                else
-                {
-                    foundPatchFiles.remove( patch );
+                } else {
+                    foundPatchFiles.remove(patch);
 
-                    patchesApplied.put( patch, createPatchCommand( patchFile ) );
+                    patchesApplied.put(patch, createPatchCommand(patchFile));
                 }
             }
         }
@@ -380,29 +372,26 @@ public class ApplyMojo
 
             List limbo = new ArrayList( foundPatchFiles );
 
-            for ( Object anIgnored : ignored )
-            {
+            for (Object anIgnored : ignored) {
                 String ignoredFile = (String) anIgnored;
 
-                limbo.remove( ignoredFile );
+                limbo.remove(ignoredFile);
             }
 
             if ( !limbo.isEmpty() )
             {
                 StringBuilder extraFileBuffer = new StringBuilder();
 
-                extraFileBuffer.append( "Found " ).append( limbo.size() ).append( " unlisted patch files:" );
+                extraFileBuffer.append("Found ").append(limbo.size()).append(" unlisted patch files:");
 
-                for ( Object foundPatchFile : foundPatchFiles )
-                {
+                for (Object foundPatchFile : foundPatchFiles) {
                     String patch = (String) foundPatchFile;
 
-                    extraFileBuffer.append( "\n  \'" ).append( patch ).append( '\'' );
+                    extraFileBuffer.append("\n  \'").append(patch).append('\'');
                 }
 
-                extraFileBuffer.append(
-                    "\n\nEither remove these files, " + "add them to the patches configuration list, "
-                        + "or relax strictPatching." );
+                extraFileBuffer.append( "\n\nEither remove these files, "
+                    + "add them to the patches configuration list, " + "or relax strictPatching." );
 
                 throw new MojoExecutionException( extraFileBuffer.toString() );
             }
@@ -430,48 +419,38 @@ public class ApplyMojo
         // used if failFast is false
         List failedPatches = new ArrayList();
 
-        for ( Object o : patchesApplied.entrySet() )
-        {
+        for (Object o : patchesApplied.entrySet()) {
             Entry entry = (Entry) o;
             String patchName = (String) entry.getKey();
             Commandline cli = (Commandline) entry.getValue();
 
-            try
-            {
-                getLog().info( "Applying patch: " + patchName );
+            try {
+                getLog().info("Applying patch: " + patchName);
 
-                int result = executeCommandLine( cli, consumer, consumer );
+                int result = executeCommandLine(cli, consumer, consumer);
 
-                if ( result != 0 )
-                {
-                    if ( failFast )
-                    {
-                        throw new MojoExecutionException(
-                            "Patch command failed with exit code " + result + " for " + patchName
-                                + ". Please see console and debug output for more information." );
-                    }
-                    else
-                    {
-                        failedPatches.add( patchName );
+                if (result != 0) {
+                    if (failFast) {
+                        throw new MojoExecutionException("Patch command failed with exit code " + result + " for "
+                                + patchName + ". Please see console and debug output for more information.");
+                    } else {
+                        failedPatches.add(patchName);
                     }
                 }
-            }
-            catch ( CommandLineException e )
-            {
-                throw new MojoExecutionException(
-                    "Failed to apply patch: " + patchName + ". See debug output for more information.", e );
+            } catch (CommandLineException e) {
+                throw new MojoExecutionException("Failed to apply patch: " + patchName
+                        + ". See debug output for more information.", e);
             }
         }
 
         if ( !failedPatches.isEmpty() )
         {
             getLog().error( "Failed applying one or more patches:" );
-            for ( Object failedPatche : failedPatches )
-            {
-                getLog().error( "* " + failedPatche );
+            for (Object failedPatche : failedPatches) {
+                getLog().error("* " + failedPatche);
             }
             throw new MojoExecutionException( "Patch command failed for one or more patches."
-                                                  + " Please see console and debug output for more information." );
+                + " Please see console and debug output for more information." );
         }
 
         return outputWriter.toString();
@@ -536,15 +515,12 @@ public class ApplyMojo
     private void checkForWatchPhrases( String output )
         throws MojoExecutionException
     {
-        for ( Object failurePhrase : failurePhrases )
-        {
+        for (Object failurePhrase : failurePhrases) {
             String phrase = (String) failurePhrase;
 
-            if ( output.contains( phrase ) )
-            {
-                throw new MojoExecutionException(
-                    "Failed to apply patches (detected watch-phrase: \'" + phrase + "\' in output). "
-                        + "If this is in error, configure the patchFailureWatchPhrases parameter." );
+            if (output.contains(phrase)) {
+                throw new MojoExecutionException("Failed to apply patches (detected watch-phrase: \'" + phrase
+                        + "\' in output). " + "If this is in error, configure the patchFailureWatchPhrases parameter.");
             }
         }
     }

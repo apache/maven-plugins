@@ -118,7 +118,7 @@ public class AnalyzeDuplicateMojo
                 {
                     String dup = it.next();
 
-                    sb.append( "\to " ).append( dup );
+                    sb.append("\to ").append(dup);
                     if ( it.hasNext() )
                     {
                         sb.append( "\n" );
@@ -138,7 +138,7 @@ public class AnalyzeDuplicateMojo
                 {
                     String dup = it.next();
 
-                    sb.append( "\to " ).append( dup );
+                    sb.append("\to ").append(dup);
                     if ( it.hasNext() )
                     {
                         sb.append( "\n" );

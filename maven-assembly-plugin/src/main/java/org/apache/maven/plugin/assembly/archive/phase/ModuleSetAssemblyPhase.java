@@ -61,7 +61,7 @@ import org.codehaus.plexus.logging.Logger;
 
 /**
  * Handles the &lt;moduleSets/&gt; top-level section of the assembly descriptor.
- *
+ * 
  * @version $Id$
  */
 @Component( role = AssemblyArchiverPhase.class, hint = "module-sets" )
@@ -96,17 +96,16 @@ public class ModuleSetAssemblyPhase
     {
         final List<ModuleSet> moduleSets = assembly.getModuleSets();
 
-        for ( final ModuleSet moduleSet : moduleSets )
-        {
-            validate( moduleSet, configSource );
+        for (final ModuleSet moduleSet : moduleSets) {
+            validate(moduleSet, configSource);
 
-            final Set<MavenProject> moduleProjects = getModuleProjects( moduleSet, configSource, getLogger() );
+            final Set<MavenProject> moduleProjects = getModuleProjects(moduleSet, configSource, getLogger());
 
             final ModuleSources sources = moduleSet.getSources();
-            addModuleSourceFileSets( sources, moduleProjects, archiver, configSource );
+            addModuleSourceFileSets(sources, moduleProjects, archiver, configSource);
 
             final ModuleBinaries binaries = moduleSet.getBinaries();
-            addModuleBinaries( binaries, moduleProjects, archiver, configSource, context );
+            addModuleBinaries(binaries, moduleProjects, archiver, configSource, context);
         }
     }
 
@@ -181,75 +180,65 @@ public class ModuleSetAssemblyPhase
 
         final Map<MavenProject, Artifact> chosenModuleArtifacts = new HashMap<MavenProject, Artifact>();
 
-        for ( final MavenProject project : moduleProjects )
-        {
+        for (final MavenProject project : moduleProjects) {
             Artifact artifact = null;
 
-            if ( classifier == null )
-            {
-                getLogger().debug( "Processing binary artifact for module project: " + project.getId() );
+            if (classifier == null) {
+                getLogger().debug("Processing binary artifact for module project: " + project.getId());
 
                 artifact = project.getArtifact();
-            }
-            else
-            {
-                getLogger().debug(
-                    "Processing binary attachment: " + classifier + " for module project: " + project.getId() );
+            } else {
+                getLogger().debug("Processing binary attachment: " + classifier + " for module project: "
+                        + project.getId());
 
-                @SuppressWarnings( "unchecked" )
+                @SuppressWarnings("unchecked")
                 final List<Artifact> attachments = project.getAttachedArtifacts();
-                if ( ( attachments != null ) && !attachments.isEmpty() )
-                {
-                    for ( final Artifact attachment : attachments )
-                    {
-                        if ( classifier.equals( attachment.getClassifier() ) )
-                        {
+                if ((attachments != null) && !attachments.isEmpty()) {
+                    for (final Artifact attachment : attachments) {
+                        if (classifier.equals(attachment.getClassifier())) {
                             artifact = attachment;
                             break;
                         }
                     }
                 }
 
-                if ( artifact == null )
-                {
-                    throw new InvalidAssemblerConfigurationException(
-                        "Cannot find attachment with classifier: " + classifier + " in module project: "
-                            + project.getId() + ". Please exclude this module from the module-set." );
+                if (artifact == null) {
+                    throw new InvalidAssemblerConfigurationException("Cannot find attachment with classifier: "
+                            + classifier + " in module project: " + project.getId()
+                            + ". Please exclude this module from the module-set.");
                 }
             }
 
-            chosenModuleArtifacts.put( project, artifact );
-            addModuleArtifact( artifact, project, archiver, configSource, binaries );
+            chosenModuleArtifacts.put(project, artifact);
+            addModuleArtifact(artifact, project, archiver, configSource, binaries);
         }
 
         final List<DependencySet> depSets = getDependencySets( binaries );
 
         if ( depSets != null )
         {
-            for ( final DependencySet ds : depSets )
-            {
+            for (final DependencySet ds : depSets) {
                 // NOTE: Disabling useProjectArtifact flag, since module artifact has already been handled!
-                ds.setUseProjectArtifact( false );
+                ds.setUseProjectArtifact(false);
             }
 
             // FIXME: This will produce unpredictable results when module dependencies have a version conflict.
             getLogger().warn( "NOTE: Currently, inclusion of module dependencies may produce unpredictable "
                                   + "results if a version conflict occurs." );
 
-            for ( final MavenProject moduleProject : moduleProjects )
-            {
-                getLogger().debug( "Processing binary dependencies for module project: " + moduleProject.getId() );
+            for (final MavenProject moduleProject : moduleProjects) {
+                getLogger().debug("Processing binary dependencies for module project: " + moduleProject.getId());
 
                 final AddDependencySetsTask task =
-                    new AddDependencySetsTask( depSets, context.getResolvedArtifacts(), moduleProject, projectBuilder,
-                                               archiverManager, getLogger() );
+                        new AddDependencySetsTask(depSets, context.getResolvedArtifacts(), moduleProject, projectBuilder,
+                                archiverManager, getLogger());
 
-                task.setModuleProject( moduleProject );
-                task.setModuleArtifact( chosenModuleArtifacts.get( moduleProject ) );
-                task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
-                task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
+                task.setModuleProject(moduleProject);
+                task.setModuleArtifact(chosenModuleArtifacts.get(moduleProject));
+                task.setDefaultOutputDirectory(binaries.getOutputDirectory());
+                task.setDefaultOutputFileNameMapping(binaries.getOutputFileNameMapping());
 
-                task.execute( archiver, configSource );
+                task.execute(archiver, configSource);
             }
         }
     }
@@ -305,9 +294,9 @@ public class ModuleSetAssemblyPhase
     {
         if ( artifact.getFile() == null )
         {
-            throw new ArchiveCreationException(
-                "Artifact: " + artifact.getId() + " (included by module) does not have an artifact with a file. "
-                    + "Please ensure the package phase is run before the assembly is generated." );
+            throw new ArchiveCreationException( "Artifact: " + artifact.getId()
+                + " (included by module) does not have an artifact with a file. "
+                + "Please ensure the package phase is run before the assembly is generated." );
         }
 
         final AddArtifactTask task = new AddArtifactTask( artifact, getLogger() );
@@ -375,24 +364,22 @@ public class ModuleSetAssemblyPhase
 
         fileSets.addAll( subFileSets );
 
-        for ( final MavenProject moduleProject : moduleProjects )
-        {
-            getLogger().info( "Processing sources for module project: " + moduleProject.getId() );
+        for (final MavenProject moduleProject : moduleProjects) {
+            getLogger().info("Processing sources for module project: " + moduleProject.getId());
 
             final List<FileSet> moduleFileSets = new ArrayList<FileSet>();
 
-            for ( final FileSet fileSet : fileSets )
-            {
-                moduleFileSets.add( createFileSet( fileSet, sources, moduleProject, configSource ) );
+            for (final FileSet fileSet : fileSets) {
+                moduleFileSets.add(createFileSet(fileSet, sources, moduleProject, configSource));
             }
 
-            final AddFileSetsTask task = new AddFileSetsTask( moduleFileSets );
+            final AddFileSetsTask task = new AddFileSetsTask(moduleFileSets);
 
-            task.setProject( moduleProject );
-            task.setModuleProject( moduleProject );
-            task.setLogger( getLogger() );
+            task.setProject(moduleProject);
+            task.setModuleProject(moduleProject);
+            task.setLogger(getLogger());
 
-            task.execute( archiver, configSource );
+            task.execute(archiver, configSource);
         }
     }
 
@@ -458,9 +445,8 @@ public class ModuleSetAssemblyPhase
         {
             @SuppressWarnings( "unchecked" )
             final List<String> modules = moduleProject.getModules();
-            for ( final String moduleSubPath : modules )
-            {
-                excludes.add( moduleSubPath + "/**" );
+            for (final String moduleSubPath : modules) {
+                excludes.add(moduleSubPath + "/**");
             }
         }
 
@@ -473,11 +459,11 @@ public class ModuleSetAssemblyPhase
         String destPathPrefix = "";
         if ( sources.isIncludeModuleDirectory() )
         {
-            destPathPrefix = AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputDirectoryMapping(),
-                                                                          moduleProject.getArtifact(),
-                                                                          configSource.getProject(), moduleProject,
-                                                                          moduleProject.getArtifact(), moduleProject,
-                                                                          configSource );
+            destPathPrefix =
+                AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputDirectoryMapping(),
+                                                             moduleProject.getArtifact(), configSource.getProject(),
+                                                             moduleProject, moduleProject.getArtifact(), moduleProject,
+                                                             configSource );
 
             if ( !destPathPrefix.endsWith( "/" ) )
             {
@@ -530,13 +516,14 @@ public class ModuleSetAssemblyPhase
         {
             try
             {
-                moduleProjects = ProjectUtils.getProjectModules( project, configSource.getReactorProjects(),
-                                                                 moduleSet.isIncludeSubModules(), logger );
+                moduleProjects =
+                    ProjectUtils.getProjectModules( project, configSource.getReactorProjects(),
+                                                    moduleSet.isIncludeSubModules(), logger );
             }
             catch ( final IOException e )
             {
-                throw new ArchiveCreationException(
-                    "Error retrieving module-set for project: " + project.getId() + ": " + e.getMessage(), e );
+                throw new ArchiveCreationException( "Error retrieving module-set for project: " + project.getId()
+                    + ": " + e.getMessage(), e );
             }
         }
 

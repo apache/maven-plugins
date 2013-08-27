@@ -272,9 +272,8 @@ public class JarSignMojo
 
         addArgIf( arguments, alias != null, this.alias );
 
-        for ( Object argument : arguments )
-        {
-            commandLine.createArgument().setValue( argument.toString() );
+        for (Object argument : arguments) {
+            commandLine.createArgument().setValue(argument.toString());
         }
 
         commandLine.setWorkingDirectory( workingDirectory.getAbsolutePath() );
@@ -322,7 +321,7 @@ public class JarSignMojo
             if ( result != 0 )
             {
                 throw new MojoExecutionException( "Result of " + purgePassword( commandLine ) +
-                                                      " execution is: \'" + result + "\'." );
+                    " execution is: \'" + result + "\'." );
             }
         }
         catch ( CommandLineException e )
@@ -349,7 +348,7 @@ public class JarSignMojo
     private String purgePassword( Commandline commandLine )
     {
         String out = commandLine.toString();
-        if ( keypass != null && out.contains( keypass ) )
+        if ( keypass != null && out.contains(keypass))
         {
             out = StringUtils.replace( out, keypass, "******" );
         }
@@ -440,7 +439,7 @@ public class JarSignMojo
      * @param arguments
      * @param key       the argument name.
      * @param value     the argument value to be added.
-     * @see #addArgIfNotEmpty(java.util.List, String, Object, boolean)
+     * @see #addArgIfNotEmpty(java.util.List,String,Object,boolean)
      */
     private void addArgIfNotEmpty( List arguments, String key, Object value )
     {

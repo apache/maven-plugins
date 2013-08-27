@@ -32,7 +32,7 @@ public class TempEclipseWorkspace
     {
         if ( rad7WithDefault14 == null )
         {
-            rad7WithDefault14 = new TempEclipseWorkspace( "rad7WithDefault14", new String[]{ "direct-compile" } );
+            rad7WithDefault14 = new TempEclipseWorkspace( "rad7WithDefault14", new String[] { "direct-compile" } );
         }
         return rad7WithDefault14;
     }
@@ -46,7 +46,7 @@ public class TempEclipseWorkspace
     {
         if ( eclipseWithDefault15 == null )
         {
-            eclipseWithDefault15 = new TempEclipseWorkspace( "eclipseWithDefault15", new String[]{ "direct-compile" } );
+            eclipseWithDefault15 = new TempEclipseWorkspace( "eclipseWithDefault15", new String[] { "direct-compile" } );
         }
         return eclipseWithDefault15;
     }
@@ -60,7 +60,7 @@ public class TempEclipseWorkspace
     {
         if ( eclipseWithDefault13 == null )
         {
-            eclipseWithDefault13 = new TempEclipseWorkspace( "eclipseWithDefault13", new String[]{ "direct-compile" } );
+            eclipseWithDefault13 = new TempEclipseWorkspace( "eclipseWithDefault13", new String[] { "direct-compile" } );
         }
         return eclipseWithDefault13;
     }
@@ -75,7 +75,7 @@ public class TempEclipseWorkspace
         if ( dynamicWorkspace == null )
         {
             dynamicWorkspace =
-                new TempEclipseWorkspace( "dynamicWorkspace", new String[]{ "project-A/module-A1", "../project-O" } );
+                new TempEclipseWorkspace( "dynamicWorkspace", new String[] { "project-A/module-A1", "../project-O" } );
         }
         return dynamicWorkspace;
     }
@@ -92,16 +92,16 @@ public class TempEclipseWorkspace
 
         workspaceLocation = new File( eclipseLocation, testWorkspaceName + "/workspace" ).getCanonicalFile();
 
-        File propertyfile = new File( workspaceLocation,
-                                      ".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs" );
+        File propertyfile =
+            new File( workspaceLocation,
+                      ".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs" );
 
         preparePropertyFile( jdkLocation, propertyfile );
 
         if ( projectsToLink != null && projectsToLink.length != 0 )
         {
-            for ( String projectToLink : projectsToLink )
-            {
-                writeLocationFile( projectToLink );
+            for (String projectToLink : projectsToLink) {
+                writeLocationFile(projectToLink);
             }
         }
 
@@ -110,7 +110,7 @@ public class TempEclipseWorkspace
     /**
      * Given the relative path from the workspace to the project to link use the basename as the project name and link
      * this project to the fully qualified path anchored at workspaceLocation.
-     *
+     * 
      * @param projectToLink The project to link
      * @throws MalformedURLException
      * @throws FileNotFoundException
@@ -139,14 +139,16 @@ public class TempEclipseWorkspace
     }
 
     private static void preparePropertyFile( File jdkLocation, File propertyfile )
-        throws IOException
-    {
+        throws IOException {
         Properties properties = new Properties();
         properties.load( new FileInputStream( propertyfile ) );
-        properties.setProperty( "org.eclipse.jdt.launching.PREF_VM_XML",
+        properties.setProperty(
+                                "org.eclipse.jdt.launching.PREF_VM_XML",
                                 properties.getProperty( "org.eclipse.jdt.launching.PREF_VM_XML" ).replaceAll(
-                                    "__replace_with_test_dir__",
-                                    jdkLocation.getCanonicalPath().replace( '\\', '/' ) ) );
+                                                                                                              "__replace_with_test_dir__",
+                                                                                                              jdkLocation.getCanonicalPath().replace(
+                                                                                                                                                      '\\',
+                                                                                                                                                      '/' ) ) );
         properties.store( new FileOutputStream( propertyfile ), "" );
     }
 

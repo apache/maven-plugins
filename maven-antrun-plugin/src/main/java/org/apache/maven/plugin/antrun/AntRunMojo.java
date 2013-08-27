@@ -64,7 +64,7 @@ import java.util.Set;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo( name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo ( name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class AntRunMojo
     extends AbstractMojo
 {
@@ -118,13 +118,13 @@ public class AntRunMojo
     /**
      * The plugin dependencies.
      */
-    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
+    @Parameter ( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
     /**
      * The local Maven repository
      */
-    @Parameter( property = "localRepository", readonly = true )
+    @Parameter ( property = "localRepository", readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
@@ -132,7 +132,7 @@ public class AntRunMojo
      *
      * @since 1.4
      */
-    @Parameter( defaultValue = "" )
+    @Parameter ( defaultValue = "" )
     private String propertyPrefix;
 
     /**
@@ -142,14 +142,14 @@ public class AntRunMojo
      *
      * @since 1.5
      */
-    @Parameter( defaultValue = "" )
+    @Parameter ( defaultValue = "" )
     private String customTaskPrefix = "";
 
     /**
      * The name of a property containing the list of all dependency versions. This is used for the removing the versions
      * from the filenames.
      */
-    @Parameter( defaultValue = "maven.project.dependencies.versions" )
+    @Parameter ( defaultValue = "maven.project.dependencies.versions" )
     private String versionsPropertyName;
 
     /**
@@ -176,7 +176,7 @@ public class AntRunMojo
      *
      * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
-    @Parameter( property = "sourceRoot" )
+    @Parameter ( property = "sourceRoot" )
     private File sourceRoot;
 
     /**
@@ -185,7 +185,7 @@ public class AntRunMojo
      *
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
-    @Parameter( property = "testSourceRoot" )
+    @Parameter ( property = "testSourceRoot" )
     private File testSourceRoot;
 
     /**
@@ -193,7 +193,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter( property = "maven.antrun.skip", defaultValue = "false" )
+    @Parameter ( property = "maven.antrun.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
@@ -201,7 +201,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter ( defaultValue = "false" )
     private boolean exportAntProperties;
 
     /**
@@ -211,7 +211,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter ( defaultValue = "true" )
     private boolean failOnError;
 
     /**
@@ -328,7 +328,7 @@ public class AntRunMojo
         catch ( BuildException e )
         {
             StringBuilder sb = new StringBuilder();
-            sb.append( "An Ant BuildException has occured: " ).append( e.getMessage() );
+            sb.append("An Ant BuildException has occured: ").append(e.getMessage());
             String fragment = findFragment( e );
             if ( fragment != null )
             {
@@ -436,7 +436,7 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "settings.localRepository" ), localRepository.getBasedir() );
 
         // Add properties for depenedency artifacts
-        @SuppressWarnings( "unchecked" ) Set<Artifact> depArtifacts = mavenProject.getArtifacts();
+        @SuppressWarnings ( "unchecked" ) Set<Artifact> depArtifacts = mavenProject.getArtifacts();
         for ( Artifact artifact : depArtifacts )
         {
             String propName = artifact.getDependencyConflictId();
@@ -448,7 +448,7 @@ public class AntRunMojo
         StringBuilder versionsBuffer = new StringBuilder();
         for ( Artifact artifact : depArtifacts )
         {
-            versionsBuffer.append( artifact.getVersion() ).append( File.pathSeparator );
+            versionsBuffer.append(artifact.getVersion()).append(File.pathSeparator);
         }
         antProject.setProperty( versionsPropertyName, versionsBuffer.toString() );
 

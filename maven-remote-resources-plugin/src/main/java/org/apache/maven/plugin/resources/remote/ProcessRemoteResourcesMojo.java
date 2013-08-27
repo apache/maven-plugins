@@ -128,8 +128,7 @@ import java.util.TreeMap;
 // @requiresDependencyResolution test
 @Mojo( name = "process", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true )
 public class ProcessRemoteResourcesMojo
-    extends AbstractMojo
-    implements LogChute
+    extends AbstractMojo implements LogChute
 {
 
     private static final String TEMPLATE_SUFFIX = ".vm";
@@ -307,7 +306,7 @@ public class ProcessRemoteResourcesMojo
      */
     @Parameter
     private Map<String, Object> properties = new HashMap<String, Object>();
-
+    
     /**
      * Whether to include properties defined in the project when filtering resources.
      *
@@ -373,19 +372,18 @@ public class ProcessRemoteResourcesMojo
      */
     @Parameter( property = "excludeScope", defaultValue = "" )
     protected String excludeScope;
-
-
+    
+    
     /**
      * When resolving project dependencies, specify the scopes to include.
      * The default is the same as "includeScope" if there are no exclude scopes set.
      * Otherwise, it defaults to "test" to grab all the dependencies so the
      * exclude filters can filter out what is not needed.
-     *
-     * @since 1.5
+     * @since 1.5 
      */
     @Parameter
     private String[] resolveScopes;
-
+    
 
     /**
      * Comma separated list of Artifact names too exclude.
@@ -432,9 +430,9 @@ public class ProcessRemoteResourcesMojo
     @Component( hint = "default" )
     protected ProjectDependenciesResolver dependencyResolver;
 
-
+    
     private VelocityEngine velocity;
-
+    
     @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
@@ -453,11 +451,11 @@ public class ProcessRemoteResourcesMojo
         {
             if ( excludeScope == null || "".equals( excludeScope ) )
             {
-                resolveScopes = new String[]{ this.includeScope };
+                resolveScopes = new String[] { this.includeScope };
             }
             else
             {
-                resolveScopes = new String[]{ Artifact.SCOPE_TEST };
+                resolveScopes = new String[] { Artifact.SCOPE_TEST };
             }
         }
         velocity = new VelocityEngine();
@@ -715,11 +713,13 @@ public class ProcessRemoteResourcesMojo
             if ( runOnlyAtExecutionRoot )
             {
                 List<MavenProject> projects = mavenSession.getSortedProjects();
-                return dependencyResolver.resolve( projects, Arrays.asList( resolveScopes ), mavenSession );
+                return dependencyResolver.resolve( projects, Arrays.asList( resolveScopes ),
+                                                   mavenSession );
             }
             else
             {
-                return dependencyResolver.resolve( project, Arrays.asList( resolveScopes ), mavenSession );
+                return dependencyResolver.resolve( project, Arrays.asList( resolveScopes ),
+                                                   mavenSession );
             }
         }
         catch ( ArtifactResolutionException e )
@@ -764,7 +764,7 @@ public class ProcessRemoteResourcesMojo
                                 artifact.setResolvedVersion( Artifact.LATEST_VERSION );
                             }
                             artifacts.add( artifact );
-                        }
+                        }  
                     }
                 }
                 catch ( InvalidDependencyVersionException e )
@@ -978,14 +978,10 @@ public class ProcessRemoteResourcesMojo
                 }
 
                 throw new MojoExecutionException( "The " + position +
-                                                      " resource bundle configured must specify a groupId, artifactId, "
-                                                      +
-                                                      " version and, optionally, type and classifier for a remote resource bundle. "
-                                                      +
-                                                      "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, "
-                                                      +
-                                                      "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or "
-                                                      +
+                                                      " resource bundle configured must specify a groupId, artifactId, " +
+                                                      " version and, optionally, type and classifier for a remote resource bundle. " +
+                                                      "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, " +
+                                                      "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or " +
                                                       "<resourceBundle>groupId:artifactId:version:type:classifier</resourceBundle>" );
             }
 
@@ -1014,7 +1010,7 @@ public class ProcessRemoteResourcesMojo
         context.put( "projects", projects );
         context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
         context.put( "presentYear", year );
-        context.put( "locator", locator );
+        context.put( "locator", locator);
 
         if ( inceptionYear.equals( year ) )
         {
@@ -1048,11 +1044,11 @@ public class ProcessRemoteResourcesMojo
                         if ( s[0].equals( p.getGroupId() ) && s[1].equals( p.getArtifactId() ) &&
                             s[2].equals( p.getVersion() ) )
                         {
-                            if ( s.length >= 4 && "test-jar".equals( s[3] ) )
+                            if ( s.length >= 4 && "test-jar".equals( s[3] ) ) 
                             {
                                 artifactFile = new File( p.getBuild().getTestOutputDirectory() );
-                            }
-                            else
+                            } 
+                            else 
                             {
                                 artifactFile = new File( p.getBuild().getOutputDirectory() );
                             }
@@ -1160,12 +1156,13 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     if ( bundle.getSourceEncoding() == null )
                                     {
-                                        velocity.mergeTemplate( bundleResource, "ISO-8859-1", context, writer );
+                                        velocity.mergeTemplate( bundleResource, "ISO-8859-1",
+                                                                            context, writer );
                                     }
                                     else
                                     {
-                                        velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(), context,
-                                                                writer );
+                                        velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(),
+                                                                            context, writer );
 
                                     }
                                 }
@@ -1307,35 +1304,29 @@ public class ProcessRemoteResourcesMojo
         }
 
         List<Supplement> supplements = new ArrayList<Supplement>();
-        for ( String set : models )
-        {
-            getLog().debug( "Preparing ruleset: " + set );
-            try
-            {
-                File f = locator.getResourceAsFile( set, getLocationTemp( set ) );
+        for (String set : models) {
+            getLog().debug("Preparing ruleset: " + set);
+            try {
+                File f = locator.getResourceAsFile(set, getLocationTemp(set));
 
-                if ( null == f || !f.exists() )
-                {
-                    throw new MojoExecutionException( "Cold not resolve " + set );
+                if (null == f || !f.exists()) {
+                    throw new MojoExecutionException("Cold not resolve " + set);
                 }
-                if ( !f.canRead() )
-                {
-                    throw new MojoExecutionException( "Supplemental data models won't be loaded. " + "File " +
-                                                          f.getAbsolutePath() +
-                                                          " cannot be read, check permissions on the file." );
+                if (!f.canRead()) {
+                    throw new MojoExecutionException("Supplemental data models won't be loaded. " + "File " +
+                            f.getAbsolutePath() +
+                            " cannot be read, check permissions on the file.");
                 }
 
-                getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
+                getLog().debug("Loading supplemental models from " + f.getAbsolutePath());
 
                 SupplementalDataModelXpp3Reader reader = new SupplementalDataModelXpp3Reader();
-                SupplementalDataModel supplementalModel = reader.read( new FileReader( f ) );
-                supplements.addAll( supplementalModel.getSupplement() );
-            }
-            catch ( Exception e )
-            {
+                SupplementalDataModel supplementalModel = reader.read(new FileReader(f));
+                supplements.addAll(supplementalModel.getSupplement());
+            } catch (Exception e) {
                 String msg = "Error loading supplemental data models: " + e.getMessage();
-                getLog().error( msg, e );
-                throw new MojoExecutionException( msg, e );
+                getLog().error(msg, e);
+                throw new MojoExecutionException(msg, e);
             }
         }
 
@@ -1451,7 +1442,7 @@ public class ProcessRemoteResourcesMojo
             default:
                 getLog().debug( message );
                 break;
-        }
+        }       
     }
 
     public void log( int level, String message, Throwable t )
@@ -1474,7 +1465,7 @@ public class ProcessRemoteResourcesMojo
             default:
                 getLog().debug( message, t );
                 break;
-        }
+        }        
     }
 
     public boolean isLevelEnabled( int level )

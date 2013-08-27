@@ -67,7 +67,7 @@ import org.codehaus.plexus.logging.Logger;
  * Abstract base plugin which takes care of the common stuff usually needed by maven IDE plugins. A plugin extending
  * AbstractIdeSupportMojo should implement the <code>setup()</code> and <code>writeConfiguration()</code> methods, plus
  * the getters needed to get the various configuration flags and required components. The lifecycle:
- * <p/>
+ * 
  * <pre>
  *       *** calls setup() where you can configure your specific stuff and stop the mojo from execute if appropriate ***
  *       - manually resolve project dependencies, NOT failing if a dependency is missing
@@ -76,7 +76,7 @@ import org.codehaus.plexus.logging.Logger;
  *       *** calls writeConfiguration(), passing the list of resolved referenced dependencies ***
  *       - report the list of missing sources or just tell how to turn this feature on if the flag was disabled
  * </pre>
- *
+ * 
  * @author Fabrizio Giustina
  * @version $Id$
  */
@@ -87,7 +87,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * The project whose project files to create.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -96,7 +96,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * The currently executed project (can be a reactor project).
-     *
+     * 
      * @parameter expression="${executedProject}"
      * @readonly
      */
@@ -104,14 +104,14 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * The project packaging.
-     *
+     * 
      * @parameter expression="${project.packaging}"
      */
     protected String packaging;
 
     /**
      * Artifact factory, needed to download source jars for inclusion in classpath.
-     *
+     * 
      * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
      * @required
      * @readonly
@@ -120,7 +120,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Artifact resolver, needed to download source jars for inclusion in classpath.
-     *
+     * 
      * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
      * @required
      * @readonly
@@ -129,7 +129,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Artifact collector, needed to resolve dependencies.
-     *
+     * 
      * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
      * @required
      * @readonly
@@ -143,14 +143,14 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * The runtime information for Maven, used to retrieve Maven's version number.
-     *
+     * 
      * @component
      */
     private RuntimeInformation runtimeInformation;
 
     /**
      * Remote repositories which will be searched for source attachments.
-     *
+     * 
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @required
      * @readonly
@@ -159,7 +159,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Local maven repository.
-     *
+     * 
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -168,7 +168,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * If the executed project is a reactor project, this will contains the full list of projects in the reactor.
-     *
+     * 
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -177,7 +177,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Skip the operation when true.
-     *
+     * 
      * @parameter expression="${eclipse.skip}" default-value="false"
      */
     private boolean skip;
@@ -188,7 +188,7 @@ public abstract class AbstractIdeSupportMojo
      * status cache is mantained. With versions 2.6+ of the plugin to reset this cache run
      * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions. With older
      * versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
-     *
+     * 
      * @parameter expression="${downloadSources}"
      */
     protected boolean downloadSources;
@@ -199,7 +199,7 @@ public abstract class AbstractIdeSupportMojo
      * a status cache is mantained. With versions 2.6+ of the plugin to reset this cache run
      * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions. With older
      * versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
-     *
+     * 
      * @parameter expression="${downloadJavadocs}"
      */
     protected boolean downloadJavadocs;
@@ -209,7 +209,7 @@ public abstract class AbstractIdeSupportMojo
      * false. When this flag is <code>true</code> and the source or javadoc attachment has a status cache to indicate
      * that it is not available, then the remote repository will be rechecked for a source or javadoc attachment and the
      * status cache updated to reflect the new state.
-     *
+     * 
      * @parameter expression="${forceRecheck}"
      */
     protected boolean forceRecheck;
@@ -221,7 +221,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>artifactMetadataSource</code>.
-     *
+     * 
      * @return Returns the artifactMetadataSource.
      */
     public ArtifactMetadataSource getArtifactMetadataSource()
@@ -231,7 +231,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>artifactMetadataSource</code>.
-     *
+     * 
      * @param artifactMetadataSource The artifactMetadataSource to set.
      */
     public void setArtifactMetadataSource( ArtifactMetadataSource artifactMetadataSource )
@@ -241,7 +241,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>project</code>.
-     *
+     * 
      * @return Returns the project.
      */
     public MavenProject getProject()
@@ -251,7 +251,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>project</code>.
-     *
+     * 
      * @param project The project to set.
      */
     public void setProject( MavenProject project )
@@ -261,7 +261,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>reactorProjects</code>.
-     *
+     * 
      * @return Returns the reactorProjects.
      */
     public List getReactorProjects()
@@ -271,7 +271,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>reactorProjects</code>.
-     *
+     * 
      * @param reactorProjects The reactorProjects to set.
      */
     public void setReactorProjects( List reactorProjects )
@@ -281,7 +281,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>remoteArtifactRepositories</code>.
-     *
+     * 
      * @return Returns the remoteArtifactRepositories.
      */
     public List getRemoteArtifactRepositories()
@@ -291,7 +291,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>remoteArtifactRepositories</code>.
-     *
+     * 
      * @param remoteArtifactRepositories The remoteArtifactRepositories to set.
      */
     public void setRemoteArtifactRepositories( List remoteArtifactRepositories )
@@ -301,7 +301,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>artifactFactory</code>.
-     *
+     * 
      * @return Returns the artifactFactory.
      */
     public ArtifactFactory getArtifactFactory()
@@ -311,7 +311,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>artifactFactory</code>.
-     *
+     * 
      * @param artifactFactory The artifactFactory to set.
      */
     public void setArtifactFactory( ArtifactFactory artifactFactory )
@@ -321,7 +321,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>artifactResolver</code>.
-     *
+     * 
      * @return Returns the artifactResolver.
      */
     public ArtifactResolver getArtifactResolver()
@@ -331,7 +331,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>artifactResolver</code>.
-     *
+     * 
      * @param artifactResolver The artifactResolver to set.
      */
     public void setArtifactResolver( ArtifactResolver artifactResolver )
@@ -341,7 +341,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>executedProject</code>.
-     *
+     * 
      * @return Returns the executedProject.
      */
     public MavenProject getExecutedProject()
@@ -351,7 +351,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>executedProject</code>.
-     *
+     * 
      * @param executedProject The executedProject to set.
      */
     public void setExecutedProject( MavenProject executedProject )
@@ -361,7 +361,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>localRepository</code>.
-     *
+     * 
      * @return Returns the localRepository.
      */
     public ArtifactRepository getLocalRepository()
@@ -371,7 +371,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>localRepository</code>.
-     *
+     * 
      * @param localRepository The localRepository to set.
      */
     public void setLocalRepository( ArtifactRepository localRepository )
@@ -381,7 +381,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>downloadJavadocs</code>.
-     *
+     * 
      * @return Returns the downloadJavadocs.
      */
     public boolean getDownloadJavadocs()
@@ -391,7 +391,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>downloadJavadocs</code>.
-     *
+     * 
      * @param downloadJavadoc The downloadJavadocs to set.
      */
     public void setDownloadJavadocs( boolean downloadJavadoc )
@@ -401,7 +401,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Getter for <code>downloadSources</code>.
-     *
+     * 
      * @return Returns the downloadSources.
      */
     public boolean getDownloadSources()
@@ -411,7 +411,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Setter for <code>downloadSources</code>.
-     *
+     * 
      * @param downloadSources The downloadSources to set.
      */
     public void setDownloadSources( boolean downloadSources )
@@ -432,14 +432,14 @@ public abstract class AbstractIdeSupportMojo
     /**
      * return <code>false</code> if projects available in a reactor build should be considered normal dependencies,
      * <code>true</code> if referenced project will be linked and not need artifact resolution.
-     *
+     * 
      * @return <code>true</code> if referenced project will be linked and not need artifact resolution
      */
     protected abstract boolean getUseProjectReferences();
 
     /**
      * Hook for preparation steps before the actual plugin execution.
-     *
+     * 
      * @return <code>true</code> if execution should continue or <code>false</code> if not.
      * @throws MojoExecutionException generic mojo exception
      */
@@ -448,7 +448,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Main plugin method where dependencies should be processed in order to generate IDE configuration files.
-     *
+     * 
      * @param deps list of <code>IdeDependency</code> objects, with artifacts, sources and javadocs already resolved
      * @throws MojoExecutionException generic mojo exception
      */
@@ -517,9 +517,9 @@ public abstract class AbstractIdeSupportMojo
      * Resolve project dependencies. Manual resolution is needed in order to avoid resolution of multiproject artifacts
      * (if projects will be linked each other an installed jar is not needed) and to avoid a failure when a jar is
      * missing.
-     *
-     * @return resolved IDE dependencies, with attached jars for non-reactor dependencies
+     * 
      * @throws MojoExecutionException if dependencies can't be resolved
+     * @return resolved IDE dependencies, with attached jars for non-reactor dependencies
      */
     protected IdeDependency[] doDependencyResolution()
         throws MojoExecutionException
@@ -538,8 +538,9 @@ public abstract class AbstractIdeSupportMojo
 
                 if ( deps != null )
                 {
-                    Map managedVersions = createManagedVersionMap( getArtifactFactory(), project.getId(),
-                                                                   project.getDependencyManagement() );
+                    Map managedVersions =
+                        createManagedVersionMap( getArtifactFactory(), project.getId(),
+                                                 project.getDependencyManagement() );
 
                     ArtifactResolutionResult artifactResolutionResult;
 
@@ -564,8 +565,9 @@ public abstract class AbstractIdeSupportMojo
                     {
                         getLog().debug( e.getMessage(), e );
                         getLog().error(
-                            Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[]{ //$NON-NLS-1$
-                                e.getGroupId(), e.getArtifactId(), e.getVersion(), e.getMessage() } ) );
+                                        Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[] { //$NON-NLS-1$
+                                                            e.getGroupId(), e.getArtifactId(), e.getVersion(),
+                                                                e.getMessage() } ) );
 
                         // if we are here artifactResolutionResult is null, create a project without dependencies but
                         // don't fail
@@ -577,51 +579,44 @@ public abstract class AbstractIdeSupportMojo
                     // keep track of added reactor projects in order to avoid duplicates
                     Set emittedReactorProjectId = new HashSet();
 
-                    for ( Object o : artifactResolutionResult.getArtifactResolutionNodes() )
-                    {
+                    for (Object o : artifactResolutionResult.getArtifactResolutionNodes()) {
 
                         ResolutionNode node = (ResolutionNode) o;
                         int dependencyDepth = node.getDepth();
                         Artifact art = node.getArtifact();
                         // don't resolve jars for reactor projects
-                        if ( hasToResolveJar( art ) )
-                        {
-                            try
-                            {
-                                artifactResolver.resolve( art, node.getRemoteRepositories(), localRepository );
-                            }
-                            catch ( ArtifactNotFoundException e )
-                            {
-                                getLog().debug( e.getMessage(), e );
-                                getLog().warn( Messages.getString( "AbstractIdeSupportMojo.artifactdownload",
-                                                                   new Object[]{ //$NON-NLS-1$
-                                                                       e.getGroupId(), e.getArtifactId(),
-                                                                       e.getVersion(), e.getMessage() } ) );
-                            }
-                            catch ( ArtifactResolutionException e )
-                            {
-                                getLog().debug( e.getMessage(), e );
-                                getLog().warn( Messages.getString( "AbstractIdeSupportMojo.artifactresolution",
-                                                                   new Object[]{ //$NON-NLS-1$
-                                                                       e.getGroupId(), e.getArtifactId(),
-                                                                       e.getVersion(), e.getMessage() } ) );
+                        if (hasToResolveJar(art)) {
+                            try {
+                                artifactResolver.resolve(art, node.getRemoteRepositories(), localRepository);
+                            } catch (ArtifactNotFoundException e) {
+                                getLog().debug(e.getMessage(), e);
+                                getLog().warn(
+                                        Messages.getString(
+                                                "AbstractIdeSupportMojo.artifactdownload", new Object[]{ //$NON-NLS-1$
+                                                e.getGroupId(), e.getArtifactId(), e.getVersion(),
+                                                e.getMessage()}));
+                            } catch (ArtifactResolutionException e) {
+                                getLog().debug(e.getMessage(), e);
+                                getLog().warn(
+                                        Messages.getString(
+                                                "AbstractIdeSupportMojo.artifactresolution", new Object[]{ //$NON-NLS-1$
+                                                e.getGroupId(), e.getArtifactId(), e.getVersion(),
+                                                e.getMessage()}));
                             }
                         }
 
                         boolean includeArtifact = true;
-                        if ( getExcludes() != null )
-                        {
+                        if (getExcludes() != null) {
                             String artifactFullId = art.getGroupId() + ":" + art.getArtifactId();
-                            if ( getExcludes().contains( artifactFullId ) )
-                            {
-                                getLog().info( "excluded: " + artifactFullId );
+                            if (getExcludes().contains(artifactFullId)) {
+                                getLog().info("excluded: " + artifactFullId);
                                 includeArtifact = false;
                             }
                         }
 
-                        if ( includeArtifact && ( !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) )
-                            || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) ) )
-                        {
+                        if (includeArtifact
+                                && (!(getUseProjectReferences() && isAvailableAsAReactorProject(art)) || emittedReactorProjectId.add(art.getGroupId()
+                                + '-' + art.getArtifactId()))) {
 
                             // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar"
                             // also
@@ -638,34 +633,25 @@ public abstract class AbstractIdeSupportMojo
                             // an osgi bundle
                             boolean isOsgiBundle;
                             String osgiSymbolicName = null;
-                            if ( art.getFile() != null )
-                            {
+                            if (art.getFile() != null) {
                                 JarFile jarFile = null;
-                                try
-                                {
-                                    jarFile = new JarFile( art.getFile(), false, ZipFile.OPEN_READ );
+                                try {
+                                    jarFile = new JarFile(art.getFile(), false, ZipFile.OPEN_READ);
 
                                     Manifest manifest = jarFile.getManifest();
-                                    if ( manifest != null )
-                                    {
-                                        osgiSymbolicName = manifest.getMainAttributes().getValue(
-                                            new Attributes.Name( "Bundle-SymbolicName" ) );
+                                    if (manifest != null) {
+                                        osgiSymbolicName =
+                                                manifest.getMainAttributes().getValue(
+                                                        new Attributes.Name(
+                                                                "Bundle-SymbolicName"));
                                     }
-                                }
-                                catch ( IOException e )
-                                {
-                                    getLog().info( "Unable to read jar manifest from " + art.getFile() );
-                                }
-                                finally
-                                {
-                                    if ( jarFile != null )
-                                    {
-                                        try
-                                        {
+                                } catch (IOException e) {
+                                    getLog().info("Unable to read jar manifest from " + art.getFile());
+                                } finally {
+                                    if (jarFile != null) {
+                                        try {
                                             jarFile.close();
-                                        }
-                                        catch ( IOException e )
-                                        {
+                                        } catch (IOException e) {
                                             // ignore
                                         }
                                     }
@@ -675,18 +661,17 @@ public abstract class AbstractIdeSupportMojo
                             isOsgiBundle = osgiSymbolicName != null;
 
                             IdeDependency dep =
-                                new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                                   art.getClassifier(), useProjectReference( art ),
-                                                   Artifact.SCOPE_TEST.equals( art.getScope() ),
-                                                   Artifact.SCOPE_SYSTEM.equals( art.getScope() ),
-                                                   Artifact.SCOPE_PROVIDED.equals( art.getScope() ),
-                                                   art.getArtifactHandler().isAddedToClasspath(), art.getFile(),
-                                                   art.getType(), isOsgiBundle, osgiSymbolicName, dependencyDepth,
-                                                   getProjectNameForArifact( art ) );
+                                    new IdeDependency(art.getGroupId(), art.getArtifactId(), art.getVersion(),
+                                            art.getClassifier(), useProjectReference(art),
+                                            Artifact.SCOPE_TEST.equals(art.getScope()),
+                                            Artifact.SCOPE_SYSTEM.equals(art.getScope()),
+                                            Artifact.SCOPE_PROVIDED.equals(art.getScope()),
+                                            art.getArtifactHandler().isAddedToClasspath(), art.getFile(),
+                                            art.getType(), isOsgiBundle, osgiSymbolicName, dependencyDepth,
+                                            getProjectNameForArifact(art));
                             // no duplicate entries allowed. System paths can cause this problem.
-                            if ( !dependencies.contains( dep ) )
-                            {
-                                dependencies.add( dep );
+                            if (!dependencies.contains(dep)) {
+                                dependencies.add(dep);
                             }
                         }
 
@@ -710,7 +695,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Find the name of the project as used in eclipse.
-     *
+     * 
      * @param artifact The artifact to find the eclipse name for.
      * @return The name os the eclipse project.
      */
@@ -719,7 +704,7 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Returns the list of project artifacts. Also artifacts generated from referenced projects will be added, but with
      * the <code>resolved</code> property set to true.
-     *
+     * 
      * @return list of projects artifacts
      * @throws MojoExecutionException if unable to parse dependency versions
      */
@@ -729,50 +714,46 @@ public abstract class AbstractIdeSupportMojo
         // [MECLIPSE-388] Don't sort this, the order should be identical to getProject.getDependencies()
         Set artifacts = new LinkedHashSet();
 
-        for ( Object o : getProject().getDependencies() )
-        {
+        for (Object o : getProject().getDependencies()) {
             Dependency dependency = (Dependency) o;
 
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
             VersionRange versionRange;
-            try
-            {
-                versionRange = VersionRange.createFromVersionSpec( dependency.getVersion() );
-            }
-            catch ( InvalidVersionSpecificationException e )
-            {
+            try {
+                versionRange = VersionRange.createFromVersionSpec(dependency.getVersion());
+            } catch (InvalidVersionSpecificationException e) {
                 throw new MojoExecutionException(
-                    Messages.getString( "AbstractIdeSupportMojo.unabletoparseversion", new Object[]{ //$NON-NLS-1$
-                        dependency.getArtifactId(), dependency.getVersion(), dependency.getManagementKey(),
-                        e.getMessage() } ), e );
+                        Messages.getString(
+                                "AbstractIdeSupportMojo.unabletoparseversion", new Object[]{ //$NON-NLS-1$
+                                dependency.getArtifactId(),
+                                dependency.getVersion(),
+                                dependency.getManagementKey(), e.getMessage()}),
+                        e);
             }
 
             String type = dependency.getType();
-            if ( type == null )
-            {
+            if (type == null) {
                 type = Constants.PROJECT_PACKAGING_JAR;
             }
             String classifier = dependency.getClassifier();
             boolean optional = dependency.isOptional();
             String scope = dependency.getScope();
-            if ( scope == null )
-            {
+            if (scope == null) {
                 scope = Artifact.SCOPE_COMPILE;
             }
 
             Artifact art =
-                getArtifactFactory().createDependencyArtifact( groupId, artifactId, versionRange, type, classifier,
-                                                               scope, optional );
+                    getArtifactFactory().createDependencyArtifact(groupId, artifactId, versionRange, type, classifier,
+                            scope, optional);
 
-            if ( scope.equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
-            {
-                art.setFile( new File( dependency.getSystemPath() ) );
+            if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
+                art.setFile(new File(dependency.getSystemPath()));
             }
 
-            handleExclusions( art, dependency );
+            handleExclusions(art, dependency);
 
-            artifacts.add( art );
+            artifacts.add(art);
         }
 
         return artifacts;
@@ -780,7 +761,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Apply exclusion filters to direct AND transitive dependencies.
-     *
+     * 
      * @param artifact
      * @param dependency
      */
@@ -788,9 +769,8 @@ public abstract class AbstractIdeSupportMojo
     {
 
         List exclusions = new ArrayList();
-        for ( Exclusion e : dependency.getExclusions() )
-        {
-            exclusions.add( e.getGroupId() + ":" + e.getArtifactId() ); //$NON-NLS-1$
+        for (Exclusion e : dependency.getExclusions()) {
+            exclusions.add(e.getGroupId() + ":" + e.getArtifactId()); //$NON-NLS-1$
         }
 
         ArtifactFilter newFilter = new ExcludesArtifactFilter( exclusions );
@@ -800,7 +780,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Utility method that locates a project producing the given artifact.
-     *
+     * 
      * @param artifact the artifact a project should produce.
      * @return <code>true</code> if the artifact is produced by a reactor projectart.
      */
@@ -811,7 +791,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Checks the list of reactor projects to see if the artifact is included.
-     *
+     * 
      * @param artifact the artifact to check if it is in the reactor
      * @return the reactor project or null if it is not in the reactor
      */
@@ -819,22 +799,19 @@ public abstract class AbstractIdeSupportMojo
     {
         if ( reactorProjects != null )
         {
-            for ( Object reactorProject1 : reactorProjects )
-            {
+            for (Object reactorProject1 : reactorProjects) {
                 MavenProject reactorProject = (MavenProject) reactorProject1;
 
-                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
-                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
-                {
-                    if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
-                    {
+                if (reactorProject.getGroupId().equals(artifact.getGroupId())
+                        && reactorProject.getArtifactId().equals(artifact.getArtifactId())) {
+                    if (reactorProject.getVersion().equals(artifact.getVersion())) {
                         return reactorProject;
-                    }
-                    else
-                    {
-                        getLog().info( "Artifact " + artifact.getId()
-                                           + " already available as a reactor project, but with different version. Expected: "
-                                           + artifact.getVersion() + ", found: " + reactorProject.getVersion() );
+                    } else {
+                        getLog().info(
+                                "Artifact "
+                                        + artifact.getId()
+                                        + " already available as a reactor project, but with different version. Expected: "
+                                        + artifact.getVersion() + ", found: " + reactorProject.getVersion());
                     }
                 }
             }
@@ -858,24 +835,23 @@ public abstract class AbstractIdeSupportMojo
         if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
         {
             map = new HashMap();
-            for ( Dependency d : dependencyManagement.getDependencies() )
-            {
-                try
-                {
-                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
+            for (Dependency d : dependencyManagement.getDependencies()) {
+                try {
+                    VersionRange versionRange = VersionRange.createFromVersionSpec(d.getVersion());
                     Artifact artifact =
-                        artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(), versionRange,
-                                                                  d.getType(), d.getClassifier(), d.getScope(),
-                                                                  d.isOptional() );
+                            artifactFactory.createDependencyArtifact(d.getGroupId(), d.getArtifactId(), versionRange,
+                                    d.getType(), d.getClassifier(), d.getScope(),
+                                    d.isOptional());
 
-                    handleExclusions( artifact, d );
-                    map.put( d.getManagementKey(), artifact );
-                }
-                catch ( InvalidVersionSpecificationException e )
-                {
+                    handleExclusions(artifact, d);
+                    map.put(d.getManagementKey(), artifact);
+                } catch (InvalidVersionSpecificationException e) {
                     throw new MojoExecutionException(
-                        Messages.getString( "AbstractIdeSupportMojo.unabletoparseversion", new Object[]{ //$NON-NLS-1$
-                            projectId, d.getVersion(), d.getManagementKey(), e.getMessage() } ), e );
+                            Messages.getString(
+                                    "AbstractIdeSupportMojo.unabletoparseversion", new Object[]{ //$NON-NLS-1$
+                                    projectId, d.getVersion(),
+                                    d.getManagementKey(), e.getMessage()}),
+                            e);
                 }
             }
         }
@@ -891,7 +867,7 @@ public abstract class AbstractIdeSupportMojo
      * javadocs artifacts will be attached to the <code>IdeDependency</code> Resolve source and javadoc artifacts. The
      * resolved artifacts will be downloaded based on the <code>downloadSources</code> and <code>downloadJavadocs</code>
      * attributes. Source and
-     *
+     * 
      * @param deps resolved dependencies
      */
     private void resolveSourceAndJavadocArtifacts( IdeDependency[] deps )
@@ -906,9 +882,9 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Resolve the required artifacts for each of the dependency. <code>sources</code> or <code>javadoc</code> artifacts
      * (depending on the <code>classifier</code>) are attached to the dependency.
-     *
-     * @param deps                      resolved dependencies
-     * @param inClassifier              the classifier we are looking for (either <code>sources</code> or <code>javadoc</code>)
+     * 
+     * @param deps resolved dependencies
+     * @param inClassifier the classifier we are looking for (either <code>sources</code> or <code>javadoc</code>)
      * @param includeRemoteRepositories flag whether we should search remote repositories for the artifacts or not
      * @return the list of dependencies for which the required artifact was not found
      */
@@ -921,84 +897,70 @@ public abstract class AbstractIdeSupportMojo
         // local repository for reporting missing source jars
         List remoteRepos = includeRemoteRepositories ? getRemoteArtifactRepositories() : Collections.EMPTY_LIST;
 
-        for ( IdeDependency dependency : deps )
-        {
-            if ( dependency.isReferencedProject() || dependency.isSystemScoped() )
-            {
+        for (IdeDependency dependency : deps) {
+            if (dependency.isReferencedProject() || dependency.isSystemScoped()) {
                 // artifact not needed
                 continue;
             }
 
-            if ( getLog().isDebugEnabled() )
-            {
+            if (getLog().isDebugEnabled()) {
                 getLog().debug(
-                    "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier() + " at "
-                        + dependency.getId() + ":" + inClassifier );
+                        "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier()
+                                + " at " + dependency.getId() + ":" + inClassifier);
             }
 
             Artifact baseArtifact =
-                artifactFactory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                              dependency.getVersion(), dependency.getType(),
-                                                              dependency.getClassifier() );
+                    artifactFactory.createArtifactWithClassifier(dependency.getGroupId(), dependency.getArtifactId(),
+                            dependency.getVersion(), dependency.getType(),
+                            dependency.getClassifier());
             baseArtifact =
-                IdeUtils.resolveArtifact( artifactResolver, baseArtifact, remoteRepos, localRepository, getLog() );
-            if ( !baseArtifact.isResolved() )
-            {
+                    IdeUtils.resolveArtifact(artifactResolver, baseArtifact, remoteRepos, localRepository, getLog());
+            if (!baseArtifact.isResolved()) {
                 // base artifact does not exist - no point checking for javadoc/sources
                 continue;
             }
 
             Artifact artifact =
-                IdeUtils.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                       dependency.getVersion(), dependency.getClassifier(),
-                                                       inClassifier, artifactFactory );
-            File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
+                    IdeUtils.createArtifactWithClassifier(dependency.getGroupId(), dependency.getArtifactId(),
+                            dependency.getVersion(), dependency.getClassifier(),
+                            inClassifier, artifactFactory);
+            File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile(localRepository, artifact);
 
-            if ( forceRecheck && notAvailableMarkerFile.exists() )
-            {
-                if ( !notAvailableMarkerFile.delete() )
-                {
-                    getLog().warn( Messages.getString( "AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile",
-                                                       notAvailableMarkerFile ) );
+            if (forceRecheck && notAvailableMarkerFile.exists()) {
+                if (!notAvailableMarkerFile.delete()) {
+                    getLog().warn(
+                            Messages.getString("AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile",
+                                    notAvailableMarkerFile));
                 }
             }
 
-            if ( !notAvailableMarkerFile.exists() )
-            {
+            if (!notAvailableMarkerFile.exists()) {
                 artifact =
-                    IdeUtils.resolveArtifact( artifactResolver, artifact, remoteRepos, localRepository, getLog() );
-                if ( artifact.isResolved() )
-                {
-                    if ( "sources".equals( inClassifier ) )
-                    {
-                        dependency.setSourceAttachment( artifact.getFile() );
+                        IdeUtils.resolveArtifact(artifactResolver, artifact, remoteRepos, localRepository, getLog());
+                if (artifact.isResolved()) {
+                    if ("sources".equals(inClassifier)) {
+                        dependency.setSourceAttachment(artifact.getFile());
+                    } else if ("javadoc".equals(inClassifier)) {
+                        dependency.setJavadocAttachment(artifact.getFile());
                     }
-                    else if ( "javadoc".equals( inClassifier ) )
-                    {
-                        dependency.setJavadocAttachment( artifact.getFile() );
-                    }
-                }
-                else
-                {
-                    if ( includeRemoteRepositories )
-                    {
-                        try
-                        {
+                } else {
+                    if (includeRemoteRepositories) {
+                        try {
                             notAvailableMarkerFile.createNewFile();
-                            getLog().debug( Messages.getString( "AbstractIdeSupportMojo.creatednotavailablemarkerfile",
-                                                                notAvailableMarkerFile ) );
-                        }
-                        catch ( IOException e )
-                        {
+                            getLog().debug(
+                                    Messages.getString("AbstractIdeSupportMojo.creatednotavailablemarkerfile",
+                                            notAvailableMarkerFile));
+                        } catch (IOException e) {
                             getLog().warn(
-                                Messages.getString( "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
-                                                    notAvailableMarkerFile ) );
+                                    Messages.getString(
+                                            "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
+                                            notAvailableMarkerFile));
                         }
                     }
                     // add the dependencies to the list
                     // of those lacking the required
                     // artifact
-                    missingClassifierDependencies.add( dependency );
+                    missingClassifierDependencies.add(dependency);
                 }
             }
         }
@@ -1020,11 +982,9 @@ public abstract class AbstractIdeSupportMojo
         {
             msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotavailable" ) ); //$NON-NLS-1$
 
-            for ( Object missingSourceDependency : missingSourceDependencies )
-            {
+            for (Object missingSourceDependency : missingSourceDependencies) {
                 IdeDependency art = (IdeDependency) missingSourceDependency;
-                msg.append(
-                    Messages.getString( "AbstractIdeSupportMojo.sourcesmissingitem", art.getId() ) ); //$NON-NLS-1$
+                msg.append(Messages.getString("AbstractIdeSupportMojo.sourcesmissingitem", art.getId())); //$NON-NLS-1$
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }
@@ -1033,11 +993,9 @@ public abstract class AbstractIdeSupportMojo
         {
             msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotavailable" ) ); //$NON-NLS-1$
 
-            for ( Object missingJavadocDependency : missingJavadocDependencies )
-            {
+            for (Object missingJavadocDependency : missingJavadocDependencies) {
                 IdeDependency art = (IdeDependency) missingJavadocDependency;
-                msg.append(
-                    Messages.getString( "AbstractIdeSupportMojo.javadocmissingitem", art.getId() ) ); //$NON-NLS-1$
+                msg.append(Messages.getString("AbstractIdeSupportMojo.javadocmissingitem", art.getId())); //$NON-NLS-1$
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }
@@ -1052,7 +1010,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Checks if jar has to be resolved for the given artifact
-     *
+     * 
      * @param art the artifact to check
      * @return true if resolution should happen
      */
@@ -1063,7 +1021,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Checks if a projects reference has to be used for the given artifact
-     *
+     * 
      * @param art the artifact to check
      * @return true if a project reference has to be used.
      */
@@ -1074,7 +1032,7 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * Checks whether the currently running Maven satisfies the specified version (range).
-     *
+     * 
      * @param version The version range to test for, must not be <code>null</code>.
      * @return <code>true</code> if the current Maven version matches the specified version range, <code>false</code>
      *         otherwise.

@@ -395,18 +395,18 @@ public class AnnouncementMojo
 
     /**
      * The scheme of your github api domain. Only use if using github enterprise.
-     *
+     * 
      * @since 2.9
      */
-    @Parameter( defaultValue = "http", property = "changes.githubAPIScheme" )
+    @Parameter( defaultValue = "http", property = "changes.githubAPIScheme")
     private String githubAPIScheme;
 
     /**
      * The port of your github api domain. Only use if using github enterprise.
-     *
+     * 
      * @since 2.9
      */
-    @Parameter( defaultValue = "80", property = "changes.githubAPIPort" )
+    @Parameter( defaultValue = "80", property = "changes.githubAPIPort")
     private int githubAPIPort;
 
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
@@ -454,7 +454,7 @@ public class AnnouncementMojo
                     issueManagementSystems.add( CHANGES_XML );
                 }
             }
-
+            
             // Fetch releases from the configured issue management systems
             List<Release> releases = null;
             if ( issueManagementSystems.contains( CHANGES_XML ) )
@@ -504,8 +504,7 @@ public class AnnouncementMojo
 
             if ( issueManagementSystems.contains( GIT_HUB ) )
             {
-                if ( ProjectUtils.validateIfIssueManagementComplete( project, GIT_HUB, "GitHub announcement",
-                                                                     getLog() ) )
+                if ( ProjectUtils.validateIfIssueManagementComplete( project, GIT_HUB, "GitHub announcement", getLog() ) )
                 {
                     List<Release> gitHubReleases = getGitHubReleases();
                     releases = releaseUtils.mergeReleases( releases, gitHubReleases );
@@ -514,7 +513,7 @@ public class AnnouncementMojo
                 else
                 {
                     throw new MojoExecutionException(
-                        "Something is wrong with the Issue Management section. See previous error messages." );
+                                                      "Something is wrong with the Issue Management section. See previous error messages." );
                 }
             }
 
@@ -551,9 +550,8 @@ public class AnnouncementMojo
     {
         String version = ( versionPrefix == null ? "" : versionPrefix ) + getVersion();
 
-        getLog().debug(
-            "Generating announcement for version [" + version + "]. Found these releases: " + ReleaseUtils.toString(
-                releases ) );
+        getLog().debug( "Generating announcement for version [" + version + "]. Found these releases: "
+                        + ReleaseUtils.toString( releases ) );
 
         doGenerate( releases, releaseUtils.getLatestRelease( releases, version ) );
     }
@@ -605,6 +603,7 @@ public class AnnouncementMojo
                 context.put( "announceParameters", announceParameters );
             }
 
+
             processTemplate( context, getOutputDirectory(), template, announcementFile );
         }
         catch ( ResourceNotFoundException rnfe )
@@ -620,9 +619,9 @@ public class AnnouncementMojo
     /**
      * Create the velocity template
      *
-     * @param context          velocity context that has the parameter values
-     * @param outputDirectory  directory where the file will be generated
-     * @param template         velocity template which will the context be merged
+     * @param context velocity context that has the parameter values
+     * @param outputDirectory directory where the file will be generated
+     * @param template velocity template which will the context be merged
      * @param announcementFile The file name of the generated announcement
      * @throws ResourceNotFoundException, VelocityException, IOException
      */
@@ -652,8 +651,9 @@ public class AnnouncementMojo
 
             if ( StringUtils.isEmpty( templateEncoding ) )
             {
-                templateEncoding = ReaderFactory.FILE_ENCODING;
-                getLog().warn( "File encoding has not been set, using platform encoding " + templateEncoding
+                templateEncoding =  ReaderFactory.FILE_ENCODING;
+                getLog().warn(
+                               "File encoding has not been set, using platform encoding " + templateEncoding
                                    + ", i.e. build is platform dependent!" );
             }
 
@@ -731,7 +731,7 @@ public class AnnouncementMojo
                 int originalNumberOfIssues = issueList.size();
                 issueList = IssueUtils.filterIssuesWithVersionPrefix( issueList, versionPrefix );
                 getLog().debug( "Filtered out " + issueList.size() + " issues of " + originalNumberOfIssues
-                                    + " that matched the versionPrefix '" + versionPrefix + "'." );
+                    + " that matched the versionPrefix '" + versionPrefix + "'." );
             }
 
             return getReleases( issueList, new JIRAIssueManagmentSystem() );
@@ -745,7 +745,7 @@ public class AnnouncementMojo
     private List<Release> getReleases( List<Issue> issues, IssueManagementSystem ims )
         throws MojoExecutionException
     {
-        if ( issueTypes != null )
+        if ( issueTypes != null ) 
         {
             ims.applyConfiguration( issueTypes );
         }
@@ -851,16 +851,16 @@ public class AnnouncementMojo
     {
         this.introduction = introduction;
     }
-
+    
     public void setIssueTypes( Map<String, String> issueTypes )
     {
-        this.issueTypes = issueTypes;
-    }
+		this.issueTypes = issueTypes;
+	}
 
     public Map<String, String> getIssueTypes()
     {
-        return issueTypes;
-    }
+		return issueTypes;
+	}
 
     public File getOutputDirectory()
     {

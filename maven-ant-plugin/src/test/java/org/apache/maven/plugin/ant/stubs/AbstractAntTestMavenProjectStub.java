@@ -131,8 +131,7 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getCompileSourceRoots()
     {
-        File src =
-            new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/main/java" );
+        File src = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/main/java" );
         return Collections.singletonList( src.getAbsolutePath() );
     }
 
@@ -141,8 +140,7 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getTestCompileSourceRoots()
     {
-        File test =
-            new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/test/java" );
+        File test = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/test/java" );
         return Collections.singletonList( test.getAbsolutePath() );
     }
 
@@ -151,9 +149,9 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getCompileArtifacts()
     {
-        Artifact junit =
-            new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ), Artifact.SCOPE_TEST,
-                                 "jar", null, new DefaultArtifactHandler( "jar" ), false );
+        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ),
+                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
+                                              false );
         junit.setFile( new File( "junit/junit/3.8.2/junit-3.8.2.jar" ) );
 
         return Collections.singletonList( junit );
@@ -164,9 +162,9 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getTestArtifacts()
     {
-        Artifact junit =
-            new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ), Artifact.SCOPE_TEST,
-                                 "jar", null, new DefaultArtifactHandler( "jar" ), false );
+        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ),
+                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
+                                              false );
         junit.setFile( new File( "junit/junit/3.8.2/junit-3.8.2.jar" ) );
 
         return Collections.singletonList( junit );

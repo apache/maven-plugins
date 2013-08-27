@@ -237,8 +237,10 @@ public class ModuleSetAssemblyPhaseTest
             createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).createFileSet( fs, sources, project,
                                                                                                 macTask.configSource );
 
-        assertEquals( 1, result.getExcludes().size() );
-        assertEquals( "submodule/**", result.getExcludes().get( 0 ) );
+        assertEquals( 1, result.getExcludes()
+                               .size() );
+        assertEquals( "submodule/**", result.getExcludes()
+                                            .get( 0 ) );
 
         mm.verifyAll();
     }
@@ -338,7 +340,8 @@ public class ModuleSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries, projects,
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries,
+                                                                                                projects,
                                                                                                 macTask.archiver,
                                                                                                 macTask.configSource,
                                                                                                 new DefaultAssemblyContext() );
@@ -359,8 +362,8 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger(
-            Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         final ModuleBinaries binaries = new ModuleBinaries();
 
@@ -441,8 +444,8 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger(
-            Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         final ModuleBinaries binaries = new ModuleBinaries();
 
@@ -480,8 +483,8 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger(
-            Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
         macTask.expectGetSession( null );
 
         final ModuleBinaries binaries = new ModuleBinaries();
@@ -505,8 +508,8 @@ public class ModuleSetAssemblyPhaseTest
         final ArtifactMock depArtifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
         final File depArtifactFile = depArtifactMock.setNewFile();
 
-        macTask.expectAddFile( depArtifactFile, "out/dep", TypeConversionUtils.modeToInt( "777", new ConsoleLogger(
-            Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( depArtifactFile, "out/dep",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         final MavenProject depProject = createProject( "group", "dep", "version", null );
         depProject.setArtifact( depArtifactMock.getArtifact() );
@@ -642,8 +645,9 @@ public class ModuleSetAssemblyPhaseTest
 
         try
         {
-            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact(
-                artifactMock.getArtifact(), null, null, null, null );
+            createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact( artifactMock.getArtifact(),
+                                                                                                    null, null, null,
+                                                                                                    null );
 
             fail( "Expected ArchiveCreationException since artifact file is null." );
         }
@@ -671,8 +675,8 @@ public class ModuleSetAssemblyPhaseTest
         macTask.expectGetFinalName( "final-name" );
         macTask.expectGetDestFile( new File( "junk" ) );
 
-        macTask.expectAddFile( artifactFile, "out/artifact", TypeConversionUtils.modeToInt( "777", new ConsoleLogger(
-            Logger.LEVEL_DEBUG, "test" ) ) );
+        macTask.expectAddFile( artifactFile, "out/artifact",
+                               TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         final ModuleBinaries binaries = new ModuleBinaries();
         binaries.setOutputDirectory( "out" );
@@ -682,8 +686,11 @@ public class ModuleSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact(
-            artifactMock.getArtifact(), project, macTask.archiver, macTask.configSource, binaries );
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleArtifact( artifactMock.getArtifact(),
+                                                                                                project,
+                                                                                                macTask.archiver,
+                                                                                                macTask.configSource,
+                                                                                                binaries );
 
         mm.verifyAll();
     }
@@ -739,8 +746,7 @@ public class ModuleSetAssemblyPhaseTest
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver,
-                                                             macTask.configSource );
+        createPhase( logger, null ).addModuleSourceFileSets( sources, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -752,8 +758,7 @@ public class ModuleSetAssemblyPhaseTest
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
         final List<MavenProject> projects = Collections.singletonList( project );
 
@@ -779,8 +784,7 @@ public class ModuleSetAssemblyPhaseTest
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
         final MavenProject project2 = createProject( "group", "artifact2", "version", null );
 
@@ -810,8 +814,7 @@ public class ModuleSetAssemblyPhaseTest
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
         final MavenProject project2 = createProject( "group", "artifact2", "version", project );
 
@@ -831,7 +834,8 @@ public class ModuleSetAssemblyPhaseTest
 
         assertFalse( moduleProjects.isEmpty() );
 
-        final MavenProject result = moduleProjects.iterator().next();
+        final MavenProject result = moduleProjects.iterator()
+                                                  .next();
 
         assertEquals( "artifact2", result.getArtifactId() );
 
@@ -845,8 +849,7 @@ public class ModuleSetAssemblyPhaseTest
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
         final MavenProject project2 = createProject( "group", "artifact2", "version", project );
         final MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
@@ -884,8 +887,7 @@ public class ModuleSetAssemblyPhaseTest
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
-        final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mm, project );
+        final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
         final List<ArtifactMock> macArtifacts = new ArrayList<ArtifactMock>();
 
@@ -958,9 +960,8 @@ public class ModuleSetAssemblyPhaseTest
 
             System.out.println( "Unexpected projects in output: " );
 
-            for ( final MavenProject project : checkTooMany )
-            {
-                System.out.println( project.getId() );
+            for (final MavenProject project : checkTooMany) {
+                System.out.println(project.getId());
             }
         }
 
@@ -973,9 +974,8 @@ public class ModuleSetAssemblyPhaseTest
 
             System.out.println( "Expected projects missing from output: " );
 
-            for ( final MavenProject project : checkTooMany )
-            {
-                System.out.println( project.getId() );
+            for (final MavenProject project : checkTooMany) {
+                System.out.println(project.getId());
             }
         }
 
@@ -1006,7 +1006,8 @@ public class ModuleSetAssemblyPhaseTest
             final File parentBase = parentProject.getBasedir();
             pomFile = new File( parentBase, artifactId + "/pom.xml" );
 
-            parentProject.getModel().addModule( artifactId );
+            parentProject.getModel()
+                         .addModule( artifactId );
             project.setParent( parentProject );
         }
 

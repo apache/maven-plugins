@@ -91,8 +91,8 @@ public abstract class AbstractDependencyPluginITCase
     {
         if ( !installed )
         {
-            System.out.println(
-                "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
+            System.out
+                .println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
         }
 
         super.setUp();
@@ -111,11 +111,9 @@ public abstract class AbstractDependencyPluginITCase
         {
             String path = System.getProperty( "java.library.path" );
             String[] paths = StringUtils.split( path, System.getProperty( "path.separator" ) );
-            for ( String pt : paths )
-            {
-                if ( new File( pt, "mvn" ).exists() )
-                {
-                    System.setProperty( "maven.home", new File( pt ).getAbsoluteFile().getParent() );
+            for (String pt : paths) {
+                if (new File(pt, "mvn").exists()) {
+                    System.setProperty("maven.home", new File(pt).getAbsoluteFile().getParent());
                     break;
                 }
 
@@ -130,11 +128,11 @@ public abstract class AbstractDependencyPluginITCase
             {
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
 
-                localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( PomFile, "test",
-                                                                                                      localRepositoryDirectory );
+                localRepositoryDirectory = pluginTestTool
+                    .preparePluginForUnitTestingWithMavenBuilds( PomFile, "test", localRepositoryDirectory );
 
-                System.out.println(
-                    "*** Installed test-version of the Dependency plugin to: " + localRepositoryDirectory + "\n" );
+                System.out.println( "*** Installed test-version of the Dependency plugin to: "
+                    + localRepositoryDirectory + "\n" );
 
                 installed = true;
             }
@@ -172,10 +170,10 @@ public abstract class AbstractDependencyPluginITCase
 
     /**
      * Execute the plugin with no properties
-     *
+     * 
      * @param projectName project directory
-     * @param goalList    comma separated list of goals to
-     *                    execute
+     * @param goalList comma separated list of goals to
+     *            execute
      * @throws Exception any exception generated during test
      */
     protected void testProject( String projectName, String goalList )
@@ -187,11 +185,11 @@ public abstract class AbstractDependencyPluginITCase
 
     /**
      * Execute the plugin.
-     *
+     * 
      * @param projectName project directory
-     * @param properties  additional properties
-     * @param goalList    comma separated list of goals to
-     *                    execute
+     * @param properties additional properties
+     * @param goalList comma separated list of goals to
+     *            execute
      * @throws Exception any exception generated during test
      */
     protected void testProject( String projectName, Properties properties, String goalList )
@@ -280,17 +278,16 @@ public abstract class AbstractDependencyPluginITCase
 
             try
             {
-
+                
                 buildLogUrl = buildLog.toURI().toURL().toExternalForm();
             }
             catch ( MalformedURLException e )
             {
             }
 
-            throw new ExecutionFailedException(
-                "Failed to execute build.\nPOM: " + pom + "\nGoals: " + StringUtils.join( goals.iterator(), ", " )
-                    + "\nExit Code: " + result.getExitCode() + "\nError: " + result.getExecutionException()
-                    + "\nBuild Log: " + buildLogUrl + "\n", result );
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: "
+                + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: "
+                + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
         }
     }
 

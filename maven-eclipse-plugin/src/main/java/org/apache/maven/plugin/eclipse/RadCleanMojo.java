@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Deletes the config files used by Rad-6. the files .j2ee and the file .websettings
- *
+ * 
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  * @goal rad-clean
  */
@@ -37,7 +37,7 @@ public class RadCleanMojo
 {
     /**
      * The project whose project files to clean.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -56,7 +56,7 @@ public class RadCleanMojo
 
     /**
      * getter for the instancevarriable project.
-     *
+     * 
      * @return the maven project decriptor
      */
     public MavenProject getProject()
@@ -66,7 +66,7 @@ public class RadCleanMojo
 
     /**
      * getter for the instancevarriable project.
-     *
+     * 
      * @param project the maven project decriptor
      */
     public void setProject( MavenProject project )
@@ -76,7 +76,7 @@ public class RadCleanMojo
 
     /**
      * Delete all jars in the EAR project root directory.
-     *
+     * 
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void handleEarLibs()
@@ -89,7 +89,7 @@ public class RadCleanMojo
 
     /**
      * Delete all jars in the project that were required by rad6.
-     *
+     * 
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void handleLibs()
@@ -108,7 +108,7 @@ public class RadCleanMojo
 
     /**
      * Delete all jars in the WAR project WEB-INF/lib directory.
-     *
+     * 
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
     private void handleWarLibs()
@@ -116,10 +116,10 @@ public class RadCleanMojo
     {
         File basedir = this.project.getBasedir();
 
-        File warSourceDirectory = new File(
-            IdeUtils.getPluginSetting( this.project, JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN, "warSourceDirectory",
-                                       //$NON-NLS-1$
-                                       "src/main/webapp" ) ); //$NON-NLS-1$
+        File warSourceDirectory =
+            new File( IdeUtils.getPluginSetting( this.project, JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                                 "warSourceDirectory", //$NON-NLS-1$
+                                                 "src/main/webapp" ) ); //$NON-NLS-1$
 
         String webContentDir = IdeUtils.toRelativeAndFixSeparator( basedir, warSourceDirectory, false );
 
@@ -135,7 +135,7 @@ public class RadCleanMojo
 
     /**
      * delete all Jar artifacts in the specified directory.
-     *
+     * 
      * @param directory to delete the jars from
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
@@ -147,7 +147,7 @@ public class RadCleanMojo
 
     /**
      * delete all War artifacts in the specified directory (cleaning up EAR's for example).
-     *
+     * 
      * @param directory to delete the wars from
      * @throws MojoExecutionException only if a file exists and can't be deleted
      */
@@ -159,12 +159,12 @@ public class RadCleanMojo
 
     /**
      * Deletes all artifacts of specified packaging type in the specified directory
-     *
-     * @param directory     - to delete the jars from
+     * 
+     * @param directory - to delete the jars from
      * @param packagingType - packaging type (file extensions in fact - can be dangerous)
-     * @throws MojoExecutionException if a file exists and can't be deleted
      * @see Constants#PROJECT_PACKAGING_JAR
      * @see Constants#PROJECT_PACKAGING_WAR
+     * @throws MojoExecutionException if a file exists and can't be deleted
      */
     private void deleteArtifactsInDirectory( File directory, String packagingType )
         throws MojoExecutionException
@@ -175,12 +175,11 @@ public class RadCleanMojo
             || Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packagingType ) )
         {
             String[] oldFiles =
-                FileUtils.getFilesFromExtension( directory.getAbsolutePath(), new String[]{ packagingType } );
-            for ( String oldFile : oldFiles )
-            {
-                File f = new File( oldFile );
+                FileUtils.getFilesFromExtension( directory.getAbsolutePath(), new String[] { packagingType } );
+            for (String oldFile : oldFiles) {
+                File f = new File(oldFile);
 
-                delete( f );
+                delete(f);
             }
         }
     }

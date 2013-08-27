@@ -44,18 +44,14 @@ import java.util.Map;
 public class ExpressionsMojo
     extends AbstractHelpMojo
 {
-    /**
-     * English sentence when no description exists
-     */
+    /** English sentence when no description exists */
     private static final String NO_DESCRIPTION_AVAILABLE = "No description available.";
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -96,8 +92,8 @@ public class ExpressionsMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Cannot write plugins expressions description to output: " + output,
-                                                  e );
+                throw new MojoExecutionException( "Cannot write plugins expressions description to output: "
+                    + output, e );
             }
 
             if ( getLog().isInfoEnabled() )
@@ -120,7 +116,7 @@ public class ExpressionsMojo
 
     /**
      * @return the value of the private static field <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>.
-     * @throws MojoFailureException   if any reflection exceptions occur
+     * @throws MojoFailureException if any reflection exceptions occur
      * @throws MojoExecutionException if no value exists for <code>ExpressionDocumenter#EXPRESSION_ROOTS</code>
      */
     private static List<String> getExpressionsRoot()
@@ -133,8 +129,8 @@ public class ExpressionsMojo
             String[] value = (String[]) f.get( new ExpressionDocumenter() );
             if ( value == null )
             {
-                throw new MojoExecutionException(
-                    "org.apache.maven.usability.plugin.ExpressionDocumenter#" + "EXPRESSION_ROOTS has no value." );
+                throw new MojoExecutionException( "org.apache.maven.usability.plugin.ExpressionDocumenter#"
+                    + "EXPRESSION_ROOTS has no value." );
             }
 
             return Arrays.asList( value );
@@ -160,7 +156,7 @@ public class ExpressionsMojo
     /**
      * @param description could be null
      * @return the given description without any new line, or <code>NO_DESCRIPTION_AVAILABLE</code> value if
-     *         <code>description</code> is null.
+     * <code>description</code> is null.
      * @see #NO_DESCRIPTION_AVAILABLE
      */
     private static String trimCDATA( String description )
@@ -172,9 +168,8 @@ public class ExpressionsMojo
 
         StringBuilder sb = new StringBuilder();
         String[] lines = StringUtils.split( description, "\r\n" );
-        for ( String line : lines )
-        {
-            sb.append( StringUtils.trim( line ) ).append( " " );
+        for (String line : lines) {
+            sb.append(StringUtils.trim(line)).append(" ");
         }
 
         return sb.toString();

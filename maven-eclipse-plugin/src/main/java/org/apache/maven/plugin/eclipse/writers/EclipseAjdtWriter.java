@@ -39,22 +39,22 @@ public class EclipseAjdtWriter
 {
 
     /**
-     *
+     * 
      */
     private static final String LIBRARY = "LIBRARY";
 
     /**
-     *
+     * 
      */
     private static final String BINARY = "BINARY";
 
     /**
-     *
+     * 
      */
     private static final String CONTENT_KIND = ".contentKind";
 
     /**
-     *
+     * 
      */
     private static final String ENTRY_KIND = ".entryKind";
 
@@ -83,16 +83,13 @@ public class EclipseAjdtWriter
         IdeDependency[] deps = config.getDeps();
         int ajdtDepCount = 0;
         int ajdtWeaveDepCount = 0;
-        for ( IdeDependency dep : deps )
-        {
-            if ( dep.isAjdtDependency() )
-            {
-                addDependency( ajdtSettings, dep, ASPECT_DEP_PROP, ++ajdtDepCount );
+        for (IdeDependency dep : deps) {
+            if (dep.isAjdtDependency()) {
+                addDependency(ajdtSettings, dep, ASPECT_DEP_PROP, ++ajdtDepCount);
             }
 
-            if ( dep.isAjdtWeaveDependency() )
-            {
-                addDependency( ajdtSettings, dep, WEAVE_DEP_PROP, ++ajdtWeaveDepCount );
+            if (dep.isAjdtWeaveDependency()) {
+                addDependency(ajdtSettings, dep, WEAVE_DEP_PROP, ++ajdtWeaveDepCount);
             }
         }
 
@@ -136,13 +133,11 @@ public class EclipseAjdtWriter
             }
             catch ( FileNotFoundException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ),
-                                                  e ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ), e ); //$NON-NLS-1$
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ),
-                                                  e ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ), e ); //$NON-NLS-1$
             }
         }
     }
@@ -179,7 +174,7 @@ public class EclipseAjdtWriter
                 if ( log.isDebugEnabled() )
                 {
                     log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
-                                                   new Object[]{ dep.getArtifactId(), path } ) );
+                                                   new Object[] { dep.getArtifactId(), path } ) );
                 }
             }
             else

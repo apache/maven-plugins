@@ -42,8 +42,7 @@ import org.apache.maven.plugins.changes.model.Release;
  *
  * @version $Id$
  */
-public class ChangesReportGenerator
-    extends AbstractIssuesReportGenerator
+public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 {
 
     /**
@@ -206,7 +205,7 @@ public class ChangesReportGenerator
         }
 
         // If the %URL% token is used then the issue management system URL must be set.
-        if ( issueLink.contains( URL_TOKEN ) && StringUtils.isBlank( getUrl() ) )
+        if (issueLink.contains(URL_TOKEN) && StringUtils.isBlank( getUrl() ) )
         {
             return false;
         }
@@ -226,9 +225,9 @@ public class ChangesReportGenerator
     {
         sinkBeginReport( sink, bundle );
 
-        constructReleaseHistory( sink, bundle, releaseList );
+        constructReleaseHistory(sink, bundle, releaseList);
 
-        constructReleases( sink, bundle, releaseList );
+        constructReleases(sink, bundle, releaseList);
 
         sinkEndReport( sink );
     }
@@ -236,7 +235,7 @@ public class ChangesReportGenerator
     /**
      * Constructs table row for specified action with all calculated content (e.g. issue link).
      *
-     * @param sink   Sink
+     * @param sink Sink
      * @param bundle Resource bundle
      * @param action Action to generate content for
      */
@@ -244,7 +243,7 @@ public class ChangesReportGenerator
     {
         sink.tableRow();
 
-        sinkShowTypeIcon( sink, action.getType() );
+        sinkShowTypeIcon(sink, action.getType());
 
         sink.tableCell();
 
@@ -312,7 +311,7 @@ public class ChangesReportGenerator
     /**
      * Construct a text or link that mention the people that helped with an action.
      *
-     * @param sink   The sink
+     * @param sink The sink
      * @param action The action that was done
      * @param bundle A resource bundle for i18n
      * @param dueTos Other people that helped with an action
@@ -321,18 +320,17 @@ public class ChangesReportGenerator
     {
 
         // Create a Map with key : dueTo name, value : dueTo email
-        Map<String, String> namesEmailMap = new LinkedHashMap<String, String>();
+        Map<String,String> namesEmailMap = new LinkedHashMap<String,String>();
 
         // Only add the dueTo specified as attributes, if it has either a dueTo or a dueToEmail
         if ( StringUtils.isNotEmpty( action.getDueTo() ) || StringUtils.isNotEmpty( action.getDueToEmail() ) )
         {
-            namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
+            namesEmailMap.put(action.getDueTo(), action.getDueToEmail());
         }
 
-        for ( Object dueTo1 : dueTos )
-        {
+        for (Object dueTo1 : dueTos) {
             DueTo dueTo = (DueTo) dueTo1;
-            namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
+            namesEmailMap.put(dueTo.getName(), dueTo.getEmail());
         }
 
         if ( namesEmailMap.isEmpty() )
@@ -362,16 +360,16 @@ public class ChangesReportGenerator
             }
         }
 
-        sink.text( "." );
+        sink.text(".");
     }
 
     /**
      * Construct links to the issues that were solved by an action.
      *
-     * @param issue  The issue specified by attributes
+     * @param issue The issue specified by attributes
      * @param system The issue management system
-     * @param sink   The sink
-     * @param fixes  The List of issues specified as fixes elements
+     * @param sink The sink
+     * @param fixes The List of issues specified as fixes elements
      */
     private void constructIssueLink( String issue, String system, Sink sink, List fixes )
     {
@@ -414,14 +412,14 @@ public class ChangesReportGenerator
      * were solved by an action.
      *
      * @param issue The issue specified by attributes
-     * @param sink  The sink
+     * @param sink The sink
      * @param fixes The List of issues specified as fixes elements
      */
     private void constructIssueText( String issue, Sink sink, List fixes )
     {
         if ( StringUtils.isNotEmpty( issue ) )
         {
-            sink.text( issue );
+            sink.text(issue);
 
             if ( !fixes.isEmpty() )
             {
@@ -436,7 +434,7 @@ public class ChangesReportGenerator
             String currentIssueId = fixedIssue.getIssue();
             if ( StringUtils.isNotEmpty( currentIssueId ) )
             {
-                sink.text( currentIssueId );
+                sink.text(currentIssueId);
             }
 
             if ( iterator.hasNext() )
@@ -465,17 +463,16 @@ public class ChangesReportGenerator
 
         sink.tableRow_();
 
-        for ( Object aReleaseList : releaseList )
-        {
+        for (Object aReleaseList : releaseList) {
             Release release = (Release) aReleaseList;
 
             sink.tableRow();
 
-            sinkCellLink( sink, release.getVersion(), "#" + HtmlTools.encodeId( release.getVersion() ) );
+            sinkCellLink(sink, release.getVersion(), "#" + HtmlTools.encodeId(release.getVersion()));
 
-            sinkCell( sink, release.getDateRelease() );
+            sinkCell(sink, release.getDateRelease());
 
-            sinkCell( sink, release.getDescription() );
+            sinkCell(sink, release.getDescription());
 
             sink.tableRow_();
         }
@@ -500,24 +497,23 @@ public class ChangesReportGenerator
     /**
      * Constructs document sections for each of specified releases.
      *
-     * @param sink        Sink
-     * @param bundle      Resource bundle
+     * @param sink Sink
+     * @param bundle Resource bundle
      * @param releaseList Releases to create content for
      */
     private void constructReleases( Sink sink, ResourceBundle bundle, List releaseList )
     {
-        for ( Object aReleaseList : releaseList )
-        {
+        for (Object aReleaseList : releaseList) {
             Release release = (Release) aReleaseList;
-            constructRelease( sink, bundle, release );
+            constructRelease(sink, bundle, release);
         }
     }
 
     /**
      * Constructs document section for specified release.
      *
-     * @param sink    Sink
-     * @param bundle  Resource bundle
+     * @param sink Sink
+     * @param bundle Resource bundle
      * @param release Release to create document section for
      */
     private void constructRelease( Sink sink, ResourceBundle bundle, Release release )
@@ -526,14 +522,13 @@ public class ChangesReportGenerator
 
         final String date = ( release.getDateRelease() == null ) ? "" : " - " + release.getDateRelease();
 
-        sinkSectionTitle2Anchor( sink,
-                                 bundle.getString( "report.changes.label.release" ) + " " + release.getVersion() + date,
-                                 release.getVersion() );
+        sinkSectionTitle2Anchor(sink, bundle.getString("report.changes.label.release") + " "
+                + release.getVersion() + date, release.getVersion());
 
         if ( isReleaseEmpty( release ) )
         {
             sink.paragraph();
-            sink.text( bundle.getString( "report.changes.text.no.changes" ) );
+            sink.text( bundle.getString("report.changes.text.no.changes") );
             sink.paragraph_();
         }
         else
@@ -543,22 +538,20 @@ public class ChangesReportGenerator
             sink.tableRow();
             sinkHeader( sink, bundle.getString( "report.issues.label.type" ) );
             sinkHeader( sink, bundle.getString( "report.issues.label.summary" ) );
-            sinkHeader( sink, bundle.getString( "report.issues.label.assignee" ) );
+            sinkHeader(sink, bundle.getString("report.issues.label.assignee"));
             if ( this.isAddActionDate() )
             {
                 sinkHeader( sink, bundle.getString( "report.issues.label.updated" ) );
             }
             sink.tableRow_();
 
-            for ( Action action : release.getActions() )
-            {
-                constructAction( sink, bundle, action );
+            for (Action action : release.getActions()) {
+                constructAction(sink, bundle, action);
             }
 
-            for ( Object o : release.getComponents() )
-            {
+            for (Object o : release.getComponents()) {
                 Component component = (Component) o;
-                constructComponent( sink, bundle, component );
+                constructComponent(sink, bundle, component);
             }
 
             sink.table_();
@@ -571,8 +564,8 @@ public class ChangesReportGenerator
      * Constructs table rows for specified release component. It will create header row for
      * component name and action rows for all component issues.
      *
-     * @param sink      Sink
-     * @param bundle    Resource bundle
+     * @param sink Sink
+     * @param bundle Resource bundle
      * @param component Release component to generate content for.
      */
     private void constructComponent( Sink sink, ResourceBundle bundle, Component component )
@@ -585,7 +578,7 @@ public class ChangesReportGenerator
             sink.tableHeaderCell_();
 
             sink.tableHeaderCell();
-            sink.text( component.getName() );
+            sink.text(component.getName());
             sink.tableHeaderCell_();
 
             sink.tableHeaderCell();
@@ -599,9 +592,8 @@ public class ChangesReportGenerator
 
             sink.tableRow_();
 
-            for ( Action action : component.getActions() )
-            {
-                constructAction( sink, bundle, action );
+            for (Action action : component.getActions()) {
+                constructAction(sink, bundle, action);
             }
         }
     }
@@ -612,18 +604,15 @@ public class ChangesReportGenerator
      * @param release Release to check
      * @return <code>true</code> if release doesn't contain any issues, <code>false</code> otherwise
      */
-    private boolean isReleaseEmpty( Release release )
-    {
+    private boolean isReleaseEmpty( Release release ) {
         if ( !release.getActions().isEmpty() )
         {
             return false;
         }
 
-        for ( Object o : release.getComponents() )
-        {
+        for (Object o : release.getComponents()) {
             Component component = (Component) o;
-            if ( !component.getActions().isEmpty() )
-            {
+            if (!component.getActions().isEmpty()) {
                 return false;
             }
         }
@@ -634,7 +623,7 @@ public class ChangesReportGenerator
     /**
      * Replace tokens in the issue link template with the real values.
      *
-     * @param issue  The issue identifier
+     * @param issue The issue identifier
      * @param system The issue management system
      * @return An interpolated issue link
      */
@@ -643,7 +632,7 @@ public class ChangesReportGenerator
         String parseLink;
         String issueLink = (String) this.issueLinksPerSystem.get( system );
         parseLink = issueLink.replaceFirst( ISSUE_TOKEN, issue );
-        if ( parseLink.contains( URL_TOKEN ) )
+        if (parseLink.contains(URL_TOKEN))
         {
             String url = this.url.substring( 0, this.url.lastIndexOf( "/" ) );
             parseLink = parseLink.replaceFirst( URL_TOKEN, url );

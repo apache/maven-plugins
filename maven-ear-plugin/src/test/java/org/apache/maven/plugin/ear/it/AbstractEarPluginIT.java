@@ -98,7 +98,7 @@ public abstract class AbstractEarPluginIT
         catch ( VerificationException e )
         {
             //@TODO needs to be handled nicely in the verifier
-            if ( expectNoError || !e.getMessage().contains( "Exit code was non-zero" ) )
+            if ( expectNoError || !e.getMessage().contains("Exit code was non-zero"))
             {
                 throw e;
             }
@@ -297,19 +297,13 @@ public abstract class AbstractEarPluginIT
            list we add it but we don't add it's content. Otherwise, we don't
            add the directory *BUT* we browse it's content
          */
-        for ( File file : result )
-        {
-            if ( file.isFile() )
-            {
-                files.add( file );
-            }
-            else if ( expectedDirectories.contains( file ) )
-            {
-                files.add( file );
-            }
-            else
-            {
-                addFiles( file, files, expectedDirectories );
+        for (File file : result) {
+            if (file.isFile()) {
+                files.add(file);
+            } else if (expectedDirectories.contains(file)) {
+                files.add(file);
+            } else {
+                addFiles(file, files, expectedDirectories);
             }
         }
     }

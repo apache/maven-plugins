@@ -193,8 +193,7 @@ public abstract class AbstractProjectInfoReport
                 siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories() );
 
             SiteRenderingContext siteContext =
-                siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes, model, getName( locale ),
-                                                   locale );
+                siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes, model, getName( locale ), locale );
 
             RenderingContext context = new RenderingContext( outputDirectory, filename );
 
@@ -213,23 +212,23 @@ public abstract class AbstractProjectInfoReport
         }
         catch ( RendererException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( SiteToolException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         finally
         {
@@ -270,7 +269,7 @@ public abstract class AbstractProjectInfoReport
     {
         return project;
     }
-
+    
     protected Plugin getPlugin( String pluginId )
     {
         if ( ( getProject().getBuild() == null ) || ( getProject().getBuild().getPluginsAsMap() == null ) )
@@ -281,22 +280,22 @@ public abstract class AbstractProjectInfoReport
         Plugin plugin = (Plugin) getProject().getBuild().getPluginsAsMap().get( pluginId );
 
         if ( ( plugin == null ) && ( getProject().getBuild().getPluginManagement() != null ) && (
-            getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
+                getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
         {
             plugin = (Plugin) getProject().getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
         }
 
         return plugin;
     }
-
+    
     protected String getPluginParameter( String pluginId, String param )
     {
         Plugin plugin = getPlugin( pluginId );
         if ( plugin != null )
         {
             Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
-            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null && StringUtils.isNotEmpty(
-                xpp3Dom.getChild( param ).getValue() ) )
+            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null
+                && StringUtils.isNotEmpty( xpp3Dom.getChild( param ).getValue() ) )
             {
                 return xpp3Dom.getChild( param ).getValue();
             }
@@ -340,17 +339,13 @@ public abstract class AbstractProjectInfoReport
 
     protected abstract String getI18Nsection();
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return getI18nString( locale, "name" );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return getI18nString( locale, "description" );
@@ -387,7 +382,7 @@ public abstract class AbstractProjectInfoReport
             URLClassLoader classLoader = null;
             try
             {
-                classLoader = new URLClassLoader( new URL[]{ customBundleFile.getParentFile().toURI().toURL() } );
+                classLoader = new URLClassLoader( new URL[] { customBundleFile.getParentFile().toURI().toURL() } );
             }
             catch ( MalformedURLException e )
             {
@@ -400,97 +395,73 @@ public abstract class AbstractProjectInfoReport
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getDefaultLanguage()
         {
             return locale.getLanguage();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getDefaultCountry()
         {
             return locale.getCountry();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getDefaultBundleName()
         {
             return bundleName;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String[] getBundleNames()
         {
-            return new String[]{ bundleName };
+            return new String[] { bundleName };
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public ResourceBundle getBundle()
         {
             return bundle;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public ResourceBundle getBundle( String bundleName )
         {
             return bundle;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public ResourceBundle getBundle( String bundleName, String languageHeader )
         {
             return bundle;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public ResourceBundle getBundle( String bundleName, Locale locale )
         {
             return bundle;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Locale getLocale( String languageHeader )
         {
             return new Locale( languageHeader );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getString( String key )
         {
             return getString( bundleName, locale, key );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getString( String key, Locale locale )
         {
             return getString( bundleName, locale, key );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String getString( String bundleName, Locale locale, String key )
         {
             String value;
@@ -509,7 +480,7 @@ public abstract class AbstractProjectInfoReport
                 value = i18nOriginal.getString( bundleName, locale, key );
             }
 
-            if ( !value.contains( "${" ) )
+            if (!value.contains("${"))
             {
                 return value;
             }
@@ -540,41 +511,31 @@ public abstract class AbstractProjectInfoReport
             return value;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String format( String key, Object arg1 )
         {
-            return format( bundleName, locale, key, new Object[]{ arg1 } );
+            return format( bundleName, locale, key, new Object[] { arg1 } );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String format( String key, Object arg1, Object arg2 )
         {
-            return format( bundleName, locale, key, new Object[]{ arg1, arg2 } );
+            return format( bundleName, locale, key, new Object[] { arg1, arg2 } );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String format( String bundleName, Locale locale, String key, Object arg1 )
         {
-            return format( bundleName, locale, key, new Object[]{ arg1 } );
+            return format( bundleName, locale, key, new Object[] { arg1 } );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String format( String bundleName, Locale locale, String key, Object arg1, Object arg2 )
         {
-            return format( bundleName, locale, key, new Object[]{ arg1, arg2 } );
+            return format( bundleName, locale, key, new Object[] { arg1, arg2 } );
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String format( String bundleName, Locale locale, String key, Object[] args )
         {
             if ( locale == null )

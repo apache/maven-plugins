@@ -206,21 +206,18 @@ public abstract class AbstractJarsignerMojo
                         excludes.addAll( Arrays.asList( excludeClassifiers ) );
                     }
 
-                    for ( Object o : this.project.getAttachedArtifacts() )
-                    {
+                    for (Object o : this.project.getAttachedArtifacts()) {
                         final Artifact artifact = (Artifact) o;
 
-                        if ( !includes.isEmpty() && !includes.contains( artifact.getClassifier() ) )
-                        {
+                        if (!includes.isEmpty() && !includes.contains(artifact.getClassifier())) {
                             continue;
                         }
 
-                        if ( excludes.contains( artifact.getClassifier() ) )
-                        {
+                        if (excludes.contains(artifact.getClassifier())) {
                             continue;
                         }
 
-                        processed += processArtifact( artifact ) ? 1 : 0;
+                        processed += processArtifact(artifact) ? 1 : 0;
                     }
                 }
                 else
@@ -251,17 +248,16 @@ public abstract class AbstractJarsignerMojo
                             "Failed to scan archive directory for JARs: " + e.getMessage(), e );
                     }
 
-                    for ( Object jarFile1 : jarFiles )
-                    {
+                    for (Object jarFile1 : jarFiles) {
                         File jarFile = (File) jarFile1;
 
-                        processArchive( jarFile );
+                        processArchive(jarFile);
                         processed++;
                     }
                 }
             }
 
-            getLog().info( getMessage( "processed", processed ) );
+            getLog().info( getMessage( "processed", processed) );
         }
         else
         {
@@ -402,7 +398,7 @@ public abstract class AbstractJarsignerMojo
             if ( resultCode != 0 )
             {
                 throw new MojoExecutionException(
-                    getMessage( "failure", getCommandlineInfo( commandLine ), resultCode ) );
+                    getMessage( "failure", getCommandlineInfo( commandLine ), resultCode) );
             }
 
         }

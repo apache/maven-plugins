@@ -182,13 +182,12 @@ public abstract class AbstractEarMojo
                 // Let's validate user-defined modules
                 EarModule module;
 
-                for ( EarModule module1 : modules )
-                {
+                for (EarModule module1 : modules) {
                     module = module1;
-                    getLog().debug( "Resolving ear module[" + module + "]" );
-                    module.setEarExecutionContext( earExecutionContext );
-                    module.resolveArtifact( project.getArtifacts() );
-                    allModules.add( module );
+                    getLog().debug("Resolving ear module[" + module + "]");
+                    module.setEarExecutionContext(earExecutionContext);
+                    module.resolveArtifact(project.getArtifacts());
+                    allModules.add(module);
                 }
             }
 
@@ -206,8 +205,8 @@ public abstract class AbstractEarMojo
                 // Artifact is not yet registered and it has neither test, nor a
                 // provided scope, not is it optional
                 ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-                if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional() && filter.include(
-                    artifact ) )
+                if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional()
+                    && filter.include( artifact ) )
                 {
                     EarModule module = EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
                                                                       includeLibInApplicationXml, typeMappingService );
@@ -223,7 +222,7 @@ public abstract class AbstractEarMojo
 
         // Now we have everything let's built modules which have not been excluded
         earModules = new ArrayList<EarModule>();
-        for ( EarModule earModule : allModules )
+        for ( EarModule earModule :  allModules )
         {
             if ( earModule.isExcluded() )
             {
@@ -263,7 +262,7 @@ public abstract class AbstractEarMojo
 
     private static boolean isArtifactRegistered( Artifact a, List<EarModule> currentList )
     {
-        for ( EarModule em : currentList )
+        for( EarModule em : currentList )
         {
             if ( em.getArtifact().equals( a ) )
             {
@@ -319,9 +318,8 @@ public abstract class AbstractEarMojo
 
                     final PlexusConfiguration[] dataSourcesConfig =
                         dataSourcesEl.getChildren( JbossConfiguration.DATASOURCE );
-                    for ( PlexusConfiguration dataSourceConfig : dataSourcesConfig )
-                    {
-                        dataSources.add( dataSourceConfig.getValue() );
+                    for (PlexusConfiguration dataSourceConfig : dataSourcesConfig) {
+                        dataSources.add(dataSourceConfig.getValue());
 
                     }
                 }

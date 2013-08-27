@@ -39,49 +39,49 @@ public class MavenProjectResourcesStub
 
     public void addInclude( String pattern )
     {
-        build.getResources().get( 0 ).addInclude( pattern );
+        build.getResources().get( 0 ).addInclude(pattern);
     }
 
     public void addExclude( String pattern )
     {
-        build.getResources().get( 0 ).addExclude( pattern );
+        build.getResources().get( 0 ).addExclude(pattern);
     }
 
     public void addTestInclude( String pattern )
     {
-        build.getTestResources().get( 0 ).addInclude( pattern );
+        build.getTestResources().get( 0 ).addInclude(pattern);
     }
 
     public void addTestExclude( String pattern )
     {
-        build.getTestResources().get( 0 ).addExclude( pattern );
+        build.getTestResources().get( 0 ).addExclude(pattern);
     }
 
     public void setTargetPath( String path )
     {
-        build.getResources().get( 0 ).setTargetPath( path );
+        build.getResources().get( 0 ).setTargetPath(path);
     }
 
     public void setTestTargetPath( String path )
     {
-        build.getTestResources().get( 0 ).setTargetPath( path );
+        build.getTestResources().get( 0 ).setTargetPath(path);
     }
 
     public void setDirectory( String dir )
     {
-        build.getResources().get( 0 ).setDirectory( dir );
+        build.getResources().get( 0 ).setDirectory(dir);
     }
 
     public void setTestDirectory( String dir )
     {
-        build.getTestResources().get( 0 ).setDirectory( dir );
+        build.getTestResources().get( 0 ).setDirectory(dir);
     }
 
     public void setResourceFiltering( int nIndex, boolean filter )
     {
         if ( build.getResources().size() > nIndex )
         {
-            build.getResources().get( nIndex ).setFiltering( filter );
+            build.getResources().get( nIndex ).setFiltering(filter);
         }
     }
 

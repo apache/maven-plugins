@@ -69,7 +69,7 @@ public class InstallPluginsMojoTest
 
     /**
      * Has both Bundle-Name and Bundle-SymbolicName and should be installed.
-     *
+     * 
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
@@ -88,7 +88,7 @@ public class InstallPluginsMojoTest
 
     /**
      * Has Bundle-SymbolicName but no Bundle-Name and should be installed.
-     *
+     * 
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
@@ -107,7 +107,7 @@ public class InstallPluginsMojoTest
 
     /**
      * Has Bundle-Name but no Bundle-SymbolicName and should be installed.
-     *
+     * 
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
@@ -126,7 +126,7 @@ public class InstallPluginsMojoTest
 
     /**
      * Has neither Bundle-Name or Bundle-SymbolicName and should NOT be installed.
-     *
+     * 
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
@@ -145,7 +145,7 @@ public class InstallPluginsMojoTest
 
     /**
      * if a jar has no manifest, do not install plugin.
-     *
+     * 
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
@@ -298,8 +298,8 @@ public class InstallPluginsMojoTest
 
         if ( resource == null )
         {
-            throw new IllegalStateException(
-                "Cannot find test source jar: " + TEST_M2_REPO + sourcepath + " in context classloader!" );
+            throw new IllegalStateException( "Cannot find test source jar: " + TEST_M2_REPO + sourcepath
+                + " in context classloader!" );
         }
         return new File( resource.getPath() );
     }
@@ -318,8 +318,8 @@ public class InstallPluginsMojoTest
         String type = artifact.getType();
 
         ArtifactRepository localRepo = createLocalRepository();
-        MavenProjectBuilder projectBuilder = createProjectBuilder( typeList.contains( type ), installAsJar );
-        ArchiverManager archiverManager = createArchiverManager( typeList.contains( type ), installAsJar );
+        MavenProjectBuilder projectBuilder = createProjectBuilder(typeList.contains(type), installAsJar );
+        ArchiverManager archiverManager = createArchiverManager(typeList.contains(type), installAsJar );
         InputHandler inputHandler = createInputHandler();
 
         Log log = new SystemStreamLog();
@@ -386,8 +386,8 @@ public class InstallPluginsMojoTest
                 manager.getUnArchiver( (File) null );
                 control.setMatcher( MockControl.ALWAYS_MATCHER );
                 ZipUnArchiver zipUnArchiver = new ZipUnArchiver();
-                zipUnArchiver.enableLogging(
-                    new ConsoleLogger( org.codehaus.plexus.logging.Logger.LEVEL_INFO, "console" ) );
+                zipUnArchiver.enableLogging( new ConsoleLogger( org.codehaus.plexus.logging.Logger.LEVEL_INFO,
+                                                                "console" ) );
                 control.setReturnValue( zipUnArchiver, MockControl.ONE_OR_MORE );
             }
             catch ( NoSuchArchiverException e )
@@ -415,7 +415,7 @@ public class InstallPluginsMojoTest
 
                 if ( installAsJar != null )
                 {
-                    model.addProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, "" + ( !installAsJar ) );
+                    model.addProperty( InstallPluginsMojo.PROP_UNPACK_PLUGIN, "" + ( !installAsJar) );
                 }
 
                 MavenProject project = new MavenProject( model );
@@ -465,8 +465,8 @@ public class InstallPluginsMojoTest
      */
     private String formatEclipsePluginName( Artifact artifact )
     {
-        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_" + maven2OsgiConverter.getVersion(
-            artifact.getVersion() );
+        return maven2OsgiConverter.getBundleSymbolicName( artifact ) + "_"
+            + maven2OsgiConverter.getVersion( artifact.getVersion() );
     }
 
     /**

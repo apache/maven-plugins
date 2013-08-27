@@ -30,6 +30,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ *
  */
 public class HelpUtilTest
     extends AbstractMojoTestCase
@@ -43,16 +44,21 @@ public class HelpUtilTest
     public void testGetMojoDescriptor()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         EvaluateMojo describe = (EvaluateMojo) lookupMojo( "evaluate", testPom );
 
-        MavenSession session = new MavenSession( container, describe.settings, // Settings settings,
-                                                 describe.localRepository, // ArtifactRepository localRepository,
-                                                 null, // EventDispatcher eventDispatcher,
-                                                 null, // ReactorManager reactorManager,
-                                                 Arrays.asList( "evaluate" ), describe.project.getBasedir().toString(),
-                                                 new Properties(), Calendar.getInstance().getTime() );
+        MavenSession session =
+            new MavenSession(
+                              container,
+                              describe.settings, // Settings settings,
+                              describe.localRepository, // ArtifactRepository localRepository,
+                              null, // EventDispatcher eventDispatcher,
+                              null, // ReactorManager reactorManager,
+                              Arrays.asList("evaluate"),
+                              describe.project.getBasedir().toString(), new Properties(),
+                              Calendar.getInstance().getTime() );
         HelpUtil.getMojoDescriptor( "help:evaluate", session, describe.project, "help:evaluate", true, false );
     }
 }
