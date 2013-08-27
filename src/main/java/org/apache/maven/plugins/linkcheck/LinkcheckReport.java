@@ -251,54 +251,39 @@ public class LinkcheckReport
     // Instance fields
     // ----------------------------------------------------------------------
 
-    /**
-     * Result of the linkcheck in {@link #execute()}
-     */
+    /** Result of the linkcheck in {@link #execute()} */
     private LinkcheckModel result;
 
     protected static final String ICON_SUCCESS = "images/icon_success_sml.gif";
-
     protected static final String ICON_WARNING = "images/icon_warning_sml.gif";
-
     protected static final String ICON_INFO = "images/icon_info_sml.gif";
-
     protected static final String ICON_ERROR = "images/icon_error_sml.gif";
-
     private static final String pluginResourcesBase = "org/apache/maven/plugin/linkcheck";
-
     private static final String resourceNames[] = { ICON_SUCCESS, ICON_WARNING, ICON_INFO, ICON_ERROR };
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getDescription( Locale locale )
     {
         return i18n.getString( "linkcheck-report", locale, "report.linkcheck.description" );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getName( Locale locale )
     {
         return i18n.getString( "linkcheck-report", locale, "report.linkcheck.name" );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "linkcheck";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
         if ( skip )
@@ -309,9 +294,7 @@ public class LinkcheckReport
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -336,33 +319,25 @@ public class LinkcheckReport
     // Protected methods
     // ----------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -398,8 +373,8 @@ public class LinkcheckReport
         {
             if ( getLog().isWarnEnabled() )
             {
-                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                                   + ", i.e. build is platform dependent!" );
+                getLog().warn( "File encoding has not been set, using platform encoding "
+                    + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
             }
 
             encoding = ReaderFactory.FILE_ENCODING;
@@ -446,7 +421,7 @@ public class LinkcheckReport
         else
         {
             getLog().warn( "The number of documents analyzed by Linkcheck could differ from the actual "
-                               + "number of documents!" );
+                                   + "number of documents!" );
 
             basedir = outputDirectory;
             basedir.mkdirs();
@@ -509,7 +484,7 @@ public class LinkcheckReport
         // Exclude this report
         pagesToExclude.add( getOutputName() + ".html" );
 
-        return (String[]) pagesToExclude.toArray( new String[pagesToExclude.size()] );
+        return (String[]) pagesToExclude.toArray(new String[pagesToExclude.size()]);
     }
 
     // ----------------------------------------------------------------------
@@ -540,10 +515,9 @@ public class LinkcheckReport
         try
         {
             getLog().debug( "Copying static linkcheck resources." );
-            for ( String resourceName : resourceNames )
-            {
-                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceName );
-                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceName ) );
+            for (String resourceName : resourceNames) {
+                URL url = this.getClass().getClassLoader().getResource(pluginResourcesBase + "/" + resourceName);
+                FileUtils.copyURLToFile(url, new File(getReportOutputDirectory(), resourceName));
             }
         }
         catch ( IOException e )

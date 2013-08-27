@@ -55,13 +55,13 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 
 /**
+ *
  * @author ltheussl
  * @since 1.1
  */
 public class SiteInvoker
 {
     private final ArtifactRepository localRepository;
-
     private final Log log;
 
     public SiteInvoker( ArtifactRepository localRepository, Log log )
@@ -80,7 +80,7 @@ public class SiteInvoker
      * <b>Note 2</be>: we can't use <code>siteOutputDirectory</code> param from site plugin because some plugins
      * <code>${project.reporting.outputDirectory}</code> in their conf.
      *
-     * @param project                     the MavenProject to invoke the site on. Not null.
+     * @param project the MavenProject to invoke the site on. Not null.
      * @param tmpReportingOutputDirectory not null
      * @throws IOException if any
      */
@@ -91,7 +91,7 @@ public class SiteInvoker
         if ( StringUtils.isEmpty( mavenHome ) )
         {
             getLog().error( "Could NOT invoke Maven because no Maven Home is defined. "
-                                + "You need to set the M2_HOME system env variable or a 'maven.home' Java system property." );
+                + "You need to set the M2_HOME system env variable or a 'maven.home' Java system property." );
             return;
         }
 
@@ -156,9 +156,8 @@ public class SiteInvoker
     {
         List profileIds = new ArrayList();
 
-        for ( Object o : clone.getActiveProfiles() )
-        {
-            profileIds.add( ( (Profile) o ).getId() );
+        for (Object o : clone.getActiveProfiles()) {
+            profileIds.add(((Profile) o).getId());
         }
 
         return profileIds;
@@ -166,13 +165,13 @@ public class SiteInvoker
 
     /**
      * @param projectFile not null, should be in the ${project.basedir}
-     * @param invokerLog  not null
-     * @param mavenHome   not null
-     * @param goals       the list of goals
-     * @param properties  the properties for the invoker
+     * @param invokerLog not null
+     * @param mavenHome not null
+     * @param goals the list of goals
+     * @param properties the properties for the invoker
      */
-    private void invoke( File projectFile, File invokerLog, String mavenHome, List goals, List activeProfiles,
-                         Properties properties )
+    private void invoke( File projectFile, File invokerLog, String mavenHome,
+        List goals, List activeProfiles, Properties properties )
     {
         Invoker invoker = new DefaultInvoker();
         invoker.setMavenHome( new File( mavenHome ) );
@@ -231,7 +230,8 @@ public class SiteInvoker
             IOUtil.close( reader );
         }
 
-        if ( invokerLogContent != null && invokerLogContent.contains( "Error occurred during initialization of VM" ) )
+        if ( invokerLogContent != null
+            && invokerLogContent.contains("Error occurred during initialization of VM"))
         {
             getLog().info( "Error occurred during initialization of VM, try to use an empty MAVEN_OPTS." );
 
@@ -256,19 +256,19 @@ public class SiteInvoker
         {
             if ( getLog().isErrorEnabled() )
             {
-                getLog().error(
-                    "Error when invoking Maven, consult the invoker log file: " + invokerLog.getAbsolutePath() );
+                getLog().error( "Error when invoking Maven, consult the invoker log file: "
+                                    + invokerLog.getAbsolutePath() );
             }
         }
     }
 
     /**
-     * @param invoker    not null
-     * @param request    not null
+     * @param invoker not null
+     * @param request not null
      * @param invokerLog not null
-     * @param goals      the list of goals
+     * @param goals the list of goals
      * @param properties the properties for the invoker
-     * @param mavenOpts  could be null
+     * @param mavenOpts could be null
      * @return the invocation result
      * @throws MavenInvocationException if any
      */
@@ -298,8 +298,8 @@ public class SiteInvoker
             {
                 if ( getLog().isErrorEnabled() )
                 {
-                    getLog().error(
-                        "FileNotFoundException: " + e.getMessage() + ". Using System.out to log the invoker." );
+                    getLog().error( "FileNotFoundException: " + e.getMessage()
+                                        + ". Using System.out to log the invoker." );
                 }
                 ps = System.out;
             }
@@ -307,8 +307,8 @@ public class SiteInvoker
             {
                 if ( getLog().isErrorEnabled() )
                 {
-                    getLog().error(
-                        "UnsupportedEncodingException: " + e.getMessage() + ". Using System.out to log the invoker." );
+                    getLog().error( "UnsupportedEncodingException: " + e.getMessage()
+                                        + ". Using System.out to log the invoker." );
                 }
                 ps = System.out;
             }
@@ -350,7 +350,7 @@ public class SiteInvoker
 
     /**
      * @return the Maven home defined in the <code>maven.home</code> system property or defined
-     *         in <code>M2_HOME</code> system env variables or null if never setted.
+     * in <code>M2_HOME</code> system env variables or null if never setted.
      * @see #invoke(Invoker, InvocationRequest, File, List, Properties, String)
      */
     private String getMavenHome()
@@ -373,7 +373,7 @@ public class SiteInvoker
         if ( !m2Home.exists() )
         {
             getLog().error( "Cannot find Maven application directory. Either specify \'maven.home\' "
-                                + "system property, or M2_HOME environment variable." );
+                + "system property, or M2_HOME environment variable." );
         }
 
         return mavenHome;
@@ -401,8 +401,8 @@ public class SiteInvoker
 
     /**
      * @return the <code>JAVA_HOME</code> from System.getProperty( "java.home" )
-     *         By default, <code>System.getProperty( "java.home" ) = JRE_HOME</code> and <code>JRE_HOME</code>
-     *         should be in the <code>JDK_HOME</code> or null if not setted.
+     * By default, <code>System.getProperty( "java.home" ) = JRE_HOME</code> and <code>JRE_HOME</code>
+     * should be in the <code>JDK_HOME</code> or null if not setted.
      * @see #invoke(Invoker, InvocationRequest, File, List, Properties, String)
      */
     private File getJavaHome()
@@ -433,7 +433,7 @@ public class SiteInvoker
         if ( javaHome == null || !javaHome.exists() )
         {
             getLog().error( "Cannot find Java application directory. Either specify \'java.home\' "
-                                + "system property, or JAVA_HOME environment variable." );
+                + "system property, or JAVA_HOME environment variable." );
         }
 
         return javaHome;
