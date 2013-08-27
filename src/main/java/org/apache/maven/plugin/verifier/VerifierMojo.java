@@ -109,18 +109,14 @@ public class VerifierMojo
             VerificationsXpp3Reader xppReader = new VerificationsXpp3Reader();
             Verifications verifications = xppReader.read( reader );
 
-            for ( org.apache.maven.plugin.verifier.model.File file : verifications.getFiles() )
-            {
+            for (org.apache.maven.plugin.verifier.model.File file : verifications.getFiles()) {
                 // Transform the file to check into an absolute path prefixing the basedir if
                 // the location is relative
-                if ( file.getLocation() != null )
-                {
-                    file.setLocation( getAbsoluteFileToCheck( new File( file.getLocation() ) ).getPath() );
-                    verifyFile( file, results );
-                }
-                else
-                {
-                    throw new MojoExecutionException( "Missing <location> element" );
+                if (file.getLocation() != null) {
+                    file.setLocation(getAbsoluteFileToCheck(new File(file.getLocation())).getPath());
+                    verifyFile(file, results);
+                } else {
+                    throw new MojoExecutionException("Missing <location> element");
                 }
             }
         }
