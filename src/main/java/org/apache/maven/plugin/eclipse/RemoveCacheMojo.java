@@ -34,7 +34,7 @@ import org.apache.maven.plugin.ide.IdeUtils;
 
 /**
  * Removes the not-available marker files from the repository.
- * 
+ *
  * @author <a href="mailto:baerrach@apache.org">Barrie Treloar</a>
  * @version $Id$
  * @goal remove-cache
@@ -44,7 +44,7 @@ public class RemoveCacheMojo
 {
     /**
      * Local maven repository.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -65,17 +65,21 @@ public class RemoveCacheMojo
 
     /**
      * Delete each file in the notAvailableMarkerFiles list.
-     * 
+     *
      * @param notAvailableMarkerFiles the list of marker files to delete.
      */
     private void deleteMarkerFiles( List/* <File> */notAvailableMarkerFiles )
     {
-        for (Object notAvailableMarkerFile : notAvailableMarkerFiles) {
+        for ( Object notAvailableMarkerFile : notAvailableMarkerFiles )
+        {
             File markerFile = (File) notAvailableMarkerFile;
-            try {
-                IdeUtils.delete(markerFile, getLog());
-            } catch (MojoExecutionException e) {
-                getLog().warn(e.getMessage(), e);
+            try
+            {
+                IdeUtils.delete( markerFile, getLog() );
+            }
+            catch ( MojoExecutionException e )
+            {
+                getLog().warn( e.getMessage(), e );
             }
         }
     }
@@ -83,7 +87,7 @@ public class RemoveCacheMojo
     /**
      * A list of all the not available marker <code>File</code>s in the localRepository. If there are no marker files
      * then an empty list is returned.
-     * 
+     *
      * @return all the not available marker files in the localRepository or an empty list.
      */
     private List/* <File> */getNotAvailableMarkerFiles()
@@ -91,10 +95,9 @@ public class RemoveCacheMojo
         File localRepositoryBaseDirectory = new File( localRepository.getBasedir() );
         List markerFiles = new ArrayList();
 
-        Iterator iterator =
-            FileUtils.iterateFiles( localRepositoryBaseDirectory,
-                                    new SuffixFileFilter( IdeUtils.NOT_AVAILABLE_MARKER_FILE_SUFFIX ),
-                                    TrueFileFilter.INSTANCE );
+        Iterator iterator = FileUtils.iterateFiles( localRepositoryBaseDirectory,
+                                                    new SuffixFileFilter( IdeUtils.NOT_AVAILABLE_MARKER_FILE_SUFFIX ),
+                                                    TrueFileFilter.INSTANCE );
         while ( iterator.hasNext() )
         {
             File notAvailableMarkerFile = (File) iterator.next();

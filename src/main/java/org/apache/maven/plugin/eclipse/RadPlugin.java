@@ -39,7 +39,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Generates the rad-6 configuration files.
- * 
+ *
  * @author Richard van Nieuwenhoven (patch submission)
  * @author jdcasey
  * @goal rad
@@ -94,7 +94,7 @@ public class RadPlugin
     /**
      * The context root of the webapplication. This parameter is only used when the current project is a war project,
      * else it will be ignored.
-     * 
+     *
      * @parameter
      */
     private String warContextRoot;
@@ -102,7 +102,7 @@ public class RadPlugin
     /**
      * Use this to specify a different generated resources folder than target/generated-resources/rad6. Set to "none" to
      * skip this folder generation.
-     * 
+     *
      * @parameter expression="${generatedResourceDirName}" default-value="target/generated-resources/rad6" since="2.4"
      */
     private String generatedResourceDirName;
@@ -126,10 +126,10 @@ public class RadPlugin
     /**
      * write all rad6 configuration files. <br/>
      * <b> NOTE: This could change the config! </b>
-     * 
-     * @see EclipsePlugin#writeConfiguration()
+     *
      * @param deps resolved dependencies to handle
      * @throws MojoExecutionException if the config files could not be written.
+     * @see EclipsePlugin#writeConfiguration()
      */
     protected void writeConfigurationExtras( EclipseWriterConfig config )
         throws MojoExecutionException
@@ -152,7 +152,7 @@ public class RadPlugin
     /**
      * make room for a Manifest file. use a generated resource for JARS and for WARS use the manifest in the
      * webapp/meta-inf directory.
-     * 
+     *
      * @throws MojoExecutionException
      */
     private void addManifestResource( EclipseWriterConfig config )
@@ -166,9 +166,8 @@ public class RadPlugin
         }
 
         if ( isJavaProject() && !Constants.PROJECT_PACKAGING_EAR.equals( packaging )
-            && !Constants.PROJECT_PACKAGING_WAR.equals( packaging )
-            && !Constants.PROJECT_PACKAGING_EJB.equals( packaging )
-            && !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ) )
+            && !Constants.PROJECT_PACKAGING_WAR.equals( packaging ) && !Constants.PROJECT_PACKAGING_EJB.equals(
+            packaging ) && !NO_GENERATED_RESOURCE_DIRNAME.equals( this.generatedResourceDirName ) )
         {
 
             String generatedResourceDir =
@@ -196,7 +195,7 @@ public class RadPlugin
     /**
      * Returns absolute path to the web content directory based on configuration of the war plugin or default one
      * otherwise.
-     * 
+     *
      * @param project
      * @return absolute directory path as String
      * @throws MojoExecutionException
@@ -205,9 +204,9 @@ public class RadPlugin
         throws MojoExecutionException
     {
         // getting true location of web source dir from config
-        File warSourceDirectory =
-            new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                 "warSourceDirectory", "src/main/webapp" ) );
+        File warSourceDirectory = new File(
+            IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN, "warSourceDirectory",
+                                       "src/main/webapp" ) );
         // getting real and correct path to the web source dir
         String webContentDir =
             IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
@@ -220,7 +219,7 @@ public class RadPlugin
 
     /**
      * overwite the default builders with the builders required by RAD6.
-     * 
+     *
      * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultBuilders( String packaging )
@@ -264,7 +263,7 @@ public class RadPlugin
 
     /**
      * overwite the default natures with the natures required by RAD6.
-     * 
+     *
      * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultNatures( String packaging )
@@ -297,29 +296,32 @@ public class RadPlugin
 
     /**
      * Utility method that locates a project producing the given artifact.
-     * 
+     *
      * @param artifact the artifact a project should produce.
      * @return <code>true</code> if the artifact is produced by a reactor projectart.
      */
     protected boolean isAvailableAsAReactorProject( Artifact artifact )
     {
-        if ( this.reactorProjects != null
-            && ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() )
-                || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
+        if ( this.reactorProjects != null && ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() )
+            || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals(
+            artifact.getType() ) ) )
         {
-            for (Object reactorProject1 : this.reactorProjects) {
+            for ( Object reactorProject1 : this.reactorProjects )
+            {
                 MavenProject reactorProject = (MavenProject) reactorProject1;
 
-                if (reactorProject.getGroupId().equals(artifact.getGroupId())
-                        && reactorProject.getArtifactId().equals(artifact.getArtifactId())) {
-                    if (reactorProject.getVersion().equals(artifact.getVersion())) {
+                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
+                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
+                {
+                    if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
+                    {
                         return true;
-                    } else {
-                        getLog().info(
-                                "Artifact "
-                                        + artifact.getId()
-                                        + " already available as a reactor project, but with different version. Expected: "
-                                        + artifact.getVersion() + ", found: " + reactorProject.getVersion());
+                    }
+                    else
+                    {
+                        getLog().info( "Artifact " + artifact.getId()
+                                           + " already available as a reactor project, but with different version. Expected: "
+                                           + artifact.getVersion() + ", found: " + reactorProject.getVersion() );
                     }
                 }
             }

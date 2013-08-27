@@ -36,7 +36,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
- * 
+ *
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
@@ -45,7 +45,8 @@ public class EclipseWtpFacetsWriter
     extends AbstractWtpResourceWriter
 {
 
-    private static final String FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR = "com.ibm.websphere.coexistence.ear"; //$NON-NLS-1$
+    private static final String FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR = "com.ibm.websphere.coexistence.ear";
+        //$NON-NLS-1$
 
     private static final String FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR = "com.ibm.websphere.extended.ear"; //$NON-NLS-1$
 
@@ -101,7 +102,8 @@ public class EclipseWtpFacetsWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
+                                              ex ); //$NON-NLS-1$
         }
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
         writeModuleTypeFacetCore( writer, packaging );
@@ -110,7 +112,7 @@ public class EclipseWtpFacetsWriter
 
     /**
      * Writes out the facet info for a faceted-project based on the packaging.
-     * 
+     *
      * @param writer
      * @param packaging
      */
@@ -131,13 +133,14 @@ public class EclipseWtpFacetsWriter
                 servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
             }
             writeFacetInstalledElement( writer, FACET_JST_WEB, servletVersion ); // installed
-            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA,
+                                        IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_EJB ); // fixed
-            
+
             String ejbVersion;
             if ( config.getJeeVersion() != null )
             {
@@ -148,7 +151,8 @@ public class EclipseWtpFacetsWriter
                 ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
             }
             writeFacetInstalledElement( writer, FACET_JST_EJB, ejbVersion ); // installed
-            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA,
+                                        IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
         }
         else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
         {
@@ -182,7 +186,8 @@ public class EclipseWtpFacetsWriter
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_UTILITY ); // fixed
             writeFacetInstalledElement( writer, FACET_JST_UTILITY, "1.0" ); //$NON-NLS-1$
-            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA,
+                                        IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
             // installed
         }
 
@@ -194,7 +199,7 @@ public class EclipseWtpFacetsWriter
     /**
      * Writes facet <code>fixed</code> element with attribute <code>facet</code> set to the value of argument
      * <code>facetName</code>.
-     * 
+     *
      * @param writer
      * @param facetName
      */
@@ -209,7 +214,7 @@ public class EclipseWtpFacetsWriter
      * Writes a facet <code>installed</code> element with attribute <code>facet</code> set to the value of argument
      * <code>facetName</code>, and attribute <code>version</code> set to the value of argument <code>facetVersion</code>
      * .
-     * 
+     *
      * @param writer
      * @param facetName
      * @param facetVersion
@@ -224,7 +229,7 @@ public class EclipseWtpFacetsWriter
 
     /**
      * Writes out any additional project facets specified in the plugin configuration
-     * 
+     *
      * @param writer
      * @param packaging
      */
@@ -235,12 +240,13 @@ public class EclipseWtpFacetsWriter
             return;
         }
 
-        for (Object o : config.getProjectFacets().entrySet()) {
+        for ( Object o : config.getProjectFacets().entrySet() )
+        {
             Entry facetEntry = (Entry) o;
 
-            writer.startElement(ELT_INSTALLED);
-            writer.addAttribute(ATTR_FACET, (String) facetEntry.getKey());
-            writer.addAttribute(ATTR_VERSION, (String) facetEntry.getValue());
+            writer.startElement( ELT_INSTALLED );
+            writer.addAttribute( ATTR_FACET, (String) facetEntry.getKey() );
+            writer.addAttribute( ATTR_VERSION, (String) facetEntry.getValue() );
             writer.endElement(); // installed
         }
     }

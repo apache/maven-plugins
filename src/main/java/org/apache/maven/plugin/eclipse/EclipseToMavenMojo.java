@@ -215,22 +215,23 @@ public class EclipseToMavenMojo
         Map plugins = new HashMap();
         Map models = new HashMap();
 
-        for (File file : files) {
+        for ( File file : files )
+        {
             getLog().info(
-                    Messages.getString("EclipseToMavenMojo.processingfile", file.getAbsolutePath())); //$NON-NLS-1$
+                Messages.getString( "EclipseToMavenMojo.processingfile", file.getAbsolutePath() ) ); //$NON-NLS-1$
 
-            processFile(file, plugins, models);
+            processFile( file, plugins, models );
         }
 
         int i = 1;
-        for (Object o : plugins.keySet()) {
-            getLog().info(Messages.getString("EclipseToMavenMojo.processingplugin",
-                    new Object[]{i++,
-                            plugins.keySet().size()})); //$NON-NLS-1$
+        for ( Object o : plugins.keySet() )
+        {
+            getLog().info( Messages.getString( "EclipseToMavenMojo.processingplugin",
+                                               new Object[]{ i++, plugins.keySet().size() } ) ); //$NON-NLS-1$
             String key = (String) o;
-            EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get(key);
-            Model model = (Model) models.get(key);
-            writeArtifact(plugin, model, remoteRepo);
+            EclipseOsgiPlugin plugin = (EclipseOsgiPlugin) plugins.get( key );
+            Model model = (Model) models.get( key );
+            writeArtifact( plugin, model, remoteRepo );
         }
     }
 
@@ -284,19 +285,22 @@ public class EclipseToMavenMojo
     protected void resolveVersionRanges( Model model, Map models )
         throws MojoFailureException
     {
-        for (Dependency dep : model.getDependencies()) {
-            if (dep.getVersion().contains("[")
-                    || dep.getVersion().contains("(")) //$NON-NLS-1$ //$NON-NLS-2$
+        for ( Dependency dep : model.getDependencies() )
+        {
+            if ( dep.getVersion().contains( "[" ) || dep.getVersion().contains( "(" ) ) //$NON-NLS-1$ //$NON-NLS-2$
             {
-                String key = getKey(model);
-                Model dependencyModel = (Model) models.get(getKey(dep));
-                if (dependencyModel != null) {
-                    dep.setVersion(dependencyModel.getVersion());
-                } else {
+                String key = getKey( model );
+                Model dependencyModel = (Model) models.get( getKey( dep ) );
+                if ( dependencyModel != null )
+                {
+                    dep.setVersion( dependencyModel.getVersion() );
+                }
+                else
+                {
                     throw new MojoFailureException(
-                            Messages.getString("EclipseToMavenMojo.unabletoresolveversionrange",
-                                    new Object[]{dep //$NON-NLS-1$
-                                            , key})); //$NON-NLS-1$
+                        Messages.getString( "EclipseToMavenMojo.unabletoresolveversionrange",
+                                            new Object[]{ dep //$NON-NLS-1$
+                                                , key } ) ); //$NON-NLS-1$
                 }
             }
         }
@@ -414,8 +418,9 @@ public class EclipseToMavenMojo
 
         if ( deps.length > 0 )
         {
-            for (Dependency dep : deps) {
-                model.getDependencies().add(dep);
+            for ( Dependency dep : deps )
+            {
+                model.getDependencies().add( dep );
             }
 
         }
@@ -651,29 +656,31 @@ public class EclipseToMavenMojo
         Map requireBundleHeader = analyzer.parseHeader( requireBundle );
 
         // now iterates on bundles and extract dependencies
-        for (Object o : requireBundleHeader.entrySet()) {
+        for ( Object o : requireBundleHeader.entrySet() )
+        {
             Map.Entry entry = (Map.Entry) o;
             String bundleName = (String) entry.getKey();
             Map attributes = (Map) entry.getValue();
 
-            String version = (String) attributes.get(Analyzer.BUNDLE_VERSION.toLowerCase());
-            boolean optional = "optional".equals(attributes.get("resolution:")); //$NON-NLS-1$ //$NON-NLS-2$
+            String version = (String) attributes.get( Analyzer.BUNDLE_VERSION.toLowerCase() );
+            boolean optional = "optional".equals( attributes.get( "resolution:" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 
-            if (version == null) {
+            if ( version == null )
+            {
                 getLog().info(
-                        Messages.getString("EclipseToMavenMojo.missingversionforbundle", bundleName)); //$NON-NLS-1$
+                    Messages.getString( "EclipseToMavenMojo.missingversionforbundle", bundleName ) ); //$NON-NLS-1$
                 version = "[0,)"; //$NON-NLS-1$
             }
 
-            version = fixBuildNumberSeparator(version);
+            version = fixBuildNumberSeparator( version );
 
             Dependency dep = new Dependency();
-            dep.setGroupId(createGroupId(bundleName));
-            dep.setArtifactId(createArtifactId(bundleName));
-            dep.setVersion(version);
-            dep.setOptional(optional);
+            dep.setGroupId( createGroupId( bundleName ) );
+            dep.setArtifactId( createArtifactId( bundleName ) );
+            dep.setVersion( version );
+            dep.setOptional( optional );
 
-            dependencies.add(dep);
+            dependencies.add( dep );
 
         }
 

@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Creates a .settings folder for Eclipse WTP 1.x release and writes out the configuration under it.
- * 
+ *
  * @author <a href="mailto:rahul.thakur.xdev@gmail.com">Rahul Thakur</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
@@ -59,7 +59,7 @@ public class EclipseWtpComponentWriter
 
     /**
      * File name where the WTP component settings will be stored for our Eclipse Project.
-     * 
+     *
      * @return <code>.component</code>
      */
     protected String getComponentFileName()
@@ -69,7 +69,7 @@ public class EclipseWtpComponentWriter
 
     /**
      * Version number added to component configuration.
-     * 
+     *
      * @return <code>1.0</code>
      */
     protected String getProjectVersion()
@@ -91,13 +91,13 @@ public class EclipseWtpComponentWriter
         Writer w;
         try
         {
-            w =
-                new OutputStreamWriter( new FileOutputStream( new File( settingsDir, getComponentFileName() ) ),
+            w = new OutputStreamWriter( new FileOutputStream( new File( settingsDir, getComponentFileName() ) ),
                                         "UTF-8" );
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
+                                              ex ); //$NON-NLS-1$
         }
 
         // create a .component file and write out to it
@@ -111,7 +111,7 @@ public class EclipseWtpComponentWriter
 
     /**
      * Writes out the module type settings for a Web Tools Project to a component file.
-     * 
+     *
      * @param writer
      * @param packaging
      * @param buildOutputDirectory
@@ -141,10 +141,10 @@ public class EclipseWtpComponentWriter
         {
             target = "/WEB-INF/classes"; //$NON-NLS-1$
 
-            File warSourceDirectory =
-                new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                     "warSourceDirectory", //$NON-NLS-1$
-                                                     config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
+            File warSourceDirectory = new File(
+                IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
+                                           "warSourceDirectory", //$NON-NLS-1$
+                                           config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
 
             writeContextRoot( writer );
 
@@ -158,14 +158,15 @@ public class EclipseWtpComponentWriter
             // add web resources over the top of the war source directory
             Xpp3Dom[] webResources =
                 IdeUtils.getPluginConfigurationDom( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                    new String[] { "webResources", "resource" } );
-            for (Xpp3Dom webResource : webResources) {
-                File webResourceDirectory = new File(webResource.getChild("directory").getValue());
-                writer.startElement(ELT_WB_RESOURCE);
-                writer.addAttribute(ATTR_DEPLOY_PATH, "/"); //$NON-NLS-1$
-                writer.addAttribute(ATTR_SOURCE_PATH,
-                        IdeUtils.toRelativeAndFixSeparator(config.getEclipseProjectDirectory(),
-                                webResourceDirectory, false));
+                                                    new String[]{ "webResources", "resource" } );
+            for ( Xpp3Dom webResource : webResources )
+            {
+                File webResourceDirectory = new File( webResource.getChild( "directory" ).getValue() );
+                writer.startElement( ELT_WB_RESOURCE );
+                writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
+                writer.addAttribute( ATTR_SOURCE_PATH,
+                                     IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                                         webResourceDirectory, false ) );
                 writer.endElement();
             }
 
@@ -203,13 +204,15 @@ public class EclipseWtpComponentWriter
 
         }
 
-        for (EclipseSourceDir dir : sourceDirs) {
+        for ( EclipseSourceDir dir : sourceDirs )
+        {
             // test src/resources are not added to wtpmodules
-            if (!dir.isTest()) {
+            if ( !dir.isTest() )
+            {
                 // <wb-resource deploy-path="/" source-path="/src/java" />
-                writer.startElement(ELT_WB_RESOURCE);
-                writer.addAttribute(ATTR_DEPLOY_PATH, target);
-                writer.addAttribute(ATTR_SOURCE_PATH, dir.getPath());
+                writer.startElement( ELT_WB_RESOURCE );
+                writer.addAttribute( ATTR_DEPLOY_PATH, target );
+                writer.addAttribute( ATTR_SOURCE_PATH, dir.getPath() );
                 writer.endElement();
             }
         }

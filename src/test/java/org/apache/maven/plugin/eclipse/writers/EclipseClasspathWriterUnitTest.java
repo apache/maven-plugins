@@ -140,7 +140,7 @@ public class EclipseClasspathWriterUnitTest
         dependency.setAddedToClasspath( true );
         dependency.setJavadocAttachment( new File( System.getProperty( "user.home" ), ".m2/some.jar" ) );
 
-        config.setDeps( new IdeDependency[] { dependency } );
+        config.setDeps( new IdeDependency[]{ dependency } );
 
         TestLog log = new TestLog();
 
@@ -153,12 +153,13 @@ public class EclipseClasspathWriterUnitTest
         Document doc = builder.build( new File( basedir, ".classpath" ) );
 
         XPath javadocUrls = XPath.newInstance( "//attribute/@value" );
-        for (Object o : javadocUrls.selectNodes(doc)) {
+        for ( Object o : javadocUrls.selectNodes( doc ) )
+        {
             Attribute attribute = (Attribute) o;
-            URL jarUrl = new URL(attribute.getValue());
-            URL fileUrl = ((JarURLConnection) jarUrl.openConnection()).getJarFileURL();
+            URL jarUrl = new URL( attribute.getValue() );
+            URL fileUrl = ( (JarURLConnection) jarUrl.openConnection() ).getJarFileURL();
             String host = fileUrl.getHost();
-            assertTrue("Unexpected host: \"" + host + "\"", "".equals(host) || "localhost".equals(host));
+            assertTrue( "Unexpected host: \"" + host + "\"", "".equals( host ) || "localhost".equals( host ) );
         }
     }
 
