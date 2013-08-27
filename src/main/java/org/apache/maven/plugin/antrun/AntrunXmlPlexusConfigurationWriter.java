@@ -30,7 +30,6 @@ import java.io.Writer;
  * Write a plexus configuration to a stream
  * Note: This class was originally copied from plexus-container-default.  It is duplicated here
  * to maintain compatibility with both Maven 2.x and Maven 3.x.
- *
  */
 public class AntrunXmlPlexusConfigurationWriter
 {
@@ -64,7 +63,7 @@ public class AntrunXmlPlexusConfigurationWriter
 
                 write( child, w, depth + 1 );
             }
-            
+
             w.endElement();
         }
     }
@@ -73,9 +72,9 @@ public class AntrunXmlPlexusConfigurationWriter
         throws IOException
     {
         w.startElement( c.getName() );
-        
+
         writeAttributes( c, w );
-        
+
         String value = c.getValue( null );
         if ( value != null )
         {
@@ -90,8 +89,9 @@ public class AntrunXmlPlexusConfigurationWriter
     {
         String[] names = c.getAttributeNames();
 
-        for (String name : names) {
-            w.addAttribute(name, c.getAttribute(name, null));
+        for ( String name : names )
+        {
+            w.addAttribute( name, c.getAttribute( name, null ) );
         }
     }
 
