@@ -41,7 +41,7 @@ public class DeployFileMojoTest
     private File remoteRepo;
 
     MavenProjectStub projectStub = new MavenProjectStub();
-
+    
     public void setUp()
         throws Exception
     {
@@ -53,7 +53,7 @@ public class DeployFileMojoTest
         {
             remoteRepo.mkdirs();
         }
-
+        
         projectStub.setAttachedArtifacts( new ArrayList<Artifact>() );
     }
 
@@ -75,7 +75,7 @@ public class DeployFileMojoTest
         DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
-
+        
         setVariableValueToObject( mojo, "project", projectStub );
 
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
@@ -105,13 +105,13 @@ public class DeployFileMojoTest
         assertEquals( "deploy-test", repositoryId );
 
         assertEquals( "file://" + getBasedir() + "/target/remote-repo/deploy-file-test", url );
-
+        
         mojo.execute();
 
         //check the generated pom
         File pom = new File( remoteRepo, "deploy-file-test/" + groupId.replace( '.', '/' ) +
-            "/" + artifactId + "/" + version + "/" + artifactId +
-            "-" + version + ".pom" );
+                                          "/" + artifactId + "/" + version + "/" + artifactId +
+                                          "-" + version + ".pom" );
 
         assertTrue( pom.exists() );
 
@@ -137,9 +137,8 @@ public class DeployFileMojoTest
 
         File[] files = repo.listFiles();
 
-        for ( File file1 : files )
-        {
-            addFileToList( file1, fileList );
+        for (File file1 : files) {
+            addFileToList(file1, fileList);
         }
 
         expectedFiles.add( "org" );
@@ -174,7 +173,7 @@ public class DeployFileMojoTest
 
         setVariableValueToObject( mojo, "project", projectStub );
 
-        File pomFile = (File) getVariableValueFromObject( mojo, "pomFile" );
+        File pomFile = ( File ) getVariableValueFromObject( mojo, "pomFile" );
 
         assertNotNull( pomFile );
 
@@ -194,21 +193,21 @@ public class DeployFileMojoTest
 
         setVariableValueToObject( mojo, "project", projectStub );
 
-        String classifier = (String) getVariableValueFromObject( mojo, "classifier" );
+        String classifier = ( String ) getVariableValueFromObject( mojo, "classifier" );
 
-        String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
+        String groupId = ( String ) getVariableValueFromObject( mojo, "groupId" );
 
-        String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
+        String artifactId = ( String ) getVariableValueFromObject( mojo, "artifactId" );
 
-        String version = (String) getVariableValueFromObject( mojo, "version" );
+        String version = ( String ) getVariableValueFromObject( mojo, "version" );
 
         assertEquals( "bin", classifier );
 
         mojo.execute();
 
         File deployedArtifact = new File( remoteRepo, "deploy-file-classifier/" + groupId.replace( '.', '/' ) +
-            "/" + artifactId + "/" + version + "/" + artifactId +
-            "-" + version + "-" + classifier + ".jar" );
+                                          "/" + artifactId + "/" + version + "/" + artifactId +
+                                          "-" + version + "-" + classifier + ".jar");
 
         assertTrue( deployedArtifact.exists() );
 
@@ -219,8 +218,8 @@ public class DeployFileMojoTest
         mojo.execute();
 
         File prodDeployedArtifact = new File( remoteRepo, "deploy-file-classifier/" + groupId.replace( '.', '/' ) +
-            "/" + artifactId + "/" + version + "/" + artifactId +
-            "-" + version + "-" + mojo.getClassifier() + ".jar" );
+                                          "/" + artifactId + "/" + version + "/" + artifactId +
+                                          "-" + version + "-" + mojo.getClassifier() + ".jar");
 
         assertTrue( prodDeployedArtifact.exists() );
     }
@@ -228,8 +227,7 @@ public class DeployFileMojoTest
     public void testDeployIfArtifactIsNotJar()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/deploy-file-artifact-not-jar/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-artifact-not-jar/plugin-config.xml" );
 
         DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
@@ -256,8 +254,8 @@ public class DeployFileMojoTest
         mojo.execute();
 
         File file = new File( remoteRepo, "deploy-file-artifact-not-jar/" + groupId.replace( '.', '/' ) +
-            "/" + artifactId + "/" + version + "/" + artifactId +
-            "-" + version + ".zip" );
+                                          "/" + artifactId + "/" + version + "/" + artifactId +
+                                          "-" + version + ".zip");
 
         assertTrue( file.exists() );
     }
@@ -265,8 +263,7 @@ public class DeployFileMojoTest
     public void testDeployIfRepositoryLayoutIsLegacy()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/deploy-file-legacy-repository-layout/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-legacy-repository-layout/plugin-config.xml" );
 
         DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
@@ -274,7 +271,7 @@ public class DeployFileMojoTest
 
         setVariableValueToObject( mojo, "project", projectStub );
 
-        String repositoryLayout = (String) getVariableValueFromObject( mojo, "repositoryLayout" );
+        String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
 
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
 
@@ -286,9 +283,7 @@ public class DeployFileMojoTest
 
         mojo.execute();
 
-        File artifactFile = new File( remoteRepo,
-                                      "deploy-file-legacy-repository-layout/" + groupId + "/jars/" + artifactId + "-"
-                                          + version + ".jar" );
+        File artifactFile = new File( remoteRepo, "deploy-file-legacy-repository-layout/" + groupId + "/jars/" + artifactId + "-" + version + ".jar" );
 
         assertTrue( artifactFile.exists() );
 
@@ -300,9 +295,8 @@ public class DeployFileMojoTest
 
         File[] files = repo.listFiles();
 
-        for ( File file : files )
-        {
-            addFileToList( file, fileList );
+        for (File file : files) {
+            addFileToList(file, fileList);
         }
 
         expectedFiles.add( "org.apache.maven.test" );
@@ -335,9 +329,8 @@ public class DeployFileMojoTest
 
             File[] files = file.listFiles();
 
-            for ( File file1 : files )
-            {
-                addFileToList( file1, fileList );
+            for (File file1 : files) {
+                addFileToList(file1, fileList);
             }
         }
     }

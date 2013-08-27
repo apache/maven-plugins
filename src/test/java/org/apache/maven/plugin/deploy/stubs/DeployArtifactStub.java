@@ -34,13 +34,13 @@ public class DeployArtifactStub
     extends ArtifactStub
 {
     private Map<Object, ArtifactMetadata> metadataMap;
-
+    
     private File file;
-
+    
     private boolean release;
-
+    
     private String extension;
-
+    
     public String getArtifactId()
     {
         return "maven-deploy-test";
@@ -55,29 +55,29 @@ public class DeployArtifactStub
     {
         return "1.0-SNAPSHOT";
     }
-
+    
     public String getBaseVersion()
     {
         return getVersion();
     }
-
+    
     public void setFile( File file )
     {
         this.file = file;
     }
-
+    
     public File getFile()
     {
         return file;
     }
-
+    
     public ArtifactHandler getArtifactHandler()
     {
         return new DefaultArtifactHandler()
         {
             public String getExtension()
             {
-                if ( extension == null )
+                if( extension == null )
                 {
                     extension = "jar";
                 }
@@ -85,12 +85,12 @@ public class DeployArtifactStub
             }
         };
     }
-
+    
     public void setArtifactHandlerExtension( String extension )
     {
         this.extension = extension;
     }
-
+    
     public void addMetadata( ArtifactMetadata metadata )
     {
         if ( metadataMap == null )
@@ -108,7 +108,7 @@ public class DeployArtifactStub
             metadataMap.put( metadata.getKey(), metadata );
         }
     }
-
+    
     public Collection<ArtifactMetadata> getMetadataList()
     {
         return metadataMap == null ? Collections.<ArtifactMetadata>emptyList() : metadataMap.values();
