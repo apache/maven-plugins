@@ -192,7 +192,7 @@ public final class AssemblyFileUtils
                 }
             }
         }
-        else if (atEndOfFile == true )
+        else if ( atEndOfFile == true )
         {
             eofChars = lineEndings;
         }

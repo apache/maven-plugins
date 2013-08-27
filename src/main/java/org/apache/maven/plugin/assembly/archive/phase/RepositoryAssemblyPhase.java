@@ -78,40 +78,48 @@ public class RepositoryAssemblyPhase
 
         final File tempRoot = configSource.getTemporaryRootDirectory();
 
-        for (final Repository repository : repositoriesList) {
+        for ( final Repository repository : repositoriesList )
+        {
             final String outputDirectory =
-                    AssemblyFormatUtils.getOutputDirectory(repository.getOutputDirectory(), configSource.getProject(),
-                            null, configSource.getFinalName(), configSource);
+                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
+                                                        null, configSource.getFinalName(), configSource );
 
-            final File repositoryDirectory = new File(tempRoot, outputDirectory);
+            final File repositoryDirectory = new File( tempRoot, outputDirectory );
 
-            if (!repositoryDirectory.exists()) {
+            if ( !repositoryDirectory.exists() )
+            {
                 repositoryDirectory.mkdirs();
             }
 
-            try {
-                getLogger().debug("Assembling repository to: " + repositoryDirectory);
-                repositoryAssembler.buildRemoteRepository(repositoryDirectory, wrap(repository), wrap(configSource));
-                getLogger().debug("Finished assembling repository to: " + repositoryDirectory);
-            } catch (final RepositoryAssemblyException e) {
-                throw new ArchiveCreationException("Failed to assemble repository: " + e.getMessage(), e);
+            try
+            {
+                getLogger().debug( "Assembling repository to: " + repositoryDirectory );
+                repositoryAssembler.buildRemoteRepository( repositoryDirectory, wrap( repository ),
+                                                           wrap( configSource ) );
+                getLogger().debug( "Finished assembling repository to: " + repositoryDirectory );
+            }
+            catch ( final RepositoryAssemblyException e )
+            {
+                throw new ArchiveCreationException( "Failed to assemble repository: " + e.getMessage(), e );
             }
 
-            final AddDirectoryTask task = new AddDirectoryTask(repositoryDirectory);
+            final AddDirectoryTask task = new AddDirectoryTask( repositoryDirectory );
 
-            final int dirMode = TypeConversionUtils.modeToInt(repository.getDirectoryMode(), getLogger());
-            if (dirMode != -1) {
-                task.setDirectoryMode(dirMode);
+            final int dirMode = TypeConversionUtils.modeToInt( repository.getDirectoryMode(), getLogger() );
+            if ( dirMode != -1 )
+            {
+                task.setDirectoryMode( dirMode );
             }
 
-            final int fileMode = TypeConversionUtils.modeToInt(repository.getFileMode(), getLogger());
-            if (fileMode != -1) {
-                task.setFileMode(fileMode);
+            final int fileMode = TypeConversionUtils.modeToInt( repository.getFileMode(), getLogger() );
+            if ( fileMode != -1 )
+            {
+                task.setFileMode( fileMode );
             }
 
-            task.setOutputDirectory(outputDirectory);
+            task.setOutputDirectory( outputDirectory );
 
-            task.execute(archiver, configSource);
+            task.execute( archiver, configSource );
         }
     }
 

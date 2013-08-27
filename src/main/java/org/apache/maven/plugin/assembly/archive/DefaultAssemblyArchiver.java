@@ -82,7 +82,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * locating and configuring {@link Archiver} instances, executing multiple {@link AssemblyArchiverPhase} instances to
  * interpret the various sections of the assembly descriptor and determine which files to add, and other associated
  * activities.
- * 
+ *
  * @version $Id$
  */
 @Component( role = AssemblyArchiver.class )
@@ -159,9 +159,8 @@ public class DefaultAssemblyArchiver
 
             if ( specifiedBasedir != null )
             {
-                basedir =
-                    AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(), null,
-                                                            finalName, configSource );
+                basedir = AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(), null,
+                                                                  finalName, configSource );
             }
 
             final List<ContainerDescriptorHandler> containerHandlers =
@@ -186,23 +185,24 @@ public class DefaultAssemblyArchiver
         }
         catch ( final ArchiverException e )
         {
-            throw new ArchiveCreationException( "Error creating assembly archive " + assembly.getId() + ": "
-                + e.getMessage(), e );
+            throw new ArchiveCreationException(
+                "Error creating assembly archive " + assembly.getId() + ": " + e.getMessage(), e );
         }
         catch ( final IOException e )
         {
-            throw new ArchiveCreationException( "Error creating assembly archive " + assembly.getId() + ": "
-                + e.getMessage(), e );
+            throw new ArchiveCreationException(
+                "Error creating assembly archive " + assembly.getId() + ": " + e.getMessage(), e );
         }
         catch ( final NoSuchArchiverException e )
         {
-            throw new ArchiveCreationException( "Unable to obtain archiver for extension '" + format
-                + "', for assembly: '" + assembly.getId() + "'", e );
+            throw new ArchiveCreationException(
+                "Unable to obtain archiver for extension '" + format + "', for assembly: '" + assembly.getId() + "'",
+                e );
         }
         catch ( final DependencyResolutionException e )
         {
-            throw new ArchiveCreationException( "Unable to resolve dependencies for assembly '" + assembly.getId()
-                + "'", e );
+            throw new ArchiveCreationException(
+                "Unable to resolve dependencies for assembly '" + assembly.getId() + "'", e );
         }
 
         return destFile;
@@ -217,13 +217,14 @@ public class DefaultAssemblyArchiver
         }
     }
 
-    private List<ContainerDescriptorHandler> selectContainerDescriptorHandlers( List<ContainerDescriptorHandlerConfig> requestedContainerDescriptorHandlers,
-                                                                                final AssemblerConfigurationSource configSource )
+    private List<ContainerDescriptorHandler> selectContainerDescriptorHandlers(
+        List<ContainerDescriptorHandlerConfig> requestedContainerDescriptorHandlers,
+        final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {
-        getLogger().debug( "All known ContainerDescriptorHandler components: "
-                               + ( containerDescriptorHandlers == null ? "none; map is null." : ""
-                                   + containerDescriptorHandlers.keySet() ) );
+        getLogger().debug( "All known ContainerDescriptorHandler components: " + ( containerDescriptorHandlers == null
+            ? "none; map is null."
+            : "" + containerDescriptorHandlers.keySet() ) );
 
         if ( requestedContainerDescriptorHandlers == null )
         {
@@ -233,29 +234,31 @@ public class DefaultAssemblyArchiver
         final List<ContainerDescriptorHandler> handlers = new ArrayList<ContainerDescriptorHandler>();
         final List<String> hints = new ArrayList<String>();
 
-        if (!requestedContainerDescriptorHandlers.isEmpty())
+        if ( !requestedContainerDescriptorHandlers.isEmpty() )
         {
-            for (final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers) {
+            for ( final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers )
+            {
                 final String hint = config.getHandlerName();
-                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get(hint);
+                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get( hint );
 
-                if (handler == null) {
+                if ( handler == null )
+                {
                     throw new InvalidAssemblerConfigurationException(
-                            "Cannot find ContainerDescriptorHandler with hint: "
-                                    + hint);
+                        "Cannot find ContainerDescriptorHandler with hint: " + hint );
                 }
 
-                getLogger().debug("Found container descriptor handler with hint: " + hint + " (component: " + handler
-                        + ")");
+                getLogger().debug(
+                    "Found container descriptor handler with hint: " + hint + " (component: " + handler + ")" );
 
-                if (config.getConfiguration() != null) {
-                    getLogger().debug("Configuring handler with:\n\n" + config.getConfiguration() + "\n\n");
+                if ( config.getConfiguration() != null )
+                {
+                    getLogger().debug( "Configuring handler with:\n\n" + config.getConfiguration() + "\n\n" );
 
-                    configureContainerDescriptorHandler(handler, (Xpp3Dom) config.getConfiguration(), configSource);
+                    configureContainerDescriptorHandler( handler, (Xpp3Dom) config.getConfiguration(), configSource );
                 }
 
-                handlers.add(handler);
-                hints.add(hint);
+                handlers.add( handler );
+                hints.add( hint );
             }
         }
 
@@ -269,8 +272,8 @@ public class DefaultAssemblyArchiver
 
     /**
      * Creates the necessary archiver to build the distribution file.
-     * 
-     * @param format Archive format
+     *
+     * @param format                Archive format
      * @param includeBaseDir
      * @param finalName
      * @param configSource
@@ -278,7 +281,9 @@ public class DefaultAssemblyArchiver
      * @param recompressZippedFiles
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
+     *
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
+     *
      */
     protected Archiver createArchiver( final String format, final boolean includeBaseDir, final String finalName,
                                        final AssemblerConfigurationSource configSource,
@@ -311,9 +316,9 @@ public class DefaultAssemblyArchiver
         {
             extraSelectors.add( new JarSecurityFileSelector() );
 
-            extraFinalizers.add( new ManifestCreationFinalizer( configSource.getMavenSession(),
-                                                                configSource.getProject(),
-                                                                configSource.getJarArchiveConfiguration() ) );
+            extraFinalizers.add(
+                new ManifestCreationFinalizer( configSource.getMavenSession(), configSource.getProject(),
+                                               configSource.getJarArchiveConfiguration() ) );
 
         }
 
@@ -328,9 +333,9 @@ public class DefaultAssemblyArchiver
             prefix = finalName;
         }
 
-        archiver =
-            new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
-                                       configSource.getWorkingDirectory(), getLogger(), configSource.isDryRun() );
+        archiver = new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
+                                              configSource.getWorkingDirectory(), getLogger(),
+                                              configSource.isDryRun() );
 
         archiver.setUseJvmChmod( configSource.isUpdateOnly() );
         archiver.setIgnorePermissions( configSource.isIgnorePermissions() );
@@ -351,13 +356,13 @@ public class DefaultAssemblyArchiver
         }
         catch ( final ComponentConfigurationException e )
         {
-            throw new InvalidAssemblerConfigurationException( "Failed to configure handler: "
-                + handler.getClass().getName(), e );
+            throw new InvalidAssemblerConfigurationException(
+                "Failed to configure handler: " + handler.getClass().getName(), e );
         }
         catch ( final ComponentLookupException e )
         {
-            throw new InvalidAssemblerConfigurationException( "Failed to lookup configurator for setup of handler: "
-                + handler.getClass().getName(), e );
+            throw new InvalidAssemblerConfigurationException(
+                "Failed to lookup configurator for setup of handler: " + handler.getClass().getName(), e );
         }
 
         getLogger().debug( "-- end configuration --" );
@@ -373,14 +378,12 @@ public class DefaultAssemblyArchiver
         }
         catch ( final XmlPullParserException e )
         {
-            throw new ArchiverException(
-                                         "Failed to parse archiver configuration for: " + archiver.getClass().getName(),
+            throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass().getName(),
                                          e );
         }
         catch ( final IOException e )
         {
-            throw new ArchiverException(
-                                         "Failed to parse archiver configuration for: " + archiver.getClass().getName(),
+            throw new ArchiverException( "Failed to parse archiver configuration for: " + archiver.getClass().getName(),
                                          e );
         }
 
@@ -396,8 +399,8 @@ public class DefaultAssemblyArchiver
         }
         catch ( final ComponentLookupException e )
         {
-            throw new ArchiverException( "Failed to lookup configurator for setup of archiver: "
-                + archiver.getClass().getName(), e );
+            throw new ArchiverException(
+                "Failed to lookup configurator for setup of archiver: " + archiver.getClass().getName(), e );
         }
 
         getLogger().debug( "-- end configuration --" );
@@ -424,13 +427,15 @@ public class DefaultAssemblyArchiver
          */
         try
         {
-            final Method configureComponent =
-                ComponentConfigurator.class.getMethod( "configureComponent", new Class[] { Object.class,
-                    PlexusConfiguration.class, ExpressionEvaluator.class, (Class<?>) containerRealm[1],
-                    ConfigurationListener.class } );
+            final Method configureComponent = ComponentConfigurator.class.getMethod( "configureComponent",
+                                                                                     new Class[]{ Object.class,
+                                                                                         PlexusConfiguration.class,
+                                                                                         ExpressionEvaluator.class,
+                                                                                         (Class<?>) containerRealm[1],
+                                                                                         ConfigurationListener.class } );
 
-            configureComponent.invoke( configurator, component, configuration, expressionEvaluator,
-                    containerRealm[0], listener);
+            configureComponent.invoke( configurator, component, configuration, expressionEvaluator, containerRealm[0],
+                                       listener );
         }
         catch ( final NoSuchMethodException e )
         {
@@ -459,7 +464,7 @@ public class DefaultAssemblyArchiver
         try
         {
             final Method getContainerRealm = container.getClass().getMethod( "getContainerRealm" );
-            return new Object[] { getContainerRealm.invoke( container ), getContainerRealm.getReturnType() };
+            return new Object[]{ getContainerRealm.invoke( container ), getContainerRealm.getReturnType() };
         }
         catch ( final NoSuchMethodException e )
         {

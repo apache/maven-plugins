@@ -117,8 +117,9 @@ public class AddDependencySetsTask
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
         }
 
-        for (final DependencySet dependencySet : dependencySets) {
-            addDependencySet(dependencySet, archiver, configSource);
+        for ( final DependencySet dependencySet : dependencySets )
+        {
+            addDependencySet( dependencySet, archiver, configSource );
         }
     }
 
@@ -131,7 +132,7 @@ public class AddDependencySetsTask
         if ( !dependencySet.isUseTransitiveDependencies() && dependencySet.isUseTransitiveFiltering() )
         {
             logger.warn( "DependencySet has nonsensical configuration: useTransitiveDependencies == false "
-                            + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
+                             + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
         }
 
         final Set<Artifact> dependencyArtifacts = resolveDependencyArtifacts( dependencySet );
@@ -149,26 +150,36 @@ public class AddDependencySetsTask
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
-        for (final Artifact depArtifact : dependencyArtifacts) {
+        for ( final Artifact depArtifact : dependencyArtifacts )
+        {
             MavenProject depProject;
-            try {
-                depProject =
-                        projectBuilder.buildFromRepository(depArtifact, configSource.getRemoteRepositories(),
-                                configSource.getLocalRepository());
-            } catch (final ProjectBuildingException e) {
-                logger.debug("Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: "
-                        + e.getMessage() + "\n\nBuilding stub project instance.");
+            try
+            {
+                depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
+                                                                 configSource.getLocalRepository() );
+            }
+            catch ( final ProjectBuildingException e )
+            {
+                logger.debug(
+                    "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: " + e.getMessage()
+                        + "\n\nBuilding stub project instance." );
 
-                depProject = buildProjectStub(depArtifact);
+                depProject = buildProjectStub( depArtifact );
             }
 
-            if (NON_ARCHIVE_DEPENDENCY_TYPES.contains(depArtifact.getType())) {
-                addNonArchiveDependency(depArtifact, depProject, dependencySet, archiver, configSource);
-            } else {
-                if (filterContents) {
-                    addFilteredUnpackedArtifact(dependencySet, depArtifact, depProject, archiver, configSource);
-                } else {
-                    addNormalArtifact(dependencySet, depArtifact, depProject, archiver, configSource);
+            if ( NON_ARCHIVE_DEPENDENCY_TYPES.contains( depArtifact.getType() ) )
+            {
+                addNonArchiveDependency( depArtifact, depProject, dependencySet, archiver, configSource );
+            }
+            else
+            {
+                if ( filterContents )
+                {
+                    addFilteredUnpackedArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
+                }
+                else
+                {
+                    addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
                 }
             }
         }
@@ -188,12 +199,12 @@ public class AddDependencySetsTask
             mapping = defaultOutputFileNameMapping;
         }
 
-        if ( ( dir == null || !dir.contains("${")) && ( mapping == null || !mapping.contains("${")) )
+        if ( ( dir == null || !dir.contains( "${" ) ) && ( mapping == null || !mapping.contains( "${" ) ) )
         {
-            logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
-                            + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '"
-                            + dir
-                            + "'\nOutput filename mapping: '" + mapping + "'" );
+            logger.warn(
+                "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
+                    + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '" + dir
+                    + "'\nOutput filename mapping: '" + mapping + "'" );
         }
     }
 
@@ -204,12 +215,8 @@ public class AddDependencySetsTask
     {
         logger.debug( "Adding dependency artifact " + depArtifact.getId() + " after filtering the unpacked contents." );
 
-        final StringBuilder sb =
-            new StringBuilder().append( depArtifact.getGroupId() )
-                               .append( "_" )
-                               .append( depArtifact.getArtifactId() )
-                               .append( "_" )
-                               .append( depArtifact.getVersion() );
+        final StringBuilder sb = new StringBuilder().append( depArtifact.getGroupId() ).append( "_" ).append(
+            depArtifact.getArtifactId() ).append( "_" ).append( depArtifact.getVersion() );
 
         final String classifier = depArtifact.getClassifier();
         if ( classifier != null )
@@ -223,7 +230,7 @@ public class AddDependencySetsTask
         if ( dir.exists() )
         {
             logger.debug( "NOT unpacking: " + depArtifact.getId() + ". Directory already exists in workdir:\n\t"
-                            + dir.getAbsolutePath() );
+                              + dir.getAbsolutePath() );
         }
         else
         {
@@ -237,7 +244,7 @@ public class AddDependencySetsTask
             catch ( final NoSuchArchiverException e )
             {
                 throw new ArchiveCreationException( "Failed to retrieve un-archiver for: " + depArtifact.getId()
-                                + ". Dependency filtering cannot proceed.", e );
+                                                        + ". Dependency filtering cannot proceed.", e );
             }
 
             unarchiver.setDestDirectory( dir );
@@ -252,7 +259,7 @@ public class AddDependencySetsTask
             catch ( final ArchiverException e )
             {
                 throw new ArchiveCreationException( "Failed to unpack dependency archive: " + depArtifact.getId()
-                                + ". Dependency filtering cannot proceed.", e );
+                                                        + ". Dependency filtering cannot proceed.", e );
             }
         }
 
@@ -371,7 +378,7 @@ public class AddDependencySetsTask
             else
             {
                 logger.warn( "Cannot include project artifact: " + projectArtifact
-                                + "; it doesn't have an associated file or directory." );
+                                 + "; it doesn't have an associated file or directory." );
             }
         }
 
@@ -381,12 +388,17 @@ public class AddDependencySetsTask
             final List<Artifact> attachments = project.getAttachedArtifacts();
             if ( attachments != null )
             {
-                for (final Artifact attachment : attachments) {
-                    if (attachment.getFile() != null) {
-                        dependencyArtifacts.add(attachment);
-                    } else {
-                        logger.warn("Cannot include attached artifact: " + project.getId() + " for project: "
-                                + project.getId() + "; it doesn't have an associated file or directory.");
+                for ( final Artifact attachment : attachments )
+                {
+                    if ( attachment.getFile() != null )
+                    {
+                        dependencyArtifacts.add( attachment );
+                    }
+                    else
+                    {
+                        logger.warn(
+                            "Cannot include attached artifact: " + project.getId() + " for project: " + project.getId()
+                                + "; it doesn't have an associated file or directory." );
                     }
                 }
             }

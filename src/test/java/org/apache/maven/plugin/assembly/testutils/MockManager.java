@@ -43,21 +43,26 @@ public class MockManager
 
     public void replayAll()
     {
-        for (final MockControl control : mockControls) {
+        for ( final MockControl control : mockControls )
+        {
             control.replay();
         }
     }
 
     public void verifyAll()
     {
-        for (final MockControl control : mockControls) {
-            try {
+        for ( final MockControl control : mockControls )
+        {
+            try
+            {
                 control.verify();
-            } catch (final AssertionFailedError err) {
+            }
+            catch ( final AssertionFailedError err )
+            {
                 final String message =
-                        "MockControl: " + control + " of: " + control.getMock() + " failed.\n" + err.getMessage();
-                final AssertionFailedError e = new AssertionFailedError(message);
-                e.initCause(err);
+                    "MockControl: " + control + " of: " + control.getMock() + " failed.\n" + err.getMessage();
+                final AssertionFailedError e = new AssertionFailedError( message );
+                e.initCause( err );
 
                 throw e;
             }

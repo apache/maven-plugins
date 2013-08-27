@@ -101,10 +101,9 @@ public class DefaultDependencyResolverTest
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).getDependencySetResolutionRequirements( new Assembly(),
-                                                                                                                                      depSets,
-                                                                                                                                      info,
-                                                                                                                                      project );
+        new DefaultDependencyResolver( resolver, metadataSource, factory, collector,
+                                       logger ).getDependencySetResolutionRequirements( new Assembly(), depSets, info,
+                                                                                        project );
 
         assertTrue( info.isResolutionRequired() );
         assertFalse( info.isResolvedTransitively() );
@@ -257,9 +256,8 @@ public class DefaultDependencyResolverTest
         assembly.setRepositories( repositories );
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).getRepositoryResolutionRequirements( assembly,
-                                                                                                                                   info,
-                                                                                                                                   project );
+        new DefaultDependencyResolver( resolver, metadataSource, factory, collector,
+                                       logger ).getRepositoryResolutionRequirements( assembly, info, project );
 
         assertTrue( info.isResolutionRequired() );
 
@@ -298,8 +296,10 @@ public class DefaultDependencyResolverTest
         project.setRemoteArtifactRepositories( projectRepos );
 
         final List<ArtifactRepository> aggregated =
-            new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).aggregateRemoteArtifactRepositories( externalRepos,
-                                                                                                                                       Collections.singleton( project ) );
+            new DefaultDependencyResolver( resolver, metadataSource, factory, collector,
+                                           logger ).aggregateRemoteArtifactRepositories( externalRepos,
+                                                                                         Collections.singleton(
+                                                                                             project ) );
 
         assertRepositoryWithId( er1.getId(), aggregated, true );
         assertRepositoryWithId( er2.getId(), aggregated, true );
@@ -593,8 +593,10 @@ public class DefaultDependencyResolverTest
         else
         {
             boolean found = false;
-            for (final ArtifactRepository repo : repos) {
-                if (repoId.equals(repo.getId())) {
+            for ( final ArtifactRepository repo : repos )
+            {
+                if ( repoId.equals( repo.getId() ) )
+                {
                     found = true;
                     break;
                 }

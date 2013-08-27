@@ -88,26 +88,36 @@ public class UnpackMojo
             dependencies.addAll( projectArtifacts );
         }
 
-        for (final Artifact artifact : dependencies) {
+        for ( final Artifact artifact : dependencies )
+        {
             final String name = artifact.getFile().getName();
 
-            final File tempLocation = new File(workDirectory, name.substring(0, name.lastIndexOf('.')));
+            final File tempLocation = new File( workDirectory, name.substring( 0, name.lastIndexOf( '.' ) ) );
             boolean process = false;
-            if (!tempLocation.exists()) {
+            if ( !tempLocation.exists() )
+            {
                 tempLocation.mkdirs();
                 process = true;
-            } else if (artifact.getFile().lastModified() > tempLocation.lastModified()) {
+            }
+            else if ( artifact.getFile().lastModified() > tempLocation.lastModified() )
+            {
                 process = true;
             }
 
-            if (process) {
+            if ( process )
+            {
                 final File file = artifact.getFile();
-                try {
-                    AssemblyFileUtils.unpack(file, tempLocation, archiverManager);
-                } catch (final NoSuchArchiverException e) {
-                    getLog().info("Skip unpacking dependency file with unknown extension: " + file.getPath());
-                } catch (final ArchiveExpansionException e) {
-                    throw new MojoExecutionException("Error unpacking dependency file: " + file, e);
+                try
+                {
+                    AssemblyFileUtils.unpack( file, tempLocation, archiverManager );
+                }
+                catch ( final NoSuchArchiverException e )
+                {
+                    getLog().info( "Skip unpacking dependency file with unknown extension: " + file.getPath() );
+                }
+                catch ( final ArchiveExpansionException e )
+                {
+                    throw new MojoExecutionException( "Error unpacking dependency file: " + file, e );
                 }
             }
         }

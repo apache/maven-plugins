@@ -58,16 +58,16 @@ public final class TypeConversionUtils
 
         if ( ( list != null ) && !list.isEmpty() )
         {
-            result = list.toArray(new String[list.size()]);
+            result = list.toArray( new String[list.size()] );
         }
 
         return result;
     }
 
-    public static int modeToInt( final String mode, final Logger logger ) throws AssemblyFormattingException
+    public static int modeToInt( final String mode, final Logger logger )
+        throws AssemblyFormattingException
     {
-        if ( mode == null || mode.trim()
-                                 .length() < 1 )
+        if ( mode == null || mode.trim().length() < 1 )
         {
             return -1;
         }
@@ -93,7 +93,8 @@ public final class TypeConversionUtils
     {
         final StringBuilder messages = new StringBuilder();
 
-        messages.append("The mode: ").append(Integer.toString(mode, 8)).append(" contains nonsensical permissions:");
+        messages.append( "The mode: " ).append( Integer.toString( mode, 8 ) ).append(
+            " contains nonsensical permissions:" );
 
         boolean warn = false;
 

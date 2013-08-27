@@ -298,9 +298,9 @@ public class ArtifactMock
     {
         if ( ( groupId != null ) && ( artifactId != null ) && ( typeAndExt != null ) && ( version != null ) )
         {
-            final String id =
-                groupId + ":" + artifactId + ":" + version + ":" + typeAndExt
-                                + ( classifier == null ? "" : ":" + classifier );
+            final String id = groupId + ":" + artifactId + ":" + version + ":" + typeAndExt + ( classifier == null
+                ? ""
+                : ":" + classifier );
             setId( id );
         }
     }
