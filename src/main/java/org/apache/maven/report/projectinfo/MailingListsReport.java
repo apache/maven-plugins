@@ -140,7 +140,7 @@ public class MailingListsReport
             if ( StringUtils.isNotBlank( introduction ) )
             {
                 log.warn( "Since 2.3, the <introduction/> parameter is deprecated. Please use a <customBundle/>"
-                    + " parameter to configure a custom bundle." );
+                              + " parameter to configure a custom bundle." );
                 paragraph( introduction );
             }
             else
@@ -214,7 +214,7 @@ public class MailingListsReport
 
                     textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                    tableRow(textRow.toArray(new String[textRow.size()]));
+                    tableRow( textRow.toArray( new String[textRow.size()] ) );
 
                     // Other lines...
                     while ( it.hasNext() )
@@ -241,7 +241,7 @@ public class MailingListsReport
 
                         textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                        tableRow(textRow.toArray(new String[textRow.size()]));
+                        tableRow( textRow.toArray( new String[textRow.size()] ) );
                     }
                 }
                 else
@@ -251,7 +251,7 @@ public class MailingListsReport
                         textRow.add( null );
                     }
 
-                    tableRow(textRow.toArray(new String[textRow.size()]));
+                    tableRow( textRow.toArray( new String[textRow.size()] ) );
                 }
             }
 

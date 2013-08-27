@@ -121,8 +121,8 @@ public class LicenseReport
                 return true;
             }
 
-            if ( licenseUrl != null
-                && ( licenseUrl.getProtocol().equals( "http" ) || licenseUrl.getProtocol().equals( "https" ) ) )
+            if ( licenseUrl != null && ( licenseUrl.getProtocol().equals( "http" ) || licenseUrl.getProtocol().equals(
+                "https" ) ) )
             {
                 linkOnly = true;
                 return true;
@@ -344,8 +344,8 @@ public class LicenseReport
                 int bodyStart = licenseContentLC.indexOf( "<body" );
                 int bodyEnd = licenseContentLC.indexOf( "</body>" );
 
-                if ( ( licenseContentLC.contains( "<!doctype html" ) || licenseContentLC.contains( "<html>" ) )
-                    && ( ( bodyStart >= 0 ) && ( bodyEnd > bodyStart ) ) )
+                if ( ( licenseContentLC.contains( "<!doctype html" ) || licenseContentLC.contains( "<html>" ) ) && (
+                    ( bodyStart >= 0 ) && ( bodyEnd > bodyStart ) ) )
                 {
                     bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                     String body = licenseContent.substring( bodyStart, bodyEnd );
