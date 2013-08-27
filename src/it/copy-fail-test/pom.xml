@@ -20,8 +20,8 @@ under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>antrun-plugin.test</groupId>
   <artifactId>antrun-plugin-test</artifactId>
@@ -38,15 +38,17 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <tasks>
-            
-            <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy.xml" overwrite="true" verbose="true" failonerror="true" />
-            <copy file="${project.build.directory}/junk.xml" tofile="${project.build.directory}/junk.xml" overwrite="true" verbose="true" failonerror="false" />
-            
+
+            <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy.xml" overwrite="true"
+                  verbose="true" failonerror="true"/>
+            <copy file="${project.build.directory}/junk.xml" tofile="${project.build.directory}/junk.xml"
+                  overwrite="true" verbose="true" failonerror="false"/>
+
             <copy todir="${project.build.directory}/">
               <fileset dir="${basedir}/stuff"/>
             </copy>
             <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy2.xml"/>
-            
+
           </tasks>
         </configuration>
       </plugin>

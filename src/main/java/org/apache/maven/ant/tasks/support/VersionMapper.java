@@ -19,13 +19,13 @@ package org.apache.maven.ant.tasks.support;
  * under the License.
  */
 
+import org.apache.tools.ant.util.FileNameMapper;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.tools.ant.util.FileNameMapper;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Ant filename mapper to remove version info from filename when copying dependencies.
@@ -56,10 +56,10 @@ public class VersionMapper
                 {
                     path = "";
                 }
-                return new String[] { path + baseFilename + extension };
+                return new String[]{ path + baseFilename + extension };
             }
         }
-        return new String[] { sourceFileName };
+        return new String[]{ sourceFileName };
     }
 
     /**
