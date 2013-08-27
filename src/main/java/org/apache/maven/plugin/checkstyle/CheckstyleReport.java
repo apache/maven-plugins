@@ -64,7 +64,7 @@ public class CheckstyleReport
 
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
-     *
+     * <p/>
      * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
     @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
@@ -325,13 +325,17 @@ public class CheckstyleReport
     @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -343,28 +347,32 @@ public class CheckstyleReport
      * {@inheritDoc}
      */
     protected CheckstyleExecutorRequest createRequest()
-            throws MavenReportException
+        throws MavenReportException
     {
         CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-        request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
-            .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
-            .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-            .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
-            .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-            .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
-            .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
-            .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
-            .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
+        request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput ).setExcludes(
+            excludes ).setFailsOnError( failsOnError ).setIncludes( includes ).setIncludeTestSourceDirectory(
+            includeTestSourceDirectory ).setListener( getListener() ).setLog( getLog() ).setProject(
+            project ).setSourceDirectory( sourceDirectory ).setResources( resources ).setStringOutputStream(
+            stringOutputStream ).setSuppressionsLocation( suppressionsLocation ).setTestSourceDirectory(
+            testSourceDirectory ).setConfigLocation( configLocation ).setPropertyExpansion(
+            propertyExpansion ).setHeaderLocation( headerLocation ).setCacheFile(
+            cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression ).setEncoding(
+            encoding ).setPropertiesLocation( propertiesLocation );
         return request;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "checkstyle";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
