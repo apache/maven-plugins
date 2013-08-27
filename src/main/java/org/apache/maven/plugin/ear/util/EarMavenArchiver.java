@@ -57,11 +57,9 @@ public class EarMavenArchiver
         this.earModules = earModules;
     }
 
-    /**
-     * @deprecated
-     */
+    /** @deprecated */
     public Manifest getManifest( MavenProject project, MavenArchiveConfiguration config )
-        throws ManifestException, DependencyResolutionRequiredException
+                    throws ManifestException, DependencyResolutionRequiredException
     {
         return this.getManifest( null, project, config );
     }

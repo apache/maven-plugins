@@ -61,7 +61,7 @@ public class JarModule
     {
         // Generates an entry in the application.xml only if
         // includeInApplicationXml is set
-        if ( includeInApplicationXml )
+        if (includeInApplicationXml)
         {
             startModuleElement( writer, generateId );
             writer.startElement( JAVA_MODULE );

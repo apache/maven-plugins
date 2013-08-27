@@ -329,8 +329,9 @@ public class EarMojo
 
                 // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
-                if ( ( unpackTypesList.contains( module.getType() ) && ( module.shouldUnpack() == null
-                    || module.shouldUnpack() ) ) || ( module.shouldUnpack() != null && module.shouldUnpack() ) )
+                if ( ( unpackTypesList.contains( module.getType() ) &&
+                    ( module.shouldUnpack() == null || module.shouldUnpack()) ) ||
+                    ( module.shouldUnpack() != null && module.shouldUnpack()) )
                 {
                     getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)
@@ -384,9 +385,8 @@ public class EarMojo
             {
                 getLog().info( "Copy ear sources to " + getWorkDirectory().getAbsolutePath() );
                 String[] fileNames = getEarFiles( earSourceDir );
-                for ( String fileName : fileNames )
-                {
-                    copyFile( new File( earSourceDir, fileName ), new File( getWorkDirectory(), fileName ) );
+                for (String fileName : fileNames) {
+                    copyFile(new File(earSourceDir, fileName), new File(getWorkDirectory(), fileName));
                 }
             }
 
@@ -480,7 +480,7 @@ public class EarMojo
             excludeList.add( "**/" + META_INF + "/application.xml" );
         }
 
-        return excludeList.toArray( new String[excludeList.size()] );
+        return excludeList.toArray(new String[excludeList.size()]);
     }
 
     /**

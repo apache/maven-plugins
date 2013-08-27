@@ -45,22 +45,22 @@ public class JavaEEVersion
     /**
      * Represents the J2EE 1.3 version.
      */
-    public static final JavaEEVersion OneDotThree = new JavaEEVersion( 0, VERSION_1_3 );
+    public static final JavaEEVersion OneDotThree = new JavaEEVersion(0, VERSION_1_3 );
 
     /**
      * Represents the J2EE 1.4 version.
      */
-    public static final JavaEEVersion OneDotFour = new JavaEEVersion( 1, VERSION_1_4 );
+    public static final JavaEEVersion OneDotFour = new JavaEEVersion(1, VERSION_1_4 );
 
     /**
      * Represents the JavaEE 5 version.
      */
-    public static final JavaEEVersion Five = new JavaEEVersion( 2, VERSION_5 );
+    public static final JavaEEVersion Five = new JavaEEVersion(2, VERSION_5 );
 
     /**
      * Represents the JavaEE 7 version.
      */
-    public static final JavaEEVersion Six = new JavaEEVersion( 3, VERSION_6 );
+    public static final JavaEEVersion Six = new JavaEEVersion(3, VERSION_6 );
 
 
     private final Integer index;
