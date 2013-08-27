@@ -121,8 +121,7 @@ public class TestTreeMojo
 
         assertTrue( findString( contents, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" ) );
         assertTrue( findString( contents, "<y:NodeLabel>testGroupId:project:jar:1.0:compile</y:NodeLabel>" ) );
-        assertTrue(
-            findString( contents, "<y:NodeLabel>testGroupId:snapshot:jar:2.0-SNAPSHOT:compile</y:NodeLabel>" ) );
+        assertTrue( findString( contents, "<y:NodeLabel>testGroupId:snapshot:jar:2.0-SNAPSHOT:compile</y:NodeLabel>" ) );
         assertTrue( findString( contents, "<y:NodeLabel>testGroupId:release:jar:1.0:compile</y:NodeLabel>" ) );
         assertTrue( findString( contents, "<key for=\"node\" id=\"d0\" yfiles.type=\"nodegraphics\"/>" ) );
         assertTrue( findString( contents, "<key for=\"edge\" id=\"d1\" yfiles.type=\"edgegraphics\"/>" ) );
@@ -144,13 +143,12 @@ public class TestTreeMojo
 
     /**
      * Help finding content in the given list of string
-     *
      * @param outputFile
      * @param format
      * @return list of strings in the output file
      */
     private List<String> runTreeMojo( String outputFile, String format )
-        throws Exception
+             throws Exception
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/tree-test/plugin-config.xml" );
         String outputFileName = testDir.getAbsolutePath() + outputFile;
@@ -182,12 +180,11 @@ public class TestTreeMojo
         }
         fp1.close();
 
-        return contents;
+        return contents ;
     }
 
     /**
      * Help finding content in the given list of string
-     *
      * @param contents
      * @param str
      */
@@ -195,7 +192,7 @@ public class TestTreeMojo
     {
         for ( String line : contents )
         {
-            if ( line.contains( str ) )
+            if (line.contains(str))
             {
                 // if match then return here
                 return true;

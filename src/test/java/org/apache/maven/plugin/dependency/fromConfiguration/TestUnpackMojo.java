@@ -69,8 +69,8 @@ public class TestUnpackMojo
         stubFactory.setUnpackableFile( mojo.getArchiverManager() );
         // i'm using one file repeatedly to archive so I can test the name
         // programmatically.
-        stubFactory.setSrcFile( new File(
-            getBasedir() + File.separatorChar + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
+        stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
+            + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
 
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
@@ -142,7 +142,7 @@ public class TestUnpackMojo
 
         assertMarkerFiles( list, true );
     }
-
+    
     public void testSkip()
         throws Exception
     {
@@ -499,7 +499,7 @@ public class TestUnpackMojo
         throws Exception
     {
         final long now = System.currentTimeMillis();
-
+        
         setSilent( mojo, false );
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -537,17 +537,16 @@ public class TestUnpackMojo
         displayFile( "marker      ", marker );
         System.out.println( "marker.lastModified() = " + marker.lastModified() );
         System.out.println( "unpackedFile.lastModified() = " + unpackedFile.lastModified() );
-        assertTrue(
-            "unpackedFile '" + unpackedFile + "' lastModified() == " + marker.lastModified() + ": should be different",
-            marker.lastModified() != unpackedFile.lastModified() );
+        assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + marker.lastModified() + ": should be different",
+                    marker.lastModified() != unpackedFile.lastModified() );
     }
 
     private void displayFile( String description, File file )
     {
         System.out.println( description + ' ' + DateFormatUtils.ISO_DATETIME_FORMAT.format( file.lastModified() ) + ' '
-                                + file.getPath().substring( getBasedir().length() ) );
+            + file.getPath().substring( getBasedir().length() ) );
     }
-
+    
     public void assertUnpacked( ArtifactItem item, boolean overWrite )
         throws Exception
     {
@@ -575,8 +574,9 @@ public class TestUnpackMojo
 
     public File getUnpackedFile( ArtifactItem item )
     {
-        File unpackedFile = new File( item.getOutputDirectory(),
-                                      DependencyArtifactStubFactory.getUnpackableFileName( item.getArtifact() ) );
+        File unpackedFile =
+            new File( item.getOutputDirectory(),
+                      DependencyArtifactStubFactory.getUnpackableFileName( item.getArtifact() ) );
 
         assertTrue( unpackedFile.exists() );
         return unpackedFile;

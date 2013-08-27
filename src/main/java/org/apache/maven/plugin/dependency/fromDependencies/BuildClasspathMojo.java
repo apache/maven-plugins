@@ -72,7 +72,7 @@ public class BuildClasspathMojo
      */
     @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
     private boolean stripClassifier = false;
-
+    
     /**
      * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
      * local repository (the stripVersion parameter does nothing then).
@@ -95,7 +95,7 @@ public class BuildClasspathMojo
      */
     @Parameter( property = "mdep.outputProperty" )
     private String outputProperty;
-
+    
     /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
      */
@@ -157,7 +157,6 @@ public class BuildClasspathMojo
     /**
      * Either append the artifact's baseVersion or uniqueVersion to the filename.
      * Will only be used if {@link #isStripVersion()} is {@code false}.
-     *
      * @since 2.6
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
@@ -231,7 +230,7 @@ public class BuildClasspathMojo
             while ( i.hasNext() )
             {
                 sb.append( isPathSepSet ? this.pathSeparator : File.pathSeparator );
-                appendArtifactPath( i.next(), sb );
+                appendArtifactPath(i.next(), sb );
             }
         }
 
@@ -314,9 +313,7 @@ public class BuildClasspathMojo
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
             sb.append( File.separator );
-            sb.append(
-                DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId, this.useBaseVersion,
-                                                     this.stripClassifier ) );
+            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId, this.useBaseVersion, this.stripClassifier ) );
         }
     }
 
@@ -332,7 +329,7 @@ public class BuildClasspathMojo
         try
         {
             String oldCp = readClasspathFile();
-            return ( cpString.equals( oldCp ) || ( cpString != null && cpString.equals( oldCp ) ) );
+            return (cpString.equals(oldCp) || ( cpString != null && cpString.equals( oldCp ) ) );
         }
         catch ( Exception ex )
         {
@@ -376,7 +373,7 @@ public class BuildClasspathMojo
     /**
      * Reads into a string the file specified by the mojo param 'outputFile'. Assumes, the instance variable
      * 'outputFile' is not null.
-     *
+     * 
      * @return the string contained in the classpathFile, if exists, or null otherwise.
      * @throws MojoExecutionException
      */

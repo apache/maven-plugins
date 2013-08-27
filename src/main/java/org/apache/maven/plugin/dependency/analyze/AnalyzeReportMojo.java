@@ -80,7 +80,6 @@ public class AnalyzeReportMojo
 
     /**
      * Ignore Runtime/Provided/Test/System scopes for unused dependency analysis
-     *
      * @since 2.2
      */
     @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
@@ -89,7 +88,7 @@ public class AnalyzeReportMojo
     /**
      * Force dependencies as used, to override incomplete result caused by bytecode-level analysis.
      * Dependency format is <code>groupId:artifactId</code>.
-     *
+     * 
      * @since 2.6
      */
     @Parameter

@@ -70,8 +70,7 @@ public class TestCopyMojo
     public ArtifactItem getSingleArtifactItem( boolean removeVersion, boolean useBaseVersion )
         throws MojoExecutionException
     {
-        List<ArtifactItem> list = mojo.getProcessedArtifactItems(
-            new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion, false ) );
+        List<ArtifactItem> list = mojo.getProcessedArtifactItems(new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion, false ));
         return list.get( 0 );
     }
 
@@ -133,7 +132,7 @@ public class TestCopyMojo
 
         assertFilesExist( list, true );
     }
-
+    
     public void testCopyFileWithBaseVersion()
         throws Exception
     {
@@ -144,16 +143,16 @@ public class TestCopyMojo
         item.setGroupId( "groupId" );
         item.setVersion( "1.0-20130210.213424-191" );
         item.setBaseVersion( "1.0-SNAPSHOT" );
-        list.add( item );
+        list.add(item);
 
         mojo.setArtifactItems( list );
-        mojo.setUseBaseVersion( true );
+        mojo.setUseBaseVersion(true);
 
         mojo.execute();
 
         assertFilesExist( list, true );
     }
-
+    
     public void testSkip()
         throws Exception
     {
@@ -220,22 +219,21 @@ public class TestCopyMojo
     }
 
     public void testCopyStripClassifierSetInMojo()
-        throws Exception
-    {
-        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-        ArtifactItem item = list.get( 0 );
-        item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
-        mojo.setStripClassifier( true );
+            throws Exception
+        {
+            List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+            ArtifactItem item = list.get( 0 );
+            item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
+            mojo.setStripClassifier( true );
 
-        mojo.setArtifactItems( list );
+            mojo.setArtifactItems( list );
 
-        mojo.execute();
-        assertEquals( DependencyUtil.getFormattedFileName( item.getArtifact(), false, false, false, true ),
-                      item.getDestFileName() );
+            mojo.execute();
+            assertEquals( DependencyUtil.getFormattedFileName( item.getArtifact(), false, false, false, true ), item.getDestFileName() );
 
-        assertFilesExist( list, true );
-    }
-
+            assertFilesExist( list, true );
+        }
+    
     public void testNonClassifierStrip()
         throws Exception
     {
@@ -711,7 +709,7 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-
+    
     public void testCopyFileWithOverideLocalRepo()
         throws Exception
     {
@@ -719,17 +717,17 @@ public class TestCopyMojo
 
         mojo.setArtifactItems( list );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
-
-        File execLocalRepo = new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
+        
+        File execLocalRepo =  new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
         assertFalse( execLocalRepo.exists() );
-
+        
         mojo.setLocalRepositoryDirectory( execLocalRepo );
-
-        assertEquals( execLocalRepo.getAbsolutePath(), mojo.getLocal().getBasedir() );
+        
+        assertEquals( execLocalRepo.getAbsolutePath(), mojo.getLocal().getBasedir() ); 
         mojo.execute();
 
         assertFilesExist( list, true );
-
-    }
+       
+    }    
 
 }

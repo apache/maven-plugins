@@ -122,7 +122,7 @@ public abstract class AbstractDependencyFilterMojo
      * <li><code>provided</code> scope just gives provided dependencies,</li>
      * <li><code>system</code> scope just gives system dependencies.</li>
      * </ul>
-     *
+     * 
      * @since 2.0
      */
     @Parameter( property = "includeScope", defaultValue = "" )
@@ -225,7 +225,7 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
-     *
+     * 
      * @return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
      */
     protected abstract ArtifactsFilter getMarkedArtifactFilter();
@@ -371,7 +371,6 @@ public abstract class AbstractDependencyFilterMojo
             }
         }
     }
-
     /**
      * Transform artifacts
      *

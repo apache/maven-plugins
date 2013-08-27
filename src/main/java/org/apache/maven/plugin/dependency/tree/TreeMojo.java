@@ -153,16 +153,16 @@ public class TreeMojo
     /**
      * A comma-separated list of artifacts to filter the serialized dependency tree by, or <code>null</code> not to
      * filter the dependency tree. The filter syntax is:
-     * <p/>
+     * 
      * <pre>
      * [groupId]:[artifactId]:[type]:[version]
      * </pre>
-     * <p/>
+     * 
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
      * segment is treated as an implicit wildcard.
      * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
      * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.</p>
-     *
+     * 
      * @see StrictPatternIncludesArtifactFilter
      * @since 2.0-alpha-6
      */
@@ -172,11 +172,11 @@ public class TreeMojo
     /**
      * A comma-separated list of artifacts to filter from the serialized dependency tree, or <code>null</code> not to
      * filter any artifacts from the dependency tree. The filter syntax is:
-     * <p/>
+     * 
      * <pre>
      * [groupId]:[artifactId]:[type]:[version]
      * </pre>
-     * <p/>
+     * 
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
      * segment is treated as an implicit wildcard.
      * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
@@ -243,8 +243,10 @@ public class TreeMojo
             if ( verbose )
             {
                 // verbose mode force Maven 2 dependency tree component use
-                dependencyTreeString = serializeVerboseDependencyTree(
-                    dependencyTreeBuilder.buildDependencyTree( project, localRepository, artifactFilter ) );
+                dependencyTreeString =
+                    serializeVerboseDependencyTree( dependencyTreeBuilder.buildDependencyTree( project,
+                                                                                               localRepository,
+                                                                                               artifactFilter ) );
             }
             else
             {
@@ -383,14 +385,12 @@ public class TreeMojo
 
         org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor visitor =
             new org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor( writer,
-                                                                                                    toTreeTokens(
-                                                                                                        tokens ) );
+                                                                                                    toTreeTokens( tokens ) );
 
         // TODO: remove the need for this when the serializer can calculate last nodes from visitor calls only
         visitor = new org.apache.maven.shared.dependency.tree.traversal.BuildingDependencyNodeVisitor( visitor );
 
-        org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter filter =
-            createVerboseDependencyNodeFilter();
+        org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter filter = createVerboseDependencyNodeFilter();
 
         if ( filter != null )
         {
@@ -402,10 +402,10 @@ public class TreeMojo
             rootNode.accept( firstPassVisitor );
 
             org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter secondPassFilter =
-                new org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter(
-                    collectingVisitor.getNodes() );
-            visitor = new org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor( visitor,
-                                                                                                            secondPassFilter );
+                new org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
+            visitor =
+                new org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor( visitor,
+                                                                                                      secondPassFilter );
         }
 
         rootNode.accept( visitor );
@@ -548,8 +548,8 @@ public class TreeMojo
             getLog().debug( "+ Filtering dependency tree by artifact include patterns: " + patterns );
 
             ArtifactFilter artifactFilter = new StrictPatternIncludesArtifactFilter( patterns );
-            filters.add(
-                new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter( artifactFilter ) );
+            filters.add( new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter(
+                                                                                                          artifactFilter ) );
         }
 
         // filter excludes
@@ -560,13 +560,12 @@ public class TreeMojo
             getLog().debug( "+ Filtering dependency tree by artifact exclude patterns: " + patterns );
 
             ArtifactFilter artifactFilter = new StrictPatternExcludesArtifactFilter( patterns );
-            filters.add(
-                new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter( artifactFilter ) );
+            filters.add( new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter(
+                                                                                                          artifactFilter ) );
         }
 
-        return filters.isEmpty()
-            ? null
-            : new org.apache.maven.shared.dependency.tree.filter.AndDependencyNodeFilter( filters );
+        return filters.isEmpty() ? null
+                        : new org.apache.maven.shared.dependency.tree.filter.AndDependencyNodeFilter( filters );
     }
 
     //following is required because the version handling in maven code
@@ -587,7 +586,8 @@ public class TreeMojo
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-            @SuppressWarnings( "unchecked" ) List<Restriction> restrictions = allowedRange.getRestrictions();
+            @SuppressWarnings( "unchecked" )
+            List<Restriction> restrictions = allowedRange.getRestrictions();
             for ( Restriction restriction : restrictions )
             {
                 if ( restriction.containsVersion( theVersion ) )
