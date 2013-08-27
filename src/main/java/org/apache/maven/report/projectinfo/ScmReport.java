@@ -111,9 +111,7 @@ public class ScmReport
         r.render();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return "source-repository";
@@ -328,28 +326,29 @@ public class ScmReport
 
             if ( anonymousRepository != null && isScmSystem( anonymousRepository, "cvs" ) )
             {
-                CvsScmProviderRepository cvsRepo =
-                    (CvsScmProviderRepository) anonymousRepository.getProviderRepository();
+                CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessCVS( cvsRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "git" ) )
             {
-                GitScmProviderRepository gitRepo =
-                    (GitScmProviderRepository) anonymousRepository.getProviderRepository();
+                GitScmProviderRepository gitRepo = (GitScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessGit( gitRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "hg" ) )
             {
-                HgScmProviderRepository hgRepo = (HgScmProviderRepository) anonymousRepository.getProviderRepository();
+                HgScmProviderRepository hgRepo = (HgScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessMercurial( hgRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "svn" ) )
             {
-                SvnScmProviderRepository svnRepo =
-                    (SvnScmProviderRepository) anonymousRepository.getProviderRepository();
+                SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) anonymousRepository
+                    .getProviderRepository();
 
                 anonymousAccessSVN( svnRepo );
             }
@@ -401,15 +400,15 @@ public class ScmReport
             }
             else if ( devRepository != null && isScmSystem( devRepository, "perforce" ) )
             {
-                PerforceScmProviderRepository perforceRepo =
-                    (PerforceScmProviderRepository) devRepository.getProviderRepository();
+                PerforceScmProviderRepository perforceRepo = (PerforceScmProviderRepository) devRepository
+                    .getProviderRepository();
 
                 developerAccessPerforce( perforceRepo );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "starteam" ) )
             {
-                StarteamScmProviderRepository starteamRepo =
-                    (StarteamScmProviderRepository) devRepository.getProviderRepository();
+                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) devRepository
+                    .getProviderRepository();
 
                 developerAccessStarteam( starteamRepo );
             }
@@ -444,7 +443,7 @@ public class ScmReport
 
                 paragraph( getI18nString( "accessbehindfirewall.svn.intro" ) );
 
-                verbatimText( "$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName );
+                verbatimText("$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName);
             }
             else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
@@ -462,7 +461,7 @@ public class ScmReport
          * Render the access from behind a firewall section
          *
          * @param anonymousRepository the anonymous repository
-         * @param devRepository       the dev repository
+         * @param devRepository the dev repository
          */
         private void renderAccessThroughProxySection( ScmRepository anonymousRepository, ScmRepository devRepository )
         {
@@ -474,9 +473,7 @@ public class ScmReport
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro2" ) );
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro3" ) );
 
-                verbatimText( "[global]" + SystemUtils.LINE_SEPARATOR + "http-proxy-host = your.proxy.name"
-                                  + SystemUtils.LINE_SEPARATOR + "http-proxy-port = 3128"
-                                  + SystemUtils.LINE_SEPARATOR );
+                verbatimText("[global]" + SystemUtils.LINE_SEPARATOR + "http-proxy-host = your.proxy.name" + SystemUtils.LINE_SEPARATOR + "http-proxy-port = 3128" + SystemUtils.LINE_SEPARATOR);
 
                 endSection();
             }
@@ -493,7 +490,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "devaccess.clearcase.intro" ) );
 
-            verbatimText( "$ cleartool checkout " );
+            verbatimText("$ cleartool checkout ");
         }
 
         // CVS
@@ -511,8 +508,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.cvs.intro" ) );
 
-            verbatimText( "$ cvs -d " + cvsRepo.getCvsRoot() + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d "
-                              + cvsRepo.getCvsRoot() + " co " + cvsRepo.getModule() );
+            verbatimText("$ cvs -d " + cvsRepo.getCvsRoot() + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRepo.getCvsRoot() + " co " + cvsRepo.getModule());
         }
 
         // Git
@@ -530,7 +526,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.git.intro" ) );
             sink.paragraph_();
 
-            verbatimText( "$ git clone " + gitRepo.getFetchUrl() );
+            verbatimText("$ git clone " + gitRepo.getFetchUrl());
         }
 
         // Mercurial
@@ -548,7 +544,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.hg.intro" ) );
             sink.paragraph_();
 
-            verbatimText( "$ hg clone " + hgRepo.getURI() );
+            verbatimText("$ hg clone " + hgRepo.getURI());
         }
 
         /**
@@ -567,9 +563,7 @@ public class ScmReport
             // Safety: remove the username if present
             String cvsRoot = StringUtils.replace( cvsRepo.getCvsRoot(), cvsRepo.getUser(), "username" );
 
-            verbatimText(
-                "$ cvs -d " + cvsRoot + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRoot + " co "
-                    + cvsRepo.getModule() );
+            verbatimText("$ cvs -d " + cvsRoot + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRoot + " co " + cvsRepo.getModule());
         }
 
         // Git
@@ -587,7 +581,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.git.intro" ) );
             sink.paragraph_();
 
-            verbatimText( "$ git clone " + gitRepo.getPushUrl() );
+            verbatimText("$ git clone " + gitRepo.getPushUrl());
         }
 
         // Mercurial
@@ -605,7 +599,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.hg.intro" ) );
             sink.paragraph_();
 
-            verbatimText( "$ hg clone " + hgRepo.getURI() );
+            verbatimText("$ hg clone " + hgRepo.getURI());
         }
 
         // Perforce
@@ -688,7 +682,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.svn.intro" ) );
 
-            verbatimText( "$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName );
+            verbatimText("$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName);
         }
 
         /**
@@ -775,8 +769,7 @@ public class ScmReport
 
                     if ( !isIntroAdded )
                     {
-                        sb.append( "This SCM url '" ).append( scmUrl ).append(
-                            "' is invalid due to the following errors:" );
+                        sb.append("This SCM url '").append(scmUrl).append("' is invalid due to the following errors:");
                         sb.append( SystemUtils.LINE_SEPARATOR );
                         isIntroAdded = true;
                     }
@@ -788,7 +781,7 @@ public class ScmReport
                 if ( StringUtils.isNotEmpty( sb.toString() ) )
                 {
                     sb.append( "For more information about SCM URL Format, please refer to: "
-                                   + "http://maven.apache.org/scm/scm-url-format.html" );
+                        + "http://maven.apache.org/scm/scm-url-format.html" );
 
                     throw new IllegalArgumentException( sb.toString() );
                 }
@@ -831,7 +824,7 @@ public class ScmReport
          * </p>
          *
          * @param scmRepository a SCM repository
-         * @param scmProvider   a SCM provider name
+         * @param scmProvider a SCM provider name
          * @return true if the provider of the given SCM repository is equal to the given scm provider.
          * @see <a href="http://svn.apache.org/repos/asf/maven/scm/trunk/maven-scm-providers/">maven-scm-providers</a>
          */

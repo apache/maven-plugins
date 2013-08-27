@@ -73,19 +73,13 @@ import org.codehaus.plexus.util.StringUtils;
 public class DependenciesRenderer
     extends AbstractProjectInfoRenderer
 {
-    /**
-     * URL for the 'icon_info_sml.gif' image
-     */
+    /** URL for the 'icon_info_sml.gif' image */
     private static final String IMG_INFO_URL = "./images/icon_info_sml.gif";
 
-    /**
-     * URL for the 'close.gif' image
-     */
+    /** URL for the 'close.gif' image */
     private static final String IMG_CLOSE_URL = "./images/close.gif";
 
-    /**
-     * Used to format decimal values in the "Dependency File Details" table
-     */
+    /** Used to format decimal values in the "Dependency File Details" table */
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
 
     private static final Set<String> JAR_SUBTYPE;
@@ -107,9 +101,7 @@ public class DependenciesRenderer
 
     private final RepositoryUtils repoUtils;
 
-    /**
-     * Used to format file length values
-     */
+    /** Used to format file length values */
     private final DecimalFormat fileLengthDecimalFormat;
 
     /**
@@ -117,9 +109,7 @@ public class DependenciesRenderer
      */
     private int section;
 
-    /**
-     * Counter for unique IDs that is consistent across generations.
-     */
+    /** Counter for unique IDs that is consistent across generations. */
     private int idCounter = 0;
 
     /**
@@ -133,7 +123,8 @@ public class DependenciesRenderer
         public Object put( String key, Object value )
         {
             // handle multiple values as a set to avoid duplicates
-            @SuppressWarnings( "unchecked" ) SortedSet<Object> valueList = (SortedSet<Object>) get( key );
+            @SuppressWarnings( "unchecked" )
+            SortedSet<Object> valueList = (SortedSet<Object>) get( key );
             if ( valueList == null )
             {
                 valueList = new TreeSet<Object>();
@@ -163,18 +154,7 @@ public class DependenciesRenderer
         jarSubtype.add( "ejb" );
         JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
 
-        JAVASCRIPT = "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR
-            + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {"
-            + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );"
-            + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );"
-            + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR
-            + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';"
-            + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR
-            + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {"
-            + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR
-            + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }"
-            + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>"
-            + SystemUtils.LINE_SEPARATOR;
+        JAVASCRIPT = "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {" + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );" + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );" + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>" + SystemUtils.LINE_SEPARATOR;
     }
 
     /**
@@ -276,9 +256,7 @@ public class DependenciesRenderer
     // Protected methods
     // ----------------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     // workaround for MPIR-140
     // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
     protected void startSection( String name )
@@ -290,7 +268,7 @@ public class DependenciesRenderer
      * Start section with a name and a specific anchor.
      *
      * @param anchor not null
-     * @param name   not null
+     * @param name not null
      */
     protected void startSection( String anchor, String name )
     {
@@ -353,9 +331,7 @@ public class DependenciesRenderer
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     // workaround for MPIR-140
     // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
     protected void endSection()
@@ -397,7 +373,7 @@ public class DependenciesRenderer
 
     /**
      * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
-     * @param withOptional   <code>true</code> to include the optional column, <code>false</code> otherwise.
+     * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
      * @return the dependency table header with/without classifier/optional column
      * @see #renderArtifactRow(Artifact, boolean, boolean)
      */
@@ -415,18 +391,18 @@ public class DependenciesRenderer
         {
             if ( withOptional )
             {
-                return new String[]{ groupId, artifactId, version, classifier, type, license, optional };
+                return new String[] { groupId, artifactId, version, classifier, type, license, optional };
             }
 
-            return new String[]{ groupId, artifactId, version, classifier, type, license };
+            return new String[] { groupId, artifactId, version, classifier, type, license };
         }
 
         if ( withOptional )
         {
-            return new String[]{ groupId, artifactId, version, type, license, optional };
+            return new String[] { groupId, artifactId, version, type, license, optional };
         }
 
-        return new String[]{ groupId, artifactId, version, type, license };
+        return new String[] { groupId, artifactId, version, type, license };
     }
 
     private void renderSectionProjectDependencies()
@@ -443,7 +419,7 @@ public class DependenciesRenderer
 
     /**
      * @param dependenciesByScope map with supported scopes as key and a list of <code>Artifact</code> as values.
-     * @param isTransitive        <code>true</code> if it is transitive dependencies rendering.
+     * @param isTransitive <code>true</code> if it is transitive dependencies rendering.
      * @see Artifact#SCOPE_COMPILE
      * @see Artifact#SCOPE_PROVIDED
      * @see Artifact#SCOPE_RUNTIME
@@ -524,8 +500,9 @@ public class DependenciesRenderer
         String debug = getI18nString( "file.details.column.debug" );
         String sealed = getI18nString( "file.details.column.sealed" );
 
-        int[] justification = new int[]{ Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
-            Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
+        int[] justification =
+            new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
+                Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
 
         startTable( justification, false );
 
@@ -544,11 +521,11 @@ public class DependenciesRenderer
         String[] tableHeader;
         if ( hasSealed )
         {
-            tableHeader = new String[]{ filename, size, entries, classes, packages, jdkrev, debug, sealed };
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug, sealed };
         }
         else
         {
-            tableHeader = new String[]{ filename, size, entries, classes, packages, jdkrev, debug };
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug };
         }
         tableHeader( tableHeader );
 
@@ -612,11 +589,12 @@ public class DependenciesRenderer
                         fileLength = "-";
                     }
 
-                    tableRow( hasSealed, new String[]{ name, fileLength,
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
-                        DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ), jarDetails.getJdkRevision(),
-                        debugstr, sealedstr } );
+                    tableRow( hasSealed,
+                              new String[] { name, fileLength,
+                                  DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
+                                  DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
+                                  DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
+                                  jarDetails.getJdkRevision(), debugstr, sealedstr } );
                 }
                 catch ( IOException e )
                 {
@@ -626,8 +604,8 @@ public class DependenciesRenderer
             else
             {
                 tableRow( hasSealed,
-                          new String[]{ artifactFile.getName(), fileLengthDecimalFormat.format( artifactFile.length() ),
-                              "", "", "", "", "", "" } );
+                          new String[] { artifactFile.getName(),
+                              fileLengthDecimalFormat.format( artifactFile.length() ), "", "", "", "", "", "" } );
             }
         }
 
@@ -642,10 +620,11 @@ public class DependenciesRenderer
         {
             if ( totaldeps.getTotal( i ) > 0 )
             {
-                tableRow( hasSealed, new String[]{ totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
-                    totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
-                    totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
-                    totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
+                tableRow( hasSealed,
+                          new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
+                              totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
+                              totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
+                              totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
             }
         }
 
@@ -669,9 +648,8 @@ public class DependenciesRenderer
 
     private void createExceptionInfoTableRow( Artifact artifact, File artifactFile, Exception e, boolean hasSealed )
     {
-        tableRow( hasSealed,
-                  new String[]{ artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "", "", "",
-                      "" } );
+        tableRow( hasSealed, new String[] { artifact.getId(), artifactFile.getAbsolutePath(), e.getMessage(), "", "",
+            "", "", "" } );
     }
 
     private void populateRepositoryMap( Map<String, ArtifactRepository> repos, List<ArtifactRepository> rowRepos )
@@ -704,8 +682,8 @@ public class DependenciesRenderer
                         URL repoUrl = new URL( repo.getUrl() );
                         if ( ProjectInfoReportUtils.getContent( repoUrl, settings ) == null )
                         {
-                            log.warn( "The repository url '" + repoUrl + "' has no stream - Repository '" + repo.getId()
-                                          + "' will be blacklisted." );
+                            log.warn( "The repository url '" + repoUrl + "' has no stream - Repository '"
+                                + repo.getId() + "' will be blacklisted." );
                             repo.setBlacklisted( true );
                             repoUrlBlackListed.add( repo.getUrl() );
                         }
@@ -713,7 +691,7 @@ public class DependenciesRenderer
                     catch ( IOException e )
                     {
                         log.warn( "The repository url '" + repo.getUrl() + "' is invalid - Repository '" + repo.getId()
-                                      + "' will be blacklisted." );
+                            + "' will be blacklisted." );
                         repo.setBlacklisted( true );
                         repoUrlBlackListed.add( repo.getUrl() );
                     }
@@ -780,9 +758,9 @@ public class DependenciesRenderer
             // can't use straight artifact comparison because we want optional last
             Collections.sort( artifacts, getArtifactComparator() );
 
-            String anchorByScope = ( isTransitive
-                ? getI18nString( "transitive.title" ) + "_" + scope
-                : getI18nString( "title" ) + "_" + scope );
+            String anchorByScope =
+                ( isTransitive ? getI18nString( "transitive.title" ) + "_" + scope : getI18nString( "title" ) + "_"
+                    + scope );
             startSection( anchorByScope, scope );
 
             paragraph( getI18nString( "intro." + scope ) );
@@ -823,9 +801,9 @@ public class DependenciesRenderer
     }
 
     /**
-     * @param artifact       not null
+     * @param artifact not null
      * @param withClassifier <code>true</code> to include the classifier column, <code>false</code> otherwise.
-     * @param withOptional   <code>true</code> to include the optional column, <code>false</code> otherwise.
+     * @param withOptional <code>true</code> to include the optional column, <code>false</code> otherwise.
      * @see #getDependencyTableHeader(boolean, boolean)
      */
     private void renderArtifactRow( Artifact artifact, boolean withClassifier, boolean withOptional )
@@ -843,7 +821,8 @@ public class DependenciesRenderer
         try
         {
             artifactProject = repoUtils.getMavenProjectFromRepository( artifact );
-            @SuppressWarnings( "unchecked" ) List<License> licenses = artifactProject.getLicenses();
+            @SuppressWarnings( "unchecked" )
+            List<License> licenses = artifactProject.getLicenses();
             for ( License license : licenses )
             {
                 sb.append( ProjectInfoReportUtils.getArtifactIdCell( license.getName(), license.getUrl() ) );
@@ -858,13 +837,14 @@ public class DependenciesRenderer
         if ( withClassifier )
         {
             content =
-                new String[]{ artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getClassifier(),
+                new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getClassifier(),
                     artifact.getType(), sb.toString(), isOptional };
         }
         else
         {
-            content = new String[]{ artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getType(),
-                sb.toString(), isOptional };
+            content =
+                new String[] { artifact.getGroupId(), artifactIdCell, artifact.getVersion(), artifact.getType(),
+                    sb.toString(), isOptional };
         }
 
         tableRow( withOptional, content );
@@ -881,8 +861,8 @@ public class DependenciesRenderer
 
         sink.text( id + ( StringUtils.isNotEmpty( artifact.getScope() ) ? " (" + artifact.getScope() + ") " : " " ) );
         sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL
-                          + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '" + dependencyDetailId + "', '"
-                          + imgId + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
+            + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '" + dependencyDetailId + "', '" + imgId
+            + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
 
         printDescriptionsAndURLs( node, dependencyDetailId );
 
@@ -931,7 +911,8 @@ public class DependenciesRenderer
                 String artifactDescription = artifactProject.getDescription();
                 String artifactUrl = artifactProject.getUrl();
                 String artifactName = artifactProject.getName();
-                @SuppressWarnings( "unchecked" ) List<License> licenses = artifactProject.getLicenses();
+                @SuppressWarnings( "unchecked" )
+                List<License> licenses = artifactProject.getLicenses();
 
                 sink.tableRow();
                 sink.tableHeaderCell();
@@ -1068,7 +1049,8 @@ public class DependenciesRenderer
             sink.text( ": " );
             sink.bold_();
 
-            @SuppressWarnings( "unchecked" ) SortedSet<String> projects = (SortedSet<String>) entry.getValue();
+            @SuppressWarnings( "unchecked" )
+            SortedSet<String> projects = (SortedSet<String>) entry.getValue();
 
             for ( Iterator<String> iterator = projects.iterator(); iterator.hasNext(); )
             {
@@ -1105,15 +1087,15 @@ public class DependenciesRenderer
         int[] justificationRepo;
         if ( repoUrlBlackListed.isEmpty() )
         {
-            tableHeader = new String[]{ repoid, url, release, snapshot };
+            tableHeader = new String[] { repoid, url, release, snapshot };
             justificationRepo =
-                new int[]{ Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
+                new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER };
         }
         else
         {
-            tableHeader = new String[]{ repoid, url, release, snapshot, blacklisted };
+            tableHeader = new String[] { repoid, url, release, snapshot, blacklisted };
             justificationRepo =
-                new int[]{ Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
+                new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT, Sink.JUSTIFY_CENTER, Sink.JUSTIFY_CENTER,
                     Sink.JUSTIFY_CENTER };
         }
 
@@ -1196,7 +1178,8 @@ public class DependenciesRenderer
     {
         try
         {
-            @SuppressWarnings( "unchecked" ) List<ArtifactRepository> mirroredRepos =
+            @SuppressWarnings( "unchecked" )
+            List<ArtifactRepository> mirroredRepos =
                 (List<ArtifactRepository>) invoke( repo, "getMirroredRepositories" );
 
             if ( ( mirroredRepos != null ) && ( !mirroredRepos.isEmpty() ) )
@@ -1281,7 +1264,8 @@ public class DependenciesRenderer
 
             if ( Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )
             {
-                for ( @SuppressWarnings( "unused" ) String repoId : repoIdList )
+                for ( @SuppressWarnings( "unused" )
+                String repoId : repoIdList )
                 {
                     tableCell( "-" );
                 }
@@ -1303,8 +1287,8 @@ public class DependenciesRenderer
 
                     boolean dependencyExists = false;
                     // check snapshots in snapshots repository only and releases in release repositories...
-                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() ) || ( !dependency.isSnapshot()
-                        && repo.getReleases().isEnabled() ) )
+                    if ( ( dependency.isSnapshot() && repo.getSnapshots().isEnabled() )
+                        || ( !dependency.isSnapshot() && repo.getReleases().isEnabled() ) )
                     {
                         dependencyExists = repoUtils.dependencyExistsInRepo( repo, dependency );
                     }
@@ -1331,7 +1315,7 @@ public class DependenciesRenderer
                         sink.link_();
                         sink.tableCell_();
 
-                        totalByRepo.put( repokey, old.intValue() + 1 );
+                        totalByRepo.put( repokey, old.intValue() + 1);
                     }
                     else
                     {
@@ -1495,9 +1479,7 @@ public class DependenciesRenderer
             this.locale = locale;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public StringBuffer format( long fs, StringBuffer result, FieldPosition fieldPosition )
         {
             if ( fs > 1024 * 1024 * 1024 )
@@ -1638,9 +1620,7 @@ public class DependenciesRenderer
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public String toString()
         {
             StringBuilder sb = new StringBuilder();
