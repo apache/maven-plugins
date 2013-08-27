@@ -53,7 +53,7 @@ public final class AssemblyFormatUtils
 
     /**
      * Get the full name of the distribution artifact
-     *
+     * 
      * @param assembly
      * @return the distribution name
      */
@@ -154,8 +154,8 @@ public final class AssemblyFormatUtils
         {
             // 2
             interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject ) );
-            interpolator.addValueSource(
-                new PrefixedPropertiesValueSource( "module.properties.", moduleProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "module.properties.",
+                                                                            moduleProject.getProperties() ) );
             if ( moduleProject.getArtifact() != null )
             {
                 interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject.getArtifact() ) );
@@ -166,12 +166,11 @@ public final class AssemblyFormatUtils
         {
             // 3
             interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
-            interpolator.addValueSource(
-                new PrefixedPropertiesValueSource( "artifact.properties.", artifactProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "artifact.properties.",
+                                                                            artifactProject.getProperties() ) );
             if ( artifactProject.getArtifact() != null )
             {
-                interpolator.addValueSource(
-                    new PrefixedObjectValueSource( "artifact.", artifactProject.getArtifact() ) );
+                interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject.getArtifact() ) );
             }
         }
 
@@ -204,13 +203,13 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             // 5
-            interpolator.addValueSource(
-                new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, mainProject, true ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES,
+                                                                        mainProject, true ) );
 
             // 6
-            interpolator.addValueSource(
-                new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
-                                                   mainProject.getProperties(), true ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource(
+                                                                            InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
+                                                                            mainProject.getProperties(), true ) );
         }
 
         Properties commandLineProperties = System.getProperties();
@@ -240,8 +239,8 @@ public final class AssemblyFormatUtils
         }
         catch ( final IOException e )
         {
-            throw new AssemblyFormattingException(
-                "Failed to retrieve OS environment variables. Reason: " + e.getMessage(), e );
+            throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: "
+                            + e.getMessage(), e );
         }
 
         try
@@ -346,18 +345,17 @@ public final class AssemblyFormatUtils
             interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleArtifact ) );
 
             // 1B
-            interpolator.addValueSource(
-                new PrefixedObjectValueSource( "module.", moduleArtifact.getArtifactHandler() ) );
-            interpolator.addValueSource(
-                new PrefixedObjectValueSource( "module.handler.", moduleArtifact.getArtifactHandler() ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleArtifact.getArtifactHandler() ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "module.handler.",
+                                                                        moduleArtifact.getArtifactHandler() ) );
         }
 
         // 1C
         if ( moduleProject != null )
         {
             interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject ) );
-            interpolator.addValueSource(
-                new PrefixedPropertiesValueSource( "module.properties.", moduleProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "module.properties.",
+                                                                            moduleProject.getProperties() ) );
             if ( moduleProject.getArtifact() != null )
             {
                 interpolator.addValueSource( new PrefixedObjectValueSource( "module.", moduleProject.getArtifact() ) );
@@ -369,19 +367,17 @@ public final class AssemblyFormatUtils
 
         // 2B
         interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifact.getArtifactHandler() ) );
-        interpolator.addValueSource(
-            new PrefixedObjectValueSource( "artifact.handler.", artifact.getArtifactHandler() ) );
+        interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.handler.", artifact.getArtifactHandler() ) );
 
         // 2C
         if ( artifactProject != null )
         {
             interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject ) );
-            interpolator.addValueSource(
-                new PrefixedPropertiesValueSource( "artifact.properties.", artifactProject.getProperties() ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "artifact.properties.",
+                                                                            artifactProject.getProperties() ) );
             if ( artifactProject.getArtifact() != null )
             {
-                interpolator.addValueSource(
-                    new PrefixedObjectValueSource( "artifact.", artifactProject.getArtifact() ) );
+                interpolator.addValueSource( new PrefixedObjectValueSource( "artifact.", artifactProject.getArtifact() ) );
             }
         }
 
@@ -389,8 +385,8 @@ public final class AssemblyFormatUtils
         {
             // 3
             // 4
-            interpolator.addValueSource(
-                new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, mainProject, true ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES,
+                                                                        mainProject, true ) );
         }
 
         final Properties specialRules = new Properties();
@@ -438,9 +434,9 @@ public final class AssemblyFormatUtils
         if ( mainProject != null )
         {
             // 7
-            interpolator.addValueSource(
-                new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
-                                                   mainProject.getProperties(), true ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource(
+                                                                            InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
+                                                                            mainProject.getProperties(), true ) );
         }
 
         Properties commandLineProperties = System.getProperties();
@@ -470,8 +466,8 @@ public final class AssemblyFormatUtils
         }
         catch ( final IOException e )
         {
-            throw new AssemblyFormattingException(
-                "Failed to retrieve OS environment variables. Reason: " + e.getMessage(), e );
+            throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: "
+                            + e.getMessage(), e );
         }
 
         try
@@ -480,8 +476,8 @@ public final class AssemblyFormatUtils
         }
         catch ( final InterpolationException e )
         {
-            throw new AssemblyFormattingException(
-                "Failed to interpolate output filename mapping. Reason: " + e.getMessage(), e );
+            throw new AssemblyFormattingException( "Failed to interpolate output filename mapping. Reason: "
+                            + e.getMessage(), e );
         }
 
         value = StringUtils.replace( value, "//", "/" );
@@ -494,9 +490,11 @@ public final class AssemblyFormatUtils
     public static String fixRelativeRefs( String src )
     {
         String value = src;
-
-        String[] separators = { "/", "\\" };
-
+        
+        String[] separators = {
+            "/", "\\"
+        };
+        
         String finalSep = null;
         for ( String sep : separators )
         {
@@ -504,12 +502,12 @@ public final class AssemblyFormatUtils
             {
                 finalSep = sep;
             }
-
-            if ( value.contains( "." + sep ) )
+            
+            if (value.contains("." + sep))
             {
                 List<String> parts = new ArrayList<String>();
                 parts.addAll( Arrays.asList( value.split( sep ) ) );
-
+                
                 for ( ListIterator<String> it = parts.listIterator(); it.hasNext(); )
                 {
                     String part = it.next();
@@ -527,16 +525,16 @@ public final class AssemblyFormatUtils
                         }
                     }
                 }
-
+                
                 value = StringUtils.join( parts.iterator(), sep );
             }
         }
-
+        
         if ( finalSep != null && value.length() > 0 && !value.endsWith( finalSep ) )
         {
             value += finalSep;
         }
-
+        
         return value;
     }
 }

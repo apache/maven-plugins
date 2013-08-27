@@ -27,7 +27,6 @@ import java.io.StringWriter;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Collections;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
@@ -91,8 +90,10 @@ public class ManifestCreationFinalizerTest
 
         JarArchiver archiver = new JarArchiver();
 
-        archiver.setArchiveFinalizers(
-            Collections.<ArchiveFinalizer>singletonList( new ManifestCreationFinalizer( null, project, config ) ) );
+        archiver.setArchiveFinalizers( Collections.<ArchiveFinalizer>singletonList( new ManifestCreationFinalizer(
+                                                                                                 null,
+                                                                                                 project,
+                                                                                                 config ) ) );
 
         File file = fileManager.createTempFile();
 
@@ -108,7 +109,7 @@ public class ManifestCreationFinalizerTest
 
         IOUtil.copy( reader, writer );
 
-        assertTrue( writer.toString().contains( "Main-Class: Stuff" ) );
+        assertTrue(writer.toString().contains("Main-Class: Stuff"));
 
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
         ( (JarURLConnection) resource.openConnection() ).getJarFile().close();
@@ -127,8 +128,10 @@ public class ManifestCreationFinalizerTest
 
         JarArchiver archiver = new JarArchiver();
 
-        archiver.setArchiveFinalizers(
-            Collections.<ArchiveFinalizer>singletonList( new ManifestCreationFinalizer( null, project, config ) ) );
+        archiver.setArchiveFinalizers( Collections.<ArchiveFinalizer>singletonList( new ManifestCreationFinalizer(
+                                                                                                 null,
+                                                                                                 project,
+                                                                                                 config ) ) );
 
         File file = fileManager.createTempFile();
 
@@ -146,7 +149,7 @@ public class ManifestCreationFinalizerTest
 
         System.out.println( "Test Manifest:\n\n" + writer );
 
-        assertTrue( writer.toString().contains( testKey + ": " + testValue ) );
+        assertTrue(writer.toString().contains(testKey + ": " + testValue));
 
         // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4823678
         ( (JarURLConnection) resource.openConnection() ).getJarFile().close();

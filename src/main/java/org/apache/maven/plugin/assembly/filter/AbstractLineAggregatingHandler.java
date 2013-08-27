@@ -95,9 +95,8 @@ public abstract class AbstractLineAggregatingHandler
             }
             catch ( final IOException e )
             {
-                throw new ArchiverException(
-                    "Error adding aggregated content for: " + fname + " to finalize archive creation. Reason: "
-                        + e.getMessage(), e );
+                throw new ArchiverException( "Error adding aggregated content for: " + fname
+                                + " to finalize archive creation. Reason: " + e.getMessage(), e );
             }
             finally
             {

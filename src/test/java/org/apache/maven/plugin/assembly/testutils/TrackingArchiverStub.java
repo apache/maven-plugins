@@ -299,18 +299,13 @@ public class TrackingArchiverStub
     {
         /**
          * {@inheritDoc}
-         *
+         * 
          * @see java.lang.Object#toString()
          */
         @Override
         public String toString()
         {
-            return "Addition (\n    resource= " + resource + "\n    directory= " + directory + "\n    destination= "
-                + destination + "\n    permissions= " + permissions + "\n    includes= " + ( includes == null
-                ? "-none-"
-                : StringUtils.join( includes, ", " ) ) + "\n    excludes= " + ( excludes == null
-                ? "-none-"
-                : StringUtils.join( excludes, ", " ) ) + "\n)";
+            return "Addition (\n    resource= " + resource + "\n    directory= " + directory + "\n    destination= " + destination + "\n    permissions= " + permissions + "\n    includes= " + (includes == null ? "-none-" : StringUtils.join(includes, ", ")) + "\n    excludes= " + (excludes == null ? "-none-" : StringUtils.join(excludes, ", ")) + "\n)";
         }
 
         public final Object resource;

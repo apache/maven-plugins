@@ -1,12 +1,11 @@
-<?xml version="1.0"?>
-<project>
+<?xml version="1.0"?><project>
   <parent>
     <artifactId>massembly-298</artifactId>
     <groupId>org.test</groupId>
     <version>1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>child1</artifactId>
+    <artifactId>child1</artifactId>
   <name>Child 1</name>
   <version>1.0</version>
   <url>http://maven.apache.org</url>

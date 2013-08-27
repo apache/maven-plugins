@@ -54,8 +54,7 @@ public final class ProjectUtils
         return classifier;
     }
 
-    @Nonnull
-    public static Set<MavenProject> getProjectModules( @Nonnull final MavenProject project,
+    @Nonnull public static Set<MavenProject> getProjectModules( @Nonnull final MavenProject project,
                                                        @Nonnull final List<MavenProject> reactorProjects,
                                                        final boolean includeSubModules, @Nonnull final Logger logger )
         throws IOException
@@ -80,16 +79,15 @@ public final class ProjectUtils
         {
             changed = 0;
 
-            for ( final Iterator<MavenProject> candidateIterator = moduleCandidates.iterator();
-                  candidateIterator.hasNext(); )
+            for ( final Iterator<MavenProject> candidateIterator = moduleCandidates.iterator(); candidateIterator.hasNext(); )
             {
                 final MavenProject moduleCandidate = candidateIterator.next();
 
                 if ( moduleCandidate.getFile() == null )
                 {
-                    logger.warn(
-                        "Cannot compute whether " + moduleCandidate.getId() + " is a module of: " + project.getId()
-                            + "; it does not have an associated POM file on the local filesystem." );
+                    logger.warn( "Cannot compute whether " + moduleCandidate.getId() + " is a module of: "
+                                    + project.getId()
+                                    + "; it does not have an associated POM file on the local filesystem." );
                     continue;
                 }
 
@@ -152,7 +150,8 @@ public final class ProjectUtils
         final List<String> modules = mainProject.getModules();
         final File basedir = mainProject.getBasedir();
 
-        final File moduleFile = moduleProject.getFile().getCanonicalFile();
+        final File moduleFile = moduleProject.getFile()
+                                             .getCanonicalFile();
 
         File moduleBasedir = moduleProject.getBasedir();
 
