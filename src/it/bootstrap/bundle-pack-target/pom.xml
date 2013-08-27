@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,14 +10,14 @@
     <relativePath>../../it-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>bundle-pack-target</artifactId>
+    <artifactId>bundle-pack-target</artifactId>
   <version>1.0</version>
-
+  
   <name>bundle-pack Target</name>
   <description>Target for the bundle:bundle-pack goal ITs</description>
-
+  
   <url>http://maven.apache.org/plugins/maven-repository-plugin/test</url>
-
+  
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -26,7 +25,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
+  
   <scm>
     <url>http://foo/</url>
     <connection>scm:svn:http://foo/</connection>
