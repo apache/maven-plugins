@@ -52,7 +52,7 @@ import java.util.Set;
 
 /**
  * Remove the project dependencies from the local repository, and optionally re-resolve them.
- * 
+ *
  * @author jdcasey
  * @version $Id$
  * @since 2.0
@@ -81,7 +81,7 @@ public class PurgeLocalRepositoryMojo
      * repository. Note that using this parameter will deactivate the normal process for purging the current project
      * dependency tree. If this parameter is used, only the included artifacts will be purged. The manualIncludes
      * parameter should not be used in combination with the includes/excludes parameters.
-     * 
+     *
      * @since 2.6
      */
     @Parameter
@@ -91,7 +91,7 @@ public class PurgeLocalRepositoryMojo
      * Comma-separated list of groupId:artifactId entries, which should be used to manually include artifacts for
      * deletion. This is a command-line alternative to the <code>manualIncludes</code> parameter, since List parameters
      * are not currently compatible with CLI specification.
-     * 
+     *
      * @since 2.6
      */
     @Parameter( property = "manualInclude" )
@@ -99,7 +99,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should BE deleted/refreshed.
-     * 
+     *
      * @since 2.6
      */
     @Parameter
@@ -109,7 +109,7 @@ public class PurgeLocalRepositoryMojo
      * Comma-separated list of groupId:artifactId entries, which should be used to include artifacts for
      * deletion/refresh. This is a command-line alternative to the <code>includes</code> parameter, since List
      * parameters are not currently compatible with CLI specification.
-     * 
+     *
      * @since 2.6
      */
     @Parameter( property = "include" )
@@ -192,7 +192,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Whether to purge only snapshot artifacts.
-     * 
+     *
      * @since 2.4
      */
     @Parameter( property = "snapshotsOnly", defaultValue = "false" )
@@ -219,9 +219,9 @@ public class PurgeLocalRepositoryMojo
 
         /**
          * Default constructor
-         * 
+         *
          * @param directDependencyArtifacts Set of Artifact objects which represent the direct dependencies of the
-         *            project
+         *                                  project
          */
         public DirectDependencyFilter( Artifact projectArtifact, Set<Artifact> directDependencyArtifacts )
         {
@@ -365,7 +365,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Purge/Delete artifacts from the local repository according to the given patterns.
-     * 
+     *
      * @param inclusionPatterns
      * @throws MojoExecutionException
      */
@@ -404,7 +404,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Convert a groupId:artifactId:version to a file system path
-     * 
+     *
      * @param gav, the groupId:artifactId:version string
      * @return
      */
@@ -421,7 +421,7 @@ public class PurgeLocalRepositoryMojo
 
         for ( int i = 1; i < pathComponents.length; ++i )
         {
-            path.append("/").append(pathComponents[i]);
+            path.append( "/" ).append( pathComponents[i] );
         }
 
         return path.toString();
@@ -430,9 +430,9 @@ public class PurgeLocalRepositoryMojo
     /**
      * Create the includes exclude filter to use when resolving and purging dependencies Also excludes any "system"
      * scope dependencies
-     * 
+     *
      * @param dependencyArtifacts The dependency artifacts to use as a reference if we're excluding transitive
-     *            dependencies
+     *                            dependencies
      * @return
      */
     private ArtifactFilter createPurgeArtifactsFilter( Set<Artifact> dependencyArtifacts )
@@ -476,7 +476,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Convert comma separated list of includes to List object
-     * 
+     *
      * @param include
      * @return the includes list
      */
@@ -502,8 +502,7 @@ public class PurgeLocalRepositoryMojo
                 resolver.resolveTransitively( artifacts, project.getArtifact(), localRepository, remoteRepositories,
                                               metadataSource, filter );
 
-            @SuppressWarnings( "unchecked" )
-            Set<Artifact> resolvedArtifacts = result.getArtifacts();
+            @SuppressWarnings( "unchecked" ) Set<Artifact> resolvedArtifacts = result.getArtifacts();
 
             return resolvedArtifacts;
         }

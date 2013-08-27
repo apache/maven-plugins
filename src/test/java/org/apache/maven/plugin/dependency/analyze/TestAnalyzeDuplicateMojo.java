@@ -37,33 +37,31 @@ public class TestAnalyzeDuplicateMojo
     public void testDuplicate()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config.xml" );
         AnalyzeDuplicateMojo mojo = (AnalyzeDuplicateMojo) lookupMojo( "analyze-duplicate", testPom );
         assertNotNull( mojo );
         DuplicateLog log = new DuplicateLog();
         mojo.setLog( log );
         mojo.execute();
 
-        assertTrue(log.getContent().contains("List of duplicate dependencies defined in <dependencies/> in "
-                + "your pom.xml"));
-        assertTrue(log.getContent().contains("junit:junit:jar"));
+        assertTrue( log.getContent().contains(
+            "List of duplicate dependencies defined in <dependencies/> in " + "your pom.xml" ) );
+        assertTrue( log.getContent().contains( "junit:junit:jar" ) );
     }
 
     public void testDuplicate2()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config2.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config2.xml" );
         AnalyzeDuplicateMojo mojo = (AnalyzeDuplicateMojo) lookupMojo( "analyze-duplicate", testPom );
         assertNotNull( mojo );
         DuplicateLog log = new DuplicateLog();
         mojo.setLog( log );
         mojo.execute();
 
-        assertTrue(log.getContent().contains("List of duplicate dependencies defined in <dependencyManagement/> in "
-                + "your pom.xml"));
-        assertTrue(log.getContent().contains("junit:junit:jar"));
+        assertTrue( log.getContent().contains(
+            "List of duplicate dependencies defined in <dependencyManagement/> in " + "your pom.xml" ) );
+        assertTrue( log.getContent().contains( "junit:junit:jar" ) );
     }
 
     class DuplicateLog
@@ -71,67 +69,89 @@ public class TestAnalyzeDuplicateMojo
     {
         StringBuilder sb = new StringBuilder();
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void debug( CharSequence content )
         {
             print( "debug", content );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void debug( CharSequence content, Throwable error )
         {
             print( "debug", content, error );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void debug( Throwable error )
         {
             print( "debug", error );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void info( CharSequence content )
         {
             print( "info", content );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void info( CharSequence content, Throwable error )
         {
             print( "info", content, error );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void info( Throwable error )
         {
             print( "info", error );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void warn( CharSequence content )
         {
             print( "warn", content );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void warn( CharSequence content, Throwable error )
         {
             print( "warn", content, error );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void warn( Throwable error )
         {
             print( "warn", error );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void error( CharSequence content )
         {
             System.err.println( "[error] " + content.toString() );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void error( CharSequence content, Throwable error )
         {
             StringWriter sWriter = new StringWriter();
@@ -190,7 +210,7 @@ public class TestAnalyzeDuplicateMojo
 
         private void print( String prefix, CharSequence content )
         {
-            sb.append("[").append(prefix).append("] ").append(content.toString()).append( "\n" );
+            sb.append( "[" ).append( prefix ).append( "] " ).append( content.toString() ).append( "\n" );
         }
 
         private void print( String prefix, Throwable error )
@@ -200,7 +220,7 @@ public class TestAnalyzeDuplicateMojo
 
             error.printStackTrace( pWriter );
 
-            sb.append("[").append(prefix).append("] ").append(sWriter.toString()).append( "\n" );
+            sb.append( "[" ).append( prefix ).append( "] " ).append( sWriter.toString() ).append( "\n" );
         }
 
         private void print( String prefix, CharSequence content, Throwable error )
@@ -210,8 +230,8 @@ public class TestAnalyzeDuplicateMojo
 
             error.printStackTrace( pWriter );
 
-            sb.append("[").append(prefix).append("] ").append(content.toString()).append( "\n\n" )
-              .append( sWriter.toString() ).append( "\n" );
+            sb.append( "[" ).append( prefix ).append( "] " ).append( content.toString() ).append( "\n\n" ).append(
+                sWriter.toString() ).append( "\n" );
         }
 
         protected String getContent()

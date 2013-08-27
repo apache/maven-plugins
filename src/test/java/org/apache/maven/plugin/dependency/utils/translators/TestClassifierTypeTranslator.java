@@ -36,7 +36,6 @@ import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
- * 
  */
 public class TestClassifierTypeTranslator
     extends AbstractDependencyMojoTestCase
@@ -83,12 +82,12 @@ public class TestClassifierTypeTranslator
         {
             Iterator<Artifact> resultIter = results.iterator();
             boolean found = false;
-            while (resultIter.hasNext())
+            while ( resultIter.hasNext() )
             {
                 Artifact translatedArtifact = resultIter.next();
-                if (artifact.getArtifactId().equals(translatedArtifact.getArtifactId())
-                    && artifact.getGroupId().equals(translatedArtifact.getGroupId())
-                    && artifact.getScope().equals(translatedArtifact.getScope()))
+                if ( artifact.getArtifactId().equals( translatedArtifact.getArtifactId() )
+                    && artifact.getGroupId().equals( translatedArtifact.getGroupId() ) && artifact.getScope().equals(
+                    translatedArtifact.getScope() ) )
                 {
                     // classifier is null, should be the same as the artifact
                     assertEquals( artifact.getClassifier(), translatedArtifact.getClassifier() );
