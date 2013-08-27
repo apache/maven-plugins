@@ -35,8 +35,9 @@ public final class RelativizePath
     }
 
     /**
-     * relativize a pathname. 
-     * @param thing Absolute File of something. (e.g., a parent pom)
+     * relativize a pathname.
+     *
+     * @param thing      Absolute File of something. (e.g., a parent pom)
      * @param relativeTo base to relativize it do. (e.g., a pom into which a relative pathname to the 'thing' is to be installed).
      * @return
      */
@@ -48,18 +49,20 @@ public final class RelativizePath
         {
             return thing.getName(); // a very simple relative path.
         }
-        
+
         List<String> thingDirectories = RelativizePath.parentDirs( thing );
         List<String> relativeToDirectories = RelativizePath.parentDirs( relativeTo );
-    
+
         //Get the shortest of the two paths
-        int length = thingDirectories.size() < relativeToDirectories.size() ? thingDirectories.size() : relativeToDirectories.size();
-    
+        int length = thingDirectories.size() < relativeToDirectories.size()
+            ? thingDirectories.size()
+            : relativeToDirectories.size();
+
         int lastCommonRoot = -1; // index of the lowest directory down from the root that the two have in common.
         int index;
-    
+
         //Find common root
-        for ( index = 0; index < length; index++ ) 
+        for ( index = 0; index < length; index++ )
         {
             if ( thingDirectories.get( index ).equals( relativeToDirectories.get( index ) ) )
             {
@@ -75,15 +78,15 @@ public final class RelativizePath
             // Build up the relative path
             relativePath = new StringBuilder();
             // add ..'s to get from the base up to the common point
-            for ( index = lastCommonRoot + 1; index < relativeToDirectories.size(); index++ ) 
+            for ( index = lastCommonRoot + 1; index < relativeToDirectories.size(); index++ )
             {
                 relativePath.append( "../" );
             }
-            
+
             // now add down from the common point to the actual 'thing' item. 
-            for ( index = lastCommonRoot + 1; index < thingDirectories.size(); index++ ) 
+            for ( index = lastCommonRoot + 1; index < thingDirectories.size(); index++ )
             {
-                relativePath.append(thingDirectories.get(index)).append('/');
+                relativePath.append( thingDirectories.get( index ) ).append( '/' );
             }
             relativePath.append( thing.getName() );
             return relativePath.toString();
@@ -94,14 +97,14 @@ public final class RelativizePath
     static List<String> parentDirs( File of )
     {
         List<String> results = new ArrayList<String>();
-        for ( File p = of.getParentFile() ; p != null ; p = p.getParentFile() )
+        for ( File p = of.getParentFile(); p != null; p = p.getParentFile() )
         {
             if ( !"".equals( p.getName() ) )
             {
                 results.add( p.getName() );
             }
         }
-        
+
         Collections.reverse( results );
         return results;
     }

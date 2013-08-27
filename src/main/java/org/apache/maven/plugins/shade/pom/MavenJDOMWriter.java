@@ -1133,33 +1133,40 @@ public class MavenJDOMWriter
         {
             Xpp3Dom[] childs = parentDom.getChildren();
             Collection domChilds = new ArrayList();
-            Collections.addAll(domChilds, childs);
+            Collections.addAll( domChilds, childs );
             // int domIndex = 0;
-            for (Object o : parent.getChildren()) {
+            for ( Object o : parent.getChildren() )
+            {
                 Element elem = (Element) o;
                 Iterator it2 = domChilds.iterator();
                 Xpp3Dom corrDom = null;
-                while (it2.hasNext()) {
+                while ( it2.hasNext() )
+                {
                     Xpp3Dom dm = (Xpp3Dom) it2.next();
-                    if (dm.getName().equals(elem.getName())) {
+                    if ( dm.getName().equals( elem.getName() ) )
+                    {
                         corrDom = dm;
                         break;
                     }
                 }
-                if (corrDom != null) {
-                    domChilds.remove(corrDom);
-                    replaceXpp3DOM(elem, corrDom, new Counter(counter.getDepth() + 1));
+                if ( corrDom != null )
+                {
+                    domChilds.remove( corrDom );
+                    replaceXpp3DOM( elem, corrDom, new Counter( counter.getDepth() + 1 ) );
                     counter.increaseCount();
-                } else {
-                    parent.removeContent(elem);
+                }
+                else
+                {
+                    parent.removeContent( elem );
                 }
             }
-            for (Object domChild : domChilds) {
+            for ( Object domChild : domChilds )
+            {
                 Xpp3Dom dm = (Xpp3Dom) domChild;
-                Element elem = factory.element(dm.getName(), parent.getNamespace());
-                insertAtPreferredLocation(parent, elem, counter);
+                Element elem = factory.element( dm.getName(), parent.getNamespace() );
+                insertAtPreferredLocation( parent, elem, counter );
                 counter.increaseCount();
-                replaceXpp3DOM(elem, dm, new Counter(counter.getDepth() + 1));
+                replaceXpp3DOM( elem, dm, new Counter( counter.getDepth() + 1 ) );
             }
         }
         else if ( parentDom.getValue() != null )
