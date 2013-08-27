@@ -165,7 +165,7 @@ public abstract class AbstractCheckstyleReport
 
     /**
      * When using custom treeWalkers, specify their names here so the checks inside the treeWalker end up the the rule-summary
-     * 
+     *
      * @since 2.11
      */
     @Parameter
@@ -197,37 +197,49 @@ public abstract class AbstractCheckstyleReport
 
     protected ByteArrayOutputStream stringOutputStream;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.checkstyle.name" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.checkstyle.description" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -284,7 +296,7 @@ public abstract class AbstractCheckstyleReport
      * @throws MavenReportException If something goes wrong during creation.
      */
     protected abstract CheckstyleExecutorRequest createRequest()
-            throws MavenReportException;
+        throws MavenReportException;
 
     /**
      * Creates and returns the report generation listener.
@@ -314,8 +326,8 @@ public abstract class AbstractCheckstyleReport
             else
             {
                 // TODO: failure if not a report
-                throw new MavenReportException( "Invalid output file format: (" + outputFileFormat
-                    + "). Must be 'plain' or 'xml'." );
+                throw new MavenReportException(
+                    "Invalid output file format: (" + outputFileFormat + "). Must be 'plain' or 'xml'." );
             }
         }
 
@@ -389,8 +401,8 @@ public abstract class AbstractCheckstyleReport
     {
         String copyright;
         int currentYear = Calendar.getInstance().get( Calendar.YEAR );
-        if ( StringUtils.isNotEmpty( project.getInceptionYear() )
-            && !String.valueOf( currentYear ).equals( project.getInceptionYear() ) )
+        if ( StringUtils.isNotEmpty( project.getInceptionYear() ) && !String.valueOf( currentYear ).equals(
+            project.getInceptionYear() ) )
         {
             copyright = project.getInceptionYear() + " - " + currentYear;
         }
@@ -434,10 +446,12 @@ public abstract class AbstractCheckstyleReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                for (ReportPlugin report : (Iterable<ReportPlugin>) getProject().getReportPlugins()) {
+                for ( ReportPlugin report : (Iterable<ReportPlugin>) getProject().getReportPlugins() )
+                {
                     String artifactId = report.getArtifactId();
-                    if ("maven-jxr-plugin".equals(artifactId) || "jxr-maven-plugin".equals(artifactId)) {
-                        generator.setXrefLocation(relativePath);
+                    if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
+                    {
+                        generator.setXrefLocation( relativePath );
                     }
                 }
             }
@@ -459,7 +473,9 @@ public abstract class AbstractCheckstyleReport
         return ResourceBundle.getBundle( "checkstyle-report", locale, AbstractCheckstyleReport.class.getClassLoader() );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         super.setReportOutputDirectory( reportOutputDirectory );
