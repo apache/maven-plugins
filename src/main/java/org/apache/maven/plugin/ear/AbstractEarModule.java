@@ -97,7 +97,9 @@ public abstract class AbstractEarModule
         this.earExecutionContext = earExecutionContext;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException
     {
@@ -276,7 +278,7 @@ public abstract class AbstractEarModule
         {
             writer.addAttribute( "id", getModuleId() );
         }
-        else if (generateId)
+        else if ( generateId )
         {
             // No module id was specified but one should be generated.
             Artifact artifact = getArtifact();
