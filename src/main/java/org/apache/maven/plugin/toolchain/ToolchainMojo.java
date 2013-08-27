@@ -83,10 +83,12 @@ public class ToolchainMojo
                     Map params = toolchains.getParams( type );
                     ToolchainPrivate[] tcs = getToolchains( type );
                     boolean matched = false;
-                    for (ToolchainPrivate tc : tcs) {
-                        if (tc.matchesRequirements(params)) {
-                            getLog().info("Toolchain (" + type + ") matched:" + tc);
-                            toolchainManager.storeToolchainToBuildContext(tc, session);
+                    for ( ToolchainPrivate tc : tcs )
+                    {
+                        if ( tc.matchesRequirements( params ) )
+                        {
+                            getLog().info( "Toolchain (" + type + ") matched:" + tc );
+                            toolchainManager.storeToolchainToBuildContext( tc, session );
                             matched = true;
                             break;
                         }
@@ -106,24 +108,28 @@ public class ToolchainMojo
                 //TODO add the default toolchain instance if defined??
                 StringBuilder buff = new StringBuilder();
                 buff.append( "Cannot find matching toolchain definitions for the following toolchain types:" );
-                for (Object nonMatchedType : nonMatchedTypes) {
+                for ( Object nonMatchedType : nonMatchedTypes )
+                {
                     String type = (String) nonMatchedType;
-                    buff.append('\n');
-                    buff.append(type);
-                    Map params = toolchains.getParams(type);
-                    if (params.size() > 0) {
+                    buff.append( '\n' );
+                    buff.append( type );
+                    Map params = toolchains.getParams( type );
+                    if ( params.size() > 0 )
+                    {
                         Iterator it2 = params.keySet().iterator();
-                        buff.append(" [");
-                        while (it2.hasNext()) {
+                        buff.append( " [" );
+                        while ( it2.hasNext() )
+                        {
                             String string = (String) it2.next();
-                            buff.append(" ").append(string).append("='").append(params.get(string)).append("' ");
+                            buff.append( " " ).append( string ).append( "='" ).append( params.get( string ) ).append(
+                                "' " );
                         }
-                        buff.append(']');
+                        buff.append( ']' );
                     }
                 }
                 getLog().error( buff.toString() );
                 throw new MojoFailureException( buff.toString()
-                    + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
+                                                    + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
             }
         }
         else
@@ -143,16 +149,16 @@ public class ToolchainMojo
             {
                 // try 3.x style API
                 Method newMethod =
-                    managerClass.getMethod( "getToolchainsForType", new Class[] { String.class, MavenSession.class } );
+                    managerClass.getMethod( "getToolchainsForType", new Class[]{ String.class, MavenSession.class } );
 
-                return (ToolchainPrivate[]) newMethod.invoke( toolchainManager, type, session);
+                return (ToolchainPrivate[]) newMethod.invoke( toolchainManager, type, session );
             }
             catch ( NoSuchMethodException e )
             {
                 // try 2.x style API
-                Method oldMethod = managerClass.getMethod( "getToolchainsForType", new Class[] { String.class } );
+                Method oldMethod = managerClass.getMethod( "getToolchainsForType", new Class[]{ String.class } );
 
-                return (ToolchainPrivate[]) oldMethod.invoke( toolchainManager, type);
+                return (ToolchainPrivate[]) oldMethod.invoke( toolchainManager, type );
             }
         }
         catch ( NoSuchMethodException e )
