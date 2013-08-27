@@ -52,24 +52,24 @@ public class JiraMojo
     /**
      * Valid JIRA columns.
      */
-    private static final Map<String, Integer> JIRA_COLUMNS = new HashMap<String, Integer>( 16 );
+    private static final Map<String,Integer> JIRA_COLUMNS = new HashMap<String,Integer>( 16 );
 
     static
     {
-        JIRA_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE );
-        JIRA_COLUMNS.put( "Component", IssuesReportHelper.COLUMN_COMPONENT );
-        JIRA_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED );
-        JIRA_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION );
-        JIRA_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID );
-        JIRA_COLUMNS.put( "Key", IssuesReportHelper.COLUMN_KEY );
-        JIRA_COLUMNS.put( "Priority", IssuesReportHelper.COLUMN_PRIORITY );
-        JIRA_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER );
-        JIRA_COLUMNS.put( "Resolution", IssuesReportHelper.COLUMN_RESOLUTION );
-        JIRA_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS );
-        JIRA_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY );
-        JIRA_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE );
-        JIRA_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED );
-        JIRA_COLUMNS.put( "Version", IssuesReportHelper.COLUMN_VERSION );
+        JIRA_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE);
+        JIRA_COLUMNS.put( "Component", IssuesReportHelper.COLUMN_COMPONENT);
+        JIRA_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED);
+        JIRA_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION);
+        JIRA_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID);
+        JIRA_COLUMNS.put( "Key", IssuesReportHelper.COLUMN_KEY);
+        JIRA_COLUMNS.put( "Priority", IssuesReportHelper.COLUMN_PRIORITY);
+        JIRA_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER);
+        JIRA_COLUMNS.put( "Resolution", IssuesReportHelper.COLUMN_RESOLUTION);
+        JIRA_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS);
+        JIRA_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY);
+        JIRA_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE);
+        JIRA_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED);
+        JIRA_COLUMNS.put( "Version", IssuesReportHelper.COLUMN_VERSION);
     }
 
     /**
@@ -90,7 +90,7 @@ public class JiraMojo
     private String columnNames;
 
     /**
-     * Use the JIRA query language instead of the JIRA query based on HTTP parameters.
+     * Use the JIRA query language instead of the JIRA query based on HTTP parameters. 
      * From JIRA 5.1 and up only JQL is supported. JIRA 4.4 supports both JQL and URL parameter based queries.
      * From 5.1.1 this is obsolete, since REST queries only use JQL.
      *
@@ -106,9 +106,9 @@ public class JiraMojo
      *
      * @since 2.9
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( defaultValue = "false")
     private boolean forceRss;
-
+    
     /**
      * Sets the component(s) that you want to limit your report to include.
      * Multiple values can be separated by commas (such as 10011,10012).
@@ -211,7 +211,7 @@ public class JiraMojo
 
     /**
      * If set to <code>true</code>, then the JIRA report will not be generated.
-     *
+     * 
      * @since 2.8
      */
     @Parameter( property = "changes.jira.skip", defaultValue = "false" )
@@ -311,10 +311,10 @@ public class JiraMojo
      */
     @Parameter( defaultValue = "" )
     private String webUser;
-
+    
     /*
-    * Used for tests.
-    */
+     * Used for tests.
+     */
     private AbstractJiraDownloader mockDownloader;
 
     /* --------------------------------------------------------------------- */
@@ -330,7 +330,7 @@ public class JiraMojo
         {
             return false;
         }
-        if ( mockDownloader != null )
+        if ( mockDownloader != null ) 
         {
             return true;
         }
@@ -373,7 +373,7 @@ public class JiraMojo
                 int originalNumberOfIssues = issueList.size();
                 issueList = IssueUtils.filterIssuesWithVersionPrefix( issueList, versionPrefix );
                 getLog().debug( "Filtered out " + issueList.size() + " issues of " + originalNumberOfIssues
-                                    + " that matched the versionPrefix '" + versionPrefix + "'." );
+                    + " that matched the versionPrefix '" + versionPrefix + "'." );
             }
 
             if ( onlyCurrentVersion )
@@ -464,9 +464,9 @@ public class JiraMojo
         issueDownloader.setSettings( settings );
 
         issueDownloader.setUseJql( useJql );
-
+        
         issueDownloader.setOnlyCurrentVersion( onlyCurrentVersion );
-
+        
         issueDownloader.setVersionPrefix( versionPrefix );
     }
 

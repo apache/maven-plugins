@@ -38,7 +38,6 @@ public class JqlQueryBuilder
     implements JiraQueryBuilder
 {
     private String filter = "";
-
     private boolean urlEncode = true;
 
     /**
@@ -135,7 +134,6 @@ public class JqlQueryBuilder
 
     /**
      * Add a sequence of version IDs already in a list.
-     *
      * @param fixVersionIds the version ids.
      * @return
      */
@@ -247,7 +245,7 @@ public class JqlQueryBuilder
                 query.append( " AND " );
             }
 
-            query.append( key ).append( " in (" );
+            query.append(key).append(" in (");
 
             String[] valuesArr = values.split( "," );
 
@@ -277,7 +275,7 @@ public class JqlQueryBuilder
                 trimAndQuoteValue( values.get( i ) );
                 query.append( ", " );
             }
-            trimAndQuoteValue( values.get( values.size() - 1 ) );
+            trimAndQuoteValue( values.get ( values.size() - 1 ) );
             query.append( ")" );
         }
     }

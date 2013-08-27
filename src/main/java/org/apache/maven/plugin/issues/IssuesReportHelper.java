@@ -68,10 +68,10 @@ public class IssuesReportHelper
      * Get a list of id:s for the columns that are to be included in the report.
      *
      * @param columnNames The names of the columns
-     * @param allColumns  A mapping from column name to column id
+     * @param allColumns A mapping from column name to column id
      * @return A List of column id:s
      */
-    public static List<Integer> getColumnIds( String columnNames, Map<String, Integer> allColumns )
+    public static List<Integer> getColumnIds( String columnNames, Map<String,Integer> allColumns )
     {
         return getColumnIds( columnNames, allColumns, null, null );
     }
@@ -82,14 +82,14 @@ public class IssuesReportHelper
      * If deprecated column names are used they generate a warning, indicating
      * the replacement column name.
      *
-     * @param columnNames       The names of the columns
-     * @param allColumns        A mapping from column name to column id
+     * @param columnNames The names of the columns
+     * @param allColumns A mapping from column name to column id
      * @param deprecatedColumns A mapping from deprecated column name to column id
-     * @param log               A log
+     * @param log A log
      * @return A List of column id:s
      */
-    public static List<Integer> getColumnIds( String columnNames, Map<String, Integer> allColumns,
-                                              Map<String, Integer> deprecatedColumns, Log log )
+    public static List<Integer> getColumnIds( String columnNames, Map<String,Integer> allColumns,
+                                              Map<String,Integer> deprecatedColumns, Log log )
     {
         DualHashBidiMap bidiColumns = null;
         List<Integer> columnIds = new ArrayList<Integer>();
@@ -101,22 +101,16 @@ public class IssuesReportHelper
         }
 
         // Loop through the names of the columns, to validate each of them and add their id to the list
-        for ( String aColumnNamesArray : columnNamesArray )
-        {
+        for (String aColumnNamesArray : columnNamesArray) {
             String columnName = aColumnNamesArray.trim();
-            if ( allColumns.containsKey( columnName ) )
-            {
-                columnIds.add( allColumns.get( columnName ) );
-            }
-            else if ( deprecatedColumns != null && deprecatedColumns.containsKey( columnName ) )
-            {
-                Integer columnId = deprecatedColumns.get( columnName );
-                columnIds.add( columnId );
-                if ( log != null )
-                {
-                    log.warn(
-                        "The columnName '" + columnName + "' has been deprecated." + " Please use " + "the columnName '"
-                            + bidiColumns.getKey( columnId ) + "' instead." );
+            if (allColumns.containsKey(columnName)) {
+                columnIds.add(allColumns.get(columnName));
+            } else if (deprecatedColumns != null && deprecatedColumns.containsKey(columnName)) {
+                Integer columnId = deprecatedColumns.get(columnName);
+                columnIds.add(columnId);
+                if (log != null) {
+                    log.warn("The columnName '" + columnName + "' has been deprecated." + " Please use "
+                            + "the columnName '" + bidiColumns.getKey(columnId) + "' instead.");
                 }
             }
         }
@@ -159,7 +153,7 @@ public class IssuesReportHelper
         int[] intArray = new int[list.size()];
         for ( int j = 0; j < intArray.length; j++ )
         {
-            intArray[j] = list.get( j );
+            intArray[j] = list.get(j);
         }
         return intArray;
     }
