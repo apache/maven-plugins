@@ -68,43 +68,57 @@ public class ModelBuilderMavenProjectStub
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public File getBasedir()
     {
         return new File( super.getBasedir(), "target/test-classes/unit/pdf/" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void addDeveloper( Developer developer )
     {
         getModel().addDeveloper( developer );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List getDevelopers()
     {
         return getModel().getDevelopers();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Organization getOrganization()
     {
         return getModel().getOrganization();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setDevelopers( List list )
     {
         getModel().setDevelopers( list );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setOrganization( Organization organization )
     {
         getModel().setOrganization( organization );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public File getFile()
     {
         return new File( getBasedir(), "pom_model_builder.xml" );
