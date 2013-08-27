@@ -61,41 +61,53 @@ public class ScmManagerStub
 {
     private ScmProvider scmProvider;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ScmProvider getProviderByType( String string )
         throws NoSuchScmProviderException
     {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ScmProvider getProviderByUrl( String string )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ScmRepository makeProviderScmRepository( String string, File file )
         throws ScmRepositoryException, UnknownRepositoryStructure, NoSuchScmProviderException
     {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ScmRepository makeScmRepository( String string )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
         return new ScmRepositoryStub();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<String> validateScmRepository( String string )
     {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ScmProvider getProviderByRepository( ScmRepository scmRepository )
         throws NoSuchScmProviderException
     {
@@ -112,41 +124,53 @@ public class ScmManagerStub
         return scmProvider;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setScmProvider( String providerType, ScmProvider provider )
     {
         setScmProvider( provider );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public AddScmResult add( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).add( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public AddScmResult add( ScmRepository repository, ScmFileSet fileSet, String message )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).add( repository, fileSet, message );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public BranchScmResult branch( ScmRepository repository, ScmFileSet fileSet, String branchName )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).branch( repository, fileSet, branchName );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public BranchScmResult branch( ScmRepository repository, ScmFileSet fileSet, String branchName, String message )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).branch( repository, fileSet, branchName, message );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ChangeLogScmResult changeLog( ScmRepository repository, ScmFileSet fileSet, Date startDate, Date endDate,
                                          int numDays, ScmBranch branch )
         throws ScmException
@@ -155,7 +179,9 @@ public class ScmManagerStub
                                                                      branch );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ChangeLogScmResult changeLog( ScmRepository repository, ScmFileSet fileSet, Date startDate, Date endDate,
                                          int numDays, ScmBranch branch, String datePattern )
         throws ScmException
@@ -164,7 +190,9 @@ public class ScmManagerStub
                                                                      branch, datePattern );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ChangeLogScmResult changeLog( ScmRepository repository, ScmFileSet fileSet, ScmVersion startVersion,
                                          ScmVersion endVersion )
         throws ScmException
@@ -172,7 +200,9 @@ public class ScmManagerStub
         return this.getProviderByRepository( repository ).changeLog( repository, fileSet, startVersion, endVersion );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ChangeLogScmResult changeLog( ScmRepository repository, ScmFileSet fileSet, ScmVersion startRevision,
                                          ScmVersion endRevision, String datePattern )
         throws ScmException
@@ -181,42 +211,54 @@ public class ScmManagerStub
                                                                      datePattern );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public CheckInScmResult checkIn( ScmRepository repository, ScmFileSet fileSet, String message )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).checkIn( repository, fileSet, message );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public CheckInScmResult checkIn( ScmRepository repository, ScmFileSet fileSet, ScmVersion revision, String message )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).checkIn( repository, fileSet, revision, message );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public CheckOutScmResult checkOut( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).checkOut( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public CheckOutScmResult checkOut( ScmRepository repository, ScmFileSet fileSet, ScmVersion version )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).checkOut( repository, fileSet, version );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public CheckOutScmResult checkOut( ScmRepository repository, ScmFileSet fileSet, boolean recursive )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).checkOut( repository, fileSet, recursive );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public CheckOutScmResult checkOut( ScmRepository repository, ScmFileSet fileSet, ScmVersion version,
                                        boolean recursive )
         throws ScmException
@@ -224,7 +266,9 @@ public class ScmManagerStub
         return this.getProviderByRepository( repository ).checkOut( repository, fileSet, version, recursive );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public DiffScmResult diff( ScmRepository repository, ScmFileSet fileSet, ScmVersion startVersion,
                                ScmVersion endVersion )
         throws ScmException
@@ -232,35 +276,45 @@ public class ScmManagerStub
         return this.getProviderByRepository( repository ).diff( repository, fileSet, startVersion, endVersion );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public EditScmResult edit( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).edit( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ExportScmResult export( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).export( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ExportScmResult export( ScmRepository repository, ScmFileSet fileSet, ScmVersion version )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).export( repository, fileSet, version );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ExportScmResult export( ScmRepository repository, ScmFileSet fileSet, String outputDirectory )
         throws ScmException
     {
         return this.export( repository, fileSet, outputDirectory );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ExportScmResult export( ScmRepository repository, ScmFileSet fileSet, ScmVersion version,
                                    String outputDirectory )
         throws ScmException
@@ -268,70 +322,90 @@ public class ScmManagerStub
         return this.getProviderByRepository( repository ).export( repository, fileSet, version, outputDirectory );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ListScmResult list( ScmRepository repository, ScmFileSet fileSet, boolean recursive, ScmVersion version )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).list( repository, fileSet, recursive, version );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public RemoveScmResult remove( ScmRepository repository, ScmFileSet fileSet, String message )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).remove( repository, fileSet, message );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public StatusScmResult status( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).status( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public TagScmResult tag( ScmRepository repository, ScmFileSet fileSet, String tagName )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).tag( repository, fileSet, tagName );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public TagScmResult tag( ScmRepository repository, ScmFileSet fileSet, String tagName, String message )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).tag( repository, fileSet, tagName, message );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UnEditScmResult unedit( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).unedit( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).update( repository, fileSet );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, ScmVersion version )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).update( repository, fileSet, version );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, boolean runChangelog )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).update( repository, fileSet, runChangelog );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, ScmVersion version,
                                    boolean runChangelog )
         throws ScmException
@@ -339,14 +413,18 @@ public class ScmManagerStub
         return this.getProviderByRepository( repository ).update( repository, fileSet, version, runChangelog );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, String datePattern )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).update( repository, fileSet, (ScmVersion) null, datePattern );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, ScmVersion version,
                                    String datePattern )
         throws ScmException
@@ -354,21 +432,27 @@ public class ScmManagerStub
         return this.getProviderByRepository( repository ).update( repository, fileSet, version, datePattern );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, Date lastUpdate )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).update( repository, fileSet, (ScmVersion) null, lastUpdate );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, ScmVersion version, Date lastUpdate )
         throws ScmException
     {
         return this.getProviderByRepository( repository ).update( repository, fileSet, version, lastUpdate );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, Date lastUpdate, String datePattern )
         throws ScmException
     {
@@ -376,7 +460,9 @@ public class ScmManagerStub
                                                                   datePattern );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public UpdateScmResult update( ScmRepository repository, ScmFileSet fileSet, ScmVersion version, Date lastUpdate,
                                    String datePattern )
         throws ScmException
@@ -385,25 +471,33 @@ public class ScmManagerStub
                                                                   datePattern );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setScmProviderImplementation( String providerType, String providerImplementation )
     {
         // nop
     }
 
-    /** {@inheritDoc} */
-	public BlameScmResult blame(ScmRepository arg0, ScmFileSet arg1, String arg2)
-			throws ScmException {
+    /**
+     * {@inheritDoc}
+     */
+    public BlameScmResult blame( ScmRepository arg0, ScmFileSet arg1, String arg2 )
+        throws ScmException
+    {
 
-		return this.getProviderByRepository( arg0 ).blame(arg0, arg1, arg2);
-	}
+        return this.getProviderByRepository( arg0 ).blame( arg0, arg1, arg2 );
+    }
 
-	/** {@inheritDoc} */
-	public MkdirScmResult mkdir(ScmRepository arg0, ScmFileSet arg1,
-			String arg2, boolean arg3) throws ScmException {
+    /**
+     * {@inheritDoc}
+     */
+    public MkdirScmResult mkdir( ScmRepository arg0, ScmFileSet arg1, String arg2, boolean arg3 )
+        throws ScmException
+    {
 
-		return this.getProviderByRepository(arg0).mkdir(arg0, arg1, arg2, arg3);
-	}
+        return this.getProviderByRepository( arg0 ).mkdir( arg0, arg1, arg2, arg3 );
+    }
 
     public ChangeLogScmResult changeLog( ChangeLogScmRequest scmRequest )
         throws ScmException

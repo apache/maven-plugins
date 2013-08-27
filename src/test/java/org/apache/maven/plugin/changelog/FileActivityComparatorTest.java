@@ -34,7 +34,9 @@ public class FileActivityComparatorTest
 {
     private FileActivityComparator comparator;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -55,7 +57,7 @@ public class FileActivityComparatorTest
 
         list2 = new ArrayList<ChangeFile>();
         list2.add( new ChangeFile( "one thing" ) );
-        list2.add( new ChangeFile( "something") );
+        list2.add( new ChangeFile( "something" ) );
 
         assertTrue( "Test compare by commits, greater than", comparator.compare( list1, list2 ) > 0 );
     }

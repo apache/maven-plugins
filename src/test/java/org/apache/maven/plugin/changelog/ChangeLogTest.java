@@ -19,17 +19,16 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
+import junit.framework.TestCase;
+import org.apache.maven.scm.ChangeFile;
+import org.apache.maven.scm.ChangeSet;
+import org.apache.maven.scm.command.changelog.ChangeLogSet;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.apache.maven.scm.ChangeFile;
-import org.apache.maven.scm.ChangeSet;
-import org.apache.maven.scm.command.changelog.ChangeLogSet;
 
 /**
  * @author Edwin Punzalan
@@ -53,7 +52,8 @@ public class ChangeLogTest
 
         ChangeSet changeSet = changelogSets.getChangeSets().get( 0 );
 
-        assertEquals( "Test changelog 1 set 1 date/time", "1977-08-06 05:30:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
+        assertEquals( "Test changelog 1 set 1 date/time", "1977-08-06 05:30:00",
+                      new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 1 set 1 author", "Edwin Punzalan", changeSet.getAuthor() );
 
@@ -67,10 +67,10 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 1 set 1 file 1 revision", "1", changeFile.getRevision() );
 
-
         changeSet = changelogSets.getChangeSets().get( 1 );
 
-        assertEquals( "Test changelog 1 set 2 date/time", "2005-02-24 21:30:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
+        assertEquals( "Test changelog 1 set 2 date/time", "2005-02-24 21:30:00",
+                      new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 1 set 2 author", "Edwin Punzalan", changeSet.getAuthor() );
 
@@ -90,15 +90,14 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 1 set 2 file 2 revision", "2", changeFile.getRevision() );
 
-
-
         changelogSets = changedLogs.get( 1 );
 
         assertEquals( "Test number of revisions on changelog 2", 2, changelogSets.getChangeSets().size() );
 
         changeSet = changelogSets.getChangeSets().get( 0 );
 
-        assertEquals( "Test changelog 2 set 1 date/time", "2005-02-25 22:45:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
+        assertEquals( "Test changelog 2 set 1 date/time", "2005-02-25 22:45:00",
+                      new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 2 set 1 author", "Keogh Edrich Punzalan", changeSet.getAuthor() );
 
@@ -112,10 +111,10 @@ public class ChangeLogTest
 
         assertEquals( "Test changelog 2 set 1 file 1 revision", "3", changeFile.getRevision() );
 
-
         changeSet = changelogSets.getChangeSets().get( 1 );
 
-        assertEquals( "Test changelog 2 set 2 date/time", "2100-02-25 05:30:00", new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
+        assertEquals( "Test changelog 2 set 2 date/time", "2100-02-25 05:30:00",
+                      new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( changeSet.getDate() ) );
 
         assertEquals( "Test changelog 2 set 2 author", "Keogh Edrich Punzalan", changeSet.getAuthor() );
 

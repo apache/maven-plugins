@@ -19,8 +19,8 @@ package org.apache.maven.plugin.changelog.stubs;
  * under the License.
  */
 
-import org.codehaus.plexus.PlexusTestCase;
 import org.apache.maven.model.Scm;
+import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
 
@@ -40,7 +40,9 @@ public class MavenProjectStub
         testCounter++;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Scm getScm()
     {
         Scm scm = new Scm();
@@ -50,7 +52,9 @@ public class MavenProjectStub
         return scm;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public File getBasedir()
     {
         return new File( PlexusTestCase.getBasedir(), "target/test-harness/" + testCounter );

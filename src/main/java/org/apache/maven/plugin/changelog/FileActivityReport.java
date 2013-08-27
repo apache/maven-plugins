@@ -39,29 +39,37 @@ import java.util.ResourceBundle;
  *
  * @version $Id$
  */
-@Mojo( name = "file-activity" )
+@Mojo(name = "file-activity")
 public class FileActivityReport
     extends ChangeLogReport
 {
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.file-activity.description" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.file-activity.name" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "file-activity";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
     {
         sink.head();
@@ -88,7 +96,9 @@ public class FileActivityReport
         sink.close();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void doGenerateReport( List<ChangeLogSet> changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();

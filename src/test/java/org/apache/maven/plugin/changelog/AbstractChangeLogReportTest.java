@@ -19,10 +19,6 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
@@ -30,6 +26,10 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -42,10 +42,10 @@ public abstract class AbstractChangeLogReportTest
     /**
      * Renderer the sink from the report mojo.
      *
-     * @param mojo not null
+     * @param mojo       not null
      * @param outputHtml not null
      * @throws RendererException if any
-     * @throws IOException if any
+     * @throws IOException       if any
      */
     protected void renderer( ChangeLogReport mojo, File outputHtml )
         throws RendererException, IOException
@@ -60,8 +60,7 @@ public abstract class AbstractChangeLogReportTest
             outputHtml.getParentFile().mkdirs();
             writer = WriterFactory.newXmlWriter( outputHtml );
 
-            mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(),
-                                                           context );
+            mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(), context );
         }
         finally
         {
