@@ -34,7 +34,9 @@ public class DeveloperActivityReportTest
 {
     private ScmManager scmManager;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -43,7 +45,9 @@ public class DeveloperActivityReportTest
         scmManager = new ScmManagerStub();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void tearDown()
         throws Exception
     {
@@ -55,8 +59,8 @@ public class DeveloperActivityReportTest
     public void testNoSource()
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(),
-                                       "src/test/plugin-configs/dev-activity/no-source-plugin-config.xml" );
+        File pluginXmlFile =
+            new File( getBasedir(), "src/test/plugin-configs/dev-activity/no-source-plugin-config.xml" );
 
         DeveloperActivityReport mojo = (DeveloperActivityReport) lookupMojo( "dev-activity", pluginXmlFile );
 
@@ -93,7 +97,7 @@ public class DeveloperActivityReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/dev-activity/" + pluginXml );
 
-        DeveloperActivityReport mojo = (DeveloperActivityReport)lookupMojo( "dev-activity", pluginXmlFile );
+        DeveloperActivityReport mojo = (DeveloperActivityReport) lookupMojo( "dev-activity", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -110,7 +114,7 @@ public class DeveloperActivityReportTest
         String changelogXml = FileUtils.fileRead( outputXML );
 
         assertTrue( "Test for xml header", changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" +
-                    encoding + "\"?>" ) );
+                                                                        encoding + "\"?>" ) );
 
         assertTrue( "Test for xml footer", changelogXml.endsWith( "</changelog>" ) );
 

@@ -19,8 +19,8 @@ package org.apache.maven.plugin.changelog.stubs;
  * under the License.
  */
 
-import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.provider.ScmProviderRepository;
+import org.apache.maven.scm.repository.ScmRepository;
 
 /**
  * @author Edwin Punzalan

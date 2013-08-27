@@ -19,10 +19,10 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
-import org.apache.maven.plugin.changelog.stubs.FailedScmManagerStub;
-import org.apache.maven.plugin.changelog.stubs.ScmManagerWithHostStub;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.changelog.stubs.FailedScmManagerStub;
+import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
+import org.apache.maven.plugin.changelog.stubs.ScmManagerWithHostStub;
 import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -37,7 +37,9 @@ public class ChangeLogReportTest
 {
     private ScmManager scmManager;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -46,7 +48,9 @@ public class ChangeLogReportTest
         scmManager = new ScmManagerStub();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void tearDown()
         throws Exception
     {
@@ -60,7 +64,7 @@ public class ChangeLogReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/changelog/no-source-plugin-config.xml" );
 
-        ChangeLogReport mojo = (ChangeLogReport)lookupMojo( "changelog", pluginXmlFile );
+        ChangeLogReport mojo = (ChangeLogReport) lookupMojo( "changelog", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -120,7 +124,8 @@ public class ChangeLogReportTest
         }
         catch ( MojoExecutionException e )
         {
-            assertTrue( "Test thrown exception", e.getCause().getMessage().startsWith( "The type parameter has an invalid value: invalid." ) );
+            assertTrue( "Test thrown exception",
+                        e.getCause().getMessage().startsWith( "The type parameter has an invalid value: invalid." ) );
         }
     }
 
@@ -146,7 +151,7 @@ public class ChangeLogReportTest
         catch ( MojoExecutionException e )
         {
             assertTrue( "Test thrown exception",
-                        e.getCause().getCause().getMessage().startsWith( "Please use this date pattern: ") );
+                        e.getCause().getCause().getMessage().startsWith( "Please use this date pattern: " ) );
         }
     }
 
@@ -197,7 +202,7 @@ public class ChangeLogReportTest
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/changelog/" + pluginXml );
 
-        ChangeLogReport mojo = (ChangeLogReport)lookupMojo( "changelog", pluginXmlFile );
+        ChangeLogReport mojo = (ChangeLogReport) lookupMojo( "changelog", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
 
@@ -214,7 +219,7 @@ public class ChangeLogReportTest
         String changelogXml = FileUtils.fileRead( outputXML );
 
         assertTrue( "Test for xml header", changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" +
-                    encoding + "\"?>" ) );
+                                                                        encoding + "\"?>" ) );
 
         assertTrue( "Test for xml footer", changelogXml.endsWith( "</changelog>" ) );
 

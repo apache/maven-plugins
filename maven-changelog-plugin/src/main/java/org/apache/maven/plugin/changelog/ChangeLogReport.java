@@ -84,6 +84,7 @@ import java.util.regex.Pattern;
  *
  * @version $Id$
  */
+@SuppressWarnings( "ALL" )
 @Mojo( name = "changelog" )
 public class ChangeLogReport
     extends AbstractMavenReport
@@ -235,19 +236,21 @@ public class ChangeLogReport
      *
      * @since 2.3
      */
-    @Parameter( property = "encodeFileUri", defaultValue = "false")
+    @Parameter( property = "encodeFileUri", defaultValue = "false" )
     protected boolean encodeFileUri;
 
     /**
      * List of files to include. Specified as fileset patterns of files to include in the report
+     *
      * @since 2.3
      */
     @Parameter
     private String[] includes;
 
     /**
-     *  List of files to include. Specified as fileset patterns of files to omit in the report
-     *  @since 2.3
+     * List of files to include. Specified as fileset patterns of files to omit in the report
+     *
+     * @since 2.3
      */
     @Parameter
     private String[] excludes;
@@ -317,6 +320,7 @@ public class ChangeLogReport
      * value is a JIRA-style issue identification pattern.
      * <p/>
      * <strong>Note:</strong> Default value is [a-zA-Z]{2,}-\d+
+     *
      * @since 2.2
      */
     @Parameter( property = "issueIDRegexPattern", defaultValue = DEFAULT_ISSUE_ID_REGEX_PATTERN, required = true )
@@ -418,7 +422,11 @@ public class ChangeLogReport
     @Parameter
     private Properties systemProperties;
 
-    /** {@inheritDoc} */
+    private final Pattern sinkFileNamePattern = Pattern.compile( "\\\\" );
+
+    /**
+     * {@inheritDoc}
+     */
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -436,12 +444,13 @@ public class ChangeLogReport
             {
                 String providerType = entry.getKey();
                 String providerImplementation = entry.getValue();
-                getLog().info( "Change the default '" + providerType + "' provider implementation to '"
-                                   + providerImplementation + "'." );
+                getLog().info(
+                    "Change the default '" + providerType + "' provider implementation to '" + providerImplementation
+                        + "'." );
                 manager.setScmProviderImplementation( providerType, providerImplementation );
             }
         }
-        
+
         initializeDefaultConfigurationParameters();
 
         initializeDeveloperMaps();
@@ -461,7 +470,7 @@ public class ChangeLogReport
 
                 System.setProperty( key, value );
 
-                getLog().debug( "Setting system property: " + key + "=" + value );
+                getLog().debug( "Setting system property: " + key + '=' + value );
             }
         }
 
@@ -527,7 +536,8 @@ public class ChangeLogReport
 
                     getLog().info( "Using existing changelog.xml..." );
 
-                    changelogList = ChangeLog.loadChangedSets( ReaderFactory.newReader( outputXML, getOutputEncoding() ) );
+                    changelogList =
+                        ChangeLog.loadChangedSets( ReaderFactory.newReader( outputXML, getOutputEncoding() ) );
                 }
                 catch ( FileNotFoundException e )
                 {
@@ -606,7 +616,8 @@ public class ChangeLogReport
         //pw.flush();
         //pw.close();
         // MCHANGELOG-86
-        Writer writer = WriterFactory.newWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ), getOutputEncoding() );
+        Writer writer = WriterFactory.newWriter( new BufferedOutputStream( new FileOutputStream( outputXML ) ),
+                                                 getOutputEncoding() );
         writer.write( changelogXml.toString() );
         writer.flush();
         writer.close();
@@ -715,7 +726,7 @@ public class ChangeLogReport
             {
                 throw new MavenReportException( "The type '" + type + "' isn't supported." );
             }
-            filter(changeSets);
+            filter( changeSets );
             return changeSets;
 
         }
@@ -732,82 +743,96 @@ public class ChangeLogReport
     /**
      * filters out unwanted files from the changesets
      */
-    private void filter(List<ChangeLogSet> changeSets)
+    private void filter( List<ChangeLogSet> changeSets )
     {
-        List<Pattern> include = compilePatterns(includes);
-        List<Pattern> exclude = compilePatterns(excludes);
-        if(includes==null && excludes==null)
+        List<Pattern> include = compilePatterns( includes );
+        List<Pattern> exclude = compilePatterns( excludes );
+        if ( includes == null && excludes == null )
+        {
             return;
-        for (ChangeLogSet changeLogSet : changeSets)
+        }
+        for ( ChangeLogSet changeLogSet : changeSets )
         {
             List<ChangeSet> set = changeLogSet.getChangeSets();
-            filter(set, include, exclude);
+            filter( set, include, exclude );
         }
 
     }
 
-    private List<Pattern> compilePatterns(String[] patternArray)
+    private List<Pattern> compilePatterns( String[] patternArray )
     {
-        if(patternArray==null)
+        if ( patternArray == null )
+        {
             return new ArrayList<Pattern>();
-        List<Pattern> patterns = new ArrayList<Pattern>(patternArray.length);
-        for (String string : patternArray)
+        }
+        List<Pattern> patterns = new ArrayList<Pattern>( patternArray.length );
+        for ( String string : patternArray )
         {
             //replaces * with [/\]* (everything but file seperators)
             //replaces ** with .*
             //quotes the rest of the string
             string = "\\Q" + string + "\\E";
-            string = string.replace("**", "\\E.?REPLACEMENT?\\Q");
-            string = string.replace("*", "\\E[^/\\\\]?REPLACEMENT?\\Q");
-            string = string.replace("?REPLACEMENT?", "*");
-            string = string.replace("\\Q\\E", "");
-            patterns.add(Pattern.compile(string));
+            string = string.replace( "**", "\\E.?REPLACEMENT?\\Q" );
+            string = string.replace( "*", "\\E[^/\\\\]?REPLACEMENT?\\Q" );
+            string = string.replace( "?REPLACEMENT?", "*" );
+            string = string.replace( "\\Q\\E", "" );
+            patterns.add( Pattern.compile( string ) );
         }
         return patterns;
     }
 
-    private void filter(List<ChangeSet> sets, List<Pattern> includes, List<Pattern> excludes)
+    private void filter( List<ChangeSet> sets, List<Pattern> includes, List<Pattern> excludes )
     {
         Iterator<ChangeSet> it = sets.iterator();
-        while (it.hasNext())
+        while ( it.hasNext() )
         {
             ChangeSet changeSet = it.next();
             List<ChangeFile> files = changeSet.getFiles();
             Iterator<ChangeFile> iterator = files.iterator();
-            while (iterator.hasNext())
+            while ( iterator.hasNext() )
             {
                 ChangeFile changeFile = iterator.next();
                 String name = changeFile.getName();
-                if(!isIncluded(includes,name) || isExcluded(excludes, name))
+                if ( !isIncluded( includes, name ) || isExcluded( excludes, name ) )
                 {
                     iterator.remove();
                 }
             }
-            if(files.isEmpty())
+            if ( files.isEmpty() )
+            {
                 it.remove();
+            }
         }
     }
 
-    private boolean isExcluded(List<Pattern> excludes, String name)
+    private boolean isExcluded( List<Pattern> excludes, String name )
     {
-        if(excludes==null || excludes.isEmpty())
-            return false;
-        for (Pattern pattern : excludes)
+        if ( excludes == null || excludes.isEmpty() )
         {
-            if(pattern.matcher(name).matches())
+            return false;
+        }
+        for ( Pattern pattern : excludes )
+        {
+            if ( pattern.matcher( name ).matches() )
+            {
                 return true;
+            }
         }
         return false;
     }
 
-    private boolean isIncluded(List<Pattern> includes, String name)
+    private boolean isIncluded( List<Pattern> includes, String name )
     {
-        if(includes==null || includes.isEmpty())
-            return true;
-        for (Pattern pattern : includes)
+        if ( includes == null || includes.isEmpty() )
         {
-            if(pattern.matcher(name).matches())
+            return true;
+        }
+        for ( Pattern pattern : includes )
+        {
+            if ( pattern.matcher( name ).matches() )
+            {
                 return true;
+            }
         }
         return false;
     }
@@ -1020,9 +1045,8 @@ public class ChangeLogReport
         {
             if ( dates == null )
             {
-                throw new MavenReportException(
-                    "The dates parameter is required when type=\"date\"."
-                    + " The value should be the absolute date for the start of the log." );
+                throw new MavenReportException( "The dates parameter is required when type=\"date\"."
+                                                    + " The value should be the absolute date for the start of the log." );
             }
         }
         else if ( "tag".equals( type ) )
@@ -1035,7 +1059,7 @@ public class ChangeLogReport
         else
         {
             throw new MavenReportException( "The type parameter has an invalid value: " + type
-                + ".  The value should be \"range\", \"date\", or \"tag\"." );
+                                                + ".  The value should be \"range\", \"date\", or \"tag\"." );
         }
     }
 
@@ -1165,36 +1189,37 @@ public class ChangeLogReport
                 sink.text( bundle.getString( "report.SetTagCreation" ) );
                 if ( set.getEndVersion() != null && set.getEndVersion().getName() != null )
                 {
-                    sink.text( " " + bundle.getString( "report.SetTagUntil" ) + " '" + set.getEndVersion() + "'" );
+                    sink.text( ' ' + bundle.getString( "report.SetTagUntil" ) + " '" + set.getEndVersion() + '\'' );
                 }
             }
             else if ( set.getEndVersion() == null || set.getEndVersion().getName() == null )
             {
                 sink.text( bundle.getString( "report.SetTagSince" ) );
-                sink.text( " '" + set.getStartVersion() + "'" );
+                sink.text( " '" + set.getStartVersion() + '\'' );
             }
             else
             {
                 sink.text( bundle.getString( "report.SetTagBetween" ) );
-                sink.text( " '" + set.getStartVersion() + "' " + bundle.getString( "report.And" ) + " '"
-                    + set.getEndVersion() + "'" );
+                sink.text(
+                    " '" + set.getStartVersion() + "' " + bundle.getString( "report.And" ) + " '" + set.getEndVersion()
+                        + '\'' );
             }
         }
-        else  if ( set.getStartDate() == null )
+        else if ( set.getStartDate() == null )
         {
             sink.text( bundle.getString( "report.SetRangeUnknown" ) );
         }
         else if ( set.getEndDate() == null )
         {
             sink.text( bundle.getString( "report.SetRangeSince" ) );
-            sink.text( " " + headingDateFormater.format( set.getStartDate() ) );
+            sink.text( ' ' + headingDateFormater.format( set.getStartDate() ) );
         }
         else
         {
             sink.text( bundle.getString( "report.SetRangeBetween" ) );
-            sink.text( " " + headingDateFormater.format( set.getStartDate() )
-                + " " + bundle.getString( "report.And" ) + " "
-                + headingDateFormater.format( set.getEndDate() ) );
+            sink.text(
+                ' ' + headingDateFormater.format( set.getStartDate() ) + ' ' + bundle.getString( "report.And" ) + ' '
+                    + headingDateFormater.format( set.getEndDate() ) );
         }
         sink.sectionTitle2_();
     }
@@ -1298,7 +1323,7 @@ public class ChangeLogReport
 
         for ( ChangeSet entry : sortedEntries )
         {
-            doChangedSetDetail( entry, bundle, sink );
+            doChangedSetDetail( entry, sink );
         }
 
         sink.table_();
@@ -1307,16 +1332,15 @@ public class ChangeLogReport
     /**
      * reports on the details of an SCM entry log
      *
-     * @param entry  an SCM entry to generate the report from
-     * @param bundle the resource bundle to retrieve report phrases from
-     * @param sink   the report formatting tool
+     * @param entry an SCM entry to generate the report from
+     * @param sink  the report formatting tool
      */
-    private void doChangedSetDetail( ChangeSet entry, ResourceBundle bundle, Sink sink )
+    private void doChangedSetDetail( ChangeSet entry, Sink sink )
     {
         sink.tableRow();
 
         sink.tableCell();
-        sink.text( entry.getDateFormatted() + " " + entry.getTimeFormatted() );
+        sink.text( entry.getDateFormatted() + ' ' + entry.getTimeFormatted() );
         sink.tableCell_();
 
         sink.tableCell();
@@ -1334,8 +1358,8 @@ public class ChangeLogReport
         String line;
         try
         {
-            if ( ( issueIDRegexPattern != null && issueIDRegexPattern.length() > 0 )
-                && ( issueLinkUrl != null && issueLinkUrl.length() > 0 ) )
+            if ( ( issueIDRegexPattern != null && issueIDRegexPattern.length() > 0 ) && ( issueLinkUrl != null
+                && issueLinkUrl.length() > 0 ) )
             {
                 Pattern pattern = Pattern.compile( issueIDRegexPattern );
 
@@ -1414,7 +1438,7 @@ public class ChangeLogReport
                 }
                 else
                 {
-                    link = issueLinkUrl + "/";
+                    link = issueLinkUrl + '/';
                 }
 
                 link += match;
@@ -1441,7 +1465,7 @@ public class ChangeLogReport
      * link to the team members report, or alternatively, if the supplied
      * author is unknown, outputs the author's name as plain text.
      *
-     * @param sink Sink to use for outputting
+     * @param sink   Sink to use for outputting
      * @param author The author's name.
      */
     protected void sinkAuthorDetails( Sink sink, String author )
@@ -1482,9 +1506,9 @@ public class ChangeLogReport
                 {
                     String rptTmpMultiRepoParam = scmUrl.substring( rptRepository.length() );
 
-                    rptOneRepoParam = "?" + rptTmpMultiRepoParam.substring( 1 );
+                    rptOneRepoParam = '?' + rptTmpMultiRepoParam.substring( 1 );
 
-                    rptMultiRepoParam = "&" + rptTmpMultiRepoParam.substring( 1 );
+                    rptMultiRepoParam = '&' + rptTmpMultiRepoParam.substring( 1 );
                 }
             }
             else
@@ -1576,13 +1600,13 @@ public class ChangeLogReport
             if ( !linkFile.equals( scmUrl ) )
             {
                 String linkName = name;
-                if(encodeFileUri)
+                if ( encodeFileUri )
                 {
                     try
                     {
-                        linkName = URLEncoder.encode(linkName, "UTF-8");
+                        linkName = URLEncoder.encode( linkName, "UTF-8" );
                     }
-                    catch (UnsupportedEncodingException e)
+                    catch ( UnsupportedEncodingException e )
                     {
                         // UTF-8 is always supported
                     }
@@ -1599,12 +1623,12 @@ public class ChangeLogReport
                     // This is here so that we are backwards compatible with the
                     // format used before the special token was introduced
 
-                    linkFile = linkFile + linkName;
+                    linkFile += linkName;
                 }
 
                 // Use the given URL to create links to the files
 
-                if (  revision != null && linkFile.indexOf( REV_TOKEN ) > 0 )
+                if ( revision != null && linkFile.indexOf( REV_TOKEN ) > 0 )
                 {
                     linkFile = linkFile.replaceAll( REV_TOKEN, revision );
                 }
@@ -1625,7 +1649,8 @@ public class ChangeLogReport
             }
             else if ( connection.indexOf( "cvsmonitor.pl" ) > 0 )
             {
-                String module = rptOneRepoParam.replaceAll( "^.*(&amp;module=.*?(?:&amp;|$)).*$", "$1" );
+                Pattern cvsMonitorRegex = Pattern.compile( "^.*(&amp;module=.*?(?:&amp;|$)).*$" );
+                String module = cvsMonitorRegex.matcher( rptOneRepoParam ).replaceAll( "$1" );
                 linkFile = displayFileDetailUrl + "?cmd=viewBrowseFile" + module + "&file=" + name;
                 if ( revision != null )
                 {
@@ -1689,7 +1714,7 @@ public class ChangeLogReport
      */
     private void sinkFileName( String name, Sink sink )
     {
-        name = name.replaceAll( "\\\\", "/" );
+        name = sinkFileNamePattern.matcher( name ).replaceAll( "/" );
         int pos = name.lastIndexOf( '/' );
 
         String head;
@@ -1701,7 +1726,7 @@ public class ChangeLogReport
         }
         else
         {
-            head = name.substring( 0, pos ) + "/";
+            head = name.substring( 0, pos ) + '/';
             tail = name.substring( pos + 1 );
         }
 
@@ -1721,9 +1746,11 @@ public class ChangeLogReport
     {
         String absPath = "";
 
-        StringTokenizer baseTokens = new StringTokenizer( base.replaceAll( "\\\\", "/" ), "/", true );
+        StringTokenizer baseTokens =
+            new StringTokenizer( sinkFileNamePattern.matcher( base ).replaceAll( "/" ), "/", true );
 
-        StringTokenizer targetTokens = new StringTokenizer( target.replaceAll( "\\\\", "/" ), "/" );
+        StringTokenizer targetTokens =
+            new StringTokenizer( sinkFileNamePattern.matcher( target ).replaceAll( "/" ), "/" );
 
         String targetRoot = targetTokens.nextToken();
 
@@ -1753,13 +1780,17 @@ public class ChangeLogReport
         return absPath + newTarget;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected MavenProject getProject()
     {
         return project;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected String getOutputDirectory()
     {
         if ( !outputDirectory.isAbsolute() )
@@ -1780,25 +1811,33 @@ public class ChangeLogReport
         return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.changelog.description" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.changelog.name" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "changelog";
@@ -1813,7 +1852,9 @@ public class ChangeLogReport
         return ResourceBundle.getBundle( "scm-activity", locale, this.getClass().getClassLoader() );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean canGenerateReport()
     {
         if ( offline && !outputXML.exists() )
@@ -1821,11 +1862,7 @@ public class ChangeLogReport
             return false;
         }
 
-        if ( skip )
-        {
-            return false;
-        }
+        return !skip;
 
-        return true;
     }
 }

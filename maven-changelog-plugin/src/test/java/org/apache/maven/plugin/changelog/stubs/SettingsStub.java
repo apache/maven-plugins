@@ -19,8 +19,8 @@ package org.apache.maven.plugin.changelog.stubs;
  * under the License.
  */
 
-import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
 
 /**
  * @author Edwin Punzalan
@@ -29,7 +29,9 @@ import org.apache.maven.settings.Server;
 public class SettingsStub
     extends Settings
 {
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Server getServer( String serverId )
     {
         return new Server()

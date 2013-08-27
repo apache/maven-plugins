@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  *
  * @version $Id$
  */
-@Mojo( name = "dev-activity" )
+@Mojo(name = "dev-activity")
 public class DeveloperActivityReport
     extends ChangeLogReport
 {
@@ -49,25 +49,33 @@ public class DeveloperActivityReport
 
     private Map<String, Map<String, ChangeFile>> files;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.dev-activity.description" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.dev-activity.name" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "dev-activity";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void doGenerateEmptyReport( ResourceBundle bundle, Sink sink )
     {
         sink.head();
@@ -94,7 +102,9 @@ public class DeveloperActivityReport
         sink.close();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void doGenerateReport( List<ChangeLogSet> changeLogSets, ResourceBundle bundle, Sink sink )
     {
         sink.head();
@@ -175,7 +185,7 @@ public class DeveloperActivityReport
     {
         initDeveloperDetails( set );
 
-        for( Map.Entry<String, List<ChangeSet>> commit : commits.entrySet() )
+        for ( Map.Entry<String, List<ChangeSet>> commit : commits.entrySet() )
         {
             String author = commit.getKey();
 

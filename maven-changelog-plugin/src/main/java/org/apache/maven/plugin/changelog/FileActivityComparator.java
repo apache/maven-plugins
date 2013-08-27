@@ -116,7 +116,7 @@ public class FileActivityComparator
 
         for ( ChangeFile file : list )
         {
-            if ( StringUtils.isNotBlank( latest) )
+            if ( StringUtils.isNotBlank( latest ) )
             {
                 latest = file.getRevision();
             }

@@ -42,9 +42,11 @@ public class ChangeLogScmResultStub
         super( "", "", "", true );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public ChangeLogSet getChangeLog()
     {
-        return new ChangeLogSet( Collections.<ChangeSet> emptyList(), new Date( 360 ), new Date( 720 ) );
+        return new ChangeLogSet( Collections.<ChangeSet>emptyList(), new Date( 360 ), new Date( 720 ) );
     }
 }

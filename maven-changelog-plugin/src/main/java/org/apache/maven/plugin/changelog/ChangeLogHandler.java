@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 /**
  * Change log generated xml parser.  SAXParser listener for processing a previously generated xml into several
@@ -47,6 +48,7 @@ public class ChangeLogHandler
     // Use the same time zone offset when reading and adding times
     // It doesn't matter which one we use, as long we always use the same one
     private static final String TIMEZONE_STRING = "GMT-00:00";
+
     private static final TimeZone TIMEZONE = TimeZone.getTimeZone( TIMEZONE_STRING );
 
     private Collection<ChangeLogSet> changeSets;
@@ -63,6 +65,8 @@ public class ChangeLogHandler
 
     private String currentPattern;
 
+    private final Pattern nameRegex = Pattern.compile( " \\(from [^:]+:\\d+\\)" );
+
     /**
      * contructor
      *
@@ -73,14 +77,18 @@ public class ChangeLogHandler
         this.changeSets = changeSets;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void characters( char[] ch, int start, int length )
         throws SAXException
     {
         bufData += new String( ch, start, length );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void endElement( String uri, String localName, String qName )
         throws SAXException
     {
@@ -127,8 +135,8 @@ public class ChangeLogHandler
                 // MCHANGELOG-68 Adjust for time zone when parsing the time
                 simpleDateFormat.setTimeZone( TIMEZONE );
                 // Adjust for time zone when adding up the milliseconds
-                bufEntry.setDate( new Date( ms + simpleDateFormat.parse( bufData ).getTime()
-                    + TIMEZONE.getRawOffset() ) );
+                bufEntry.setDate(
+                    new Date( ms + simpleDateFormat.parse( bufData ).getTime() + TIMEZONE.getRawOffset() ) );
             }
             catch ( ParseException e )
             {
@@ -150,11 +158,13 @@ public class ChangeLogHandler
         }
         else if ( "name".equals( qName ) )
         {
-            bufFile.setName( bufData.replaceFirst( " \\(from [^:]+:\\d+\\)", "" ) );
+            bufFile.setName( nameRegex.matcher( bufData ).replaceFirst( "" ) );
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void startElement( String uri, String localName, String qName, Attributes attributes )
         throws SAXException
     {

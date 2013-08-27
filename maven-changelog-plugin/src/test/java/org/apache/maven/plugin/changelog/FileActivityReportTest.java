@@ -19,11 +19,11 @@ package org.apache.maven.plugin.changelog;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.changelog.stubs.ScmManagerStub;
 import org.apache.maven.scm.manager.ScmManager;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
 
 /**
  * @author Edwin Punzalan
@@ -34,7 +34,9 @@ public class FileActivityReportTest
 {
     private ScmManager scmManager;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -43,7 +45,9 @@ public class FileActivityReportTest
         scmManager = new ScmManagerStub();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void tearDown()
         throws Exception
     {
@@ -109,8 +113,8 @@ public class FileActivityReportTest
 
         String changelogXml = FileUtils.fileRead( outputXML );
 
-        assertTrue( "Test for xml header", changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding
-            + "\"?>" ) );
+        assertTrue( "Test for xml header",
+                    changelogXml.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>" ) );
 
         assertTrue( "Test for xml footer", changelogXml.endsWith( "</changelog>" ) );
 

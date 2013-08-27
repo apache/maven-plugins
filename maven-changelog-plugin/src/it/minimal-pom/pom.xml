@@ -32,7 +32,8 @@
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changelog-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changelog-plugin/</developerConnection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changelog-plugin/
+    </developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-changelog-plugin/</url>
   </scm>
 
