@@ -34,8 +34,8 @@ import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * @author Olivier Lamy
- * @since 22 nov. 07
  * @version $Id$
+ * @since 22 nov. 07
  */
 public class InterpolationTest
     extends AbstractMojoTestCase
@@ -82,8 +82,9 @@ public class InterpolationTest
         properties.put( "cleanProps", "clean" );
         properties.put( "version", "2.0-SNAPSHOT" );
         setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
-        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test"
-        + File.separatorChar + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
+        String dirPath =
+            getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
+                + File.separatorChar + "unit" + File.separatorChar + "interpolation";
         List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( goals.toString(), 2, goals.size() );
         assertEquals( "clean", goals.get( 0 ) );
@@ -105,9 +106,10 @@ public class InterpolationTest
             properties.put( "foo", "bar" );
             properties.put( "version", "2.0-SNAPSHOT" );
             setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
-            String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test"
-                + File.separatorChar + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
-            
+            String dirPath =
+                getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
+                    + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
+
             interpolatedPomFile = new File( getBasedir(), "target/interpolated-pom.xml" );
             invokerMojo.buildInterpolatedFile( new File( dirPath, "pom.xml" ), interpolatedPomFile );
             reader = ReaderFactory.newXmlReader( interpolatedPomFile );
@@ -134,8 +136,9 @@ public class InterpolationTest
         setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
         setVariableValueToObject( invokerMojo, "profilesFile", "profiles.txt" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
-            + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
+        String dirPath =
+            getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
+                + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
         List<String> profiles = invokerMojo.getProfiles( new File( dirPath ) );
         assertEquals( 2, profiles.size() );
         assertTrue( profiles.contains( "foo" ) );
@@ -147,11 +150,12 @@ public class InterpolationTest
 
         InvokerMojo invokerMojo = new InvokerMojo();
         setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
-        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList("zloug") );
+        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( "zloug" ) );
         setVariableValueToObject( invokerMojo, "profilesFile", "emptyProfiles.txt" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
-            + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
+        String dirPath =
+            getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
+                + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
         List<String> profiles = invokerMojo.getProfiles( new File( dirPath ) );
         assertFalse( profiles.contains( "zloug" ) );
         assertEquals( 0, profiles.size() );
@@ -163,11 +167,12 @@ public class InterpolationTest
     {
 
         InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList("zloug") );
+        setVariableValueToObject( invokerMojo, "profiles", Arrays.asList( "zloug" ) );
         setVariableValueToObject( invokerMojo, "profilesFile", "zorglubProfiles.txt" );
         setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        String dirPath = getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
-            + "resources" + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
+        String dirPath =
+            getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
+                + File.separatorChar + "unit" + File.separatorChar + "profiles-from-file";
         List<String> profiles = invokerMojo.getProfiles( new File( dirPath ) );
         assertTrue( profiles.contains( "zloug" ) );
         assertEquals( 1, profiles.size() );

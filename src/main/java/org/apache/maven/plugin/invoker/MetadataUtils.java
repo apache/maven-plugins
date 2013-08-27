@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Provides utility methods for artifact metadata processing.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class MetadataUtils
@@ -52,8 +52,8 @@ class MetadataUtils
      * Creates local metadata files for the specified artifact. The goal is to simulate the installation of the artifact
      * by a local build, thereby decoupling the forked builds from the inderministic collection of remote repositories
      * that are available to the main build and from which the artifact was originally resolved.
-     * 
-     * @param file The artifact's file in the local test repository, must not be <code>null</code>.
+     *
+     * @param file     The artifact's file in the local test repository, must not be <code>null</code>.
      * @param artifact The artifact to create metadata for, must not be <code>null</code>.
      * @throws IOException If the metadata could not be created.
      */
@@ -98,8 +98,9 @@ class MetadataUtils
                     {
 
                         Xpp3Dom[] children = versions.getChildren( "version" );
-                        for (Xpp3Dom aChildren : children) {
-                            allVersions.add(aChildren.getValue());
+                        for ( Xpp3Dom aChildren : children )
+                        {
+                            allVersions.add( aChildren.getValue() );
                         }
                     }
                 }

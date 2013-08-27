@@ -29,10 +29,10 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 /**
  * A map-like source to interpolate expressions.
- * 
+ *
  * @author Olivier Lamy
- * @since 1.1
  * @version $Id$
+ * @since 1.1
  */
 class CompositeMap
     implements Map<String, Object>
@@ -50,10 +50,10 @@ class CompositeMap
 
     /**
      * Creates a new interpolation source backed by the specified Maven project and some user-specified properties.
-     * 
+     *
      * @param mavenProject The Maven project from which to extract interpolated values, must not be <code>null</code>.
-     * @param properties The set of additional properties from which to extract interpolated values, may be
-     *            <code>null</code>.
+     * @param properties   The set of additional properties from which to extract interpolated values, may be
+     *                     <code>null</code>.
      */
     protected CompositeMap( MavenProject mavenProject, Map<String, Object> properties )
     {
@@ -67,7 +67,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#clear()
      */
     public void clear()
@@ -77,7 +77,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#containsKey(java.lang.Object)
      */
     public boolean containsKey( Object key )
@@ -109,7 +109,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#containsValue(java.lang.Object)
      */
     public boolean containsValue( Object value )
@@ -119,7 +119,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#entrySet()
      */
     public Set<Entry<String, Object>> entrySet()
@@ -129,7 +129,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#get(java.lang.Object)
      */
     public Object get( Object key )
@@ -164,7 +164,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#isEmpty()
      */
     public boolean isEmpty()
@@ -174,7 +174,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#keySet()
      */
     public Set<String> keySet()
@@ -184,7 +184,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     public Object put( String key, Object value )
@@ -194,7 +194,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#putAll(java.util.Map)
      */
     public void putAll( Map<? extends String, ? extends Object> t )
@@ -204,7 +204,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#remove(java.lang.Object)
      */
     public Object remove( Object key )
@@ -214,7 +214,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#size()
      */
     public int size()
@@ -224,7 +224,7 @@ class CompositeMap
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.util.Map#values()
      */
     public Collection<Object> values()

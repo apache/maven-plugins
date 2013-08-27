@@ -46,13 +46,17 @@ class SelectorUtils
     {
         String[] tokens = ( list != null ) ? StringUtils.split( list, "," ) : new String[0];
 
-        for (String token1 : tokens) {
+        for ( String token1 : tokens )
+        {
             String token = token1.trim();
 
-            if (token.startsWith("!")) {
-                excludes.add(token.substring(1));
-            } else {
-                includes.add(token);
+            if ( token.startsWith( "!" ) )
+            {
+                excludes.add( token.substring( 1 ) );
+            }
+            else
+            {
+                includes.add( token );
             }
         }
     }
@@ -88,6 +92,7 @@ class SelectorUtils
 
     /**
      * Retrieves the current Maven version.
+     *
      * @return The current Maven version.
      */
     static String getMavenVersion()
@@ -108,7 +113,7 @@ class SelectorUtils
             return null;
         }
     }
-    
+
     static String getMavenVersion( File mavenHome )
     {
         File mavenLib = new File( mavenHome, "lib" );
@@ -124,10 +129,8 @@ class SelectorUtils
         {
             try
             {
-                @SuppressWarnings( "deprecation" )
-                URL url =
-                    new URL( "jar:" + file.toURL().toExternalForm()
-                        + "!/META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+                @SuppressWarnings( "deprecation" ) URL url = new URL( "jar:" + file.toURL().toExternalForm()
+                                                                          + "!/META-INF/maven/org.apache.maven/maven-core/pom.properties" );
 
                 Properties properties = new Properties();
                 properties.load( url.openStream() );
@@ -153,7 +156,7 @@ class SelectorUtils
     {
         return isMavenVersion( mavenSpec, getMavenVersion() );
     }
-    
+
     static boolean isMavenVersion( String mavenSpec, String actualVersion )
     {
         List<String> includes = new ArrayList<String>();
@@ -169,7 +172,7 @@ class SelectorUtils
     {
         return System.getProperty( "java.version", "" );
     }
-    
+
     static String getJreVersion( File javaHome )
     {
         //@todo detect actual version
@@ -180,7 +183,7 @@ class SelectorUtils
     {
         return isJreVersion( jreSpec, getJreVersion() );
     }
-    
+
     static boolean isJreVersion( String jreSpec, String actualJreVersion )
     {
         List<String> includes = new ArrayList<String>();
@@ -243,8 +246,9 @@ class SelectorUtils
 
         List<Integer> numbers = new ArrayList<Integer>();
 
-        for (String token : tokens) {
-            numbers.add(Integer.valueOf(token));
+        for ( String token : tokens )
+        {
+            numbers.add( Integer.valueOf( token ) );
         }
 
         return numbers;

@@ -29,7 +29,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides a convenient facade around the <code>invoker.properties</code>.
- * 
+ *
  * @author Benjamin Bentmann
  * @version $Id$
  */
@@ -41,26 +41,27 @@ class InvokerProperties
         PROJECT( "invoker.project" ),
         GOALS( "invoker.goals" ),
         PROFILES( "invoker.profiles" ),
-        MAVEN_OPTS ( "invoker.mavenOpts" ),
+        MAVEN_OPTS( "invoker.mavenOpts" ),
         FAILURE_BEHAVIOR( "invoker.failureBehavior" ),
         NON_RECURSIVE( "invoker.nonRecursive" ),
         OFFLINE( "invoker.offline" ),
         SYSTEM_PROPERTIES_FILE( "invoker.systemPropertiesFile" ),
         DEBUG( "invoker.debug" );
-        
+
         private final String key;
-        
-        private InvocationProperty(final String s)
+
+        private InvocationProperty( final String s )
         {
             this.key = s;
         }
 
         @Override
-        public String toString() {
+        public String toString()
+        {
             return key;
         }
     }
-    
+
     /**
      * The invoker properties being wrapped.
      */
@@ -69,7 +70,7 @@ class InvokerProperties
     /**
      * Creates a new facade for the specified invoker properties. The properties will not be copied, so any changes to
      * them will be reflected by the facade.
-     * 
+     *
      * @param properties The invoker properties to wrap, may be <code>null</code> if none.
      */
     public InvokerProperties( Properties properties )
@@ -79,7 +80,7 @@ class InvokerProperties
 
     /**
      * Gets the invoker properties being wrapped.
-     * 
+     *
      * @return The invoker properties being wrapped, never <code>null</code>.
      */
     public Properties getProperties()
@@ -89,7 +90,7 @@ class InvokerProperties
 
     /**
      * Gets the name of the corresponding build job.
-     * 
+     *
      * @return The name of the build job or an empty string if not set.
      */
     public String getJobName()
@@ -99,7 +100,7 @@ class InvokerProperties
 
     /**
      * Gets the description of the corresponding build job.
-     * 
+     *
      * @return The description of the build job or an empty string if not set.
      */
     public String getJobDescription()
@@ -109,7 +110,7 @@ class InvokerProperties
 
     /**
      * Gets the specification of JRE versions on which this build job should be run.
-     * 
+     *
      * @return The specification of JRE versions or an empty string if not set.
      */
     public String getJreVersion()
@@ -130,7 +131,7 @@ class InvokerProperties
 
     /**
      * Gets the specification of OS families on which this build job should be run.
-     * 
+     *
      * @return The specification of OS families or an empty string if not set.
      */
     public String getOsFamily()
@@ -140,7 +141,7 @@ class InvokerProperties
 
     /**
      * Determines whether these invoker properties contain a build definition for the specified invocation index.
-     * 
+     *
      * @param index The one-based index of the invocation to check for, must not be negative.
      * @return <code>true</code> if the invocation with the specified index is defined, <code>false</code> otherwise.
      */
@@ -159,9 +160,9 @@ class InvokerProperties
     /**
      * Configures the specified invocation request from these invoker properties. Settings not present in the invoker
      * properties will be left unchanged in the invocation request.
-     * 
+     *
      * @param request The invocation request to configure, must not be <code>null</code>.
-     * @param index The one-based index of the invocation to configure, must not be negative.
+     * @param index   The one-based index of the invocation to configure, must not be negative.
      */
     public void configureInvocation( InvocationRequest request, int index )
     {
@@ -190,7 +191,8 @@ class InvokerProperties
         String profiles = get( InvocationProperty.PROFILES, index );
         if ( profiles != null )
         {
-            request.setProfiles( new ArrayList<String>( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
+            request.setProfiles(
+                new ArrayList<String>( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
         }
 
         String mvnOpts = get( InvocationProperty.MAVEN_OPTS, index );
@@ -208,27 +210,27 @@ class InvokerProperties
         String nonRecursive = get( InvocationProperty.NON_RECURSIVE, index );
         if ( nonRecursive != null )
         {
-            request.setRecursive( !Boolean.valueOf(nonRecursive));
+            request.setRecursive( !Boolean.valueOf( nonRecursive ) );
         }
 
         String offline = get( InvocationProperty.OFFLINE, index );
         if ( offline != null )
         {
-            request.setOffline(Boolean.valueOf(offline));
+            request.setOffline( Boolean.valueOf( offline ) );
         }
-        
+
         String debug = get( InvocationProperty.DEBUG, index );
         if ( debug != null )
         {
-            request.setDebug(Boolean.valueOf(debug));
+            request.setDebug( Boolean.valueOf( debug ) );
         }
     }
 
     /**
      * Checks whether the specified exit code matches the one expected for the given invocation.
-     * 
+     *
      * @param exitCode The exit code of the Maven invocation to check.
-     * @param index The index of the invocation for which to check the exit code, must not be negative.
+     * @param index    The index of the invocation for which to check the exit code, must not be negative.
      * @return <code>true</code> if the exit code is zero and a success was expected or if the exit code is non-zero and
      *         a failue was expected, <code>false</code> otherwise.
      */
@@ -240,7 +242,7 @@ class InvokerProperties
 
     /**
      * Gets the path to the properties file used to set the system properties for the specified invocation.
-     * 
+     *
      * @param index The index of the invocation for which to check the exit code, must not be negative.
      * @return The path to the properties file or <code>null</code> if not set.
      */
@@ -254,8 +256,8 @@ class InvokerProperties
      * for multiple builds of the same project. For this reason, the properties are indexed. First, a property named
      * <code>key.index</code> will be queried. If this property does not exist, the value of the property named
      * <code>key</code> will finally be returned.
-     * 
-     * @param key The (base) key for the invoker property to lookup, must not be <code>null</code>.
+     *
+     * @param key   The (base) key for the invoker property to lookup, must not be <code>null</code>.
      * @param index The index of the invocation for which to retrieve the value, must not be negative.
      * @return The value for the requested invoker property or <code>null</code> if not defined.
      */
@@ -276,6 +278,6 @@ class InvokerProperties
 
     private String get( InvocationProperty prop, int index )
     {
-        return get( prop.toString(), index);
+        return get( prop.toString(), index );
     }
 }
