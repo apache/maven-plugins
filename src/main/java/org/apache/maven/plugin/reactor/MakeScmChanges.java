@@ -42,7 +42,7 @@ import java.util.Set;
 
 /**
  * Goal to build all projects that you personally have changed (according to SCM)
- * 
+ *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
  */
 @Mojo( name = "make-scm-changes", aggregator = true, defaultPhase = LifecyclePhase.PROCESS_SOURCES )
@@ -75,7 +75,8 @@ public class MakeScmChanges
         }
         if ( scmConnection == null )
         {
-            throw new MojoFailureException("No SCM connection specified.  You must specify an SCM connection by adding a <connection> element to your <scm> element in your POM");
+            throw new MojoFailureException(
+                "No SCM connection specified.  You must specify an SCM connection by adding a <connection> element to your <scm> element in your POM" );
         }
         StatusScmResult result;
         try
@@ -89,39 +90,46 @@ public class MakeScmChanges
         }
 
         List changedFiles = result.getChangedFiles();
-        
+
         List projectDirectories = getProjectDirectories();
         Set changedDirectories = new HashSet();
-        for (Object changedFile1 : changedFiles) {
+        for ( Object changedFile1 : changedFiles )
+        {
             ScmFile changedScmFile = (ScmFile) changedFile1;
-            getLog().debug(changedScmFile.toString());
+            getLog().debug( changedScmFile.toString() );
             ScmFileStatus status = changedScmFile.getStatus();
-            if (!status.isStatus()) {
-                getLog().debug("Not a diff: " + status);
+            if ( !status.isStatus() )
+            {
+                getLog().debug( "Not a diff: " + status );
                 continue;
             }
-            if (ignoreUnknown && ScmFileStatus.UNKNOWN.equals(status)) {
-                getLog().debug("Ignoring unknown");
+            if ( ignoreUnknown && ScmFileStatus.UNKNOWN.equals( status ) )
+            {
+                getLog().debug( "Ignoring unknown" );
                 continue;
             }
 
-            File changedFile = new File(changedScmFile.getPath());
+            File changedFile = new File( changedScmFile.getPath() );
             boolean found = false;
             // TODO There's a cleverer/faster way to code this, right?  This is O(n^2)
-            for (Object projectDirectory1 : projectDirectories) {
+            for ( Object projectDirectory1 : projectDirectories )
+            {
                 File projectDirectory = (File) projectDirectory1;
-                if (changedFile.getAbsolutePath().startsWith(projectDirectory.getAbsolutePath() + File.separator)) {
-                    String path = RelativePather.getRelativePath(baseDir, projectDirectory);
-                    if (!changedDirectories.contains(path)) {
-                        getLog().debug("Including " + path);
+                if ( changedFile.getAbsolutePath().startsWith( projectDirectory.getAbsolutePath() + File.separator ) )
+                {
+                    String path = RelativePather.getRelativePath( baseDir, projectDirectory );
+                    if ( !changedDirectories.contains( path ) )
+                    {
+                        getLog().debug( "Including " + path );
                     }
-                    changedDirectories.add(path);
+                    changedDirectories.add( path );
                     found = true;
                     break;
                 }
             }
-            if (!found) {
-                getLog().debug("Couldn't find file in any reactor root: " + changedFile.getAbsolutePath());
+            if ( !found )
+            {
+                getLog().debug( "Couldn't find file in any reactor root: " + changedFile.getAbsolutePath() );
             }
         }
         folderList = StringUtils.join( changedDirectories.iterator(), "," );
@@ -133,9 +141,10 @@ public class MakeScmChanges
     private List getProjectDirectories()
     {
         List dirs = new ArrayList( collectedProjects.size() );
-        for (Object collectedProject : collectedProjects) {
+        for ( Object collectedProject : collectedProjects )
+        {
             MavenProject mp = (MavenProject) collectedProject;
-            dirs.add(mp.getFile().getParentFile());
+            dirs.add( mp.getFile().getParentFile() );
         }
         return dirs;
     }
