@@ -12,7 +12,9 @@ import java.io.Reader;
 import java.io.FileReader;
 import java.util.List;
 
-/** @author Jason van Zyl */
+/**
+ * @author Jason van Zyl
+ */
 public class RepositoryCopierTest
     extends PlexusTestCase
 {
@@ -40,29 +42,15 @@ public class RepositoryCopierTest
 
         copier.copy( sourceRepository, targetRepository, version );
 
-        String s[] = {
-            "maven",
-            "maven-artifact",
-            "maven-artifact-manager",
-            "maven-artifact-test",
-            "maven-core",
-            "maven-error-diagnostics",
-            "maven-model",
-            "maven-monitor",
-            "maven-plugin-api",
-            "maven-plugin-descriptor",
-            "maven-plugin-parameter-documenter",
-            "maven-plugin-registry",
-            "maven-profile",
-            "maven-project",
-            "maven-repository-metadata",
-            "maven-script",
-            "maven-script-ant",
-            "maven-script-beanshell",
+        String s[] = { "maven", "maven-artifact", "maven-artifact-manager", "maven-artifact-test", "maven-core",
+            "maven-error-diagnostics", "maven-model", "maven-monitor", "maven-plugin-api", "maven-plugin-descriptor",
+            "maven-plugin-parameter-documenter", "maven-plugin-registry", "maven-profile", "maven-project",
+            "maven-repository-metadata", "maven-script", "maven-script-ant", "maven-script-beanshell",
             "maven-settings" };
 
-        for (String value : s) {
-            testMavenArtifact(targetRepo, value);
+        for ( String value : s )
+        {
+            testMavenArtifact( targetRepo, value );
         }
 
         // leave something behind to clean it up.
@@ -85,7 +73,7 @@ public class RepositoryCopierTest
 
         assertTrue( versionDir.exists() );
 
-        Reader r = new FileReader( new File( basedir, RepositoryCopier.MAVEN_METADATA) );
+        Reader r = new FileReader( new File( basedir, RepositoryCopier.MAVEN_METADATA ) );
 
         Metadata metadata = reader.read( r );
 
@@ -102,7 +90,7 @@ public class RepositoryCopierTest
         assertTrue( versions.contains( "2.0.2" ) );
 
         assertTrue( versions.contains( "2.0.3" ) );
-        
+
         assertTrue( versions.contains( "2.0.4" ) );
 
         assertTrue( versions.contains( "2.0.5" ) );
