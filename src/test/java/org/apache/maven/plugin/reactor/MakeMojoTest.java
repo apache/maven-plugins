@@ -67,7 +67,7 @@ public class MakeMojoTest
         configureProject( businessLogic, "businessLogic", "reactortest", "1.0" );
         configureProject( ui, "ui", "reactortest", "1.0" );
 
-        configuredProjects = Arrays.asList( dataAccess, businessLogic, ui );
+        configuredProjects = Arrays.asList(dataAccess, businessLogic, ui);
 
         // ui depends on businessLogic
         // businessLogic depends on dataAccess
@@ -141,7 +141,7 @@ public class MakeMojoTest
         m.simpleInvoker = fi;
 
         ScmFile sf = new ScmFile( businessLogic.getFile().getAbsolutePath(), ScmFileStatus.MODIFIED );
-        m.scmManager = new FakeScmManager( Arrays.asList( sf ) );
+        m.scmManager = new FakeScmManager( Arrays.asList(sf) );
         m.scmConnection = "";
 
         m.execute();

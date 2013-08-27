@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Goal to build a project X and all of the reactor projects on which X depends
+ * Goal to build a project X and all of the reactor projects on which X depends 
  *
  * @author <a href="mailto:dfabulich@apache.org">Dan Fabulich</a>
  */
@@ -113,50 +113,42 @@ public class MakeMojo
      */
     @Parameter( property = "from" )
     File continueFromFolder;
-
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( artifactList == null && folderList == null )
-        {
-            throw new MojoFailureException(
-                "You must specify either folders or projects with -Dmake.folders=foo,baz/bar or -Dmake.artifacts=com.mycompany:foo,com.mycompany:bar" );
+        if ( artifactList == null && folderList == null ) {
+            throw new MojoFailureException("You must specify either folders or projects with -Dmake.folders=foo,baz/bar or -Dmake.artifacts=com.mycompany:foo,com.mycompany:bar");
         }
         String[] reactorIncludes;
         List sortedProjects;
         try
         {
-            if ( collectedProjects.size() == 0 )
-            {
+            if (collectedProjects.size() == 0) {
                 throw new NonReactorException();
             }
             SuperProjectSorter ps = new SuperProjectSorter( collectedProjects );
             DAG dag = ps.getDAG();
-
+            
             // gather projects
             collectArtifactListFromFolderList( collectedProjects );
             String[] artifacts = StringUtils.split( artifactList, "," );
             Set visited = new HashSet();
             Set out = new HashSet();
-            for ( String artifact : artifacts )
-            {
+            for (String artifact : artifacts) {
                 String project = artifact;
-                if ( project.indexOf( ':' ) == -1 )
-                {
+                if (project.indexOf(':') == -1) {
                     project = defaultGroup + ":" + project;
                 }
-                Vertex projectVertex = dag.getVertex( project );
-                if ( projectVertex == null )
-                {
-                    throw new MissingProjectException( project );
-                }
-                gatherProjects( projectVertex, ps, visited, out );
+                Vertex projectVertex = dag.getVertex(project);
+                if (projectVertex == null) throw new MissingProjectException(project);
+                gatherProjects(projectVertex, ps, visited, out);
             }
-
+            
             // sort them again
             ps = new SuperProjectSorter( new ArrayList( out ) );
             sortedProjects = ps.getSortedProjects();
-
+            
             // construct array of relative POM paths
             reactorIncludes = new String[sortedProjects.size()];
             for ( int i = 0; i < sortedProjects.size(); i++ )
@@ -166,17 +158,15 @@ public class MakeMojo
                 reactorIncludes[i] = path;
             }
         }
-        catch ( MojoFailureException e )
-        {
+        catch (MojoFailureException e) {
             throw e;
-        }
+        }        
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Problem generating dependency tree", e );
         }
 
-        if ( continueFromFolder != null || continueFromProject != null )
-        {
+        if (continueFromFolder != null || continueFromProject != null) {
             ResumeMojo resumer = new ResumeMojo();
             resumer.baseDir = baseDir;
             resumer.collectedProjects = sortedProjects;
@@ -188,55 +178,41 @@ public class MakeMojo
             resumer.printOnly = printOnly;
             resumer.continueFromGroup = defaultGroup;
             resumer.execute();
-        }
-        else
-        {
-            simpleInvoker.runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly,
-                                      getLog() );
+        } else {
+            simpleInvoker.runReactor( reactorIncludes, Arrays.asList( goals.split( "," ) ), invoker, printOnly, getLog() );
         }
 
     }
 
-    void collectArtifactListFromFolderList( List collectedProjects )
-        throws MojoFailureException
+    void collectArtifactListFromFolderList(List collectedProjects) throws MojoFailureException
     {
         if ( folderList == null )
-        {
             return;
-        }
         String[] folders = StringUtils.split( folderList, "," );
         Set pathSet = new HashSet();
-        for ( String folder : folders )
-        {
-            File file = new File( baseDir, folder );
-            if ( !file.exists() )
-            {
-                throw new MojoFailureException( "Folder doesn't exist: " + file.getAbsolutePath() );
+        for (String folder : folders) {
+            File file = new File(baseDir, folder);
+            if (!file.exists()) {
+                throw new MojoFailureException("Folder doesn't exist: " + file.getAbsolutePath());
             }
             String path = file.getAbsolutePath();
-            pathSet.add( path );
+            pathSet.add(path);
         }
-        if ( artifactList == null )
-        {
-            artifactList = "";
-        }
-        StringBuilder artifactBuffer = new StringBuilder( artifactList );
-        for ( Object collectedProject : collectedProjects )
-        {
+        if (artifactList == null) artifactList = "";
+        StringBuilder artifactBuffer = new StringBuilder(artifactList);
+        for (Object collectedProject : collectedProjects) {
             MavenProject mp = (MavenProject) collectedProject;
-            if ( pathSet.contains( mp.getFile().getParentFile().getAbsolutePath() ) )
-            {
-                if ( artifactBuffer.length() > 0 )
-                {
-                    artifactBuffer.append( ',' );
+            if (pathSet.contains(mp.getFile().getParentFile().getAbsolutePath())) {
+                if (artifactBuffer.length() > 0) {
+                    artifactBuffer.append(',');
                 }
-                String id = ArtifactUtils.versionlessKey( mp.getGroupId(), mp.getArtifactId() );
-                artifactBuffer.append( id );
+                String id = ArtifactUtils.versionlessKey(mp.getGroupId(), mp.getArtifactId());
+                artifactBuffer.append(id);
             }
         }
         if ( artifactBuffer.length() == 0 )
         {
-            throw new MojoFailureException( "No folders matched: " + folderList );
+            throw new MojoFailureException("No folders matched: " + folderList);
         }
         artifactList = artifactBuffer.toString();
     }
@@ -246,14 +222,11 @@ public class MakeMojo
         visited.add( v );
         out.add( ps.getProjectMap().get( v.getLabel() ) );
         List children = v.getChildren();
-        for ( Object aChildren : children )
-        {
+        for (Object aChildren : children) {
             Vertex child = (Vertex) aChildren;
-            if ( visited.contains( child ) )
-            {
+            if (visited.contains(child))
                 continue;
-            }
-            gatherProjects( child, ps, visited, out );
+            gatherProjects(child, ps, visited, out);
         }
         return out;
     }
