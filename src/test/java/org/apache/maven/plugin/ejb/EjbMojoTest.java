@@ -183,10 +183,10 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, false );
-        assertJarContent( project, new String[]{"META-INF/MANIFEST.MF", "META-INF/ejb-jar.xml",
+        assertJarContent( project, new String[]{ "META-INF/MANIFEST.MF", "META-INF/ejb-jar.xml",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppBean.class",
-            "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class"}, null );
+            "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class" }, null );
     }
 
     /**
@@ -220,11 +220,11 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+        assertClientJarContent( project, new String[]{ "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppStub.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppBean.class",
-                                             "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppStub.class" },
+                                new String[]{ "META-INF/ejb-jar.xml", "org/sample/ejb/AppBean.class",
+                                    "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class" } );
     }
 
     /**
@@ -258,10 +258,11 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+        assertClientJarContent( project, new String[]{ "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+            "org/sample/ejb/AppInclude.class" },
+                                new String[]{ "META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class" } );
     }
 
     /**
@@ -296,10 +297,11 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+        assertClientJarContent( project, new String[]{ "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+            "org/sample/ejb/AppInclude.class" },
+                                new String[]{ "META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class" } );
 
     }
 
@@ -335,10 +337,11 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+        assertJarContent( project, new String[]{ "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
-                          new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+            "org/sample/ejb/AppInclude.class" },
+                          new String[]{ "META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class" } );
 
     }
 
@@ -374,11 +377,11 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+        assertClientJarContent( project, new String[]{ "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/App.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/impl/AppImpl.class",
-                                             "org/sample/ejb/impl"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/App.class" },
+                                new String[]{ "META-INF/ejb-jar.xml", "org/sample/ejb/impl/AppImpl.class",
+                                    "org/sample/ejb/impl" } );
     }
 
 
@@ -416,11 +419,11 @@ public class EjbMojoTest
         assertJarCreation( project, true, true );
 
         // We check that the created jar does not contain the org/sample/ejb package empty
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
+        assertClientJarContent( project, new String[]{ "META-INF/MANIFEST.MF",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb2/AppTwo.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class",
-                                             "org/sample/ejb"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb2/AppTwo.class" },
+                                new String[]{ "META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class",
+                                    "org/sample/ejb" } );
 
     }
 
@@ -583,7 +586,8 @@ public class EjbMojoTest
         else
         {
             checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + ".jar";
-            checkedClientJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + "-client.jar";
+            checkedClientJarFile =
+                project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + "-client.jar";
         }
 
         assertEquals( "Invalid value for ejb-jar creation", ejbJarCreated, FileUtils.fileExists( checkedJarFile ) );
@@ -608,16 +612,18 @@ public class EjbMojoTest
             final JarContentChecker inclusionChecker = new JarContentChecker();
 
             // set expected jar contents
-            for (String expectedFile : expectedFiles) {
-                inclusionChecker.addFile(new File(expectedFile));
+            for ( String expectedFile : expectedFiles )
+            {
+                inclusionChecker.addFile( new File( expectedFile ) );
             }
             assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         }
         if ( unexpectedFiles != null )
         {
             final JarContentChecker exclusionChecker = new JarContentChecker();
-            for (String unexpectedFile : unexpectedFiles) {
-                exclusionChecker.addFile(new File(unexpectedFile));
+            for ( String unexpectedFile : unexpectedFiles )
+            {
+                exclusionChecker.addFile( new File( unexpectedFile ) );
             }
             assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         }
