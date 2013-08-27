@@ -44,23 +44,33 @@ public class SpecificScopesArtifactFilter
 
     /**
      * Takes a comma separated list of scopes to include.
-     * 
+     *
      * @param scopes A comma separated list of scopes
      */
     public SpecificScopesArtifactFilter( String scopes )
     {
-        String [] scopeList = scopes.split( "," );
+        String[] scopeList = scopes.split( "," );
 
-        for (String aScopeList : scopeList) {
-            if (aScopeList.trim().equals(DefaultArtifact.SCOPE_COMPILE)) {
+        for ( String aScopeList : scopeList )
+        {
+            if ( aScopeList.trim().equals( DefaultArtifact.SCOPE_COMPILE ) )
+            {
                 compileScope = true;
-            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_PROVIDED)) {
+            }
+            else if ( aScopeList.trim().equals( DefaultArtifact.SCOPE_PROVIDED ) )
+            {
                 providedScope = true;
-            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_RUNTIME)) {
+            }
+            else if ( aScopeList.trim().equals( DefaultArtifact.SCOPE_RUNTIME ) )
+            {
                 runtimeScope = true;
-            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_SYSTEM)) {
+            }
+            else if ( aScopeList.trim().equals( DefaultArtifact.SCOPE_SYSTEM ) )
+            {
                 systemScope = true;
-            } else if (aScopeList.trim().equals(DefaultArtifact.SCOPE_TEST)) {
+            }
+            else if ( aScopeList.trim().equals( DefaultArtifact.SCOPE_TEST ) )
+            {
                 testScope = true;
             }
         }

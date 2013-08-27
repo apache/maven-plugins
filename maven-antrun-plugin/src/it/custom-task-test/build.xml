@@ -21,31 +21,31 @@ under the License.
 
 <project name="test1">
 
-    <target name="test">
+  <target name="test">
 
-        <property name="property1" value="value"/>
-        <property name="property2" value="${property1}"/>
-        <property name="property3" value="prefix ${property1}"/>
-        <echo>P1: ${property1}</echo>
-        <echo>P2: ${property2}</echo>
-        <echo>P3: ${property3}</echo>
-        <echo message="P1: ${property1}"/>
-        <echo message="P2: ${property2}"/>
-        <echo message="P3: ${property3}"/>
-        <echo message="${property1}"/>
-        <echo message="${property2}"/>
-        <echo message="${property3}"/>
+    <property name="property1" value="value"/>
+    <property name="property2" value="${property1}"/>
+    <property name="property3" value="prefix ${property1}"/>
+    <echo>P1: ${property1}</echo>
+    <echo>P2: ${property2}</echo>
+    <echo>P3: ${property3}</echo>
+    <echo message="P1: ${property1}"/>
+    <echo message="P2: ${property2}"/>
+    <echo message="P3: ${property3}"/>
+    <echo message="${property1}"/>
+    <echo message="${property2}"/>
+    <echo message="${property3}"/>
 
-        <fail message="Some property contains null in build.xml">
-          <condition>
-            <or>
-              <contains string="${property1}" substring="null" casesensitive="no"/>
-              <contains string="${property2}" substring="null" casesensitive="no"/>
-              <contains string="${property3}" substring="null" casesensitive="no"/>
-            </or>
-          </condition>
-        </fail>
+    <fail message="Some property contains null in build.xml">
+      <condition>
+        <or>
+          <contains string="${property1}" substring="null" casesensitive="no"/>
+          <contains string="${property2}" substring="null" casesensitive="no"/>
+          <contains string="${property3}" substring="null" casesensitive="no"/>
+        </or>
+      </condition>
+    </fail>
 
-    </target>
+  </target>
 
 </project>

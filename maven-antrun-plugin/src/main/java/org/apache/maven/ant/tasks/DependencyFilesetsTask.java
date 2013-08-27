@@ -19,10 +19,6 @@ package org.apache.maven.ant.tasks;
  * under the License.
  */
 
-import java.io.File;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.apache.maven.ant.tasks.support.SpecificScopesArtifactFilter;
 import org.apache.maven.ant.tasks.support.TypesArtifactFilter;
 import org.apache.maven.artifact.Artifact;
@@ -34,10 +30,14 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
+import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
- * Ant task which create a fileset for each dependency in a Maven project, and a 
+ * Ant task which create a fileset for each dependency in a Maven project, and a
  * fileset containing all selected dependencies.
- * 
+ *
  * @author pgier
  */
 public class DependencyFilesetsTask
@@ -96,8 +96,7 @@ public class DependencyFilesetsTask
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( "maven.project" );
 
         // Add filesets for depenedency artifacts
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
+        @SuppressWarnings("unchecked") Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
 
         FileSet dependenciesFileSet = new FileSet();
         dependenciesFileSet.setProject( getProject() );
@@ -169,7 +168,7 @@ public class DependencyFilesetsTask
 
     /**
      * Filter a set of artifacts using the scopes and type filters.
-     * 
+     *
      * @param artifacts
      * @return
      */

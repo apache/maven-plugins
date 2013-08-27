@@ -27,16 +27,15 @@ import java.util.List;
 
 /**
  * Artifact Filter which filters on artifact types.
- * 
  */
 public class TypesArtifactFilter
     implements ArtifactFilter
 {
     private List<String> types = new ArrayList<String>();
 
-    /** 
+    /**
      * Accepts a comma separated list of types
-     * 
+     *
      * @param types
      */
     public TypesArtifactFilter( String types )

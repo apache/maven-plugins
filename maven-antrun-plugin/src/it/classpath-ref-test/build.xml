@@ -21,12 +21,12 @@ under the License.
 
 <project name="test1">
 
-    <target name="test">
+  <target name="test">
 
-        <java failonerror="true" classname="Test" fork="true" newenvironment="true">
-            <classpath refid="classpath"/>
-        </java>
+    <java failonerror="true" classname="Test" fork="true" newenvironment="true">
+      <classpath refid="classpath"/>
+    </java>
 
-    </target>
+  </target>
 
 </project>

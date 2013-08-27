@@ -21,15 +21,15 @@ under the License.
 
 <project name="test6">
 
-    <target name="test">
+  <target name="test">
 
-        <!-- <taskdef name="antlr" classname="org.apache.tools.ant.taskdefs.optional.ANTLR"/> -->
+    <!-- <taskdef name="antlr" classname="org.apache.tools.ant.taskdefs.optional.ANTLR"/> -->
 
-        <mkdir dir="target" />
-        <antlr target="calc.g" outputdirectory="target">
-            <classpath refid="maven.plugin.classpath"/>
-        </antlr>
+    <mkdir dir="target"/>
+    <antlr target="calc.g" outputdirectory="target">
+      <classpath refid="maven.plugin.classpath"/>
+    </antlr>
 
-    </target>
+  </target>
 
 </project>

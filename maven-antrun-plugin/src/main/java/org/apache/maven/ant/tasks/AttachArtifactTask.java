@@ -19,8 +19,6 @@ package org.apache.maven.ant.tasks;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.antrun.AntRunMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
@@ -28,6 +26,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
 
 public class AttachArtifactTask
     extends Task
@@ -47,29 +47,29 @@ public class AttachArtifactTask
      * The file to attach.
      */
     private File file;
-    
+
     /**
      * The classifier of the artifact to attach
      */
     private String classifier;
-    
+
     /**
      * The type of the artifact to attach.  Defaults to file extension.
      */
     private String type;
-    
+
     public void execute()
     {
         if ( file == null )
         {
             throw new BuildException( "File is a required parameter." );
         }
-        
+
         if ( !file.exists() )
         {
             throw new BuildException( "File does not exist: " + file );
         }
-        
+
         if ( this.getProject().getReference( mavenProjectRefId ) == null )
         {
             throw new BuildException( "Maven project reference not found: " + mavenProjectRefId );
@@ -79,7 +79,7 @@ public class AttachArtifactTask
         {
             type = FileUtils.getExtension( file.getName() );
         }
-        
+
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( mavenProjectRefId );
 
         if ( this.getProject().getReference( mavenProjectHelperRefId ) == null )

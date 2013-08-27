@@ -21,17 +21,17 @@ under the License.
 
 <project name="test1">
 
-    <target name="test">
+  <target name="test">
 
-        <echo>user.home = ${user.home}</echo>
-        <fail message="user.home is not set">
-          <condition>
-            <not>
-              <isset property="user.home"/>
-            </not>
-          </condition>
-        </fail>
+    <echo>user.home = ${user.home}</echo>
+    <fail message="user.home is not set">
+      <condition>
+        <not>
+          <isset property="user.home"/>
+        </not>
+      </condition>
+    </fail>
 
-    </target>
+  </target>
 
 </project>
