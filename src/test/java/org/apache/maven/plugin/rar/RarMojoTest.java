@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings( "ConstantConditions" )
 public class RarMojoTest
     extends AbstractMojoTestCase
 {
@@ -63,7 +63,7 @@ public class RarMojoTest
 
         Boolean includeJar = (Boolean) getVariableValueFromObject( mojo, "includeJar" );
 
-        assertTrue(includeJar);
+        assertTrue( includeJar );
 
         //include the project jar to the rar
         File projectJar = new File( getBasedir(), "src/test/resources/unit/basic-rar-test/target/test-rar.jar" );
@@ -89,16 +89,20 @@ public class RarMojoTest
 
         assertEquals( "Files in working directory", expectedFiles.size(), fileNames.length );
 
-        for (File fileName1 : fileNames) {
+        for ( File fileName1 : fileNames )
+        {
             String fileName = fileName1.getName();
 
-            assertTrue(expectedFiles.contains(fileName));
+            assertTrue( expectedFiles.contains( fileName ) );
 
-            if (expectedFiles.contains(fileName)) {
-                expectedFiles.remove(fileName);
-                assertFalse(expectedFiles.contains(fileName));
-            } else {
-                fail(fileName + " is not included in expected files.");
+            if ( expectedFiles.contains( fileName ) )
+            {
+                expectedFiles.remove( fileName );
+                assertFalse( expectedFiles.contains( fileName ) );
+            }
+            else
+            {
+                fail( fileName + " is not included in expected files." );
             }
         }
 
@@ -161,8 +165,9 @@ public class RarMojoTest
         List<String> expectedFiles = new ArrayList<String>();
         List<String> fileList = new ArrayList<String>();
 
-        for (File fileName : fileNames) {
-            addFileToList(fileName, fileList);
+        for ( File fileName : fileNames )
+        {
+            addFileToList( fileName, fileList );
         }
 
         expectedFiles.add( "ra.xml" );
@@ -295,14 +300,18 @@ public class RarMojoTest
 
     private int getSizeOfExpectedFiles( List fileList, List expectedFiles )
     {
-        for (Object aFileList : fileList) {
+        for ( Object aFileList : fileList )
+        {
             String fileName = (String) aFileList;
 
-            if (expectedFiles.contains(fileName)) {
-                expectedFiles.remove(fileName);
-                assertFalse(expectedFiles.contains(fileName));
-            } else {
-                fail(fileName + " is not included in the expected files");
+            if ( expectedFiles.contains( fileName ) )
+            {
+                expectedFiles.remove( fileName );
+                assertFalse( expectedFiles.contains( fileName ) );
+            }
+            else
+            {
+                fail( fileName + " is not included in the expected files" );
             }
         }
         return expectedFiles.size();
@@ -320,8 +329,9 @@ public class RarMojoTest
 
             File[] files = file.listFiles();
 
-            for (File file1 : files) {
-                addFileToList(file1, fileList);
+            for ( File file1 : files )
+            {
+                addFileToList( file1, fileList );
             }
         }
     }
