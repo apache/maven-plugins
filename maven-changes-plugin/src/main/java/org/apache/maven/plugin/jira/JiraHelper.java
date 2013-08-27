@@ -47,7 +47,7 @@ public class JiraHelper
      * @param issueManagementUrl The URL to the issue management system
      * @return A <code>Map</code> containing the URL and project id
      */
-    static Map<String,String> getJiraUrlAndProjectId( String issueManagementUrl )
+    static Map<String, String> getJiraUrlAndProjectId( String issueManagementUrl )
     {
         String url = issueManagementUrl;
 
@@ -87,7 +87,7 @@ public class JiraHelper
             }
         }
 
-        HashMap<String,String> urlMap = new HashMap<String,String>( 4 );
+        HashMap<String, String> urlMap = new HashMap<String, String>( 4 );
 
         urlMap.put( "url", jiraUrl );
 
@@ -99,9 +99,9 @@ public class JiraHelper
     /**
      * Try to get a JIRA pid from the issue management URL.
      *
-     * @param log     Used to tell the user what happened
+     * @param log                Used to tell the user what happened
      * @param issueManagementUrl The URL to the issue management system
-     * @param client  The client used to connect to JIRA
+     * @param client             The client used to connect to JIRA
      * @return The JIRA id for the project, or null if it can't be found
      */
     public static String getPidFromJira( Log log, String issueManagementUrl, HttpClient client )

@@ -15,11 +15,11 @@ import org.apache.maven.plugin.ide.JeeUtils;
 
 /**
  * Generates MyEclipse configuration files
- * 
+ *
  * @author <a href="mailto:olivier.jacob@gmail.com">Olivier Jacob</a>
  * @goal myeclipse
- * @since 2.5
  * @execute phase="generate-resources"
+ * @since 2.5
  */
 public class MyEclipsePlugin
     extends EclipsePlugin
@@ -61,7 +61,7 @@ public class MyEclipsePlugin
     /**
      * Spring configuration placeholder
      * <p/>
-     * 
+     * <p/>
      * <pre>
      *   &lt;spring&gt;
      *     &lt;version&gt;1.0/2.0&lt;/version&gt;
@@ -69,7 +69,7 @@ public class MyEclipsePlugin
      *     &lt;basedir&gt;src/main/resources&lt;/basedir&gt;
      *   &lt;/spring&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     private Map spring;
@@ -77,14 +77,14 @@ public class MyEclipsePlugin
     /**
      * Hibernate configuration placeholder
      * <p/>
-     * 
+     * <p/>
      * <pre>
      *   &lt;hibernate&gt;
      *     &lt;config-file&gt;src/main/resources/applicationContext-persistence.xml&lt;/config-file&gt;
      *     &lt;session-factory-id&gt;mySessionFactory&lt;/session-factory-id&gt;
      *   &lt;/hibernate&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     private Map hibernate;
@@ -92,7 +92,7 @@ public class MyEclipsePlugin
     /**
      * Allow declaration of struts properties for MyEclipse
      * <p/>
-     * 
+     * <p/>
      * <pre>
      *   &lt;struts&gt;
      *     &lt;version&gt;1.2.9&lt;/version&gt;
@@ -101,7 +101,7 @@ public class MyEclipsePlugin
      *     &lt;base-package&gt;1.2.9&lt;/base-package&gt;
      *   &lt;/struts&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     private Map struts;
@@ -124,9 +124,11 @@ public class MyEclipsePlugin
                                                "/src/main/webapp" ); //$NON-NLS-1$
 
                 EclipseSourceDir[] sourceDirs = config.getSourceDirs();
-                for (EclipseSourceDir sourceDir : sourceDirs) {
-                    if (!sourceDir.isTest()) {
-                        sourceDir.setOutput(warSourceDirectory + "/WEB-INF/classes");
+                for ( EclipseSourceDir sourceDir : sourceDirs )
+                {
+                    if ( !sourceDir.isTest() )
+                    {
+                        sourceDir.setOutput( warSourceDirectory + "/WEB-INF/classes" );
                     }
                 }
             }
@@ -152,7 +154,7 @@ public class MyEclipsePlugin
 
     /**
      * Override the default builders with the builders used by MyEclipse
-     * 
+     *
      * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultBuilders( String packaging )
@@ -210,7 +212,7 @@ public class MyEclipsePlugin
 
     /**
      * Override the default natures with the natures used by MyEclipse
-     * 
+     *
      * @param packaging packaging-type (jar,war,ejb,ear)
      */
     protected void fillDefaultNatures( String packaging )
@@ -275,8 +277,8 @@ public class MyEclipsePlugin
             }
             else
             {
-                j2eeVersion =
-                    JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( project ) ).getJeeVersion();
+                j2eeVersion = JeeUtils.getJeeDescriptorFromServletVersion(
+                    JeeUtils.resolveServletVersion( project ) ).getJeeVersion();
             }
 
             if ( "1.3".equals( j2eeVersion ) )

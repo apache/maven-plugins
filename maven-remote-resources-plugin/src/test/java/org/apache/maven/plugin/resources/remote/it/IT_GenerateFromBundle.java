@@ -31,21 +31,21 @@ import java.net.URISyntaxException;
 public class IT_GenerateFromBundle
     extends AbstractIT
 {
-    
+
     public void test()
         throws IOException, URISyntaxException, VerificationException
     {
         File dir = TestUtils.getTestDir( "generate-from-bundle" );
         Verifier verifier = new Verifier( dir.getAbsolutePath() );
-        
+
         verifier.executeGoal( "generate-resources" );
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
-        
+
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
-        
-        assertTrue(content.contains("Built-In:"));
+
+        assertTrue( content.contains( "Built-In:" ) );
     }
 
 }

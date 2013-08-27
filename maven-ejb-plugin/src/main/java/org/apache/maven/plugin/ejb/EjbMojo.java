@@ -280,7 +280,7 @@ public class EjbMojo
             if ( excludes != null && !excludes.isEmpty() )
             {
                 excludes.add( EJB_JAR_XML );
-                mainJarExcludes = (String[]) excludes.toArray(new String[excludes.size()]);
+                mainJarExcludes = (String[]) excludes.toArray( new String[excludes.size()] );
             }
 
             archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
@@ -293,10 +293,9 @@ public class EjbMojo
                     getLog().debug( "Filtering deployment descriptor." );
                     MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                     mavenResourcesExecution.setEscapeString( escapeString );
-                    List filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
-                                                                                    escapeBackslashesInFilePath,
-                                                                                    this.session,
-                                                                                    mavenResourcesExecution );
+                    List filterWrappers =
+                        mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
+                                                                  this.session, mavenResourcesExecution );
 
                     // Create a temporary file that we can copy-and-filter
                     File unfilteredDeploymentDescriptor = new File( outputDirectory, EJB_JAR_XML + ".unfiltered" );
@@ -330,7 +329,8 @@ public class EjbMojo
         }
         catch ( MavenFilteringException e )
         {
-            throw new MojoExecutionException( "There was a problem filtering the deployment descriptor: " + e.getMessage(), e );
+            throw new MojoExecutionException(
+                "There was a problem filtering the deployment descriptor: " + e.getMessage(), e );
         }
 
         // Handle the classifier if necessary
@@ -358,12 +358,12 @@ public class EjbMojo
 
             if ( clientIncludes != null && !clientIncludes.isEmpty() )
             {
-                includes = (String[]) clientIncludes.toArray(new String[clientIncludes.size()]);
+                includes = (String[]) clientIncludes.toArray( new String[clientIncludes.size()] );
             }
 
             if ( clientExcludes != null && !clientExcludes.isEmpty() )
             {
-                excludes = (String[]) clientExcludes.toArray(new String[clientExcludes.size()]);
+                excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
             }
 
             File clientJarFile = new File( basedir, clientJarName + "-client.jar" );

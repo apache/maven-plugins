@@ -57,8 +57,9 @@ public class RepoInfoWrapper
             final List<GroupVersionAlignmentWrapper> l =
                 new ArrayList<GroupVersionAlignmentWrapper>( alignments.size() );
 
-            for (final GroupVersionAlignment alignment : alignments) {
-                l.add(new GroupVersionAlignmentWrapper(alignment));
+            for ( final GroupVersionAlignment alignment : alignments )
+            {
+                l.add( new GroupVersionAlignmentWrapper( alignment ) );
             }
 
             convertedAlignments = l;

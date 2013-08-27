@@ -53,11 +53,8 @@ public class ToolchainConverter
     /**
      * @see org.codehaus.plexus.component.configurator.converters.ConfigurationConverter#fromConfiguration(org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup, org.codehaus.plexus.configuration.PlexusConfiguration, java.lang.Class, java.lang.Class, java.lang.ClassLoader, org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator, org.codehaus.plexus.component.configurator.ConfigurationListener)
      */
-    public Object fromConfiguration( ConverterLookup converterLookup,
-                                     PlexusConfiguration configuration,
-                                     Class type, Class baseType,
-                                     ClassLoader classLoader,
-                                     ExpressionEvaluator expressionEvaluator,
+    public Object fromConfiguration( ConverterLookup converterLookup, PlexusConfiguration configuration, Class type,
+                                     Class baseType, ClassLoader classLoader, ExpressionEvaluator expressionEvaluator,
                                      ConfigurationListener listener )
         throws ComponentConfigurationException
     {
@@ -67,27 +64,31 @@ public class ToolchainConverter
         return retValue;
     }
 
-    private void processConfiguration( Toolchains chain,
-                                       PlexusConfiguration configuration,
+    private void processConfiguration( Toolchains chain, PlexusConfiguration configuration,
                                        ExpressionEvaluator expressionEvaluator )
         throws ComponentConfigurationException
     {
         Map map = new HashMap();
         PlexusConfiguration[] tools = configuration.getChildren();
-        for (PlexusConfiguration tool : tools) {
+        for ( PlexusConfiguration tool : tools )
+        {
             String type = tool.getName();
             PlexusConfiguration[] params = tool.getChildren();
             Map parameters = new HashMap();
-            for (PlexusConfiguration param : params) {
-                try {
+            for ( PlexusConfiguration param : params )
+            {
+                try
+                {
                     String name = param.getName();
                     String val = param.getValue();
-                    parameters.put(name, val);
-                } catch (PlexusConfigurationException ex) {
-                    throw new ComponentConfigurationException(ex);
+                    parameters.put( name, val );
+                }
+                catch ( PlexusConfigurationException ex )
+                {
+                    throw new ComponentConfigurationException( ex );
                 }
             }
-            map.put(type, parameters);
+            map.put( type, parameters );
         }
         chain.toolchains = map;
     }

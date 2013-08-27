@@ -1,11 +1,12 @@
-<?xml version="1.0"?><project>
+<?xml version="1.0"?>
+<project>
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>8</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-    <artifactId>maven-dependency-plugin</artifactId>
+  <artifactId>maven-dependency-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Dependency Plugin</name>
   <version>test</version>
@@ -84,7 +85,9 @@
                   <excludes>
                     <exclude>org.codehaus.plexus:plexus-component-api</exclude>
                   </excludes>
-                  <message>The new containers are not supported. You probably added a dependency that is missing the exclusions.</message>
+                  <message>The new containers are not supported. You probably added a dependency that is missing the
+                    exclusions.
+                  </message>
                 </bannedDependencies>
               </rules>
               <fail>true</fail>
@@ -248,6 +251,7 @@
     </site>
   </distributionManagement>
   <properties>
-    <integration-test.deployment.repo.url>file:/C:/DOCUME~1/brianf/LOCALS~1/Temp/integration-test-repo1378140143</integration-test.deployment.repo.url>
+    <integration-test.deployment.repo.url>file:/C:/DOCUME~1/brianf/LOCALS~1/Temp/integration-test-repo1378140143
+    </integration-test.deployment.repo.url>
   </properties>
 </project>

@@ -32,8 +32,8 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 /**
  * @author Olivier Lamy
- * @since 27 juil. 2008
  * @version $Id$
+ * @since 27 juil. 2008
  */
 public class ChangesXMLTest
     extends PlexusTestCase
@@ -146,16 +146,18 @@ public class ChangesXMLTest
 
         List releases = changesXML.getReleaseList();
         assertEquals( 2, releases.size() );
-        for (Object release1 : releases) {
+        for ( Object release1 : releases )
+        {
             Release release = (Release) release1;
-            if ("1.0".equals(release.getVersion())) {
-                Action action = release.getActions().get(0);
-                assertEquals(2, action.getFixedIssues().size());
-                assertEquals("JIRA-XXX", action.getFixedIssues().get(0).getIssue());
-                assertEquals("JIRA-YYY", action.getFixedIssues().get(1).getIssue());
-                assertEquals(2, action.getDueTos().size());
+            if ( "1.0".equals( release.getVersion() ) )
+            {
+                Action action = release.getActions().get( 0 );
+                assertEquals( 2, action.getFixedIssues().size() );
+                assertEquals( "JIRA-XXX", action.getFixedIssues().get( 0 ).getIssue() );
+                assertEquals( "JIRA-YYY", action.getFixedIssues().get( 1 ).getIssue() );
+                assertEquals( 2, action.getDueTos().size() );
             }
         }
     }
-    
+
 }

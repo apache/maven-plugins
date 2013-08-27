@@ -29,9 +29,9 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Represent an eclipse source dir. Eclipse has no "main", "test" or "resource" concepts, so two source dirs with the
  * same path are equal.
- * <p>
+ * <p/>
  * source directories should always have a null output value.
- * 
+ *
  * @author <a href="mailto:fgiust@users.sourceforge.net">Fabrizio Giustina</a>
  * @version $Id$
  */
@@ -64,14 +64,14 @@ public class EclipseSourceDir
     private boolean filtering;
 
     /**
-     * @param path the eclipse source directory
-     * @param output path output directory
+     * @param path       the eclipse source directory
+     * @param output     path output directory
      * @param isResource true if the directory only contains resources, false if a compilation directory
-     * @param test true if is a test directory, false otherwise
-     * @param include a string in the eclipse pattern format for the include filter
-     * @param exclude a string in the eclipse pattern format for the exclude filter
-     * @param filtering true if filtering should be applied, false otherwise. Note: Filtering will only be applied if
-     *            this become a "special directory" by being nested within the default output directory.
+     * @param test       true if is a test directory, false otherwise
+     * @param include    a string in the eclipse pattern format for the include filter
+     * @param exclude    a string in the eclipse pattern format for the exclude filter
+     * @param filtering  true if filtering should be applied, false otherwise. Note: Filtering will only be applied if
+     *                   this become a "special directory" by being nested within the default output directory.
      */
     public EclipseSourceDir( String path, String output, boolean isResource, boolean test, List include, List exclude,
                              boolean filtering )
@@ -87,7 +87,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>exclude</code>.
-     * 
+     *
      * @return Returns the exclude. Never null.
      */
     public List getExclude()
@@ -97,7 +97,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>exclude</code>.
-     * 
+     *
      * @param exclude The exclude to set.
      */
     public void setExclude( List exclude )
@@ -111,7 +111,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>include</code>.
-     * 
+     *
      * @return Returns the include. Never null.
      */
     public List getInclude()
@@ -121,7 +121,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>include</code>.
-     * 
+     *
      * @param include The include to set.
      */
     public void setInclude( List include )
@@ -151,9 +151,9 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>output</code>.
-     * <p>
+     * <p/>
      * source directories should always have a null output value.
-     * 
+     *
      * @return Returns the output.
      */
     public String getOutput()
@@ -163,7 +163,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>output</code>.
-     * 
+     *
      * @param output The output to set.
      */
     public void setOutput( String output )
@@ -173,7 +173,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>path</code>.
-     * 
+     *
      * @return Returns the path.
      */
     public String getPath()
@@ -183,7 +183,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>path</code>. Converts \\ to / in path.
-     * 
+     *
      * @param path The path to set.
      */
     public void setPath( String path )
@@ -193,7 +193,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>test</code>.
-     * 
+     *
      * @return Returns the test.
      */
     public boolean isTest()
@@ -203,7 +203,7 @@ public class EclipseSourceDir
 
     /**
      * Setter for <code>test</code>.
-     * 
+     *
      * @param test The test to set.
      */
     public void setTest( boolean test )
@@ -213,7 +213,7 @@ public class EclipseSourceDir
 
     /**
      * Getter for <code>isResource</code>.
-     * 
+     *
      * @return Returns the isResource.
      */
     public boolean isResource()
@@ -231,9 +231,10 @@ public class EclipseSourceDir
 
     /**
      * Wheter this resource should be copied with filtering.
+     *
      * @param filtering filter resources
      */
-    public void setFiltering(boolean filtering)
+    public void setFiltering( boolean filtering )
     {
         this.filtering = filtering;
     }
@@ -243,8 +244,8 @@ public class EclipseSourceDir
      */
     public boolean equals( Object obj )
     {
-        return ( obj != null ) && ( obj instanceof EclipseSourceDir )
-            && this.path.equals( ( (EclipseSourceDir) obj ).path );
+        return ( obj != null ) && ( obj instanceof EclipseSourceDir ) && this.path.equals(
+            ( (EclipseSourceDir) obj ).path );
     }
 
     /**
@@ -268,26 +269,28 @@ public class EclipseSourceDir
      */
     public String toString()
     {
-        return (isResource ? "resource " : "source ") + path + ": " + "output=" + output + ", " + "include=[" + getIncludeAsString() + "], " + "exclude=[" + getExcludeAsString() + "], " + "test=" + test + ", " + "filtering=" + filtering;
+        return ( isResource ? "resource " : "source " ) + path + ": " + "output=" + output + ", " + "include=["
+            + getIncludeAsString() + "], " + "exclude=[" + getExcludeAsString() + "], " + "test=" + test + ", "
+            + "filtering=" + filtering;
     }
 
     /**
      * Merge with the provided directory.
-     * <p>
+     * <p/>
      * If one directory is a source and the other is a resource directory then the result will be a source directory and
      * any includes or excludes will be removed since Eclipse has no "main", "test" or "resource" concepts. The output
      * directory will be the source directories value.
-     * <p>
+     * <p/>
      * If the two directories are the same resources type (i.e isResource is equal) then the result will be the same
      * resource type with the includes from each merged together (duplicates will be removed), similarly for the
      * excludes. No effort is made to ensure that the includes and excludes are disjointed sets. Please fix your pom
      * instead.
-     * <p>
+     * <p/>
      * No support for cases where the test, or filtering values are not identical.
-     * 
+     *
      * @param mergeWith the directory to merge with
      * @throws MojoExecutionException test or filtering values are not identical, or isResource true and output are not
-     *             identical
+     *                                identical
      */
     public boolean merge( EclipseSourceDir mergeWith )
         throws MojoExecutionException
@@ -312,10 +315,10 @@ public class EclipseSourceDir
 
             // if the orginal or merged dir have an empty "include" this means all is included,
             // so merge includes only if both are not empty
-            if (!include.isEmpty() && !mergeWith.include.isEmpty())
+            if ( !include.isEmpty() && !mergeWith.include.isEmpty() )
             {
-                includesAsSet.addAll(include);
-                includesAsSet.addAll(mergeWith.include);
+                includesAsSet.addAll( include );
+                includesAsSet.addAll( mergeWith.include );
             }
 
             include = new ArrayList( includesAsSet );
@@ -326,19 +329,19 @@ public class EclipseSourceDir
             exclude = new ArrayList( excludesAsSet );
         }
 
-        if (!StringUtils.equals(output, mergeWith.output))
+        if ( !StringUtils.equals( output, mergeWith.output ) )
         {
             // Request to merge when 'output' is not identical
             return false;
         }
 
-        if (test != mergeWith.test)
+        if ( test != mergeWith.test )
         {
             // Request to merge when 'test' is not identical
             return false;
         }
 
-        if (filtering != mergeWith.filtering)
+        if ( filtering != mergeWith.filtering )
         {
             // Request to merge when 'filtering' is not identical
             return false;

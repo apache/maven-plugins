@@ -30,7 +30,7 @@ under the License.
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-    <artifactId>child-b</artifactId>
+  <artifactId>child-b</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>Child B</name>

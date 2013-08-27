@@ -81,7 +81,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      *
      * @since 3.0
      */
-    @Parameter(property = "pmd.printFailingErrors", defaultValue = "false")
+    @Parameter( property = "pmd.printFailingErrors", defaultValue = "false" )
     private boolean printFailingErrors;
 
     /**
@@ -91,7 +91,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      *
      * @since 3.0
      */
-    @Parameter(property = "pmd.excludeFromFailureFile", defaultValue = "")
+    @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
     private String excludeFromFailureFile;
 
     /**
@@ -100,7 +100,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     @Component
     protected MavenProject project;
 
-    protected void executeCheck( final String filename, final String tagName, final String key, final int failurePriority )
+    protected void executeCheck( final String filename, final String tagName, final String key,
+                                 final int failurePriority )
         throws MojoFailureException, MojoExecutionException
     {
         if ( aggregate && !project.isExecutionRoot() )
@@ -246,7 +247,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         {
             if ( failureCount > 0 )
             {
-                message.append("You have ").append(failureCount).append(" ").append(key).append(failureCount > 1 ? "s" : "");
+                message.append( "You have " ).append( failureCount ).append( " " ).append( key ).append(
+                    failureCount > 1 ? "s" : "" );
             }
 
             if ( warningCount > 0 )
@@ -259,7 +261,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 {
                     message.append( "You have " );
                 }
-                message.append(warningCount).append(" warning").append(warningCount > 1 ? "s" : "");
+                message.append( warningCount ).append( " warning" ).append( warningCount > 1 ? "s" : "" );
             }
 
             message.append( ". For more details see:" ).append( outputFile.getAbsolutePath() );

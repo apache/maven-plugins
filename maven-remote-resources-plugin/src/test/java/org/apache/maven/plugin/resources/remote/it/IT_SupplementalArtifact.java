@@ -44,7 +44,7 @@ public class IT_SupplementalArtifact
         Verifier verifier;
 
         verifier = new Verifier( resources.getAbsolutePath() );
-        
+
         verifier.deleteArtifacts( "org.apache.maven.plugin.rresource.it.mrr43" );
 
         verifier.executeGoal( "deploy" );
@@ -59,9 +59,10 @@ public class IT_SupplementalArtifact
 
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
-        
-        assertTrue(content.contains("From: 'Deficient Tooling, Inc.' (http://www.deficient-tools.us/)"));
-        assertTrue(content.contains("Deficient Dependency (http://www.deficient-tools.us/dep) org.apache.maven.plugin.rresource.it.mrr43:deficient-dep"));
+
+        assertTrue( content.contains( "From: 'Deficient Tooling, Inc.' (http://www.deficient-tools.us/)" ) );
+        assertTrue( content.contains(
+            "Deficient Dependency (http://www.deficient-tools.us/dep) org.apache.maven.plugin.rresource.it.mrr43:deficient-dep" ) );
     }
 
 }

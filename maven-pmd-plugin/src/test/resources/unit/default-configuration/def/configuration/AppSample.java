@@ -29,7 +29,7 @@ public class AppSample
     /**
      * The main method
      *
-     * @param args  an array of strings that contains the arguments
+     * @param args an array of strings that contains the arguments
      */
     public static void main( String[] args )
     {
@@ -53,11 +53,11 @@ public class AppSample
     {
         String tmp = "";
 
-        for( int i = 0; i < str.length(); i++ )
+        for ( int i = 0; i < str.length(); i++ )
         {
-            if ( i != ( str.length() -1 ) )
+            if ( i != ( str.length() - 1 ) )
             {
-                tmp = tmp + str.substring( i, i + 1);
+                tmp = tmp + str.substring( i, i + 1 );
             }
             else
             {
@@ -65,9 +65,9 @@ public class AppSample
             }
         }
 
-        if ("".equals( tmp ))
+        if ( "".equals( tmp ) )
         {
-                tmp = "EMPTY";
+            tmp = "EMPTY";
         }
 
         System.out.println( "The value of tmp is " + tmp );

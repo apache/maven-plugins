@@ -39,10 +39,10 @@ public class ResourcesMojoTest
     extends AbstractMojoTestCase
 {
     protected final static String defaultPomFilePath = "/target/test-classes/unit/resources-test/plugin-config.xml";
-    
+
     /**
      * test mojo lookup, test harness should be working fine
-     * 
+     *
      * @throws Exception
      */
     public void testHarnessEnvironment()
@@ -53,7 +53,7 @@ public class ResourcesMojoTest
 
         assertNotNull( mojo );
     }
-    
+
     /**
      * @throws Exception
      */
@@ -324,8 +324,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
-        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(),
-                                                      null );
+        MavenSession mavenSession =
+            new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.execute();
 
@@ -337,7 +337,7 @@ public class ResourcesMojoTest
         Properties props = new Properties();
         props.load( new FileInputStream( new File( resourcesDir, "file4.txt" ) ) );
         File fileFromFiltering = new File( props.getProperty( "current-working-directory" ) );
-        
+
         assertTrue( fileFromFiltering.getAbsolutePath() + " does not exist.", fileFromFiltering.exists() );
         assertEquals( userDir.getAbsolutePath(), fileFromFiltering.getAbsolutePath() );
     }
@@ -382,8 +382,8 @@ public class ResourcesMojoTest
     {
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub(
-                                                                           "resourcePojectProperty_Filtering_PropertyDestination" );
+        MavenProjectResourcesStub project =
+            new MavenProjectResourcesStub( "resourcePojectProperty_Filtering_PropertyDestination" );
         List resources = project.getBuild().getResources();
 
         assertNotNull( mojo );
@@ -497,10 +497,10 @@ public class ResourcesMojoTest
         project.addFile( "filter.properties", "dir:testdir" );
         project.addFile( "extra-filter.properties", "dir2:testdir2" );
         project.setResourceFiltering( 0, true );
-        
+
         project.cleanBuildEnvironment();
         project.setupBuildEnvironment();
-        
+
         filterList.add( project.getResourcesDirectory() + "filter.properties" );
         extraFilterList.add( project.getResourcesDirectory() + "extra-filter.properties" );
 
@@ -523,7 +523,7 @@ public class ResourcesMojoTest
     /**
      * Validates that a Filter token containing a project property will be resolved before the Filter is applied to the
      * resources.
-     * 
+     *
      * @throws Exception
      */
     public void testPropertyFiles_Filtering_TokensInFilters()
@@ -531,8 +531,8 @@ public class ResourcesMojoTest
     {
         final File testPom = new File( getBasedir(), defaultPomFilePath );
         final ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
-        final MavenProjectResourcesStub project = new MavenProjectResourcesStub(
-                                                                                 "resourcePropertyFiles_Filtering_TokensInFilters" );
+        final MavenProjectResourcesStub project =
+            new MavenProjectResourcesStub( "resourcePropertyFiles_Filtering_TokensInFilters" );
         final List resources = project.getBuild().getResources();
         final LinkedList filterList = new LinkedList();
 
@@ -628,8 +628,9 @@ public class ResourcesMojoTest
 
         assertTrue( FileUtils.fileExists( new File( resourcesDir, "path-listing.txt" ).getAbsolutePath() ) );
 
-        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
-                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
+        assertEquals(
+            "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
+            FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
     }
 
     /**

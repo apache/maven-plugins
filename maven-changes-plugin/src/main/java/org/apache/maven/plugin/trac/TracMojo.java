@@ -50,40 +50,40 @@ public class TracMojo
     /**
      * Deprecated Trac columns.
      */
-    private static Map<String,Integer> DEPRECATED_TRAC_COLUMNS = new HashMap<String,Integer>();
+    private static Map<String, Integer> DEPRECATED_TRAC_COLUMNS = new HashMap<String, Integer>();
 
     /**
      * Valid Trac columns.
      */
-    private static Map<String,Integer> TRAC_COLUMNS = new HashMap<String,Integer>();
+    private static Map<String, Integer> TRAC_COLUMNS = new HashMap<String, Integer>();
 
     static
     {
-        DEPRECATED_TRAC_COLUMNS.put( "changed", IssuesReportHelper.COLUMN_UPDATED);
-        DEPRECATED_TRAC_COLUMNS.put( "component", IssuesReportHelper.COLUMN_COMPONENT);
-        DEPRECATED_TRAC_COLUMNS.put( "created", IssuesReportHelper.COLUMN_CREATED);
-        DEPRECATED_TRAC_COLUMNS.put( "id", IssuesReportHelper.COLUMN_ID);
-        DEPRECATED_TRAC_COLUMNS.put( "milestone", IssuesReportHelper.COLUMN_FIX_VERSION);
-        DEPRECATED_TRAC_COLUMNS.put( "owner", IssuesReportHelper.COLUMN_ASSIGNEE);
-        DEPRECATED_TRAC_COLUMNS.put( "priority", IssuesReportHelper.COLUMN_PRIORITY);
-        DEPRECATED_TRAC_COLUMNS.put( "reporter", IssuesReportHelper.COLUMN_REPORTER);
-        DEPRECATED_TRAC_COLUMNS.put( "resolution", IssuesReportHelper.COLUMN_RESOLUTION);
-        DEPRECATED_TRAC_COLUMNS.put( "status", IssuesReportHelper.COLUMN_STATUS);
-        DEPRECATED_TRAC_COLUMNS.put( "summary", IssuesReportHelper.COLUMN_SUMMARY);
-        DEPRECATED_TRAC_COLUMNS.put( "type", IssuesReportHelper.COLUMN_TYPE);
+        DEPRECATED_TRAC_COLUMNS.put( "changed", IssuesReportHelper.COLUMN_UPDATED );
+        DEPRECATED_TRAC_COLUMNS.put( "component", IssuesReportHelper.COLUMN_COMPONENT );
+        DEPRECATED_TRAC_COLUMNS.put( "created", IssuesReportHelper.COLUMN_CREATED );
+        DEPRECATED_TRAC_COLUMNS.put( "id", IssuesReportHelper.COLUMN_ID );
+        DEPRECATED_TRAC_COLUMNS.put( "milestone", IssuesReportHelper.COLUMN_FIX_VERSION );
+        DEPRECATED_TRAC_COLUMNS.put( "owner", IssuesReportHelper.COLUMN_ASSIGNEE );
+        DEPRECATED_TRAC_COLUMNS.put( "priority", IssuesReportHelper.COLUMN_PRIORITY );
+        DEPRECATED_TRAC_COLUMNS.put( "reporter", IssuesReportHelper.COLUMN_REPORTER );
+        DEPRECATED_TRAC_COLUMNS.put( "resolution", IssuesReportHelper.COLUMN_RESOLUTION );
+        DEPRECATED_TRAC_COLUMNS.put( "status", IssuesReportHelper.COLUMN_STATUS );
+        DEPRECATED_TRAC_COLUMNS.put( "summary", IssuesReportHelper.COLUMN_SUMMARY );
+        DEPRECATED_TRAC_COLUMNS.put( "type", IssuesReportHelper.COLUMN_TYPE );
 
-        TRAC_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE);
-        TRAC_COLUMNS.put( "Component", IssuesReportHelper.COLUMN_COMPONENT);
-        TRAC_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED);
-        TRAC_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION);
-        TRAC_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID);
-        TRAC_COLUMNS.put( "Priority", IssuesReportHelper.COLUMN_PRIORITY);
-        TRAC_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER);
-        TRAC_COLUMNS.put( "Resolution", IssuesReportHelper.COLUMN_RESOLUTION);
-        TRAC_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS);
-        TRAC_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY);
-        TRAC_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE);
-        TRAC_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED);
+        TRAC_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE );
+        TRAC_COLUMNS.put( "Component", IssuesReportHelper.COLUMN_COMPONENT );
+        TRAC_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED );
+        TRAC_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION );
+        TRAC_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID );
+        TRAC_COLUMNS.put( "Priority", IssuesReportHelper.COLUMN_PRIORITY );
+        TRAC_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER );
+        TRAC_COLUMNS.put( "Resolution", IssuesReportHelper.COLUMN_RESOLUTION );
+        TRAC_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS );
+        TRAC_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY );
+        TRAC_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE );
+        TRAC_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED );
     }
 
     /**
@@ -139,8 +139,8 @@ public class TracMojo
         throws MavenReportException
     {
         // Validate parameters
-        List<Integer> columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS,
-                                                                   getLog() );
+        List<Integer> columnIds =
+            IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS, getLog() );
         if ( columnIds.size() == 0 )
         {
             // This can happen if the user has configured column names and they are all invalid

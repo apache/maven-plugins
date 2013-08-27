@@ -40,7 +40,7 @@ import org.jdom.xpath.XPath;
 
 /**
  * Component writer test for WTP 1.5.
- * 
+ *
  * @author Steffen Grunwald
  */
 public class EclipseWtpComponent15WriterTest
@@ -63,10 +63,10 @@ public class EclipseWtpComponent15WriterTest
      * <li>dep is referenced project
      * </ul>
      * The archivename is expected to be jar - independent from the packaging (ejb).
-     * 
+     *
      * @throws MojoExecutionException Exception
-     * @throws IOException Exception
-     * @throws JDOMException Exception
+     * @throws IOException            Exception
+     * @throws JDOMException          Exception
      */
     public void testWriteEjbComponentMECLIPSE455()
         throws MojoExecutionException, IOException, JDOMException
@@ -91,7 +91,7 @@ public class EclipseWtpComponent15WriterTest
         config.setPackaging( "ear" );
 
         // add an ejb3 and ejb packaged dependency
-        config.setDeps( new IdeDependency[] { createDep( "ejb" ), createDep( "jar" ) } );
+        config.setDeps( new IdeDependency[]{ createDep( "ejb" ), createDep( "jar" ) } );
 
         EclipseWtpComponentWriter lWriter = new EclipseWtpComponent15Writer();
 
@@ -109,13 +109,14 @@ public class EclipseWtpComponent15WriterTest
         XPath archiveNames = XPath.newInstance( "//dependent-module/@archiveName" );
 
         assertEquals( "Must be 2 modules", 2, archiveNames.selectNodes( doc ).size() );
-        for (Object o : archiveNames.selectNodes(doc)) {
+        for ( Object o : archiveNames.selectNodes( doc ) )
+        {
             Attribute attribute = (Attribute) o;
 
             String archiveName = attribute.getValue();
-            String extension = archiveName.substring(archiveName.lastIndexOf(".") + 1).toLowerCase();
+            String extension = archiveName.substring( archiveName.lastIndexOf( "." ) + 1 ).toLowerCase();
 
-            assertEquals("Must be of type jar", "jar", extension);
+            assertEquals( "Must be of type jar", "jar", extension );
         }
 
     }

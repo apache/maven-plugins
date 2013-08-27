@@ -125,7 +125,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 @Mojo( name = "pdf", threadSafe = true )
 public class PdfMojo
-    extends AbstractMojo implements Contextualizable
+    extends AbstractMojo
+    implements Contextualizable
 {
     /**
      * The vm line separator
@@ -272,7 +273,7 @@ public class PdfMojo
      *
      * @since 1.1
      */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}"  )
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}" )
     private List<ArtifactRepository> remoteRepositories;
 
     /**
@@ -318,14 +319,15 @@ public class PdfMojo
      */
     @Parameter( property = "validate", defaultValue = "false" )
     private boolean validate;
-    
+
     /**
      * Reports (Maven 2).
+     *
      * @since 1.3
      */
     @Parameter( defaultValue = "${reports}", required = true, readonly = true )
     private MavenReport[] reports;
-    
+
     /**
      * <p>Configuration section <b>used internally</b> by Maven 3.</p>
      * <p>More details available here:
@@ -346,6 +348,7 @@ public class PdfMojo
 
     /**
      * The current document Renderer.
+     *
      * @see #implementation
      */
     private DocumentRenderer docRenderer;
@@ -385,7 +388,7 @@ public class PdfMojo
      * @since 1.1
      */
     private Map<Locale, List<MavenReport>> generatedMavenReports;
-    
+
     /**
      * @since 1.3
      */
@@ -395,7 +398,9 @@ public class PdfMojo
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -421,8 +426,10 @@ public class PdfMojo
             throw new MojoExecutionException( "Error copying generated PDF: " + e.getMessage(), e );
         }
     }
-    
-    /** {@inheritDoc} */
+
+    /**
+     * {@inheritDoc}
+     */
     public void contextualize( Context context )
         throws ContextException
     {
@@ -448,17 +455,15 @@ public class PdfMojo
         }
         else
         {
-            getLog().warn( "Invalid 'implementation' parameter: '" + implementation
-                    + "', using 'fo' as default." );
+            getLog().warn( "Invalid 'implementation' parameter: '" + implementation + "', using 'fo' as default." );
 
             this.docRenderer = foRenderer;
         }
 
-        if ( !( "none".equalsIgnoreCase( generateTOC )
-                || "start".equalsIgnoreCase( generateTOC ) || "end".equalsIgnoreCase( generateTOC ) ) )
+        if ( !( "none".equalsIgnoreCase( generateTOC ) || "start".equalsIgnoreCase( generateTOC )
+            || "end".equalsIgnoreCase( generateTOC ) ) )
         {
-            getLog().warn( "Invalid 'generateTOC' parameter: '" + generateTOC
-                    + "', using 'start' as default." );
+            getLog().warn( "Invalid 'generateTOC' parameter: '" + generateTOC + "', using 'start' as default." );
 
             this.generateTOC = "start";
         }
@@ -468,7 +473,7 @@ public class PdfMojo
      * Copy the generated PDF to outputDirectory.
      *
      * @throws MojoExecutionException if any
-     * @throws IOException if any
+     * @throws IOException            if any
      * @since 1.1
      */
     private void copyGeneratedPdf()
@@ -487,7 +492,7 @@ public class PdfMojo
 
         for ( final Locale locale : getAvailableLocales() )
         {
-            File generatedPdfSource = new File( getLocaleDirectory( workingDirectory, locale), outputName );
+            File generatedPdfSource = new File( getLocaleDirectory( workingDirectory, locale ), outputName );
 
             if ( !generatedPdfSource.exists() )
             {
@@ -495,7 +500,7 @@ public class PdfMojo
                 continue;
             }
 
-            File generatedPdfDest = new File( getLocaleDirectory( outputDirectory, locale), outputName );
+            File generatedPdfDest = new File( getLocaleDirectory( outputDirectory, locale ), outputName );
 
             FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
             generatedPdfSource.delete();
@@ -506,7 +511,7 @@ public class PdfMojo
      * Generate the PDF.
      *
      * @throws MojoExecutionException if any
-     * @throws IOException if any
+     * @throws IOException            if any
      * @since 1.1
      */
     private void generatePdf()
@@ -532,7 +537,7 @@ public class PdfMojo
             context.put( "StringUtils", new StringUtils() );
             context.put( "i18n", i18n );
             context.put( "generateTOC", generateTOC );
-            context.put( "validate", validate);
+            context.put( "validate", validate );
 
             final DocumentModel model = aggregate ? getDocumentModel( locale ) : null;
 
@@ -605,8 +610,8 @@ public class PdfMojo
 
         // Remove SCM files
         List<String> files =
-            FileUtils.getFileAndDirectoryNames( tmpSiteDir, FileUtils.getDefaultExcludesAsString(), null, true,
-                                                true, true, true );
+            FileUtils.getFileAndDirectoryNames( tmpSiteDir, FileUtils.getDefaultExcludesAsString(), null, true, true,
+                                                true, true );
         for ( final String fileName : files )
         {
             final File file = new File( fileName );
@@ -628,7 +633,7 @@ public class PdfMojo
      * Copy the from site dir to the to dir.
      *
      * @param from not null
-     * @param to not null
+     * @param to   not null
      * @throws IOException if any
      * @since 1.1
      */
@@ -729,7 +734,8 @@ public class PdfMojo
      *
      * @param locale used to set the language.
      * @return the DocumentModel read from the configured document descriptor.
-     * @throws org.apache.maven.plugin.MojoExecutionException if the model could not be read.
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          if the model could not be read.
      */
     private DocumentModel getDocumentModelFromDescriptor( Locale locale )
         throws MojoExecutionException
@@ -738,8 +744,7 @@ public class PdfMojo
 
         try
         {
-            model =
-                new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
+            model = new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
         }
         catch ( XmlPullParserException ex )
         {
@@ -772,7 +777,7 @@ public class PdfMojo
      * Return the directory for a given Locale and the current default Locale.
      *
      * @param basedir the base directory
-     * @param locale a Locale.
+     * @param locale  a Locale.
      * @return File.
      */
     private File getLocaleDirectory( File basedir, Locale locale )
@@ -889,9 +894,8 @@ public class PdfMojo
         File skinFile;
         try
         {
-            skinFile =
-                siteTool.getSkinArtifactFromRepository( localRepository, project.getRemoteArtifactRepositories(),
-                                                        decorationModel ).getFile();
+            skinFile = siteTool.getSkinArtifactFromRepository( localRepository, project.getRemoteArtifactRepositories(),
+                                                               decorationModel ).getFile();
         }
         catch ( SiteToolException e )
         {
@@ -981,7 +985,7 @@ public class PdfMojo
      *
      * @param locale not null
      * @throws MojoExecutionException if any
-     * @throws IOException if any
+     * @throws IOException            if any
      * @since 1.1
      */
     private void generateMavenReports( Locale locale )
@@ -998,7 +1002,7 @@ public class PdfMojo
             getLog().info( "No report was specified." );
             return;
         }
-        
+
         for ( final ReportPlugin reportPlugin : project.getReporting().getPlugins() )
         {
             final PluginDescriptor pluginDescriptor = getPluginDescriptor( reportPlugin );
@@ -1013,15 +1017,17 @@ public class PdfMojo
                         goals.add( goal );
                     }
                 }
-    
+
                 List mojoDescriptors = pluginDescriptor.getMojos();
-                for (Object mojoDescriptor1 : mojoDescriptors) {
+                for ( Object mojoDescriptor1 : mojoDescriptors )
+                {
                     final MojoDescriptor mojoDescriptor = (MojoDescriptor) mojoDescriptor1;
 
-                    if (goals.isEmpty() || (!goals.isEmpty() && goals.contains(mojoDescriptor.getGoal()))) {
-                        MavenReport report = getMavenReport(mojoDescriptor);
+                    if ( goals.isEmpty() || ( !goals.isEmpty() && goals.contains( mojoDescriptor.getGoal() ) ) )
+                    {
+                        MavenReport report = getMavenReport( mojoDescriptor );
 
-                        generateMavenReport(report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(), locale);
+                        generateMavenReport( report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(), locale );
                     }
                 }
             }
@@ -1055,6 +1061,7 @@ public class PdfMojo
 
     /**
      * TODO olamy : remove when maven 3 will be the de facto standard :-)
+     *
      * @param reportPlugin not null
      * @return the PluginDescriptor instance for the given reportPlugin.
      * @throws MojoExecutionException if any
@@ -1119,8 +1126,8 @@ public class PdfMojo
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
-            Thread.currentThread()
-                  .setContextClassLoader( mojoDescriptor.getPluginDescriptor().getClassRealm().getClassLoader() );
+            Thread.currentThread().setContextClassLoader(
+                mojoDescriptor.getPluginDescriptor().getClassRealm().getClassLoader() );
 
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor );
 
@@ -1152,9 +1159,9 @@ public class PdfMojo
      * Generate the given Maven report only if it is not an external report and the report could be generated.
      *
      * @param mojoDescriptor not null, to catch linkage error
-     * @param report could be null
-     * @param locale not null
-     * @throws IOException if any
+     * @param report         could be null
+     * @param locale         not null
+     * @throws IOException            if any
      * @throws MojoExecutionException if any
      * @see #isValidGeneratedReport(MojoDescriptor, File, String)
      * @since 1.1
@@ -1206,12 +1213,12 @@ public class PdfMojo
         File generatedReport = new File( outDir, report.getOutputName() + ".xml" );
 
         String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-        List<String> files = FileUtils.getFileNames( siteDirectory, "*/" + report.getOutputName() + ".*", excludes, false );
+        List<String> files =
+            FileUtils.getFileNames( siteDirectory, "*/" + report.getOutputName() + ".*", excludes, false );
         if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
-            files =
-                FileUtils.getFileNames( new File( siteDirectory, locale.getLanguage() ), "*/"
-                    + report.getOutputName() + ".*", excludes, false );
+            files = FileUtils.getFileNames( new File( siteDirectory, locale.getLanguage() ),
+                                            "*/" + report.getOutputName() + ".*", excludes, false );
         }
 
         if ( files.size() != 0 )
@@ -1220,10 +1227,8 @@ public class PdfMojo
 
             if ( getLog().isInfoEnabled() )
             {
-                getLog().info(
-                               "Skipped \"" + report.getName( locale ) + "\" report, file \""
-                                   + report.getOutputName() + "\" already exists for the " + displayLanguage
-                                   + " version." );
+                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + report.getOutputName()
+                                   + "\" already exists for the " + displayLanguage + " version." );
             }
 
             return;
@@ -1241,8 +1246,8 @@ public class PdfMojo
         {
             sink = new PdfSink( sw );
             org.codehaus.doxia.sink.Sink proxy = (org.codehaus.doxia.sink.Sink) Proxy.newProxyInstance(
-                org.codehaus.doxia.sink.Sink.class.getClassLoader(),
-                new Class[] { org.codehaus.doxia.sink.Sink.class }, new SinkDelegate( sink ) );
+                org.codehaus.doxia.sink.Sink.class.getClassLoader(), new Class[]{ org.codehaus.doxia.sink.Sink.class },
+                new SinkDelegate( sink ) );
             report.generate( proxy, locale );
         }
         catch ( MavenReportException e )
@@ -1298,7 +1303,7 @@ public class PdfMojo
      * &lt;/item&gt;
      * </pre>
      *
-     * @param model not null
+     * @param model  not null
      * @param locale not null
      * @see #generateMavenReports(Locale)
      * @since 1.1
@@ -1344,8 +1349,8 @@ public class PdfMojo
                 if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
                     generatedDirs =
-                        FileUtils.getFileNames( new File( generatedSiteDirectory, locale.getLanguage() ), "*",
-                                                excludes, true );
+                        FileUtils.getFileNames( new File( generatedSiteDirectory, locale.getLanguage() ), "*", excludes,
+                                                true );
                 }
 
                 for ( final String generatedDir : generatedDirs )
@@ -1359,8 +1364,7 @@ public class PdfMojo
 
                         if ( !addedRef.contains( ref ) )
                         {
-                            final String title =
-                                getGeneratedDocumentTitle( new File( generatedDir, generatedFile ) );
+                            final String title = getGeneratedDocumentTitle( new File( generatedDir, generatedFile ) );
 
                             if ( title != null )
                             {
@@ -1430,14 +1434,13 @@ public class PdfMojo
     /**
      * Parsing the generated report to see if it is correct or not. Log the error for the user.
      *
-     * @param mojoDescriptor not null
+     * @param mojoDescriptor  not null
      * @param generatedReport not null
      * @param localReportName not null
      * @return <code>true</code> if Doxia is able to parse the generated report, <code>false</code> otherwise.
      * @since 1.1
      */
-    private boolean isValidGeneratedReport( Artifact pluginArtifact, File generatedReport,
-                                            String localReportName )
+    private boolean isValidGeneratedReport( Artifact pluginArtifact, File generatedReport, String localReportName )
     {
         SinkAdapter sinkAdapter = new SinkAdapter();
         Reader reader = null;
@@ -1481,18 +1484,21 @@ public class PdfMojo
                 if ( pluginProject.getMailingLists() != null && !pluginProject.getMailingLists().isEmpty() )
                 {
                     boolean appended = false;
-                    for (Object o : pluginProject.getMailingLists()) {
+                    for ( Object o : pluginProject.getMailingLists() )
+                    {
                         MailingList mailingList = (MailingList) o;
 
-                        if (StringUtils.isNotEmpty(mailingList.getName())
-                                && StringUtils.isNotEmpty(mailingList.getPost())) {
-                            if (!appended) {
-                                sb.append("  Mailing Lists:").append(EOL);
+                        if ( StringUtils.isNotEmpty( mailingList.getName() ) && StringUtils.isNotEmpty(
+                            mailingList.getPost() ) )
+                        {
+                            if ( !appended )
+                            {
+                                sb.append( "  Mailing Lists:" ).append( EOL );
                                 appended = true;
                             }
-                            sb.append("    ").append(mailingList.getName());
-                            sb.append(": ").append(mailingList.getPost());
-                            sb.append(EOL);
+                            sb.append( "    " ).append( mailingList.getName() );
+                            sb.append( ": " ).append( mailingList.getPost() );
+                            sb.append( EOL );
                         }
                     }
                 }
@@ -1502,8 +1508,8 @@ public class PdfMojo
                     sb.append( "    " ).append( pluginProject.getUrl() );
                     sb.append( EOL );
                 }
-                if ( pluginProject.getIssueManagement() != null
-                    && StringUtils.isNotEmpty( pluginProject.getIssueManagement().getUrl() ) )
+                if ( pluginProject.getIssueManagement() != null && StringUtils.isNotEmpty(
+                    pluginProject.getIssueManagement().getUrl() ) )
                 {
                     sb.append( "  Issue Tracking:" ).append( EOL );
                     sb.append( "    " ).append( pluginProject.getIssueManagement().getUrl() );
@@ -1511,8 +1517,8 @@ public class PdfMojo
                 }
             }
 
-            sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName )
-                    .append( "\" report in the PDF." ).append( EOL );
+            sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName ).append(
+                "\" report in the PDF." ).append( EOL );
 
             getLog().error( sb.toString() );
             getLog().debug( e );
@@ -1560,7 +1566,7 @@ public class PdfMojo
 
         return null;
     }
-    
+
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
@@ -1594,7 +1600,7 @@ public class PdfMojo
         }
         return reportExecutions;
     }
-    
+
     /**
      * Check the current Maven version to see if it's Maven 3.0 or newer.
      */
@@ -1619,8 +1625,8 @@ public class PdfMojo
         // and that should have a pom.properties file
         // if this ever changes, we will have to revisit this code.
         final Properties properties = new Properties();
-        final InputStream in =
-            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+        final InputStream in = MavenProject.class.getClassLoader().getResourceAsStream(
+            "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
         try
         {
             properties.load( in );
@@ -1648,7 +1654,7 @@ public class PdfMojo
      * {@link org.apache.maven.reporting.AbstractMavenReport}.
      *
      * @param content the given content
-     * @param toFile the report file
+     * @param toFile  the report file
      * @throws IOException if any
      * @since 1.1
      */
@@ -1674,7 +1680,7 @@ public class PdfMojo
     }
 
     /**
-     * @param locales the list of locales dir to exclude
+     * @param locales       the list of locales dir to exclude
      * @param defaultLocale the default locale.
      * @return the comma separated list of default excludes and locales dir.
      * @see FileUtils#getDefaultExcludesAsString()
@@ -1711,7 +1717,9 @@ public class PdfMojo
             super( writer );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void text( String text )
         {
             // workaround to fix quotes introduced with MPIR-59 (then removed in MPIR-136)
@@ -1742,13 +1750,17 @@ public class PdfMojo
             this.locale = locale;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public String getTitle()
         {
             return i18n.getString( "pdf-plugin", locale, "report.project-info.title" );
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public void renderBody()
         {
             sink.section1();
@@ -1771,7 +1783,7 @@ public class PdfMojo
 
             sink.table();
 
-            sink.tableRows( new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT }, false );
+            sink.tableRows( new int[]{ Sink.JUSTIFY_LEFT, Sink.JUSTIFY_LEFT }, false );
 
             String name = i18n.getString( "pdf-plugin", locale, "report.project-info.column.document" );
             String description = i18n.getString( "pdf-plugin", locale, "report.project-info.column.description" );
@@ -1835,7 +1847,9 @@ public class PdfMojo
             this.sink = sink;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public Object invoke( Object proxy, Method method, Object[] args )
             throws Throwable
         {

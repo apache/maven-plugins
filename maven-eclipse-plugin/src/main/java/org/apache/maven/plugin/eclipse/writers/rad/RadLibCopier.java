@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.FileUtils;
 /**
  * Copy all dependent jar in the directorys where RAD6 needs then to use the runtime enviorment in RAD6. so all
  * dependent jars in the EAR rootdirectory and all dependend jars in the WAR WEB-INF/lib directory
- * 
+ *
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
  */
 public class RadLibCopier
@@ -44,7 +44,7 @@ public class RadLibCopier
 
     /**
      * copy the jars in the apropreate directorys.
-     * 
+     *
      * @throws MojoExecutionException when writing the config files was not possible
      */
     public void write()
@@ -66,8 +66,8 @@ public class RadLibCopier
     /**
      * Copies the Artifact after building the destination file name if overridden. This method also checks if the
      * classifier is set and adds it to the destination file name if needed.
-     * 
-     * @param deps representing the dependencies to be copied.
+     *
+     * @param deps    representing the dependencies to be copied.
      * @param destDir where should the atifact go.
      * @throws MojoExecutionException with a message if an error occurs.
      * @see DependencyUtil#copyFile(File, File, Log)
@@ -76,28 +76,30 @@ public class RadLibCopier
     private void copyArtifact( IdeDependency[] deps, File destDir )
         throws MojoExecutionException
     {
-        String[] oldFiles =
-            FileUtils.getFilesFromExtension( destDir.getAbsolutePath(),
-                                             new String[] { Constants.PROJECT_PACKAGING_JAR } );
-        for (String oldFile : oldFiles) {
-            if (!new File(oldFile).delete()) {
-                log.error(Messages.getString("Rad6LibCopier.cantdeletefile", new Object[]{oldFile}));
+        String[] oldFiles = FileUtils.getFilesFromExtension( destDir.getAbsolutePath(),
+                                                             new String[]{ Constants.PROJECT_PACKAGING_JAR } );
+        for ( String oldFile : oldFiles )
+        {
+            if ( !new File( oldFile ).delete() )
+            {
+                log.error( Messages.getString( "Rad6LibCopier.cantdeletefile", new Object[]{ oldFile } ) );
             }
         }
-        for (IdeDependency dep : deps) {
-            if (!dep.isTestDependency() && !dep.isProvided() && !dep.isReferencedProject()
-                    && !dep.isSystemScoped()) {
-                copyFile(dep.getFile(), new File(destDir, dep.getFile().getName()), log);
+        for ( IdeDependency dep : deps )
+        {
+            if ( !dep.isTestDependency() && !dep.isProvided() && !dep.isReferencedProject() && !dep.isSystemScoped() )
+            {
+                copyFile( dep.getFile(), new File( destDir, dep.getFile().getName() ), log );
             }
         }
     }
 
     /**
      * Does the actual copy of the file and logging.
-     * 
+     *
      * @param artifact represents the file to copy.
      * @param destFile file name of destination file.
-     * @param log to use for output.
+     * @param log      to use for output.
      * @throws MojoExecutionException with a message if an error occurs.
      */
     private void copyFile( File artifact, File destFile, Log log )
@@ -116,7 +118,7 @@ public class RadLibCopier
 
     /**
      * EARs need the jars in the root directory.
-     * 
+     *
      * @param deps dependencys to include
      * @throws MojoExecutionException if the copying fails
      */
@@ -129,7 +131,7 @@ public class RadLibCopier
 
     /**
      * WARs need the jars in the WEB-INF/lib directory.
-     * 
+     *
      * @param deps dependencys to include
      * @throws MojoExecutionException if the copying fails
      */
@@ -139,10 +141,10 @@ public class RadLibCopier
         File basedir = config.getProject().getBasedir();
 
         // Generating web content settings based on war plug-in warSourceDirectory property
-        File warSourceDirectory =
-            new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                                                 "warSourceDirectory", //$NON-NLS-1$
-                                                 "src/main/webapp" ) ); //$NON-NLS-1$
+        File warSourceDirectory = new File(
+            IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN, "warSourceDirectory",
+                                       //$NON-NLS-1$
+                                       "src/main/webapp" ) ); //$NON-NLS-1$
         String webContentDir =
             IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
 

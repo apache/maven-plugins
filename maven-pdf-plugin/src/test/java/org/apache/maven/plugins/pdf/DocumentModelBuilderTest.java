@@ -39,12 +39,11 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- *
  * @author ltheussl
  * @version $Id$
  */
 public class DocumentModelBuilderTest
-        extends PlexusTestCase
+    extends PlexusTestCase
 {
     /**
      * Test of getDocumentModel method, of class DocumentModelBuilder.
@@ -78,12 +77,12 @@ public class DocumentModelBuilderTest
         assertEquals( "v. Test Version", cover.getCoverSubTitle() );
         assertEquals( "Test Organization", cover.getCompanyName() );
         assertEquals( 2, cover.getAuthors().size() );
-        assertFirstDocumentAuthor(cover.getAuthors().get( 0 ));
+        assertFirstDocumentAuthor( cover.getAuthors().get( 0 ) );
 
         DocumentMeta meta = model.getMeta();
         assertEquals( "Test Description", meta.getDescription() );
         assertEquals( 2, meta.getAuthors().size() );
-        assertFirstDocumentAuthor(meta.getAuthors().get( 0 ));
+        assertFirstDocumentAuthor( meta.getAuthors().get( 0 ) );
         assertEquals( "Test Name", meta.getSubject() );
         assertEquals( "Test Name", meta.getTitle() );
 
@@ -93,15 +92,15 @@ public class DocumentModelBuilderTest
 
     /**
      * Test of getDocumentModel method, of class DocumentModelBuilder.
+     *
      * @throws Exception if something happens.
      */
     public void testGetDocumentModelWithSiteDescriptor()
-            throws Exception
+        throws Exception
     {
         File descriptorFile = new File( testBaseDir() + "src/site/", "model_builder_site.xml" );
         DecorationModel dModel = getDecorationModelFromFile( descriptorFile );
-        DocumentModel model =
-                new DocumentModelBuilder( new ModelBuilderMavenProjectStub(), dModel ).getDocumentModel();
+        DocumentModel model = new DocumentModelBuilder( new ModelBuilderMavenProjectStub(), dModel ).getDocumentModel();
 
         DocumentTOC toc = model.getToc();
         assertEquals( 1, toc.getItems().size() );
@@ -118,7 +117,7 @@ public class DocumentModelBuilderTest
     }
 
     private DecorationModel getDecorationModelFromFile( File descriptorFile )
-            throws IOException, XmlPullParserException
+        throws IOException, XmlPullParserException
     {
         Reader reader = null;
 

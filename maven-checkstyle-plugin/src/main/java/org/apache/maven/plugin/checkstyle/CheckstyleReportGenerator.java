@@ -69,7 +69,7 @@ public class CheckstyleReportGenerator
     private SiteTool siteTool;
 
     private String xrefLocation;
-    
+
     private List<String> treeWalkerNames = Collections.singletonList( "TreeWalker" );
 
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
@@ -238,10 +238,10 @@ public class CheckstyleReportGenerator
      * current configuration. If the attribute is still not found, the
      * specified default value will be returned.
      *
-     * @param config The current Checkstyle configuration
+     * @param config               The current Checkstyle configuration
      * @param parentConfigurations The configurations for the parents of the current configuration
-     * @param attributeName The name of the attribute
-     * @param defaultValue The default value to use if the attribute cannot be found in any configuration
+     * @param attributeName        The name of the attribute
+     * @param defaultValue         The default value to use if the attribute cannot be found in any configuration
      * @return The value of the specified attribute
      */
     private String getConfigAttribute( Configuration config, List<Configuration> parentConfigurations,
@@ -326,9 +326,9 @@ public class CheckstyleReportGenerator
     /**
      * Create a summary for each Checkstyle rule.
      *
-     * @param configuration The Checkstyle configuration
+     * @param configuration        The Checkstyle configuration
      * @param parentConfigurations A List of configurations for the chain of parents to the current configuration
-     * @param results The results to summarize
+     * @param results              The results to summarize
      */
     private void doRuleChildren( Configuration configuration, List<Configuration> parentConfigurations,
                                  CheckstyleResults results )
@@ -361,14 +361,18 @@ public class CheckstyleReportGenerator
         }
 
         Configuration configChildren[] = configuration.getChildren();
-        for (Configuration aConfigChildren : configChildren) {
+        for ( Configuration aConfigChildren : configChildren )
+        {
             String ruleName = aConfigChildren.getName();
 
-            if (treeWalkerNames.contains(ruleName)) {
+            if ( treeWalkerNames.contains( ruleName ) )
+            {
                 // special sub-case
-                doRuleChildren(aConfigChildren, parentConfigurations, results);
-            } else {
-                doRuleRow(aConfigChildren, parentConfigurations, ruleName, results);
+                doRuleChildren( aConfigChildren, parentConfigurations, results );
+            }
+            else
+            {
+                doRuleRow( aConfigChildren, parentConfigurations, ruleName, results );
             }
         }
     }
@@ -376,10 +380,10 @@ public class CheckstyleReportGenerator
     /**
      * Create a summary for one Checkstyle rule.
      *
-     * @param checkerConfig Configuration for the Checkstyle rule
+     * @param checkerConfig        Configuration for the Checkstyle rule
      * @param parentConfigurations Configurations for the parents of this rule
-     * @param ruleName The name of the rule, for example "JavadocMethod"
-     * @param results The results to summarize
+     * @param ruleName             The name of the rule, for example "JavadocMethod"
+     * @param results              The results to summarize
      */
     private void doRuleRow( Configuration checkerConfig, List<Configuration> parentConfigurations, String ruleName,
                             CheckstyleResults results )
@@ -458,8 +462,7 @@ public class CheckstyleReportGenerator
         String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
         // Grab the severity from the rule configuration, use null as default value
         String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
-        sink.text( countRuleViolation( results.getFiles().values(), ruleName, fixedmessage,
-                                       configSeverity ) );
+        sink.text( countRuleViolation( results.getFiles().values(), ruleName, fixedmessage, configSeverity ) );
         sink.tableCell_();
 
         sink.tableCell();
@@ -507,9 +510,9 @@ public class CheckstyleReportGenerator
     /**
      * Count the number of violations for the given rule.
      *
-     * @param files A collection over the set of files that has violations
+     * @param files    A collection over the set of files that has violations
      * @param ruleName The name of the rule
-     * @param message A message that, if it's not null, will be matched to the message from the violation
+     * @param message  A message that, if it's not null, will be matched to the message from the violation
      * @param severity A severity that, if it's not null, will be matched to the severity from the violation
      * @return The number of rule violations
      */
@@ -523,9 +526,8 @@ public class CheckstyleReportGenerator
             for ( AuditEvent event : errors )
             {
                 String eventSrcName = event.getSourceName();
-                if ( eventSrcName != null
-                        && ( eventSrcName.endsWith( ruleName )
-                        || eventSrcName.endsWith( ruleName + "Check" ) ) )
+                if ( eventSrcName != null && ( eventSrcName.endsWith( ruleName ) || eventSrcName.endsWith(
+                    ruleName + "Check" ) ) )
                 {
                     // check message too, for those that have a specific one.
                     // like GenericIllegalRegexp and Regexp
@@ -535,8 +537,8 @@ public class CheckstyleReportGenerator
                         // Read MessageFormat Javadoc about single quote:
                         // http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html
                         String msgWithoutSingleQuote = StringUtils.replace( message, "'", "" );
-                        if ( message.equals( event.getMessage() )
-                            || msgWithoutSingleQuote.equals( event.getMessage() ) )
+                        if ( message.equals( event.getMessage() ) || msgWithoutSingleQuote.equals(
+                            event.getMessage() ) )
                         {
                             count++;
                         }
@@ -774,9 +776,8 @@ public class CheckstyleReportGenerator
             sink.tableCell();
             if ( getXrefLocation() != null )
             {
-                sink
-                    .link(
-                        getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#" + event.getLine() );
+                sink.link(
+                    getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#" + event.getLine() );
             }
             sink.text( String.valueOf( event.getLine() ) );
             if ( getXrefLocation() != null )
@@ -858,13 +859,13 @@ public class CheckstyleReportGenerator
     {
         this.checkstyleConfig = config;
     }
-    
-    
+
+
     public void setTreeWalkerNames( List<String> treeWalkerNames )
     {
         this.treeWalkerNames = treeWalkerNames;
     }
-    
+
     public List<String> getTreeWalkerNames()
     {
         return treeWalkerNames;

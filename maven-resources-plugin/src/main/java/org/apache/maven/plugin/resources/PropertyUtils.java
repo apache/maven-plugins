@@ -28,11 +28,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * @deprecated use classes in the component maven-filtering
- * TODO remove the class ?
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author William Ferguson
- *
+ * @deprecated use classes in the component maven-filtering
+ *             TODO remove the class ?
  */
 public final class PropertyUtils
 {
@@ -48,7 +47,7 @@ public final class PropertyUtils
      * resolution the value of property B will contain the value of property B.
      * </p>
      *
-     * @param propFile The property file to load.
+     * @param propFile  The property file to load.
      * @param baseProps Properties containing the initial values to subsitute into the properties file.
      * @return Properties object containing the properties in the file with their values fully resolved.
      * @throws IOException if profile does not exist, or cannot be read.
@@ -85,10 +84,11 @@ public final class PropertyUtils
         // as can be verified by replacing the implementation of #loadPropertyFile(File, boolean, boolean)
         // with the commented variant I have provided that reuses this method.
 
-        for (Object o : fileProps.keySet()) {
+        for ( Object o : fileProps.keySet() )
+        {
             final String k = (String) o;
-            final String propValue = getPropertyValue(k, combinedProps);
-            fileProps.setProperty(k, propValue);
+            final String propValue = getPropertyValue( k, combinedProps );
+            fileProps.setProperty( k, propValue );
         }
 
         return fileProps;
@@ -97,8 +97,8 @@ public final class PropertyUtils
     /**
      * Reads a property file, resolving all internal variables.
      *
-     * @param propfile The property file to load
-     * @param fail wheter to throw an exception when the file cannot be loaded or to return null
+     * @param propfile       The property file to load
+     * @param fail           wheter to throw an exception when the file cannot be loaded or to return null
      * @param useSystemProps wheter to incorporate System.getProperties settings into the returned Properties object.
      * @return the loaded and fully resolved Properties object
      */
@@ -137,7 +137,7 @@ public final class PropertyUtils
     /**
      * Retrieves a property value, replacing values like ${token}
      * using the Properties to look them up.
-     *
+     * <p/>
      * It will leave unresolved properties alone, trying for System
      * properties, and implements reparsing (in the case that
      * the value of a property contains a key), and will

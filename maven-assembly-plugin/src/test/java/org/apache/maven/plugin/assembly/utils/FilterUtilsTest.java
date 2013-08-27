@@ -113,23 +113,17 @@ public class FilterUtilsTest
     public void testFilterArtifacts_ShouldNotRemoveArtifactTransitivelyIncluded()
         throws InvalidAssemblerConfigurationException
     {
-        verifyArtifactInclusion( "group",
-                                 "artifact",
-                                 "group:dependentArtifact",
-                                 null,
-                                 Arrays.asList("current:project:jar:1.0",
-                                         "group:dependentArtifact:jar:version"), null );
+        verifyArtifactInclusion( "group", "artifact", "group:dependentArtifact", null,
+                                 Arrays.asList( "current:project:jar:1.0", "group:dependentArtifact:jar:version" ),
+                                 null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactTransitivelyExcluded()
         throws InvalidAssemblerConfigurationException
     {
-        verifyArtifactExclusion( "group",
-                                 "artifact",
-                                 null,
-                                 "group:dependentArtifact",
-                                 Arrays.asList("current:project:jar:1.0",
-                                         "group:dependentArtifact:jar:version"), null );
+        verifyArtifactExclusion( "group", "artifact", null, "group:dependentArtifact",
+                                 Arrays.asList( "current:project:jar:1.0", "group:dependentArtifact:jar:version" ),
+                                 null );
     }
 
     public void testFilterArtifacts_ShouldRemoveArtifactDirectlyExcluded()
@@ -173,22 +167,14 @@ public class FilterUtilsTest
 
     public void testFilterProjects_ShouldNotRemoveProjectTransitivelyIncluded()
     {
-        verifyProjectInclusion( "group",
-                                "artifact",
-                                "group:dependentArtifact",
-                                null,
-                                Arrays.asList("current:project:jar:1.0",
-                                        "group:dependentArtifact:jar:version") );
+        verifyProjectInclusion( "group", "artifact", "group:dependentArtifact", null,
+                                Arrays.asList( "current:project:jar:1.0", "group:dependentArtifact:jar:version" ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectTransitivelyExcluded()
     {
-        verifyProjectExclusion( "group",
-                                "artifact",
-                                null,
-                                "group:dependentArtifact",
-                                Arrays.asList("current:project:jar:1.0",
-                                        "group:dependentArtifact:jar:version") );
+        verifyProjectExclusion( "group", "artifact", null, "group:dependentArtifact",
+                                Arrays.asList( "current:project:jar:1.0", "group:dependentArtifact:jar:version" ) );
     }
 
     public void testFilterProjects_ShouldRemoveProjectDirectlyExcluded()
@@ -259,9 +245,8 @@ public class FilterUtilsTest
         if ( verifyInclusion )
         {
             assertEquals( 1, artifacts.size() );
-            assertEquals( mac.artifact.getDependencyConflictId(), artifacts.iterator()
-                                                                           .next()
-                                                                           .getDependencyConflictId() );
+            assertEquals( mac.artifact.getDependencyConflictId(),
+                          artifacts.iterator().next().getDependencyConflictId() );
         }
         else
         {
@@ -330,9 +315,7 @@ public class FilterUtilsTest
         if ( verifyInclusion )
         {
             assertEquals( 1, projects.size() );
-            assertEquals( pmac.getId(), projects.iterator()
-                                                .next()
-                                                .getId() );
+            assertEquals( pmac.getId(), projects.iterator().next().getId() );
         }
         else
         {

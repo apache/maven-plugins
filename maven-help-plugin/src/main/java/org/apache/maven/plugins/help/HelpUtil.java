@@ -44,29 +44,29 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  */
 public class HelpUtil
 {
-    
+
     private HelpUtil()
     {
         // Utility classes should not have a public or default constructor.
     }
-    
+
     /**
      * Invoke the following private method <code>
      * DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)</code>
      *
-     * @param task not null
-     * @param session not null
-     * @param project not null
-     * @param invokedVia not null
-     * @param canUsePrefix not null
+     * @param task           not null
+     * @param session        not null
+     * @param project        not null
+     * @param invokedVia     not null
+     * @param canUsePrefix   not null
      * @param isOptionalMojo not null
      * @return MojoDescriptor for the task
-     * @throws MojoFailureException if can not invoke the method.
+     * @throws MojoFailureException   if can not invoke the method.
      * @throws MojoExecutionException if no descriptor was found for <code>task</code>.
      * @see DefaultLifecycleExecutor#getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)
      */
     protected static MojoDescriptor getMojoDescriptor( String task, MavenSession session, MavenProject project,
-                                              String invokedVia, boolean canUsePrefix, boolean isOptionalMojo )
+                                                       String invokedVia, boolean canUsePrefix, boolean isOptionalMojo )
         throws MojoFailureException, MojoExecutionException
     {
         try
@@ -74,16 +74,14 @@ public class HelpUtil
             DefaultLifecycleExecutor lifecycleExecutor =
                 (DefaultLifecycleExecutor) session.lookup( LifecycleExecutor.ROLE );
 
-            Method m =
-                lifecycleExecutor.getClass().getDeclaredMethod(
-                                                                "getMojoDescriptor",
-                                                                new Class[] { String.class, MavenSession.class,
-                                                                    MavenProject.class, String.class,
-                                                                    Boolean.TYPE, Boolean.TYPE } );
+            Method m = lifecycleExecutor.getClass().getDeclaredMethod( "getMojoDescriptor",
+                                                                       new Class[]{ String.class, MavenSession.class,
+                                                                           MavenProject.class, String.class,
+                                                                           Boolean.TYPE, Boolean.TYPE } );
             m.setAccessible( true );
             MojoDescriptor mojoDescriptor =
-                (MojoDescriptor) m.invoke( lifecycleExecutor, task, session, project, invokedVia,
-                        canUsePrefix, isOptionalMojo);
+                (MojoDescriptor) m.invoke( lifecycleExecutor, task, session, project, invokedVia, canUsePrefix,
+                                           isOptionalMojo );
 
             if ( mojoDescriptor == null )
             {

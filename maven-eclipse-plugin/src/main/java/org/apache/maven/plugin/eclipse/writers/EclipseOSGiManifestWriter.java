@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * The <code>EclipseOSGiManifestWriter</code> ensures that value of the "Bundle-Classpath" property in
  * META-INF/MANIFEST.MF is synchronized with the POM by adding all dependencies that don't have the scope provided.
- * 
+ *
  * @deprecated use <a href="http://cwiki.apache.org/FELIX/bundle-plugin-for-maven-bnd.html/">Maven Bundle plugin</a>
  *             from Felix
  */
@@ -47,7 +47,7 @@ public class EclipseOSGiManifestWriter
 
     /**
      * Constant used for newline.
-     * 
+     *
      * @todo check if we should use system-dependent newlines or if eclipse prefers a common format
      */
     private static final String NEWLINE = "\n";
@@ -100,13 +100,14 @@ public class EclipseOSGiManifestWriter
         }
         catch ( FileNotFoundException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile",
-                                                                  config.getOSGIManifestFile().getAbsolutePath() ) );
+            throw new MojoExecutionException(
+                Messages.getString( "EclipsePlugin.cantwritetofile", config.getOSGIManifestFile().getAbsolutePath() ) );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile",
-                                                                  config.getOSGIManifestFile().getAbsolutePath() ), e );
+            throw new MojoExecutionException(
+                Messages.getString( "EclipsePlugin.cantwritetofile", config.getOSGIManifestFile().getAbsolutePath() ),
+                e );
         }
         finally
         {
@@ -128,7 +129,7 @@ public class EclipseOSGiManifestWriter
             String line;
             while ( ( line = in.readLine() ) != null )
             {
-                if ( inBundleClasspathEntry && line.contains(":"))
+                if ( inBundleClasspathEntry && line.contains( ":" ) )
                 {
                     inBundleClasspathEntry = false;
                 }
@@ -168,7 +169,8 @@ public class EclipseOSGiManifestWriter
                     manifestSb.append( getNormalizedVersion( config.getProject().getVersion() ) );
                     manifestSb.append( NEWLINE );
                 }
-                else if ( name.equalsIgnoreCase( ENTRY_BUNDLE_VENDOR ) && config.getProject().getOrganization() != null )
+                else if ( name.equalsIgnoreCase( ENTRY_BUNDLE_VENDOR )
+                    && config.getProject().getOrganization() != null )
                 {
                     manifestSb.append( ENTRY_BUNDLE_VENDOR );
                     manifestSb.append( " " );
@@ -177,7 +179,7 @@ public class EclipseOSGiManifestWriter
                 }
                 else
                 {
-                    manifestSb.append(line).append(NEWLINE);
+                    manifestSb.append( line ).append( NEWLINE );
                 }
             }
 
@@ -185,8 +187,8 @@ public class EclipseOSGiManifestWriter
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantreadfile",
-                                                                  manifestFile.getAbsolutePath() ) );
+            throw new MojoExecutionException(
+                Messages.getString( "EclipsePlugin.cantreadfile", manifestFile.getAbsolutePath() ) );
         }
         manifestSb.append( addBundleClasspathEntries() );
 
@@ -198,7 +200,7 @@ public class EclipseOSGiManifestWriter
     /**
      * Normalize a version number, by moving snapshot identifier to the 5th token (first 4 tokens must be numeric for
      * OSGI bundles)
-     * 
+     *
      * @param version original version
      * @return a normalized version number
      */
@@ -211,12 +213,12 @@ public class EclipseOSGiManifestWriter
 
             int j = 0;
             StringBuilder newVersion = new StringBuilder( 20 );
-            for ( ; j < versionTokens.length; j++ )
+            for (; j < versionTokens.length; j++ )
             {
                 newVersion.append( versionTokens[j] );
                 newVersion.append( "." );
             }
-            for ( ; j < 3; j++ )
+            for (; j < 3; j++ )
             {
                 newVersion.append( "0." );
             }
@@ -230,7 +232,7 @@ public class EclipseOSGiManifestWriter
 
     /**
      * Add all libraries that don't have the scope "provided" to the "Bundle-Classpath".
-     * 
+     *
      * @return complete "Bundle-ClassPath:" entry for manifest
      */
     protected String addBundleClasspathEntries()
@@ -243,13 +245,15 @@ public class EclipseOSGiManifestWriter
 
         IdeDependency[] deps = config.getDeps();
 
-        for (IdeDependency dep : deps) {
-            if (!dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() && !dep.isOsgiBundle()) {
-                bundleClasspathSb.append("," + NEWLINE);
+        for ( IdeDependency dep : deps )
+        {
+            if ( !dep.isProvided() && !dep.isReferencedProject() && !dep.isTestDependency() && !dep.isOsgiBundle() )
+            {
+                bundleClasspathSb.append( "," + NEWLINE );
 
-                log.debug("Adding artifact to manifest: " + dep.getArtifactId());
+                log.debug( "Adding artifact to manifest: " + dep.getArtifactId() );
 
-                bundleClasspathSb.append(" ").append(dep.getFile().getName());
+                bundleClasspathSb.append( " " ).append( dep.getFile().getName() );
             }
         }
         // only insert the name of the property if there are local libraries

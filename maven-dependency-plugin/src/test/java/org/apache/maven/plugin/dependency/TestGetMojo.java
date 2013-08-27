@@ -46,20 +46,17 @@ public class TestGetMojo
         mojo = (GetMojo) lookupMojo( "get", testPom );
 
         assertNotNull( mojo );
-        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ){
+        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() )
+        {
             @Override
             public String pathOf( Artifact artifact )
             {
                 StringBuilder pathOf = new StringBuilder();
-                pathOf.append( artifact.getGroupId() )
-                    .append( '_' )
-                    .append( artifact.getArtifactId() )
-                    .append( '-' )
-                    .append( artifact.getVersion() );
+                pathOf.append( artifact.getGroupId() ).append( '_' ).append( artifact.getArtifactId() ).append(
+                    '-' ).append( artifact.getVersion() );
                 if ( artifact.getClassifier() != null )
                 {
-                    pathOf.append( '-' )
-                    .append( artifact.getClassifier() );
+                    pathOf.append( '-' ).append( artifact.getClassifier() );
                 }
                 pathOf.append( '.' ).append( artifact.getArtifactHandler().getExtension() );
                 return pathOf.toString();
@@ -69,7 +66,7 @@ public class TestGetMojo
 
     /**
      * Test transitive parameter
-     * 
+     *
      * @throws Exception
      */
     public void testTransitive()
@@ -88,10 +85,10 @@ public class TestGetMojo
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
         mojo.execute();
     }
-    
+
     /**
      * Test destination parameter
-     * 
+     *
      * @throws Exception
      */
     public void testDestination()
@@ -119,12 +116,11 @@ public class TestGetMojo
         mojo.execute();
         assertTrue( new File( output, "org.apache.maven_maven-model-2.0.9.jar" ).exists() );
     }
-    
-    
+
 
     /**
      * Test remote repositories parameter
-     * 
+     *
      * @throws Exception
      */
     public void testRemoteRepositories()
@@ -141,7 +137,7 @@ public class TestGetMojo
 
     /**
      * Test parsing of the remote repositories parameter
-     * 
+     *
      * @throws Exception
      */
     public void testParseRepository()

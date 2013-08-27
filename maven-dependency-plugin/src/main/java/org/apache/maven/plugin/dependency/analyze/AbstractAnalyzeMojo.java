@@ -70,7 +70,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Specify the project dependency analyzer to use (plexus component role-hint).
      * By default, <a href="/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is used.
-     *
+     * <p/>
      * To use this, you must declare a dependency for this plugin that contains the code for the
      * analyzer. The analyzer must have a declared Plexus role name, and you specify the role name
      * here.
@@ -141,7 +141,7 @@ public abstract class AbstractAnalyzeMojo
     /**
      * Force dependencies as used, to override incomplete result caused by bytecode-level analysis.
      * Dependency format is <code>groupId:artifactId</code>.
-     * 
+     *
      * @since 2.6
      */
     @Parameter
@@ -378,7 +378,10 @@ public abstract class AbstractAnalyzeMojo
                 // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
 
-                buf.append(scriptableFlag).append(":").append(pomFile).append(":").append(artifact.getDependencyConflictId()).append(":").append(artifact.getClassifier()).append(":").append(artifact.getBaseVersion()).append(":").append(artifact.getScope()).append("\n");
+                buf.append( scriptableFlag ).append( ":" ).append( pomFile ).append( ":" ).append(
+                    artifact.getDependencyConflictId() ).append( ":" ).append( artifact.getClassifier() ).append(
+                    ":" ).append( artifact.getBaseVersion() ).append( ":" ).append( artifact.getScope() ).append(
+                    "\n" );
             }
             getLog().info( "\n" + buf );
         }

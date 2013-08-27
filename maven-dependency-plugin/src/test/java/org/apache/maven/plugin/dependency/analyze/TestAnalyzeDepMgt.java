@@ -53,7 +53,9 @@ public class TestAnalyzeDepMgt
     Artifact exclusionArtifact;
 
     DependencyManagement depMgt;
+
     DependencyManagement depMgtNoExclusions;
+
     protected void setUp()
         throws Exception
     {
@@ -65,7 +67,6 @@ public class TestAnalyzeDepMgt
 
         Set<Artifact> allArtifacts = stubFactory.getMixedArtifacts();
         Set<Artifact> directArtifacts = stubFactory.getClassifiedArtifacts();
-
 
         exclusionArtifact = stubFactory.getReleaseArtifact();
         directArtifacts.add( exclusionArtifact );
@@ -87,7 +88,6 @@ public class TestAnalyzeDepMgt
         depMgt = new DependencyManagement();
         depMgt.setDependencies( list );
 
-
         project.setArtifacts( allArtifacts );
         project.setDependencyArtifacts( directArtifacts );
 
@@ -107,8 +107,8 @@ public class TestAnalyzeDepMgt
         // version isn't used in the key, it can be different
         dep.setVersion( "1.1" );
 
-        Artifact artifact = stubFactory.createArtifact( "group", "artifact", "1.0", Artifact.SCOPE_COMPILE, "type",
-                                                        "class" );
+        Artifact artifact =
+            stubFactory.createArtifact( "group", "artifact", "1.0", Artifact.SCOPE_COMPILE, "type", "class" );
 
         // basic case ok
         assertEquals( dep.getManagementKey(), mojo.getArtifactManagementKey( artifact ) );
@@ -156,7 +156,7 @@ public class TestAnalyzeDepMgt
         list.add( ex );
         Map<String, Exclusion> map = mojo.addExclusions( list );
 
-        assertEquals( 1,map.size() );
+        assertEquals( 1, map.size() );
         assertTrue( map.containsKey( mojo.getExclusionKey( ex ) ) );
         assertSame( ex, map.get( mojo.getExclusionKey( ex ) ) );
     }
@@ -173,7 +173,7 @@ public class TestAnalyzeDepMgt
 
         assertEquals( 1, l.size() );
 
-        assertEquals( mojo.getExclusionKey( ex ), mojo.getExclusionKey(l.get( 0 )) );
+        assertEquals( mojo.getExclusionKey( ex ), mojo.getExclusionKey( l.get( 0 ) ) );
     }
 
     public void testGetMismatch()
@@ -191,7 +191,8 @@ public class TestAnalyzeDepMgt
         assertSame( exclusion, results.get( stubFactory.getReleaseArtifact() ) );
     }
 
-    public void testMojo() throws IOException
+    public void testMojo()
+        throws IOException
     {
         mojo.setIgnoreDirect( false );
         try

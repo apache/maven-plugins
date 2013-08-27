@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Olivier Lamy
- * @since 
  * @version $Id$
  */
 public class AuthAsyncProxyServlet
@@ -69,7 +68,7 @@ public class AuthAsyncProxyServlet
 
     /**
      * Constructor for authentication servlet.
-     * 
+     *
      * @param authentications a map of user/password
      */
     public AuthAsyncProxyServlet( Map<String, String> authentications, File siteTargetPath )
@@ -81,9 +80,9 @@ public class AuthAsyncProxyServlet
 
     /**
      * Constructor for authentication servlet.
-     * 
+     *
      * @param authentications a map of user/password
-     * @param sleepTime a positive time to sleep the service thread (for timeout)
+     * @param sleepTime       a positive time to sleep the service thread (for timeout)
      */
     public AuthAsyncProxyServlet( Map<String, String> authentications, long sleepTime, File siteTargetPath )
     {
@@ -93,7 +92,9 @@ public class AuthAsyncProxyServlet
         this.sleepTime = sleepTime;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void service( ServletRequest req, ServletResponse res )
         throws ServletException, IOException
     {
@@ -129,7 +130,7 @@ public class AuthAsyncProxyServlet
                         // nop
                     }
                 }
-                String authPass = this.authentications.get(user);
+                String authPass = this.authentications.get( user );
                 if ( password.equals( authPass ) )
                 {
                     String targetPath = request.getServletPath();
@@ -138,8 +139,7 @@ public class AuthAsyncProxyServlet
                     rq.method = request.getMethod();
                     rq.path = targetPath;
 
-                    @SuppressWarnings( "rawtypes" )
-                    Enumeration headerNames = request.getHeaderNames();
+                    @SuppressWarnings( "rawtypes" ) Enumeration headerNames = request.getHeaderNames();
                     while ( headerNames.hasMoreElements() )
                     {
                         String name = (String) headerNames.nextElement();

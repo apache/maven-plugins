@@ -58,7 +58,9 @@ public class ActiveProfilesMojo
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -74,8 +76,8 @@ public class ActiveProfilesMojo
         if ( output != null )
         {
             StringBuilder sb = new StringBuilder();
-            sb.append("Created by: ").append(getClass().getName()).append("\n");
-            sb.append("Created on: ").append(new Date()).append("\n").append( "\n" );
+            sb.append( "Created by: " ).append( getClass().getName() ).append( "\n" );
+            sb.append( "Created on: " ).append( new Date() ).append( "\n" ).append( "\n" );
             sb.append( message.toString() );
 
             try
@@ -108,22 +110,22 @@ public class ActiveProfilesMojo
     /**
      * Method to get the active profiles for the project
      *
-     * @param project   the current project
-     * @param message   the object where the information will be appended to
+     * @param project the current project
+     * @param message the object where the information will be appended to
      */
     private void getActiveProfileStatement( MavenProject project, StringBuilder message )
     {
         Map<String, List<String>> activeProfileIds = new LinkedHashMap<String, List<String>>();
-        try 
+        try
         {
             activeProfileIds.putAll( getInjectedProfileIds( project ) );
         }
         catch ( UnsupportedOperationException uoe )
         {
             // Fall back to M2 approach
-            @SuppressWarnings( "unchecked" )
-            List<Profile> profiles = new ArrayList<Profile>( project.getActiveProfiles() );
-            
+            @SuppressWarnings( "unchecked" ) List<Profile> profiles =
+                new ArrayList<Profile>( project.getActiveProfiles() );
+
             for ( Profile profile : profiles )
             {
                 List<String> profileIds = activeProfileIds.get( profile.getSource() );
@@ -135,11 +137,10 @@ public class ActiveProfilesMojo
                 profileIds.add( profile.getId() );
             }
         }
-        
 
         message.append( "\n" );
 
-        message.append("Active Profiles for Project \'").append(project.getId()).append("\': \n\n");
+        message.append( "Active Profiles for Project \'" ).append( project.getId() ).append( "\': \n\n" );
 
         if ( activeProfileIds.isEmpty() )
         {
@@ -163,7 +164,8 @@ public class ActiveProfilesMojo
     }
 
     @SuppressWarnings( "unchecked" )
-    private Map<String, List<String>> getInjectedProfileIds( MavenProject project ) throws UnsupportedOperationException
+    private Map<String, List<String>> getInjectedProfileIds( MavenProject project )
+        throws UnsupportedOperationException
     {
         try
         {

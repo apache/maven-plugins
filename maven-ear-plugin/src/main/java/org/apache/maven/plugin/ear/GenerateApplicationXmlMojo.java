@@ -138,7 +138,7 @@ public class GenerateApplicationXmlMojo
         super.execute();
 
         // Handle application.xml
-        if ( !generateApplicationXml)
+        if ( !generateApplicationXml )
         {
             getLog().debug( "Generation of application.xml is disabled" );
         }
@@ -256,19 +256,23 @@ public class GenerateApplicationXmlMojo
         {
             final PlexusConfiguration[] securityRoles = security.getChildren( SecurityRole.SECURITY_ROLE );
 
-            for (PlexusConfiguration securityRole : securityRoles) {
-                final String id = securityRole.getAttribute(SecurityRole.ID_ATTRIBUTE);
-                final String roleName = securityRole.getChild(SecurityRole.ROLE_NAME).getValue();
+            for ( PlexusConfiguration securityRole : securityRoles )
+            {
+                final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
+                final String roleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
                 final String roleNameId =
-                        securityRole.getChild(SecurityRole.ROLE_NAME).getAttribute(SecurityRole.ID_ATTRIBUTE);
-                final String description = securityRole.getChild(SecurityRole.DESCRIPTION).getValue();
+                    securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
+                final String description = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
                 final String descriptionId =
-                        securityRole.getChild(SecurityRole.DESCRIPTION).getAttribute(SecurityRole.ID_ATTRIBUTE);
+                    securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
 
-                if (roleName == null) {
-                    throw new EarPluginException("Invalid security-role configuration, role-name could not be null.");
-                } else {
-                    result.add(new SecurityRole(roleName, roleNameId, id, description, descriptionId));
+                if ( roleName == null )
+                {
+                    throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
+                }
+                else
+                {
+                    result.add( new SecurityRole( roleName, roleNameId, id, description, descriptionId ) );
                 }
             }
             return result;

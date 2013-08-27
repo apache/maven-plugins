@@ -28,7 +28,7 @@ under the License.
     <version>0.1</version>
   </parent>
 
-    <artifactId>MJAVADOC-275-mod-c</artifactId>
+  <artifactId>MJAVADOC-275-mod-c</artifactId>
   <version>0.1</version>
   <packaging>jar</packaging>
 

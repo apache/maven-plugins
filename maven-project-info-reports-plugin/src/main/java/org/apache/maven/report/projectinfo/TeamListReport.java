@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
@@ -261,7 +262,7 @@ public class TeamListReport
                 {
                     picUrl = getGravatarUrl( member.getEmail() );
                 }
-                if (StringUtils.isEmpty( picUrl ))
+                if ( StringUtils.isEmpty( picUrl ) )
                 {
                     picUrl = getSpacerGravatarUrl();
                 }
@@ -314,7 +315,7 @@ public class TeamListReport
                 {
                     // Comma separated roles
                     List<String> var = member.getRoles();
-                    tableCell( StringUtils.join(var.toArray(new String[var.size()]), ", " ) );
+                    tableCell( StringUtils.join( var.toArray( new String[var.size()] ), ", " ) );
                 }
                 else
                 {
@@ -466,12 +467,12 @@ public class TeamListReport
             String timeZone = getI18nString( "contributors.timezone" );
             String actualTime = getI18nString( "contributors.actualtime" );
             String properties = getI18nString( "contributors.properties" );
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages)
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages )
             {
                 requiredArray.add( image );
             }
-            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl, roles,
-                              timeZone, actualTime, properties );
+            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl,
+                              roles, timeZone, actualTime, properties );
 
             return requiredArray.toArray( new String[requiredArray.size()] );
         }
@@ -496,7 +497,7 @@ public class TeamListReport
             String actualTime = getI18nString( "developers.actualtime" );
             String properties = getI18nString( "developers.properties" );
 
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages)
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages )
             {
                 requiredArray.add( image );
             }
@@ -505,8 +506,8 @@ public class TeamListReport
                 requiredArray.add( id );
             }
 
-            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl, roles,
-                              timeZone, actualTime, properties );
+            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl,
+                              roles, timeZone, actualTime, properties );
 
             return requiredArray.toArray( new String[requiredArray.size()] );
         }
@@ -526,8 +527,9 @@ public class TeamListReport
          * @param properties
          */
         private void setRequiredArray( Map<String, Boolean> requiredHeaders, List<String> requiredArray, String image,
-                                       String name, String email, String url, String organization, String organizationUrl,
-                                       String roles, String timeZone, String actualTime, String properties )
+                                       String name, String email, String url, String organization,
+                                       String organizationUrl, String roles, String timeZone, String actualTime,
+                                       String properties )
         {
             if ( requiredHeaders.get( NAME ) == Boolean.TRUE )
             {

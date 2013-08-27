@@ -46,7 +46,8 @@ public class FileSetFormatter
         this.logger = logger;
     }
 
-    public File formatFileSetForAssembly( @Nonnull File fileSetDir, @Nonnull org.apache.maven.plugin.assembly.model.FileSet set )
+    public File formatFileSetForAssembly( @Nonnull File fileSetDir,
+                                          @Nonnull org.apache.maven.plugin.assembly.model.FileSet set )
         throws AssemblyFormattingException, IOException
     {
         String lineEndingHint = set.getLineEnding();
@@ -58,9 +59,9 @@ public class FileSetFormatter
 
             FileSet fileSet = new FileSet();
             fileSet.setLineEnding( lineEnding );
-            
+
             fileSet.setDirectory( fileSetDir.getAbsolutePath() );
-                        
+
             fileSet.setIncludes( set.getIncludes() );
 
             fileSet.setExcludes( set.getExcludes() );
@@ -72,37 +73,43 @@ public class FileSetFormatter
             // if we don't have anything to process, let's just skip all of this mess.
             if ( ( files == null ) || ( files.length == 0 ) )
             {
-                logger.info( "No files selected for line-ending conversion or filtering. Skipping: " + fileSet.getDirectory() );
+                logger.info(
+                    "No files selected for line-ending conversion or filtering. Skipping: " + fileSet.getDirectory() );
             }
             else
             {
                 File formattedDir =
                     FileUtils.createTempFile( "fileSetFormatter.", ".tmp", configSource.getTemporaryRootDirectory() );
-                
+
                 logger.debug( "Filtering files from: " + fileSetDir + " into temp dir: " + formattedDir );
 
                 formattedDir.delete();
                 formattedDir.mkdirs();
 
                 FileFormatter fileFormatter = new FileFormatter( configSource, logger );
-                for (String file : files) {
-                    logger.debug("Filtering: " + file);
+                for ( String file : files )
+                {
+                    logger.debug( "Filtering: " + file );
 
-                    File targetFile = new File(formattedDir, file);
+                    File targetFile = new File( formattedDir, file );
 
                     targetFile.getParentFile().mkdirs();
 
-                    File sourceFile = new File(fileSetDir, file);
-                    try {
-                        sourceFile =
-                                fileFormatter.format(sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
-                                        configSource.getEncoding());
-                        AssemblyFileUtils.copyFile(sourceFile, targetFile);
-                    } catch (AssemblyFormattingException e) {
-                        deleteDirectory(formattedDir);
+                    File sourceFile = new File( fileSetDir, file );
+                    try
+                    {
+                        sourceFile = fileFormatter.format( sourceFile, set.isFiltered(), lineEndingHint, formattedDir,
+                                                           configSource.getEncoding() );
+                        AssemblyFileUtils.copyFile( sourceFile, targetFile );
+                    }
+                    catch ( AssemblyFormattingException e )
+                    {
+                        deleteDirectory( formattedDir );
                         throw e;
-                    } catch (IOException e) {
-                        deleteDirectory(formattedDir);
+                    }
+                    catch ( IOException e )
+                    {
+                        deleteDirectory( formattedDir );
                         throw e;
                     }
                 }

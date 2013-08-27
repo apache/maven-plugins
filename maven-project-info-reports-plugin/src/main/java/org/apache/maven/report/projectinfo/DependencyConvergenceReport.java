@@ -67,7 +67,9 @@ public class DependencyConvergenceReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getOutputName()
     {
         return "dependency-convergence";
@@ -181,7 +183,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell( );
+        sink.tableCell();
         if ( artifactMap.size() > 1 )
         {
             iconError( sink );
@@ -199,7 +201,7 @@ public class DependencyConvergenceReport
         for ( String version : artifactMap.keySet() )
         {
             sink.tableRow();
-            sink.tableCell( new SinkEventAttributeSet( new String[] {SinkEventAttributes.WIDTH, "25%"} ) );
+            sink.tableCell( new SinkEventAttributeSet( new String[]{ SinkEventAttributes.WIDTH, "25%" } ) );
             sink.text( version );
             sink.tableCell_();
 
@@ -244,7 +246,7 @@ public class DependencyConvergenceReport
     /**
      * Produce a Map of relationships between dependencies (its version) and
      * reactor projects.
-     *
+     * <p/>
      * This is the structure of the Map:
      * <pre>
      * +--------------------+----------------------------------+
@@ -296,7 +298,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell( );
+        sink.tableCell();
         iconSuccess( sink );
         sink.tableCell_();
         sink.tableCell();
@@ -307,7 +309,7 @@ public class DependencyConvergenceReport
 
         sink.tableRow();
 
-        sink.tableCell( );
+        sink.tableCell();
         iconError( sink );
         sink.tableCell_();
         sink.tableCell();
@@ -350,7 +352,7 @@ public class DependencyConvergenceReport
         sink.tableCaption_();
 
         sink.tableRow();
-        sink.tableHeaderCell( );
+        sink.tableHeaderCell();
         sink.text( getI18nString( locale, "stats.subprojects" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -359,7 +361,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( );
+        sink.tableHeaderCell();
         sink.text( getI18nString( locale, "stats.dependencies" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -368,7 +370,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( );
+        sink.tableHeaderCell();
         sink.text( getI18nString( locale, "stats.artifacts" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -377,7 +379,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( );
+        sink.tableHeaderCell();
         sink.text( getI18nString( locale, "stats.snapshots" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -386,7 +388,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( );
+        sink.tableHeaderCell();
         sink.text( getI18nString( locale, "stats.convergence" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -406,7 +408,7 @@ public class DependencyConvergenceReport
         sink.tableRow_();
 
         sink.tableRow();
-        sink.tableHeaderCell( );
+        sink.tableHeaderCell();
         sink.text( getI18nString( locale, "stats.readyrelease" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
@@ -481,8 +483,8 @@ public class DependencyConvergenceReport
     {
         for ( MavenProject mavenProject : reactorProjects )
         {
-            if ( mavenProject.getGroupId().equals( dependency.getGroupId() )
-                && mavenProject.getArtifactId().equals( dependency.getArtifactId() ) )
+            if ( mavenProject.getGroupId().equals( dependency.getGroupId() ) && mavenProject.getArtifactId().equals(
+                dependency.getArtifactId() ) )
             {
                 if ( getLog().isDebugEnabled() )
                 {
@@ -517,7 +519,7 @@ public class DependencyConvergenceReport
     /**
      * Produce a Map of relationships between dependencies
      * (its groupId:artifactId) and reactor projects.
-     *
+     * <p/>
      * This is the structure of the Map:
      * <pre>
      * +--------------------+----------------------------------+
@@ -539,14 +541,16 @@ public class DependencyConvergenceReport
 
         for ( MavenProject reactorProject : reactorProjects )
         {
-            for (Dependency dep : (Iterable<Dependency>) reactorProject.getDependencies()) {
+            for ( Dependency dep : (Iterable<Dependency>) reactorProject.getDependencies() )
+            {
                 String key = dep.getGroupId() + ":" + dep.getArtifactId();
-                List<ReverseDependencyLink> depList = dependencyMap.get(key);
-                if (depList == null) {
+                List<ReverseDependencyLink> depList = dependencyMap.get( key );
+                if ( depList == null )
+                {
                     depList = new ArrayList<ReverseDependencyLink>();
                 }
-                depList.add(new ReverseDependencyLink(dep, reactorProject));
-                dependencyMap.put(key, depList);
+                depList.add( new ReverseDependencyLink( dep, reactorProject ) );
+                dependencyMap.put( key, depList );
             }
         }
 
@@ -591,7 +595,9 @@ public class DependencyConvergenceReport
     static class ReverseDependencyLinkComparator
         implements Comparator<ReverseDependencyLink>
     {
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public int compare( ReverseDependencyLink p1, ReverseDependencyLink p2 )
         {
             return p1.getProject().getId().compareTo( p2.getProject().getId() );

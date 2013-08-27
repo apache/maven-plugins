@@ -384,6 +384,7 @@ public abstract class AbstractJavadocMojo
      *         &lt;additionalJOption&gt;-J-Xmx1g &lt;/additionalJOption&gt;
      *     &lt;/additionalJOptions&gt;
      * </pre>
+     *
      * @since 2.9
      */
     @Parameter
@@ -1278,7 +1279,7 @@ public abstract class AbstractJavadocMojo
      * <br/>
      */
     @Parameter( property = "destDir", alias = "destDir", defaultValue = "${project.build.directory}/apidocs",
-                    required = true )
+                required = true )
     protected File outputDirectory;
 
     /**
@@ -1381,7 +1382,7 @@ public abstract class AbstractJavadocMojo
      * stylesheetfile</a>.
      */
     @Parameter( property = "stylesheetfile" )
-   private String stylesheetfile;
+    private String stylesheetfile;
 
     /**
      * Specifies the class file that starts the taglet used in generating the documentation for that tag.
@@ -1663,9 +1664,10 @@ public abstract class AbstractJavadocMojo
 
     /**
      * To apply the security fix on generated javadoc see http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1571
+     *
      * @since 2.9.1
      */
-    @Parameter(defaultValue = "true", property = "maven.javadoc.applyJavadocSecurityFix")
+    @Parameter( defaultValue = "true", property = "maven.javadoc.applyJavadocSecurityFix" )
     private boolean applyJavadocSecurityFix = true;
 
     // ----------------------------------------------------------------------
@@ -2045,7 +2047,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-          getLog().info( "applying javadoc security fix has been disabled" );
+            getLog().info( "applying javadoc security fix has been disabled" );
         }
     }
 
@@ -2067,7 +2069,8 @@ public abstract class AbstractJavadocMojo
             for ( String sourcePath : sourcePaths )
             {
                 File sourceDirectory = new File( sourcePath );
-                JavadocUtil.addFilesFromSource( files, sourceDirectory, sourceFileIncludes, sourceFileExcludes, excludedPackages );
+                JavadocUtil.addFilesFromSource( files, sourceDirectory, sourceFileIncludes, sourceFileExcludes,
+                                                excludedPackages );
             }
         }
 
@@ -2138,12 +2141,12 @@ public abstract class AbstractJavadocMojo
                         if ( getJavadocDirectory() != null )
                         {
                             String javadocDirRelative =
-                                    PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
+                                PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
                             File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                             if ( javadocDir.exists() && javadocDir.isDirectory() )
                             {
                                 List<String> l = JavadocUtil.pruneDirs( subProject, Collections.singletonList(
-                                        javadocDir.getAbsolutePath() ) );
+                                    javadocDir.getAbsolutePath() ) );
                                 sourcePaths.addAll( l );
                             }
                         }
@@ -3552,7 +3555,8 @@ public abstract class AbstractJavadocMojo
             {
                 throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
             }
-            if ( ( !new File( javaHome ).getCanonicalFile().exists() ) || ( new File( javaHome ).getCanonicalFile().isFile() ) )
+            if ( ( !new File( javaHome ).getCanonicalFile().exists() ) || ( new File(
+                javaHome ).getCanonicalFile().isFile() ) )
             {
                 throw new IOException(
                     "The environment variable JAVA_HOME=" + javaHome + " doesn't exist or is not a valid directory." );
@@ -4206,7 +4210,7 @@ public abstract class AbstractJavadocMojo
                     currentSourcePath += "/";
                 }
 
-                if (currentFile.contains(currentSourcePath))
+                if ( currentFile.contains( currentSourcePath ) )
                 {
                     String packagename = currentFile.substring( currentSourcePath.length() + 1 );
 
@@ -4214,7 +4218,7 @@ public abstract class AbstractJavadocMojo
                      * Remove the miscellaneous files
                      * http://docs.oracle.com/javase/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed
                      */
-                    if (packagename.contains("doc-files"))
+                    if ( packagename.contains( "doc-files" ) )
                     {
                         continue;
                     }
@@ -4258,7 +4262,8 @@ public abstract class AbstractJavadocMojo
         File optionsFile = new File( javadocOutputDirectory, OPTIONS_FILE_NAME );
 
         StringBuilder options = new StringBuilder();
-        options.append( StringUtils.join(arguments.toArray(new String[arguments.size()]), SystemUtils.LINE_SEPARATOR ) );
+        options.append(
+            StringUtils.join( arguments.toArray( new String[arguments.size()] ), SystemUtils.LINE_SEPARATOR ) );
 
         try
         {
@@ -4837,14 +4842,19 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        for (Taglet taglet1 : taglets) {
-            if ((taglet1 == null) || (StringUtils.isEmpty(taglet1.getTagletClass()))) {
-                if (getLog().isWarnEnabled()) {
-                    getLog().warn("A taglet option is empty. Ignore this option.");
+        for ( Taglet taglet1 : taglets )
+        {
+            if ( ( taglet1 == null ) || ( StringUtils.isEmpty( taglet1.getTagletClass() ) ) )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "A taglet option is empty. Ignore this option." );
                 }
-            } else {
-                addArgIfNotEmpty(arguments, "-taglet", JavadocUtil.quotedArgument(taglet1.getTagletClass()),
-                        SINCE_JAVADOC_1_4);
+            }
+            else
+            {
+                addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet1.getTagletClass() ),
+                                  SINCE_JAVADOC_1_4 );
             }
         }
     }
@@ -5036,7 +5046,12 @@ public abstract class AbstractJavadocMojo
                     output ) )
                 {
 
-                    throw new MavenReportException(output + '\n' + '\n' + JavadocUtil.ERROR_INIT_VM + '\n' + "Or, try to reduce the Java heap size for the Javadoc goal using " + "-Dminmemory=<size> and -Dmaxmemory=<size>." + '\n' + '\n' + "Command line was: " + cmdLine + '\n' + '\n' + "Refer to the generated Javadoc files in '" + javadocOutputDirectory + "' dir.\n");
+                    throw new MavenReportException( output + '\n' + '\n' + JavadocUtil.ERROR_INIT_VM + '\n'
+                                                        + "Or, try to reduce the Java heap size for the Javadoc goal using "
+                                                        + "-Dminmemory=<size> and -Dmaxmemory=<size>." + '\n' + '\n'
+                                                        + "Command line was: " + cmdLine + '\n' + '\n'
+                                                        + "Refer to the generated Javadoc files in '"
+                                                        + javadocOutputDirectory + "' dir.\n" );
                 }
 
                 if ( StringUtils.isNotEmpty( output ) )
@@ -5263,7 +5278,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        ClassLoader javadocClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
+        ClassLoader javadocClassLoader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
 
         return javadocClassLoader.getResource( resource );
     }
@@ -5787,8 +5802,8 @@ public abstract class AbstractJavadocMojo
         if ( plugin != null )
         {
             Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
-            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null
-                && StringUtils.isNotEmpty( xpp3Dom.getChild( param ).getValue() ) )
+            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null && StringUtils.isNotEmpty(
+                xpp3Dom.getChild( param ).getValue() ) )
             {
                 return xpp3Dom.getChild( param ).getValue();
             }

@@ -115,8 +115,8 @@ public class AssemblyInterpolator
         }
         catch ( final InterpolationException e )
         {
-            throw new AssemblyInterpolationException( "Failed to interpolate assembly with ID: " + assembly.getId()
-                            + ". Reason: " + e.getMessage(), e );
+            throw new AssemblyInterpolationException(
+                "Failed to interpolate assembly with ID: " + assembly.getId() + ". Reason: " + e.getMessage(), e );
         }
         finally
         {
@@ -127,12 +127,14 @@ public class AssemblyInterpolator
         {
             final StringBuilder sb = new StringBuilder();
 
-            sb.append("One or more minor errors occurred while interpolating the assembly with ID: ").append(assembly.getId()).append(":\n");
+            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: " ).append(
+                assembly.getId() ).append( ":\n" );
 
             @SuppressWarnings( "unchecked" )
             final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
-            for (final ObjectInterpolationWarning warning : warnings) {
-                sb.append('\n').append(warning);
+            for ( final ObjectInterpolationWarning warning : warnings )
+            {
+                sb.append( '\n' ).append( warning );
             }
 
             sb.append( "\n\nThese values were SKIPPED, but the assembly process will continue.\n" );
@@ -170,22 +172,24 @@ public class AssemblyInterpolator
             }
         }
 
-        interpolator.addValueSource( new PrefixedPropertiesValueSource(
-                                                                        InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
-                                                                        project.getProperties(), true ) );
-        interpolator.addValueSource( new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project,
-                                                                    true ) );
+        interpolator.addValueSource(
+            new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
+                                               project.getProperties(), true ) );
+        interpolator.addValueSource(
+            new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project, true ) );
 
         final Properties settingsProperties = new Properties();
         if ( configSource.getLocalRepository() != null )
         {
             settingsProperties.setProperty( "localRepository", configSource.getLocalRepository().getBasedir() );
-            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository().getBasedir() );
+            settingsProperties.setProperty( "settings.localRepository",
+                                            configSource.getLocalRepository().getBasedir() );
         }
         else if ( session != null && session.getSettings() != null )
         {
             settingsProperties.setProperty( "localRepository", session.getSettings().getLocalRepository() );
-            settingsProperties.setProperty( "settings.localRepository", configSource.getLocalRepository().getBasedir() );
+            settingsProperties.setProperty( "settings.localRepository",
+                                            configSource.getLocalRepository().getBasedir() );
         }
 
         interpolator.addValueSource( new PropertiesBasedValueSource( settingsProperties ) );
@@ -198,7 +202,7 @@ public class AssemblyInterpolator
             {
                 commandLineProperties.putAll( session.getExecutionProperties() );
             }
-            
+
             if ( session.getUserProperties() != null )
             {
                 commandLineProperties.putAll( session.getUserProperties() );
@@ -207,8 +211,8 @@ public class AssemblyInterpolator
 
         // 7
         interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );
-        interpolator.addValueSource( new PrefixedPropertiesValueSource( Collections.singletonList( "env." ),
-                                                                        ENVIRONMENT_VARIABLES, true ) );
+        interpolator.addValueSource(
+            new PrefixedPropertiesValueSource( Collections.singletonList( "env." ), ENVIRONMENT_VARIABLES, true ) );
 
         interpolator.addPostProcessor( new PathTranslatingPostProcessor( project.getBasedir() ) );
         return interpolator;

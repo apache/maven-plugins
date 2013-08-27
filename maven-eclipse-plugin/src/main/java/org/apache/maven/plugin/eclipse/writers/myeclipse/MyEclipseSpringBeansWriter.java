@@ -20,7 +20,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * MyEclipse .springBeans configuration file writer
- * 
+ *
  * @author Olivier Jacob
  */
 public class MyEclipseSpringBeansWriter
@@ -49,7 +49,7 @@ public class MyEclipseSpringBeansWriter
 
     /**
      * Allow injection of Spring configuration filenames through constructor
-     * 
+     *
      * @param springConfig a map holding Spring configuration properties
      */
     public MyEclipseSpringBeansWriter( Map springConfig )
@@ -59,7 +59,7 @@ public class MyEclipseSpringBeansWriter
 
     /**
      * Write MyEclipse .springBeans configuration file
-     * 
+     *
      * @throws MojoExecutionException
      */
     public void write()
@@ -68,12 +68,13 @@ public class MyEclipseSpringBeansWriter
         FileWriter springFileWriter;
         try
         {
-            springFileWriter =
-                new FileWriter( new File( config.getEclipseProjectDirectory(), MYECLIPSE_SPRING_CONFIGURATION_FILENAME ) );
+            springFileWriter = new FileWriter(
+                new File( config.getEclipseProjectDirectory(), MYECLIPSE_SPRING_CONFIGURATION_FILENAME ) );
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
+                                              ex ); //$NON-NLS-1$
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( springFileWriter, "UTF-8", null );
@@ -93,14 +94,15 @@ public class MyEclipseSpringBeansWriter
         // do this with full path so it works as we descend through various modules (projects)
         File basedir = config.getEclipseProjectDirectory();
 
-        for (Object o : getConfigurationFilesList(new File(basedir, (String) springConfig.get("basedir")),
-                (String) springConfig.get("file-pattern"))) {
+        for ( Object o : getConfigurationFilesList( new File( basedir, (String) springConfig.get( "basedir" ) ),
+                                                    (String) springConfig.get( "file-pattern" ) ) )
+        {
             String onConfigFileName = (String) o;
-            File onConfigFile = new File(onConfigFileName);
-            String relativeFileName = IdeUtils.toRelativeAndFixSeparator(basedir, onConfigFile, false);
+            File onConfigFile = new File( onConfigFileName );
+            String relativeFileName = IdeUtils.toRelativeAndFixSeparator( basedir, onConfigFile, false );
 
-            writer.startElement(MYECLIPSE_SPRING_CONFIG);
-            writer.writeText(relativeFileName);
+            writer.startElement( MYECLIPSE_SPRING_CONFIG );
+            writer.writeText( relativeFileName );
             writer.endElement();
         }
         writer.endElement();
@@ -122,7 +124,7 @@ public class MyEclipseSpringBeansWriter
     /**
      * Retrieve the list of Spring configuration files recursively from the <code>basedir</code> directory, considering
      * only filenames matching the <code>pattern</code> given
-     * 
+     *
      * @param basedir the path to the base directory to search in
      * @param pattern file include pattern
      * @return the list of filenames matching the given pattern
@@ -146,8 +148,9 @@ public class MyEclipseSpringBeansWriter
 
                 if ( subdirs != null )
                 {
-                    for (File subdir : subdirs) {
-                        configFiles.addAll(getConfigurationFilesList(subdir, pattern));
+                    for ( File subdir : subdirs )
+                    {
+                        configFiles.addAll( getConfigurationFilesList( subdir, pattern ) );
                     }
                 }
 
@@ -157,8 +160,8 @@ public class MyEclipseSpringBeansWriter
             {
                 // This isn't fatal because sometimes we run this in a nested set of
                 // projects where some of the projects may not have spring configuration
-                log.warn( Messages.getString( "MyEclipseSpringBeansWriter.baseDirDoesNotExist",
-                                              new Object[] { basedir } ) );
+                log.warn(
+                    Messages.getString( "MyEclipseSpringBeansWriter.baseDirDoesNotExist", new Object[]{ basedir } ) );
             }
         }
         catch ( IOException ioe )

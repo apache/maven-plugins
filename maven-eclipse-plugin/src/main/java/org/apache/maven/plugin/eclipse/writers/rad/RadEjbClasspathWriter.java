@@ -47,7 +47,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 /**
  * Adapts the .classpath file for RAD6 for now write hardcoded: target/websphere/classes future releases could make this
  * varriable.
- * 
+ *
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven </a>
  */
 public class RadEjbClasspathWriter
@@ -81,12 +81,12 @@ public class RadEjbClasspathWriter
 
     /**
      * write the .classpath file to the project root directory.
-     * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
-     * @param sourceDirs all eclipse source directorys
-     * @param localRepository the local reposetory
+     *
+     * @param sourceDirs           all eclipse source directorys
+     * @param localRepository      the local reposetory
      * @param buildOutputDirectory build output directory (target)
      * @throws MojoExecutionException when writing the config files was not possible
+     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      */
     public void write()
         throws MojoExecutionException
@@ -103,9 +103,11 @@ public class RadEjbClasspathWriter
             }
             Xpp3Dom classpath = readXMLFile( classpathFile );
             Xpp3Dom[] children = classpath.getChildren();
-            for (Xpp3Dom aChildren : children) {
-                if (LIB.equals(aChildren.getAttribute(KIND))
-                        && TARGET_WEBSPHERE_CLASSES.equals(aChildren.getAttribute("path"))) {
+            for ( Xpp3Dom aChildren : children )
+            {
+                if ( LIB.equals( aChildren.getAttribute( KIND ) ) && TARGET_WEBSPHERE_CLASSES.equals(
+                    aChildren.getAttribute( "path" ) ) )
+                {
                     return; // nothing to do!
                 }
             }
@@ -139,7 +141,8 @@ public class RadEjbClasspathWriter
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
+                                                  ex ); //$NON-NLS-1$
             }
             XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
             Xpp3DomWriter.write( writer, classpath );
@@ -149,7 +152,7 @@ public class RadEjbClasspathWriter
 
     /**
      * determinate of witch type this classpath entry is. this is used for sorting them.
-     * 
+     *
      * @param classpathentry the classpath entry to sort
      * @return an integer identifieing the type
      * @see RadEjbClasspathWriter#orderClasspath(Xpp3Dom)
@@ -202,7 +205,7 @@ public class RadEjbClasspathWriter
      * Order of classpath this is nessesary for the ejb's the generated classes are elsewise not found. 1 - kind=src
      * ohne starting '/' oder '\' 2 - kind=lib kein ':' und kein start mit '/' oder '\' 3 - kind=src mit ohne starting
      * '/' oder '\' 4 - kind=var 5 - kind=lib ein ':' oder start mit '/' oder '\' 6 - rest 7 - kind=output
-     * 
+     *
      * @param classpath the classpath to sort
      * @return dom-tree representing ordered classpath
      */
@@ -217,15 +220,16 @@ public class RadEjbClasspathWriter
             }
         } );
         Xpp3Dom resultClasspath = new Xpp3Dom( CLASSPATH );
-        for (Xpp3Dom aChildren : children) {
-            resultClasspath.addChild(aChildren);
+        for ( Xpp3Dom aChildren : children )
+        {
+            resultClasspath.addChild( aChildren );
         }
         return resultClasspath;
     }
 
     /**
      * read an xml file (application.xml or .modulemaps).
-     * 
+     *
      * @param xmlFile an xmlfile
      * @return dom-tree representing the file contents
      */
@@ -251,7 +255,7 @@ public class RadEjbClasspathWriter
 
     /**
      * Losche alle pfade die nach was6 zeigen diese sind erkennbar an den parrent runtimes/base_v6/lib.
-     * 
+     *
      * @param classpath classpath to remove was6 libraries
      */
     private void removeDupicateWAS6Libs( Xpp3Dom classpath )

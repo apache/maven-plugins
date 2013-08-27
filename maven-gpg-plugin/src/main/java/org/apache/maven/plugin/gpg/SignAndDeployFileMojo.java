@@ -58,7 +58,7 @@ import java.util.Map;
 
 /**
  * Signs artifacts and installs the artifact in the remote repository.
- * 
+ *
  * @author Daniel Kulp
  * @since 1.0-beta-4
  */
@@ -389,12 +389,14 @@ public class SignAndDeployFileMojo
             if ( typesLength != filesLength )
             {
                 throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
-                        "'types' (respectively " + filesLength + " and " + typesLength + " entries )" );
+                                                      "'types' (respectively " + filesLength + " and " + typesLength
+                                                      + " entries )" );
             }
             if ( classifiersLength != filesLength )
             {
                 throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
-                        "'classifiers' (respectively " + filesLength + " and " + classifiersLength + " entries )" );
+                                                      "'classifiers' (respectively " + filesLength + " and "
+                                                      + classifiersLength + " entries )" );
             }
             int fi = 0;
             int ti = 0;
@@ -423,16 +425,16 @@ public class SignAndDeployFileMojo
                     file = new File( project.getBasedir(), files.substring( fi, nfi ) );
                 }
                 if ( file.isFile() )
-                {   
+                {
                     if ( StringUtils.isWhitespace( classifiers.substring( ci, nci ) ) )
                     {
                         projectHelper.attachArtifact( project, types.substring( ti, nti ).trim(), file );
                     }
                     else
                     {
-                        projectHelper.attachArtifact( project, types.substring( ti, nti).trim(),
-                                classifiers.substring( ci, nci ).trim(), file);
-                    } 
+                        projectHelper.attachArtifact( project, types.substring( ti, nti ).trim(),
+                                                      classifiers.substring( ci, nci ).trim(), file );
+                    }
                 }
                 else
                 {
@@ -442,31 +444,35 @@ public class SignAndDeployFileMojo
                 ti = nti + 1;
                 ci = nci + 1;
             }
-        }   
-        else    
-        {               
+        }
+        else
+        {
             if ( types != null )
             {
                 throw new MojoExecutionException( "You must specify 'files' if you specify 'types'" );
-            }   
+            }
             if ( classifiers != null )
-            {   
+            {
                 throw new MojoExecutionException( "You must specify 'files' if you specify 'classifiers'" );
-            }       
-        }       
+            }
+        }
 
         List attachedArtifacts = project.getAttachedArtifacts();
 
-        for (Object attachedArtifact : attachedArtifacts) {
+        for ( Object attachedArtifact : attachedArtifacts )
+        {
             Artifact attached = (Artifact) attachedArtifact;
 
-            fileSig = signer.generateSignatureForArtifact(attached.getFile());
-            attached = new AttachedSignedArtifact(attached, new AscArtifactMetadata(attached, fileSig, false));
-            try {
-                deploy(attached.getFile(), attached, deploymentRepository, localRepository);
-            } catch (ArtifactDeploymentException e) {
+            fileSig = signer.generateSignatureForArtifact( attached.getFile() );
+            attached = new AttachedSignedArtifact( attached, new AscArtifactMetadata( attached, fileSig, false ) );
+            try
+            {
+                deploy( attached.getFile(), attached, deploymentRepository, localRepository );
+            }
+            catch ( ArtifactDeploymentException e )
+            {
                 throw new MojoExecutionException(
-                        "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e);
+                    "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e );
             }
         }
 
@@ -475,7 +481,7 @@ public class SignAndDeployFileMojo
     /**
      * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
      * (yet).
-     * 
+     *
      * @param artifact The artifact whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact when installed, never <code>null</code>.
      */
@@ -522,7 +528,7 @@ public class SignAndDeployFileMojo
 
     /**
      * Extract the model from the specified POM file.
-     * 
+     *
      * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
      * @return The model from the POM file, never <code>null</code>.
      * @throws MojoExecutionException If the file doesn't exist of cannot be read.
@@ -556,7 +562,7 @@ public class SignAndDeployFileMojo
 
     /**
      * Generates a minimal POM from the user-supplied artifact information.
-     * 
+     *
      * @return The path to the generated POM file, never <code>null</code>.
      * @throws MojoExecutionException If the generation failed.
      */
@@ -588,7 +594,7 @@ public class SignAndDeployFileMojo
 
     /**
      * Validates the user-supplied artifact information.
-     * 
+     *
      * @throws MojoFailureException If any artifact coordinate is invalid.
      */
     private void validateArtifactInformation()
@@ -600,8 +606,8 @@ public class SignAndDeployFileMojo
 
         if ( result.getMessageCount() > 0 )
         {
-            throw new MojoFailureException( "The artifact information is incomplete or not valid:\n"
-                + result.render( "  " ) );
+            throw new MojoFailureException(
+                "The artifact information is incomplete or not valid:\n" + result.render( "  " ) );
         }
     }
 
@@ -629,10 +635,10 @@ public class SignAndDeployFileMojo
     /**
      * Deploy an artifact from a particular file.
      *
-     * @param source the file to deploy
-     * @param artifact the artifact definition
+     * @param source               the file to deploy
+     * @param artifact             the artifact definition
      * @param deploymentRepository the repository to deploy to
-     * @param localRepository the local repository to install into
+     * @param localRepository      the local repository to install into
      * @throws ArtifactDeploymentException if an error occurred deploying the artifact
      */
     protected void deploy( File source, Artifact artifact, ArtifactRepository deploymentRepository,
@@ -645,23 +651,25 @@ public class SignAndDeployFileMojo
         {
             try
             {
-                if (count > 0)
+                if ( count > 0 )
                 {
                     getLog().info(
                         "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
                 }
                 deployer.deploy( source, artifact, deploymentRepository, localRepository );
-                for (Object o : artifact.getMetadataList()) {
+                for ( Object o : artifact.getMetadataList() )
+                {
                     ArtifactMetadata metadata = (ArtifactMetadata) o;
-                    getLog().info("Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename());
+                    getLog().info( "Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename() );
                 }
                 exception = null;
                 break;
             }
             catch ( ArtifactDeploymentException e )
             {
-                if (count + 1 < retryFailedDeploymentCount) {
-                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage());
+                if ( count + 1 < retryFailedDeploymentCount )
+                {
+                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage() );
                     getLog().debug( e );
                 }
                 if ( exception == null )

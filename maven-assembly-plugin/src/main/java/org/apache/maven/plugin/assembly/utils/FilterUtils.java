@@ -80,9 +80,11 @@ public final class FilterUtils
             }
         }
 
-        for (final PatternIncludesArtifactFilter f : allFilters) {
-            if (f != null) {
-                f.reportMissedCriteria(logger);
+        for ( final PatternIncludesArtifactFilter f : allFilters )
+        {
+            if ( f != null )
+            {
+                f.reportMissedCriteria( logger );
             }
         }
     }
@@ -149,13 +151,16 @@ public final class FilterUtils
 
         reportFilteringStatistics( allFilters, logger );
 
-        for (final ArtifactFilter f : allFilters) {
-            if (f instanceof StatisticsReportingArtifactFilter) {
+        for ( final ArtifactFilter f : allFilters )
+        {
+            if ( f instanceof StatisticsReportingArtifactFilter )
+            {
                 final StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
 
-                if (strictFiltering && sFilter.hasMissedCriteria()) {
+                if ( strictFiltering && sFilter.hasMissedCriteria() )
+                {
                     throw new InvalidAssemblerConfigurationException(
-                            "One or more filters had unmatched criteria. Check debug log for more information.");
+                        "One or more filters had unmatched criteria. Check debug log for more information." );
                 }
             }
         }
@@ -163,16 +168,19 @@ public final class FilterUtils
 
     public static void reportFilteringStatistics( final Collection<ArtifactFilter> filters, final Logger logger )
     {
-        for (final ArtifactFilter f : filters) {
-            if (f instanceof StatisticsReportingArtifactFilter) {
+        for ( final ArtifactFilter f : filters )
+        {
+            if ( f instanceof StatisticsReportingArtifactFilter )
+            {
                 final StatisticsReportingArtifactFilter sFilter = (StatisticsReportingArtifactFilter) f;
 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Statistics for " + sFilter + "\n");
+                if ( logger.isDebugEnabled() )
+                {
+                    logger.debug( "Statistics for " + sFilter + "\n" );
                 }
 
-                sFilter.reportMissedCriteria(logger);
-                sFilter.reportFilteredArtifacts(logger);
+                sFilter.reportMissedCriteria( logger );
+                sFilter.reportFilteredArtifacts( logger );
             }
         }
     }

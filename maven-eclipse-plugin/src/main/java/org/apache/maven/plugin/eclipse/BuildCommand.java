@@ -28,19 +28,25 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Represents a buildCommand section in the <code>.project</code> file.
- * 
+ *
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
  * @author Jochen Kuhnle
  */
 public class BuildCommand
 {
-    /** Builder name */
+    /**
+     * Builder name
+     */
     private String name;
 
-    /** Trigger names (comma-delimited list) */
+    /**
+     * Trigger names (comma-delimited list)
+     */
     private String triggers;
 
-    /** Argument map */
+    /**
+     * Argument map
+     */
     private Map arguments;
 
     /**
@@ -52,7 +58,7 @@ public class BuildCommand
 
     /**
      * Creates a new build command
-     * 
+     *
      * @param name Command name
      */
     public BuildCommand( String name )
@@ -75,9 +81,9 @@ public class BuildCommand
 
     /**
      * Creates a new build command
-     * 
-     * @param name Command name
-     * @param triggers Command triggers
+     *
+     * @param name      Command name
+     * @param triggers  Command triggers
      * @param arguments Command arguments
      */
     public BuildCommand( String name, String triggers, Map arguments )
@@ -103,9 +109,9 @@ public class BuildCommand
 
     /**
      * Creates a new build command from a DOM subtree
-     * <p>
+     * <p/>
      * The subtree must represent a &lt;buildCommand&gt; section from an Eclipse .project file
-     * 
+     *
      * @param node DOM node
      */
     public BuildCommand( Xpp3Dom node )
@@ -178,15 +184,16 @@ public class BuildCommand
 
             writer.startElement( "dictionary" );
 
-            for (Object o : arguments.keySet()) {
+            for ( Object o : arguments.keySet() )
+            {
                 String key = (String) o;
 
-                writer.startElement("key");
-                writer.writeText(key);
+                writer.startElement( "key" );
+                writer.writeText( key );
                 writer.endElement();
 
-                writer.startElement("value");
-                writer.writeText((String) arguments.get(key));
+                writer.startElement( "value" );
+                writer.writeText( (String) arguments.get( key ) );
                 writer.endElement();
             }
 
@@ -204,10 +211,10 @@ public class BuildCommand
         {
             BuildCommand b = (BuildCommand) obj;
 
-            return name.equals( b.name )
-                && ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) )
-                && ( arguments == null || arguments.isEmpty() ? b.arguments == null || b.arguments.isEmpty()
-                                : arguments.equals( b.arguments ) );
+            return name.equals( b.name ) && ( triggers == null ? b.triggers == null : triggers.equals( b.triggers ) )
+                && ( arguments == null || arguments.isEmpty()
+                ? b.arguments == null || b.arguments.isEmpty()
+                : arguments.equals( b.arguments ) );
         }
         else
         {
@@ -217,7 +224,8 @@ public class BuildCommand
 
     public int hashCode()
     {
-        return name.hashCode() + ( triggers == null ? 0 : 13 * triggers.hashCode() )
-            + ( arguments == null ? 0 : 17 * arguments.hashCode() );
+        return name.hashCode() + ( triggers == null ? 0 : 13 * triggers.hashCode() ) + ( arguments == null
+            ? 0
+            : 17 * arguments.hashCode() );
     }
 }

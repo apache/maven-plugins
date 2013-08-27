@@ -94,7 +94,7 @@ public class DescribeMojo
      * For deprecated values
      */
     private static final String NO_REASON = "No reason given";
-    
+
     private static final Pattern EXPRESSION = Pattern.compile( "^\\$\\{([^}]+)\\}$" );
 
     // ----------------------------------------------------------------------
@@ -147,7 +147,8 @@ public class DescribeMojo
      * The local repository ArtifactRepository instance. This is used
      * for plugin manager API calls.
      */
-    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
+    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${localRepository}", required = true,
+                                                     readonly = true )
     private ArtifactRepository localRepository;
 
     /**
@@ -156,7 +157,7 @@ public class DescribeMojo
      * @since 2.1
      */
     @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${project.remoteArtifactRepositories}",
-                    required = true, readonly = true )
+                                                     required = true, readonly = true )
     private List<ArtifactRepository> remoteRepositories;
 
     /**
@@ -398,8 +399,13 @@ public class DescribeMojo
         else
         {
 
-            throw new MojoFailureException(("You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
-                    + " OR a 'cmd' parameter. For instance:\n") + "  # mvn help:describe -Dcmd=install\n" + "or\n" + "  # mvn help:describe -Dcmd=help:describe\n" + "or\n" + "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" + "or\n" + "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" + "Try 'mvn help:help -Ddetail=true' for more information.");
+            throw new MojoFailureException(
+                ( "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
+                    + " OR a 'cmd' parameter. For instance:\n" ) + "  # mvn help:describe -Dcmd=install\n" + "or\n"
+                    + "  # mvn help:describe -Dcmd=help:describe\n" + "or\n"
+                    + "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" + "or\n"
+                    + "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n"
+                    + "Try 'mvn help:help -Ddetail=true' for more information." );
         }
 
         if ( descriptor == null && forLookup != null )
@@ -463,7 +469,7 @@ public class DescribeMojo
         if ( descriptor == null )
         {
             throw new MojoFailureException( "Plugin could not be found. If you believe it is correct,"
-                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
+                                                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
         }
 
         return descriptor;
@@ -560,8 +566,7 @@ public class DescribeMojo
         append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
         buffer.append( "\n" );
 
-        @SuppressWarnings( "unchecked" )
-        List<MojoDescriptor> mojos = pd.getMojos();
+        @SuppressWarnings( "unchecked" ) List<MojoDescriptor> mojos = pd.getMojos();
 
         if ( mojos == null )
         {
@@ -707,8 +712,7 @@ public class DescribeMojo
     private void describeMojoParameters( MojoDescriptor md, StringBuilder buffer )
         throws MojoFailureException, MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" )
-        List<Parameter> params = md.getParameters();
+        @SuppressWarnings( "unchecked" ) List<Parameter> params = md.getParameters();
 
         if ( params == null || params.isEmpty() )
         {
@@ -825,12 +829,12 @@ public class DescribeMojo
 
                 LifecycleMapping lifecycleMapping =
                     (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, project.getPackaging() );
-                @SuppressWarnings( "unchecked" )
-                List<String> phases = lifecycle.getPhases();
+                @SuppressWarnings( "unchecked" ) List<String> phases = lifecycle.getPhases();
 
                 if ( lifecycle.getDefaultPhases() == null )
                 {
-                    descriptionBuffer.append("'").append(cmd).append("' is a phase corresponding to this plugin:\n");
+                    descriptionBuffer.append( "'" ).append( cmd ).append(
+                        "' is a phase corresponding to this plugin:\n" );
                     for ( String key : phases )
                     {
                         if ( !key.equals( cmd ) )
@@ -846,11 +850,12 @@ public class DescribeMojo
                     }
 
                     descriptionBuffer.append( "\n" );
-                    descriptionBuffer.append("It is a part of the lifecycle for the POM packaging '").append(project.getPackaging()).append("'. This lifecycle includes the following phases:");
+                    descriptionBuffer.append( "It is a part of the lifecycle for the POM packaging '" ).append(
+                        project.getPackaging() ).append( "'. This lifecycle includes the following phases:" );
                     descriptionBuffer.append( "\n" );
                     for ( String key : phases )
                     {
-                        descriptionBuffer.append("* ").append(key).append(": ");
+                        descriptionBuffer.append( "* " ).append( key ).append( ": " );
                         String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
                         if ( StringUtils.isNotEmpty( value ) )
                         {
@@ -876,12 +881,13 @@ public class DescribeMojo
                 }
                 else
                 {
-                    descriptionBuffer.append("'").append(cmd).append("' is a lifecycle with the following phases: ");
+                    descriptionBuffer.append( "'" ).append( cmd ).append(
+                        "' is a lifecycle with the following phases: " );
                     descriptionBuffer.append( "\n" );
 
                     for ( String key : phases )
                     {
-                        descriptionBuffer.append("* ").append(key).append(": ");
+                        descriptionBuffer.append( "* " ).append( key ).append( ": " );
                         if ( lifecycle.getDefaultPhases().get( key ) != null )
                         {
                             descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( "\n" );
@@ -908,7 +914,7 @@ public class DescribeMojo
         // goals
         MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
 
-        descriptionBuffer.append("'").append(cmd).append("' is a plugin goal (aka mojo)").append(".\n");
+        descriptionBuffer.append( "'" ).append( cmd ).append( "' is a plugin goal (aka mojo)" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
         goal = mojoDescriptor.getGoal();
 
@@ -937,9 +943,7 @@ public class DescribeMojo
                                                          new Class[]{ String.class, Integer.TYPE, Integer.TYPE,
                                                              Integer.TYPE } );
             m.setAccessible( true );
-            List<String> output = (List<String>) m.invoke( HelpMojo.class,
-                    text, indent, indentSize,
-                    lineLength);
+            List<String> output = (List<String>) m.invoke( HelpMojo.class, text, indent, indentSize, lineLength );
 
             if ( output == null )
             {

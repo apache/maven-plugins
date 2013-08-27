@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.maven</groupId>
     <version>2.0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-    <artifactId>maven-artifact-test</artifactId>
+  <artifactId>maven-artifact-test</artifactId>
   <name>Maven Artifact Test Helper Library</name>
   <version>2.0.3</version>
   <dependencies>

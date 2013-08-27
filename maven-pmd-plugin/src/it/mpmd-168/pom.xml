@@ -19,7 +19,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugin.pmd.its</groupId>
@@ -52,12 +53,13 @@ under the License.
           <verbose>true</verbose>
           <minimumTokens>25</minimumTokens>
           <sourceEncoding>UTF-8</sourceEncoding>
-          <failOnViolation>false</failOnViolation> <!-- force execution of both goals, will be checked with verify-script -->
+          <failOnViolation>false</failOnViolation>
+          <!-- force execution of both goals, will be checked with verify-script -->
         </configuration>
       </plugin>
     </plugins>
   </build>
-  
+
   <reporting>
     <plugins>
       <plugin>
@@ -65,7 +67,7 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-<!--           <skipEmptyReport>true</skipEmptyReport> it's by default true -->
+          <!--           <skipEmptyReport>true</skipEmptyReport> it's by default true -->
         </configuration>
       </plugin>
       <plugin>

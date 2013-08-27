@@ -84,8 +84,8 @@ public class TestBuildClasspathMojo
         assertNotNull( file );
         assertTrue( file.length() > 0 );
 
-        assertTrue(file.contains(File.pathSeparator));
-        assertTrue(file.contains(File.separator));
+        assertTrue( file.contains( File.pathSeparator ) );
+        assertTrue( file.contains( File.separator ) );
 
         String fileSep = "#####";
         String pathSep = "%%%%%";
@@ -98,10 +98,10 @@ public class TestBuildClasspathMojo
         assertNotNull( file );
         assertTrue( file.length() > 0 );
 
-        assertFalse(file.contains(File.pathSeparator));
-        assertFalse(file.contains(File.separator));
-        assertTrue(file.contains(fileSep));
-        assertTrue(file.contains(pathSep));
+        assertFalse( file.contains( File.pathSeparator ) );
+        assertFalse( file.contains( File.separator ) );
+        assertTrue( file.contains( fileSep ) );
+        assertTrue( file.contains( pathSep ) );
 
         String propertyValue = project.getProperties().getProperty( "outputProperty" );
         assertNull( propertyValue );
@@ -112,7 +112,8 @@ public class TestBuildClasspathMojo
 
     }
 
-    public void testPath() throws Exception
+    public void testPath()
+        throws Exception
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/build-classpath-test/plugin-config.xml" );
         BuildClasspathMojo mojo = (BuildClasspathMojo) lookupMojo( "build-classpath", testPom );
@@ -124,7 +125,6 @@ public class TestBuildClasspathMojo
         mojo.setLocal( local );
 
         Artifact artifact = stubFactory.getReleaseArtifact();
-
 
         StringBuilder sb = new StringBuilder();
         mojo.setPrefix( null );
@@ -146,29 +146,31 @@ public class TestBuildClasspathMojo
         sb.setLength( 0 );
         mojo.setPrependGroupId( true );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("If prefix is null, prependGroupId has no impact ", "%M2_REPO%"+File.separator 
-                     + DependencyUtil.getFormattedFileName( artifact, false, false ), sb.toString());
-        
+        assertEquals( "If prefix is null, prependGroupId has no impact ",
+                      "%M2_REPO%" + File.separator + DependencyUtil.getFormattedFileName( artifact, false, false ),
+                      sb.toString() );
+
         mojo.setLocalRepoProperty( "" );
         mojo.setPrefix( "prefix" );
         sb.setLength( 0 );
         mojo.setPrependGroupId( true );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("prefix"+File.separator+DependencyUtil.getFormattedFileName( artifact, false, true ), 
-                     sb.toString());
+        assertEquals( "prefix" + File.separator + DependencyUtil.getFormattedFileName( artifact, false, true ),
+                      sb.toString() );
         mojo.setPrependGroupId( false );
-        
+
         mojo.setLocalRepoProperty( "" );
         mojo.setPrefix( "prefix" );
         sb.setLength( 0 );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals("prefix"+File.separator+artifact.getFile().getName(),sb.toString());
-      
+        assertEquals( "prefix" + File.separator + artifact.getFile().getName(), sb.toString() );
+
         mojo.setPrefix( "prefix" );
         mojo.setStripVersion( true );
         sb.setLength( 0 );
         mojo.appendArtifactPath( artifact, sb );
-        assertEquals( "prefix" + File.separator + DependencyUtil.getFormattedFileName( artifact, true ), sb.toString() );
-        
+        assertEquals( "prefix" + File.separator + DependencyUtil.getFormattedFileName( artifact, true ),
+                      sb.toString() );
+
     }
 }

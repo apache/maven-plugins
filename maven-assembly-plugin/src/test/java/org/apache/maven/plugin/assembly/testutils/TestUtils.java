@@ -57,7 +57,8 @@ public final class TestUtils
     /**
      * Read file content using platform encoding and converting line endings to \\n.
      */
-    public static String readFile( File file ) throws IOException
+    public static String readFile( File file )
+        throws IOException
     {
         StringBuilder buffer = new StringBuilder();
 
@@ -65,7 +66,7 @@ public final class TestUtils
 
         String line;
 
-        while( ( line = reader.readLine() ) != null )
+        while ( ( line = reader.readLine() ) != null )
         {
             if ( buffer.length() > 0 )
             {
