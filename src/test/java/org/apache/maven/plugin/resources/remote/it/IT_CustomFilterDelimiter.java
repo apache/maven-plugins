@@ -31,24 +31,24 @@ import java.net.URISyntaxException;
 public class IT_CustomFilterDelimiter
     extends AbstractIT
 {
-
+    
     @SuppressWarnings( "unchecked" )
     public void test()
         throws IOException, URISyntaxException, VerificationException
     {
         File dir = TestUtils.getTestDir( "custom-filter-delim" );
         Verifier verifier = new Verifier( dir.getAbsolutePath() );
-
+        
         verifier.getCliOptions().add( "-X" );
-
+        
         verifier.executeGoal( "validate" );
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
-
+        
         File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
         String content = FileUtils.fileRead( output );
-
-        assertTrue( content.contains( "Override: custom-filter-delim" ) );
+        
+        assertTrue(content.contains("Override: custom-filter-delim"));
     }
 
 }
