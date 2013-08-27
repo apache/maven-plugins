@@ -3,8 +3,8 @@
 
   <import file="maven-build.xml"/>
 
-  <target name="junit-missing" 
-          depends="test-junit-status" 
+  <target name="junit-missing"
+          depends="test-junit-status"
           if="junit.missing">
     <echo level="error">Skipping tests should also work if JUnit is not present at all.</echo>
     <fail>JUnit not found on class path, cannot run unit tests.</fail>

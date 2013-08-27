@@ -24,8 +24,8 @@
         <version>1.1</version>
         <configuration>
           <tasks>
-            <property name="lib.dir" location="${lib.dir}" />
-            <ant dir="${basedir}" antfile="${basedir}/build.xml" target="compile" />
+            <property name="lib.dir" location="${lib.dir}"/>
+            <ant dir="${basedir}" antfile="${basedir}/build.xml" target="compile"/>
           </tasks>
         </configuration>
       </plugin>

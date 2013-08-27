@@ -19,9 +19,6 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -29,12 +26,16 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Wrapper object to resolve artifact.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
+@SuppressWarnings( "JavaDoc" )
 public class ArtifactResolverWrapper
 {
     /**
@@ -64,7 +65,7 @@ public class ArtifactResolverWrapper
      * @param remoteRepositories
      */
     private ArtifactResolverWrapper( ArtifactResolver resolver, ArtifactFactory factory,
-                                    ArtifactRepository localRepository, List remoteRepositories )
+                                     ArtifactRepository localRepository, List remoteRepositories )
     {
         this.resolver = resolver;
         this.factory = factory;
@@ -80,7 +81,7 @@ public class ArtifactResolverWrapper
      * @return an instance of ArtifactResolverWrapper
      */
     public static ArtifactResolverWrapper getInstance( ArtifactResolver resolver, ArtifactFactory factory,
-                                                      ArtifactRepository localRepository, List remoteRepositories )
+                                                       ArtifactRepository localRepository, List remoteRepositories )
     {
         return new ArtifactResolverWrapper( resolver, factory, localRepository, remoteRepositories );
     }
@@ -159,7 +160,7 @@ public class ArtifactResolverWrapper
      * Gets the path to the specified artifact relative to the local repository's base directory. Note that this method
      * does not actually resolve the artifact, it merely calculates the path at which the artifact is or would be stored
      * in the local repository.
-     * 
+     *
      * @param artifact The artifact whose path should be determined, must not be <code>null</code>.
      * @return The path to the artifact, never <code>null</code>.
      */

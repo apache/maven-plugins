@@ -19,17 +19,17 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.Properties;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ExitException;
 import org.apache.tools.ant.Main;
 import org.apache.tools.ant.util.optional.NoExitSecurityManager;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Properties;
 
 /**
  * Wrap <code>Ant</code> call.
@@ -44,7 +44,7 @@ public class AntWrapper
      *
      * @param antBuild an <code>Ant build</code> file
      * @throws IllegalArgumentException if any
-     * @throws BuildException if any
+     * @throws BuildException           if any
      */
     public static void invoke( File antBuild )
         throws BuildException, IllegalArgumentException
@@ -90,14 +90,14 @@ public class AntWrapper
 
         try
         {
-            Main.main( new String[] { "-f", antBuild.getAbsolutePath() } );
+            Main.main( new String[]{ "-f", antBuild.getAbsolutePath() } );
         }
         catch ( ExitException e )
         {
             if ( StringUtils.isNotEmpty( errOS.toString() ) )
             {
-                throw new BuildException( "Error in the Ant build file. \n= Ant output =\n" + outOS.toString() + "\n"
-                    + errOS.toString() );
+                throw new BuildException(
+                    "Error in the Ant build file. \n= Ant output =\n" + outOS.toString() + "\n" + errOS.toString() );
             }
         }
         finally

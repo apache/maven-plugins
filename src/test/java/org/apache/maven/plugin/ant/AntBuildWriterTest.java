@@ -19,13 +19,13 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
-import java.io.File;
-
 import junit.framework.TestCase;
+
+import java.io.File;
 
 /**
  * Tests <code>AntBuildWriter</code>.
- * 
+ *
  * @author Benjamin Bentmann
  * @version $Id$
  */
@@ -52,8 +52,8 @@ public class AntBuildWriterTest
         // not so strict URLs
         assertEquals( "", AntBuildWriter.getProjectRepoDirectory( "file://" + basedir, basedir ) );
         assertEquals( "dir", AntBuildWriter.getProjectRepoDirectory( "file://" + basedir + "/dir", basedir ) );
-        assertEquals( "dir/subdir", AntBuildWriter.getProjectRepoDirectory( "file://" + basedir + "/dir/subdir",
-                                                                            basedir ) );
+        assertEquals( "dir/subdir",
+                      AntBuildWriter.getProjectRepoDirectory( "file://" + basedir + "/dir/subdir", basedir ) );
 
         // URLs with encoded characters
         assertEquals( "some dir",

@@ -34,7 +34,7 @@ import java.io.File;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo( name = "clean" )
+@Mojo(name = "clean")
 public class AntCleanMojo
     extends AbstractMojo
 {
@@ -57,7 +57,7 @@ public class AntCleanMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "deleteCustomFiles", defaultValue = "false" )
+    @Parameter(property = "deleteCustomFiles", defaultValue = "false")
     private boolean deleteCustomFiles;
 
     /**

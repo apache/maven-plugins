@@ -19,12 +19,12 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Class to test Ant plugin
@@ -121,11 +121,12 @@ public class AntMojoTest
         {
             assertTrue( new File( antBasedir, "target" ).exists() );
             assertTrue( new File( antBasedir, "target/classes" ).exists() );
-            assertTrue( new File( antBasedir, "target/" + currentProject.getBuild().getFinalName() + ".jar" ).exists() );
+            assertTrue(
+                new File( antBasedir, "target/" + currentProject.getBuild().getFinalName() + ".jar" ).exists() );
 
             Properties properties = new Properties();
-            properties
-                .load( new FileInputStream( new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME ) ) );
+            properties.load(
+                new FileInputStream( new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME ) ) );
             String repo = properties.getProperty( "maven.repo.local" );
             assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
         }
