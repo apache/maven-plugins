@@ -208,13 +208,13 @@ public class ChangesMojo
 
     /**
      * The type of the feed to generate.
-     *
+     * <p/>
      * <p>
      * Supported values are:
      * <code>"rss_0.9", "rss_0.91N" (RSS 0.91 Netscape), "rss_0.91U" (RSS 0.91 Userland),
      * "rss_0.92", "rss_0.93", "rss_0.94", "rss_1.0", "rss_2.0", "atom_0.3", "atom_1.0"</code>.
      * </p>
-     *
+     * <p/>
      * <p>If not specified, no feed is generated.</p>
      *
      * @since 2.9
@@ -245,13 +245,15 @@ public class ChangesMojo
         throws MavenReportException
     {
         Date now = new Date();
-        SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat(publishDateFormat, new Locale(publishDateLocale));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
         Properties additionalProperties = new Properties();
-        additionalProperties.put("publishDate", simpleDateFormat.format(now));
+        additionalProperties.put( "publishDate", simpleDateFormat.format( now ) );
 
-        ChangesXML changesXml = getChangesFromFile( xmlPath, project, additionalProperties);
-        if ( changesXml == null ) return;
+        ChangesXML changesXml = getChangesFromFile( xmlPath, project, additionalProperties );
+        if ( changesXml == null )
+        {
+            return;
+        }
 
         if ( aggregated )
         {
@@ -265,12 +267,15 @@ public class ChangesMojo
             final String relativePath = absolutePath.substring( basePath.length() );
 
             List releaseList = changesXml.getReleaseList();
-            for (Object o : project.getCollectedProjects()) {
+            for ( Object o : project.getCollectedProjects() )
+            {
                 final MavenProject childProject = (MavenProject) o;
-                final File changesFile = new File(childProject.getBasedir(), relativePath);
-                final ChangesXML childXml = getChangesFromFile(changesFile, childProject, additionalProperties);
-                if (childXml != null) {
-                    releaseList = releaseUtils.mergeReleases(releaseList, childProject.getName(), childXml.getReleaseList());
+                final File changesFile = new File( childProject.getBasedir(), relativePath );
+                final ChangesXML childXml = getChangesFromFile( changesFile, childProject, additionalProperties );
+                if ( childXml != null )
+                {
+                    releaseList =
+                        releaseUtils.mergeReleases( releaseList, childProject.getName(), childXml.getReleaseList() );
                 }
             }
             changesXml.setReleaseList( releaseList );
@@ -281,7 +286,7 @@ public class ChangesMojo
         report.setAuthor( changesXml.getAuthor() );
         report.setTitle( changesXml.getTitle() );
 
-        report.setEscapeHTML ( escapeHTML );
+        report.setEscapeHTML( escapeHTML );
 
         // Create a case insensitive version of issueLinkTemplatePerSystem
         // We need something case insensitive to maintain backward compatibility
@@ -321,7 +326,7 @@ public class ChangesMojo
 
         report.setSystem( system );
 
-        report.setTeamlist ( teamlist );
+        report.setTeamlist( teamlist );
 
         report.setUrl( url );
 
@@ -370,8 +375,8 @@ public class ChangesMojo
      * Parses specified changes.xml file. It also makes filtering if needed. If specified file doesn't exist
      * it will log warning and return <code>null</code>.
      *
-     * @param changesXml changes xml file to parse
-     * @param project maven project to parse changes for
+     * @param changesXml           changes xml file to parse
+     * @param project              maven project to parse changes for
      * @param additionalProperties additional properties used for filtering
      * @return parsed <code>ChangesXML</code> instance or null if file doesn't exist
      * @throws MavenReportException if any errors occurs while parsing
@@ -397,11 +402,12 @@ public class ChangesMojo
                 // so we get encoding from the file itself
                 xmlStreamReader = new XmlStreamReader( changesXml );
                 String encoding = xmlStreamReader.getEncoding();
-                File resultFile = new File( filteredOutputDirectory, project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
+                File resultFile = new File( filteredOutputDirectory,
+                                            project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
 
                 final MavenFileFilterRequest mavenFileFilterRequest =
-                        new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.EMPTY_LIST, false,
-                                encoding, session, additionalProperties );
+                    new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.EMPTY_LIST, false,
+                                                encoding, session, additionalProperties );
                 mavenFileFilter.copyFile( mavenFileFilterRequest );
                 changesXml = resultFile;
             }
@@ -429,7 +435,7 @@ public class ChangesMojo
      * Add the issue link template for the given issue management system,
      * but only if it has not already been configured.
      *
-     * @param system The issue management system
+     * @param system            The issue management system
      * @param issueLinkTemplate The issue link template to use
      * @since 2.4
      */
@@ -449,19 +455,16 @@ public class ChangesMojo
         throws MavenReportException
     {
         final String pluginResourcesBase = "org/apache/maven/plugin/changes";
-        String resourceNames[] = {
-            "images/add.gif",
-            "images/fix.gif",
-            "images/icon_help_sml.gif",
-            "images/remove.gif",
-            "images/rss.png",
-            "images/update.gif" };
+        String resourceNames[] =
+            { "images/add.gif", "images/fix.gif", "images/icon_help_sml.gif", "images/remove.gif", "images/rss.png",
+                "images/update.gif" };
         try
         {
             getLog().debug( "Copying static resources." );
-            for (String resourceName : resourceNames) {
-                URL url = this.getClass().getClassLoader().getResource(pluginResourcesBase + "/" + resourceName);
-                FileUtils.copyURLToFile(url, new File(getReportOutputDirectory(), resourceName));
+            for ( String resourceName : resourceNames )
+            {
+                URL url = this.getClass().getClassLoader().getResource( pluginResourcesBase + "/" + resourceName );
+                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceName ) );
             }
         }
         catch ( IOException e )
@@ -490,9 +493,10 @@ public class ChangesMojo
             }
             else
             {
-                for (Object o : issueLinkTemplatePerSystem.entrySet()) {
+                for ( Object o : issueLinkTemplatePerSystem.entrySet() )
+                {
                     Map.Entry entry = (Map.Entry) o;
-                    getLog().debug("issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue());
+                    getLog().debug( "issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue() );
                 }
             }
         }

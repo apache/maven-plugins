@@ -29,6 +29,7 @@ package org.apache.maven.plugin.jira;
 public class UrlBuilder
 {
     private static final String AMPERSAND = "&";
+
     private static final String QUESTION_MARK = "?";
 
     private StringBuilder query = new StringBuilder();
@@ -50,7 +51,7 @@ public class UrlBuilder
             {
                 query.append( QUESTION_MARK );
             }
-            query.append(key).append("=").append(value);
+            query.append( key ).append( "=" ).append( value );
         }
         return this;
     }

@@ -36,7 +36,7 @@ import org.apache.velocity.util.StringUtils;
 
 /**
  * Resource Loader for external projects.
- * 
+ *
  * @version $Id$
  */
 public class ProjectResourceLoader
@@ -52,7 +52,7 @@ public class ProjectResourceLoader
      * so that we can properly check the modification
      * times of the files.
      */
-    private Hashtable<String,String> templatePaths = new Hashtable<String,String>();
+    private Hashtable<String, String> templatePaths = new Hashtable<String, String>();
 
     public void init( ExtendedProperties configuration )
     {
@@ -60,17 +60,19 @@ public class ProjectResourceLoader
 
         String separator = System.getProperty( "file.separator" );
 
-        String path = System.getProperty( "user.dir" ) + separator + "src" + separator + "main" + separator
-            + "resources" + separator;
+        String path =
+            System.getProperty( "user.dir" ) + separator + "src" + separator + "main" + separator + "resources"
+                + separator;
 
         rsvc.getLog().info( "path :" + path );
-        
+
         paths = new ArrayList<String>();
 
         paths.add( path );
-        
-        for (String path1 : paths) {
-            rsvc.getLog().info("ProjectResourceLoader : adding path '" + path1 + "'");
+
+        for ( String path1 : paths )
+        {
+            rsvc.getLog().info( "ProjectResourceLoader : adding path '" + path1 + "'" );
         }
         rsvc.getLog().info( "ProjectResourceLoader : initialization complete." );
     }
@@ -82,7 +84,7 @@ public class ProjectResourceLoader
      * @param templateName name of template to get
      * @return InputStream containing the template
      * @throws ResourceNotFoundException if template not found
-     *         in the file template path.
+     *                                   in the file template path.
      */
     public synchronized InputStream getResourceStream( String templateName )
         throws ResourceNotFoundException
@@ -103,8 +105,9 @@ public class ProjectResourceLoader
         String template = StringUtils.normalizePath( templateName );
         if ( template == null || template.length() == 0 )
         {
-            String msg = "Project Resource loader error : argument " + template
-                + " contains .. and may be trying to access " + "content outside of template root.  Rejected.";
+            String msg =
+                "Project Resource loader error : argument " + template + " contains .. and may be trying to access "
+                    + "content outside of template root.  Rejected.";
 
             rsvc.getLog().error( "ProjectResourceLoader : " + msg );
 
@@ -118,7 +121,7 @@ public class ProjectResourceLoader
         {
             template = template.substring( 1 );
         }
-        
+
         // MCHANGES-118 adding the basedir path
         paths.add( (String) rsvc.getApplicationAttribute( "baseDirectory" ) );
 
@@ -151,17 +154,16 @@ public class ProjectResourceLoader
 
     /**
      * Try to find a template given a normalized path.
-     * 
+     *
      * @param path a normalized path
      * @return InputStream input stream that will be parsed
-     *
      */
     private InputStream findTemplate( String path, String template )
     {
         try
         {
             File file = new File( path, template );
-            
+
             if ( file.canRead() )
             {
                 return new BufferedInputStream( new FileInputStream( file.getAbsolutePath() ) );
