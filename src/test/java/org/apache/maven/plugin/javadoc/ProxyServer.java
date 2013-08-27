@@ -58,9 +58,9 @@ class ProxyServer
     }
 
     /**
-     * @param hostName     the server name
-     * @param port         the server port
-     * @param debug        true to display System.err, false otherwise.
+     * @param hostName the server name
+     * @param port the server port
+     * @param debug true to display System.err, false otherwise.
      * @param proxyServlet the wanted auth proxy servlet
      */
     public ProxyServer( String hostName, int port, AuthAsyncProxyServlet proxyServlet )
@@ -177,7 +177,7 @@ class ProxyServer
          * Constructor for authentication servlet.
          *
          * @param authentications a map of user/password
-         * @param sleepTime       a positive time to sleep the service thread (for timeout)
+         * @param sleepTime a positive time to sleep the service thread (for timeout)
          */
         public AuthAsyncProxyServlet( Map<String, String> authentications, long sleepTime )
         {
@@ -187,9 +187,7 @@ class ProxyServer
             this.sleepTime = sleepTime;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void service( ServletRequest req, ServletResponse res )
             throws ServletException, IOException
         {
@@ -223,7 +221,7 @@ class ProxyServer
                             // nop
                         }
                     }
-                    String authPass = this.authentications.get( user );
+                    String authPass = this.authentications.get(user);
                     if ( password.equals( authPass ) )
                     {
                         // could throw exceptions...
