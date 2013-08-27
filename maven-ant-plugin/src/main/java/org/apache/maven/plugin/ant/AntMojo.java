@@ -43,7 +43,7 @@ import java.util.Properties;
  * @version $Id$
  * @todo change this to use the artifact ant tasks instead of :get
  */
-@Mojo( name = "ant", requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo(name = "ant", requiresDependencyResolution = ResolutionScope.TEST)
 public class AntMojo
     extends AbstractMojo
 {
@@ -76,13 +76,13 @@ public class AntMojo
     /**
      * The local repository where the artifacts are located.
      */
-    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
+    @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     private ArtifactRepository localRepository;
 
     /**
      * The remote repositories where artifacts are located.
      */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true )
+    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
     private List remoteRepositories;
 
     /**
@@ -94,7 +94,7 @@ public class AntMojo
     /**
      * Whether or not to overwrite the <code>build.xml</code> file.
      */
-    @Parameter( property = "overwrite", defaultValue = "false" )
+    @Parameter(property = "overwrite", defaultValue = "false")
     private boolean overwrite;
 
     /**
@@ -103,13 +103,14 @@ public class AntMojo
     @Component
     private MavenSession session;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {
-        ArtifactResolverWrapper artifactResolverWrapper = ArtifactResolverWrapper.getInstance( resolver, factory,
-                                                                                       localRepository,
-                                                                                       remoteRepositories );
+        ArtifactResolverWrapper artifactResolverWrapper =
+            ArtifactResolverWrapper.getInstance( resolver, factory, localRepository, remoteRepositories );
 
         Properties executionProperties = ( session != null ) ? session.getExecutionProperties() : null;
 
@@ -127,7 +128,6 @@ public class AntMojo
         }
 
         getLog().info(
-                       "Wrote Ant project for " + project.getArtifactId() + " to "
-                           + project.getBasedir().getAbsolutePath() );
+            "Wrote Ant project for " + project.getArtifactId() + " to " + project.getBasedir().getAbsolutePath() );
     }
 }

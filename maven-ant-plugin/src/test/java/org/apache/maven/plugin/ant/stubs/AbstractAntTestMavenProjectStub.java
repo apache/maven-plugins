@@ -19,13 +19,6 @@ package org.apache.maven.plugin.ant.stubs;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
@@ -38,6 +31,13 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.PlexusTestCase;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -120,6 +120,7 @@ public abstract class AbstractAntTestMavenProjectStub
 
         if ( !basedir.exists() )
         {
+            //noinspection ResultOfMethodCallIgnored
             basedir.mkdirs();
         }
 
@@ -131,7 +132,8 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getCompileSourceRoots()
     {
-        File src = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/main/java" );
+        File src =
+            new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/main/java" );
         return Collections.singletonList( src.getAbsolutePath() );
     }
 
@@ -140,7 +142,8 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getTestCompileSourceRoots()
     {
-        File test = new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/test/java" );
+        File test =
+            new File( PlexusTestCase.getBasedir() + "/src/test/resources/unit/" + getProjetPath() + "src/test/java" );
         return Collections.singletonList( test.getAbsolutePath() );
     }
 
@@ -149,9 +152,9 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getCompileArtifacts()
     {
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ),
-                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
-                                              false );
+        Artifact junit =
+            new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ), Artifact.SCOPE_TEST,
+                                 "jar", null, new DefaultArtifactHandler( "jar" ), false );
         junit.setFile( new File( "junit/junit/3.8.2/junit-3.8.2.jar" ) );
 
         return Collections.singletonList( junit );
@@ -162,9 +165,9 @@ public abstract class AbstractAntTestMavenProjectStub
      */
     public List getTestArtifacts()
     {
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ),
-                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
-                                              false );
+        Artifact junit =
+            new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.2" ), Artifact.SCOPE_TEST,
+                                 "jar", null, new DefaultArtifactHandler( "jar" ), false );
         junit.setFile( new File( "junit/junit/3.8.2/junit-3.8.2.jar" ) );
 
         return Collections.singletonList( junit );

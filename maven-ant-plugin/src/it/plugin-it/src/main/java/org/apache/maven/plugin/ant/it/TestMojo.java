@@ -19,10 +19,9 @@ package org.apache.maven.plugin.ant.it;
 import org.apache.maven.plugin.AbstractMojo;
 
 /**
- * @goal test
- *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @goal test
  */
 public class TestMojo
     extends AbstractMojo

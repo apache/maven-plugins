@@ -21,7 +21,6 @@ package org.apache.maven.plugins.ant.test;
 
 /**
  * Hello world!
- *
  */
 public class App
 {

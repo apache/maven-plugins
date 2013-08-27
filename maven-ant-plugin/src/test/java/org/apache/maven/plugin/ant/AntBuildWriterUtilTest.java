@@ -19,13 +19,13 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Map;
-
 import org.apache.maven.embedder.MavenEmbedder;
 import org.apache.maven.embedder.MavenEmbedderConsoleLogger;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * Test cases for 'org.apache.maven.plugin.ant.AntBuildWriterUtil'
@@ -85,8 +85,8 @@ public class AntBuildWriterUtilTest
         MavenProject project = maven.readProject( testPom );
 
         assertEquals( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "warName", null ), "mywebapp" );
-        assertTrue( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "webXml", null )
-            .endsWith( "/src/main/webapp/WEB-INF/web.xml" ) );
+        assertTrue( AntBuildWriterUtil.getMavenWarPluginBasicOption( project, "webXml", null ).endsWith(
+            "/src/main/webapp/WEB-INF/web.xml" ) );
 
         maven.stop();
     }
@@ -110,7 +110,8 @@ public class AntBuildWriterUtilTest
 
         MavenProject project = maven.readProject( testPom );
 
-        assertEquals( AntBuildWriterUtil.getMavenJavadocPluginBasicOption( project, "doclet", null ), "gr.spinellis.umlgraph.doclet.UmlGraphDoc" );
+        assertEquals( AntBuildWriterUtil.getMavenJavadocPluginBasicOption( project, "doclet", null ),
+                      "gr.spinellis.umlgraph.doclet.UmlGraphDoc" );
 
         assertNotNull( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "links", null ) );
         assertEquals( AntBuildWriterUtil.getMavenJavadocPluginOptions( project, "links", null ).length, 2 );
@@ -148,24 +149,25 @@ public class AntBuildWriterUtilTest
 
     /**
      * Test method for <code>AntBuildWriterUtil.toRelative(File, String)</code>.
-     * 
+     *
      * @throws Exception
      */
     public static void testToRelative()
         throws Exception
     {
         assertEquals( "relative", AntBuildWriterUtil.toRelative( new File( "/home" ), "relative" ) );
-        assertEquals( "dir", AntBuildWriterUtil.toRelative( new File( "home" ),
-                                                            new File( "home/dir" ).getAbsolutePath() ) );
-        assertEquals( "dir", AntBuildWriterUtil.toRelative( new File( "/home" ),
-                                                            new File( "/home/dir" ).getAbsolutePath() ) );
+        assertEquals( "dir",
+                      AntBuildWriterUtil.toRelative( new File( "home" ), new File( "home/dir" ).getAbsolutePath() ) );
+        assertEquals( "dir",
+                      AntBuildWriterUtil.toRelative( new File( "/home" ), new File( "/home/dir" ).getAbsolutePath() ) );
         assertEquals( "dir/", AntBuildWriterUtil.toRelative( new File( "/home" ),
                                                              new File( "/home/dir" ).getAbsolutePath() + "/" ) );
         assertEquals( "dir/sub", AntBuildWriterUtil.toRelative( new File( "/home" ),
                                                                 new File( "/home/dir/sub" ).getAbsolutePath() ) );
-        assertEquals( ".", AntBuildWriterUtil.toRelative( new File( "/home" ), new File( "/home" ).getAbsolutePath() ) );
-        assertEquals( "./", AntBuildWriterUtil.toRelative( new File( "/home" ), new File( "/home" ).getAbsolutePath()
-            + "/" ) );
+        assertEquals( ".",
+                      AntBuildWriterUtil.toRelative( new File( "/home" ), new File( "/home" ).getAbsolutePath() ) );
+        assertEquals( "./", AntBuildWriterUtil.toRelative( new File( "/home" ),
+                                                           new File( "/home" ).getAbsolutePath() + "/" ) );
     }
 
 }

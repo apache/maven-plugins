@@ -1,5 +1,6 @@
 package test;
 
-public class ExtendedLog extends Log
+public class ExtendedLog
+    extends Log
 {
 }
