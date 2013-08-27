@@ -365,7 +365,7 @@ public abstract class AbstractInvokerMojo
      */
     @Component
     private MavenProject project;
-
+    
     @Component
     private MojoExecution mojoExecution;
 
@@ -373,11 +373,11 @@ public abstract class AbstractInvokerMojo
      * A comma separated list of projectname patterns to run. Specify this parameter to run individual tests by file name,
      * overriding the {@link #setupIncludes}, {@link #pomIncludes} and {@link #pomExcludes} parameters. Each pattern you
      * specify here will be used to create an include/exclude pattern formatted like
-     * <code>${projectsDirectory}/<i>pattern</i></code>. To exclude a test, prefix the pattern with a '<code>!</code>'.
+     * <code>${projectsDirectory}/<i>pattern</i></code>. To exclude a test, prefix the pattern with a '<code>!</code>'. 
      * So you can just type
-     * <nobr><code>-Dinvoker.test=SimpleTest,Comp*Test,!Compare*</code></nobr> to run builds in
+     * <nobr><code>-Dinvoker.test=SimpleTest,Comp*Test,!Compare*</code></nobr> to run builds in 
      * <code>${projectsDirectory}/SimpleTest</code> and
-     * <code>${projectsDirectory}/ComplexTest</code>, but not <code>${projectsDirectory}/CompareTest</code>
+     * <code>${projectsDirectory}/ComplexTest</code>, but not <code>${projectsDirectory}/CompareTest</code> 
      *
      * @since 1.1 (exclusion since 1.8)
      */
@@ -425,13 +425,13 @@ public abstract class AbstractInvokerMojo
 
     /**
      * mavenExecutable can either be a file relative to <code>${maven.home}/bin/</code> or an absolute file.
-     *
-     * @see Invoker#setMavenExecutable(File)
+     * 
      * @since 1.8
+     * @see Invoker#setMavenExecutable(File)
      */
     @Parameter( property = "invoker.mavenExecutable" )
     private String mavenExecutable;
-
+    
     /**
      * The <code>JAVA_HOME</code> environment variable to use for forked Maven invocations. Defaults to the current Java
      * home directory.
@@ -538,7 +538,7 @@ public abstract class AbstractInvokerMojo
      * # A comma separated list of Maven versions on which this build should be run.
      * # Since plugin version 1.5
      * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
-     *
+     * 
      * # A boolean value controlling the debug logging level of Maven, , defaults to &quot;false&quot;
      * # Since plugin version 1.8
      * invoker.debug = true
@@ -582,19 +582,17 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Additional environment variables to set on the command line.
-     *
      * @since 1.8
      */
     @Parameter
-    private Map<String, String> environmentVariables;
+    private Map<String, String> environmentVariables;  
 
     /**
      * Additional variables for use in the hook scripts.
-     *
      * @since 1.9
      */
     @Parameter
-    private Map<String, String> scriptVariables;
+    private Map<String, String> scriptVariables;  
 
     /**
      * The scripter runner that is responsible to execute hook scripts.
@@ -612,7 +610,7 @@ public abstract class AbstractInvokerMojo
      * The format for elapsed build time.
      */
     private final DecimalFormat secFormat = new DecimalFormat( "(0.0 s)", new DecimalFormatSymbols( Locale.ENGLISH ) );
-
+    
     /**
      * The version of Maven which is used to run the builds
      */
@@ -622,13 +620,13 @@ public abstract class AbstractInvokerMojo
      * The version of the JRE which is used to run the builds
      */
     private String actualJreVersion;
-
-
+    
+    
     private void setActualJreVersion( String actualJreVersion )
     {
         this.actualJreVersion = actualJreVersion;
     }
-
+    
     /**
      * Invokes Maven on the configured test projects.
      *
@@ -744,9 +742,8 @@ public abstract class AbstractInvokerMojo
         processResults( new InvokerSession( buildJobs ) );
     }
 
-
-    protected void doFailIfNoProjects()
-        throws MojoFailureException
+    
+    protected void doFailIfNoProjects() throws MojoFailureException
     {
         // should only be used during run and verify
     }
@@ -1171,7 +1168,7 @@ public abstract class AbstractInvokerMojo
             }
         }
         final File finalSettingsFile = mergedSettingsFile;
-
+        
         if ( mavenHome != null )
         {
             actualMavenVersion = SelectorUtils.getMavenVersion( mavenHome );
@@ -1180,7 +1177,7 @@ public abstract class AbstractInvokerMojo
         {
             actualMavenVersion = SelectorUtils.getMavenVersion();
         }
-
+        
         if ( javaHome != null )
         {
             resolveExternalJreVersion();
@@ -1189,7 +1186,7 @@ public abstract class AbstractInvokerMojo
         {
             actualJreVersion = SelectorUtils.getJreVersion();
         }
-
+        
         try
         {
             if ( isParallelRun() )
@@ -1278,8 +1275,7 @@ public abstract class AbstractInvokerMojo
         try
         {
             ReflectionUtils.setVariableValueInObject( trackable, "sourceLevelSet", Boolean.FALSE );
-            getLog().debug(
-                "sourceLevelSet: " + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
+            getLog().debug( "sourceLevelSet: " + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
         }
         catch ( IllegalAccessException e )
         {
@@ -1291,14 +1287,14 @@ public abstract class AbstractInvokerMojo
     {
         Artifact pluginArtifact = mojoExecution.getMojoDescriptor().getPluginDescriptor().getPluginArtifact();
         pluginArtifact.getFile();
-
+        
         Commandline commandLine = new Commandline();
         commandLine.setExecutable( new File( javaHome, "bin/java" ).getAbsolutePath() );
         commandLine.createArg().setValue( "-cp" );
         commandLine.createArg().setFile( pluginArtifact.getFile() );
         commandLine.createArg().setValue( SystemPropertyPrinter.class.getName() );
         commandLine.createArg().setValue( "java.version" );
-
+        
         StreamConsumer consumer = new StreamConsumer()
         {
             public void consumeLine( String line )
@@ -1373,7 +1369,7 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            int selection = getSelection( invokerProperties );
+            int selection = getSelection( invokerProperties ); 
             if ( selection == 0 )
             {
                 long milliseconds = System.currentTimeMillis();
@@ -1437,7 +1433,7 @@ public abstract class AbstractInvokerMojo
                 {
                     getLog().info( "..SKIPPED due to " + message.toString() );
                 }
-
+                
                 // Abuse failureMessage, the field in the report which should contain the reason for skipping
                 // Consider skipCode + I18N
                 buildJob.setFailureMessage( "Skipped due to " + message.toString() );
@@ -1479,8 +1475,8 @@ public abstract class AbstractInvokerMojo
      * Determines whether selector conditions of the specified invoker properties match the current environment.
      *
      * @param invokerProperties The invoker properties to check, must not be <code>null</code>.
-     * @return <code>0</code> if the job corresponding to the properties should be run,
-     *         otherwise a bitwise value representing the reason why it should be skipped.
+     * @return <code>0</code> if the job corresponding to the properties should be run, 
+     *   otherwise a bitwise value representing the reason why it should be skipped.
      */
     private int getSelection( InvokerProperties invokerProperties )
     {
@@ -1623,7 +1619,7 @@ public abstract class AbstractInvokerMojo
             request.setDebug( debug );
 
             request.setShowVersion( showVersion );
-
+            
             if ( logger != null )
             {
                 request.setErrorHandler( logger );
@@ -1636,7 +1632,7 @@ public abstract class AbstractInvokerMojo
                 invoker.setMavenHome( mavenHome );
                 request.addShellEnvironment( "M2_HOME", mavenHome.getAbsolutePath() );
             }
-
+            
             if ( mavenExecutable != null )
             {
                 invoker.setMavenExecutable( new File( mavenExecutable ) );
@@ -1646,7 +1642,7 @@ public abstract class AbstractInvokerMojo
             {
                 request.setJavaHome( javaHome );
             }
-
+            
             if ( environmentVariables != null )
             {
                 for ( Map.Entry<String, String> variable : environmentVariables.entrySet() )
@@ -1780,7 +1776,7 @@ public abstract class AbstractInvokerMojo
         throws MojoExecutionException
     {
         Properties collectedTestProperties = new Properties();
-
+        
         if ( testProperties != null )
         {
             collectedTestProperties.putAll( testProperties );
