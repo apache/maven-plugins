@@ -34,18 +34,18 @@ import org.junit.runners.JUnit4;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@RunWith( JUnit4.class )
+@RunWith(JUnit4.class)
 public class SiteMojoTest
     extends AbstractMojoTestCase
 {
-
+    
     @Before
     public void setup()
         throws Exception
     {
         super.setUp();
     }
-
+    
     /**
      * Test method for 'org.apache.maven.plugins.site.AbstractSiteMojo.getInterpolatedSiteDescriptorContent(Map, MavenProject, String)'
      *
@@ -69,13 +69,13 @@ public class SiteMojoTest
 
         String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
         assertNotNull( siteDescriptorContent );
-        assertTrue( siteDescriptorContent.contains( "${project.name}" ) );
+        assertTrue(siteDescriptorContent.contains("${project.name}"));
 
         SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
         siteDescriptorContent =
             siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), siteMojo.project,
                                                            siteDescriptorContent, "UTF-8", "UTF-8" );
         assertNotNull( siteDescriptorContent );
-        assertTrue( !siteDescriptorContent.contains( "${project.name}" ) );
+        assertTrue(!siteDescriptorContent.contains("${project.name}"));
     }
 }
