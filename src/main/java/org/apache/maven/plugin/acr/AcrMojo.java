@@ -202,7 +202,7 @@ public class AcrMojo
                     getLog().debug( "Filtering deployment descriptor." );
                     MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                     mavenResourcesExecution.setEscapeString( escapeString );
-                    List<org.codehaus.plexus.util.FileUtils.FilterWrapper> filterWrappers =
+                    List<FileUtils.FilterWrapper> filterWrappers =
                         mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
                                                                   this.session, mavenResourcesExecution );
 
