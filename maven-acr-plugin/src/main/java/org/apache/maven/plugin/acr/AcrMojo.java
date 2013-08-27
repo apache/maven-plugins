@@ -20,6 +20,7 @@ package org.apache.maven.plugin.acr;
  */
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -40,7 +41,6 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
-import org.apache.commons.io.input.XmlStreamReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +53,9 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id:
  */
-@Mojo (name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
-       defaultPhase = LifecyclePhase.PACKAGE)
+@SuppressWarnings( { "UnqualifiedStaticUsage", "IfStatementWithNegatedCondition" } )
+@Mojo( name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
+       defaultPhase = LifecyclePhase.PACKAGE )
 public class AcrMojo
     extends AbstractMojo
 {
@@ -62,28 +63,26 @@ public class AcrMojo
     private static final String APP_CLIENT_XML = "META-INF/application-client.xml";
 
     // TODO: will null work instead?
-    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
+    private static final String[] DEFAULT_INCLUDES = { "**/**" };
 
-    private static final String[] DEFAULT_EXCLUDES = new String[]{ APP_CLIENT_XML };
-
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+    private static final String[] DEFAULT_EXCLUDES = { APP_CLIENT_XML };
 
     /**
      * The directory for the generated jar.
      */
-    @Parameter (defaultValue = "${project.build.directory}", required = true, readonly = true)
+    @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File basedir;
 
     /**
      * Directory that resources are copied to during the build.
      */
-    @Parameter (property = "outputDirectory", defaultValue = "${project.build.outputDirectory}")
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
 
     /**
      * The name of the Application client JAR file to generate.
      */
-    @Parameter (property = "jarName", defaultValue = "${project.build.finalName}")
+    @Parameter( property = "jarName", defaultValue = "${project.build.finalName}" )
     private String jarName;
 
     /**
@@ -108,7 +107,7 @@ public class AcrMojo
     /**
      * The Jar archiver.
      */
-    @Component (role = Archiver.class, hint = "jar")
+    @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
     /**
@@ -122,20 +121,20 @@ public class AcrMojo
      * To escape interpolated value with windows path.
      * c:\foo\bar will be replaced with c:\\foo\\bar.
      */
-    @Parameter (property = "acr.escapeBackslashesInFilePath", defaultValue = "false")
+    @Parameter( property = "acr.escapeBackslashesInFilePath", defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
 
     /**
      * An expression preceded with this String won't be interpolated.
      * \${foo} will be replaced with ${foo}.
      */
-    @Parameter (property = "acr.escapeString")
+    @Parameter( property = "acr.escapeString" )
     protected String escapeString;
 
     /**
      * To filter the deployment descriptor.
      */
-    @Parameter (property = "acr.filterDeploymentDescriptor", defaultValue = "false")
+    @Parameter( property = "acr.filterDeploymentDescriptor", defaultValue = "false" )
     private boolean filterDeploymentDescriptor;
 
     /**
@@ -146,7 +145,7 @@ public class AcrMojo
 
     /**
      */
-    @Component (role = MavenFileFilter.class, hint = "default")
+    @Component( role = MavenFileFilter.class, hint = "default" )
     private MavenFileFilter mavenFileFilter;
 
     /**
@@ -183,17 +182,17 @@ public class AcrMojo
             if ( excludes != null && !excludes.isEmpty() )
             {
                 excludes.add( APP_CLIENT_XML );
-                mainJarExcludes = excludes.toArray(new String[excludes.size()]);
+                mainJarExcludes = excludes.toArray( new String[excludes.size()] );
             }
 
-            if ( !outputDirectory.exists() )
+            if ( outputDirectory.exists() )
             {
-                getLog().info(
-                    "JAR will only contain the META-INF/application-client.xml as no content was marked for inclusion" );
+                archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
             }
             else
             {
-                archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
+                getLog().info(
+                    "JAR will only contain the META-INF/application-client.xml as no content was marked for inclusion" );
             }
 
             if ( deploymentDescriptor.exists() )
@@ -203,7 +202,7 @@ public class AcrMojo
                     getLog().debug( "Filtering deployment descriptor." );
                     MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                     mavenResourcesExecution.setEscapeString( escapeString );
-                    List filterWrappers =
+                    List<org.codehaus.plexus.util.FileUtils.FilterWrapper> filterWrappers =
                         mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
                                                                   this.session, mavenResourcesExecution );
 
@@ -219,7 +218,7 @@ public class AcrMojo
             }
 
             // create archive
-            archiver.createArchive( project, archive );
+            archiver.createArchive( session, project, archive );
         }
         catch ( ArchiverException e )
         {
