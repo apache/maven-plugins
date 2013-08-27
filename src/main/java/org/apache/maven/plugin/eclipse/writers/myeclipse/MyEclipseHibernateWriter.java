@@ -14,7 +14,7 @@ import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Writer for MyEclipse Hibernate Capability
- *
+ * 
  * @author <a href="mailto:olivier.jacob@gmail.com">Olivier Jacob</a>
  */
 public class MyEclipseHibernateWriter
@@ -72,7 +72,7 @@ public class MyEclipseHibernateWriter
 
     /**
      * Constructor
-     *
+     * 
      * @param hibernateConfig path to the configuration file to use
      */
     public MyEclipseHibernateWriter( Map hibernateConfig )
@@ -82,7 +82,7 @@ public class MyEclipseHibernateWriter
 
     /**
      * Write MyEclipse Hibernate configuration
-     *
+     * 
      * @throws MojoExecutionException if an error occurs
      */
     public void write()
@@ -96,8 +96,7 @@ public class MyEclipseHibernateWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
-                                              ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
 
         PrintWriter pw = new PrintWriter( w );
@@ -131,9 +130,9 @@ public class MyEclipseHibernateWriter
 
     /**
      * Writes a configuration property to the PrintWriter given in parameter
-     *
-     * @param pw        the PrintWriter to write to
-     * @param propName  the property name
+     * 
+     * @param pw the PrintWriter to write to
+     * @param propName the property name
      * @param propValue the property value (writes empty String if null)
      */
     private void addProperty( PrintWriter pw, String propName, String propValue )
@@ -152,20 +151,20 @@ public class MyEclipseHibernateWriter
 
     /**
      * Find Hibernate version in project dependencies
-     *
+     * 
      * @return the version of the hibernate artifact if found in the dependencies or 3.2 (default value)
      */
     private String getHibernateVersion()
     {
         String version =
-            IdeUtils.getArtifactVersion( new String[]{ "hibernate" }, config.getProject().getDependencies(), 3 );
+            IdeUtils.getArtifactVersion( new String[] { "hibernate" }, config.getProject().getDependencies(), 3 );
 
         return version != null ? version : "3.2";
     }
 
     /**
      * Prepend the project artifactId to the path given in the plugin configuration
-     *
+     * 
      * @return the path to the file relative to the root of the Eclipse Workspace
      */
     private String makePathToHibernateConfigFile( String configFile )

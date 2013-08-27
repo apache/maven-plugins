@@ -45,7 +45,7 @@ import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 
 /**
  * Scan the eclipse workspace and create a array with {@link IdeDependency} for all found artefacts.
- *
+ * 
  * @author Richard van Nieuwenhoven
  * @version $Id$
  */
@@ -57,17 +57,17 @@ public class ReadWorkspaceLocations
     public static final String METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS =
         ".metadata/.plugins/org.eclipse.core.resources/.projects";
 
-    private static final String[] PARENT_VERSION = new String[]{ "parent", "version" };
+    private static final String[] PARENT_VERSION = new String[] { "parent", "version" };
 
-    private static final String[] PARENT_GROUP_ID = new String[]{ "parent", "groupId" };
+    private static final String[] PARENT_GROUP_ID = new String[] { "parent", "groupId" };
 
-    private static final String[] PACKAGING = new String[]{ "packaging" };
+    private static final String[] PACKAGING = new String[] { "packaging" };
 
-    private static final String[] VERSION = new String[]{ "version" };
+    private static final String[] VERSION = new String[] { "version" };
 
-    private static final String[] GROUP_ID = new String[]{ "groupId" };
+    private static final String[] GROUP_ID = new String[] { "groupId" };
 
-    private static final String[] ARTEFACT_ID = new String[]{ "artifactId" };
+    private static final String[] ARTEFACT_ID = new String[] { "artifactId" };
 
     private static final String METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_LAUNCHING_PREFS =
         ".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs";
@@ -97,13 +97,12 @@ public class ReadWorkspaceLocations
 
     /**
      * Detect WTP Default Server. Do nothing if tehre are no defined servers in the settings.
-     *
+     * 
      * @param workspaceConfiguration the workspace configuration
-     * @param wtpDefaultServer       Default server
-     * @param log                    the log
+     * @param wtpDefaultServer Default server
+     * @param log the log
      */
-    private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer,
-                                         Log log )
+    private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer, Log log )
     {
         HashMap servers = readDefinedServers( workspaceConfiguration, log );
         if ( servers == null || servers.isEmpty() )
@@ -134,7 +133,7 @@ public class ReadWorkspaceLocations
                 {
                     String id = (String) idIterator.next();
                     String name = (String) servers.get( id );
-                    if ( id.contains( wtpDefaultServer ) || name.contains( wtpDefaultServer ) )
+                    if (id.contains(wtpDefaultServer) || name.contains(wtpDefaultServer))
                     {
                         workspaceConfiguration.setDefaultDeployServerId( id );
                         workspaceConfiguration.setDefaultDeployServerName( name );
@@ -147,18 +146,17 @@ public class ReadWorkspaceLocations
             // now take the default server
             log.info( "no substring wtp server match." );
             workspaceConfiguration.setDefaultDeployServerId( (String) servers.get( "" ) );
-            workspaceConfiguration.setDefaultDeployServerName(
-                (String) servers.get( workspaceConfiguration.getDefaultDeployServerId() ) );
+            workspaceConfiguration.setDefaultDeployServerName( (String) servers.get( workspaceConfiguration.getDefaultDeployServerId() ) );
         }
         log.info( "Using as WTP server : " + workspaceConfiguration.getDefaultDeployServerName() );
     }
 
     /**
      * Take the compiler executable and try to find a JRE that contains that compiler.
-     *
+     * 
      * @param rawExecutable the executable with the complete path.
-     * @param jreMap        the map with defined JRE's.
-     * @param logger        the logger to log the error's
+     * @param jreMap the map with defined JRE's.
+     * @param logger the logger to log the error's
      * @return the found container or null if non found.
      */
     private String getContainerFromExecutable( String rawExecutable, Map jreMap, Log logger )
@@ -194,10 +192,10 @@ public class ReadWorkspaceLocations
 
     /**
      * Search the default JREContainer from eclipse for the current MavenProject
-     *
+     * 
      * @param workspaceConfiguration the location of the workspace.
-     * @param project                the maven project the get the configuration
-     * @param logger                 the logger for errors
+     * @param project the maven project the get the configuration
+     * @param logger the logger for errors
      */
     private void detectDefaultJREContainer( WorkspaceConfiguration workspaceConfiguration, MavenProject project,
                                             Log logger )
@@ -223,7 +221,7 @@ public class ReadWorkspaceLocations
                     if ( foundContainer != null )
                     {
                         logger.debug( "detected classpathContainer from sourceVersion(" + sourceVersion + "): "
-                                          + foundContainer );
+                            + foundContainer );
                     }
                 }
                 if ( foundContainer == null )
@@ -242,11 +240,11 @@ public class ReadWorkspaceLocations
 
     /**
      * Get the project location for a project in the eclipse metadata.
-     *
+     * 
      * @param workspaceLocation the location of the workspace
-     * @param project           the project subdirectory in the metadata
+     * @param project the project subdirectory in the metadata
      * @return the full path to the project.
-     * @throws IOException        failures to read location file
+     * @throws IOException failures to read location file
      * @throws URISyntaxException failures to read location file
      */
     /* package */File getProjectLocation( File workspaceLocation, File project )
@@ -288,8 +286,8 @@ public class ReadWorkspaceLocations
 
     /**
      * get a value from a dom element.
-     *
-     * @param element      the element to get a value from
+     * 
+     * @param element the element to get a value from
      * @param elementNames the sub elements to get
      * @param defaultValue teh default value if the value was null or empty
      * @return the value of the dome element.
@@ -319,9 +317,9 @@ public class ReadWorkspaceLocations
     /**
      * Read the artefact information from the pom in the project location and the eclipse project name from the .project
      * file.
-     *
+     * 
      * @param projectLocation the location of the project
-     * @param logger          the logger to report errors and debug info.
+     * @param logger the logger to report errors and debug info.
      * @return an {@link IdeDependency} or null.
      * @throws FileNotFoundException
      * @throws XmlPullParserException
@@ -335,7 +333,7 @@ public class ReadWorkspaceLocations
         if ( projectFile.exists() )
         {
             Xpp3Dom project = Xpp3DomBuilder.build( new FileReader( projectFile ) );
-            eclipseProjectName = getValue( project, new String[]{ "name" }, eclipseProjectName );
+            eclipseProjectName = getValue( project, new String[] { "name" }, eclipseProjectName );
         }
         File pomFile = new File( projectLocation, "pom.xml" );
         if ( pomFile.exists() )
@@ -343,14 +341,16 @@ public class ReadWorkspaceLocations
             Xpp3Dom pom = Xpp3DomBuilder.build( new FileReader( pomFile ) );
 
             String artifact = getValue( pom, ReadWorkspaceLocations.ARTEFACT_ID, null );
-            String group = getValue( pom, ReadWorkspaceLocations.GROUP_ID,
-                                     getValue( pom, ReadWorkspaceLocations.PARENT_GROUP_ID, null ) );
-            String version = getValue( pom, ReadWorkspaceLocations.VERSION,
-                                       getValue( pom, ReadWorkspaceLocations.PARENT_VERSION, null ) );
+            String group =
+                getValue( pom, ReadWorkspaceLocations.GROUP_ID, getValue( pom, ReadWorkspaceLocations.PARENT_GROUP_ID,
+                                                                          null ) );
+            String version =
+                getValue( pom, ReadWorkspaceLocations.VERSION, getValue( pom, ReadWorkspaceLocations.PARENT_VERSION,
+                                                                         null ) );
             String packaging = getValue( pom, ReadWorkspaceLocations.PACKAGING, "jar" );
 
             logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packaging + " ("
-                              + eclipseProjectName + ")" + " -> " + projectLocation.getAbsolutePath() );
+                + eclipseProjectName + ")" + " -> " + projectLocation.getAbsolutePath() );
             return new IdeDependency( group, artifact, version, packaging, true, false, false, false, false, null,
                                       packaging, false, null, 0, eclipseProjectName );
         }
@@ -361,22 +361,23 @@ public class ReadWorkspaceLocations
         }
     }
 
-    /* package */HashMap<String, String> readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    /* package */HashMap<String,String> readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
-        HashMap<String, String> detectedRuntimes = new HashMap<String, String>();
+        HashMap<String,String> detectedRuntimes = new HashMap<String,String>();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
         {
             Xpp3Dom runtimesElement = null;
             try
             {
-                File prefs = new File( workspaceConfiguration.getWorkspaceDirectory(),
-                                       ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_SERVER_PREFS );
+                File prefs =
+                    new File( workspaceConfiguration.getWorkspaceDirectory(),
+                              ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_SERVER_PREFS );
                 if ( prefs.exists() )
                 {
                     Properties properties = new Properties();
                     properties.load( new FileInputStream( prefs ) );
-                    String runtimes = properties.getProperty(
-                        ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
+                    String runtimes =
+                        properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
                     if ( runtimes != null )
                     {
                         runtimesElement = Xpp3DomBuilder.build( new StringReader( runtimes ) );
@@ -411,26 +412,28 @@ public class ReadWorkspaceLocations
     /**
      * Read the JRE definition configured in the workspace. They will be put in a HashMap with as key there path and as
      * value the JRE constant. a second key is included with the JRE version as a key.
-     *
+     * 
      * @param workspaceLocation the workspace location
-     * @param logger            the logger to error messages
+     * @param logger the logger to error messages
      * @return the map with found jre's
      */
-    private HashMap<String, String> readAvailableJREs( File workspaceLocation, Log logger )
+    private HashMap<String,String> readAvailableJREs( File workspaceLocation, Log logger )
     {
         Xpp3Dom vms;
         try
         {
-            File prefs = new File( workspaceLocation,
-                                   ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_LAUNCHING_PREFS );
+            File prefs =
+                new File( workspaceLocation,
+                          ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_LAUNCHING_PREFS );
             if ( !prefs.exists() )
             {
                 return null;
             }
             Properties properties = new Properties();
             properties.load( new FileInputStream( prefs ) );
-            vms = Xpp3DomBuilder.build( new StringReader( properties.getProperty(
-                ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_VM_KEY ) ) );
+            vms =
+                Xpp3DomBuilder.build( new StringReader(
+                                                        properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_VM_KEY ) ) );
         }
         catch ( Exception e )
         {
@@ -438,7 +441,7 @@ public class ReadWorkspaceLocations
             return null;
         }
 
-        HashMap<String, String> jreMap = new HashMap<String, String>();
+        HashMap<String,String> jreMap = new HashMap<String,String>();
         jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
         jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
         jreMap.put( "1.4", CLASSPATHENTRY_STANDARD + "J2SE-1.4" );
@@ -448,54 +451,42 @@ public class ReadWorkspaceLocations
         jreMap.put( "6", jreMap.get( "1.6" ) );
         String defaultJRE = vms.getAttribute( "defaultVM" ).trim();
         Xpp3Dom[] vmTypes = vms.getChildren( "vmType" );
-        for ( Xpp3Dom vmType : vmTypes )
-        {
-            String typeId = vmType.getAttribute( "id" );
-            Xpp3Dom[] vm = vmType.getChildren( "vm" );
-            for ( Xpp3Dom aVm : vm )
-            {
-                try
-                {
-                    String path = aVm.getAttribute( "path" );
-                    String name = aVm.getAttribute( "name" );
-                    String vmId = aVm.getAttribute( "id" ).trim();
+        for (Xpp3Dom vmType : vmTypes) {
+            String typeId = vmType.getAttribute("id");
+            Xpp3Dom[] vm = vmType.getChildren("vm");
+            for (Xpp3Dom aVm : vm) {
+                try {
+                    String path = aVm.getAttribute("path");
+                    String name = aVm.getAttribute("name");
+                    String vmId = aVm.getAttribute("id").trim();
                     String classpathEntry =
-                        MessageFormat.format( ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT, typeId, name );
-                    String jrePath = new File( path ).getCanonicalPath();
-                    File rtJarFile = new File( new File( jrePath ), "jre/lib/rt.jar" );
-                    if ( !rtJarFile.exists() )
-                    {
-                        logger.warn( Messages.getString( "EclipsePlugin.invalidvminworkspace", jrePath ) );
+                            MessageFormat.format(ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT,
+                                    typeId, name);
+                    String jrePath = new File(path).getCanonicalPath();
+                    File rtJarFile = new File(new File(jrePath), "jre/lib/rt.jar");
+                    if (!rtJarFile.exists()) {
+                        logger.warn(Messages.getString("EclipsePlugin.invalidvminworkspace", jrePath));
                         continue;
                     }
-                    JarFile rtJar = new JarFile( rtJarFile );
-                    String version = rtJar.getManifest().getMainAttributes().getValue( "Specification-Version" );
-                    if ( defaultJRE.endsWith( "," + vmId ) )
-                    {
-                        jreMap.put( jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
-                        jreMap.put( version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
-                        logger.debug( "Default Classpath Container version: " + version + "  location: " + jrePath );
-                    }
-                    else if ( !jreMap.containsKey( jrePath ) )
-                    {
-                        if ( !jreMap.containsKey( version ) )
-                        {
-                            jreMap.put( version, classpathEntry );
+                    JarFile rtJar = new JarFile(rtJarFile);
+                    String version = rtJar.getManifest().getMainAttributes().getValue("Specification-Version");
+                    if (defaultJRE.endsWith("," + vmId)) {
+                        jreMap.put(jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT);
+                        jreMap.put(version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT);
+                        logger.debug("Default Classpath Container version: " + version + "  location: " + jrePath);
+                    } else if (!jreMap.containsKey(jrePath)) {
+                        if (!jreMap.containsKey(version)) {
+                            jreMap.put(version, classpathEntry);
                         }
-                        jreMap.put( jrePath, classpathEntry );
-                        logger.debug(
-                            "Additional Classpath Container version: " + version + " " + classpathEntry + " location: "
-                                + jrePath );
+                        jreMap.put(jrePath, classpathEntry);
+                        logger.debug("Additional Classpath Container version: " + version + " " + classpathEntry
+                                + " location: " + jrePath);
+                    } else {
+                        logger.debug("Ignored (duplicated) additional Classpath Container version: " + version + " "
+                                + classpathEntry + " location: " + jrePath);
                     }
-                    else
-                    {
-                        logger.debug( "Ignored (duplicated) additional Classpath Container version: " + version + " "
-                                          + classpathEntry + " location: " + jrePath );
-                    }
-                }
-                catch ( IOException e )
-                {
-                    logger.warn( "Could not interpret entry: " + aVm.toString() );
+                } catch (IOException e) {
+                    logger.warn("Could not interpret entry: " + aVm.toString());
                 }
             }
         }
@@ -504,17 +495,18 @@ public class ReadWorkspaceLocations
 
     /**
      * Scan the eclipse workspace and create a array with {@link IdeDependency} for all found artifacts.
-     *
+     * 
      * @param workspaceConfiguration the location of the eclipse workspace.
-     * @param logger                 the logger to report errors and debug info.
+     * @param logger the logger to report errors and debug info.
      */
     private void readWorkspace( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
         ArrayList<IdeDependency> dependencies = new ArrayList<IdeDependency>();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
         {
-            File workspace = new File( workspaceConfiguration.getWorkspaceDirectory(),
-                                       ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
+            File workspace =
+                new File( workspaceConfiguration.getWorkspaceDirectory(),
+                          ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
 
             File[] directories = workspace.listFiles();
             for ( int index = 0; directories != null && index < directories.length; index++ )
@@ -528,7 +520,7 @@ public class ReadWorkspaceLocations
                             getProjectLocation( workspaceConfiguration.getWorkspaceDirectory(), project );
                         if ( projectLocation != null )
                         {
-                            logger.debug( "read workpsace project " + projectLocation );
+						    logger.debug( "read workpsace project " + projectLocation );
                             IdeDependency ideDependency = readArtefact( projectLocation, logger );
                             if ( ideDependency != null )
                             {
@@ -543,7 +535,7 @@ public class ReadWorkspaceLocations
                 }
             }
         }
-        logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
-        workspaceConfiguration.setWorkspaceArtefacts( dependencies.toArray( new IdeDependency[dependencies.size()] ) );
+		logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
+        workspaceConfiguration.setWorkspaceArtefacts(dependencies.toArray( new IdeDependency[dependencies.size()] ));
     }
 }

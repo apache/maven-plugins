@@ -122,9 +122,9 @@ public class IdeUtils
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException(
-                        Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
-                                            new Object[]{ f.getName(), f.getAbsolutePath() } ) );
+                    throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
+                                                                          new Object[] { f.getName(),
+                                                                              f.getAbsolutePath() } ) );
                 }
             }
         }
@@ -144,7 +144,7 @@ public class IdeUtils
         catch ( IOException e )
         {
             throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file //$NON-NLS-1$
-                .getAbsolutePath() ), e );
+            .getAbsolutePath() ), e );
         }
     }
 
@@ -188,11 +188,11 @@ public class IdeUtils
     public static String getCompilerSourceEncoding( MavenProject project )
     {
         String value = IdeUtils.getCompilerPluginSetting( project, PROPERTY_ENCODING );
-        if ( value == null )
+		if ( value == null )
         {
             project.getProperties().getProperty( "project.build.sourceEncoding" );
         }
-        return value;
+		return value;
     }
 
     /**
@@ -234,17 +234,17 @@ public class IdeUtils
 
     /**
      * Extracts the version of the first matching artifact in the given list.
-     * <p/>
+     * <p>
      * The {@code len} parameter indicated what to to return:
      * <ul>
-     * <li><strong>1</strong> indicated <code>major</code> version</li>
-     * <li><strong>3</strong> indicated <code>major dot minor</code> version</li>
-     * <li><strong>5 and above</strong> indicates <code>major dot minor dot incremental</code> version
+     *   <li><strong>1</strong> indicated <code>major</code> version</li>
+     *   <li><strong>3</strong> indicated <code>major dot minor</code> version</li>
+     *   <li><strong>5 and above</strong> indicates <code>major dot minor dot incremental</code> version
      * </ul>
-     *
+     * 
      * @param artifactIds artifact names to compare against for extracting version
-     * @param artifacts   Set of artifacts for our project
-     * @param len         expected length of the version sub-string
+     * @param artifacts Set of artifacts for our project
+     * @param len expected length of the version sub-string
      * @return
      */
     public static String getArtifactVersion( String[] artifactIds, List dependencies, int len )
@@ -254,23 +254,23 @@ public class IdeUtils
         if ( artifactVersion != null )
         {
             StringBuilder versionBuffer = new StringBuilder();
-            if ( len >= 1 )
+            if( len >= 1 )
             {
                 versionBuffer.append( artifactVersion.getMajorVersion() );
             }
-            if ( len >= 2 )
+            if( len >= 2 )
             {
                 versionBuffer.append( '.' );
-            }
-            if ( len >= 3 )
+            }            
+            if( len >= 3 )
             {
                 versionBuffer.append( artifactVersion.getMinorVersion() );
             }
-            if ( len >= 4 )
+            if( len >= 4 )
             {
                 versionBuffer.append( '.' );
-            }
-            if ( len >= 5 )
+            }            
+            if( len >= 5 )
             {
                 versionBuffer.append( artifactVersion.getIncrementalVersion() );
             }
@@ -278,22 +278,20 @@ public class IdeUtils
         }
         return version;
     }
-
+    
     /**
-     * @param artifactIds  an array of artifactIds, should not be <code>null</code>
+     * 
+     * @param artifactIds an array of artifactIds, should not be <code>null</code>
      * @param dependencies a list of {@link Dependency}-objects, should not be <code>null</code>
      * @return the resolved ArtifactVersion, otherwise <code>null</code>
      */
     public static ArtifactVersion getArtifactVersion( String[] artifactIds, List /*<Dependency>*/ dependencies )
     {
-        for ( String id : artifactIds )
-        {
-            for ( Object dependency : dependencies )
-            {
+        for (String id : artifactIds) {
+            for (Object dependency : dependencies) {
                 Dependency dep = (Dependency) dependency;
-                if ( id.equals( dep.getArtifactId() ) )
-                {
-                    return VersionRange.createFromVersion( dep.getVersion() ).getRecommendedVersion();
+                if (id.equals(dep.getArtifactId())) {
+                    return VersionRange.createFromVersion(dep.getVersion()).getRecommendedVersion();
                 }
 
             }
@@ -304,15 +302,14 @@ public class IdeUtils
     /**
      * Search for a configuration setting of an other plugin for a configuration setting.
      *
-     * @param project      the current maven project to get the configuration from.
-     * @param pluginId     the group id and artifact id of the plugin to search for
-     * @param optionName   the option to get from the configuration
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
+     * @param pluginId the group id and artifact id of the plugin to search for
+     * @param optionName the option to get from the configuration
      * @param defaultValue the default value if the configuration was not found
      * @return the value of the option configured in the plugin configuration
-     * @todo there should be a better way to do this
      */
-    public static String getPluginSetting( MavenProject project, String pluginId, String optionName,
-                                           String defaultValue )
+    public static String getPluginSetting( MavenProject project, String pluginId, String optionName, String defaultValue )
     {
         Xpp3Dom dom = getPluginConfigurationDom( project, pluginId );
         if ( dom != null && dom.getChild( optionName ) != null )
@@ -325,10 +322,10 @@ public class IdeUtils
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
      *
-     * @param project  the current maven project to get the configuration from.
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
      * @param pluginId the group id and artifact id of the plugin to search for
      * @return the value of the option configured in the plugin configuration
-     * @todo there should be a better way to do this
      */
     public static Xpp3Dom getPluginConfigurationDom( MavenProject project, String pluginId )
     {
@@ -345,10 +342,10 @@ public class IdeUtils
     /**
      * Search for the configuration Xpp3 dom of an other plugin.
      *
-     * @param project    the current maven project to get the configuration from.
+     * @todo there should be a better way to do this
+     * @param project the current maven project to get the configuration from.
      * @param artifactId the artifact id of the plugin to search for
      * @return the value of the option configured in the plugin configuration
-     * @todo there should be a better way to do this
      */
     public static Xpp3Dom[] getPluginConfigurationDom( MavenProject project, String artifactId,
                                                        String[] subConfiguration )
@@ -358,20 +355,16 @@ public class IdeUtils
         if ( configuration != null )
         {
             configurationDomList.add( configuration );
-            for ( int index = 0;
-                  !configurationDomList.isEmpty() && subConfiguration != null && index < subConfiguration.length;
-                  index++ )
+            for ( int index = 0; !configurationDomList.isEmpty() && subConfiguration != null
+                && index < subConfiguration.length; index++ )
             {
                 ArrayList newConfigurationDomList = new ArrayList();
-                for ( Object aConfigurationDomList : configurationDomList )
-                {
+                for (Object aConfigurationDomList : configurationDomList) {
                     Xpp3Dom child = (Xpp3Dom) aConfigurationDomList;
-                    Xpp3Dom[] deeperChild = child.getChildren( subConfiguration[index] );
-                    for ( Xpp3Dom aDeeperChild : deeperChild )
-                    {
-                        if ( aDeeperChild != null )
-                        {
-                            newConfigurationDomList.add( aDeeperChild );
+                    Xpp3Dom[] deeperChild = child.getChildren(subConfiguration[index]);
+                    for (Xpp3Dom aDeeperChild : deeperChild) {
+                        if (aDeeperChild != null) {
+                            newConfigurationDomList.add(aDeeperChild);
                         }
                     }
                 }
@@ -384,11 +377,11 @@ public class IdeUtils
     /**
      * Calculate the project name template from the specified value <code>projectNameTemplate</code>,
      * <code>addVersionToProjectName</code> and <code>addGroupIdToProjectName</code>
-     * <p/>
+     * <p>
      * Note: if projectNameTemplate is not null then that value will be used regardless of the values for
      * addVersionToProjectName or addGroupIdToProjectName and a warning will be issued.
      *
-     * @param projectNameTemplate     the current projectNameTemplate, if available
+     * @param projectNameTemplate the current projectNameTemplate, if available
      * @param addVersionToProjectName whether to include Version in the project name
      * @param addGroupIdToProjectName whether to include GroupId in the project name.
      * @return the project name template.
@@ -401,7 +394,7 @@ public class IdeUtils
             if ( addVersionToProjectName || addGroupIdToProjectName )
             {
                 log.warn( "projectNameTemplate definition overrides "
-                              + "addVersionToProjectName or addGroupIdToProjectName" );
+                    + "addVersionToProjectName or addGroupIdToProjectName" );
             }
             return projectNameTemplate;
         }
@@ -447,8 +440,8 @@ public class IdeUtils
 
     public static String getProjectName( MavenProject project, boolean addVersionToProjectName )
     {
-        return getProjectName(
-            addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE : PROJECT_NAME_DEFAULT_TEMPLATE, project );
+        return getProjectName( addVersionToProjectName ? PROJECT_NAME_WITH_VERSION_TEMPLATE
+                        : PROJECT_NAME_DEFAULT_TEMPLATE, project );
     }
 
     /**
@@ -457,18 +450,18 @@ public class IdeUtils
      */
     public static File getNotAvailableMarkerFile( ArtifactRepository localRepository, Artifact artifact )
     {
-        return new File( localRepository.getBasedir(),
-                         localRepository.pathOf( artifact ) + NOT_AVAILABLE_MARKER_FILE_SUFFIX );
+        return new File( localRepository.getBasedir(), localRepository.pathOf( artifact )
+            + NOT_AVAILABLE_MARKER_FILE_SUFFIX );
     }
 
     /**
      * Wrapper around {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
      *
      * @param artifactResolver see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
-     * @param artifact         see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
-     * @param remoteRepos      see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
-     * @param localRepository  see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
-     * @param log              Logger
+     * @param artifact see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param remoteRepos see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param localRepository see {@link ArtifactResolver#resolve(Artifact, List, ArtifactRepository)}
+     * @param log Logger
      * @return the artifact, resolved if possible.
      */
     public static Artifact resolveArtifact( ArtifactResolver artifactResolver, Artifact artifact, List remoteRepos,
@@ -496,9 +489,9 @@ public class IdeUtils
         }
         catch ( ArtifactResolutionException e )
         {
-            String message = Messages.getString( "IdeUtils.errorresolving",
-                                                 new Object[]{ artifact.getClassifier(), artifact.getId(),
-                                                     e.getMessage() } );
+            String message =
+                Messages.getString( "IdeUtils.errorresolving", new Object[] { artifact.getClassifier(),
+                    artifact.getId(), e.getMessage() } );
 
             log.warn( message );
         }
@@ -510,11 +503,11 @@ public class IdeUtils
      * Wrap {@link ArtifactFactory#createArtifactWithClassifier} so that the type and classifier are set correctly for
      * "sources" and "javadoc".
      *
-     * @param groupId         see {@link ArtifactFactory#createArtifactWithClassifier}
-     * @param artifactId      see {@link ArtifactFactory#createArtifactWithClassifier}
-     * @param version         see {@link ArtifactFactory#createArtifactWithClassifier}
-     * @param depClassifier   see {@link ArtifactFactory#createArtifactWithClassifier}
-     * @param inClassifier    either "sources" of "javadoc"
+     * @param groupId see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param artifactId see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param version see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param depClassifier see {@link ArtifactFactory#createArtifactWithClassifier}
+     * @param inClassifier either "sources" of "javadoc"
      * @param artifactFactory see {@link ArtifactFactory#createArtifactWithClassifier}
      * @return see {@link ArtifactFactory#createArtifactWithClassifier}
      * @see ArtifactFactory#createArtifactWithClassifier
@@ -661,34 +654,29 @@ public class IdeUtils
     {
         String value = null;
 
-        for ( Object plugin1 : plugins )
-        {
+        for (Object plugin1 : plugins) {
             Plugin plugin = (Plugin) plugin1;
 
-            if ( plugin.getArtifactId().equals( ARTIFACT_MAVEN_COMPILER_PLUGIN ) )
-            {
+            if (plugin.getArtifactId().equals(ARTIFACT_MAVEN_COMPILER_PLUGIN)) {
                 // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
                 // this is the default setting
-                if ( o != null && o.getChild( optionName ) != null )
-                {
-                    value = o.getChild( optionName ).getValue();
+                if (o != null && o.getChild(optionName) != null) {
+                    value = o.getChild(optionName).getValue();
                 }
 
                 List executions = plugin.getExecutions();
 
                 // a different source/target version can be configured for test sources compilation
-                for ( Object execution1 : executions )
-                {
+                for (Object execution1 : executions) {
                     PluginExecution execution = (PluginExecution) execution1;
 
                     // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                     o = (Xpp3Dom) execution.getConfiguration();
 
-                    if ( o != null && o.getChild( optionName ) != null )
-                    {
-                        value = o.getChild( optionName ).getValue();
+                    if (o != null && o.getChild(optionName) != null) {
+                        value = o.getChild(optionName).getValue();
                     }
                 }
             }

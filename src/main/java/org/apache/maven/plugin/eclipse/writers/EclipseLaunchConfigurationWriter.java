@@ -36,7 +36,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * Base class for writing external launch configuration files.
- *
+ * 
  * @author <a href="mailto:kenneyw@neonics.com">Kenney Westerhof</a>
  */
 public abstract class EclipseLaunchConfigurationWriter
@@ -50,7 +50,7 @@ public abstract class EclipseLaunchConfigurationWriter
 
     /**
      * Filename including .launch
-     *
+     * 
      * @param filename
      */
     protected EclipseWriter init( Log log, EclipseWriterConfig config, String filename )
@@ -81,8 +81,7 @@ public abstract class EclipseLaunchConfigurationWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ),
-                                              ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -118,12 +117,13 @@ public abstract class EclipseLaunchConfigurationWriter
 
         writeAttribute( writer, "org.eclipse.debug.core.capture_output", isCaptureOutput() );
 
-        String workingSet = "<?xml version='1.0'?>"
-            + "<launchConfigurationWorkingSet editPageId='org.eclipse.ui.resourceWorkingSetPage'"
-            + " factoryID='org.eclipse.ui.internal.WorkingSetFactory'" + " label='workingSet'" + " name='workingSet'>";
+        String workingSet =
+            "<?xml version='1.0'?>"
+                + "<launchConfigurationWorkingSet editPageId='org.eclipse.ui.resourceWorkingSetPage'"
+                + " factoryID='org.eclipse.ui.internal.WorkingSetFactory'" + " label='workingSet'"
+                + " name='workingSet'>";
 
-        for ( Object o : getMonitoredResources() )
-        {
+        for (Object o : getMonitoredResources()) {
             MonitoredResource monitoredResource = (MonitoredResource) o;
 
             workingSet += monitoredResource.print();
@@ -142,8 +142,8 @@ public abstract class EclipseLaunchConfigurationWriter
 
     protected List getMonitoredResources()
     {
-        return Collections.singletonList(
-            new MonitoredResource( config.getEclipseProjectName(), MonitoredResource.PROJECT ) );
+        return Collections.singletonList( new MonitoredResource( config.getEclipseProjectName(),
+                                                                 MonitoredResource.PROJECT ) );
     }
 
     protected abstract void addAttributes( XMLWriter writer );
@@ -170,7 +170,7 @@ public abstract class EclipseLaunchConfigurationWriter
 
     protected String[] getRunBuildKinds()
     {
-        return new String[]{ "full", "incremental", "auto", "clean" };
+        return new String[] { "full", "incremental", "auto", "clean" };
     }
 
     protected boolean isAppendEnvironmentVariables()
@@ -206,10 +206,9 @@ public abstract class EclipseLaunchConfigurationWriter
         writer.startElement( "listAttribute" );
         writer.addAttribute( "key", key );
 
-        for ( String value : values )
-        {
-            writer.startElement( "listEntry" );
-            writer.addAttribute( "value", value );
+        for (String value : values) {
+            writer.startElement("listEntry");
+            writer.addAttribute("value", value);
             writer.endElement();
         }
 

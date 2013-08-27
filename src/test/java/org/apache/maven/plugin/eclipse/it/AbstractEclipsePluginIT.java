@@ -132,8 +132,7 @@ public abstract class AbstractEclipsePluginIT
     {
         if ( !installed )
         {
-            System.out.println(
-                "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
+            System.out.println( "*** Running test builds; output will be directed to: " + BUILD_OUTPUT_DIRECTORY + "\n" );
         }
 
         super.setUp();
@@ -150,11 +149,9 @@ public abstract class AbstractEclipsePluginIT
         {
             String path = System.getProperty( "java.library.path" );
             String[] paths = StringUtils.split( path, System.getProperty( "path.separator" ) );
-            for ( String pt : paths )
-            {
-                if ( new File( pt, "mvn" ).exists() )
-                {
-                    System.setProperty( "maven.home", new File( pt ).getAbsoluteFile().getParent() );
+            for (String pt : paths) {
+                if (new File(pt, "mvn").exists()) {
+                    System.setProperty("maven.home", new File(pt).getAbsoluteFile().getParent());
                     break;
                 }
 
@@ -169,11 +166,12 @@ public abstract class AbstractEclipsePluginIT
             {
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
 
-                localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( PomFile, "test",
-                                                                                                      localRepositoryDirectory );
+                localRepositoryDirectory =
+                    pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( PomFile, "test",
+                                                                               localRepositoryDirectory );
 
-                System.out.println(
-                    "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory + "\n" );
+                System.out.println( "*** Installed test-version of the Eclipse plugin to: " + localRepositoryDirectory
+                    + "\n" );
 
                 // Hack: to work around proxys and DTDs retrievals.
                 EntityResolver ignoreDtds = new EntityResolver()
@@ -207,19 +205,16 @@ public abstract class AbstractEclipsePluginIT
 
         containers.add( getContainer() );
 
-        for ( Object container1 : containers )
-        {
+        for (Object container1 : containers) {
             PlexusContainer container = (PlexusContainer) container1;
 
-            if ( container != null )
-            {
+            if (container != null) {
                 container.dispose();
 
                 ClassRealm realm = container.getContainerRealm();
 
-                if ( realm != null )
-                {
-                    realm.getWorld().disposeRealm( realm.getId() );
+                if (realm != null) {
+                    realm.getWorld().disposeRealm(realm.getId());
                 }
             }
         }
@@ -253,9 +248,9 @@ public abstract class AbstractEclipsePluginIT
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      *
      * @param projectName project directory
-     * @param properties  additional properties
-     * @param cleanGoal   TODO
-     * @param genGoal     TODO
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
      * @throws Exception any exception generated during test
      */
     protected void testProject( String projectName, Properties properties, String cleanGoal, String genGoal )
@@ -268,9 +263,9 @@ public abstract class AbstractEclipsePluginIT
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      *
      * @param projectName project directory
-     * @param properties  additional properties
-     * @param cleanGoal   TODO
-     * @param genGoal     TODO
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
      * @param withInstall true to include the install goal, false to exclude it.
      * @throws Exception any exception generated during test
      */
@@ -283,10 +278,10 @@ public abstract class AbstractEclipsePluginIT
     }
 
     /**
-     * @param basedir    Execute the eclipse:eclipse goal on a test project and verify generated files.
+     * @param basedir Execute the eclipse:eclipse goal on a test project and verify generated files.
      * @param properties additional properties
-     * @param cleanGoal  TODO
-     * @param genGoal    TODO
+     * @param cleanGoal TODO
+     * @param genGoal TODO
      * @throws Exception any exception generated during test
      */
     protected void testProject( File basedir, Properties properties, String cleanGoal, String genGoal )
@@ -298,10 +293,10 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      *
-     * @param basedir     basedir of mvn execution
-     * @param properties  additional properties
-     * @param cleanGoal   TODO
-     * @param genGoal     TODO
+     * @param basedir basedir of mvn execution
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
      * @param withInstall true to include the install goal, false to exclude it.
      * @throws Exception any exception generated during test
      */
@@ -368,9 +363,9 @@ public abstract class AbstractEclipsePluginIT
      * Execute the eclipse:configure-workspace goal on a test project and verify generated files.
      *
      * @param projectName project directory
-     * @param properties  additional properties
-     * @param cleanGoal   TODO
-     * @param genGoal     TODO
+     * @param properties additional properties
+     * @param cleanGoal TODO
+     * @param genGoal TODO
      * @throws Exception any exception generated during test
      */
     protected void testWorkspace( String projectName, Properties properties, String genGoal )
@@ -438,15 +433,13 @@ public abstract class AbstractEclipsePluginIT
 
         File buildLog = null;
 
-        for ( StackTraceElement element : trace )
-        {
+        for (StackTraceElement element : trace) {
             String methodName = element.getMethodName();
 
-            if ( methodName.startsWith( "test" ) && !methodName.equals( "testProject" ) )
-            {
+            if (methodName.startsWith("test") && !methodName.equals("testProject")) {
                 String classname = element.getClassName();
 
-                buildLog = new File( BUILD_OUTPUT_DIRECTORY, classname + "_" + element.getMethodName() + ".build.log" );
+                buildLog = new File(BUILD_OUTPUT_DIRECTORY, classname + "_" + element.getMethodName() + ".build.log");
 
                 break;
             }
@@ -457,10 +450,7 @@ public abstract class AbstractEclipsePluginIT
             buildLog = new File( BUILD_OUTPUT_DIRECTORY, "unknown.build.log" );
         }
 
-        if ( properties == null )
-        {
-            properties = new Properties();
-        }
+        if (properties == null) properties = new Properties();
         InvocationRequest request = buildTool.createBasicInvocationRequest( pom, properties, goals, buildLog );
         request.setUpdateSnapshots( false );
         request.setShowErrors( true );
@@ -488,10 +478,9 @@ public abstract class AbstractEclipsePluginIT
             {
             }
 
-            throw new ExecutionFailedException(
-                "Failed to execute build.\nPOM: " + pom + "\nGoals: " + StringUtils.join( goals.iterator(), ", " )
-                    + "\nExit Code: " + result.getExitCode() + "\nError: " + result.getExecutionException()
-                    + "\nBuild Log: " + buildLogUrl + "\n", result );
+            throw new ExecutionFailedException( "Failed to execute build.\nPOM: " + pom + "\nGoals: "
+                + StringUtils.join( goals.iterator(), ", " ) + "\nExit Code: " + result.getExitCode() + "\nError: "
+                + result.getExecutionException() + "\nBuild Log: " + buildLogUrl + "\n", result );
         }
     }
 
@@ -521,7 +510,7 @@ public abstract class AbstractEclipsePluginIT
     }
 
     /**
-     * @param basedir          the base directory of the project
+     * @param basedir the base directory of the project
      * @param projectOutputDir the directory where the eclipse plugin will write the output files.
      * @throws MojoExecutionException
      */
@@ -530,15 +519,13 @@ public abstract class AbstractEclipsePluginIT
     {
         File[] expectedDirectories = getExpectedDirectories( basedir );
 
-        for ( File expectedDirectory : expectedDirectories )
-        {
-            File[] expectedFilesToCompare = getExpectedFilesToCompare( expectedDirectory );
+        for (File expectedDirectory : expectedDirectories) {
+            File[] expectedFilesToCompare = getExpectedFilesToCompare(expectedDirectory);
 
-            for ( File expectedFile : expectedFilesToCompare )
-            {
-                File actualFile = getActualFile( projectOutputDir, basedir, expectedFile );
+            for (File expectedFile : expectedFilesToCompare) {
+                File actualFile = getActualFile(projectOutputDir, basedir, expectedFile);
 
-                assertFileEquals( expectedFile, actualFile );
+                assertFileEquals(expectedFile, actualFile);
             }
         }
     }
@@ -573,10 +560,10 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Assert that two XML files are equal.
      *
-     * @param expectedFile         the expected file - only used for path information
+     * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
-     * @param actualFile           the actual file - only used for path information
-     * @param actualFileContents   the contents of the actual file
+     * @param actualFile the actual file - only used for path information
+     * @param actualFileContents the contents of the actual file
      * @throws MojoExecutionException failures.
      */
     private void assertXmlFileEquals( File expectedFile, String expectedFileContents, File actualFile,
@@ -586,22 +573,20 @@ public abstract class AbstractEclipsePluginIT
         try
         {
             String message =
-                "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '" + IdeUtils.getCanonicalPath(
-                    expectedFile ) + "'";
-            if ( CLASSPATH_FILENAME.equals( actualFile.getName() ) )
-            {
-                Diff diff = new Diff( expectedFileContents, actualFileContents );
+                "Comparing '" + IdeUtils.getCanonicalPath(actualFile) + "' against '"
+                    + IdeUtils.getCanonicalPath(expectedFile) + "'";
+            if (CLASSPATH_FILENAME.equals(actualFile.getName())) {                
+                Diff diff = new Diff(expectedFileContents, actualFileContents);
                 XMLAssert.assertXMLIdentical( message, diff, true );
             }
-            else
-            {
+            else {
                 XMLAssert.assertXMLEqual( message, expectedFileContents, actualFileContents );
             }
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                IdeUtils.getCanonicalPath( expectedFile ) + "assertXmlFileEquals failure: IO " + e.getMessage(), e );
+            throw new MojoExecutionException( IdeUtils.getCanonicalPath( expectedFile )
+                + "assertXmlFileEquals failure: IO " + e.getMessage(), e );
         }
         catch ( SAXException e )
         {
@@ -612,10 +597,10 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Assert that two text files are equals. Lines that start with # are comments and ignored.
      *
-     * @param expectedFile         the expected file - only used for path information
+     * @param expectedFile the expected file - only used for path information
      * @param expectedFileContents the contents of the expected file
-     * @param actualFile           the actual file - only used for path information
-     * @param actualFileContents   the contents of the actual fiel
+     * @param actualFile the actual file - only used for path information
+     * @param actualFileContents the contents of the actual fiel
      * @throws MojoExecutionException failures.
      */
     private void assertTextFileEquals( File expectedFile, String expectedFileContents, File actualFile,
@@ -630,7 +615,7 @@ public abstract class AbstractEclipsePluginIT
             if ( actualLines.size() <= i )
             {
                 fail( "Too few lines in the actual file. Was " + actualLines.size() + ", expected: "
-                          + expectedLines.size() );
+                    + expectedLines.size() );
             }
             String actual = actualLines.get( i ).toString();
             if ( expected.startsWith( "#" ) && actual.startsWith( "#" ) )
@@ -638,9 +623,8 @@ public abstract class AbstractEclipsePluginIT
                 // ignore comments, for settings file
                 continue;
             }
-            assertEquals(
-                "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '" + IdeUtils.getCanonicalPath(
-                    expectedFile ) + "' at line #" + ( i + 1 ), expected, actual );
+            assertEquals( "Comparing '" + IdeUtils.getCanonicalPath( actualFile ) + "' against '"
+                + IdeUtils.getCanonicalPath( expectedFile ) + "' at line #" + ( i + 1 ), expected, actual );
         }
         assertTrue( "Unequal number of lines.", expectedLines.size() == actualLines.size() );
     }
@@ -648,7 +632,7 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Preprocess the file so that equals comparison can be done. Preprocessing may vary based on filename.
      *
-     * @param file      the file being processed
+     * @param file the file being processed
      * @param variables if not null, then replace all keys with the corresponding values in the expected string.
      * @return processed input
      */
@@ -701,7 +685,7 @@ public abstract class AbstractEclipsePluginIT
     }
 
     /**
-     * @param str       input string
+     * @param str input string
      * @param variables map of variables (keys) and replacement value (values)
      * @return the string with all variable values replaced.
      */
@@ -710,12 +694,11 @@ public abstract class AbstractEclipsePluginIT
         String result = str;
         if ( variables != null && !variables.isEmpty() )
         {
-            for ( Object o : variables.entrySet() )
-            {
+            for (Object o : variables.entrySet()) {
                 Entry entry = (Entry) o;
                 String variable = (String) entry.getKey();
                 String replacement = (String) entry.getValue();
-                result = StringUtils.replace( result, variable, replacement );
+                result = StringUtils.replace(result, variable, replacement);
             }
         }
 
@@ -724,7 +707,7 @@ public abstract class AbstractEclipsePluginIT
 
     protected void assertContains( String message, String full, String substring )
     {
-        if ( full == null || !full.contains( substring ) )
+        if ( full == null || !full.contains(substring))
         {
             StringBuilder buf = new StringBuilder();
             if ( message != null )
@@ -741,7 +724,7 @@ public abstract class AbstractEclipsePluginIT
 
     protected void assertDoesNotContain( String message, String full, String substring )
     {
-        if ( full == null || full.contains( substring ) )
+        if ( full == null || full.contains(substring))
         {
             StringBuilder buf = new StringBuilder();
             if ( message != null )
@@ -795,28 +778,22 @@ public abstract class AbstractEclipsePluginIT
         File[] allFiles = basedir.listFiles();
         if ( allFiles != null )
         {
-            for ( File currentFile : allFiles )
-            {
-                if ( currentFile.isDirectory() )
-                {
-                    if ( currentFile.getName().equals( EXPECTED_DIRECTORY_NAME ) )
-                    {
-                        expectedDirectories.add( currentFile );
-                    }
-                    else
-                    {
-                        subdirectories.add( currentFile );
+            for (File currentFile : allFiles) {
+                if (currentFile.isDirectory()) {
+                    if (currentFile.getName().equals(EXPECTED_DIRECTORY_NAME)) {
+                        expectedDirectories.add(currentFile);
+                    } else {
+                        subdirectories.add(currentFile);
                     }
                 }
             }
         }
         if ( !subdirectories.isEmpty() )
         {
-            for ( Object subdirectory1 : subdirectories )
-            {
+            for (Object subdirectory1 : subdirectories) {
                 File subdirectory = (File) subdirectory1;
-                File[] subdirectoryFiles = getExpectedDirectories( subdirectory );
-                expectedDirectories.addAll( Arrays.asList( subdirectoryFiles ) );
+                File[] subdirectoryFiles = getExpectedDirectories(subdirectory);
+                expectedDirectories.addAll(Arrays.asList(subdirectoryFiles));
             }
         }
         return (File[]) expectedDirectories.toArray( new File[expectedDirectories.size()] );
@@ -834,25 +811,20 @@ public abstract class AbstractEclipsePluginIT
         File[] allFiles = expectedDirectory.listFiles();
         if ( allFiles != null )
         {
-            for ( File currentFile : allFiles )
-            {
-                if ( currentFile.isDirectory() )
-                {
-                    subdirectories.add( currentFile );
-                }
-                else
-                {
-                    expectedFiles.add( currentFile );
+            for (File currentFile : allFiles) {
+                if (currentFile.isDirectory()) {
+                    subdirectories.add(currentFile);
+                } else {
+                    expectedFiles.add(currentFile);
                 }
             }
         }
         if ( !subdirectories.isEmpty() )
         {
-            for ( Object subdirectory1 : subdirectories )
-            {
+            for (Object subdirectory1 : subdirectories) {
                 File subdirectory = (File) subdirectory1;
-                File[] subdirectoryFiles = getExpectedFilesToCompare( subdirectory );
-                expectedFiles.addAll( Arrays.asList( subdirectoryFiles ) );
+                File[] subdirectoryFiles = getExpectedFilesToCompare(subdirectory);
+                expectedFiles.addAll(Arrays.asList(subdirectoryFiles));
             }
         }
 
@@ -864,8 +836,8 @@ public abstract class AbstractEclipsePluginIT
      * relative path used to locate the file within the projectOutputDir.
      *
      * @param projectOutputDir the directory where the eclipse plugin writes files to
-     * @param basedir          the base dir of the project being tested
-     * @param expectedFile     the expected file used to compare to the actual file
+     * @param basedir the base dir of the project being tested
+     * @param expectedFile the expected file used to compare to the actual file
      * @return the actual file needed for comparison against the expectedFile
      * @throws MojoExecutionException failures for obtaining actual file.
      */
@@ -882,7 +854,8 @@ public abstract class AbstractEclipsePluginIT
         catch ( IOException e )
         {
             throw new MojoExecutionException(
-                Messages.getString( "EclipsePlugin.cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
+                                              Messages.getString(
+                                                                  "EclipsePlugin.cantcanonicalize", actualFile.getAbsolutePath() ), e ); //$NON-NLS-1$
         }
     }
 
@@ -915,10 +888,10 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Return the not available marker file for the specified artifact details.
      *
-     * @param groupId      group id of artifact
-     * @param artifactId   artifact id of artifact
-     * @param version      version of artifact
-     * @param classifier   the classifier of the artifact
+     * @param groupId group id of artifact
+     * @param artifactId artifact id of artifact
+     * @param version version of artifact
+     * @param classifier the classifier of the artifact
      * @param inClassifier the sources/javadocs to be attached
      * @return the not available marker file
      * @throws Exception failures.
@@ -960,10 +933,10 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Assert that the not available marker file exists for the specified artifact details.
      *
-     * @param groupId      group id of artifact
-     * @param artifactId   artifact id of artifact
-     * @param version      version of artifact
-     * @param classifier   the classifier of the artifact
+     * @param groupId group id of artifact
+     * @param artifactId artifact id of artifact
+     * @param version version of artifact
+     * @param classifier the classifier of the artifact
      * @param inClassifier the sources/javadocs to be attached
      * @throws Exception failures
      */
@@ -978,10 +951,10 @@ public abstract class AbstractEclipsePluginIT
     /**
      * Assert that the not available marker file does not exist for the specified artifact details.
      *
-     * @param groupId      group id of artifact
-     * @param artifactId   artifact id of artifact
-     * @param version      version of artifact
-     * @param classifier   the classifier of the artifact
+     * @param groupId group id of artifact
+     * @param artifactId artifact id of artifact
+     * @param version version of artifact
+     * @param classifier the classifier of the artifact
      * @param inClassifier the sources/javadocs to be attached
      * @throws Exception failures
      */
