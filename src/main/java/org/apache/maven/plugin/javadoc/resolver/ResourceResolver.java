@@ -61,11 +61,11 @@ public final class ResourceResolver
     public static final String TEST_SOURCES_CLASSIFIER = "test-sources";
 
     private static final List<String> SOURCE_VALID_CLASSIFIERS =
-        Arrays.asList(SOURCES_CLASSIFIER, TEST_SOURCES_CLASSIFIER);
+        Arrays.asList( SOURCES_CLASSIFIER, TEST_SOURCES_CLASSIFIER );
 
     private static final List<String> RESOURCE_VALID_CLASSIFIERS =
-        Arrays.asList(AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
-                AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER);
+        Arrays.asList( AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
+                       AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER );
 
     private ResourceResolver()
     {
@@ -146,42 +146,46 @@ public final class ResourceResolver
     }
 
     private static List<JavadocBundle> resolveBundleFromProject( SourceResolverConfig config, MavenProject project,
-                                                           Artifact artifact ) throws IOException
+                                                                 Artifact artifact )
+        throws IOException
     {
         List<JavadocBundle> bundles = new ArrayList<JavadocBundle>();
-        
+
         List<String> classifiers = new ArrayList<String>();
         if ( config.includeCompileSources() )
         {
             classifiers.add( AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER );
         }
-        
+
         if ( config.includeTestSources() )
         {
             classifiers.add( AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER );
         }
-        
+
         for ( String classifier : classifiers )
         {
-            File optionsFile = new File( project.getBuild().getDirectory(), "javadoc-bundle-options/javadoc-options-" + classifier + ".xml" );
+            File optionsFile = new File( project.getBuild().getDirectory(),
+                                         "javadoc-bundle-options/javadoc-options-" + classifier + ".xml" );
             if ( !optionsFile.exists() )
             {
                 continue;
             }
-            
+
             FileInputStream stream = null;
             try
             {
                 stream = new FileInputStream( optionsFile );
                 JavadocOptions options = new JavadocOptionsXpp3Reader().read( stream );
-                
-                bundles.add( new JavadocBundle( options, new File( project.getBasedir(), options.getJavadocResourcesDirectory() ) ) );
+
+                bundles.add( new JavadocBundle( options, new File( project.getBasedir(),
+                                                                   options.getJavadocResourcesDirectory() ) ) );
             }
             catch ( XmlPullParserException e )
             {
-                IOException error = new IOException( "Failed to read javadoc options from: " + optionsFile + "\nReason: " + e.getMessage() );
+                IOException error = new IOException(
+                    "Failed to read javadoc options from: " + optionsFile + "\nReason: " + e.getMessage() );
                 error.initCause( e );
-                
+
                 throw error;
             }
             finally
@@ -208,12 +212,16 @@ public final class ResourceResolver
 
             if ( config.includeCompileSources() )
             {
-                toResolve.add( createResourceArtifact( artifact, AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER, config ) );
+                toResolve.add(
+                    createResourceArtifact( artifact, AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
+                                            config ) );
             }
 
             if ( config.includeTestSources() )
             {
-                toResolve.add( createResourceArtifact( artifact, AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER, config ) );
+                toResolve.add(
+                    createResourceArtifact( artifact, AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
+                                            config ) );
             }
         }
 
@@ -236,7 +244,7 @@ public final class ResourceResolver
                 config.log().debug( e.getMessage(), e );
             }
         }
-        
+
         List<JavadocBundle> result = new ArrayList<JavadocBundle>();
 
         if ( dirs != null )
@@ -260,7 +268,7 @@ public final class ResourceResolver
                     {
                         IOException error = new IOException( "Failed to parse javadoc options: " + e.getMessage() );
                         error.initCause( e );
-                        
+
                         throw error;
                     }
                     finally
@@ -268,15 +276,16 @@ public final class ResourceResolver
                         close( reader );
                     }
                 }
-                
+
                 result.add( new JavadocBundle( options, resources ) );
             }
         }
-        
+
         return result;
     }
 
-    private static List<String> resolveFromArtifacts( final SourceResolverConfig config, final List<Artifact> artifacts )
+    private static List<String> resolveFromArtifacts( final SourceResolverConfig config,
+                                                      final List<Artifact> artifacts )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
         final List<Artifact> toResolve = new ArrayList<Artifact>( artifacts.size() );
@@ -343,8 +352,9 @@ public final class ResourceResolver
 
         final ArtifactResolver resolver = config.artifactResolver();
 
-        final ArtifactResolutionResult resolutionResult = resolver.resolveTransitively(
-                artifactSet, pomArtifact, localRepo, remoteRepos, metadataSource, resolutionFilter );
+        final ArtifactResolutionResult resolutionResult =
+            resolver.resolveTransitively( artifactSet, pomArtifact, localRepo, remoteRepos, metadataSource,
+                                          resolutionFilter );
 
         final List<String> result = new ArrayList<String>( artifacts.size() );
         for ( final Artifact a : (Collection<Artifact>) resolutionResult.getArtifacts() )
@@ -377,8 +387,8 @@ public final class ResourceResolver
             {
                 if ( propagateErrors )
                 {
-                    throw new ArtifactResolutionException( "Failed to retrieve valid un-archiver component: "
-                        + a.getType(), a, e );
+                    throw new ArtifactResolutionException(
+                        "Failed to retrieve valid un-archiver component: " + a.getType(), a, e );
                 }
             }
             catch ( final ArchiverException e )

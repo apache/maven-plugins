@@ -46,12 +46,16 @@ public class JavadocReportTest
 {
     private static final char LINE_SEPARATOR = ' ';
 
-    /** flag to copy repo only one time */
+    /**
+     * flag to copy repo only one time
+     */
     private static boolean TEST_REPO_CREATED = false;
 
     private File unit;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -121,8 +125,8 @@ public class JavadocReportTest
 
         // Remove SCM files
         List<String> files =
-            FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true,
-                                                true, true, true );
+            FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true, true,
+                                                true, true );
         for ( String filename : files )
         {
             File file = new File( filename );
@@ -144,10 +148,10 @@ public class JavadocReportTest
      * Convenience method that reads the contents of the specified file object into a string with a
      * <code>space</code> as line separator.
      *
-     * @see #LINE_SEPARATOR
      * @param file the file to be read
      * @return a String object that contains the contents of the file
      * @throws IOException if any
+     * @see #LINE_SEPARATOR
      */
     private static String readFile( File file )
         throws IOException
@@ -240,7 +244,7 @@ public class JavadocReportTest
     }
 
     public void testIncludesExcludes()
-            throws Exception
+        throws Exception
     {
         File testPom = new File( unit, "file-include-exclude-test/file-include-exclude-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
@@ -319,7 +323,8 @@ public class JavadocReportTest
         assertTrue( str.toUpperCase().contains( "SAMPLE BOTTOM CONTENT" ) );
 
         // offlineLinks
-        assertTrue( str.toLowerCase().contains( "href=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/string.html" ) );
+        assertTrue(
+            str.toLowerCase().contains( "href=\"http://java.sun.com/j2se/1.4.2/docs/api/java/lang/string.html" ) );
 
         // header
         assertTrue( str.toUpperCase().contains( "MAVEN JAVADOC PLUGIN TEST" ) );
@@ -518,8 +523,7 @@ public class JavadocReportTest
         if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
         {
             getContainer().getLogger().warn(
-                                             "JDK 5.0 or more is required to run javadoc for '"
-                                                 + getClass().getName() + "#" + getName() + "()'." );
+                "JDK 5.0 or more is required to run javadoc for '" + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
@@ -731,8 +735,7 @@ public class JavadocReportTest
         if ( !SystemUtils.isJavaVersionAtLeast( 1.6f ) )
         {
             getContainer().getLogger().warn(
-                                             "JDK 6.0 or more is required to run javadoc for '"
-                                                 + getClass().getName() + "#" + getName() + "()'." );
+                "JDK 6.0 or more is required to run javadoc for '" + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
@@ -787,7 +790,10 @@ public class JavadocReportTest
         setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
         mojo.execute();
 
-        File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
+        File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + (
+            SystemUtils.IS_OS_WINDOWS
+                ? "bat"
+                : "sh" ) );
         assertTrue( FileUtils.fileExists( commandLine.getAbsolutePath() ) );
         String readed = readFile( commandLine );
         assertTrue( readed.contains( "-J-Dhttp.proxySet=true" ) );
@@ -999,8 +1005,10 @@ public class JavadocReportTest
         assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoPhaseTypeTaglet" ) );
         assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoReadOnlyFieldTaglet" ) );
         assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiredFieldTaglet" ) );
-        assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresDependencyResolutionTypeTaglet" ) );
-        assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresDirectInvocationTypeTaglet" ) );
+        assertTrue(
+            options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresDependencyResolutionTypeTaglet" ) );
+        assertTrue(
+            options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresDirectInvocationTypeTaglet" ) );
         assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresOnLineTypeTaglet" ) );
         assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresProjectTypeTaglet" ) );
         assertTrue( options.contains( "org.apache.maven.tools.plugin.javadoc.MojoRequiresReportsTypeTaglet" ) );
@@ -1057,8 +1065,8 @@ public class JavadocReportTest
         mojo.execute();
 
         content = readFile( stylesheetfile );
-        assertTrue( content.contains( "/* Javadoc style sheet */" )
-            && content.contains( "Licensed to the Apache Software Foundation (ASF) under one" ) );
+        assertTrue( content.contains( "/* Javadoc style sheet */" ) && content.contains(
+            "Licensed to the Apache Software Foundation (ASF) under one" ) );
 
         optionsContent = readFile( options );
         assertTrue( optionsContent.contains( "-stylesheetfile" ) );
@@ -1076,8 +1084,8 @@ public class JavadocReportTest
         assertTrue( optionsContent.contains( "-stylesheetfile" ) );
         File stylesheetResource =
             new File( unit, "stylesheetfile-test/src/main/resources/com/mycompany/app/javadoc/css/stylesheet.css" );
-        assertTrue( optionsContent.contains( "'" + stylesheetResource.getAbsolutePath().replaceAll( "\\\\", "/" )
-            + "'" ) );
+        assertTrue(
+            optionsContent.contains( "'" + stylesheetResource.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) );
 
         // stylesheetfile defined in a javadoc plugin dependency
         setVariableValueToObject( mojo, "stylesheetfile", "com/mycompany/app/javadoc/css2/stylesheet.css" );
@@ -1103,7 +1111,8 @@ public class JavadocReportTest
         assertTrue( optionsContent.contains( "-stylesheetfile" ) );
         stylesheetResource =
             new File( unit, "stylesheetfile-test/src/main/resources/com/mycompany/app/javadoc/css3/stylesheet.css" );
-        assertTrue( optionsContent.contains( "'" + stylesheetResource.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) );
+        assertTrue(
+            optionsContent.contains( "'" + stylesheetResource.getAbsolutePath().replaceAll( "\\\\", "/" ) + "'" ) );
     }
 
     /**

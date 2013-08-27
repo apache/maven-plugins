@@ -223,7 +223,7 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      * See <a href="#defaultSince">defaultSince</a>.
      */
-    @Parameter ( property = "comparisonVersion", defaultValue = "(,${project.version})" )
+    @Parameter( property = "comparisonVersion", defaultValue = "(,${project.version})" )
     private String comparisonVersion;
 
     /**
@@ -231,13 +231,13 @@ public abstract class AbstractFixJavadocMojo
      * <br/>
      * If not specified, the <code>user.name</code> defined in the System properties will be used.
      */
-    @Parameter ( property = "defaultAuthor" )
+    @Parameter( property = "defaultAuthor" )
     private String defaultAuthor;
 
     /**
      * Default value for the Javadoc tag <code>&#64;since</code>.
      */
-    @Parameter ( property = "defaultSince", defaultValue = "${project.version}" )
+    @Parameter( property = "defaultSince", defaultValue = "${project.version}" )
     private String defaultSince;
 
     /**
@@ -247,20 +247,20 @@ public abstract class AbstractFixJavadocMojo
      * <a href="http://svnbook.red-bean.com/en/1.1/ch07s02.html#svn-ch-7-sect-2.3.4">SVN keyword</a>.
      * Refer to your SCM to use an other SCM keyword.
      */
-    @Parameter ( property = "defaultVersion", defaultValue = DEFAULT_VERSION_VALUE )
+    @Parameter( property = "defaultVersion", defaultValue = DEFAULT_VERSION_VALUE )
     private String defaultVersion = "\u0024Id: \u0024"; // can't use default-value="\u0024Id: \u0024"
 
     /**
      * The file encoding to use when reading the source files. If the property
      * <code>project.build.sourceEncoding</code> is not set, the platform default encoding is used.
      */
-    @Parameter ( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /**
      * Comma separated excludes Java files, i.e. <code>&#42;&#42;/&#42;Test.java</code>.
      */
-    @Parameter ( property = "excludes" )
+    @Parameter( property = "excludes" )
     private String excludes;
 
     /**
@@ -277,37 +277,37 @@ public abstract class AbstractFixJavadocMojo
      * <li>link (fix only &#64;link tag)</li>
      * </ul>
      */
-    @Parameter ( property = "fixTags", defaultValue = "all" )
+    @Parameter( property = "fixTags", defaultValue = "all" )
     private String fixTags;
 
     /**
      * Flag to fix the classes or interfaces Javadoc comments according the <code>level</code>.
      */
-    @Parameter ( property = "fixClassComment", defaultValue = "true" )
+    @Parameter( property = "fixClassComment", defaultValue = "true" )
     private boolean fixClassComment;
 
     /**
      * Flag to fix the fields Javadoc comments according the <code>level</code>.
      */
-    @Parameter ( property = "fixFieldComment", defaultValue = "true" )
+    @Parameter( property = "fixFieldComment", defaultValue = "true" )
     private boolean fixFieldComment;
 
     /**
      * Flag to fix the methods Javadoc comments according the <code>level</code>.
      */
-    @Parameter ( property = "fixMethodComment", defaultValue = "true" )
+    @Parameter( property = "fixMethodComment", defaultValue = "true" )
     private boolean fixMethodComment;
 
     /**
      * Forcing the goal execution i.e. skip warranty messages (not recommended).
      */
-    @Parameter ( property = "force" )
+    @Parameter( property = "force" )
     private boolean force;
 
     /**
      * Flag to ignore or not Clirr.
      */
-    @Parameter ( property = "ignoreClirr", defaultValue = "false" )
+    @Parameter( property = "ignoreClirr", defaultValue = "false" )
     protected boolean ignoreClirr;
 
     /**
@@ -315,7 +315,7 @@ public abstract class AbstractFixJavadocMojo
      * <p/>
      * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
-    @Parameter ( property = "includes", defaultValue = JAVA_FILES )
+    @Parameter( property = "includes", defaultValue = JAVA_FILES )
     private String includes;
 
     /**
@@ -332,19 +332,19 @@ public abstract class AbstractFixJavadocMojo
      * (shows all classes and members)</li>
      * </ul>
      */
-    @Parameter ( property = "level", defaultValue = "protected" )
+    @Parameter( property = "level", defaultValue = "protected" )
     private String level;
 
     /**
      * The local repository where the artifacts are located, used by the tests.
      */
-    @Parameter ( property = "localRepository" )
+    @Parameter( property = "localRepository" )
     private ArtifactRepository localRepository;
 
     /**
      * Output directory where Java classes will be rewritten.
      */
-    @Parameter ( property = "outputDirectory", defaultValue = "${project.build.sourceDirectory}" )
+    @Parameter( property = "outputDirectory", defaultValue = "${project.build.sourceDirectory}" )
     private File outputDirectory;
 
     /**
@@ -442,8 +442,9 @@ public abstract class AbstractFixJavadocMojo
 
             if ( javaClasses != null )
             {
-                for (JavaClass javaClass : javaClasses) {
-                    processFix(javaClass);
+                for ( JavaClass javaClass : javaClasses )
+                {
+                    processFix( javaClass );
                 }
             }
         }
@@ -528,14 +529,19 @@ public abstract class AbstractFixJavadocMojo
         {
             String[] split = StringUtils.split( fixTags, "," );
             List<String> filtered = new LinkedList<String>();
-            for (String aSplit : split) {
+            for ( String aSplit : split )
+            {
                 String s = aSplit.trim();
-                if (JavadocUtil.equalsIgnoreCase(s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
-                        THROWS_TAG, LINK_TAG)) {
-                    filtered.add(s);
-                } else {
-                    if (getLog().isWarnEnabled()) {
-                        getLog().warn("Unrecognized '" + s + "' for fixTags parameter. Ignored it!");
+                if ( JavadocUtil.equalsIgnoreCase( s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
+                                                   THROWS_TAG, LINK_TAG ) )
+                {
+                    filtered.add( s );
+                }
+                else
+                {
+                    if ( getLog().isWarnEnabled() )
+                    {
+                        getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
                     }
                 }
             }
@@ -611,7 +617,7 @@ public abstract class AbstractFixJavadocMojo
                     getLog().info( "OK, let's proceed..." );
                     break;
                 }
-                if (JavadocUtil.equalsIgnoreCase( userExpression, "N", "No" ))
+                if ( JavadocUtil.equalsIgnoreCase( userExpression, "N", "No" ) )
                 {
                     getLog().info( "No changes in your sources occur." );
                     return false;
@@ -673,7 +679,7 @@ public abstract class AbstractFixJavadocMojo
                     StringUtils.unifyLineSeparators( FileUtils.fileRead( invokerLogFile, "UTF-8" ) );
                 // see org.codehaus.mojo.clirr.AbstractClirrMojo#getComparisonArtifact()
                 final String artifactNotFoundMsg = "Unable to find a previous version of the project in the repository";
-                if (invokerLogContent.contains(artifactNotFoundMsg))
+                if ( invokerLogContent.contains( artifactNotFoundMsg ) )
                 {
                     getLog().warn( "No previous artifact has been deployed, Clirr is ignored." );
                     return;
@@ -830,8 +836,10 @@ public abstract class AbstractFixJavadocMojo
             return true;
         }
 
-        for (String aFixTagsSplitted : fixTagsSplitted) {
-            if (aFixTagsSplitted.trim().equals(tag)) {
+        for ( String aFixTagsSplitted : fixTagsSplitted )
+        {
+            if ( aFixTagsSplitted.trim().equals( tag ) )
+            {
                 return true;
             }
         }
@@ -932,7 +940,7 @@ public abstract class AbstractFixJavadocMojo
                 }
             }
 
-            projectClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
+            projectClassLoader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
         }
 
         return projectClassLoader;
@@ -1095,7 +1103,7 @@ public abstract class AbstractFixJavadocMojo
         String extraComment = javadocComment.substring( javadocComment.indexOf( END_JAVADOC ) + END_JAVADOC.length() );
         if ( StringUtils.isNotEmpty( extraComment ) )
         {
-            if (extraComment.contains(EOL))
+            if ( extraComment.contains( EOL ) )
             {
                 stringWriter.write( extraComment.substring( extraComment.indexOf( EOL ) + EOL.length() ) );
             }
@@ -1320,18 +1328,22 @@ public abstract class AbstractFixJavadocMojo
             {
                 StringBuilder value = new StringBuilder();
                 String[] lines = getLines( field.getInitializationExpression() );
-                for (String line : lines) {
-                    StringTokenizer token = new StringTokenizer(line.trim(), "\"\n\r");
-                    while (token.hasMoreTokens()) {
+                for ( String line : lines )
+                {
+                    StringTokenizer token = new StringTokenizer( line.trim(), "\"\n\r" );
+                    while ( token.hasMoreTokens() )
+                    {
                         String s = token.nextToken();
 
-                        if (s.trim().equals("+")) {
+                        if ( s.trim().equals( "+" ) )
+                        {
                             continue;
                         }
-                        if (s.trim().endsWith("\\")) {
+                        if ( s.trim().endsWith( "\\" ) )
+                        {
                             s += "\"";
                         }
-                        value.append(s);
+                        value.append( s );
                     }
                 }
 
@@ -1697,9 +1709,10 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String[] lines = getLines( comment );
-        for (String line : lines) {
-            sb.append(indent).append(" ").append(line.trim());
-            sb.append(EOL);
+        for ( String line : lines )
+        {
+            sb.append( indent ).append( " " ).append( line.trim() );
+            sb.append( EOL );
         }
     }
 
@@ -1919,7 +1932,8 @@ public abstract class AbstractFixJavadocMojo
                     {
                         String originalJavadocTag = it.next();
 
-                        if (StringUtils.removeDuplicateWhitespace(originalJavadocTag).trim().contains("@" + docletTag.getName()))
+                        if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().contains(
+                            "@" + docletTag.getName() ) )
                         {
                             it.remove();
                             sb.append( originalJavadocTag );
@@ -1934,7 +1948,8 @@ public abstract class AbstractFixJavadocMojo
                 {
                     String originalJavadocTag = it.next();
 
-                    if (StringUtils.removeDuplicateWhitespace(originalJavadocTag).trim().contains("@" + docletTag.getName()))
+                    if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().contains(
+                        "@" + docletTag.getName() ) )
                     {
                         it.remove();
                         sb.append( originalJavadocTag );
@@ -1952,8 +1967,8 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeParamTag( final StringBuilder sb, final JavaMethod javaMethod, final JavaEntityTags javaEntityTags,
-                                String[] params )
+    private void writeParamTag( final StringBuilder sb, final JavaMethod javaMethod,
+                                final JavaEntityTags javaEntityTags, String[] params )
     {
         params = fixQdox173( params );
 
@@ -1976,8 +1991,10 @@ public abstract class AbstractFixJavadocMojo
         {
             // is generic?
             TypeVariable[] typeParams = javaMethod.getTypeParameters();
-            for (TypeVariable typeParam : typeParams) {
-                if (typeParam.getGenericValue().equals(paramName)) {
+            for ( TypeVariable typeParam : typeParams )
+            {
+                if ( typeParam.getGenericValue().equals( paramName ) )
+                {
                     found = true;
                 }
             }
@@ -2520,7 +2537,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-        sb.append("<").append(typeParameter.getName()).append(">");
+        sb.append( "<" ).append( typeParameter.getName() ).append( ">" );
         sb.append( " " );
         sb.append( getDefaultJavadocForType( typeParameter ) );
         sb.append( EOL );
@@ -3368,7 +3385,7 @@ public abstract class AbstractFixJavadocMojo
     private static String removeLastEmptyJavadocLines( final String content )
         throws IOException
     {
-        if (!content.contains(EOL))
+        if ( !content.contains( EOL ) )
         {
             return content;
         }
@@ -3468,7 +3485,7 @@ public abstract class AbstractFixJavadocMojo
             line = reader.readLine();
         }
 
-        return lines.toArray(new String[lines.size()]);
+        return lines.toArray( new String[lines.size()] );
     }
 
     /**
@@ -3541,7 +3558,7 @@ public abstract class AbstractFixJavadocMojo
             l.remove( 0 );
             l.remove( 1 );
 
-            return l.toArray(new String[l.size()]);
+            return l.toArray( new String[l.size()] );
         }
 
         return params;
@@ -3656,7 +3673,8 @@ public abstract class AbstractFixJavadocMojo
         private String getMessage( String paramName, String mapName )
         {
             StringBuilder msg = new StringBuilder();
-            msg.append("No param '").append(paramName).append("' key found in ").append(mapName).append(" for the entity: ");
+            msg.append( "No param '" ).append( paramName ).append( "' key found in " ).append( mapName ).append(
+                " for the entity: " );
             if ( isJavaMethod )
             {
                 JavaMethod javaMethod = (JavaMethod) entity;

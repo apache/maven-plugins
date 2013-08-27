@@ -51,13 +51,19 @@ import com.thoughtworks.qdox.model.JavaMethod;
 public class FixJavadocMojoTest
     extends AbstractMojoTestCase
 {
-    /** The vm line separator */
+    /**
+     * The vm line separator
+     */
     private static final String EOL = System.getProperty( "line.separator" );
 
-    /** flag to copy repo only one time */
+    /**
+     * flag to copy repo only one time
+     */
     private static boolean TEST_REPO_CREATED = false;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     protected void setUp()
         throws Exception
     {
@@ -108,8 +114,8 @@ public class FixJavadocMojoTest
 
         // Remove SCM files
         List<String> files =
-            FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true,
-                                                true, true, true );
+            FileUtils.getFileAndDirectoryNames( localRepo, FileUtils.getDefaultExcludesAsString(), null, true, true,
+                                                true, true );
         for ( String filename : files )
         {
             File file = new File( filename );
@@ -135,7 +141,7 @@ public class FixJavadocMojoTest
     {
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-test" );
 
-        executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
+        executeMojoAndTest( testPomBasedir, new String[]{ "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
             "InterfaceWithJavadoc.java", "InterfaceWithNoJavadoc.java" } );
     }
 
@@ -148,13 +154,12 @@ public class FixJavadocMojoTest
         if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
         {
             getContainer().getLogger().warn(
-                                             "JDK 5.0 or more is required to run fix for '" + getClass().getName()
-                                                 + "#" + getName() + "()'." );
+                "JDK 5.0 or more is required to run fix for '" + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk5-test" );
-        executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
+        executeMojoAndTest( testPomBasedir, new String[]{ "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
             "InterfaceWithJavadoc.java", "InterfaceWithNoJavadoc.java", "SubClassWithJavadoc.java" } );
     }
 
@@ -167,13 +172,12 @@ public class FixJavadocMojoTest
         if ( !SystemUtils.isJavaVersionAtLeast( 1.6f ) )
         {
             getContainer().getLogger().warn(
-                                             "JDK 6.0 or more is required to run fix for '" + getClass().getName()
-                                                 + "#" + getName() + "()'." );
+                "JDK 6.0 or more is required to run fix for '" + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk6-test" );
-        executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "InterfaceWithJavadoc.java" } );
+        executeMojoAndTest( testPomBasedir, new String[]{ "ClassWithJavadoc.java", "InterfaceWithJavadoc.java" } );
     }
 
     // ----------------------------------------------------------------------
@@ -188,31 +192,31 @@ public class FixJavadocMojoTest
     {
         String s = null;
         assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                  new Class[] { String.class }, new Object[] { s } ) );
+                                                  new Class[]{ String.class }, new Object[]{ s } ) );
 
         s = "no indentation";
         assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                  new Class[] { String.class }, new Object[] { s } ) );
+                                                  new Class[]{ String.class }, new Object[]{ s } ) );
 
         s = "no indentation with right spaces  ";
         assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                  new Class[] { String.class }, new Object[] { s } ) );
+                                                  new Class[]{ String.class }, new Object[]{ s } ) );
 
         s = "    indentation";
         assertEquals( "    ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                      new Class[] { String.class }, new Object[] { s } ) );
+                                                      new Class[]{ String.class }, new Object[]{ s } ) );
 
         s = "    indentation with right spaces  ";
         assertEquals( "    ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                      new Class[] { String.class }, new Object[] { s } ) );
+                                                      new Class[]{ String.class }, new Object[]{ s } ) );
 
         s = "\ttab indentation";
         assertEquals( "\t", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                    new Class[] { String.class }, new Object[] { s } ) );
+                                                    new Class[]{ String.class }, new Object[]{ s } ) );
 
         s = "  \n  indentation with right spaces  ";
         assertEquals( "  \n  ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "autodetectIndentation",
-                                                        new Class[] { String.class }, new Object[] { s } ) );
+                                                        new Class[]{ String.class }, new Object[]{ s } ) );
     }
 
     /**
@@ -221,22 +225,27 @@ public class FixJavadocMojoTest
     public void testTrimLeft()
         throws Throwable
     {
-        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                  new Class[] { String.class }, new Object[] { null } ) );
-        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                  new Class[] { String.class }, new Object[] { "  " } ) );
-        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                  new Class[] { String.class }, new Object[] { "  \t  " } ) );
-        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                   new Class[] { String.class }, new Object[] { "a" } ) );
-        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                   new Class[] { String.class }, new Object[] { "  a" } ) );
-        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                   new Class[] { String.class }, new Object[] { "\ta" } ) );
-        assertEquals( "a  ", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                     new Class[] { String.class }, new Object[] { "  a  " } ) );
-        assertEquals( "a\t", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft",
-                                                     new Class[] { String.class }, new Object[] { "\ta\t" } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                                  new Object[]{ null } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                                  new Object[]{ "  " } ) );
+        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                                  new Object[]{ "  \t  " } ) );
+        assertEquals( "a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                              new Object[]{ "a" } ) );
+        assertEquals( "a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                              new Object[]{ "  a" } ) );
+        assertEquals( "a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                              new Object[]{ "\ta" } ) );
+        assertEquals( "a  ",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                              new Object[]{ "  a  " } ) );
+        assertEquals( "a\t",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimLeft", new Class[]{ String.class },
+                                              new Object[]{ "\ta\t" } ) );
     }
 
     /**
@@ -245,22 +254,30 @@ public class FixJavadocMojoTest
     public void testTrimRight()
         throws Throwable
     {
-        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                  new Class[] { String.class }, new Object[] { null } ) );
-        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                  new Class[] { String.class }, new Object[] { "  " } ) );
-        assertEquals( "", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                  new Class[] { String.class }, new Object[] { "  \t  " } ) );
-        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                   new Class[] { String.class }, new Object[] { "a" } ) );
-        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                   new Class[] { String.class }, new Object[] { "a  " } ) );
-        assertEquals( "a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                   new Class[] { String.class }, new Object[] { "a\t" } ) );
-        assertEquals( "  a", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                     new Class[] { String.class }, new Object[] { "  a  " } ) );
-        assertEquals( "\ta", PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight",
-                                                     new Class[] { String.class }, new Object[] { "\ta\t" } ) );
+        assertEquals( "",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ null } ) );
+        assertEquals( "",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "  " } ) );
+        assertEquals( "",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "  \t  " } ) );
+        assertEquals( "a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "a" } ) );
+        assertEquals( "a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "a  " } ) );
+        assertEquals( "a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "a\t" } ) );
+        assertEquals( "  a",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "  a  " } ) );
+        assertEquals( "\ta",
+                      PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "trimRight", new Class[]{ String.class },
+                                              new Object[]{ "\ta\t" } ) );
     }
 
     /**
@@ -270,45 +287,38 @@ public class FixJavadocMojoTest
         throws Throwable
     {
         String content = "/** {@inheritDoc} */";
-        Boolean has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        Boolean has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                        new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.TRUE, has );
 
         content = "/**{@inheritDoc}*/";
-        has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.TRUE, has );
 
         content = "/**{@inheritDoc  }  */";
-        has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.TRUE, has );
 
         content = "/**  {@inheritDoc  }  */";
-        has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.TRUE, has );
 
         content = "/** */";
-        has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.FALSE, has );
 
         content = "/**{  @inheritDoc  }*/";
-        has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.FALSE, has );
 
         content = "/**{@ inheritDoc}*/";
-        has =
-            (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
-                                              new Class[] { String.class }, new Object[] { content } );
+        has = (Boolean) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "hasInheritedTag",
+                                                new Class[]{ String.class }, new Object[]{ content } );
         assertEquals( Boolean.FALSE, has );
     }
 
@@ -319,36 +329,36 @@ public class FixJavadocMojoTest
         throws Throwable
     {
         String content = "/**" + EOL +
-                " * Dummy Class." + EOL +
-                " */" + EOL +
-                "public class DummyClass" + EOL +
-                "{" + EOL +
-                "    /**" + EOL +
-                "     *" + EOL +
-                "     * Dummy" + EOL +
-                "     *" + EOL +
-                "     *      Method." + EOL +
-                "     *" + EOL +
-                "     * @param args not" + EOL +
-                "     *" + EOL +
-                "     * null" + EOL +
-                "     * @param i non negative" + EOL +
-                "     * @param object could" + EOL +
-                "     * be" + EOL +
-                "     *      null" + EOL +
-                "     * @return a" + EOL +
-                "     * String" + EOL +
-                "     *" + EOL +
-                "     * @throws Exception if" + EOL +
-                "     * any" + EOL +
-                "     *" + EOL +
-                "     */" + EOL +
-                "    public static String dummyMethod( String[] args, int i, Object object )" + EOL +
-                "        throws Exception" + EOL +
-                "    {" + EOL +
-                "        return null;" + EOL +
-                "    }" + EOL +
-                "}";
+            " * Dummy Class." + EOL +
+            " */" + EOL +
+            "public class DummyClass" + EOL +
+            "{" + EOL +
+            "    /**" + EOL +
+            "     *" + EOL +
+            "     * Dummy" + EOL +
+            "     *" + EOL +
+            "     *      Method." + EOL +
+            "     *" + EOL +
+            "     * @param args not" + EOL +
+            "     *" + EOL +
+            "     * null" + EOL +
+            "     * @param i non negative" + EOL +
+            "     * @param object could" + EOL +
+            "     * be" + EOL +
+            "     *      null" + EOL +
+            "     * @return a" + EOL +
+            "     * String" + EOL +
+            "     *" + EOL +
+            "     * @throws Exception if" + EOL +
+            "     * any" + EOL +
+            "     *" + EOL +
+            "     */" + EOL +
+            "    public static String dummyMethod( String[] args, int i, Object object )" + EOL +
+            "        throws Exception" + EOL +
+            "    {" + EOL +
+            "        return null;" + EOL +
+            "    }" + EOL +
+            "}";
 
         JavaDocBuilder builder = new JavaDocBuilder();
         builder.setEncoding( "UTF-8" );
@@ -359,137 +369,133 @@ public class FixJavadocMojoTest
 
         JavaMethod javaMethod = clazz.getMethods()[0];
 
-        String javadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "extractOriginalJavadoc", new Class[] {
-                String.class, AbstractJavaEntity.class }, new Object[] { content, javaMethod } );
+        String javadoc = (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "extractOriginalJavadoc",
+                                                          new Class[]{ String.class, AbstractJavaEntity.class },
+                                                          new Object[]{ content, javaMethod } );
         assertEquals( "    /**" + EOL +
-                "     *" + EOL +
-                "     * Dummy" + EOL +
-                "     *" + EOL +
-                "     *      Method." + EOL +
-                "     *" + EOL +
-                "     * @param args not" + EOL +
-                "     *" + EOL +
-                "     * null" + EOL +
-                "     * @param i non negative" + EOL +
-                "     * @param object could" + EOL +
-                "     * be" + EOL +
-                "     *      null" + EOL +
-                "     * @return a" + EOL +
-                "     * String" + EOL +
-                "     *" + EOL +
-                "     * @throws Exception if" + EOL +
-                "     * any" + EOL +
-                "     *" + EOL +
-                "     */", javadoc );
+                          "     *" + EOL +
+                          "     * Dummy" + EOL +
+                          "     *" + EOL +
+                          "     *      Method." + EOL +
+                          "     *" + EOL +
+                          "     * @param args not" + EOL +
+                          "     *" + EOL +
+                          "     * null" + EOL +
+                          "     * @param i non negative" + EOL +
+                          "     * @param object could" + EOL +
+                          "     * be" + EOL +
+                          "     *      null" + EOL +
+                          "     * @return a" + EOL +
+                          "     * String" + EOL +
+                          "     *" + EOL +
+                          "     * @throws Exception if" + EOL +
+                          "     * any" + EOL +
+                          "     *" + EOL +
+                          "     */", javadoc );
 
         String javadocContent =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "extractOriginalJavadocContent",
-                                             new Class[] { String.class, AbstractJavaEntity.class }, new Object[] {
-                                                 content, javaMethod } );
+                                             new Class[]{ String.class, AbstractJavaEntity.class },
+                                             new Object[]{ content, javaMethod } );
         assertEquals( "     *" + EOL +
-                      "     * Dummy" + EOL +
-                      "     *" + EOL +
-                      "     *      Method." + EOL +
-                      "     *" + EOL +
-                      "     * @param args not" + EOL +
-                      "     *" + EOL +
-                      "     * null" + EOL +
-                      "     * @param i non negative" + EOL +
-                      "     * @param object could" + EOL +
-                      "     * be" + EOL +
-                      "     *      null" + EOL +
-                      "     * @return a" + EOL +
-                      "     * String" + EOL +
-                      "     *" + EOL +
-                      "     * @throws Exception if" + EOL +
-                      "     * any" + EOL +
-                      "     *", javadocContent );
+                          "     * Dummy" + EOL +
+                          "     *" + EOL +
+                          "     *      Method." + EOL +
+                          "     *" + EOL +
+                          "     * @param args not" + EOL +
+                          "     *" + EOL +
+                          "     * null" + EOL +
+                          "     * @param i non negative" + EOL +
+                          "     * @param object could" + EOL +
+                          "     * be" + EOL +
+                          "     *      null" + EOL +
+                          "     * @return a" + EOL +
+                          "     * String" + EOL +
+                          "     *" + EOL +
+                          "     * @throws Exception if" + EOL +
+                          "     * any" + EOL +
+                          "     *", javadocContent );
 
         String withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { javadocContent } );
+                                             new Class[]{ String.class }, new Object[]{ javadocContent } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "any" ) );
 
-        String methodJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
-                String.class, AbstractJavaEntity.class }, new Object[] { content, javaMethod } );
+        String methodJavadoc = (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment",
+                                                                new Class[]{ String.class, AbstractJavaEntity.class },
+                                                                new Object[]{ content, javaMethod } );
         assertEquals( "     *" + EOL +
-                "     * Dummy" + EOL +
-                "     *" + EOL +
-                "     *      Method." + EOL +
-                "     *", methodJavadoc );
+                          "     * Dummy" + EOL +
+                          "     *" + EOL +
+                          "     *      Method." + EOL +
+                          "     *", methodJavadoc );
         withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { methodJavadoc } );
+                                             new Class[]{ String.class }, new Object[]{ methodJavadoc } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "Method." ) );
 
         assertEquals( 5, javaMethod.getTags().length );
 
         AbstractFixJavadocMojo mojoInstance = new FixJavadocMojo();
-        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[] { "all" } );
+        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[]{ "all" } );
 
         DocletTag tag = javaMethod.getTags()[0];
-        String tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        String tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                             new Class[]{ String.class,
+                                                                 AbstractInheritableJavaEntity.class, DocletTag.class },
+                                                             new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @param args not" + EOL +
-                "     *" + EOL +
-                "     * null", tagJavadoc );
+                          "     *" + EOL +
+                          "     * null", tagJavadoc );
         withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+                                             new Class[]{ String.class }, new Object[]{ tagJavadoc } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "null" ) );
 
         tag = javaMethod.getTags()[1];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @param i non negative", tagJavadoc );
         withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+                                             new Class[]{ String.class }, new Object[]{ tagJavadoc } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "negative" ) );
 
         tag = javaMethod.getTags()[2];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @param object could" + EOL +
-                "     * be" + EOL +
-                "     *      null", tagJavadoc );
+                          "     * be" + EOL +
+                          "     *      null", tagJavadoc );
         withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+                                             new Class[]{ String.class }, new Object[]{ tagJavadoc } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "null" ) );
 
         tag = javaMethod.getTags()[3];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @return a" + EOL +
-                "     * String" + EOL +
-                "     *", tagJavadoc );
+                          "     * String" + EOL +
+                          "     *", tagJavadoc );
         withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+                                             new Class[]{ String.class }, new Object[]{ tagJavadoc } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "String" ) );
 
         tag = javaMethod.getTags()[4];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @throws Exception if" + EOL +
-                "     * any" + EOL +
-                "     *", tagJavadoc );
+                          "     * any" + EOL +
+                          "     *", tagJavadoc );
         withoutEmptyJavadocLines =
             (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "removeLastEmptyJavadocLines",
-                                             new Class[] { String.class }, new Object[] { tagJavadoc } );
+                                             new Class[]{ String.class }, new Object[]{ tagJavadoc } );
         assertTrue( withoutEmptyJavadocLines.endsWith( "any" ) );
     }
 
@@ -502,29 +508,28 @@ public class FixJavadocMojoTest
         if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
         {
             getContainer().getLogger().warn(
-                                             "JDK 5.0 or more is required to run fix for '" + getClass().getName()
-                                                 + "#" + getName() + "()'." );
+                "JDK 5.0 or more is required to run fix for '" + getClass().getName() + "#" + getName() + "()'." );
             return;
         }
 
         String content = "/**" + EOL +
-                " * Dummy Class." + EOL +
-                " */" + EOL +
-                "public class DummyClass" + EOL +
-                "{" + EOL +
-                "    /**" + EOL +
-                "     * Dummy method." + EOL +
-                "     *" + EOL +
-                "     * @param <K>  The Key type for the method" + EOL +
-                "     * @param <V>  The Value type for the method" + EOL +
-                "     * @param name The name." + EOL +
-                "     * @return A map configured." + EOL +
-                "     */" + EOL +
-                "    public <K, V> java.util.Map<K, V> dummyMethod( String name )" + EOL +
-                "    {" + EOL +
-                "        return null;" + EOL +
-                "    }" + EOL +
-                "}";
+            " * Dummy Class." + EOL +
+            " */" + EOL +
+            "public class DummyClass" + EOL +
+            "{" + EOL +
+            "    /**" + EOL +
+            "     * Dummy method." + EOL +
+            "     *" + EOL +
+            "     * @param <K>  The Key type for the method" + EOL +
+            "     * @param <V>  The Value type for the method" + EOL +
+            "     * @param name The name." + EOL +
+            "     * @return A map configured." + EOL +
+            "     */" + EOL +
+            "    public <K, V> java.util.Map<K, V> dummyMethod( String name )" + EOL +
+            "    {" + EOL +
+            "        return null;" + EOL +
+            "    }" + EOL +
+            "}";
 
         JavaDocBuilder builder = new JavaDocBuilder();
         builder.setEncoding( "UTF-8" );
@@ -535,43 +540,40 @@ public class FixJavadocMojoTest
 
         JavaMethod javaMethod = clazz.getMethods()[0];
 
-        String methodJavadoc =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment", new Class[] {
-                String.class, AbstractJavaEntity.class }, new Object[] { content, javaMethod } );
+        String methodJavadoc = (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "getJavadocComment",
+                                                                new Class[]{ String.class, AbstractJavaEntity.class },
+                                                                new Object[]{ content, javaMethod } );
         assertEquals( "     * Dummy method." + EOL +
-                "     *", methodJavadoc );
+                          "     *", methodJavadoc );
 
         assertEquals( 4, javaMethod.getTags().length );
 
         AbstractFixJavadocMojo mojoInstance = new FixJavadocMojo();
-        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[] { "all" } );
+        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[]{ "all" } );
 
         DocletTag tag = javaMethod.getTags()[0];
-        String tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        String tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                             new Class[]{ String.class,
+                                                                 AbstractInheritableJavaEntity.class, DocletTag.class },
+                                                             new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @param <K>  The Key type for the method", tagJavadoc );
 
         tag = javaMethod.getTags()[1];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @param <V>  The Value type for the method", tagJavadoc );
 
         tag = javaMethod.getTags()[2];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @param name The name.", tagJavadoc );
 
         tag = javaMethod.getTags()[3];
-        tagJavadoc =
-            (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class, DocletTag.class }, new Object[] { content,
-                javaMethod, tag } );
+        tagJavadoc = (String) PrivateAccessor.invoke( mojoInstance, "getJavadocComment",
+                                                      new Class[]{ String.class, AbstractInheritableJavaEntity.class,
+                                                          DocletTag.class }, new Object[]{ content, javaMethod, tag } );
         assertEquals( "     * @return A map configured.", tagJavadoc );
     }
 
@@ -607,8 +609,9 @@ public class FixJavadocMojoTest
         File generatedDir = new File( testPomBasedir, "target/generated/fix/test" );
         assertTrue( generatedDir.exists() );
 
-        for (String className : clazzToCompare) {
-            assertEquals(new File(expectedDir, className), new File(generatedDir, className));
+        for ( String className : clazzToCompare )
+        {
+            assertEquals( new File( expectedDir, className ), new File( generatedDir, className ) );
         }
     }
 
@@ -616,7 +619,7 @@ public class FixJavadocMojoTest
      * Invoke the compilation on the given pom file.
      *
      * @param testPom not null
-     * @param log not null
+     * @param log     not null
      * @throws MavenInvocationException if any
      */
     private void invokeCompileGoal( File testPom, Log log )
@@ -650,8 +653,8 @@ public class FixJavadocMojoTest
         assertTrue( actual.exists() );
         String actualContent = StringUtils.unifyLineSeparators( readFile( actual ) );
 
-        assertEquals( "Expected file: " + expected.getAbsolutePath() + ", actual file: "
-            + actual.getAbsolutePath(), expectedContent, actualContent );
+        assertEquals( "Expected file: " + expected.getAbsolutePath() + ", actual file: " + actual.getAbsolutePath(),
+                      expectedContent, actualContent );
     }
 
     /**
@@ -664,9 +667,7 @@ public class FixJavadocMojoTest
         File testPomBasedir = new File( getBasedir(), "target/test/unit/" + testProjectDirName );
 
         // Using unit test dir
-        FileUtils
-                 .copyDirectoryStructure(
-                                          new File( getBasedir(), "src/test/resources/unit/" + testProjectDirName ),
+        FileUtils.copyDirectoryStructure( new File( getBasedir(), "src/test/resources/unit/" + testProjectDirName ),
                                           testPomBasedir );
         List<String> scmFiles = FileUtils.getDirectoryNames( testPomBasedir, "**/.svn", null, true );
         for ( String filename : scmFiles )

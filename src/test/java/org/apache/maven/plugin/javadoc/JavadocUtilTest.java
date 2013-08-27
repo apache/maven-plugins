@@ -80,7 +80,8 @@ public class JavadocUtilTest
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
 
         // IBM JDK 1.5
-        version = "J2RE 1.5.0 IBM Windows 32 build pwi32devifx-20070323 (ifix 117674: SR4 + 116644 + 114941 + 116110 + 114881)";
+        version =
+            "J2RE 1.5.0 IBM Windows 32 build pwi32devifx-20070323 (ifix 117674: SR4 + 116644 + 114941 + 116110 + 114881)";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
 
         // FreeBSD
@@ -96,8 +97,8 @@ public class JavadocUtilTest
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
         version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\"";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
-        version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\""
-            + System.getProperty( "line.separator" );
+        version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\"" + System.getProperty(
+            "line.separator" );
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
         version = "java full" + System.getProperty( "line.separator" ) + " version \"1.5.0_07-164\"";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
@@ -223,11 +224,12 @@ public class JavadocUtilTest
     public void testHideProxyPassword()
         throws Exception
     {
-        String cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 "
-        + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
-        + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
+        String cmdLine =
+            "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 " + "-J-Dhttp.proxyPort=80 "
+                + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" " + "-J-Dhttp.proxyUser=\"toto\" "
+                + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
-        assertFalse(cmdLine.contains("-J-Dhttp.proxyPassword=\"****\""));
+        assertFalse( cmdLine.contains( "-J-Dhttp.proxyPassword=\"****\"" ) );
 
         Settings settings = new Settings();
         Proxy proxy = new Proxy();
@@ -240,11 +242,12 @@ public class JavadocUtilTest
         proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
         settings.addProxy( proxy );
 
-        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 "
-            + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
-            + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
+        cmdLine =
+            "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 " + "-J-Dhttp.proxyPort=80 "
+                + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" " + "-J-Dhttp.proxyUser=\"toto\" "
+                + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, settings );
-        assertTrue(cmdLine.contains("-J-Dhttp.proxyPassword=\"****\""));
+        assertTrue( cmdLine.contains( "-J-Dhttp.proxyPassword=\"****\"" ) );
 
         settings = new Settings();
         proxy = new Proxy();
@@ -256,11 +259,12 @@ public class JavadocUtilTest
         proxy.setNonProxyHosts( "www.google.com|*.somewhere.com" );
         settings.addProxy( proxy );
 
-        cmdLine = "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 "
-        + "-J-Dhttp.proxyPort=80 " + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" "
-        + "-J-Dhttp.proxyUser=\"toto\" " + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
+        cmdLine =
+            "javadoc.exe " + "-J-Dhttp.proxySet=true " + "-J-Dhttp.proxyHost=127.0.0.1 " + "-J-Dhttp.proxyPort=80 "
+                + "-J-Dhttp.nonProxyHosts=\"www.google.com|*.somewhere.com\" " + "-J-Dhttp.proxyUser=\"toto\" "
+                + "-J-Dhttp.proxyPassword=\"toto\" " + "@options @packages";
         cmdLine = JavadocUtil.hideProxyPassword( cmdLine, null );
-        assertFalse(cmdLine.contains("-J-Dhttp.proxyPassword=\"****\""));
+        assertFalse( cmdLine.contains( "-J-Dhttp.proxyPassword=\"****\"" ) );
     }
 
     /**
@@ -497,13 +501,13 @@ public class JavadocUtilTest
         JavadocUtil.copyJavadocResources( output, input, null );
         List<String> expected = new ArrayList<String>();
         expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir1" + File.separator
-            + "sample-excluded1.gif" );
+                          + "sample-excluded1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "excluded-dir2" + File.separator
-            + "sample-excluded2.gif" );
+                          + "sample-excluded2.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" + File.separator
-            + "sample-included1.gif" );
+                          + "sample-included1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
-            + "sample-included2.gif" );
+                          + "sample-included2.gif" );
         assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
         expected = new ArrayList<String>();
         expected.add( "" );
@@ -512,8 +516,7 @@ public class JavadocUtilTest
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" );
         assertTrue( EqualsBuilder.reflectionEquals( expected,
-                                                    FileUtils.getDirectoryNames( new File( output,
-                                                                                           "test/doc-files" ),
+                                                    FileUtils.getDirectoryNames( new File( output, "test/doc-files" ),
                                                                                  null, null, false ) ) );
 
         input = new File( getBasedir(), "src/test/resources/unit/docfiles-test/docfiles/" );
@@ -529,17 +532,16 @@ public class JavadocUtilTest
         JavadocUtil.copyJavadocResources( output, input, "excluded-dir1:excluded-dir2" );
         expected = new ArrayList<String>();
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" + File.separator
-            + "sample-included1.gif" );
+                          + "sample-included1.gif" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" + File.separator
-            + "sample-included2.gif" );
+                          + "sample-included2.gif" );
         assertTrue( EqualsBuilder.reflectionEquals( expected, FileUtils.getFiles( output, null, null, false ) ) );
         expected = new ArrayList<String>();
         expected.add( "" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir1" );
         expected.add( "test" + File.separator + "doc-files" + File.separator + "included-dir2" );
         assertTrue( EqualsBuilder.reflectionEquals( expected,
-                                                    FileUtils.getDirectoryNames( new File( output,
-                                                                                           "test/doc-files" ),
+                                                    FileUtils.getDirectoryNames( new File( output, "test/doc-files" ),
                                                                                  null, null, false ) ) );
     }
 
@@ -584,15 +586,15 @@ public class JavadocUtilTest
         path2 = "C:/maven-javadoc-plugin/src/main/javadoc";
         assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";" + path2 ) );
         assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ":" + path2 ) );
-        assertEquals( path1 + ps + path2 + ps + path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";"
-            + path2 + ";" + path1 + ":" + path2 ) );
+        assertEquals( path1 + ps + path2 + ps + path1 + ps + path2,
+                      JavadocUtil.unifyPathSeparator( path1 + ";" + path2 + ";" + path1 + ":" + path2 ) );
 
         // Unix
         path1 = "/tmp/maven-javadoc-plugin/src/main/java";
         path2 = "/tmp/maven-javadoc-plugin/src/main/javadoc";
         assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";" + path2 ) );
         assertEquals( path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ":" + path2 ) );
-        assertEquals( path1 + ps + path2 + ps + path1 + ps + path2, JavadocUtil.unifyPathSeparator( path1 + ";"
-            + path2 + ":" + path1 + ":" + path2 ) );
+        assertEquals( path1 + ps + path2 + ps + path1 + ps + path2,
+                      JavadocUtil.unifyPathSeparator( path1 + ";" + path2 + ":" + path1 + ":" + path2 ) );
     }
 }
