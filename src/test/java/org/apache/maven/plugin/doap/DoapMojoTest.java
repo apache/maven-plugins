@@ -124,11 +124,11 @@ public class DoapMojoTest
 
         // Developers and Organizations
         assertTrue( readed.contains( "<maintainer>" ) );
-        assertTrue( readed.contains( "<foaf:Person rdf:nodeID=\"b1\">" ) );
+        assertTrue( readed.contains( "<foaf:Person rdf:nodeID=\"b" ) );
         assertTrue( readed.contains( "<foaf:name>Jane Doe</foaf:name>" ) );
         assertTrue( readed.contains( "<foaf:Organization>" ) );
         assertTrue( readed.contains( "<foaf:homepage rdf:resource=\"http://www.example.org\"/>" ) );
-        assertTrue( readed.contains( "<foaf:member rdf:nodeID=\"b1\"/>" ) );
+        assertTrue( readed.contains( "<foaf:member rdf:nodeID=\"b" ) );
     }
 
     /**
