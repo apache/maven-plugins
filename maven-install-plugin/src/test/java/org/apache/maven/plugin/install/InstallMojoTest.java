@@ -72,8 +72,8 @@ public class InstallMojoTest
 
         assertNotNull( mojo );
 
-        File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/" +
-            "maven-install-test-1.0-SNAPSHOT.jar" );
+        File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/"
+            + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
@@ -96,13 +96,13 @@ public class InstallMojoTest
     public void testBasicInstallWithAttachedArtifacts()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-install-test-with-attached-artifacts/" +
-            "plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-install-test-with-attached-artifacts/"
+            + "plugin-config.xml" );
 
         InstallMojo mojo = (InstallMojo) lookupMojo( "install", testPom );
 
         assertNotNull( mojo );
-        
+
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
         List attachedArtifacts = project.getAttachedArtifacts();
@@ -136,8 +136,8 @@ public class InstallMojoTest
 
         assertNotNull( mojo );
 
-        File file = new File( getBasedir(), "target/test-classes/unit/configured-install-test/target/" +
-            "maven-install-test-1.0-SNAPSHOT.jar" );
+        File file = new File( getBasedir(), "target/test-classes/unit/configured-install-test/target/"
+            + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
@@ -221,7 +221,7 @@ public class InstallMojoTest
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
         artifact = (InstallArtifactStub) project.getArtifact();
-        
+
         boolean createChecksum = (Boolean) getVariableValueFromObject( mojo, "createChecksum" );
 
         assertTrue( createChecksum );
@@ -288,27 +288,27 @@ public class InstallMojoTest
 
         assertTrue( installedArtifact.exists() );
     }
-    
+
     public void testSkip()
-    throws Exception
-    {	
+        throws Exception
+    {
         File testPom = new File( getBasedir(), "target/test-classes/unit/basic-install-test/plugin-config.xml" );
 
         InstallMojo mojo = (InstallMojo) lookupMojo( "install", testPom );
 
         assertNotNull( mojo );
 
-        File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/" +
-            "maven-install-test-1.0-SNAPSHOT.jar" );
+        File file = new File( getBasedir(), "target/test-classes/unit/basic-install-test/target/"
+            + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
         artifact = (InstallArtifactStub) project.getArtifact();
-        
+
         artifact.setFile( file );
 
-        mojo.setSkip(true);
-            
+        mojo.setSkip( true );
+
         mojo.execute();
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
@@ -316,11 +316,11 @@ public class InstallMojoTest
         String packaging = project.getPackaging();
 
         File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
-           artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
+            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
 
         assertFalse( installedArtifact.exists() );
     }
-    
+
 
     private String dotToSlashReplacer( String parameter )
     {

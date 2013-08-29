@@ -74,6 +74,7 @@ public abstract class AbstractInstallMojo
     protected boolean updateReleaseInfo;
 
     protected final DualDigester digester = new DualDigester();
+
     /**
      * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
      * (yet).
@@ -106,7 +107,6 @@ public abstract class AbstractInstallMojo
      * generated/updated files. For example, in Maven 2.0.4- the <code>ProjectArtifactMetadata</code> did not install
      * the original POM file (cf. MNG-2820). While the plugin currently requires Maven 2.0.6, we continue to hash the
      * installed POM for robustness with regard to future changes like re-introducing some kind of POM filtering.
-     * 
      *
      * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
@@ -130,8 +130,7 @@ public abstract class AbstractInstallMojo
             return;
         }
 
-        @SuppressWarnings( "unchecked" )
-        Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
+        @SuppressWarnings( "unchecked" ) Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
         if ( metadatas != null )
         {
             for ( ArtifactMetadata metadata : metadatas )
@@ -144,7 +143,7 @@ public abstract class AbstractInstallMojo
 
     /**
      * Installs the checksums for the specified metadata files.
-     * 
+     *
      * @param metadataFiles The collection of metadata files to install checksums for, must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
@@ -161,7 +160,7 @@ public abstract class AbstractInstallMojo
      * Installs the checksums for the specified file (if it exists).
      *
      * @param installedFile The path to the already installed file in the local repo for which to generate checksums,
-     *            must not be <code>null</code>.
+     *                      must not be <code>null</code>.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
     private void installChecksums( File installedFile )
@@ -181,13 +180,11 @@ public abstract class AbstractInstallMojo
     /**
      * Installs a checksum for the specified file.
      *
-     *
-     *
      * @param installedFile The base path from which the path to the checksum files is derived by appending the given
-     *            file extension, must not be <code>null</code>.
-     * @param ext The file extension (including the leading dot) to use for the checksum file, must not be
-     *            <code>null</code>.
-     * @param checksum  the checksum to write
+     *                      file extension, must not be <code>null</code>.
+     * @param ext           The file extension (including the leading dot) to use for the checksum file, must not be
+     *                      <code>null</code>.
+     * @param checksum      the checksum to write
      * @throws MojoExecutionException If the checksum could not be installed.
      */
     private void installChecksum( File installedFile, String ext, String checksum )
@@ -199,7 +196,7 @@ public abstract class AbstractInstallMojo
         {
             //noinspection ResultOfMethodCallIgnored
             checksumFile.getParentFile().mkdirs();
-            FileUtils.fileWrite(checksumFile.getAbsolutePath(), "UTF-8", checksum );
+            FileUtils.fileWrite( checksumFile.getAbsolutePath(), "UTF-8", checksum );
         }
         catch ( IOException e )
         {

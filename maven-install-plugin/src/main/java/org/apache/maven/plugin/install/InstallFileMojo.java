@@ -62,7 +62,7 @@ import org.apache.maven.shared.utils.WriterFactory;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-@Mojo( name = "install-file", requiresProject = false, aggregator = true, threadSafe = true )
+@Mojo(name = "install-file", requiresProject = false, aggregator = true, threadSafe = true)
 public class InstallFileMojo
     extends AbstractInstallMojo
 {
@@ -70,25 +70,25 @@ public class InstallFileMojo
     /**
      * GroupId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
-    @Parameter( property = "groupId" )
+    @Parameter(property = "groupId")
     protected String groupId;
 
     /**
      * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
-    @Parameter( property = "artifactId" )
+    @Parameter(property = "artifactId")
     protected String artifactId;
 
     /**
      * Version of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
-    @Parameter( property = "version" )
+    @Parameter(property = "version")
     protected String version;
 
     /**
      * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
      */
-    @Parameter( property = "packaging" )
+    @Parameter(property = "packaging")
     protected String packaging;
 
     /**
@@ -97,13 +97,13 @@ public class InstallFileMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "classifier" )
+    @Parameter(property = "classifier")
     protected String classifier;
 
     /**
      * The file to be installed in the local repository.
      */
-    @Parameter( property = "file", required = true )
+    @Parameter(property = "file", required = true)
     private File file;
 
     /**
@@ -111,7 +111,7 @@ public class InstallFileMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "javadoc" )
+    @Parameter(property = "javadoc")
     private File javadoc;
 
     /**
@@ -119,7 +119,7 @@ public class InstallFileMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "sources" )
+    @Parameter(property = "sources")
     private File sources;
 
     /**
@@ -128,7 +128,7 @@ public class InstallFileMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "pomFile" )
+    @Parameter(property = "pomFile")
     private File pomFile;
 
     /**
@@ -137,7 +137,7 @@ public class InstallFileMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "generatePom" )
+    @Parameter(property = "generatePom")
     private Boolean generatePom;
 
     /**
@@ -146,14 +146,14 @@ public class InstallFileMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "repositoryLayout", defaultValue = "default", required = true )
+    @Parameter(property = "repositoryLayout", defaultValue = "default", required = true)
     private String repositoryLayout;
 
     /**
      * Map that contains the repository layouts.
      */
-    @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
-    @Component( role = ArtifactRepositoryLayout.class )
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    @Component(role = ArtifactRepositoryLayout.class)
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
@@ -162,7 +162,7 @@ public class InstallFileMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "localRepositoryPath" )
+    @Parameter(property = "localRepositoryPath")
     private File localRepositoryPath;
 
     /**
@@ -213,33 +213,34 @@ public class InstallFileMojo
         else
         {
             boolean foundPom = false;
-            
+
             try
             {
                 Pattern pomEntry = Pattern.compile( "META-INF/maven/.*/pom\\.xml" );
-                
+
                 JarFile jarFile = new JarFile( file );
-                
+
                 Enumeration<JarEntry> jarEntries = jarFile.entries();
-                
-                while( jarEntries.hasMoreElements() )
+
+                while ( jarEntries.hasMoreElements() )
                 {
                     JarEntry entry = jarEntries.nextElement();
-                    
-                    if( pomEntry.matcher( entry.getName() ).matches() )
+
+                    if ( pomEntry.matcher( entry.getName() ).matches() )
                     {
-                        getLog().debug( "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
-                        
+                        getLog().debug(
+                            "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
+
                         foundPom = true;
-                        
+
                         InputStream pomInputStream = null;
-                        
+
                         try
                         {
                             pomInputStream = jarFile.getInputStream( entry );
-                            
+
                             processModel( readModel( pomInputStream ) );
-                            
+
                             break;
                         }
                         finally
@@ -251,7 +252,7 @@ public class InstallFileMojo
                         }
                     }
                 }
-                
+
                 if ( !foundPom )
                 {
                     getLog().info( "pom.xml not found in " + file.getName() );
@@ -545,7 +546,7 @@ public class InstallFileMojo
     /**
      * @return the localRepositoryPath
      */
-    @SuppressWarnings( "UnusedDeclaration" )
+    @SuppressWarnings("UnusedDeclaration")
     public File getLocalRepositoryPath()
     {
         return this.localRepositoryPath;

@@ -34,7 +34,7 @@ import java.util.Map;
 public class InstallArtifactStub
     extends ArtifactStub
 {
-    private Map<Object,ArtifactMetadata> metadataMap;
+    private Map<Object, ArtifactMetadata> metadataMap;
 
     private File file;
 

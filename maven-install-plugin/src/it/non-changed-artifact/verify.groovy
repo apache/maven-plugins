@@ -25,6 +25,6 @@ def logText = buildLog.text
 artifactPath = new File( basedir, 'target/minstall-39-1.0-SNAPSHOT.jar' ).canonicalPath
 copyArtifactPath = new File( basedir, '../../local-repo/org/apache/maven/plugins/install/its/minstall-39/1.0-SNAPSHOT/minstall-39-1.0-SNAPSHOT.jar' ).canonicalPath
 
-assert 2 ==  logText.count( "[INFO] Installing ${artifactPath} to ${copyArtifactPath}" )
-assert 1 ==  logText.count( "[DEBUG] Skipped re-installing ${artifactPath} to ${copyArtifactPath}, seems unchanged" )
+assert 2 == logText.count( "[INFO] Installing ${artifactPath} to ${copyArtifactPath}" )
+assert 1 == logText.count( "[DEBUG] Skipped re-installing ${artifactPath} to ${copyArtifactPath}, seems unchanged" )
 

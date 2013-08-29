@@ -19,7 +19,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.its.install.nma1</groupId>
@@ -29,7 +30,8 @@ under the License.
 
   <description>
     Tests the installation of a non-POM project that has no main artifact file but only attached artifacts (see
-    MINSTALL-18, MINSTALL-40, MINSTALL-41). This variant of the test checks the build when target/classes is non-existent.
+    MINSTALL-18, MINSTALL-40, MINSTALL-41). This variant of the test checks the build when target/classes is
+    non-existent.
   </description>
 
   <properties>

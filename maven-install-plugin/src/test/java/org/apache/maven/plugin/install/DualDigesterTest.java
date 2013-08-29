@@ -24,7 +24,8 @@ import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
 
-public class DualDigesterTest  extends TestCase
+public class DualDigesterTest
+    extends TestCase
 {
     public void testGetMd5()
         throws Exception

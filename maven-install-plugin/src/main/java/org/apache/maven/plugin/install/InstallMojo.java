@@ -45,25 +45,25 @@ import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 public class InstallMojo
     extends AbstractInstallMojo
 {
-    
+
     /**
      */
     @Component
     private MavenProject project;
-    
+
     @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
-    
+
     /**
      * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build.
-     * If set to {@code true} and the build fails, none of the reactor projects is deployed 
-     * 
+     * If set to {@code true} and the build fails, none of the reactor projects is deployed
+     *
      * @since 2.5
      */
     @Parameter( defaultValue = "false", property = "installAtEnd" )
     private boolean installAtEnd;
-    
+
     /**
      * @deprecated either use project.getPackaging() or reactorProjects.get(i).getPackaging()
      */
@@ -106,24 +106,24 @@ public class InstallMojo
             return;
         }
 
-        if( !installAtEnd )
+        if ( !installAtEnd )
         {
             installProject( project );
         }
         else
         {
             MavenProject lastProject = reactorProjects.get( reactorProjects.size() - 1 );
-            if( lastProject.equals( project ) )
+            if ( lastProject.equals( project ) )
             {
-                for( MavenProject reactorProject : reactorProjects )
+                for ( MavenProject reactorProject : reactorProjects )
                 {
                     installProject( reactorProject );
                 }
             }
             else
             {
-                getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + 
-                               ":" + project.getVersion() + " at end" );
+                getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() +
+                                   ":" + project.getVersion() + " at end" );
             }
         }
     }
@@ -134,9 +134,8 @@ public class InstallMojo
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        @SuppressWarnings( "unchecked" )
-        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
-        
+        @SuppressWarnings( "unchecked" ) List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
+
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
 

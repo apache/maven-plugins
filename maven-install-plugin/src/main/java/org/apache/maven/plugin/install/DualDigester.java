@@ -33,8 +33,9 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Calculates md5 and sha1 digest.
- *
+ * <p/>
  * Todo: Consider using a thread to calculate one of the digests when the files are large; it's fairly slow !
+ *
  * @author Kristian Rosenvold
  */
 public class DualDigester
@@ -43,7 +44,7 @@ public class DualDigester
 
     private final MessageDigest sh1 = getDigester( "SHA-1" );
 
-    private static final int bufsize = 65536*2;
+    private static final int bufsize = 65536 * 2;
 
     private final byte[] buffer = new byte[bufsize];
 
@@ -55,12 +56,12 @@ public class DualDigester
         }
         catch ( NoSuchAlgorithmException e )
         {
-            throw new RuntimeException( "Unable to initialize digest " + algorithm + " : "
-                    + e.getMessage() );
+            throw new RuntimeException( "Unable to initialize digest " + algorithm + " : " + e.getMessage() );
         }
     }
 
-    public void calculate( File file ) throws MojoExecutionException
+    public void calculate( File file )
+        throws MojoExecutionException
     {
         FileInputStream fis = null;
         BufferedInputStream bis = null;
@@ -81,23 +82,27 @@ public class DualDigester
         }
     }
 
-    void calculate( InputStream stream ) throws IOException
+    void calculate( InputStream stream )
+        throws IOException
     {
-            md5.reset();
-            sh1.reset();
-            update( stream );
+        md5.reset();
+        sh1.reset();
+        update( stream );
     }
 
-    public String getMd5(){
+    public String getMd5()
+    {
         return Hex.encodeHexString( md5.digest() );
     }
 
-    public String getSha1(){
+    public String getSha1()
+    {
         return Hex.encodeHexString( sh1.digest() );
     }
 
     private void update( InputStream is )
-        throws IOException {
+        throws IOException
+    {
         int size = is.read( buffer, 0, bufsize );
         while ( size >= 0 )
         {
