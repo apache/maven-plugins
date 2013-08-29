@@ -36,7 +36,7 @@ public class InstallFileMojoTest
     extends AbstractMojoTestCase
 {
     private String groupId;
-    
+
     private String legacyGroupId;
 
     private String artifactId;
@@ -103,12 +103,13 @@ public class InstallFileMojoTest
 
         mojo.execute();
 
-        File installedArtifact = new File( getBasedir(), LOCAL_REPO + legacyGroupId + "/" + "jars" + "/" + artifactId + "-"
-            + version + "." + packaging );
+        File installedArtifact = new File( getBasedir(),
+                                           LOCAL_REPO + legacyGroupId + "/" + "jars" + "/" + artifactId + "-" + version
+                                               + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
     }
-    
+
     public void testInstallFileWithClassifier()
         throws Exception
     {
@@ -279,7 +280,7 @@ public class InstallFileMojoTest
         this.groupId = dotToSlashReplacer( (String) getVariableValueFromObject( obj, "groupId" ) );
 
         this.legacyGroupId = (String) getVariableValueFromObject( obj, "groupId" );
-        
+
         this.artifactId = (String) getVariableValueFromObject( obj, "artifactId" );
 
         this.version = (String) getVariableValueFromObject( obj, "version" );

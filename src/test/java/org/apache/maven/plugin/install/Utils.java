@@ -20,7 +20,9 @@ package org.apache.maven.plugin.install;
  */
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -35,12 +37,11 @@ public class Utils
 
     /**
      * Verifies a checksum file in the local repo.
-     * 
+     *
      * @param checksumFile The checksum file to verify, must not be <code>null</code>.
-     * @throws Exception If the verification failed.
      */
     public static void verifyChecksum( File checksumFile )
-        throws Exception
+        throws MojoExecutionException, IOException
     {
         File dataFile;
         SimpleDigester digester;

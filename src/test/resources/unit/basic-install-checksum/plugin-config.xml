@@ -27,7 +27,7 @@ under the License.
           <packaging>jar</packaging>
           <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub"/>
           <attachedArtifacts/>
-          
+
           <localRepository>${localRepository}</localRepository>
           <createChecksum>true</createChecksum>
           <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub">

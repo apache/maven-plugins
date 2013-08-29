@@ -32,56 +32,65 @@ import java.util.regex.Pattern;
 /**
  * @author Kristian Rosenvold
  */
-public class SimpleDigester {
+public class SimpleDigester
+{
 
     private final MessageDigest messageDigest;
+
     private static final int bufsize = 65536;
 
-    public SimpleDigester(String algorithm) {
+    public SimpleDigester( String algorithm )
+    {
         messageDigest = DualDigester.getDigester( algorithm );
     }
 
-    public static SimpleDigester md5(){
-        return new SimpleDigester("MD5");
+    public static SimpleDigester md5()
+    {
+        return new SimpleDigester( "MD5" );
     }
 
-    public static SimpleDigester sha1(){
-        return new SimpleDigester("SHA-1");
+    public static SimpleDigester sha1()
+    {
+        return new SimpleDigester( "SHA-1" );
     }
 
-    public String calculate( File file ) throws MojoExecutionException {
+    public String calculate( File file )
+        throws MojoExecutionException
+    {
         FileInputStream fis = null;
         BufferedInputStream bis = null;
 
         try
         {
             fis = new FileInputStream( file );
-            int bufsiz = (int) Math.min(file.length(), bufsize);
-            bis = new BufferedInputStream(fis, bufsiz);
+            int bufsiz = (int) Math.min( file.length(), bufsize );
+            bis = new BufferedInputStream( fis, bufsiz );
             messageDigest.reset();
-            update(bis);
-            return Hex.encodeHexString(messageDigest.digest());
+            update( bis );
+            return Hex.encodeHexString( messageDigest.digest() );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Failed to calculate " + messageDigest.getAlgorithm() + " checksum for "
-                    + file, e );
-        } finally
+            throw new MojoExecutionException(
+                "Failed to calculate " + messageDigest.getAlgorithm() + " checksum for " + file, e );
+        }
+        finally
         {
-            IOUtil.close(bis);
+            IOUtil.close( bis );
             IOUtil.close( fis );
         }
     }
 
     private void update( InputStream is )
-            throws IOException {
-            byte[] buffer = new byte[bufsize];
-            int size = is.read( buffer, 0, bufsize );
-            while ( size >= 0 )
-            {
-                messageDigest.update( buffer, 0, size );
-                size = is.read( buffer, 0, bufsize );
-            }
+        throws IOException
+    {
+        byte[] buffer = new byte[bufsize];
+        int size = is.read( buffer, 0, bufsize );
+        while ( size >= 0 )
+        {
+            messageDigest.update( buffer, 0, size );
+            size = is.read( buffer, 0, bufsize );
+        }
     }
 
     public void verify( File file, String checksum )
@@ -130,7 +139,7 @@ public class SimpleDigester {
 
     private static boolean isValidChecksumPattern( String filename, String path )
     {
-        return filename.endsWith( path ) || filename.equals("-");
+        return filename.endsWith( path ) || filename.equals( "-" );
     }
 
 }
