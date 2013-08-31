@@ -106,7 +106,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -541,7 +540,7 @@ under the License.
               <issueManagementSystems>
                 <issueManagementSystem>JIRA</issueManagementSystem>
               </issueManagementSystems>
-              <!-- For Changes-report -->
+              <!-- For (sample) Changes-report -->
               <issueLinkTemplatePerSystem>
                 <default>%URL%/%ISSUE%</default>
               </issueLinkTemplatePerSystem>
