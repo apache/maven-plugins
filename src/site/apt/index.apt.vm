@@ -29,12 +29,13 @@
 
 ${project.name}
 
-  This plugin is used to inform your users of the changes that have occured
+  This plugin is used to inform your users of the changes that have occurred
   between different releases of your project. The plugin can extract these
-  changes, either from a <<<changes.xml>>> file or from the JIRA issue
-  management system, and present them as a report. You also have the option of
-  creating a release announcement and even sending this via email to your
-  users.
+  changes, either from a <<<changes.xml>>> file or from an issue
+  management system (Jira, Trac and GitHub supported), and presents them as a report.
+
+  You also have the option of creating a release announcement and even sending it via email
+  to your users.
 
 * Goals Overview
 
@@ -44,9 +45,9 @@ ${project.name}
 
   * {{{./changes-check-mojo.html}changes:changes-check}} check that the <<<changes.xml>>> file contains a valid release date.
 
-  * {{{./changes-report-mojo.html}changes:changes-report}} create a report showing what has changed between different releases of the project.
-
   * {{{./changes-validate-mojo.html}changes:changes-validate}} validate the <<<changes.xml>>> file.
+
+  * {{{./changes-report-mojo.html}changes:changes-report}} create a report from <<<changes.xml>>> file.
 
   * {{{./jira-report-mojo.html}changes:jira-report}} create a report from issues downloaded from {{{http://www.atlassian.com/software/jira/}JIRA}}.
 
