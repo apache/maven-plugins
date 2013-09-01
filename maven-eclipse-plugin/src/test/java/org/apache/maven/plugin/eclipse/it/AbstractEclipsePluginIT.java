@@ -123,6 +123,8 @@ public abstract class AbstractEclipsePluginIT
      * .classpath file name
      */
     private static final String CLASSPATH_FILENAME = ".classpath";
+    
+    private File mavenHome;
 
     /**
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
@@ -149,13 +151,19 @@ public abstract class AbstractEclipsePluginIT
         {
             String path = System.getProperty( "java.library.path" );
             String[] paths = StringUtils.split( path, System.getProperty( "path.separator" ) );
-            for (String pt : paths) {
-                if (new File(pt, "mvn").exists()) {
-                    System.setProperty("maven.home", new File(pt).getAbsoluteFile().getParent());
+            for ( String pt : paths )
+            {
+                if ( new File( pt, "mvn" ).exists() )
+                {
+                    System.setProperty( "maven.home", mavenHome = new File( pt ).getAbsoluteFile().getParent() );
                     break;
                 }
-
             }
+        }
+        
+        if ( mavenHome != null )
+        {
+            this.mavenHome = new File( mavenHome );
         }
 
         System.setProperty( "MAVEN_TERMINATE_CMD", "on" );
@@ -220,6 +228,11 @@ public abstract class AbstractEclipsePluginIT
         }
     }
 
+    protected final File getMavenHome()
+    {
+        return mavenHome;
+    }
+    
     /**
      * Execute the eclipse:eclipse goal on a test project and verify generated files.
      *

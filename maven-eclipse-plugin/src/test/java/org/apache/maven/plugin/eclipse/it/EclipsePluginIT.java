@@ -146,7 +146,15 @@ public class EclipsePluginIT
     public void testProject13()
         throws Exception
     {
-        testProject( "project-13" );
+        String mavenVersion = SelectorUtils.getMavenVersion( getMavenHome() );
+        if( SelectorUtils.isMavenVersion( "!3.0.5, !3.1.0-alpha-1, !3.1.0", mavenVersion ) )
+        {
+            testProject( "project-13" );
+        }
+        else
+        {
+            System.out.println( "  Skipping project-13 due to Maven version" );
+        }
     }
 
     /**
