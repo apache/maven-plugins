@@ -62,7 +62,8 @@ under the License.
     <module>maven-docck-plugin</module>
     <module>maven-ear-plugin</module>
     <module>maven-ejb-plugin</module>
-    <module>maven-gpg-plugin</module>
+    <!-- Moved to non-windows profile, since there's no gpg.exe available by default -->
+    <!-- <module>maven-gpg-plugin</module> -->
     <module>maven-help-plugin</module>
     <module>maven-install-plugin</module>
     <!--Moved to maven-3 profile as a workaround for MNG-3814
@@ -105,6 +106,18 @@ under the License.
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
         <module>maven-shade-plugin</module>
+      </modules>
+    </profile>
+    
+    <profile>
+      <id>non-windows</id>
+      <activation>
+        <os>
+          <family>!windows</family>
+        </os>
+      </activation>
+      <modules>
+        <module>maven-gpg-plugin</module>
       </modules>
     </profile>
   </profiles>
