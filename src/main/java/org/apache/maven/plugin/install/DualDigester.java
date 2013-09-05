@@ -1,17 +1,5 @@
 package org.apache.maven.plugin.install;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.IOUtil;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -30,6 +18,19 @@ import java.security.NoSuchAlgorithmException;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.util.IOUtil;
+
 
 /**
  * Calculates md5 and sha1 digest.
