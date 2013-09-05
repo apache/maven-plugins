@@ -36,7 +36,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 /**
- * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle, to the local repository.
+ * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle,
+ * to the local repository.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -122,8 +123,8 @@ public class InstallMojo
             }
             else
             {
-                getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() +
-                                   ":" + project.getVersion() + " at end" );
+                getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                                   + project.getVersion() + " at end" );
             }
         }
     }
