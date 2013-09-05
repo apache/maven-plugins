@@ -58,111 +58,115 @@ import org.apache.maven.shared.utils.WriterFactory;
 
 /**
  * Installs a file in the local repository.
- *
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-@Mojo(name = "install-file", requiresProject = false, aggregator = true, threadSafe = true)
+@Mojo( name = "install-file", requiresProject = false, aggregator = true, threadSafe = true )
 public class InstallFileMojo
     extends AbstractInstallMojo
 {
 
     /**
-     * GroupId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
+     * GroupId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
+     * {@code pom.xml} in jar if available.
      */
-    @Parameter(property = "groupId")
+    @Parameter( property = "groupId" )
     protected String groupId;
 
     /**
-     * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
+     * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
+     * {@code pom.xml} in jar if available.
      */
-    @Parameter(property = "artifactId")
+    @Parameter( property = "artifactId" )
     protected String artifactId;
 
     /**
-     * Version of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
+     * Version of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
+     * {@code pom.xml} in jar if available.
      */
-    @Parameter(property = "version")
+    @Parameter( property = "version" )
     protected String version;
 
     /**
-     * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified or extracted from {@code pom.xml} in jar if available.
+     * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
+     * {@code pom.xml} in jar if available.
      */
-    @Parameter(property = "packaging")
+    @Parameter( property = "packaging" )
     protected String packaging;
 
     /**
      * Classifier type of the artifact to be installed. For example, "sources" or "javadoc". Defaults to none which
      * means this is the project's main artifact.
-     *
+     * 
      * @since 2.2
      */
-    @Parameter(property = "classifier")
+    @Parameter( property = "classifier" )
     protected String classifier;
 
     /**
      * The file to be installed in the local repository.
      */
-    @Parameter(property = "file", required = true)
+    @Parameter( property = "file", required = true )
     private File file;
 
     /**
      * The bundled API docs for the artifact.
-     *
+     * 
      * @since 2.3
      */
-    @Parameter(property = "javadoc")
+    @Parameter( property = "javadoc" )
     private File javadoc;
 
     /**
      * The bundled sources for the artifact.
-     *
+     * 
      * @since 2.3
      */
-    @Parameter(property = "sources")
+    @Parameter( property = "sources" )
     private File sources;
 
     /**
      * Location of an existing POM file to be installed alongside the main artifact, given by the {@link #file}
      * parameter.
-     *
+     * 
      * @since 2.1
      */
-    @Parameter(property = "pomFile")
+    @Parameter( property = "pomFile" )
     private File pomFile;
 
     /**
      * Generate a minimal POM for the artifact if none is supplied via the parameter {@link #pomFile}. Defaults to
      * <code>true</code> if there is no existing POM in the local repository yet.
-     *
+     * 
      * @since 2.1
      */
-    @Parameter(property = "generatePom")
+    @Parameter( property = "generatePom" )
     private Boolean generatePom;
 
     /**
      * The type of remote repository layout to install to. Try <code>legacy</code> for a Maven 1.x-style repository
      * layout.
-     *
+     * 
      * @since 2.2
      */
-    @Parameter(property = "repositoryLayout", defaultValue = "default", required = true)
+    @Parameter( property = "repositoryLayout", defaultValue = "default", required = true )
     private String repositoryLayout;
 
     /**
      * Map that contains the repository layouts.
      */
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    @Component(role = ArtifactRepositoryLayout.class)
+    @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
+    @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * The path for a specific local repository directory. If not specified the local repository path configured in the
      * Maven settings will be used.
-     *
+     * 
      * @since 2.2
      */
-    @Parameter(property = "localRepositoryPath")
+    @Parameter( property = "localRepositoryPath" )
     private File localRepositoryPath;
 
     /**
@@ -195,7 +199,7 @@ public class InstallFileMojo
                 ArtifactRepositoryLayout layout = repositoryLayouts.get( repositoryLayout );
                 getLog().debug( "Layout: " + layout.getClass() );
 
-                //noinspection deprecation
+                // noinspection deprecation
                 localRepository =
                     new DefaultArtifactRepository( localRepository.getId(), localRepositoryPath.toURL().toString(),
                                                    layout );
@@ -228,8 +232,7 @@ public class InstallFileMojo
 
                     if ( pomEntry.matcher( entry.getName() ).matches() )
                     {
-                        getLog().debug(
-                            "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
+                        getLog().debug( "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
 
                         foundPom = true;
 
@@ -272,9 +275,8 @@ public class InstallFileMojo
 
         if ( file.equals( getLocalRepoFile( artifact ) ) )
         {
-            throw new MojoFailureException(
-                "Cannot install artifact. " + "Artifact is already in the local repository.\n\nFile in question is: "
-                    + file + "\n" );
+            throw new MojoFailureException( "Cannot install artifact. "
+                + "Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
         }
 
         File generatedPomFile = null;
@@ -290,8 +292,8 @@ public class InstallFileMojo
             {
                 generatedPomFile = generatePomFile();
                 ArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
-                if ( Boolean.TRUE.equals( generatePom ) || ( generatePom == null && !getLocalRepoFile(
-                    pomMetadata ).exists() ) )
+                if ( Boolean.TRUE.equals( generatePom )
+                    || ( generatePom == null && !getLocalRepoFile( pomMetadata ).exists() ) )
                 {
                     getLog().debug( "Installing generated POM" );
                     artifact.addMetadata( pomMetadata );
@@ -321,14 +323,14 @@ public class InstallFileMojo
         }
         catch ( ArtifactInstallationException e )
         {
-            throw new MojoExecutionException(
-                "Error installing artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
+            throw new MojoExecutionException( "Error installing artifact '" + artifact.getDependencyConflictId()
+                + "': " + e.getMessage(), e );
         }
         finally
         {
             if ( generatedPomFile != null )
             {
-                //noinspection ResultOfMethodCallIgnored
+                // noinspection ResultOfMethodCallIgnored
                 generatedPomFile.delete();
             }
         }
@@ -370,7 +372,7 @@ public class InstallFileMojo
 
     /**
      * Parses a POM.
-     *
+     * 
      * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
      * @return The model from the POM file, never <code>null</code>.
      * @throws MojoExecutionException If the POM could not be parsed.
@@ -404,7 +406,7 @@ public class InstallFileMojo
 
     /**
      * Parses a POM.
-     *
+     * 
      * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
      * @return The model from the POM file, never <code>null</code>.
      * @throws MojoExecutionException If the POM could not be parsed.
@@ -438,7 +440,7 @@ public class InstallFileMojo
 
     /**
      * Populates missing mojo parameters from the specified POM.
-     *
+     * 
      * @param model The POM to extract missing artifact coordinates from, must not be <code>null</code>.
      */
     private void processModel( Model model )
@@ -473,7 +475,7 @@ public class InstallFileMojo
 
     /**
      * Validates the user-supplied artifact information.
-     *
+     * 
      * @throws MojoExecutionException If any artifact coordinate is invalid.
      */
     private void validateArtifactInformation()
@@ -485,14 +487,14 @@ public class InstallFileMojo
 
         if ( result.getMessageCount() > 0 )
         {
-            throw new MojoExecutionException(
-                "The artifact information is incomplete or not valid:\n" + result.render( "  " ) );
+            throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
+                + result.render( "  " ) );
         }
     }
 
     /**
      * Generates a minimal model from the user-supplied artifact information.
-     *
+     * 
      * @return The generated model, never <code>null</code>.
      */
     private Model generateModel()
@@ -514,7 +516,7 @@ public class InstallFileMojo
     /**
      * Generates a (temporary) POM file from the plugin configuration. It's the responsibility of the caller to delete
      * the generated file when no longer needed.
-     *
+     * 
      * @return The path to the generated POM file, never <code>null</code>.
      * @throws MojoExecutionException If the POM file could not be generated.
      */
@@ -546,7 +548,7 @@ public class InstallFileMojo
     /**
      * @return the localRepositoryPath
      */
-    @SuppressWarnings("UnusedDeclaration")
+    @SuppressWarnings( "UnusedDeclaration" )
     public File getLocalRepositoryPath()
     {
         return this.localRepositoryPath;
