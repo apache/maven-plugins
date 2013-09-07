@@ -80,7 +80,7 @@ public class DependenciesRenderer
     private static final String IMG_CLOSE_URL = "./images/close.gif";
 
     /** Used to format decimal values in the "Dependency File Details" table */
-    protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "#,##0" );
+    protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "###0" );
 
     private static final Set<String> JAR_SUBTYPE;
 
@@ -1449,12 +1449,12 @@ public class DependenciesRenderer
     }
 
     /**
-     * Formats file length with the associated <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing">SI</a> unit
-     * (GB, MB, kB) and using the pattern <code>########.00</code> by default.
+     * Formats file length with the associated <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI</a> prefix
+     * (GB, MB, kB) and using the pattern <code>###0.00</code> by default.
      *
-     * @see <a href="http://en.wikipedia.org/wiki/SI_prefix#Computing"> http://en.wikipedia.org/wiki/SI_prefix#Computing</a>
-     * @see <a href="http://en.wikipedia.org/wiki/Binary_prefix"> http://en.wikipedia.org/wiki/Binary_prefix</a>
-     * @see <a href="http://en.wikipedia.org/wiki/Octet_(computing)"> http://en.wikipedia.org/wiki/Octet_(computing)</a>
+     * @see <a href="https://en.wikipedia.org/wiki/Metric_prefix">https://en.wikipedia.org/wiki/Metric_prefix</a>
+     * @see <a href="https://en.wikipedia.org/wiki/Binary_prefix">https://en.wikipedia.org/wiki/Binary_prefix</a>
+     * @see <a href="https://en.wikipedia.org/wiki/Octet_%28computing%29">https://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
     static class FileDecimalFormat
         extends DecimalFormat
@@ -1473,7 +1473,7 @@ public class DependenciesRenderer
          */
         public FileDecimalFormat( I18N i18n, Locale locale )
         {
-            super( "#,###.00" );
+            super( "###0.00" );
 
             this.i18n = i18n;
             this.locale = locale;
@@ -1482,21 +1482,21 @@ public class DependenciesRenderer
         /** {@inheritDoc} */
         public StringBuffer format( long fs, StringBuffer result, FieldPosition fieldPosition )
         {
-            if ( fs > 1024 * 1024 * 1024 )
+            if ( fs > 1000 * 1000 * 1000 )
             {
-                result = super.format( (float) fs / ( 1024 * 1024 * 1024 ), result, fieldPosition );
+                result = super.format( (float) fs / ( 1000 * 1000 * 1000 ), result, fieldPosition );
                 result.append( " " ).append( getString( "report.dependencies.file.details.column.size.gb" ) );
                 return result;
             }
 
-            if ( fs > 1024 * 1024 )
+            if ( fs > 1000 * 1000 )
             {
-                result = super.format( (float) fs / ( 1024 * 1024 ), result, fieldPosition );
+                result = super.format( (float) fs / ( 1000 * 1000 ), result, fieldPosition );
                 result.append( " " ).append( getString( "report.dependencies.file.details.column.size.mb" ) );
                 return result;
             }
 
-            result = super.format( (float) fs / ( 1024 ), result, fieldPosition );
+            result = super.format( (float) fs / ( 1000 ), result, fieldPosition );
             result.append( " " ).append( getString( "report.dependencies.file.details.column.size.kb" ) );
             return result;
         }
