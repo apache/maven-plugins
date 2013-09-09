@@ -662,7 +662,7 @@ public class DependenciesRenderer
         sink.tableRow_();
     }
 
-    protected void tableHeaderCell( String text, String title )
+    private void tableHeaderCell( String text, String title )
     {
         if ( title != null )
         {
