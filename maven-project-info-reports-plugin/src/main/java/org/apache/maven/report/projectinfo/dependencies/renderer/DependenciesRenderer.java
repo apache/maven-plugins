@@ -47,6 +47,8 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.logging.Log;
@@ -498,6 +500,7 @@ public class DependenciesRenderer
         String packages = getI18nString( "file.details.column.packages" );
         String jdkrev = getI18nString( "file.details.column.jdkrev" );
         String debugInformation = getI18nString( "file.details.column.debuginformation" );
+        String debugInformationTitle = getI18nString( "file.details.columntitle.debuginformation" );
         String debugInformationCellYes = getI18nString( "file.details.cell.debuginformation.yes" );
         String debugInformationCellNo = getI18nString( "file.details.cell.debuginformation.no" );
         String sealed = getI18nString( "file.details.column.sealed" );
@@ -521,15 +524,18 @@ public class DependenciesRenderer
 
         // Table header
         String[] tableHeader;
+        String[] tableHeaderTitles;
         if ( hasSealed )
         {
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation, sealed };
+            tableHeaderTitles = new String[] {null, null, null, null, null, null, debugInformationTitle, null};
         }
         else
         {
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation };
+            tableHeaderTitles = new String[] {null, null, null, null, null, null, debugInformationTitle};
         }
-        tableHeader( tableHeader );
+        tableHeader( tableHeader, tableHeaderTitles );
 
         // Table rows
         for ( Artifact artifact : alldeps )
@@ -632,6 +638,45 @@ public class DependenciesRenderer
 
         endTable();
         endSection();
+    }
+
+    // Almost as same as in the abstract class but includes the title attribute
+    private void tableHeader( String[] content, String[] titles )
+    {
+        sink.tableRow();
+
+        if ( content != null )
+        {
+            if ( titles != null && content.length != titles.length )
+                throw new IllegalArgumentException( "Length of title array must equal the length of the content array" );
+
+            for ( int i = 0; i < content.length; i++ )
+            {
+                if ( titles != null )
+                    tableHeaderCell( content[i], titles[i] );
+                else
+                    tableHeaderCell( content[i] );
+            }
+        }
+
+        sink.tableRow_();
+    }
+
+    protected void tableHeaderCell( String text, String title )
+    {
+        if ( title != null )
+        {
+            SinkEventAttributes attributes = new SinkEventAttributeSet( SinkEventAttributes.TITLE, title );
+            sink.tableHeaderCell( attributes );
+        }
+        else
+        {
+            sink.tableHeaderCell();
+        }
+
+        text( text );
+
+        sink.tableHeaderCell_();
     }
 
     private void tableRow( boolean fullRow, String[] content )
