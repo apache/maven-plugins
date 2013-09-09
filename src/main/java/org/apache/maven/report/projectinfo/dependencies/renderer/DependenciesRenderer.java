@@ -497,7 +497,9 @@ public class DependenciesRenderer
         String classes = getI18nString( "file.details.column.classes" );
         String packages = getI18nString( "file.details.column.packages" );
         String jdkrev = getI18nString( "file.details.column.jdkrev" );
-        String debug = getI18nString( "file.details.column.debug" );
+        String debugInformation = getI18nString( "file.details.column.debuginformation" );
+        String debugInformationCellYes = getI18nString( "file.details.cell.debuginformation.yes" );
+        String debugInformationCellNo = getI18nString( "file.details.cell.debuginformation.no" );
         String sealed = getI18nString( "file.details.column.sealed" );
 
         int[] justification =
@@ -512,7 +514,7 @@ public class DependenciesRenderer
         TotalCell totalclasses = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalpackages = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         double highestjdk = 0.0;
-        TotalCell totaldebug = new TotalCell( DEFAULT_DECIMAL_FORMAT );
+        TotalCell totalDebugInformation = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalsealed = new TotalCell( DEFAULT_DECIMAL_FORMAT );
 
         boolean hasSealed = hasSealed( alldeps );
@@ -521,11 +523,11 @@ public class DependenciesRenderer
         String[] tableHeader;
         if ( hasSealed )
         {
-            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug, sealed };
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation, sealed };
         }
         else
         {
-            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debug };
+            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation };
         }
         tableHeader( tableHeader );
 
@@ -549,11 +551,11 @@ public class DependenciesRenderer
                 {
                     JarData jarDetails = dependencies.getJarDependencyDetails( artifact );
 
-                    String debugstr = "release";
+                    String debugInformationCellValue = debugInformationCellNo;
                     if ( jarDetails.isDebugPresent() )
                     {
-                        debugstr = "debug";
-                        totaldebug.incrementTotal( artifact.getScope() );
+                        debugInformationCellValue = debugInformationCellYes;
+                        totalDebugInformation.incrementTotal( artifact.getScope() );
                     }
 
                     totalentries.addTotal( jarDetails.getNumEntries(), artifact.getScope() );
@@ -594,7 +596,7 @@ public class DependenciesRenderer
                                   DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
                                   DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
                                   DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
-                                  jarDetails.getJdkRevision(), debugstr, sealedstr } );
+                                  jarDetails.getJdkRevision(), debugInformationCellValue, sealedstr } );
                 }
                 catch ( IOException e )
                 {
@@ -624,7 +626,7 @@ public class DependenciesRenderer
                           new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
                               totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
                               totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
-                              totaldebug.getTotalString( i ), totalsealed.getTotalString( i ) } );
+                              totalDebugInformation.getTotalString( i ), totalsealed.getTotalString( i ) } );
             }
         }
 
