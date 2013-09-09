@@ -68,13 +68,13 @@ public class ScmReport
     /**
      * The directory name to checkout right after the SCM URL.
      */
-    @Parameter( defaultValue = "${project.artifactId}", required = true )
+    @Parameter( defaultValue = "${project.artifactId}" )
     private String checkoutDirectoryName;
 
     /**
      * The SCM anonymous connection url respecting the SCM URL Format.
      *
-     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
+     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format</a>
      * @since 2.1
      */
     @Parameter( defaultValue = "${project.scm.connection}" )
@@ -83,7 +83,7 @@ public class ScmReport
     /**
      * The SCM developer connection url respecting the SCM URL Format.
      *
-     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format< /a>
+     * @see <a href="http://maven.apache.org/scm/scm-url-format.html">SCM URL Format</a>
      * @since 2.1
      */
     @Parameter( defaultValue = "${project.scm.developerConnection}" )
@@ -97,6 +97,14 @@ public class ScmReport
     @Parameter( defaultValue = "${project.scm.url}" )
     private String webAccessUrl;
 
+    /**
+     * The SCM tag.
+     *
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "${project.scm.tag}" )
+    private String scmTag;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -106,7 +114,7 @@ public class ScmReport
     {
         ScmRenderer r =
             new ScmRenderer( getLog(), scmManager, getSink(), getProject().getModel(), getI18N( locale ), locale,
-                             checkoutDirectoryName, webAccessUrl, anonymousConnection, developerConnection );
+                             checkoutDirectoryName, webAccessUrl, anonymousConnection, developerConnection, scmTag );
 
         r.render();
     }
@@ -150,8 +158,11 @@ public class ScmReport
 
         private String webAccessUrl;
 
+        private String scmTag;
+
         ScmRenderer( Log log, ScmManager scmManager, Sink sink, Model model, I18N i18n, Locale locale,
-                     String checkoutDirName, String webAccessUrl, String anonymousConnection, String devConnection )
+                     String checkoutDirName, String webAccessUrl, String anonymousConnection, String devConnection,
+                     String scmTag )
         {
             super( sink, i18n, locale );
 
@@ -169,6 +180,7 @@ public class ScmReport
 
             this.devConnection = devConnection;
 
+            this.scmTag = scmTag;
         }
 
         @Override
@@ -473,7 +485,8 @@ public class ScmReport
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro2" ) );
                 paragraph( getI18nString( "accessthroughtproxy.svn.intro3" ) );
 
-                verbatimText("[global]" + SystemUtils.LINE_SEPARATOR + "http-proxy-host = your.proxy.name" + SystemUtils.LINE_SEPARATOR + "http-proxy-port = 3128" + SystemUtils.LINE_SEPARATOR);
+                verbatimText( "[global]" + SystemUtils.LINE_SEPARATOR + "http-proxy-host = your.proxy.name"
+                    + SystemUtils.LINE_SEPARATOR + "http-proxy-port = 3128" + SystemUtils.LINE_SEPARATOR );
 
                 endSection();
             }
@@ -490,7 +503,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "devaccess.clearcase.intro" ) );
 
-            verbatimText("$ cleartool checkout ");
+            verbatimText( "$ cleartool checkout " );
         }
 
         // CVS
@@ -508,10 +521,17 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.cvs.intro" ) );
 
-            verbatimText("$ cvs -d " + cvsRepo.getCvsRoot() + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRepo.getCvsRoot() + " co " + cvsRepo.getModule());
+            verbatimText( "$ cvs -d " + cvsRepo.getCvsRoot() + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d "
+                + cvsRepo.getCvsRoot() + " co " + cvsRepo.getModule() );
         }
 
         // Git
+
+        private void gitClone( String url )
+        {
+            boolean head = StringUtils.isEmpty( scmTag ) || "HEAD".equals( scmTag );
+            verbatimText( "$ git clone " + ( head ? "" : ( "--branch " + scmTag ) ) + url );
+        }
 
         /**
          * Create the documentation to provide an anonymous access with a <code>Git</code> SCM.
@@ -526,7 +546,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.git.intro" ) );
             sink.paragraph_();
 
-            verbatimText("$ git clone " + gitRepo.getFetchUrl());
+            gitClone( gitRepo.getFetchUrl() );
         }
 
         // Mercurial
@@ -544,7 +564,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "anonymousaccess.hg.intro" ) );
             sink.paragraph_();
 
-            verbatimText("$ hg clone " + hgRepo.getURI());
+            verbatimText( "$ hg clone " + hgRepo.getURI() );
         }
 
         /**
@@ -563,7 +583,8 @@ public class ScmReport
             // Safety: remove the username if present
             String cvsRoot = StringUtils.replace( cvsRepo.getCvsRoot(), cvsRepo.getUser(), "username" );
 
-            verbatimText("$ cvs -d " + cvsRoot + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRoot + " co " + cvsRepo.getModule());
+            verbatimText( "$ cvs -d " + cvsRoot + " login" + SystemUtils.LINE_SEPARATOR + "$ cvs -z3 -d " + cvsRoot
+                + " co " + cvsRepo.getModule() );
         }
 
         // Git
@@ -581,7 +602,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.git.intro" ) );
             sink.paragraph_();
 
-            verbatimText("$ git clone " + gitRepo.getPushUrl());
+            gitClone( gitRepo.getPushUrl() );
         }
 
         // Mercurial
@@ -599,7 +620,7 @@ public class ScmReport
             linkPatternedText( getI18nString( "devaccess.hg.intro" ) );
             sink.paragraph_();
 
-            verbatimText("$ hg clone " + hgRepo.getURI());
+            verbatimText( "$ hg clone " + hgRepo.getURI() );
         }
 
         // Perforce
@@ -682,7 +703,7 @@ public class ScmReport
         {
             paragraph( getI18nString( "anonymousaccess.svn.intro" ) );
 
-            verbatimText("$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName);
+            verbatimText( "$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName );
         }
 
         /**
@@ -769,7 +790,7 @@ public class ScmReport
 
                     if ( !isIntroAdded )
                     {
-                        sb.append("This SCM url '").append(scmUrl).append("' is invalid due to the following errors:");
+                        sb.append( "This SCM url '" ).append( scmUrl ).append( "' is invalid due to the following errors:" );
                         sb.append( SystemUtils.LINE_SEPARATOR );
                         isIntroAdded = true;
                     }
