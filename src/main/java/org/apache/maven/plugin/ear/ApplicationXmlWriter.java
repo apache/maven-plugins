@@ -74,7 +74,11 @@ final class ApplicationXmlWriter
         {
             writer = initializeRootElementSix( w );
         }
-
+        else if ( JavaEEVersion.Seven.eq( version ) )
+        {
+                writer = initializeRootElementSeven( w );
+        }
+        
         // As from JavaEE6
         if ( version.ge( JavaEEVersion.Six ) )
         {
@@ -221,5 +225,16 @@ final class ApplicationXmlWriter
         writer.addAttribute( "version", "6" );
         return writer;
     }
-
+    
+    private XMLWriter initializeRootElementSeven( Writer w )
+    {
+        XMLWriter writer = initializeXmlWriter( w, null );
+        writer.startElement( APPLICATION_ELEMENT );
+        writer.addAttribute( "xmlns", "http://xmlns.jcp.org/xml/ns/javaee" );
+        writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+        writer.addAttribute( "xsi:schemaLocation",
+                             "http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd" );
+        writer.addAttribute( "version", "7" );
+        return writer;
+    }
 }

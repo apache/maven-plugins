@@ -849,4 +849,12 @@ public class EarMojoIT
         doTestProject( "project-081", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
+    /**
+    * Builds an EAR with deployment descriptor configuration for JavaEE 7.
+    */
+    public void testProject082()
+        throws Exception
+    {
+        doTestProject( "project-082", new String[]{ "ejb-sample-one-1.0.jar"} );
+    }
 }
