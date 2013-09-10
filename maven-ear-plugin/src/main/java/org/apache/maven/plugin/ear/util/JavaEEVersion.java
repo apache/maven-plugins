@@ -39,28 +39,35 @@ public class JavaEEVersion
 
     private static final String VERSION_6 = "6";
 
+    private static final String VERSION_7 = "7";
+    
     private static final Map<String, JavaEEVersion> versionsMap = new HashMap<String, JavaEEVersion>();
 
 
     /**
      * Represents the J2EE 1.3 version.
      */
-    public static final JavaEEVersion OneDotThree = new JavaEEVersion(0, VERSION_1_3 );
+    public static final JavaEEVersion OneDotThree = new JavaEEVersion( Integer.valueOf( 0 ), VERSION_1_3 );
 
     /**
      * Represents the J2EE 1.4 version.
      */
-    public static final JavaEEVersion OneDotFour = new JavaEEVersion(1, VERSION_1_4 );
+    public static final JavaEEVersion OneDotFour = new JavaEEVersion( Integer.valueOf( 1 ), VERSION_1_4 );
 
     /**
      * Represents the JavaEE 5 version.
      */
-    public static final JavaEEVersion Five = new JavaEEVersion(2, VERSION_5 );
+    public static final JavaEEVersion Five = new JavaEEVersion( Integer.valueOf( 2 ), VERSION_5 );
+
+    /**
+     * Represents the JavaEE 6 version.
+     */
+    public static final JavaEEVersion Six = new JavaEEVersion( Integer.valueOf( 3 ), VERSION_6 );
 
     /**
      * Represents the JavaEE 7 version.
      */
-    public static final JavaEEVersion Six = new JavaEEVersion(3, VERSION_6 );
+    public static final JavaEEVersion Seven = new JavaEEVersion( Integer.valueOf( 4 ), VERSION_7 );
 
 
     private final Integer index;
@@ -163,7 +170,7 @@ public class JavaEEVersion
             throw new IllegalArgumentException( "version could not be null." );
         }
         return VERSION_1_3.equals( version ) || VERSION_1_4.equals( version ) || VERSION_5.equals( version )
-            || VERSION_6.equals( version );
+            || VERSION_6.equals( version ) || VERSION_7.equals(version);
     }
 
     public int compareTo( JavaEEVersion otherVersion )
