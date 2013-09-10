@@ -530,7 +530,7 @@ public class ScmReport
         private void gitClone( String url )
         {
             boolean head = StringUtils.isEmpty( scmTag ) || "HEAD".equals( scmTag );
-            verbatimText( "$ git clone " + ( head ? "" : ( "--branch " + scmTag ) ) + url );
+            verbatimText( "$ git clone " + ( head ? "" : ( "--branch " + scmTag + ' ' ) ) + url );
         }
 
         /**
