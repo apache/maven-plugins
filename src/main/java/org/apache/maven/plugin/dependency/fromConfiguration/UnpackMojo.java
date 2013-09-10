@@ -118,7 +118,6 @@ public class UnpackMojo
      * @param artifactItem containing the information about the Artifact to unpack.
      * @throws MojoExecutionException with a message if an error occurs.
      * @see #getArtifact
-     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager, Log)
      */
     private void unpackArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException
