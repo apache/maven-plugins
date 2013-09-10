@@ -529,6 +529,15 @@ public class ScmReport
 
         private void gitClone( String url )
         {
+            int index = url.indexOf( ".git/" );
+            if ( index > 0 )
+            {
+                log.warn( "Wrong effective scm url " + url + ": removing " + url.substring( index + 4 )
+                    + " in report, but this should be configured in pom.xml." );
+
+                url = url.substring( 0, index + 4 );
+            }
+
             boolean head = StringUtils.isEmpty( scmTag ) || "HEAD".equals( scmTag );
             verbatimText( "$ git clone " + ( head ? "" : ( "--branch " + scmTag + ' ' ) ) + url );
         }
