@@ -19,11 +19,19 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub;
@@ -524,6 +532,44 @@ public class DeployMojoTest
         assertTrue( sshFile.exists() );
         
         FileUtils.deleteDirectory( sshFile );
+    }
+    
+    public void testAltSnapshotDeploymentRepository() throws Exception
+    {
+        DeployMojo mojo = new DeployMojo();
+        
+        setVariableValueToObject( mojo, "altSnapshotDeploymentRepository", "altSnapshotDeploymentRepository::default::http://localhost" );
+        
+        ArtifactRepositoryLayout repositoryLayout = mock( ArtifactRepositoryLayout.class );
+        setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
+
+        ArtifactRepositoryFactory repositoryFactory = mock( ArtifactRepositoryFactory.class );
+        ArtifactRepository repository = mock( ArtifactRepository.class);
+        when( repositoryFactory.createDeploymentArtifactRepository( "altSnapshotDeploymentRepository", "http://localhost", repositoryLayout, true ) ).thenReturn( repository );
+        setVariableValueToObject( mojo, "repositoryFactory", repositoryFactory );
+        
+        project.setVersion( "1.0-SNAPSHOT" );
+        
+        assertEquals( repository, mojo.getDeploymentRepository( project ) );
+    }
+
+    public void testAltReleaseDeploymentRepository() throws Exception
+    {
+        DeployMojo mojo = new DeployMojo();
+        
+        setVariableValueToObject( mojo, "altReleaseDeploymentRepository", "altReleaseDeploymentRepository::default::http://localhost" );
+        
+        ArtifactRepositoryLayout repositoryLayout = mock( ArtifactRepositoryLayout.class );
+        setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
+
+        ArtifactRepositoryFactory repositoryFactory = mock( ArtifactRepositoryFactory.class );
+        ArtifactRepository repository = mock( ArtifactRepository.class);
+        when( repositoryFactory.createDeploymentArtifactRepository( "altReleaseDeploymentRepository", "http://localhost", repositoryLayout, true ) ).thenReturn( repository );
+        setVariableValueToObject( mojo, "repositoryFactory", repositoryFactory );
+        
+        project.setVersion( "1.0" );
+        
+        assertEquals( repository, mojo.getDeploymentRepository( project ) );
     }
 
     
