@@ -20,6 +20,7 @@ package org.apache.maven.plugin.deploy;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -105,6 +106,24 @@ public class DeployMojo
      */
     @Parameter( property = "altDeploymentRepository" )
     private String altDeploymentRepository;
+
+    /**
+     * The alternative repository to use when the project has a snapshot version.
+     * 
+     * @since 2.8
+     * @see DeployMojo#altDeploymentRepository
+     */
+    @Parameter( property = "altSnapshotDeploymentRepository" )
+    private String altSnapshotDeploymentRepository;
+
+    /**
+     * The alternative repository to use when the project has a final version.
+     * 
+     * @since 2.8
+     * @see DeployMojo#altDeploymentRepository
+     */
+    @Parameter( property = "altReleaseDeploymentRepository" )
+    private String altReleaseDeploymentRepository;
 
     /**
      * @deprecated either use project.getAttachedArtifacts() or reactorProjects.get(i).getAttachedArtifacts()
@@ -241,20 +260,34 @@ public class DeployMojo
         }
     }
 
-    private ArtifactRepository getDeploymentRepository( MavenProject project )
+    ArtifactRepository getDeploymentRepository( MavenProject project )
         throws MojoExecutionException, MojoFailureException
     {
         ArtifactRepository repo = null;
 
-        if ( altDeploymentRepository != null )
+        String altDeploymentRepo;
+        if ( ArtifactUtils.isSnapshot( project.getVersion() ) && altSnapshotDeploymentRepository != null )
         {
-            getLog().info( "Using alternate deployment repository " + altDeploymentRepository );
+            altDeploymentRepo = altSnapshotDeploymentRepository;
+        }
+        else if ( !ArtifactUtils.isSnapshot( project.getVersion() ) && altReleaseDeploymentRepository != null )
+        {
+            altDeploymentRepo = altReleaseDeploymentRepository;
+        }
+        else
+        {
+            altDeploymentRepo = altDeploymentRepository;
+        }
 
-            Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( altDeploymentRepository );
+        if ( altDeploymentRepo != null )
+        {
+            getLog().info( "Using alternate deployment repository " + altDeploymentRepo );
+
+            Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( altDeploymentRepo );
 
             if ( !matcher.matches() )
             {
-                throw new MojoFailureException( altDeploymentRepository, "Invalid syntax for repository.",
+                throw new MojoFailureException( altDeploymentRepo, "Invalid syntax for repository.",
                                                 "Invalid syntax for alternative repository. Use \"id::layout::url\"." );
             }
             else
