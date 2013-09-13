@@ -1,3 +1,0 @@
-# Specify the goals to be run here, one per line. Lines beginning with a hash '#' will be ignored.
-clean
-package
