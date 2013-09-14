@@ -54,9 +54,12 @@ Deploy an artifact in legacy layout
   of repository, set the <<repositoryLayout>> parameter to <<<legacy>>> value.
 
 +---+
-mvn deploy:deploy-file -Durl=file:///C:/m2-repo \
-                       -DrepositoryId=some.id \
-                       -Dfile=your-artifact-1.0.jar \
-                       -DpomFile=your-pom.xml \
-                       -DrepositoryLayout=legacy
+mvn ${project.groupId}:${project.artifactId}:${project.version}:deploy-file -Durl=file:///C:/m2-repo \
+                                                                            -DrepositoryId=some.id \
+                                                                            -Dfile=your-artifact-1.0.jar \
+                                                                            -DpomFile=your-pom.xml \
+                                                                            -DrepositoryLayout=legacy
 +---+
+
+  <<Note>>: By using the fully qualified path of a goal, you're ensured to be using the preferred version of the maven-deploy-plugin. When using <<<mvn deploy:deploy-file>>> 
+  its version depends on its specification in the pom or the version of Apache Maven.

@@ -33,12 +33,15 @@ Disable the generation of pom
   <<generatePom>> parameter to <<<false>>>.
 
 +---+
-mvn deploy:deploy-file -Durl=file:///C:/m2-repo \
-                       -DrepositoryId=some.id \
-                       -Dfile=path-to-your-artifact-jar \
-                       -DgroupId=your.groupId \
-                       -DartifactId=your-artifactId \
-                       -Dversion=version \
-                       -Dpackaging=jar \
-                       -DgeneratePom=false
+mvn ${project.groupId}:${project.artifactId}:${project.version}:deploy-file -Durl=file:///C:/m2-repo \
+                                                                            -DrepositoryId=some.id \
+                                                                            -Dfile=path-to-your-artifact-jar \
+                                                                            -DgroupId=your.groupId \
+                                                                            -DartifactId=your-artifactId \
+                                                                            -Dversion=version \
+                                                                            -Dpackaging=jar \
+                                                                            -DgeneratePom=false
 +---+
+
+  <<Note>>: By using the fully qualified path of a goal, you're ensured to be using the preferred version of the maven-deploy-plugin. When using <<<mvn deploy:deploy-file>>> 
+  its version depends on its specification in the pom or the version of Apache Maven.
