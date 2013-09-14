@@ -194,6 +194,25 @@ under the License.
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                These are archive files that should ideally be recognized by RAT.
+              -->
+              <exclude>src/test/resources/unit/sample_wars/sample.par</exclude>
+              <exclude>src/test/resources/unit/sample_wars/simple.mar</exclude>
+              <exclude>src/test/resources/unit/sample_wars/simple.xar</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <!-- TO remove when parent upgrade -->
       <plugin>
