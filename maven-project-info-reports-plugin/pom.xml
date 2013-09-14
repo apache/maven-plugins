@@ -405,6 +405,19 @@ under the License.
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                This is a plugin-specific data file that must only contain the file names of available resources.
+              -->
+              <exclude>src/main/resources/org/apache/maven/report/projectinfo/resources/resources.txt</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>keytool-maven-plugin</artifactId>
           <version>1.0</version>
