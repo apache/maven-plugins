@@ -102,6 +102,23 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                This is a plugin-specific data file that must only contain the names of applied patches.
+              -->
+              <exclude>src/it/skip-when-patch-tracking-file-present/src/main/patches/patches-applied.txt</exclude>
+              <!--
+                I cannot add headers to this file and commit it, I get an error associated with the spaces in the path.
+              -->
+              <exclude>src/it/path with spaces/invoker.properties</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
