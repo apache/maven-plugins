@@ -32,11 +32,15 @@ Deploy an artifact with a customized pom
   set the <<pomFile>> parameter to the path of the pom.xml.
 
 +---+
-mvn deploy:deploy-file -Durl=file:///C:/m2-repo \
-                       -DrepositoryId=some.id \
-                       -Dfile=path-to-your-artifact-jar \
-                       -DpomFile=path-to-your-pom.xml
+mvn ${project.groupId}:${project.artifactId}:${project.version}:deploy-file -Durl=file:///C:/m2-repo \
+                                                                            -DrepositoryId=some.id \
+                                                                            -Dfile=path-to-your-artifact-jar \
+                                                                            -DpomFile=path-to-your-pom.xml
 +---+
 
    Note that the groupId, artifactId, version and packaging informations are automatically retrieved from the
    given pom.
+
+  <<Note>>: By using the fully qualified path of a goal, you're ensured to be using the preferred version of the maven-deploy-plugin. When using <<<mvn deploy:deploy-file>>> 
+  its version depends on its specification in the pom or the version of Apache Maven.
+   
