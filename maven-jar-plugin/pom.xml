@@ -167,6 +167,20 @@ under the License.
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                The manifest specification does not describe any method for writing comments into the manifest.
+              -->
+              <exclude>src/it/mjar-71-01/src/main/resources/META-INF/MANIFEST.MF</exclude>
+              <exclude>src/it/mjar-71-02/src/main/resources/META-INF/MANIFEST.MF</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
