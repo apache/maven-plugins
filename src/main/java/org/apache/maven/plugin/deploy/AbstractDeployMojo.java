@@ -82,9 +82,9 @@ public abstract class AbstractDeployMojo
     protected boolean updateReleaseInfo;
 
     /**
-     * Parameter used to control how many times a failed deployment will be retried before giving up and failing.
-     * If a value outside the range 1-10 is specified it will be pulled to the nearest value within the range 1-10.
-     *
+     * Parameter used to control how many times a failed deployment will be retried before giving up and failing. If a
+     * value outside the range 1-10 is specified it will be pulled to the nearest value within the range 1-10.
+     * 
      * @since 2.7
      */
     @Parameter( property = "retryFailedDeploymentCount", defaultValue = "1" )
@@ -136,7 +136,7 @@ public abstract class AbstractDeployMojo
 
     /**
      * Deploy an artifact from a particular file.
-     *
+     * 
      * @param source the file to deploy
      * @param artifact the artifact definition
      * @param deploymentRepository the repository to deploy to
@@ -153,10 +153,9 @@ public abstract class AbstractDeployMojo
         {
             try
             {
-                if (count > 0)
+                if ( count > 0 )
                 {
-                    getLog().info(
-                        "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
+                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
                 }
                 getDeployer().deploy( source, artifact, deploymentRepository, localRepository );
                 exception = null;
@@ -164,8 +163,9 @@ public abstract class AbstractDeployMojo
             }
             catch ( ArtifactDeploymentException e )
             {
-                if (count + 1 < retryFailedDeploymentCount) {
-                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage());
+                if ( count + 1 < retryFailedDeploymentCount )
+                {
+                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage() );
                     getLog().debug( e );
                 }
                 if ( exception == null )

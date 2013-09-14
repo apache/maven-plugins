@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 
 /**
  * Deploys an artifact to remote repository.
- *
+ * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:jdcasey@apache.org">John Casey (refactoring only)</a>
  * @version $Id$
@@ -57,13 +57,13 @@ public class DeployMojo
      */
     @Component
     private MavenProject project;
-    
+
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
-    
+
     /**
-     * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build.
-     * If set to {@code true} and the build fails, none of the reactor projects is deployed 
+     * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build. If
+     * set to {@code true} and the build fails, none of the reactor projects is deployed
      * 
      * @since 2.8
      */
@@ -89,19 +89,17 @@ public class DeployMojo
     private File pomFile;
 
     /**
-     * Specifies an alternative repository to which the project artifacts should be deployed ( other
-     * than those specified in &lt;distributionManagement&gt; ).
-     * <br/>
+     * Specifies an alternative repository to which the project artifacts should be deployed ( other than those
+     * specified in &lt;distributionManagement&gt; ). <br/>
      * Format: id::layout::url
-     * 
      * <dl>
-     *   <dt>id</dt>
-     *   <dd>The id can be used to pick up the correct credentials from the settings.xml</dd>
-     *   <dt>layout</dt>
-     *   <dd>Either <code>default</code> for the Maven2 layout or <code>legacy</code> for the Maven1 layout. 
-     *       Maven3 also uses the <code>default</code> layout.</dd>
-     *   <dt>url</dt>
-     *   <dd>The location of the repository</dd>
+     * <dt>id</dt>
+     * <dd>The id can be used to pick up the correct credentials from the settings.xml</dd>
+     * <dt>layout</dt>
+     * <dd>Either <code>default</code> for the Maven2 layout or <code>legacy</code> for the Maven1 layout. Maven3 also
+     * uses the <code>default</code> layout.</dd>
+     * <dt>url</dt>
+     * <dd>The location of the repository</dd>
      * </dl>
      */
     @Parameter( property = "altDeploymentRepository" )
@@ -133,7 +131,7 @@ public class DeployMojo
 
     /**
      * Set this to 'true' to bypass artifact deploy
-     *
+     * 
      * @since 2.4
      */
     @Parameter( property = "maven.deploy.skip", defaultValue = "false" )
@@ -149,25 +147,25 @@ public class DeployMojo
         }
 
         failIfOffline();
-        
-        if( !deployAtEnd )
+
+        if ( !deployAtEnd )
         {
             deployProject( project );
         }
         else
         {
             MavenProject lastProject = reactorProjects.get( reactorProjects.size() - 1 );
-            if( lastProject.equals( project ) )
+            if ( lastProject.equals( project ) )
             {
-                for( MavenProject reactorProject : reactorProjects )
+                for ( MavenProject reactorProject : reactorProjects )
                 {
                     deployProject( reactorProject );
                 }
             }
             else
             {
-                getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + 
-                               ":" + project.getVersion() + " at end" );
+                getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                                   + project.getVersion() + " at end" );
             }
         }
     }
@@ -178,10 +176,10 @@ public class DeployMojo
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        
+
         @SuppressWarnings( "unchecked" )
         List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
-        
+
         ArtifactRepository repo = getDeploymentRepository( project );
 
         String protocol = repo.getProtocol();
@@ -195,7 +193,6 @@ public class DeployMojo
                 sshFile.mkdirs();
             }
         }
-        
 
         // Deploy the POM
         boolean isPomArtifact = "pom".equals( packaging );
@@ -309,8 +306,9 @@ public class DeployMojo
 
         if ( repo == null )
         {
-            String msg = "Deployment failed: repository element was not specified in the POM inside"
-                + " distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter";
+            String msg =
+                "Deployment failed: repository element was not specified in the POM inside"
+                    + " distributionManagement element or in -DaltDeploymentRepository=id::layout::url parameter";
 
             throw new MojoExecutionException( msg );
         }

@@ -54,7 +54,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Installs the artifact in the remote repository.
- *
+ * 
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
 @Mojo( name = "deploy-file", requiresProject = false, threadSafe = true )
@@ -74,29 +74,28 @@ public class DeployFileMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * GroupId of the artifact to be deployed.  Retrieved from POM file if specified.
+     * GroupId of the artifact to be deployed. Retrieved from POM file if specified.
      */
     @Parameter( property = "groupId" )
     private String groupId;
 
     /**
-     * ArtifactId of the artifact to be deployed.  Retrieved from POM file if specified.
+     * ArtifactId of the artifact to be deployed. Retrieved from POM file if specified.
      */
     @Parameter( property = "artifactId" )
     private String artifactId;
 
     /**
-     * Version of the artifact to be deployed.  Retrieved from POM file if specified.
+     * Version of the artifact to be deployed. Retrieved from POM file if specified.
      */
     @Parameter( property = "version" )
     private String version;
 
     /**
-     * Type of the artifact to be deployed.
-     * Retrieved from the &lt;packaging&gt element of the POM file if a POM file specified.
-     * Defaults to the file extension if it is not specified via command line or POM.<br/>
-     * Maven uses two terms to refer to this datum: the &lt;packaging&gt; element
-     * for the entire POM, and the &lt;type&gt; element in a dependency specification.
+     * Type of the artifact to be deployed. Retrieved from the &lt;packaging&gt element of the POM file if a POM file
+     * specified. Defaults to the file extension if it is not specified via command line or POM.<br/>
+     * Maven uses two terms to refer to this datum: the &lt;packaging&gt; element for the entire POM, and the
+     * &lt;type&gt; element in a dependency specification.
      */
     @Parameter( property = "packaging" )
     private String packaging;
@@ -126,15 +125,14 @@ public class DeployFileMojo
     private File sources;
 
     /**
-     * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
-     * In most cases, this parameter will be required for authentication.
+     * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml In most cases, this parameter
+     * will be required for authentication.
      */
     @Parameter( property = "repositoryId", defaultValue = "remote-repository", required = true )
     private String repositoryId;
 
     /**
-     * The type of remote repository layout to deploy to. Try <i>legacy</i> for
-     * a Maven 1.x-style repository layout.
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
      */
     @Parameter( property = "repositoryLayout", defaultValue = "default" )
     private String repositoryLayout;
@@ -147,15 +145,13 @@ public class DeployFileMojo
     private String url;
 
     /**
-     * Location of an existing POM file to be deployed alongside the main
-     * artifact, given by the ${file} parameter.
+     * Location of an existing POM file to be deployed alongside the main artifact, given by the ${file} parameter.
      */
     @Parameter( property = "pomFile" )
     private File pomFile;
 
     /**
-     * Upload a POM for this artifact.  Will generate a default POM if none is
-     * supplied with the pomFile argument.
+     * Upload a POM for this artifact. Will generate a default POM if none is supplied with the pomFile argument.
      */
     @Parameter( property = "generatePom", defaultValue = "true" )
     private boolean generatePom;
@@ -179,8 +175,8 @@ public class DeployFileMojo
     private ModelValidator modelValidator;
 
     /**
-     * A comma separated list of types for each of the extra side artifacts to deploy. If there is a mis-match in
-     * the number of entries in {@link #files} or {@link #classifiers}, then an error will be raised.
+     * A comma separated list of types for each of the extra side artifacts to deploy. If there is a mis-match in the
+     * number of entries in {@link #files} or {@link #classifiers}, then an error will be raised.
      */
     @Parameter( property = "types" )
     private String types;
@@ -193,8 +189,8 @@ public class DeployFileMojo
     private String classifiers;
 
     /**
-     * A comma separated list of files for each of the extra side artifacts to deploy. If there is a mis-match in
-     * the number of entries in {@link #types} or {@link #classifiers}, then an error will be raised.
+     * A comma separated list of files for each of the extra side artifacts to deploy. If there is a mis-match in the
+     * number of entries in {@link #types} or {@link #classifiers}, then an error will be raised.
      */
     @Parameter( property = "files" )
     private String files;
@@ -211,7 +207,7 @@ public class DeployFileMojo
 
             processModel( model );
         }
-        
+
         if ( packaging == null && file != null )
         {
             packaging = FileUtils.getExtension( file.getName() );
@@ -272,7 +268,7 @@ public class DeployFileMojo
         {
             artifact.setRelease( true );
         }
-        
+
         project.setArtifact( artifact );
 
         try
@@ -309,13 +305,13 @@ public class DeployFileMojo
             int classifiersLength = StringUtils.countMatches( classifiers, "," );
             if ( typesLength != filesLength )
             {
-                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
-                        "'types' (respectively " + filesLength + " and " + typesLength + " entries )" );
+                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and "
+                    + "'types' (respectively " + filesLength + " and " + typesLength + " entries )" );
             }
             if ( classifiersLength != filesLength )
             {
-                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
-                        "'classifiers' (respectively " + filesLength + " and " + classifiersLength + " entries )" );
+                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and "
+                    + "'classifiers' (respectively " + filesLength + " and " + classifiersLength + " entries )" );
             }
             int fi = 0;
             int ti = 0;
@@ -351,8 +347,8 @@ public class DeployFileMojo
                     }
                     else
                     {
-                        projectHelper.attachArtifact( project, types.substring( ti, nti).trim(), 
-                                classifiers.substring( ci, nci ).trim(), file);
+                        projectHelper.attachArtifact( project, types.substring( ti, nti ).trim(),
+                                                      classifiers.substring( ci, nci ).trim(), file );
                     }
                 }
                 else
@@ -379,7 +375,7 @@ public class DeployFileMojo
         @SuppressWarnings( "unchecked" )
         List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
-        for ( Artifact attached : attachedArtifacts)
+        for ( Artifact attached : attachedArtifacts )
         {
             try
             {
@@ -387,7 +383,8 @@ public class DeployFileMojo
             }
             catch ( ArtifactDeploymentException e )
             {
-                throw new MojoExecutionException( "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e );
+                throw new MojoExecutionException( "Error deploying attached artifact " + attached.getFile() + ": "
+                    + e.getMessage(), e );
             }
         }
 
@@ -408,7 +405,7 @@ public class DeployFileMojo
 
     /**
      * Process the supplied pomFile to get groupId, artifactId, version, and packaging
-     *
+     * 
      * @param model The POM to extract missing artifact coordinates from, must not be <code>null</code>.
      */
     private void processModel( Model model )
@@ -477,7 +474,7 @@ public class DeployFileMojo
 
     /**
      * Generates a minimal POM from the user-supplied artifact information.
-     *
+     * 
      * @return The path to the generated POM file, never <code>null</code>.
      * @throws MojoExecutionException If the generation failed.
      */
