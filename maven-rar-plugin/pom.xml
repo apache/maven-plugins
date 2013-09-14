@@ -121,6 +121,19 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                The manifest specification does not describe any method for writing comments into the manifest.
+              -->
+              <exclude>src/test/resources/unit/basic-rar-with-manifest/src/main/rar/META-INF/MANIFEST.MF</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
