@@ -157,6 +157,28 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                The manifest specification does not describe any method for writing comments into the manifest.
+              -->
+              <exclude>src/test/resources/projects/project-015/src/main/application/META-INF/MANIFEST.MF</exclude>
+              <exclude>src/test/resources/projects/project-016/src/main/ear/MANIFEST.MF</exclude>
+              <!--
+                DTDs from other sources - do not add our own license header.
+              -->
+              <exclude>src/test/resources/dtd/application_1_3.dtd</exclude>
+              <exclude>src/test/resources/dtd/jboss-app_3_2.dtd</exclude>
+              <exclude>src/test/resources/dtd/jboss-app_4_0.dtd</exclude>
+              <exclude>src/test/resources/dtd/jboss-app_4_2.dtd</exclude>
+              <exclude>src/test/resources/dtd/jboss-app_5_0.dtd</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
