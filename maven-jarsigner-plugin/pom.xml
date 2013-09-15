@@ -127,11 +127,6 @@ under the License.
                 The manifest specification does not describe any method for writing comments into the manifest.
               -->
               <exclude>src/it/unsign/src/main/resources/META-INF/UNSIGNED.SF</exclude>
-              <!--
-                I cannot add headers to these files and commit them, I get an error associated with the space in the path.
-              -->
-              <exclude>src/it/spacy path/src/main/java/Main.java</exclude>
-              <exclude>src/it/spacy path/verify.bsh</exclude>
             </excludes>
           </configuration>
         </plugin>
