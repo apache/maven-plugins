@@ -112,10 +112,6 @@ under the License.
                 This is a plugin-specific data file that must only contain the names of applied patches.
               -->
               <exclude>src/it/skip-when-patch-tracking-file-present/src/main/patches/patches-applied.txt</exclude>
-              <!--
-                I cannot add headers to this file and commit it, I get an error associated with the spaces in the path.
-              -->
-              <exclude>src/it/path with spaces/invoker.properties</exclude>
             </excludes>
           </configuration>
         </plugin>
