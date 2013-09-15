@@ -238,6 +238,28 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.10</version>
+          <configuration>
+            <excludes>
+              <!--
+                This file must not contain a license header, because the test is
+                supposed to report an error because of a missing license header.
+              -->
+              <exclude>src/it/multi-modules-aggregate/child-b/src/test/java/org/apache/maven/plugins/checkstyle/its/AppTest.java</exclude>
+              <!--
+                This is a license header template.
+              -->
+              <exclude>src/main/resources/config/maven-header.txt</exclude>
+              <!--
+                File from the Checkstyle distribution - do not add our own license header.
+              -->
+              <exclude>src/main/resources/config/sun_checks.xml</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
