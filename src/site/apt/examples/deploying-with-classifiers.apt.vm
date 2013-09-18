@@ -1,9 +1,9 @@
   ----
   Deploy an artifact with classifier
   ------
-  Allan Ramirez
+  Robert Scholte 
   ------
-  June 2006
+  September 2013
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,28 +28,34 @@
 
 Deploy an artifact with classifier
 
-  Classifiers are the additional text given to describe an artifact.
+  Beside the main artifact there can be additional files which are attached to the Maven project. Such attached filed can be recognized and accessed by their classifier.
 
-+---+
-  artifact-name-1.0-bin.jar
-  artifact-name-1.0-dev.jar
-  artifact-name-1.0-prod.jar
-+---+
+  For example: from the following artifact names, the classifier is be located between the version and extension name of the artifact.
 
-  From the above artifact names, classifiers can be located between the version and extension name of the artifact.
+  * <<<artifact-name-1.0.jar>>> the main jar which contains classes compiled without {{{http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug}debugging}} information (such as linenumbers)
 
-  *<<<bin>>> is used to describe that the artifact is a binary.
+  * <<<artifact-name-1.0-debug.jar>>> the classified jar which contains classes compiled with {{{http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#debug}debugging}} information, so will be smaller
 
-  *<<<dev>>> is used to describe that the artifact is for development.
-
-  *<<<prod>>> is used to describe that the artifact is for production.
+  * <<<artifact-name-1.0-site.pdf>>> a pdf which contains an export of the site documentation. 
 
   []
 
-  To add classifier into your artifact for your deployment, set the text to the <<classifier>> parameter.
+  You can deploy the main artifact and the classified artifacts in a single run. Let's assume the original filename for the documentation is <<<site.pdf>>>: 
 
 +---+
-mvn ${project.groupId}:${project.artifactId}:${project.version}:deploy-file -Durl=file:///C:/m2-repo \
+mvn ${project.groupId}:${project.artifactId}:${project.version}:deploy-file -Durl=http://localhost:8081/repomanager/ \
+                                                                            -DrepositoryId=some.id \
+                                                                            -Dfile=path/to/artifact-name-1.0.jar \
+                                                                            -DpomFile=path-to-your-pom.xml \
+                                                                            -Dfiles=path/to/artifact-name-1.0-debug.jar,path/to/site.pdf \
+                                                                            -Dclassifiers=debug,site \
+                                                                            -Dtypes=jar,pdf
++---+
+
+  If you only want to deploy the <<<debug>>>-jar and want to keep the classifier, you can execute the <<<deploy-file>>> like
+
++---+
+mvn ${project.groupId}:${project.artifactId}:${project.version}:deploy-file -Durl=http://localhost:8081/repomanager/ \
                                                                             -DrepositoryId=some.id \
                                                                             -Dfile=path-to-your-artifact-jar \
                                                                             -DpomFile=path-to-your-pom.xml \
