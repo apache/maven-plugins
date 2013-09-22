@@ -70,6 +70,16 @@ under the License.
               </excludes>
               <followSymlinks>false</followSymlinks>
             </fileset>
+            <fileset>
+              <directory>${basedir}/dirs/dir4</directory>
+              <includes>
+                <include>**/file.txt</include>
+                <include>**/included/**</include>
+              </includes>
+              <excludes>
+                <exclude>**/excluded/**</exclude>
+              </excludes>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>

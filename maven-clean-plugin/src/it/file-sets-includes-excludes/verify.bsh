@@ -42,6 +42,8 @@ try
         "dir3/excluded.txt",
         "dir3/sub0/excluded.txt",
         "dir3/sub2/excluded.txt",
+
+        "dir4/excluded/file.txt",
     };
     for ( String path : expected )
     {
@@ -70,6 +72,9 @@ try
         "dir3/included.txt",
         "dir3/sub0/included.txt",
         "dir3/sub1",
+
+        "dir4/file.txt",
+        "dir4/included/file.txt",
     };
     for ( String path : unexpected )
     {
