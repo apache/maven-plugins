@@ -157,7 +157,8 @@ public class CleanMojoTest
         assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir" ) );
         assertFalse( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/classes/file.txt" ) );
         assertTrue( checkEmpty( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/classes" ) );
-        assertTrue( checkEmpty( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir" ) );
+        assertFalse( checkEmpty( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir" ) );
+        assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/target/subdir/file.txt" ) );
 
         // fileset 2
         assertTrue( checkExists( getBasedir() + "/target/test-classes/unit/fileset-clean-test/"
@@ -343,6 +344,6 @@ public class CleanMojoTest
      */
     private boolean checkEmpty( String dir )
     {
-        return FileUtils.sizeOfDirectory( new File( dir ).getAbsolutePath() ) == 0;
+        return new File( dir ).listFiles().length == 0;
     }
 }
