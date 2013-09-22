@@ -54,6 +54,7 @@ public class TestResourcesMojo
     /**
      * Set this to 'true' to bypass copying of test resources.
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * @since 2.6
      */
     @Parameter( property = "maven.test.skip" )
     private boolean skip;
