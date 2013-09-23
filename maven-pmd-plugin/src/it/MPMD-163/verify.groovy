@@ -22,4 +22,4 @@ File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
 assert 1 == buildLog.getText().count('You have 1 warning')
-assert 1 == buildLog.getText().count("PMD Warning: Foo:4 Rule:UnusedFormalParameter Priority:3 Avoid unused constructor parameters such as 'foo'..")
+assert 1 == buildLog.getText().count("PMD Warning: Foo:23 Rule:UnusedFormalParameter Priority:3 Avoid unused constructor parameters such as 'foo'..")
