@@ -108,6 +108,12 @@ public class TestJavadocJar
     @Parameter( alias = "javadocDirectory", defaultValue = "${basedir}/src/test/javadoc" )
     private File testJavadocDirectory;
 
+    /**
+     * @since 2.9.2
+     */
+    @Parameter( property = "maven.javadoc.testClassifier", defaultValue = "test-javadoc", required = true )
+    private String testClassifier;
+
     // ----------------------------------------------------------------------
     // Protected methods
     // ----------------------------------------------------------------------
@@ -115,7 +121,7 @@ public class TestJavadocJar
     @Override
     protected String getClassifier()
     {
-        return "test-javadoc";
+        return testClassifier;
     }
 
     // ----------------------------------------------------------------------
