@@ -150,6 +150,12 @@ public class JavadocJar
     @Parameter( defaultValue = "false" )
     private boolean useDefaultManifestFile;
 
+    /**
+     * @since 2.9.2
+     */
+    @Parameter( property = "maven.javadoc.classifier", defaultValue = "javadoc" )
+    protected String classifier;
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
@@ -223,7 +229,7 @@ public class JavadocJar
      */
     protected String getClassifier()
     {
-        return "javadoc";
+        return classifier;
     }
 
     // ----------------------------------------------------------------------
