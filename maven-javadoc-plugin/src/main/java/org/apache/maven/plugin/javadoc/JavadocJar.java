@@ -153,8 +153,8 @@ public class JavadocJar
     /**
      * @since 2.9.2
      */
-    @Parameter( property = "maven.javadoc.classifier", defaultValue = "javadoc" )
-    protected String classifier;
+    @Parameter( property = "maven.javadoc.classifier", defaultValue = "javadoc", required = true )
+    private String classifier;
 
     /** {@inheritDoc} */
     public void execute()
