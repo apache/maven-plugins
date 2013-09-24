@@ -38,6 +38,7 @@ under the License.
           <jarOutputDirectory>${basedir}/target/test/unit/javadocjar-default/target</jarOutputDirectory>
           <outputDirectory>${basedir}/target/test/unit/javadocjar-default/target/site/apidocs</outputDirectory>
           <finalName>javadocjar-default</finalName>
+          <classifier>javadoc</classifier>
           <attach>true</attach>
           <breakiterator>false</breakiterator>
           <old>false</old>
