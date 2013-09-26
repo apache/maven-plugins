@@ -31,8 +31,8 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
-
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -45,7 +45,8 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  * @version $Id$
  * @since 2.0-beta-6
  */
-@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresReports = true )
+// MSITE-665: requiresDependencyResolution workaround for MPLUGIN-253 
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST )
 public class SiteJarMojo
     extends SiteMojo
 {
