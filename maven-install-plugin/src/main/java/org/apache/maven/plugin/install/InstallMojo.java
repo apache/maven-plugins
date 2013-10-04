@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.installer.ArtifactInstallationException;
@@ -46,6 +47,11 @@ import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 public class InstallMojo
     extends AbstractInstallMojo
 {
+
+    /**
+     * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready to be installed 
+     */
+    private static final AtomicInteger readyProjectsCounter = new AtomicInteger(); 
 
     /**
      */
@@ -113,8 +119,7 @@ public class InstallMojo
         }
         else
         {
-            MavenProject lastProject = reactorProjects.get( reactorProjects.size() - 1 );
-            if ( lastProject.equals( project ) )
+            if ( readyProjectsCounter.incrementAndGet() == reactorProjects.size() )
             {
                 for ( MavenProject reactorProject : reactorProjects )
                 {
