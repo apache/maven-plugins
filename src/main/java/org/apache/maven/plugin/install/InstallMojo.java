@@ -119,19 +119,16 @@ public class InstallMojo
         {
             installProject( project );
         }
+        else if ( projectsReady < reactorProjects.size() )
+        {
+            getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                            + project.getVersion() + " at end" );
+        }
         else
         {
-            if ( projectsReady == reactorProjects.size() )
+            for ( MavenProject reactorProject : reactorProjects )
             {
-                for ( MavenProject reactorProject : reactorProjects )
-                {
-                    installProject( reactorProject );
-                }
-            }
-            else
-            {
-                getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
-                                   + project.getVersion() + " at end" );
+                installProject( reactorProject );
             }
         }
     }
