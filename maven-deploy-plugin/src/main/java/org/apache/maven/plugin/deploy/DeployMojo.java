@@ -36,6 +36,7 @@ import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +53,11 @@ public class DeployMojo
 {
 
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
+    
+    /**
+     * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready to be deployed 
+     */
+    private static final AtomicInteger readyProjectsCounter = new AtomicInteger();
 
     /**
      */
@@ -140,6 +146,8 @@ public class DeployMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        int projectsReady = readyProjectsCounter.incrementAndGet();
+        
         if ( skip )
         {
             getLog().info( "Skipping artifact deployment" );
@@ -152,20 +160,16 @@ public class DeployMojo
         {
             deployProject( project );
         }
+        else if ( projectsReady < reactorProjects.size() )
+        {
+            getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                               + project.getVersion() + " at end" );
+        }
         else
         {
-            MavenProject lastProject = reactorProjects.get( reactorProjects.size() - 1 );
-            if ( lastProject.equals( project ) )
+            for ( MavenProject reactorProject : reactorProjects )
             {
-                for ( MavenProject reactorProject : reactorProjects )
-                {
-                    deployProject( reactorProject );
-                }
-            }
-            else
-            {
-                getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
-                                   + project.getVersion() + " at end" );
+                deployProject( reactorProject );
             }
         }
     }
