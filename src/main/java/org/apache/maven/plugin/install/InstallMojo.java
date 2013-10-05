@@ -107,6 +107,8 @@ public class InstallMojo
     public void execute()
         throws MojoExecutionException
     {
+        int projectsReady = readyProjectsCounter.incrementAndGet();
+
         if ( skip )
         {
             getLog().info( "Skipping artifact installation" );
@@ -119,7 +121,7 @@ public class InstallMojo
         }
         else
         {
-            if ( readyProjectsCounter.incrementAndGet() == reactorProjects.size() )
+            if ( projectsReady == reactorProjects.size() )
             {
                 for ( MavenProject reactorProject : reactorProjects )
                 {
