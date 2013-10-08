@@ -109,9 +109,10 @@ public abstract class AbstractInstallMojo
      * installed POM for robustness with regard to future changes like re-introducing some kind of POM filtering.
      *
      * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
+     * @param createChecksum {@code true} if checksum should be created, otherwise {@code false}.
      * @throws MojoExecutionException If the checksums could not be installed.
      */
-    protected void installChecksums( Artifact artifact )
+    protected void installChecksums( Artifact artifact, boolean createChecksum )
         throws MojoExecutionException
     {
         if ( !createChecksum )
@@ -123,7 +124,7 @@ public abstract class AbstractInstallMojo
         installChecksums( artifactFile );
     }
 
-    protected void addMetaDataFilesForArtifact( Artifact artifact, Collection<File> targetMetadataFiles )
+    protected void addMetaDataFilesForArtifact( Artifact artifact, Collection<File> targetMetadataFiles, boolean createChecksum )
     {
         if ( !createChecksum )
         {

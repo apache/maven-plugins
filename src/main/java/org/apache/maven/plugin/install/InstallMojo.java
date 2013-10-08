@@ -158,8 +158,8 @@ public class InstallMojo
             if ( isPomArtifact )
             {
                 installer.install( pomFile, artifact, localRepository );
-                installChecksums( artifact );
-                addMetaDataFilesForArtifact( artifact, metadataFiles );
+                installChecksums( artifact, createChecksum );
+                addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
             }
             else
             {
@@ -173,8 +173,8 @@ public class InstallMojo
                 if ( file != null && file.isFile() )
                 {
                     installer.install( file, artifact, localRepository );
-                    installChecksums( artifact );
-                    addMetaDataFilesForArtifact( artifact, metadataFiles );
+                    installChecksums( artifact, createChecksum );
+                    addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -190,8 +190,8 @@ public class InstallMojo
                     }
 
                     installer.install( pomFile, pomArtifact, localRepository );
-                    installChecksums( pomArtifact );
-                    addMetaDataFilesForArtifact( pomArtifact, metadataFiles );
+                    installChecksums( pomArtifact, createChecksum );
+                    addMetaDataFilesForArtifact( pomArtifact, metadataFiles, createChecksum );
                 }
                 else
                 {
@@ -203,8 +203,8 @@ public class InstallMojo
             for ( Artifact attached : attachedArtifacts )
             {
                 installer.install( attached.getFile(), attached, localRepository );
-                installChecksums( attached );
-                addMetaDataFilesForArtifact( attached, metadataFiles );
+                installChecksums( attached, createChecksum );
+                addMetaDataFilesForArtifact( attached, metadataFiles, createChecksum );
             }
 
             installChecksums( metadataFiles );
