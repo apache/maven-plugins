@@ -20,7 +20,9 @@ package org.apache.maven.plugin.install;
  */
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,9 +39,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 /**
- * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle,
- * to the local repository.
- *
+ * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle, to the
+ * local repository.
+ * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
@@ -49,9 +51,13 @@ public class InstallMojo
 {
 
     /**
-     * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready to be installed 
+     * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready
+     * to be installed
      */
-    private static final AtomicInteger readyProjectsCounter = new AtomicInteger(); 
+    private static final AtomicInteger readyProjectsCounter = new AtomicInteger();
+
+    private static final List<InstallRequest> installRequests =
+        Collections.synchronizedList( new ArrayList<InstallRequest>() );
 
     /**
      */
@@ -63,9 +69,9 @@ public class InstallMojo
     private List<MavenProject> reactorProjects;
 
     /**
-     * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build.
-     * If set to {@code true} and the build fails, none of the reactor projects is deployed
-     *
+     * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build. If
+     * set to {@code true} and the build fails, none of the reactor projects is deployed
+     * 
      * @since 2.5
      */
     @Parameter( defaultValue = "false", property = "installAtEnd" )
@@ -84,9 +90,9 @@ public class InstallMojo
     private File pomFile;
 
     /**
-     * Set this to <code>true</code> to bypass artifact installation.
-     * Use this for artifacts that does not need to be installed in the local repository.
-     *
+     * Set this to <code>true</code> to bypass artifact installation. Use this for artifacts that does not need to be
+     * installed in the local repository.
+     * 
      * @since 2.4
      */
     @Parameter( property = "maven.install.skip", defaultValue = "false" )
@@ -107,39 +113,58 @@ public class InstallMojo
     public void execute()
         throws MojoExecutionException
     {
-        int projectsReady = readyProjectsCounter.incrementAndGet();
+        boolean projectsReady = readyProjectsCounter.incrementAndGet() == reactorProjects.size();
 
         if ( skip )
         {
             getLog().info( "Skipping artifact installation" );
-            return;
-        }
-
-        if ( !installAtEnd )
-        {
-            installProject( project );
-        }
-        else if ( projectsReady < reactorProjects.size() )
-        {
-            getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
-                            + project.getVersion() + " at end" );
         }
         else
         {
-            for ( MavenProject reactorProject : reactorProjects )
+            InstallRequest currentExecutionInstallRequest =
+                new InstallRequest().setProject( project ).setCreateChecksum( createChecksum ).setUpdateReleaseInfo( updateReleaseInfo );
+
+            if ( !installAtEnd )
             {
-                installProject( reactorProject );
+                installProject( currentExecutionInstallRequest );
+            }
+            else
+            {
+                installRequests.add( currentExecutionInstallRequest );
+
+                if ( !projectsReady )
+                {
+                    getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                                       + project.getVersion() + " at end" );
+                }
+            }
+
+        }
+
+        if ( projectsReady )
+        {
+            synchronized ( installRequests )
+            {
+                while ( !installRequests.isEmpty() )
+                {
+                    installProject( installRequests.remove( 0 ) );
+                }
             }
         }
     }
 
-    private void installProject( MavenProject project )
+    private void installProject( InstallRequest request )
         throws MojoExecutionException
     {
+        MavenProject project = request.getProject();
+        boolean createChecksum = request.isCreateChecksum();
+        boolean updateReleaseInfo = request.isUpdateReleaseInfo();
+
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        @SuppressWarnings( "unchecked" ) List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
+        @SuppressWarnings( "unchecked" )
+        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
@@ -196,7 +221,7 @@ public class InstallMojo
                 else
                 {
                     throw new MojoExecutionException(
-                        "The packaging for this project did not assign a file to the build artifact" );
+                                                      "The packaging for this project did not assign a file to the build artifact" );
                 }
             }
 
@@ -219,4 +244,5 @@ public class InstallMojo
     {
         this.skip = skip;
     }
+
 }
