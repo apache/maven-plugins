@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.FileUtils;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -76,7 +77,9 @@ public class InstallMojoTest
             + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
-
+        
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        
         artifact = (InstallArtifactStub) project.getArtifact();
 
         artifact.setFile( file );
@@ -104,6 +107,8 @@ public class InstallMojoTest
         assertNotNull( mojo );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         List attachedArtifacts = project.getAttachedArtifacts();
 
@@ -140,6 +145,8 @@ public class InstallMojoTest
             + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -160,6 +167,8 @@ public class InstallMojoTest
         assertNotNull( mojo );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -191,6 +200,8 @@ public class InstallMojoTest
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+
         String packaging = project.getPackaging();
 
         assertEquals( "pom", packaging );
@@ -219,6 +230,8 @@ public class InstallMojoTest
         File file = new File( getBasedir(), "target/test-classes/unit/basic-install-checksum/" + "maven-test-jar.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -302,6 +315,8 @@ public class InstallMojoTest
             + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
