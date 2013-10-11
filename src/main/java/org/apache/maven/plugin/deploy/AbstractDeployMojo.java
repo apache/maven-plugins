@@ -62,7 +62,7 @@ public abstract class AbstractDeployMojo
      * Map that contains the layouts.
      */
     @Component( role = ArtifactRepositoryLayout.class )
-    private Map repositoryLayouts;
+    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      */
@@ -124,7 +124,7 @@ public abstract class AbstractDeployMojo
     ArtifactRepositoryLayout getLayout( String id )
         throws MojoExecutionException
     {
-        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( id );
+        ArtifactRepositoryLayout layout = repositoryLayouts.get( id );
 
         if ( layout == null )
         {
