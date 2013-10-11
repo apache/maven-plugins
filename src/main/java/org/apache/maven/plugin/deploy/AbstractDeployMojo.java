@@ -134,6 +134,16 @@ public abstract class AbstractDeployMojo
         return layout;
     }
 
+    boolean isUpdateReleaseInfo()
+    {
+        return updateReleaseInfo;
+    }
+    
+    int getRetryFailedDeploymentCount()
+    {
+        return retryFailedDeploymentCount;
+    }
+    
     /**
      * Deploy an artifact from a particular file.
      * 
@@ -141,21 +151,22 @@ public abstract class AbstractDeployMojo
      * @param artifact the artifact definition
      * @param deploymentRepository the repository to deploy to
      * @param localRepository the local repository to install into
+     * @param retryFailedDeploymentCount TODO
      * @throws ArtifactDeploymentException if an error occurred deploying the artifact
      */
     protected void deploy( File source, Artifact artifact, ArtifactRepository deploymentRepository,
-                           ArtifactRepository localRepository )
+                           ArtifactRepository localRepository, int retryFailedDeploymentCount )
         throws ArtifactDeploymentException
     {
-        int retryFailedDeploymentCount = Math.max( 1, Math.min( 10, this.retryFailedDeploymentCount ) );
+        int retryFailedDeploymentCounter = Math.max( 1, Math.min( 10, retryFailedDeploymentCount ) );
         ArtifactDeploymentException exception = null;
-        for ( int count = 0; count < retryFailedDeploymentCount; count++ )
+        for ( int count = 0; count < retryFailedDeploymentCounter; count++ )
         {
             try
             {
                 if ( count > 0 )
                 {
-                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
+                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCounter );
                 }
                 getDeployer().deploy( source, artifact, deploymentRepository, localRepository );
                 exception = null;
@@ -163,7 +174,7 @@ public abstract class AbstractDeployMojo
             }
             catch ( ArtifactDeploymentException e )
             {
-                if ( count + 1 < retryFailedDeploymentCount )
+                if ( count + 1 < retryFailedDeploymentCounter )
                 {
                     getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage() );
                     getLog().debug( e );

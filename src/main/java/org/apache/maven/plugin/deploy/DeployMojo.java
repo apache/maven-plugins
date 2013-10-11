@@ -35,6 +35,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -58,6 +60,9 @@ public class DeployMojo
      * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready to be deployed 
      */
     private static final AtomicInteger readyProjectsCounter = new AtomicInteger();
+    
+    private static final List<DeployRequest> deployRequests =
+                    Collections.synchronizedList( new ArrayList<DeployRequest>() );
 
     /**
      */
@@ -146,45 +151,60 @@ public class DeployMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        int projectsReady = readyProjectsCounter.incrementAndGet();
+        boolean projectsReady = readyProjectsCounter.incrementAndGet() == reactorProjects.size();
         
         if ( skip )
         {
             getLog().info( "Skipping artifact deployment" );
-            return;
-        }
-
-        failIfOffline();
-
-        if ( !deployAtEnd )
-        {
-            deployProject( project );
-        }
-        else if ( projectsReady < reactorProjects.size() )
-        {
-            getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
-                               + project.getVersion() + " at end" );
         }
         else
         {
-            for ( MavenProject reactorProject : reactorProjects )
+            failIfOffline();
+
+            DeployRequest currentExecutionDeployRequest =
+                new DeployRequest().setProject( project ).setUpdateReleaseInfo( isUpdateReleaseInfo() ).setRetryFailedDeploymentCount( getRetryFailedDeploymentCount() ).setAltReleaseDeploymentRepository( altReleaseDeploymentRepository ).setAltSnapshotDeploymentRepository( altSnapshotDeploymentRepository ).setAltDeploymentRepository( altDeploymentRepository );
+
+            if ( !deployAtEnd )
             {
-                deployProject( reactorProject );
+                deployProject( currentExecutionDeployRequest );
+            }
+            else
+            {
+                deployRequests.add( currentExecutionDeployRequest );
+                if ( !projectsReady )
+                {
+                    getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                                       + project.getVersion() + " at end" );
+                }
+            }
+        }
+
+        if ( projectsReady )
+        {
+            synchronized ( deployRequests )
+            {
+                while( !deployRequests.isEmpty() )
+                {
+                    deployProject( deployRequests.remove( 0 ) );
+                }
             }
         }
     }
 
-    private void deployProject( MavenProject project )
+    private void deployProject( DeployRequest request )
         throws MojoExecutionException, MojoFailureException
     {
-        Artifact artifact = project.getArtifact();
-        String packaging = project.getPackaging();
-        File pomFile = project.getFile();
+        Artifact artifact = request.getProject().getArtifact();
+        String packaging = request.getProject().getPackaging();
+        File pomFile = request.getProject().getFile();
 
         @SuppressWarnings( "unchecked" )
-        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
+        List<Artifact> attachedArtifacts = request.getProject().getAttachedArtifacts();
 
-        ArtifactRepository repo = getDeploymentRepository( project );
+        ArtifactRepository repo =
+            getDeploymentRepository( request.getProject(), request.getAltDeploymentRepository(),
+                                     request.getAltReleaseDeploymentRepository(),
+                                     request.getAltSnapshotDeploymentRepository() );
 
         String protocol = repo.getProtocol();
 
@@ -206,16 +226,18 @@ public class DeployMojo
             artifact.addMetadata( metadata );
         }
 
-        if ( updateReleaseInfo )
+        if ( request.isUpdateReleaseInfo() )
         {
             artifact.setRelease( true );
         }
+        
+        int retryFailedDeploymentCount = request.getRetryFailedDeploymentCount();
 
         try
         {
             if ( isPomArtifact )
             {
-                deploy( pomFile, artifact, repo, getLocalRepository() );
+                deploy( pomFile, artifact, repo, getLocalRepository(), retryFailedDeploymentCount );
             }
             else
             {
@@ -223,7 +245,7 @@ public class DeployMojo
 
                 if ( file != null && file.isFile() )
                 {
-                    deploy( file, artifact, repo, getLocalRepository() );
+                    deploy( file, artifact, repo, getLocalRepository(), retryFailedDeploymentCount );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -233,12 +255,12 @@ public class DeployMojo
                         artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
                                                                artifact.getBaseVersion() );
                     pomArtifact.setFile( pomFile );
-                    if ( updateReleaseInfo )
+                    if ( request.isUpdateReleaseInfo() )
                     {
                         pomArtifact.setRelease( true );
                     }
 
-                    deploy( pomFile, pomArtifact, repo, getLocalRepository() );
+                    deploy( pomFile, pomArtifact, repo, getLocalRepository(), retryFailedDeploymentCount );
 
                     // propagate the timestamped version to the main artifact for the attached artifacts to pick it up
                     artifact.setResolvedVersion( pomArtifact.getVersion() );
@@ -252,7 +274,7 @@ public class DeployMojo
 
             for ( Artifact attached : attachedArtifacts )
             {
-                deploy( attached.getFile(), attached, repo, getLocalRepository() );
+                deploy( attached.getFile(), attached, repo, getLocalRepository(), retryFailedDeploymentCount );
             }
         }
         catch ( ArtifactDeploymentException e )
@@ -261,7 +283,7 @@ public class DeployMojo
         }
     }
 
-    ArtifactRepository getDeploymentRepository( MavenProject project )
+    ArtifactRepository getDeploymentRepository( MavenProject project, String altDeploymentRepository, String altReleaseDeploymentRepository, String altSnapshotDeploymentRepository )
         throws MojoExecutionException, MojoFailureException
     {
         ArtifactRepository repo = null;
