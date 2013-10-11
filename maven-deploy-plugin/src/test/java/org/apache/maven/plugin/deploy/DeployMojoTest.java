@@ -122,6 +122,8 @@ public class DeployMojoTest
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
         
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        
         artifact = ( DeployArtifactStub ) project.getArtifact();
 
         String packaging = project.getPackaging();
@@ -223,6 +225,8 @@ public class DeployMojoTest
         assertTrue( file.exists() );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (DeployArtifactStub) project.getArtifact();
 
@@ -275,6 +279,8 @@ public class DeployMojoTest
         assertEquals( "pom", packaging );
         
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (DeployArtifactStub) project.getArtifact();
         
@@ -334,6 +340,8 @@ public class DeployMojoTest
         
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+
         artifact = (DeployArtifactStub) project.getArtifact();
         
         artifact.setFile( testPom );
@@ -358,6 +366,8 @@ public class DeployMojoTest
         assertNotNull( mojo );
         
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (DeployArtifactStub) project.getArtifact();
         
@@ -389,6 +399,8 @@ public class DeployMojoTest
         assertNotNull( mojo );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (DeployArtifactStub) project.getArtifact();
         
@@ -505,6 +517,8 @@ public class DeployMojoTest
         
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
+        setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+
         artifact = (DeployArtifactStub) project.getArtifact();
         
         artifact.setFile( file );
@@ -538,8 +552,6 @@ public class DeployMojoTest
     {
         DeployMojo mojo = new DeployMojo();
         
-        setVariableValueToObject( mojo, "altSnapshotDeploymentRepository", "altSnapshotDeploymentRepository::default::http://localhost" );
-        
         ArtifactRepositoryLayout repositoryLayout = mock( ArtifactRepositoryLayout.class );
         setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
 
@@ -550,14 +562,12 @@ public class DeployMojoTest
         
         project.setVersion( "1.0-SNAPSHOT" );
         
-        assertEquals( repository, mojo.getDeploymentRepository( project ) );
+        assertEquals( repository, mojo.getDeploymentRepository( project, null, null, "altSnapshotDeploymentRepository::default::http://localhost" ) );
     }
 
     public void testAltReleaseDeploymentRepository() throws Exception
     {
         DeployMojo mojo = new DeployMojo();
-        
-        setVariableValueToObject( mojo, "altReleaseDeploymentRepository", "altReleaseDeploymentRepository::default::http://localhost" );
         
         ArtifactRepositoryLayout repositoryLayout = mock( ArtifactRepositoryLayout.class );
         setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
@@ -569,7 +579,7 @@ public class DeployMojoTest
         
         project.setVersion( "1.0" );
         
-        assertEquals( repository, mojo.getDeploymentRepository( project ) );
+        assertEquals( repository, mojo.getDeploymentRepository( project, null, "altReleaseDeploymentRepository::default::http://localhost", null ) );
     }
 
     
