@@ -37,6 +37,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/aggregate-resources-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/aggregate-resources-test/target/javadoc-bundle-options</javadocOptionsDir>
           <windowtitle>Maven Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
           <reactorProjects>
             <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject1TestMavenProjectStub"/>

@@ -37,6 +37,7 @@ under the License.
           <localRepository>${localRepository}</localRepository>
           <jarOutputDirectory>${basedir}/target/test/unit/javadocjar-default/target</jarOutputDirectory>
           <outputDirectory>${basedir}/target/test/unit/javadocjar-default/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/javadocjar-default/target/javadoc-bundle-options</javadocOptionsDir>
           <finalName>javadocjar-default</finalName>
           <classifier>javadoc</classifier>
           <attach>true</attach>

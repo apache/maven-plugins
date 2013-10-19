@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.NewlineTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/newline-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/newline-test/target/javadoc-bundle-options</javadocOptionsDir>
           <show>protected</show>
           <encoding>ISO-8859-1</encoding>
           <groups/>

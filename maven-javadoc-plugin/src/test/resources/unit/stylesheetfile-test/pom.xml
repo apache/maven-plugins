@@ -37,6 +37,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.StylesheetFileMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/stylesheetfile-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/stylesheetfile-test/target/javadoc-bundle-options</javadocOptionsDir>
           <javadocDirectory>${basedir}/src/test/resources/unit/stylesheetfile-test/src/main/javadoc</javadocDirectory>
           <breakiterator>false</breakiterator>
           <old>false</old>

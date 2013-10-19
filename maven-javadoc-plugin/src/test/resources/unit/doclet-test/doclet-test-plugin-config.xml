@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.DocletTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/doclet-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/doclet-test/target/javadoc-bundle-options</javadocOptionsDir>
           <doclet>UmlGraph</doclet>
           <docletArtifact>
               <groupId>umlgraph</groupId>

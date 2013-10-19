@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.TagTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/tag-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/tag-test/target/javadoc-bundle-options</javadocOptionsDir>
           <windowtitle>Maven Javadoc Plugin tag 1.0-SNAPSHOT API</windowtitle>
           <show>protected</show>
           <encoding>ISO-8859-1</encoding>

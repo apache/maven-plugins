@@ -38,6 +38,7 @@ under the License.
           <destDir>${basedir}/target/test/unit/javadocjar-invalid-destdir/target/invalid</destDir>
           <jarOutputDirectory>${basedir}/target/test/unit/javadocjar-invalid-destdir/target</jarOutputDirectory>
           <outputDirectory>${basedir}/target/test/unit/javadocjar-invalid-destdir/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/javadocjar-invalid-destdir/target/javadoc-bundle-options</javadocOptionsDir>
           <finalName>javadocjar-invalid-destdir</finalName>
           <attach>true</attach>
           <breakiterator>false</breakiterator>

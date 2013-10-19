@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.DefaultConfigurationMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/javaHome-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/javaHome-test/target/javadoc-bundle-options</javadocOptionsDir>
           <breakiterator>false</breakiterator>
           <old>false</old>
           <show>protected</show>
