@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.TagletTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/taglet-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/taglet-test/target/javadoc-bundle-options</javadocOptionsDir>
           <taglet>org.tullmann.taglets.ToDo</taglet>
           <tagletArtifact>
             <groupId>org.tullmann</groupId>

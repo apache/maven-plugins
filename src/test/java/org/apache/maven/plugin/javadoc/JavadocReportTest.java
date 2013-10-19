@@ -652,7 +652,7 @@ public class JavadocReportTest
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
 
-        assertFalse( new File( getBasedir(), "target/test/unit/pom-test" ).exists() );
+        assertFalse( new File( getBasedir(), "target/test/unit/pom-test/target/site" ).exists() );
     }
 
     /**

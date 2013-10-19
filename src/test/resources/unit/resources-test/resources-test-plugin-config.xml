@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.ResourcesTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/resources-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/resources-test/target/javadoc-bundle-options</javadocOptionsDir>
           <windowtitle>Maven Javadoc Plugin resources 1.0-SNAPSHOT API</windowtitle>
           <javadocDirectory>${basedir}/src/test/resources/unit/resources-test/src/main/javadoc</javadocDirectory>
           <show>protected</show>

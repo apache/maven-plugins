@@ -42,6 +42,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.javadoc.stubs.TestJavadocMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/test-javadoc-test/target/site/apidocs</outputDirectory>
+          <javadocOptionsDir>${basedir}/target/test/unit/test-javadoc-test/target/javadoc-bundle-options</javadocOptionsDir>
           <windowtitle>Maven Test Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
           <show>protected</show>
           <encoding>ISO-8859-1</encoding>
