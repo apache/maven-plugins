@@ -69,8 +69,8 @@ public class InstallMojo
     private List<MavenProject> reactorProjects;
 
     /**
-     * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build. If
-     * set to {@code true} and the build fails, none of the reactor projects is deployed
+     * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
+     * set to {@code true} and the build fails, none of the reactor projects is installed.
      * 
      * @since 2.5
      */
