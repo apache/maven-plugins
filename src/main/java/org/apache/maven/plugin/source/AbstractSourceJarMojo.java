@@ -19,9 +19,16 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,12 +41,6 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Base class for bundling sources into a jar archive.
@@ -190,6 +191,12 @@ public abstract class AbstractSourceJarMojo
     @Parameter( property = "source.skip", defaultValue = "false" )
     private boolean skipSource;
 
+    /**
+     * The Maven session.
+     */
+    @Component
+    private MavenSession session;
+    
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -285,7 +292,7 @@ public abstract class AbstractSourceJarMojo
                 archive.setAddMavenDescriptor( false );
                 archive.setForced( forceCreation );
 
-                archiver.createArchive( project, archive );
+                archiver.createArchive( session, project, archive );
             }
             catch ( IOException e )
             {
