@@ -31,16 +31,7 @@ try
         return false;
     }
 
-    // TODO: Use variable localRepositoryPath once MINVOKER-49 is released
-    File localRepoDir = new File( basedir.getParentFile().getParentFile(), "local-repo" );
-    System.out.println( "Checking for existence of " + localRepoDir );
-    if ( !localRepoDir.isDirectory() )
-    {
-        System.out.println( "FAILURE!" );
-        return false;
-    }
-
-    File attachedFile = new File( localRepoDir, "org/apache/maven/its/ejb/jar-attached/1.0-SNAPSHOT/jar-attached-1.0-SNAPSHOT-sources.jar" );
+    File attachedFile = new File( localRepositoryPath, "org/apache/maven/its/ejb/jar-attached/1.0-SNAPSHOT/jar-attached-1.0-SNAPSHOT-sources.jar" );
     System.out.println( "Checking for existence of " + attachedFile );
     if ( !attachedFile.isFile() )
     {
