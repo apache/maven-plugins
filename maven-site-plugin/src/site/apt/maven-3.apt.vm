@@ -47,7 +47,7 @@ Using maven-site-plugin with Maven 3
 ** Plugins Maintained by the Apache Maven Community
 
   Tests have been made on the reporting profile of the Maven parent POM which enables some reports.
-  You will need so update some of these plugins for them to work with Maven 3. Below you will find the minimum version
+  You will need to update some of these plugins for them to work with Maven 3. Below you will find the minimum version
   required for these plugins to work in Maven 3.
 
 *-----------------------------------+-----------+
