@@ -329,7 +329,7 @@ Using maven-site-plugin with Maven 3
   a plugin providing multiple report goals, in Maven 2,
   reports configured in child pom are added to reports from parent, whereas in Maven 3 up to 3.0.3
   reports from child replace reports from parent. Since 3.0.4, though, inheritance of reports works
-  back like Maven 2.
+  in the same way as with Maven 2.
 
   For example, given a multi module build where the parent POM has the <<<index>>> report
   configured and the child POM has the <<<summary>>> report configured for
