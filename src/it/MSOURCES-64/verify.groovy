@@ -18,5 +18,5 @@
  * under the License.
  */
 
-assert new File(basedir,"target/64-1.0-SNAPSHOT-test-sources.jar").exists()
+assert new File(basedir,"target/MSOURCES-64-1.0-SNAPSHOT-test-sources.jar").exists()
 

@@ -24,7 +24,7 @@ import java.util.regex.*;
 
 try
 {
-    File jarFile = new File( basedir, "target/jar-1.0-SNAPSHOT-foo.jar" );
+    File jarFile = new File( basedir, "target/jar-classifier-1.0-SNAPSHOT-foo.jar" );
     System.out.println( "Checking for existence of " + jarFile );
     if ( !jarFile.isFile() )
     {

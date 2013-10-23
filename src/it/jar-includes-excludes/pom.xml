@@ -23,11 +23,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>test</groupId>
-  <artifactId>jar</artifactId>
+  <groupId>org.apache.maven.its.ejb</groupId>
+  <artifactId>jar-includes-excludes</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Test for jar</name>
+  <name>Test of jar with includes/excludes</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +38,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>@project.version@</version>
         <executions>
           <execution>
             <id>jar</id>

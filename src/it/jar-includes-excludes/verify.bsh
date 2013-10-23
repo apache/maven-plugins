@@ -24,7 +24,7 @@ import java.util.regex.*;
 
 try
 {
-    File jarFile = new File( basedir, "target/jar-1.0-SNAPSHOT-sources.jar" );
+    File jarFile = new File( basedir, "target/jar-includes-excludes-1.0-SNAPSHOT-sources.jar" );
     System.out.println( "Checking for existence of " + jarFile );
     if ( !jarFile.isFile() )
     {
@@ -65,7 +65,7 @@ try
     }
 
 
-    File jarFile = new File( basedir, "target/jar-1.0-SNAPSHOT-test-sources.jar" );
+    File jarFile = new File( basedir, "target/jar-includes-excludes-1.0-SNAPSHOT-test-sources.jar" );
     System.out.println( "Checking for existence of " + jarFile );
     if ( !jarFile.isFile() )
     {
