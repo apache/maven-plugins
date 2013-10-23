@@ -21,7 +21,6 @@
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
-import org.codehaus.plexus.util.*;
 
 boolean result = true;
 

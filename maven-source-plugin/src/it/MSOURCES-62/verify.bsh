@@ -21,7 +21,6 @@
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
-import org.codehaus.plexus.util.*;
 
 boolean result = true;
 
@@ -34,7 +33,7 @@ try
         return false;
     }
 
-    File artifact = new File( target, "62-1.0-SNAPSHOT-sources.jar" );
+    File artifact = new File( target, "MSOURCES-62-1.0-SNAPSHOT-sources.jar" );
     if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "artifact file is missing or a directory." );
@@ -58,9 +57,6 @@ try
         System.err.println( "An-Entry manifest entry" + " not equals Some Value" );
         return false;
     }
-
-
-
 }
 catch( Throwable e )
 {

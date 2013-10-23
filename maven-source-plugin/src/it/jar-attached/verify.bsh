@@ -40,7 +40,7 @@ try
         return false;
     }
 
-    File attachedFile = new File( localRepoDir, "test/jar-attached/1.0-SNAPSHOT/jar-attached-1.0-SNAPSHOT-sources.jar" );
+    File attachedFile = new File( localRepoDir, "org/apache/maven/its/ejb/jar-attached/1.0-SNAPSHOT/jar-attached-1.0-SNAPSHOT-sources.jar" );
     System.out.println( "Checking for existence of " + attachedFile );
     if ( !attachedFile.isFile() )
     {
