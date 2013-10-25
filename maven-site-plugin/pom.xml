@@ -190,8 +190,8 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.4</doxiaVersion>
-    <doxiaSitetoolsVersion>1.4</doxiaSitetoolsVersion>
+    <doxiaVersion>1.5-SNAPSHOT</doxiaVersion>
+    <doxiaSitetoolsVersion>1.5-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
     <wagonVersion>1.0</wagonVersion>
