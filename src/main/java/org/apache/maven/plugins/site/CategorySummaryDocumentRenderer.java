@@ -21,22 +21,20 @@ package org.apache.maven.plugins.site;
 
 import java.io.FileNotFoundException;
 import java.io.Writer;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
+import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.tools.MojoLogWrapper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.reporting.MavenReport;
-
 import org.codehaus.plexus.i18n.I18N;
 
 /**
