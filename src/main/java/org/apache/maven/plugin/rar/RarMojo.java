@@ -265,12 +265,26 @@ public class RarMojo
     @Parameter( property = "warnOnMissingRaXml", defaultValue = "true" )
     protected boolean warnOnMissingRaXml = true;
 
+    /**
+     * To skip execution of the rar mojo.
+     *
+     * @since 2.4
+     */
+    @Parameter( property = "maven.rar.skip" )
+    private boolean skip;
+
     private File buildDir;
 
 
     public void execute()
         throws MojoExecutionException
     {
+
+        if ( skip )
+        {
+            getLog().info( "Skipping rar generation." );
+        }
+
         getLog().debug( " ======= RarMojo settings =======" );
         getLog().debug( "rarSourceDirectory[" + rarSourceDirectory + "]" );
         getLog().debug( "manifestFile[" + manifestFile + "]" );
