@@ -283,6 +283,7 @@ public class RarMojo
         if ( skip )
         {
             getLog().info( "Skipping rar generation." );
+            return;
         }
 
         getLog().debug( " ======= RarMojo settings =======" );
