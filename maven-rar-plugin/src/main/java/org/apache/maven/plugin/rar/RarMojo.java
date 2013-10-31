@@ -33,6 +33,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
@@ -60,8 +61,6 @@ public class RarMojo
     extends AbstractMojo
 {
     public static final String RA_XML_URI = "META-INF/ra.xml";
-
-    private static final String[] DEFAULT_INCLUDES = { "**/**" };
 
     /**
      * Single directory for extra files to include in the RAR.
@@ -107,25 +106,15 @@ public class RarMojo
     private String finalName;
 
     /**
-     * The maven project.
-     */
-    @Component
-    private MavenProject project;
-
-    /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * Classifier to add to the artifact generated. If given, the artifact will be attached.
+     *
+     * If this is not given, it will merely be written to the output directory
+     * according to the finalName.
      *
      * @since 2.4
-     *
-     * @parameter
      */
+    @Parameter( property = "maven.rar.classifier", defaultValue = "" )
     private String classifier;
-
-    /**
-     * The Jar archiver.
-     */
-    @Component( role = Archiver.class, hint = "jar" )
-    private JarArchiver jarArchiver;
 
     /**
      * The archive configuration to use.
@@ -141,13 +130,6 @@ public class RarMojo
      */
     @Parameter( property = "rar.filterRarSourceDirectory", defaultValue = "false" )
     private boolean filterRarSourceDirectory;
-
-
-    /**
-     * @since 2.3
-     */
-    @Component( role = MavenResourcesFiltering.class, hint = "default" )
-    protected MavenResourcesFiltering mavenResourcesFiltering;
 
     /**
      * @since 2.3
@@ -281,6 +263,30 @@ public class RarMojo
      */
     @Parameter( property = "maven.rar.skip" )
     private boolean skip;
+
+    /**
+     * The maven project.
+     */
+    @Component
+    private MavenProject project;
+
+    /**
+     * The Jar archiver.
+     */
+    @Component( role = Archiver.class, hint = "jar" )
+    private JarArchiver jarArchiver;
+
+    /**
+     * @since 2.3
+     */
+    @Component( role = MavenResourcesFiltering.class, hint = "default" )
+    protected MavenResourcesFiltering mavenResourcesFiltering;
+
+    /**
+     * @since 2.4
+     */
+    @Component
+    private MavenProjectHelper projectHelper;
 
     private File buildDir;
 
@@ -427,9 +433,9 @@ public class RarMojo
             getLog().warn( "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
         }
 
+        File rarFile = getRarFile(outputDirectory, finalName, classifier);
         try
         {
-            File rarFile = getRarFile(outputDirectory, finalName, classifier);
             MavenArchiver archiver = new MavenArchiver();
             archiver.setArchiver( jarArchiver );
             archiver.setOutputFile( rarFile );
@@ -439,12 +445,19 @@ public class RarMojo
 
             archiver.getArchiver().addDirectory( getBuildDir() );
             archiver.createArchive( session, project, archive );
-
-            project.getArtifact().setFile( rarFile );
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Error assembling RAR", e );
+        }
+
+        if ( classifier != null )
+        {
+            projectHelper.attachArtifact( project, "rar", classifier, rarFile );
+        }
+        else
+        {
+            project.getArtifact().setFile( rarFile );
         }
     }
 
