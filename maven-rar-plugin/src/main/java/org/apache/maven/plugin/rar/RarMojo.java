@@ -115,6 +115,8 @@ public class RarMojo
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      *
+     * @since 2.4
+     *
      * @parameter
      */
     private String classifier;
