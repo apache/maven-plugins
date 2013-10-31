@@ -17,6 +17,18 @@ try
         println "Global script variable not defined: localRepositoryPath"
         return false
     }
+
+    println mavenVersion
+    if ( !mavenVersion )
+    {
+        println "Global script variable not defined: mavenVersion"
+        return false
+    }
+    if ( !mavenVersion?.trim() )
+    {
+        println "Global script variable empty: mavenVersion"
+        return false
+    }
 }
 catch( Throwable t )
 {

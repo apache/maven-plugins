@@ -17,6 +17,18 @@ try
         System.out.println( "Global script variable not defined: localRepositoryPath" );
         return false;
     }
+
+    System.out.println( mavenVersion );
+    if ( mavenVersion == null )
+    {
+        System.out.println( "Global script variable not defined: mavenVersion" );
+        return false;
+    }
+    if ( mavenVersion.trim().equals( "" ) )
+    {
+        System.out.println( "Global script variable empty: mavenVersion" );
+        return false;
+    }
 }
 catch( Throwable t )
 {

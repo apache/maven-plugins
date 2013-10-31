@@ -90,6 +90,8 @@ if ( !file.isFile() )
 *--------------------------+----------------------+-----------------------------------------------------------+--------+
 | <<<context>>>            | <<<java.util.Map>>>  | The storage of key-value pairs used to pass data from the pre-build hook script to the post-build hook script. | 1.4   |
 *--------------------------+----------------------+-----------------------------------------------------------+--------+
+| <<<mavenVersion>>>       | <<<java.lang.String>>> | The version of Maven executing on the test project.     | 1.9    |
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
 
   Additional variables that can be accessed in the hook scripts can be defined through the
   <<<{{{../run-mojo.html#scriptVariables}scriptVariables}}>>> parameter in the Invoker Plugin's configuration.
