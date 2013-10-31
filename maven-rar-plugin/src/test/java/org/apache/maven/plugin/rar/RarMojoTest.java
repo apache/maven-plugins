@@ -19,20 +19,19 @@ package org.apache.maven.plugin.rar;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.archiver.zip.ZipEntry;
-import org.codehaus.plexus.archiver.zip.ZipFile;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.archiver.zip.ZipEntry;
+import org.codehaus.plexus.archiver.zip.ZipFile;
+import org.codehaus.plexus.util.FileUtils;
+
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
  */
-@SuppressWarnings("ConstantConditions")
 public class RarMojoTest
     extends AbstractMojoTestCase
 {
@@ -59,7 +58,7 @@ public class RarMojoTest
 
         String workDir = (String) getVariableValueFromObject( mojo, "workDirectory" );
 
-        String outputDir = (String) getVariableValueFromObject( mojo, "outputDirectory" );
+        File outputDir = ( File ) getVariableValueFromObject( mojo, "outputDirectory" );
 
         Boolean includeJar = (Boolean) getVariableValueFromObject( mojo, "includeJar" );
 
@@ -68,7 +67,7 @@ public class RarMojoTest
         //include the project jar to the rar
         File projectJar = new File( getBasedir(), "src/test/resources/unit/basic-rar-test/target/test-rar.jar" );
 
-        FileUtils.copyFileToDirectory( projectJar, new File( outputDir ) );
+        FileUtils.copyFileToDirectory( projectJar, outputDir );
 
         mojo.execute();
 
@@ -105,7 +104,7 @@ public class RarMojoTest
         assertEquals( 0, expectedFiles.size() );
 
         //check the generated rar file
-        File rarFile = new File( outputDir, finalName + ".rar" );
+        File rarFile = new File( outputDir.getPath(), finalName + ".rar" );
 
         assertTrue( rarFile.exists() );
 
@@ -135,17 +134,18 @@ public class RarMojoTest
     public void testBasicRarWithDescriptor()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-rar-with-descriptor/plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "target/test-classes/unit/basic-rar-with-descriptor/plugin-config.xml" );
 
-        RarMojo mojo = (RarMojo) lookupMojo( "rar", testPom );
+        RarMojo mojo = ( RarMojo ) lookupMojo( "rar", testPom );
 
         assertNotNull( mojo );
 
-        String finalName = (String) getVariableValueFromObject( mojo, "finalName" );
+        String finalName = ( String ) getVariableValueFromObject( mojo, "finalName" );
 
-        String workDir = (String) getVariableValueFromObject( mojo, "workDirectory" );
+        String workDir = ( String ) getVariableValueFromObject( mojo, "workDirectory" );
 
-        String outputDir = (String) getVariableValueFromObject( mojo, "outputDirectory" );
+        File outputDir = ( File ) getVariableValueFromObject( mojo, "outputDirectory" );
 
         mojo.execute();
 
@@ -175,7 +175,7 @@ public class RarMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );
 
         //check the generated rar file
-        File rarFile = new File( outputDir, finalName + ".rar" );
+        File rarFile = new File( outputDir.getPath(), finalName + ".rar" );
 
         assertTrue( rarFile.exists() );
 
@@ -205,17 +205,18 @@ public class RarMojoTest
     public void testBasicRarWithManifest()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/basic-rar-with-manifest/plugin-config.xml" );
+        File testPom = new File( getBasedir(),
+                                 "target/test-classes/unit/basic-rar-with-manifest/plugin-config.xml" );
 
-        RarMojo mojo = (RarMojo) lookupMojo( "rar", testPom );
+        RarMojo mojo = ( RarMojo ) lookupMojo( "rar", testPom );
 
         assertNotNull( mojo );
 
-        String finalName = (String) getVariableValueFromObject( mojo, "finalName" );
+        String finalName = ( String ) getVariableValueFromObject( mojo, "finalName" );
 
-        String workDir = (String) getVariableValueFromObject( mojo, "workDirectory" );
+        String workDir = ( String ) getVariableValueFromObject( mojo, "workDirectory" );
 
-        String outputDir = (String) getVariableValueFromObject( mojo, "outputDirectory" );
+        File outputDir = ( File ) getVariableValueFromObject( mojo, "outputDirectory" );
 
         mojo.execute();
 
@@ -247,7 +248,7 @@ public class RarMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );
 
         //check the generated rar file
-        File rarFile = new File( outputDir, finalName + ".rar" );
+        File rarFile = new File( outputDir.getPath(), finalName + ".rar" );
 
         assertTrue( rarFile.exists() );
 
