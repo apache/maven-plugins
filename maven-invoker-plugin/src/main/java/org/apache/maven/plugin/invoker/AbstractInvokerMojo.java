@@ -1177,6 +1177,7 @@ public abstract class AbstractInvokerMojo
         {
             actualMavenVersion = SelectorUtils.getMavenVersion();
         }
+        scriptRunner.setGlobalVariable( "mavenVersion", actualMavenVersion );
         
         if ( javaHome != null )
         {
