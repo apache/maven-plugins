@@ -98,7 +98,7 @@ public class RarMojo
      * The directory for the generated RAR.
      */
     @Parameter( defaultValue = "${project.build.directory}", required = true )
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * The name of the RAR file to generate.
@@ -111,6 +111,13 @@ public class RarMojo
      */
     @Component
     private MavenProject project;
+
+    /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     *
+     * @parameter
+     */
+    private String classifier;
 
     /**
      * The Jar archiver.
@@ -293,6 +300,7 @@ public class RarMojo
         getLog().debug( "workDirectory[" + workDirectory + "]" );
         getLog().debug( "outputDirectory[" + outputDirectory + "]" );
         getLog().debug( "finalName[" + finalName + "]" );
+        getLog().debug( "classifier[" + classifier + "]" );
 
         // Check if jar file is there and if requested, copy it
         try
@@ -419,7 +427,7 @@ public class RarMojo
 
         try
         {
-            File rarFile = new File( outputDirectory, finalName + ".rar" );
+            File rarFile = getRarFile(outputDirectory, finalName, classifier);
             MavenArchiver archiver = new MavenArchiver();
             archiver.setArchiver( jarArchiver );
             archiver.setOutputFile( rarFile );
@@ -445,6 +453,20 @@ public class RarMojo
             buildDir = new File( workDirectory );
         }
         return buildDir;
+    }
+
+    protected static File getRarFile( File basedir, String finalName, String classifier )
+    {
+        if ( classifier == null )
+        {
+            classifier = "";
+        }
+        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        {
+            classifier = "-" + classifier;
+        }
+
+        return new File( basedir, finalName + classifier + ".rar" );
     }
 
     private void includeCustomManifestFile()
