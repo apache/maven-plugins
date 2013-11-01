@@ -39,7 +39,8 @@ Usage
 
   <<Note:>> Originally, this plugin was meant to sign JARs as well. As of version 2.3, the corresponding goals are no
   longer supported and users are advised to use the dedicated
-  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead.
+  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead. As of version 2.5, the
+  corresponding goals were removed.
 
 
 * How to build a JAR file
