@@ -116,6 +116,10 @@ under the License.
   </dependencies>
 
   <contributors>
+    <!-- alphabetic order -->
+    <contributor>
+      <name>Hermann Josef Hill</name>
+    </contributor>
     <contributor>
       <name>Ludwig Magnusson</name>
     </contributor>
