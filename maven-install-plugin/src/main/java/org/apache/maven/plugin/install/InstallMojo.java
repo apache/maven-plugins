@@ -113,8 +113,7 @@ public class InstallMojo
     public void execute()
         throws MojoExecutionException
     {
-        boolean projectsReady = readyProjectsCounter.incrementAndGet() == reactorProjects.size();
-
+        boolean addedInstallRequest = false;
         if ( skip )
         {
             getLog().info( "Skipping artifact installation" );
@@ -131,16 +130,11 @@ public class InstallMojo
             else
             {
                 installRequests.add( currentExecutionInstallRequest );
-
-                if ( !projectsReady )
-                {
-                    getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
-                                       + project.getVersion() + " at end" );
-                }
+                addedInstallRequest = true;
             }
-
         }
 
+        boolean projectsReady = readyProjectsCounter.incrementAndGet() == reactorProjects.size();
         if ( projectsReady )
         {
             synchronized ( installRequests )
@@ -150,6 +144,11 @@ public class InstallMojo
                     installProject( installRequests.remove( 0 ) );
                 }
             }
+        }
+        else if ( addedInstallRequest )
+        {
+            getLog().info( "Installing " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                               + project.getVersion() + " at end" );
         }
     }
 
