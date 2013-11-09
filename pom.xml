@@ -116,6 +116,13 @@ under the License.
     </dependency>
   </dependencies>
 
+  <contributors>
+    <!-- alphabetic order -->
+    <contributor>
+      <name>Hermann Josef Hill</name>
+    </contributor>
+  </contributors>
+  
   <build>
 
     <pluginManagement>
