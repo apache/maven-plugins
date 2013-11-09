@@ -33,6 +33,12 @@ public interface FileNameMapping
 {
 
     /**
+     * 
+     * @param useBaseVersion
+     */
+    void setUseBaseVersion( boolean useBaseVersion );
+
+    /**
      * Returns the file name of the specified artifact.
      *
      * @param a the artifact

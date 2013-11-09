@@ -107,6 +107,16 @@ public abstract class AbstractEarMojo
      */
     @Parameter
     private String fileNameMapping;
+    
+    /**
+     * When using a {@link #fileNameMapping} with versions, either use the {@code baseVersion} or the {@code version}.
+     * When the artifact is a SNAPSHOT, {@code version} will always return a value with a {@code -SNAPSHOT} postfix 
+     * instead of the possible timestamped value. 
+     *  
+     *  @since 2.9
+     */
+    @Parameter
+    private Boolean useBaseVersion;
 
     /**
      * Directory that resources are copied to during the build.
@@ -172,6 +182,11 @@ public abstract class AbstractEarMojo
         EarExecutionContext earExecutionContext =
             new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMapping,
                                      typeMappingService );
+        
+        if ( useBaseVersion != null )
+        {
+            earExecutionContext.getFileNameMapping().setUseBaseVersion( useBaseVersion );
+        }
 
         getLog().debug( "Resolving ear modules ..." );
         allModules = new ArrayList<EarModule>();
