@@ -32,6 +32,12 @@ public abstract class AbstractFileNameMapping
     implements FileNameMapping
 {
 
+    private boolean useBaseVersion = false;
+    
+    public final void setUseBaseVersion( boolean useBaseVersion )
+    {
+        this.useBaseVersion = useBaseVersion;
+    }
 
     /**
      * Generates a standard file name for the specified {@link Artifact}.
@@ -52,7 +58,14 @@ public abstract class AbstractFileNameMapping
         buffer.append( a.getArtifactId() );
         if ( addVersion )
         {
-            buffer.append( '-' ).append( a.getBaseVersion() );
+            if ( useBaseVersion )
+            {
+                buffer.append( '-' ).append( a.getBaseVersion() );
+            }
+            else
+            {
+                buffer.append( '-' ).append( a.getVersion() );
+            }    
         }
         if ( a.hasClassifier() )
         {
