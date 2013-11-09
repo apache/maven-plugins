@@ -23,12 +23,12 @@ under the License.
 <application>
   <display-name>maven-ear-plugin-test-project-055</display-name>
   <module>
+    <java>jar-sample-one-1.0.jar</java>
+  </module>
+  <module>
     <java>jar-sample-three-with-deps-1.0.jar</java>
   </module>
   <module>
     <java>jar-sample-two-1.0.jar</java>
-  </module>
-  <module>
-    <java>jar-sample-one-1.0.jar</java>
   </module>
 </application>
