@@ -143,6 +143,12 @@ under the License.
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -276,17 +282,15 @@ under the License.
             </configuration>
           </plugin>
           <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
             <executions>
               <execution>
-                <phase>integration-test</phase>
                 <goals>
-                  <goal>test</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
                 </goals>
                 <configuration>
-                  <includes>
-                    <include>**/*IT.java</include>
-                  </includes>
                   <systemPropertyVariables combine.children="append">
                     <maven.home>${maven.home}</maven.home>
                     <userlocalRepository>${settings.localRepository}</userlocalRepository>
