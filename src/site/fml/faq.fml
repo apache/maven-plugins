@@ -53,5 +53,16 @@ under the License.
         </p>
       </answer>
     </faq>
+     <faq id="What is the difference between checkstyle:checkstyle and checkstyle:check">
+          <question>What is the difference between checkstyle:checkstyle and checkstyle:check?</question>
+          <answer>
+            <p>
+              The checkstyle:checkstyle goal is a <strong>reporting</strong> goal that adds a report
+              of Checkstyle violations to the output of the maven-site-plugin. The checkstyle:check goal
+              is an ordinary goal that reports violations to the console and/or fails the build when there
+              are violations.
+            </p>
+          </answer>
+        </faq>
   </part>
 </faqs>
