@@ -29,8 +29,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Perform a Checkstyle analysis, and generate a report on violations,
- * aggregating the result in the project which started this mojo.
+ * A reporting task that performs Checkstyle analysis and generates an aggregate HTML report on the violations that checkstyle finds in a multi-module reactor build.
  *
  * @version $Id$
  * @since 2.8

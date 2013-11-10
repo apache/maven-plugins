@@ -40,15 +40,22 @@ Usage
 +-----+
 <project>
   ...
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
-    </plugins>
-  </reporting>
+   <reporting>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${project.version}</version>
+          <reportSets>
+            <reportSet>
+              <reports>
+                <report>checkstyle</report>
+              </reports>
+            </reportSet>
+          </reportSets>
+        </plugin>
+      </plugins>
+    </reporting>
   ...
 </project>
 +-----+
@@ -62,42 +69,46 @@ mvn site
 * Generate Checkstyle Report As Standalone
 
   You can also generate the Checkstyle report by explicitly executing the <<<checkstyle:checkstyle>>> goal from the
-  command line. It is not required to specify the Checkstyle Plugin in your
+  command line. You are not required to specify the Checkstyle Plugin in your
   <<<pom.xml>>> unless you want to use a specific configuration.
 
 +-----+
 mvn checkstyle:checkstyle
 +-----+
 
-* Configure the Checkstyle Plugin
+* Checking for Violations as Part of the Build
 
-** Maven 3
+  If you want to report to the console or fail
+  the build, you must add an execution of <<<checkstyle::check>>> to the <<<\<build\>>>> element
+  and configure any options that you need.
 
-  As per {{{https://cwiki.apache.org/MAVEN/maven-3x-compatibility-notes.html}Maven 3 Compatibility Notes}}
-  to configure the Checkstyle Plugin, you need to the add it in the <<<\<build\>>>> section of your <<<pom.xml>>> as
-  shown in the sample below.
+  (Note in that for Maven 3, as per {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes}Maven 3 Compatibility Notes}},
+  in Maven 3, options you set in the <<<\<reporting\>>>> element do not have any effect on executions in the <<<\<build\>>>> element.)
 
-+-----+
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <enableRulesSummary>false</enableRulesSummary>
-           ...
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>
-+-----+
+  For example:
 
-** Maven 2
++------+
+ <plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-checkstyle-plugin</artifactId>
+   <version>${project.version}</version>
+   <executions>
+     <execution>
+       <id>validate</id>
+       <phase>validate</phase>
+       <configuration>
+         <configLocation>checkstyle.xml</configLocation>
+         <encoding>UTF-8</encoding>
+         <consoleOutput>true</consoleOutput>
+         <failsOnError>true</failsOnError>
+         <linkXRef>false</linkXRef>
+       </configuration>
+       <goals>
+         <goal>check</goal>
+       </goals>
+     </execution>
+   </executions>
+ </plugin>
++------+
 
-  You may need to duplicate some configuration details between the <<<\<build\>>>> section and the <<<\<reporting\>>>>
-  section, depending on whether you use maven-checkstyle-plugin as part of the build, part of site, or both.
+
