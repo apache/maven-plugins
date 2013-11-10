@@ -315,6 +315,23 @@ public class CheckstyleViolationCheckMojo
     private String includes;
 
     /**
+     * Specifies the names filter of the files to be excluded for
+     * Checkstyle when checking resources.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceExcludes" )
+    private String resourceExcludes;
+
+    /**
+     * Specifies the names filter of the files to be used for Checkstyle when checking resources.
+     *
+     * <strong>Note:</strong> default value is {@code **\/*.properties}.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceIncludes", defaultValue = "**/*.properties", required = true )
+    private String resourceIncludes;
+
+    /**
      * Specifies if the build should fail upon a violation.
      */
     @Parameter( defaultValue = "false" )
@@ -343,8 +360,21 @@ public class CheckstyleViolationCheckMojo
     @Parameter( defaultValue = "${project.build.sourceDirectory}", required = true )
     private File sourceDirectory;
 
-    private ByteArrayOutputStream stringOutputStream;
+    /**
+     * Whether to apply CheckStyle to resource directories.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeResources", defaultValue = "true", required = true )
+    private boolean includeResources = true;
 
+    /**
+     * Whether to apply CheckStyle to test resource directories.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
+    private boolean includeTestResources = true;
+
+    private ByteArrayOutputStream stringOutputStream;
 
     /** {@inheritDoc} */
     public void execute()
@@ -363,16 +393,19 @@ public class CheckstyleViolationCheckMojo
                 {
                     CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
                     request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
-                        .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
-                        .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
-                        .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-                        .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
-                        .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
-                        .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
-                        .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
-
-                    checkstyleExecutor.executeCheckstyle( request );
+                        .setExcludes(excludes).setFailsOnError(failsOnError).setIncludes(includes)
+                        .setResourceIncludes( resourceIncludes )
+                        .setResourceExcludes( resourceExcludes )
+                        .setIncludeResources( includeResources )
+                        .setIncludeTestResources( includeTestResources )
+                        .setIncludeTestSourceDirectory(includeTestSourceDirectory).setListener(getListener())
+                        .setLog(getLog()).setProject(project).setSourceDirectory(sourceDirectory).setResources(resources)
+                        .setStringOutputStream(stringOutputStream).setSuppressionsLocation(suppressionsLocation)
+                        .setTestSourceDirectory(testSourceDirectory).setConfigLocation(configLocation)
+                        .setPropertyExpansion(propertyExpansion).setHeaderLocation(headerLocation)
+                        .setCacheFile(cacheFile).setSuppressionsFileExpression(suppressionsFileExpression)
+                        .setEncoding(encoding).setPropertiesLocation(propertiesLocation);
+                    checkstyleExecutor.executeCheckstyle(request);
 
                 }
                 catch ( CheckstyleException e )

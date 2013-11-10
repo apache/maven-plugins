@@ -57,6 +57,38 @@ public class CheckstyleAggregateReport
     private String excludes;
 
     /**
+     * Specifies the names filter of the resource files to be used for Checkstyle.
+     *
+     * <strong>Note:</strong> default value is {@code **\/*.properties}.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceIncludes", defaultValue = "**/*.properties", required = true )
+    private String resourceIncludes;
+
+    /**
+     * Specifies the names filter of the resource files to be excluded for
+     * Checkstyle.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceExcludes" )
+    private String resourceExcludes;
+
+    /**
+     * Specifies whether to include the resource directories in the check.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeResources", defaultValue = "true", required = true )
+    private boolean includeResources;
+
+    /**
+     * Specifies whether to include the test resource directories in the check.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
+    private boolean includeTestResources;
+
+
+    /**
      * <p>
      * Specifies the location of the XML configuration to use.
      * </p>
@@ -248,13 +280,18 @@ public class CheckstyleAggregateReport
             throws MavenReportException
     {
         CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-        request.setAggregate( true )
-            .setReactorProjects( reactorProjects )
-            .setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
-            .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
-            .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
+        request.setAggregate(true)
+            .setReactorProjects(reactorProjects)
+            .setConsoleListener(getConsoleListener()).setConsoleOutput(consoleOutput)
+            .setExcludes(excludes).setFailsOnError(failsOnError).setIncludes(includes)
+            .setIncludeResources( includeResources )
+            .setIncludeTestResources( includeTestResources )
+            .setResourceIncludes( resourceIncludes )
+            .setResourceExcludes( resourceExcludes )
+            .setIncludeTestSourceDirectory(includeTestSourceDirectory).setListener( getListener() )
             .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
-            .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
+            .setTestResources( testResources )
+            .setStringOutputStream(stringOutputStream).setSuppressionsLocation( suppressionsLocation )
             .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
             .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
             .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
