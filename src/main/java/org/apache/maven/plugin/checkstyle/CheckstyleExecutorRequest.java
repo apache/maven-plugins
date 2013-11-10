@@ -48,6 +48,16 @@ public class CheckstyleExecutorRequest
      */
     private String excludes;
 
+    /**
+     * Specifies names filter for resources.
+     */
+    private String resourceIncludes;
+
+    /**
+     * Specifies names filter for resources.
+     */
+    private String resourceExcludes;
+
     private MavenProject project;
 
     private Log log;
@@ -60,7 +70,13 @@ public class CheckstyleExecutorRequest
 
     private File sourceDirectory;
 
+    private boolean includeResources;
+
+    private boolean includeTestResources;
+
     private List<Resource> resources;
+
+    private List<Resource> testResources;
 
     private boolean failsOnError;
 
@@ -130,6 +146,28 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setExcludes( String excludes )
     {
         this.excludes = excludes;
+        return this;
+    }
+
+    public String getResourceIncludes()
+    {
+        return resourceIncludes;
+    }
+
+    public CheckstyleExecutorRequest setResourceIncludes( String resourceIncludes )
+    {
+        this.resourceIncludes = resourceIncludes;
+        return this;
+    }
+
+    public String getResourceExcludes()
+    {
+        return resourceExcludes;
+    }
+
+    public CheckstyleExecutorRequest setResourceExcludes( String resourceExcludes )
+    {
+        this.resourceExcludes = resourceExcludes;
         return this;
     }
 
@@ -207,6 +245,17 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setResources( List<Resource> resources )
     {
         this.resources = resources;
+        return this;
+    }
+
+    public List<Resource> getTestResources()
+    {
+        return testResources;
+    }
+
+    public CheckstyleExecutorRequest setTestResources( List<Resource> testResources )
+    {
+        this.testResources = testResources;
         return this;
     }
 
@@ -382,6 +431,36 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setReactorProjects( List<MavenProject> pReactorProjects )
     {
         this.reactorProjects = pReactorProjects;
+        return this;
+    }
+
+    public boolean isIncludeResources()
+    {
+        return includeResources;
+    }
+
+    /**
+     * @param includeResources whether to include the resource directories in the checks.
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setIncludeResources( boolean includeResources )
+    {
+        this.includeResources = includeResources;
+        return this;
+    }
+
+    public boolean isIncludeTestResources()
+    {
+        return includeTestResources;
+    }
+
+    /**
+     * @param includeTestResources whether to set the test resource directories in the checks.
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setIncludeTestResources( boolean includeTestResources )
+    {
+        this.includeTestResources = includeTestResources;
         return this;
     }
 }

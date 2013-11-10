@@ -492,31 +492,32 @@ public class DefaultCheckstyleExecutor
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
-                addFilesToProcess( request, excludesStr, new File( project.getBuild().getSourceDirectory() ),
-                                   project.getResources(), new File( project.getBuild().getTestSourceDirectory() ),
-                                   files );
+                addFilesToProcess( request, new File( project.getBuild().getSourceDirectory() ),
+                                   project.getResources(), project.getTestResources(),
+                                   files, new File( project.getBuild().getTestSourceDirectory() )
+                );
             }
         }
         else
         {
-            addFilesToProcess( request, excludesStr, sourceDirectory, request.getResources(),
-                               request.getTestSourceDirectory(), files );
+            addFilesToProcess( request, sourceDirectory, request.getResources(),
+                request.getTestResources(), files, request.getTestSourceDirectory() );
         }
 
         getLogger().debug( "Added " + files.size() + " files to process." );
 
-        return files.toArray(new File[files.size()]);
+        return files.toArray( new File[files.size()] );
     }
 
-    private void addFilesToProcess( CheckstyleExecutorRequest request, StringBuilder excludesStr, File sourceDirectory,
-                                    List<Resource> resources, File testSourceDirectory, List<File> files )
+    private void addFilesToProcess( CheckstyleExecutorRequest request, File sourceDirectory,
+                                   List<Resource> resources, List<Resource> testResources, List<File> files, File testSourceDirectory )
         throws IOException
     {
         if ( sourceDirectory != null && sourceDirectory.exists() )
         {
             final List sourceFiles = FileUtils.getFiles( sourceDirectory,
                                                          request.getIncludes(),
-                                                         excludesStr.toString() );
+                                                         request.getExcludes() );
             files.addAll( sourceFiles );
             getLogger().debug( "Added " + sourceFiles.size() + " source files found in '"
                     + sourceDirectory.getAbsolutePath() + "'." );
@@ -526,39 +527,51 @@ public class DefaultCheckstyleExecutor
             && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
         {
             final List testSourceFiles = FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
-                                                             excludesStr.toString() );
+                                                             request.getExcludes() );
             files.addAll( testSourceFiles );
             getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '"
                     + testSourceDirectory.getAbsolutePath() + "'." );
         }
 
-        // @todo Should we add a check to see if resources should be included or not, similar to request.isIncludeTestSourceDirectory()?
-        if ( resources != null )
+        if ( resources != null && request.isIncludeResources() )
         {
-            for ( Resource resource : resources )
-            {
-                if ( resource.getDirectory() != null )
-                {
-                    File resourcesDirectory = new File( resource.getDirectory() );
-                    if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
-                    {
-                        // @todo Perhaps extend the functionality in the future so that the included types of files can be configured. For now it is hard-coded to properties files.
-                        List resourceFiles = FileUtils.getFiles( resourcesDirectory, "**/*.properties", null );
-                        files.addAll( resourceFiles );
-                        getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '"
-                                + resourcesDirectory.getAbsolutePath() + "'." );
-                    }
-                    else
-                    {
-                        getLogger().debug( "The resources directory '" + resourcesDirectory.getAbsolutePath()
-                                + "' does not exist or is not a directory." );
-                    }
-                }
-            }
+            addResourceFilesToProcess( request, resources, files );
         }
         else
         {
             getLogger().debug( "No resources found in this project." );
+        }
+
+        if ( testResources != null && request.isIncludeTestResources() )
+        {
+            addResourceFilesToProcess( request, testResources, files );
+        }
+        else
+        {
+            getLogger().debug( "No test resources found in this project." );
+        }
+    }
+
+    private void addResourceFilesToProcess( CheckstyleExecutorRequest request, List<Resource> resources, List<File> files ) throws IOException
+    {
+        for ( Resource resource : resources )
+        {
+            if ( resource.getDirectory() != null )
+            {
+                File resourcesDirectory = new File( resource.getDirectory() );
+                if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
+                {
+                    List resourceFiles = FileUtils.getFiles( resourcesDirectory, request.getResourceIncludes(), request.getResourceExcludes() );
+                    files.addAll( resourceFiles );
+                    getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '"
+                            + resourcesDirectory.getAbsolutePath() + "'." );
+                }
+                else
+                {
+                    getLogger().debug( "The resources directory '" + resourcesDirectory.getAbsolutePath()
+                            + "' does not exist or is not a directory." );
+                }
+            }
         }
     }
 
