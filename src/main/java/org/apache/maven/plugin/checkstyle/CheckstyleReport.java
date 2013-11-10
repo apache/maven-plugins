@@ -78,6 +78,37 @@ public class CheckstyleReport
     private String excludes;
 
     /**
+     * Specifies the names filter of the source files to be used for Checkstyle.
+     * @since 2.11
+     *
+     * <strong>Note:</strong> default value is {@code **\/*.properties}.
+     */
+    @Parameter( property = "checkstyle.resourceIncludes", defaultValue = "**/*.properties", required = true )
+    private String resourceIncludes;
+
+    /**
+     * Specifies the names filter of the source files to be excluded for
+     * Checkstyle.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceExcludes" )
+    private String resourceExcludes;
+
+    /**
+     * Specifies whether to include the resource directories in the check.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeResources", defaultValue = "true", required = true )
+    private boolean includeResources;
+
+    /**
+     * Specifies whether to include the test resource directories in the check.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
+    private boolean includeTestResources;
+
+    /**
      * <p>
      * Specifies the location of the XML configuration to use.
      * </p>
@@ -348,6 +379,10 @@ public class CheckstyleReport
         CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
         request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
             .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
+            .setResourceIncludes( resourceIncludes )
+            .setResourceExcludes( resourceExcludes )
+            .setIncludeResources( includeResources )
+            .setIncludeTestResources( includeTestResources )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
             .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
             .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )

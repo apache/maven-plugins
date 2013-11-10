@@ -97,6 +97,14 @@ public abstract class AbstractCheckstyleReport
     protected List<Resource> resources;
 
     /**
+     * Specifies the location of the test resources to be used for Checkstyle.
+     *
+     * @since 2.11
+     */
+    @Parameter( defaultValue = "${project.testResources}", readonly = true )
+    protected List<Resource> testResources;
+
+    /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.
      * Otherwise, a text file will be created with the violations.
      */
