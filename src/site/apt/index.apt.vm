@@ -41,14 +41,11 @@ ${project.name}
 
    The Checkstyle Plugin has three goals:
 
-   * {{{./checkstyle-mojo.html}checkstyle:checkstyle}} performs Checkstyle analysis and generates a report on violations.
+   * {{{./checkstyle-mojo.html}checkstyle:checkstyle}} is a reporting goal that performs Checkstyle analysis and generates a report on violations.
 
-   * {{{./checkstyle-aggregate-mojo.html}checkstyle:checkstyle-aggregate}} performs Checkstyle analysis and generates a
-     report on violations, aggregating the result in the project which started this goal.
+   * {{{./checkstyle-aggregate-mojo.html}checkstyle:checkstyle-aggregate}} is a reporting goal that performs Checkstyle analysis and generates an aggregate HTML report on violations in a multi-module reactor build.
 
-   * {{{./check-mojo.html}checkstyle:check}} performs a violation check against the last Checkstyle run to see if there are
-     any violations. It reads the Checkstyle output file, counts the number of violations found and displays it on the
-     console.
+   * {{{./check-mojo.html}checkstyle:check}} is a goal that performs Checkstyle analysis and outputs violations or a count of violations to the console, potentially failing the build. It can also be configured to re-use an earlier analysis.
 
 * Usage
 

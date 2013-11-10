@@ -34,7 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Perform a Checkstyle analysis, and generate a report on violations.
+ * A reporting task that performs Checkstyle analysis and generates an HTML report on any violations that Checkstyle finds.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>

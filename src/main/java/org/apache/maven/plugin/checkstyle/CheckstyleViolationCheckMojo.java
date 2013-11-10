@@ -50,9 +50,8 @@ import java.io.Reader;
 import java.util.List;
 
 /**
- * Perform a violation check against the last Checkstyle run to see if there are
- * any violations. It reads the Checkstyle output file, counts the number of
- * violations found and displays it on the console.
+ * Performs Checkstyle analysis and outputs violations or a count of violations to the console, potentially failing the build.
+ * It can also be configured to re-use an earlier analysis.
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @version $Id$
