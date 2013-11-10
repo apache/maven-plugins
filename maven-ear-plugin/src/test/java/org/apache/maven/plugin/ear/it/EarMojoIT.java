@@ -857,4 +857,14 @@ public class EarMojoIT
     {
         doTestProject( "project-082", new String[]{ "ejb-sample-one-1.0.jar"} );
     }
+    
+    /**
+     * Builds an EAR with a library directory and custom env entries. The library-directory element must come first
+     * (MEAR-158).
+     */
+    public void testProject083()
+        throws Exception
+    {
+        doTestProject( "project-083", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+    }
 }
