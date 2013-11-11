@@ -80,7 +80,10 @@ public class CheckstyleViolationCheckMojo
     private String outputFileFormat;
 
     /**
-     * Do we fail the build on a violation?
+     * Fail the build on a violation. The goal checks for the violations
+     * after logging them (if {@link #logViolationsToConsole} is 'true').
+     * Compare this to {@link #failsOnError} which fails the build immediately
+     * before examining the output log.
      */
     @Parameter( property = "checkstyle.failOnViolation", defaultValue = "true" )
     private boolean failOnViolation;
@@ -92,7 +95,7 @@ public class CheckstyleViolationCheckMojo
      * @since 2.3
      */
     @Parameter( property = "checkstyle.maxAllowedViolations", defaultValue = "0" )
-    private int maxAllowedViolations = 0;
+    private int maxAllowedViolations;
 
     /**
      * The lowest severity level that is considered a violation.
@@ -331,7 +334,10 @@ public class CheckstyleViolationCheckMojo
     private String resourceIncludes;
 
     /**
-     * Specifies if the build should fail upon a violation.
+     * If this is true, and checkstyle reported any violations or errors,
+     * the build fails immediately after running checkstyle, before checking the log
+     * for {@link #logViolationsToConsole}. If you want to use {@link #logViolationsToConsole},
+     * use {@link #failOnViolation} instead of this.
      */
     @Parameter( defaultValue = "false" )
     private boolean failsOnError;
@@ -392,7 +398,7 @@ public class CheckstyleViolationCheckMojo
                 {
                     CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
                     request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
-                        .setExcludes(excludes).setFailsOnError(failsOnError).setIncludes(includes)
+                        .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
                         .setResourceIncludes( resourceIncludes )
                         .setResourceExcludes( resourceExcludes )
                         .setIncludeResources( includeResources )
@@ -493,7 +499,8 @@ public class CheckstyleViolationCheckMojo
             {
                 if ( logViolationsToConsole )
                 {
-                    getLog().error(file + '[' + xpp.getAttributeValue("", "line") + ':' + xpp.getAttributeValue("", "column") + "] " + xpp.getAttributeValue("", "message"));
+                    getLog().error( file + '[' + xpp.getAttributeValue( "", "line" ) + ':'
+                        + xpp.getAttributeValue( "", "column" ) + "] " + xpp.getAttributeValue( "", "message" ));
                 }
                 count++;
             }
