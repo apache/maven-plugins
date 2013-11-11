@@ -194,30 +194,33 @@ public abstract class AbstractJarsignerMojo
 
                 if ( processAttachedArtifacts && !Boolean.FALSE.equals( attachments ) )
                 {
-                    Collection includes = new HashSet();
+                    Collection<String> includes = new HashSet<String>();
                     if ( includeClassifiers != null )
                     {
                         includes.addAll( Arrays.asList( includeClassifiers ) );
                     }
 
-                    Collection excludes = new HashSet();
+                    Collection<String> excludes = new HashSet<String>();
                     if ( excludeClassifiers != null )
                     {
                         excludes.addAll( Arrays.asList( excludeClassifiers ) );
                     }
 
-                    for (Object o : this.project.getAttachedArtifacts()) {
+                    for ( Object o : this.project.getAttachedArtifacts() )
+                    {
                         final Artifact artifact = (Artifact) o;
 
-                        if (!includes.isEmpty() && !includes.contains(artifact.getClassifier())) {
+                        if ( !includes.isEmpty() && !includes.contains( artifact.getClassifier() ) )
+                        {
                             continue;
                         }
 
-                        if (excludes.contains(artifact.getClassifier())) {
+                        if ( excludes.contains( artifact.getClassifier() ) )
+                        {
                             continue;
                         }
 
-                        processed += processArtifact(artifact) ? 1 : 0;
+                        processed += processArtifact( artifact ) ? 1 : 0;
                     }
                 }
                 else
@@ -237,7 +240,7 @@ public abstract class AbstractJarsignerMojo
                     String includeList = ( includes != null ) ? StringUtils.join( includes, "," ) : null;
                     String excludeList = ( excludes != null ) ? StringUtils.join( excludes, "," ) : null;
 
-                    List jarFiles;
+                    List<File> jarFiles;
                     try
                     {
                         jarFiles = FileUtils.getFiles( archiveDirectory, includeList, excludeList );
@@ -248,10 +251,9 @@ public abstract class AbstractJarsignerMojo
                             "Failed to scan archive directory for JARs: " + e.getMessage(), e );
                     }
 
-                    for (Object jarFile1 : jarFiles) {
-                        File jarFile = (File) jarFile1;
-
-                        processArchive(jarFile);
+                    for ( File jarFile : jarFiles )
+                    {
+                        processArchive( jarFile );
                         processed++;
                     }
                 }
