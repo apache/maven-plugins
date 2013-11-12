@@ -49,6 +49,12 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MWAR</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mavenArchiverVersion>2.5</mavenArchiverVersion>

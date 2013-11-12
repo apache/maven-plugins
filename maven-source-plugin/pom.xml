@@ -36,11 +36,6 @@ under the License.
   <name>Apache Maven Source Plugin</name>
   <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
 
-  <properties>
-    <mavenVersion>2.0.9</mavenVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-  </properties>
-
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
@@ -64,6 +59,18 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSOURCES</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
+
+  <properties>
+    <mavenVersion>2.0.9</mavenVersion>
+    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
+  </properties>
 
   <dependencies>
     <dependency>

@@ -21,22 +21,27 @@ under the License.
 
 <project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
     <version>24</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
+
   <artifactId>maven-eclipse-plugin</artifactId>
   <version>2.10-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Apache Maven Eclipse Plugin</name>
   <description>The Eclipse Plugin is used to generate Eclipse IDE files (.project, .classpath and the .settings folder)
     from a POM.
   </description>
+
   <prerequisites>
     <maven>${mavenVersion}</maven>
   </prerequisites>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/
@@ -47,11 +52,19 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MECLIPSE</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
+
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <maven.test.jvmargs>-Xmx1024m</maven.test.jvmargs>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -218,6 +231,7 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -285,6 +299,7 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>maven-repo-local</id>
@@ -425,6 +440,7 @@ under the License.
       </build>
     </profile>
   </profiles>
+
   <reporting>
     <plugins>
       <plugin>
