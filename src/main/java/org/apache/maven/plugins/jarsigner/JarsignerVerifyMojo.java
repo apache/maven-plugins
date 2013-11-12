@@ -45,6 +45,9 @@ public class JarsignerVerifyMojo
     @Parameter( property = "jarsigner.certs", defaultValue = "false" )
     private boolean certs;
 
+    /**
+     * {@inheritDoc}
+     */
     protected JarSignerRequest createRequest( File archive )
     {
         JarSignerVerifyRequest request = new JarSignerVerifyRequest();
