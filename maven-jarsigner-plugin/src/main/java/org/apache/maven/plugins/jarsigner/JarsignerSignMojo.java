@@ -27,8 +27,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
 import org.apache.maven.shared.jarsigner.JarSignerSignRequest;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.Commandline;
+import org.apache.maven.shared.utils.StringUtils;
+import org.apache.maven.shared.utils.cli.Commandline;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
@@ -111,11 +111,28 @@ public class JarsignerSignMojo
     private boolean removeExistingSignatures;
 
     /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     *
+     * @since 1.3
+     */
+    @Parameter( property = "jarsigner.tsa" )
+    private String tsa;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     *
+     * @since 1.3
+     */
+    @Parameter( property = "jarsigner.tsacert" )
+    private String tsacert;
+
+    /**
      * @since 1.3
      */
     @Component( hint = "mng-4384")
     private SecDispatcher securityDispatcher;
 
+    @Override
     protected String getCommandlineInfo( final Commandline commandLine )
     {
         String commandLineInfo = commandLine != null ? commandLine.toString() : null;
@@ -129,6 +146,7 @@ public class JarsignerSignMojo
         return commandLineInfo;
     }
 
+    @Override
     protected void preProcessArchive( final File archive )
         throws MojoExecutionException
     {
@@ -145,6 +163,9 @@ public class JarsignerSignMojo
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected JarSignerRequest createRequest( File archive )
         throws MojoExecutionException
     {
@@ -156,6 +177,8 @@ public class JarsignerSignMojo
         request.setProviderName( providerName );
         request.setSigfile( sigfile );
         request.setStoretype( storetype );
+        request.setTsaLocation( tsa );
+        request.setTsaAlias( tsacert );
 
         // Special handling for passwords through the Maven Security Dispatcher
         try
