@@ -867,4 +867,13 @@ public class EarMojoIT
     {
         doTestProject( "project-083", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
+
+    /**
+     * Support of an application id (MEAR-174).
+     */
+    public void testProject084()
+        throws Exception
+    {
+        doTestProject( "project-084", new String[] { "ejb-sample-one-1.0.jar" } );
+    }
 }
