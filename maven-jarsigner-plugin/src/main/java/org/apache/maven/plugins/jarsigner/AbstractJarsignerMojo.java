@@ -129,6 +129,15 @@ public abstract class AbstractJarsignerMojo
     private boolean processAttachedArtifacts;
 
     /**
+     * Must be set to true if the password must be given via a protected
+     * authentication path such as a dedicated PIN reader.
+     *
+     * @since 1.3
+     */
+    @Parameter( property = "jarsigner.protectedAuthenticationPath", defaultValue = "false" )
+    private boolean protectedAuthenticationPath;
+
+    /**
      * Controls processing of project attachments.
      *
      * @deprecated As of version 1.1 in favor of the new parameter <code>processAttachedArtifacts</code>.
@@ -388,6 +397,7 @@ public abstract class AbstractJarsignerMojo
         request.setWorkingDirectory( workingDirectory );
         request.setMaxMemory( maxMemory );
         request.setArguments( arguments );
+        request.setProtectedAuthenticationPath( protectedAuthenticationPath );
 
         try
         {
