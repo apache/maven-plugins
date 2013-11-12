@@ -289,7 +289,7 @@ public class JavadocJar
         {
             // we don't want Maven stuff
             archive.setAddMavenDescriptor( false );
-            archiver.createArchive( project, archive );
+            archiver.createArchive( session, project, archive );
         }
         catch ( ManifestException e )
         {
