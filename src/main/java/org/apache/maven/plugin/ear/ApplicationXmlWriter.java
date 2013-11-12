@@ -76,9 +76,15 @@ final class ApplicationXmlWriter
         }
         else if ( JavaEEVersion.Seven.eq( version ) )
         {
-                writer = initializeRootElementSeven( w );
+            writer = initializeRootElementSeven( w );
         }
-        
+
+        // writer is still on root element, so we can still add this attribute
+        if ( context.getApplicationId() != null )
+        {
+            writer.addAttribute( "id", context.getApplicationId() );
+        }
+
         // As from JavaEE6
         if ( version.ge( JavaEEVersion.Six ) )
         {

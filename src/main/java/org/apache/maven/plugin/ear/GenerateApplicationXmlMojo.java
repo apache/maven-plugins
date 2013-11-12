@@ -118,6 +118,13 @@ public class GenerateApplicationXmlMojo
     private Boolean initializeInOrder;
 
     /**
+     * Defines the application id used when generating the deployment descriptor.
+     * @since 2.9
+     */
+    @Parameter
+    private String  applicationId;
+    
+    /**
      * The security-roles to be added to the auto-generated
      * application.xml file.
      */
@@ -216,7 +223,7 @@ public class GenerateApplicationXmlMojo
         final ApplicationXmlWriterContext context =
             new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), buildEnvEntries(),
                                              displayName, description, getActualLibraryDirectory(), applicationName,
-                                             initializeInOrder );
+                                             initializeInOrder ).setApplicationId( applicationId );
         writer.write( context );
     }
 

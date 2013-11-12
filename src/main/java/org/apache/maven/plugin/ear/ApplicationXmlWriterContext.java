@@ -31,6 +31,8 @@ import java.util.List;
 class ApplicationXmlWriterContext
 {
 
+    private String applicationId;
+    
     private final File destinationFile;
 
     private final List<EarModule> earModules;
@@ -65,6 +67,17 @@ class ApplicationXmlWriterContext
         this.initializeInOrder = initializeInOrder;
     }
 
+    public final ApplicationXmlWriterContext setApplicationId( String applicationId )
+    {
+        this.applicationId = applicationId;
+        return this;
+    }
+    
+    public final String getApplicationId()
+    {
+        return applicationId;
+    }
+    
     /**
      * Returns the name of the file to use to write application.xml to.
      *
