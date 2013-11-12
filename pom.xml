@@ -53,6 +53,12 @@ under the License.
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MJAVADOC</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
@@ -62,6 +68,7 @@ under the License.
     <sitePluginVersion>3.3</sitePluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <contributors>
