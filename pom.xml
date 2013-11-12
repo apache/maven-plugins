@@ -133,6 +133,12 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MCHANGELOG</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <maven-scm.version>1.8</maven-scm.version>
@@ -140,6 +146,7 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
     <sitePluginVersion>3.3</sitePluginVersion><!-- used in ITs -->
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
