@@ -49,12 +49,19 @@ under the License.
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MLINKCHECK</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <doxiaVersion>1.0</doxiaVersion>
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <mavenVersion>2.0.9</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
