@@ -49,11 +49,18 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MDOAP</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mavenVersion>2.2.0</mavenVersion>
     <scmVersion>1.7</scmVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
