@@ -317,7 +317,7 @@ public abstract class AbstractJavadocMojo
      * toolchain manager API calls.
      */
     @Component
-    private MavenSession session;
+    protected MavenSession session;
 
     /**
      * The Maven Settings.
