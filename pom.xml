@@ -51,11 +51,18 @@ under the License.
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MANT</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <antVersion>1.7.1</antVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <contributors>
