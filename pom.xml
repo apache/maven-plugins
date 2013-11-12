@@ -49,6 +49,12 @@ under the License.
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MASSEMBLY</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mdoVersion>1.1.2</mdoVersion>
@@ -57,6 +63,7 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <testOutputToFile>true</testOutputToFile>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <contributors>
