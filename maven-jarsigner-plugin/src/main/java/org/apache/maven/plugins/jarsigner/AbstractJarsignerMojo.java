@@ -63,6 +63,12 @@ public abstract class AbstractJarsignerMojo
     private boolean verbose;
 
     /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.keystore" )
+    private String keystore;
+
+    /**
      * The maximum memory available to the JAR signer, e.g. <code>256M</code>. See <a
      * href="http://java.sun.com/javase/6/docs/technotes/tools/windows/java.html#Xms">-Xmx</a> for more details.
      */
@@ -421,6 +427,7 @@ public abstract class AbstractJarsignerMojo
 
         JarSignerRequest request = createRequest( archive );
         request.setArchive( archive );
+        request.setKeystore( keystore );
         request.setWorkingDirectory( workingDirectory );
         request.setMaxMemory( maxMemory );
         request.setArguments( arguments );

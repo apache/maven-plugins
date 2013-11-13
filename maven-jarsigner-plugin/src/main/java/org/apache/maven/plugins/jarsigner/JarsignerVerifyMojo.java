@@ -46,11 +46,18 @@ public class JarsignerVerifyMojo
     private boolean certs;
 
     /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.alias" )
+    private String alias;
+
+    /**
      * {@inheritDoc}
      */
     protected JarSignerRequest createRequest( File archive )
     {
         JarSignerVerifyRequest request = new JarSignerVerifyRequest();
+        request.setAlias( alias );
         request.setCerts( certs );
         return request;
     }

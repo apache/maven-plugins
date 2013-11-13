@@ -50,12 +50,6 @@ public class JarsignerSignMojo
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
-    @Parameter( property = "jarsigner.keystore" )
-    private String keystore;
-
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
     @Parameter( property = "jarsigner.storepass" )
     private String storepass;
 
@@ -171,7 +165,6 @@ public class JarsignerSignMojo
     {
         JarSignerSignRequest request = new JarSignerSignRequest();
         request.setAlias( alias );
-        request.setKeystore( keystore );
         request.setProviderArg( providerArg );
         request.setProviderClass( providerClass );
         request.setProviderName( providerName );
