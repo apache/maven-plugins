@@ -426,6 +426,7 @@ public abstract class AbstractJarsignerMojo
         }
 
         JarSignerRequest request = createRequest( archive );
+        request.setVerbose( verbose );
         request.setArchive( archive );
         request.setKeystore( keystore );
         request.setWorkingDirectory( workingDirectory );
