@@ -20,19 +20,22 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.jarsigner.JarSigner;
-import org.apache.maven.shared.jarsigner.JarSignerException;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
 import org.apache.maven.shared.jarsigner.JarSignerResult;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.apache.maven.shared.utils.StringUtils;
 import org.apache.maven.shared.utils.cli.Commandline;
+import org.apache.maven.shared.utils.cli.javatool.JavaToolException;
 import org.apache.maven.shared.utils.io.FileUtils;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -182,11 +185,35 @@ public abstract class AbstractJarsignerMojo
     @Component
     private JarSigner jarSigner;
 
+    /**
+     * The current build session instance. This is used for
+     * toolchain manager API calls.
+     *
+     * @since 1.3
+     */
+    @Component
+    private MavenSession session;
+
+    /**
+     * To obtain a toolchain if possible.
+     *
+     * @since 1.3
+     */
+    @Component
+    private ToolchainManager toolchainManager;
+
     public final void execute()
         throws MojoExecutionException
     {
         if ( !this.skip )
         {
+            Toolchain toolchain = getToolchain();
+
+            if ( toolchain != null )
+            {
+                jarSigner.setToolchain(toolchain);
+            }
+
             int processed = 0;
 
             if ( this.archive != null )
@@ -414,7 +441,7 @@ public abstract class AbstractJarsignerMojo
             }
 
         }
-        catch ( JarSignerException e )
+        catch ( JavaToolException e )
         {
             throw new MojoExecutionException( getMessage( "commandLineException", e.getMessage() ), e );
         }
@@ -456,4 +483,21 @@ public abstract class AbstractJarsignerMojo
         return getMessage( key, new Object[]{ arg1, arg2 } );
     }
 
+    /**
+     * FIXME tchemit-20123-11-13, need to find out how to do this...
+     * TODO remove the part with ToolchainManager lookup once we depend on
+     * 2.0.9 (have it as prerequisite). Define as regular component field then.
+     *
+     * @return Toolchain instance
+     */
+    private Toolchain getToolchain()
+    {
+        Toolchain tc = null;
+        if ( toolchainManager != null )
+        {
+            tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
+        }
+
+        return tc;
+    }
 }
