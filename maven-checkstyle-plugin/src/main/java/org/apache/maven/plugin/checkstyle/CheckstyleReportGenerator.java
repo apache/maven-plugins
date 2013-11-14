@@ -361,14 +361,18 @@ public class CheckstyleReportGenerator
         }
 
         Configuration configChildren[] = configuration.getChildren();
-        for (Configuration aConfigChildren : configChildren) {
+        for ( Configuration aConfigChildren : configChildren )
+        {
             String ruleName = aConfigChildren.getName();
 
-            if (treeWalkerNames.contains(ruleName)) {
+            if ( treeWalkerNames.contains( ruleName ) )
+            {
                 // special sub-case
-                doRuleChildren(aConfigChildren, parentConfigurations, results);
-            } else {
-                doRuleRow(aConfigChildren, parentConfigurations, ruleName, results);
+                doRuleChildren( aConfigChildren, parentConfigurations, results );
+            }
+            else
+            {
+                doRuleRow( aConfigChildren, parentConfigurations, ruleName, results );
             }
         }
     }
