@@ -54,7 +54,7 @@ public abstract class AbstractEarMojo
 
     /**
      * The version of the application.xml to generate. Valid values
-     * are 1.3, 1.4, 5 and 6.
+     * are 1.3, 1.4, 5, 6 and 7.
      */
     @Parameter( defaultValue = "1.3" )
     protected String version;
