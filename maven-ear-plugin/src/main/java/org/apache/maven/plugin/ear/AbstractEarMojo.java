@@ -73,7 +73,7 @@ public abstract class AbstractEarMojo
     /**
      * The maven project.
      */
-    @Parameter( defaultValue = "${project}" )
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
