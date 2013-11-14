@@ -74,7 +74,15 @@ public final class EarModuleFactory
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)
-        final String artifactType = typeMappingService.getStandardType( artifact.getType() );
+        final String artifactType;
+        try
+        {
+            artifactType = typeMappingService.getStandardType( artifact.getType() );
+        }
+        catch ( UnknownArtifactTypeException e )
+        {
+            throw new UnknownArtifactTypeException( e.getMessage() + " for " + artifact.getArtifactId() );
+        }
 
         if ( "jar".equals( artifactType ) )
         {
