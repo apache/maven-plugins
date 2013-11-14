@@ -31,7 +31,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -74,7 +73,7 @@ public abstract class AbstractEarMojo
     /**
      * The maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}" )
     protected MavenProject project;
 
     /**
