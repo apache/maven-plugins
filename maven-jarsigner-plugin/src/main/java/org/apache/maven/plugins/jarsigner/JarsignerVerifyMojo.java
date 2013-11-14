@@ -19,13 +19,16 @@ package org.apache.maven.plugins.jarsigner;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
+import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.apache.maven.shared.jarsigner.JarSignerVerifyRequest;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Checks the signatures of a project artifact and attachments using jarsigner.
@@ -51,6 +54,17 @@ public class JarsignerVerifyMojo
     @Parameter( property = "jarsigner.alias" )
     private String alias;
 
+    /** When <code>true</code> this will make the execute() operation fail,
+     * throwing an exception, when verifying a non signed jar.
+     *
+     * Primarily to keep backwards compatibility with existing code, and allow reusing the
+     * bean in unattended operations when set to <code>false</code>.
+     *
+     * @since 1.3
+     **/
+    @Parameter( property = "jarsigner.errorWhenNotSigned", defaultValue = "false" )
+    private boolean errorWhenNotSigned;
+
     /**
      * {@inheritDoc}
      */
@@ -62,4 +76,30 @@ public class JarsignerVerifyMojo
         return request;
     }
 
+    @Override
+    protected void preProcessArchive( File archive )
+        throws MojoExecutionException
+    {
+        super.preProcessArchive( archive );
+
+        if (errorWhenNotSigned) {
+
+            // check archive if signed
+            boolean archiveSigned;
+            try
+            {
+                archiveSigned = JarSignerUtil.isArchiveSigned( archive );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to check if archive " + archive + " is signed: " + e.getMessage(), e );
+            }
+
+            if ( !archiveSigned ) {
+
+                // fails, archive must be signed
+                throw new MojoExecutionException( getMessage( "archiveNotSigned", archive ) );
+            }
+        }
+    }
 }
