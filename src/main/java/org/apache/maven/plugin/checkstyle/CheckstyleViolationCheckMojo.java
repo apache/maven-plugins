@@ -403,14 +403,14 @@ public class CheckstyleViolationCheckMojo
                         .setResourceExcludes( resourceExcludes )
                         .setIncludeResources( includeResources )
                         .setIncludeTestResources( includeTestResources )
-                        .setIncludeTestSourceDirectory(includeTestSourceDirectory).setListener(getListener())
-                        .setLog(getLog()).setProject(project).setSourceDirectory(sourceDirectory).setResources(resources)
-                        .setStringOutputStream(stringOutputStream).setSuppressionsLocation(suppressionsLocation)
-                        .setTestSourceDirectory(testSourceDirectory).setConfigLocation(configLocation)
-                        .setPropertyExpansion(propertyExpansion).setHeaderLocation(headerLocation)
-                        .setCacheFile(cacheFile).setSuppressionsFileExpression(suppressionsFileExpression)
-                        .setEncoding(encoding).setPropertiesLocation(propertiesLocation);
-                    checkstyleExecutor.executeCheckstyle(request);
+                        .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
+                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
+                        .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
+                        .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+                        .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
+                        .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
+                        .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
+                    checkstyleExecutor.executeCheckstyle( request );
 
                 }
                 catch ( CheckstyleException e )
@@ -500,7 +500,7 @@ public class CheckstyleViolationCheckMojo
                 if ( logViolationsToConsole )
                 {
                     getLog().error( file + '[' + xpp.getAttributeValue( "", "line" ) + ':'
-                        + xpp.getAttributeValue( "", "column" ) + "] " + xpp.getAttributeValue( "", "message" ));
+                        + xpp.getAttributeValue( "", "column" ) + "] " + xpp.getAttributeValue( "", "message" ) );
                 }
                 count++;
             }

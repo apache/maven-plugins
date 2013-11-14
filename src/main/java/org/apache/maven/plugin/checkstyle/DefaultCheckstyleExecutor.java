@@ -159,7 +159,7 @@ public class DefaultCheckstyleExecutor
             }
         }
 
-        URLClassLoader projectClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
+        URLClassLoader projectClassLoader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
         checker.setClassloader( projectClassLoader );
 
         checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
@@ -289,7 +289,7 @@ public class DefaultCheckstyleExecutor
                     // MCHECKSTYLE-173 Only add the "charset" attribute if it has not been set
                     try
                     {
-                        if ( config.getAttribute("charset") == null )
+                        if ( config.getAttribute( "charset" ) == null )
                         {
                             ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
                         }
@@ -306,22 +306,32 @@ public class DefaultCheckstyleExecutor
                 }
             }
             Configuration[] modules = config.getChildren();
-            for (Configuration module : modules) {
-                if ("TreeWalker".equals(module.getName())
-                        || "com.puppycrawl.tools.checkstyle.TreeWalker".equals(module.getName())) {
-                    if (module instanceof DefaultConfiguration) {
-                        //MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
-                        try {
-                            if (module.getAttribute("cacheFile") == null) {
-                                ((DefaultConfiguration) module).addAttribute("cacheFile", request.getCacheFile());
+            for ( Configuration module : modules )
+            {
+                if ( "TreeWalker".equals( module.getName() )
+                    || "com.puppycrawl.tools.checkstyle.TreeWalker".equals( module.getName() ) )
+                {
+                    if ( module instanceof DefaultConfiguration )
+                    {
+                        // MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
+                        try
+                        {
+                            if ( module.getAttribute( "cacheFile" ) == null )
+                            {
+                                ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
                             }
-                        } catch (CheckstyleException ex) {
-                            //MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if "cacheFile"
-                            // doesn't exist
-                            ((DefaultConfiguration) module).addAttribute("cacheFile", request.getCacheFile());
                         }
-                    } else {
-                        request.getLog().warn("Failed to configure cache file on module " + module);
+                        catch ( CheckstyleException ex )
+                        {
+                            // MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if
+                            // "cacheFile"
+                            // doesn't exist
+                            ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                        }
+                    }
+                    else
+                    {
+                        request.getLog().warn( "Failed to configure cache file on module " + module );
                     }
                 }
             }
@@ -477,12 +487,14 @@ public class DefaultCheckstyleExecutor
         }
 
         String[] defaultExcludes = FileUtils.getDefaultExcludes();
-        for (String defaultExclude : defaultExcludes) {
-            if (excludesStr.length() > 0) {
-                excludesStr.append(",");
+        for ( String defaultExclude : defaultExcludes )
+        {
+            if ( excludesStr.length() > 0 )
+            {
+                excludesStr.append( "," );
             }
 
-            excludesStr.append(defaultExclude);
+            excludesStr.append( defaultExclude );
         }
 
         File sourceDirectory = request.getSourceDirectory();
@@ -509,15 +521,14 @@ public class DefaultCheckstyleExecutor
         return files.toArray( new File[files.size()] );
     }
 
-    private void addFilesToProcess( CheckstyleExecutorRequest request, File sourceDirectory,
-                                   List<Resource> resources, List<Resource> testResources, List<File> files, File testSourceDirectory )
+    private void addFilesToProcess( CheckstyleExecutorRequest request, File sourceDirectory, List<Resource> resources,
+                                    List<Resource> testResources, List<File> files, File testSourceDirectory )
         throws IOException
     {
         if ( sourceDirectory != null && sourceDirectory.exists() )
         {
-            final List sourceFiles = FileUtils.getFiles( sourceDirectory,
-                                                         request.getIncludes(),
-                                                         request.getExcludes() );
+            final List<File> sourceFiles =
+                FileUtils.getFiles( sourceDirectory, request.getIncludes(), request.getExcludes() );
             files.addAll( sourceFiles );
             getLogger().debug( "Added " + sourceFiles.size() + " source files found in '"
                     + sourceDirectory.getAbsolutePath() + "'." );
@@ -526,8 +537,8 @@ public class DefaultCheckstyleExecutor
         if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
             && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
         {
-            final List testSourceFiles = FileUtils.getFiles( testSourceDirectory, request.getIncludes(),
-                                                             request.getExcludes() );
+            final List<File> testSourceFiles =
+                FileUtils.getFiles( testSourceDirectory, request.getIncludes(), request.getExcludes() );
             files.addAll( testSourceFiles );
             getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '"
                     + testSourceDirectory.getAbsolutePath() + "'." );
@@ -552,7 +563,9 @@ public class DefaultCheckstyleExecutor
         }
     }
 
-    private void addResourceFilesToProcess( CheckstyleExecutorRequest request, List<Resource> resources, List<File> files ) throws IOException
+    private void addResourceFilesToProcess( CheckstyleExecutorRequest request, List<Resource> resources,
+                                            List<File> files )
+        throws IOException
     {
         for ( Resource resource : resources )
         {
@@ -561,7 +574,9 @@ public class DefaultCheckstyleExecutor
                 File resourcesDirectory = new File( resource.getDirectory() );
                 if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
                 {
-                    List resourceFiles = FileUtils.getFiles( resourcesDirectory, request.getResourceIncludes(), request.getResourceExcludes() );
+                    List<File> resourceFiles =
+                        FileUtils.getFiles( resourcesDirectory, request.getResourceIncludes(),
+                                            request.getResourceExcludes() );
                     files.addAll( resourceFiles );
                     getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '"
                             + resourcesDirectory.getAbsolutePath() + "'." );

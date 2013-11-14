@@ -279,15 +279,15 @@ public class CheckstyleAggregateReport
             throws MavenReportException
     {
         CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-        request.setAggregate(true)
-            .setReactorProjects(reactorProjects)
-            .setConsoleListener(getConsoleListener()).setConsoleOutput(consoleOutput)
-            .setExcludes(excludes).setFailsOnError(failsOnError).setIncludes(includes)
+        request.setAggregate( true )
+            .setReactorProjects( reactorProjects )
+            .setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
+            .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
             .setIncludeResources( includeResources )
             .setIncludeTestResources( includeTestResources )
             .setResourceIncludes( resourceIncludes )
             .setResourceExcludes( resourceExcludes )
-            .setIncludeTestSourceDirectory(includeTestSourceDirectory).setListener( getListener() )
+            .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
             .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
             .setTestResources( testResources )
             .setStringOutputStream(stringOutputStream).setSuppressionsLocation( suppressionsLocation )
