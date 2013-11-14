@@ -442,10 +442,12 @@ public abstract class AbstractCheckstyleReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                for (ReportPlugin report : (Iterable<ReportPlugin>) getProject().getReportPlugins()) {
+                for ( ReportPlugin report : (Iterable<ReportPlugin>) getProject().getReportPlugins() )
+                {
                     String artifactId = report.getArtifactId();
-                    if ("maven-jxr-plugin".equals(artifactId) || "jxr-maven-plugin".equals(artifactId)) {
-                        generator.setXrefLocation(relativePath);
+                    if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
+                    {
+                        generator.setXrefLocation( relativePath );
                     }
                 }
             }
