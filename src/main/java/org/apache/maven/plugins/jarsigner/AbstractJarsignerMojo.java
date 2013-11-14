@@ -481,7 +481,7 @@ public abstract class AbstractJarsignerMojo
         return getMessage( key, null );
     }
 
-    private String getMessage( final String key, final Object arg )
+    String getMessage( final String key, final Object arg )
     {
         return getMessage( key, new Object[]{ arg } );
     }
