@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  * The {@link EarModule} implementation for a Web application module.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -87,9 +87,8 @@ public class WebModule
     /**
      * Returns the context root to use for the web module.
      * <p/>
-     * Note that this might return <tt>null</tt> till the
-     * artifact has been resolved.
-     *
+     * Note that this might return <tt>null</tt> till the artifact has been resolved.
+     * 
      * @return the context root
      */
     public String getContextRoot()
@@ -103,9 +102,8 @@ public class WebModule
     }
 
     /**
-     * Generates a default context root for the given artifact, based
-     * on the <tt>artifactId</tt>.
-     *
+     * Generates a default context root for the given artifact, based on the <tt>artifactId</tt>.
+     * 
      * @param a the artifact
      * @return a context root for the artifact
      */

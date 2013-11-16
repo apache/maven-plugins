@@ -21,7 +21,7 @@ package org.apache.maven.plugin.ear;
 
 /**
  * Thrown if an unknown artifact type is encountered.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */

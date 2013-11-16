@@ -40,7 +40,6 @@ public class ArtifactHandlerTestStub
         return extension;
     }
 
-
     public String getDirectory()
     {
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );

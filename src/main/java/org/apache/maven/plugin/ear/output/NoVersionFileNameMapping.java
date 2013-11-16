@@ -22,9 +22,8 @@ package org.apache.maven.plugin.ear.output;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * A simplified version of the standard file name mapping which does not
- * retain the version in the generated file name.
- *
+ * A simplified version of the standard file name mapping which does not retain the version in the generated file name.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
 public class NoVersionFileNameMapping

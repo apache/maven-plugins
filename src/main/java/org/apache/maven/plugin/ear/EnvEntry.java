@@ -23,9 +23,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * The representation of a env-entry entry within an
- * application.xml file.
- *
+ * The representation of a env-entry entry within an application.xml file.
+ * 
  * @author Jim Brownfield based on code by <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -58,9 +57,8 @@ class EnvEntry
         }
         else if ( StringUtils.isEmpty( type ) && StringUtils.isEmpty( value ) )
         {
-            throw new IllegalArgumentException(
-                ENV_ENTRY_TYPE + " in " + ENV_ENTRY + " element cannot be null if no " + ENV_ENTRY_VALUE +
-                    " was specified." );
+            throw new IllegalArgumentException( ENV_ENTRY_TYPE + " in " + ENV_ENTRY + " element cannot be null if no "
+                + ENV_ENTRY_VALUE + " was specified." );
 
         }
 
@@ -92,7 +90,7 @@ class EnvEntry
 
     /**
      * Appends the <tt>XML</tt> representation of this env-entry.
-     *
+     * 
      * @param writer the writer to use
      */
     public void appendEnvEntry( XMLWriter writer )
@@ -124,7 +122,6 @@ class EnvEntry
         writer.endElement();
     }
 
-
     private void doWriteElement( XMLWriter writer, String element, String text )
     {
         writer.startElement( element );
@@ -136,6 +133,5 @@ class EnvEntry
     {
         return "env-entry [name=" + getName() + ", type=" + getType() + ", value=" + getValue() + "]";
     }
-
 
 }

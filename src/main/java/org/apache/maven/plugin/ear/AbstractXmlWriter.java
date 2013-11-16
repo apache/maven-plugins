@@ -29,7 +29,7 @@ import java.io.Writer;
 
 /**
  * A base class for deployment descriptor file generators.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -56,8 +56,7 @@ abstract class AbstractXmlWriter
         }
         catch ( IOException ex )
         {
-            throw new EarPluginException( "Exception while opening file[" + destinationFile.getAbsolutePath() + "]",
-                                          ex );
+            throw new EarPluginException( "Exception while opening file[" + destinationFile.getAbsolutePath() + "]", ex );
         }
     }
 

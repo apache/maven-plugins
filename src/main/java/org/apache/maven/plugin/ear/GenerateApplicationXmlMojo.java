@@ -38,12 +38,11 @@ import java.util.List;
 
 /**
  * Generates the EAR deployment descriptor file(s).
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true,
-       requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
@@ -67,22 +66,19 @@ public class GenerateApplicationXmlMojo
     private Boolean generateModuleId = Boolean.FALSE;
 
     /**
-     * Application name of the application to be used when the application.xml
-     * file is auto-generated. Since JavaEE6.
+     * Application name of the application to be used when the application.xml file is auto-generated. Since JavaEE6.
      */
     @Parameter
     private String applicationName;
 
     /**
-     * Display name of the application to be used when the application.xml
-     * file is auto-generated.
+     * Display name of the application to be used when the application.xml file is auto-generated.
      */
     @Parameter( defaultValue = "${project.artifactId}" )
     private String displayName;
 
     /**
-     * Description of the application to be used when the application.xml
-     * file is auto-generated.
+     * Description of the application to be used when the application.xml file is auto-generated.
      */
     @Parameter( defaultValue = "${project.description}" )
     private String description;
@@ -92,12 +88,12 @@ public class GenerateApplicationXmlMojo
      * <p/>
      * Three special values can be set:
      * <ul>
-     * <li><code>DEFAULT</code> (default) generates a <tt>library-directory</tt> element with
-     * the value of the <tt>defaultLibBundleDir</tt>  parameter</li>
-     * <li><code>EMPTY</code> generates an empty <tt>library-directory</tt> element. Per spec, this disables
-     * the scanning of jar files in the <tt>lib</tt> directory of the ear file</li>
-     * <li><code>NONE</code> does not write the library-directory element at all. A corner case that can
-     * be used in Oracle Weblogic to delegate the classloading to the container</li>
+     * <li><code>DEFAULT</code> (default) generates a <tt>library-directory</tt> element with the value of the
+     * <tt>defaultLibBundleDir</tt> parameter</li>
+     * <li><code>EMPTY</code> generates an empty <tt>library-directory</tt> element. Per spec, this disables the
+     * scanning of jar files in the <tt>lib</tt> directory of the ear file</li>
+     * <li><code>NONE</code> does not write the library-directory element at all. A corner case that can be used in
+     * Oracle Weblogic to delegate the classloading to the container</li>
      * </ul>
      * <p/>
      * Since JavaEE5.
@@ -106,34 +102,30 @@ public class GenerateApplicationXmlMojo
     private String libraryDirectoryMode;
 
     /**
-     * Defines the value of the initialize in order element to be used when
-     * the application.xml file is auto-generated. When set to true, modules
-     * must be initialized in the order they're listed in this deployment descriptor,
-     * with the exception of application client modules, which can be
-     * initialized in any order. If initialize-in-order is not set or set to
-     * false, the order of initialization is unspecified and may be
-     * product-dependent. Since JavaEE6.
+     * Defines the value of the initialize in order element to be used when the application.xml file is auto-generated.
+     * When set to true, modules must be initialized in the order they're listed in this deployment descriptor, with the
+     * exception of application client modules, which can be initialized in any order. If initialize-in-order is not set
+     * or set to false, the order of initialization is unspecified and may be product-dependent. Since JavaEE6.
      */
     @Parameter
     private Boolean initializeInOrder;
 
     /**
      * Defines the application id used when generating the deployment descriptor.
+     * 
      * @since 2.9
      */
     @Parameter
-    private String  applicationId;
-    
+    private String applicationId;
+
     /**
-     * The security-roles to be added to the auto-generated
-     * application.xml file.
+     * The security-roles to be added to the auto-generated application.xml file.
      */
     @Parameter
     private PlexusConfiguration security;
 
     /**
-     * The env-entries to be added to the auto-generated
-     * application.xml file. Since JavaEE6.
+     * The env-entries to be added to the auto-generated application.xml file. Since JavaEE6.
      */
     @Parameter( alias = "env-entries" )
     private PlexusConfiguration envEntries;
@@ -145,7 +137,7 @@ public class GenerateApplicationXmlMojo
         super.execute();
 
         // Handle application.xml
-        if ( !generateApplicationXml)
+        if ( !generateApplicationXml )
         {
             getLog().debug( "Generation of application.xml is disabled" );
         }
@@ -247,7 +239,7 @@ public class GenerateApplicationXmlMojo
 
     /**
      * Builds the security roles based on the configuration.
-     *
+     * 
      * @return a list of SecurityRole object(s)
      * @throws EarPluginException if the configuration is invalid
      */
@@ -263,19 +255,23 @@ public class GenerateApplicationXmlMojo
         {
             final PlexusConfiguration[] securityRoles = security.getChildren( SecurityRole.SECURITY_ROLE );
 
-            for (PlexusConfiguration securityRole : securityRoles) {
-                final String id = securityRole.getAttribute(SecurityRole.ID_ATTRIBUTE);
-                final String roleName = securityRole.getChild(SecurityRole.ROLE_NAME).getValue();
+            for ( PlexusConfiguration securityRole : securityRoles )
+            {
+                final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
+                final String roleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
                 final String roleNameId =
-                        securityRole.getChild(SecurityRole.ROLE_NAME).getAttribute(SecurityRole.ID_ATTRIBUTE);
-                final String description = securityRole.getChild(SecurityRole.DESCRIPTION).getValue();
+                    securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
+                final String description = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
                 final String descriptionId =
-                        securityRole.getChild(SecurityRole.DESCRIPTION).getAttribute(SecurityRole.ID_ATTRIBUTE);
+                    securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
 
-                if (roleName == null) {
-                    throw new EarPluginException("Invalid security-role configuration, role-name could not be null.");
-                } else {
-                    result.add(new SecurityRole(roleName, roleNameId, id, description, descriptionId));
+                if ( roleName == null )
+                {
+                    throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
+                }
+                else
+                {
+                    result.add( new SecurityRole( roleName, roleNameId, id, description, descriptionId ) );
                 }
             }
             return result;
@@ -289,7 +285,7 @@ public class GenerateApplicationXmlMojo
 
     /**
      * Builds the env-entries based on the configuration.
-     *
+     * 
      * @return a list of EnvEntry object(s)
      * @throws EarPluginException if the configuration is invalid
      */
@@ -352,9 +348,8 @@ public class GenerateApplicationXmlMojo
         }
         else
         {
-            throw new EarPluginException(
-                "Unsupported library directory mode [" + libraryDirectoryMode + "] Supported modes " +
-                    ( Arrays.asList( DEFAULT, EMPTY, NONE ) ) );
+            throw new EarPluginException( "Unsupported library directory mode [" + libraryDirectoryMode
+                + "] Supported modes " + ( Arrays.asList( DEFAULT, EMPTY, NONE ) ) );
         }
     }
 }

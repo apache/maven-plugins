@@ -30,19 +30,16 @@ public abstract class AbstractFileNameMappingTest
     extends AbstractEarTest
 {
 
-
     protected Artifact createArtifactWithGroupId( String groupId, String artifactId, String version, String type,
                                                   String classifier )
     {
         return new ArtifactTestStub( groupId, artifactId, type, classifier, version );
     }
 
-
     protected Artifact createArtifactWithGroupId( String groupId, String artifactId, String version, String type )
     {
         return createArtifactWithGroupId( groupId, artifactId, version, type, null );
     }
-
 
     protected Artifact createArtifact( String artifactId, String version, String type, String classifier )
     {

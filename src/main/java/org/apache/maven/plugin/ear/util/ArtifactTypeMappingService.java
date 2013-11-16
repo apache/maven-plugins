@@ -32,7 +32,7 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
 /**
  * Allows to map custom artifact type to standard type.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -70,47 +70,54 @@ public class ArtifactTypeMappingService
         // Inject users configuration
         final PlexusConfiguration[] artifactTypeMappings =
             plexusConfiguration.getChildren( ARTIFACT_TYPE_MAPPING_ELEMENT );
-        for (PlexusConfiguration artifactTypeMapping : artifactTypeMappings) {
-            final String customType = artifactTypeMapping.getAttribute(TYPE_ATTRIBUTE);
-            final String mapping = artifactTypeMapping.getAttribute(MAPPING_ATTRIBUTE);
+        for ( PlexusConfiguration artifactTypeMapping : artifactTypeMappings )
+        {
+            final String customType = artifactTypeMapping.getAttribute( TYPE_ATTRIBUTE );
+            final String mapping = artifactTypeMapping.getAttribute( MAPPING_ATTRIBUTE );
 
-            if (customType == null) {
-                throw new EarPluginException("Invalid artifact type mapping, type attribute should be set.");
-            } else if (mapping == null) {
-                throw new EarPluginException("Invalid artifact type mapping, mapping attribute should be set.");
-            } else if (!EarModuleFactory.isStandardArtifactType(mapping)) {
-                throw new EarPluginException(
-                        "Invalid artifact type mapping, mapping[" + mapping + "] must be a standard Ear artifact type["
-                                + EarModuleFactory.getStandardArtifactTypes() + "]");
-            } else if (customMappings.containsKey(customType)) {
-                throw new EarPluginException(
-                        "Invalid artifact type mapping, type[" + customType + "] is already registered.");
-            } else {
+            if ( customType == null )
+            {
+                throw new EarPluginException( "Invalid artifact type mapping, type attribute should be set." );
+            }
+            else if ( mapping == null )
+            {
+                throw new EarPluginException( "Invalid artifact type mapping, mapping attribute should be set." );
+            }
+            else if ( !EarModuleFactory.isStandardArtifactType( mapping ) )
+            {
+                throw new EarPluginException( "Invalid artifact type mapping, mapping[" + mapping
+                    + "] must be a standard Ear artifact type[" + EarModuleFactory.getStandardArtifactTypes() + "]" );
+            }
+            else if ( customMappings.containsKey( customType ) )
+            {
+                throw new EarPluginException( "Invalid artifact type mapping, type[" + customType
+                    + "] is already registered." );
+            }
+            else
+            {
                 // Add the custom mapping
-                customMappings.put(customType, mapping);
+                customMappings.put( customType, mapping );
 
                 // Register the custom mapping to its standard type
-                List<String> typeMapping = typeMappings.get(mapping);
-                typeMapping.add(customType);
+                List<String> typeMapping = typeMappings.get( mapping );
+                typeMapping.add( customType );
             }
         }
     }
 
     /**
-     * Specify whether the <tt>customType</tt> could be mapped to the
-     * <tt>standardType</tt>.
-     *
+     * Specify whether the <tt>customType</tt> could be mapped to the <tt>standardType</tt>.
+     * 
      * @param standardType the standard type (ejb, jar, war, ...)
-     * @param customType   a user-defined type
+     * @param customType a user-defined type
      * @return true if the customType could be mapped to the standard type
      */
     public boolean isMappedToType( final String standardType, final String customType )
     {
         if ( !EarModuleFactory.isStandardArtifactType( standardType ) )
         {
-            throw new IllegalStateException(
-                "Artifact type[" + standardType + "] is not a standard Ear artifact type["
-                    + EarModuleFactory.getStandardArtifactTypes() + "]" );
+            throw new IllegalStateException( "Artifact type[" + standardType + "] is not a standard Ear artifact type["
+                + EarModuleFactory.getStandardArtifactTypes() + "]" );
         }
         final List<String> typeMappings = this.typeMappings.get( standardType );
         return typeMappings.contains( customType );
@@ -118,10 +125,9 @@ public class ArtifactTypeMappingService
     }
 
     /**
-     * Returns the standard type for the specified <tt>type</tt>. If
-     * the specified type is already a standard type, the orignal type
-     * is returned.
-     *
+     * Returns the standard type for the specified <tt>type</tt>. If the specified type is already a standard type, the
+     * orignal type is returned.
+     * 
      * @param type a type
      * @return the standard type (ejb, jar, war, ...) for this type
      */

@@ -26,16 +26,14 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 import java.util.Set;
 
 /**
- * The {@link EarModule} implementation for a non J2EE module such as
- * third party libraries.
+ * The {@link EarModule} implementation for a non J2EE module such as third party libraries.
  * <p/>
  * Such module is not incorporated in the generated <tt>application.xml<tt>
  * but some application servers support it. To include it in the generated
- * deployment descriptor anyway, set the <tt>includeInApplicationXml</tt>
- * boolean flag.
+ * deployment descriptor anyway, set the <tt>includeInApplicationXml</tt> boolean flag.
  * <p/>
  * This class deprecates {@link org.apache.maven.plugin.ear.JavaModule}.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -61,7 +59,7 @@ public class JarModule
     {
         // Generates an entry in the application.xml only if
         // includeInApplicationXml is set
-        if (includeInApplicationXml)
+        if ( includeInApplicationXml )
         {
             startModuleElement( writer, generateId );
             writer.startElement( JAVA_MODULE );

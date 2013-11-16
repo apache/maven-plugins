@@ -42,7 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Base class for ear test cases.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -66,12 +66,11 @@ public abstract class AbstractEarPluginIT
 
     protected File settingsFile = new File( getBasedir().getAbsolutePath(), "target/test-classes/settings.xml" );
 
-
     /**
      * Execute the EAR plugin for the specified project.
-     *
+     * 
      * @param projectName the name of the project
-     * @param properties  extra properties to be used by the embedder
+     * @param properties extra properties to be used by the embedder
      * @return the base directory of the project
      * @throws Exception if an error occurred
      */
@@ -98,8 +97,8 @@ public abstract class AbstractEarPluginIT
         }
         catch ( VerificationException e )
         {
-            //@TODO needs to be handled nicely in the verifier
-            if ( expectNoError || !e.getMessage().contains("Exit code was non-zero"))
+            // @TODO needs to be handled nicely in the verifier
+            if ( expectNoError || !e.getMessage().contains( "Exit code was non-zero" ) )
             {
                 throw e;
             }
@@ -116,9 +115,9 @@ public abstract class AbstractEarPluginIT
 
     /**
      * Execute the EAR plugin for the specified project.
-     *
+     * 
      * @param projectName the name of the project
-     * @param properties  extra properties to be used by the embedder
+     * @param properties extra properties to be used by the embedder
      * @return the base directory of the project
      * @throws Exception if an error occurred
      */
@@ -128,13 +127,12 @@ public abstract class AbstractEarPluginIT
         return executeMojo( projectName, properties, true );
     }
 
-
     /**
      * Executes the specified projects and asserts the given artifacts.
-     *
-     * @param projectName               the project to test
-     * @param expectedArtifacts         the list of artifacts to be found in the EAR archive
-     * @param artifactsDirectory        whether the artifact is an exploded artifactsDirectory or not
+     * 
+     * @param projectName the project to test
+     * @param expectedArtifacts the list of artifacts to be found in the EAR archive
+     * @param artifactsDirectory whether the artifact is an exploded artifactsDirectory or not
      * @param testDeploymentDescriptors whether we should test deployment descriptors
      * @return the base directory of the project
      * @throws Exception
@@ -159,11 +157,10 @@ public abstract class AbstractEarPluginIT
     }
 
     /**
-     * Executes the specified projects and asserts the given artifacts. Assert the
-     * deployment descriptors are valid
-     *
-     * @param projectName        the project to test
-     * @param expectedArtifacts  the list of artifacts to be found in the EAR archive
+     * Executes the specified projects and asserts the given artifacts. Assert the deployment descriptors are valid
+     * 
+     * @param projectName the project to test
+     * @param expectedArtifacts the list of artifacts to be found in the EAR archive
      * @param artifactsDirectory whether the artifact is an exploded artifactsDirectory or not
      * @return the base directory of the project
      * @throws Exception
@@ -177,11 +174,10 @@ public abstract class AbstractEarPluginIT
     }
 
     /**
-     * Executes the specified projects and asserts the given artifacts as
-     * artifacts (non directory)
-     *
-     * @param projectName               the project to test
-     * @param expectedArtifacts         the list of artifacts to be found in the EAR archive
+     * Executes the specified projects and asserts the given artifacts as artifacts (non directory)
+     * 
+     * @param projectName the project to test
+     * @param expectedArtifacts the list of artifacts to be found in the EAR archive
      * @param testDeploymentDescriptors whether we should test deployment descriptors
      * @return the base directory of the project
      * @throws Exception
@@ -194,10 +190,10 @@ public abstract class AbstractEarPluginIT
     }
 
     /**
-     * Executes the specified projects and asserts the given artifacts as
-     * artifacts (non directory). Assert the deployment descriptors are valid
-     *
-     * @param projectName       the project to test
+     * Executes the specified projects and asserts the given artifacts as artifacts (non directory). Assert the
+     * deployment descriptors are valid
+     * 
+     * @param projectName the project to test
      * @param expectedArtifacts the list of artifacts to be found in the EAR archive
      * @return the base directory of the project
      * @throws Exception
@@ -267,8 +263,7 @@ public abstract class AbstractEarPluginIT
 
             assertEquals( "Artifact[" + artifactName + "] not in the right form (exploded/archive", isDirectory,
                           expectedFile.isDirectory() );
-            assertTrue( "Artifact[" + artifactName + "] not found in ear archive",
-                        actualFiles.contains( expectedFile ) );
+            assertTrue( "Artifact[" + artifactName + "] not found in ear archive", actualFiles.contains( expectedFile ) );
 
         }
     }
@@ -293,18 +288,23 @@ public abstract class AbstractEarPluginIT
         } );
 
         /*
-           Kinda complex. If we found a file, we always add it to the list
-           of files. If a directory is within the expectedDirectories short
-           list we add it but we don't add it's content. Otherwise, we don't
-           add the directory *BUT* we browse it's content
+         * Kinda complex. If we found a file, we always add it to the list of files. If a directory is within the
+         * expectedDirectories short list we add it but we don't add it's content. Otherwise, we don't add the directory
+         * *BUT* we browse it's content
          */
-        for (File file : result) {
-            if (file.isFile()) {
-                files.add(file);
-            } else if (expectedDirectories.contains(file)) {
-                files.add(file);
-            } else {
-                addFiles(file, files, expectedDirectories);
+        for ( File file : result )
+        {
+            if ( file.isFile() )
+            {
+                files.add( file );
+            }
+            else if ( expectedDirectories.contains( file ) )
+            {
+                files.add( file );
+            }
+            else
+            {
+                addFiles( file, files, expectedDirectories );
             }
         }
     }
@@ -339,11 +339,10 @@ public abstract class AbstractEarPluginIT
     /**
      * Asserts that the deployment descriptors have been generated successfully.
      * <p/>
-     * This test assumes that deployment descriptors are located in the
-     * <tt>expected-META-INF</tt> directory of the project. Note that the
-     * <tt>MANIFEST.mf</tt> file is ignored and is not tested.
-     *
-     * @param baseDir     the directory of the tested project
+     * This test assumes that deployment descriptors are located in the <tt>expected-META-INF</tt> directory of the
+     * project. Note that the <tt>MANIFEST.mf</tt> file is ignored and is not tested.
+     * 
+     * @param baseDir the directory of the tested project
      * @param projectName the name of the project
      */
     protected void assertDeploymentDescriptors( final File baseDir, final String projectName )
@@ -384,13 +383,13 @@ public abstract class AbstractEarPluginIT
                     dbf.setValidating( true );
                     DocumentBuilder docBuilder = dbf.newDocumentBuilder();
                     docBuilder.setEntityResolver( new ResourceEntityResolver() );
-                    docBuilder.setErrorHandler( new DefaultHandler()  );
+                    docBuilder.setErrorHandler( new DefaultHandler() );
 
-                    final Diff myDiff = new Diff( docBuilder.parse( expectedDeploymentDescriptor ),
-                                                  docBuilder.parse( actualDeploymentDescriptor ) );
-                    XMLAssert.assertXMLEqual(
-                        "Wrong deployment descriptor generated for[" + expectedDeploymentDescriptor.getName() + "]",
-                        myDiff, true );
+                    final Diff myDiff =
+                        new Diff( docBuilder.parse( expectedDeploymentDescriptor ),
+                                  docBuilder.parse( actualDeploymentDescriptor ) );
+                    XMLAssert.assertXMLEqual( "Wrong deployment descriptor generated for["
+                        + expectedDeploymentDescriptor.getName() + "]", myDiff, true );
                 }
                 catch ( Exception e )
                 {

@@ -124,7 +124,7 @@ public class JavaEEVersionTest
         }
         catch ( InvalidJavaEEVersion e )
         {
-            //OK
+            // OK
         }
     }
 
@@ -145,6 +145,5 @@ public class JavaEEVersionTest
         }
 
     }
-
 
 }

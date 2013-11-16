@@ -26,7 +26,6 @@ public class FullFileNameMappingTest
     extends AbstractFileNameMappingTest
 {
 
-
     private final FullFileNameMapping instance = new FullFileNameMapping();
 
     public void testSimpleArtifact()
@@ -37,7 +36,8 @@ public class FullFileNameMappingTest
 
     public void testArtifactWithClassifier()
     {
-        assertEquals( "org-apache-foo-1.0-SNAPSHOT-sources.jar", instance.mapFileName(
-            createArtifactWithGroupId( "org.apache", "foo", "1.0-SNAPSHOT", "jar", "sources" ) ) );
+        assertEquals( "org-apache-foo-1.0-SNAPSHOT-sources.jar",
+                      instance.mapFileName( createArtifactWithGroupId( "org.apache", "foo", "1.0-SNAPSHOT", "jar",
+                                                                       "sources" ) ) );
     }
 }

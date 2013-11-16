@@ -24,7 +24,7 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
  * The {@link EarModule} implementation for an application client module.
- *
+ * 
  * @author Stephane Nicoll
  */
 public class AppClientModule
@@ -57,4 +57,3 @@ public class AppClientModule
         return "app-client";
     }
 }
-

@@ -21,7 +21,7 @@ package org.apache.maven.plugin.ear;
 
 /**
  * The base exception of the EAR plugin.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */

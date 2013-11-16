@@ -32,10 +32,9 @@ import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 
 /**
- * A custom {@link MavenArchiver} implementation that takes care
- * of setting the right classpath value according to the actual
- * path of bundled files.
- *
+ * A custom {@link MavenArchiver} implementation that takes care of setting the right classpath value according to the
+ * actual path of bundled files.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
 public class EarMavenArchiver
@@ -45,11 +44,9 @@ public class EarMavenArchiver
 
     private final List<EarModule> earModules;
 
-
     /**
-     * Creates an instance with the ear modules that will be packaged
-     * in the EAR archive.
-     *
+     * Creates an instance with the ear modules that will be packaged in the EAR archive.
+     * 
      * @param earModules the intitialized list of ear modules
      */
     public EarMavenArchiver( List<EarModule> earModules )
@@ -59,7 +56,7 @@ public class EarMavenArchiver
 
     /** @deprecated */
     public Manifest getManifest( MavenProject project, MavenArchiveConfiguration config )
-                    throws ManifestException, DependencyResolutionRequiredException
+        throws ManifestException, DependencyResolutionRequiredException
     {
         return this.getManifest( null, project, config );
     }
@@ -95,9 +92,8 @@ public class EarMavenArchiver
     }
 
     /**
-     * Generates the <tt>Class-Path</tt> entry of the manifest according to
-     * the list of ear modules.
-     *
+     * Generates the <tt>Class-Path</tt> entry of the manifest according to the list of ear modules.
+     * 
      * @param classPathPrefix the classpath prefix to use
      * @return the <tt>Class-Path</tt> entry
      */

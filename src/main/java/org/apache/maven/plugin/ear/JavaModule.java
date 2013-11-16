@@ -22,20 +22,19 @@ package org.apache.maven.plugin.ear;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * The original {@link org.apache.maven.plugin.ear.EarModule} implementation
- * of a third party library.
- *
+ * The original {@link org.apache.maven.plugin.ear.EarModule} implementation of a third party library.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
- * @deprecated the name JavaModule is really confusing since it targets a
- *             third party library, use {@link JarModule} instead
+ * @deprecated the name JavaModule is really confusing since it targets a third party library, use {@link JarModule}
+ *             instead
  */
 public class JavaModule
     extends JarModule
 {
 
     /**
-     * @deprecated use {@link org.apache.maven.plugin.ear.JavaModule#JarModule()}  instead
+     * @deprecated use {@link org.apache.maven.plugin.ear.JavaModule#JarModule()} instead
      */
     public JavaModule()
     {

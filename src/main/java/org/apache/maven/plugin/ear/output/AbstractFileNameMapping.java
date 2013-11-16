@@ -22,10 +22,9 @@ import org.apache.maven.artifact.Artifact;
  */
 
 /**
- * A base class used to generate the standard name of an
- * artifact instead of relying on the (potentially) wrong
- * file name provided by {@link org.apache.maven.artifact.Artifact#getFile()}.
- *
+ * A base class used to generate the standard name of an artifact instead of relying on the (potentially) wrong file
+ * name provided by {@link org.apache.maven.artifact.Artifact#getFile()}.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
 public abstract class AbstractFileNameMapping
@@ -33,7 +32,7 @@ public abstract class AbstractFileNameMapping
 {
 
     private boolean useBaseVersion = false;
-    
+
     public final void setUseBaseVersion( boolean useBaseVersion )
     {
         this.useBaseVersion = useBaseVersion;
@@ -42,11 +41,10 @@ public abstract class AbstractFileNameMapping
     /**
      * Generates a standard file name for the specified {@link Artifact}.
      * <p/>
-     * Returns something like <tt>artifactId-version[-classifier].extension</tt>
-     * if <tt>addVersion</tt> is true. Otherwise it generates something
-     * like <tt>artifactId[-classifier].extension</tt>
-     *
-     * @param a          the artifact to generate a filename from
+     * Returns something like <tt>artifactId-version[-classifier].extension</tt> if <tt>addVersion</tt> is true.
+     * Otherwise it generates something like <tt>artifactId[-classifier].extension</tt>
+     * 
+     * @param a the artifact to generate a filename from
      * @param addVersion whether the version should be added
      * @return the filename, with a standard format
      */
@@ -65,7 +63,7 @@ public abstract class AbstractFileNameMapping
             else
             {
                 buffer.append( '-' ).append( a.getVersion() );
-            }    
+            }
         }
         if ( a.hasClassifier() )
         {

@@ -22,9 +22,8 @@ package org.apache.maven.plugin.ear.output;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * A full file name mapping, useful if artifacts might have the same
- * name across groups.
- *
+ * A full file name mapping, useful if artifacts might have the same name across groups.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */

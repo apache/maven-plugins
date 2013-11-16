@@ -23,12 +23,11 @@ import org.apache.maven.artifact.Artifact;
 
 /**
  * The {@link EarModule} implementation for an Ejb3 module.
- *
+ * 
  * @author Stephane Nicoll <snicoll@apache.org>
  * @author $Author$ (last edit)
  * @version $Revision$
- * @deprecated ejb v3 is now properly handled by the standard
- *             ejb packaging type. use {@link EjbModule} instead
+ * @deprecated ejb v3 is now properly handled by the standard ejb packaging type. use {@link EjbModule} instead
  */
 public class Ejb3Module
     extends EjbModule

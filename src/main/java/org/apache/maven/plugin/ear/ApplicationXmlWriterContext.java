@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * A context for the {@link ApplicationXmlWriter}.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id: ApplicationXmlWriter.java 728546 2008-12-21 22:56:51Z bentmann $
  */
@@ -32,13 +32,13 @@ class ApplicationXmlWriterContext
 {
 
     private String applicationId;
-    
+
     private final File destinationFile;
 
     private final List<EarModule> earModules;
 
     private final List<SecurityRole> securityRoles;
-    
+
     private final List<EnvEntry> envEntries;
 
     private final String displayName;
@@ -51,10 +51,10 @@ class ApplicationXmlWriterContext
 
     private final Boolean initializeInOrder;
 
-    public ApplicationXmlWriterContext( File destinationFile, List<EarModule> earModules, List<SecurityRole> securityRoles, 
-                                        List<EnvEntry> envEntries, String displayName,
-                                        String description, String libraryDirectory, String applicationName,
-                                        Boolean initializeInOrder )
+    public ApplicationXmlWriterContext( File destinationFile, List<EarModule> earModules,
+                                        List<SecurityRole> securityRoles, List<EnvEntry> envEntries,
+                                        String displayName, String description, String libraryDirectory,
+                                        String applicationName, Boolean initializeInOrder )
     {
         this.destinationFile = destinationFile;
         this.earModules = earModules;
@@ -72,15 +72,15 @@ class ApplicationXmlWriterContext
         this.applicationId = applicationId;
         return this;
     }
-    
+
     public final String getApplicationId()
     {
         return applicationId;
     }
-    
+
     /**
      * Returns the name of the file to use to write application.xml to.
-     *
+     * 
      * @return the output file
      */
     public File getDestinationFile()
@@ -89,8 +89,8 @@ class ApplicationXmlWriterContext
     }
 
     /**
-     * Returns the  list of {@link EarModule} instances.
-     *
+     * Returns the list of {@link EarModule} instances.
+     * 
      * @return the ear modules
      */
     public List<EarModule> getEarModules()
@@ -100,7 +100,7 @@ class ApplicationXmlWriterContext
 
     /**
      * Returns the list of {@link SecurityRole} instances.
-     *
+     * 
      * @return the security roles
      */
     public List<SecurityRole> getSecurityRoles()
@@ -110,17 +110,17 @@ class ApplicationXmlWriterContext
 
     /**
      * Returns the list of {@link EnvEntry} instances (as per JavaEE 6).
-     *
+     * 
      * @return the env-entry elements
      */
     public List<EnvEntry> getEnvEntries()
     {
         return envEntries;
     }
-    
+
     /**
      * Returns the display name.
-     *
+     * 
      * @return the display name
      */
     public String getDisplayName()
@@ -130,7 +130,7 @@ class ApplicationXmlWriterContext
 
     /**
      * Returns the description.
-     *
+     * 
      * @return the description
      */
     public String getDescription()
@@ -140,7 +140,7 @@ class ApplicationXmlWriterContext
 
     /**
      * Returns the library directory (as per JavaEE 5).
-     *
+     * 
      * @return the library directory
      */
     public String getLibraryDirectory()
@@ -150,7 +150,7 @@ class ApplicationXmlWriterContext
 
     /**
      * Returns the application name (as per JavaEE 6).
-     *
+     * 
      * @return the application name
      */
     public String getApplicationName()
@@ -159,9 +159,8 @@ class ApplicationXmlWriterContext
     }
 
     /**
-     * Returns the value of the initialize in order
-     * parameter (as per JavaEE 6).
-     *
+     * Returns the value of the initialize in order parameter (as per JavaEE 6).
+     * 
      * @return the initialize in order value
      */
     public Boolean getInitializeInOrder()
