@@ -25,21 +25,19 @@ import org.apache.maven.plugin.ear.util.JavaEEVersion;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * An <tt>XmlWriter</tt> based implementation used to generate an
- * <tt>application.xml</tt> file
- *
+ * An <tt>XmlWriter</tt> based implementation used to generate an <tt>application.xml</tt> file
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
 final class ApplicationXmlWriter
     extends AbstractXmlWriter
 {
-    public static final String DOCTYPE_1_3 =
-        "application PUBLIC\n" + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n"
-            + "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
+    public static final String DOCTYPE_1_3 = "application PUBLIC\n"
+        + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n"
+        + "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
 
     private static final String APPLICATION_ELEMENT = "application";
-
 
     private final JavaEEVersion version;
 
@@ -133,7 +131,7 @@ final class ApplicationXmlWriter
                 envEntry.appendEnvEntry( writer );
             }
         }
-        
+
         writer.endElement();
 
         close( w );
@@ -231,7 +229,7 @@ final class ApplicationXmlWriter
         writer.addAttribute( "version", "6" );
         return writer;
     }
-    
+
     private XMLWriter initializeRootElementSeven( Writer w )
     {
         XMLWriter writer = initializeXmlWriter( w, null );

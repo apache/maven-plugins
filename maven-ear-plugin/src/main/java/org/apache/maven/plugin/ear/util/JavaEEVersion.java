@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * Represents the supported JavaEE version.
- *
+ * 
  * @author Stephane Nicoll
  */
 public class JavaEEVersion
@@ -40,9 +40,8 @@ public class JavaEEVersion
     private static final String VERSION_6 = "6";
 
     private static final String VERSION_7 = "7";
-    
-    private static final Map<String, JavaEEVersion> versionsMap = new HashMap<String, JavaEEVersion>();
 
+    private static final Map<String, JavaEEVersion> versionsMap = new HashMap<String, JavaEEVersion>();
 
     /**
      * Represents the J2EE 1.3 version.
@@ -69,7 +68,6 @@ public class JavaEEVersion
      */
     public static final JavaEEVersion Seven = new JavaEEVersion( Integer.valueOf( 4 ), VERSION_7 );
 
-
     private final Integer index;
 
     private final String version;
@@ -93,7 +91,7 @@ public class JavaEEVersion
 
     /**
      * Returns the version as a string.
-     *
+     * 
      * @return the version string
      */
     public String getVersion()
@@ -103,7 +101,7 @@ public class JavaEEVersion
 
     /**
      * Specifies if this version is greater or equal to the specified version.
-     *
+     * 
      * @param version the version to check
      * @return true if this version is greater or equal to <tt>version</tt>
      */
@@ -114,7 +112,7 @@ public class JavaEEVersion
 
     /**
      * Specifies if this version is greater than the specified version.
-     *
+     * 
      * @param version the version to check
      * @return true if this version is greater to <tt>version</tt>
      */
@@ -125,7 +123,7 @@ public class JavaEEVersion
 
     /**
      * Specifies if this version is equal to the specified version.
-     *
+     * 
      * @param version the version to check
      * @return true if this version is equal to <tt>version</tt>
      */
@@ -136,7 +134,7 @@ public class JavaEEVersion
 
     /**
      * Specifies if this version is less or equal to the specified version.
-     *
+     * 
      * @param version the version to check
      * @return true if this version is less or equal to <tt>version</tt>
      */
@@ -145,10 +143,9 @@ public class JavaEEVersion
         return this.compareTo( version ) <= 0;
     }
 
-
     /**
      * Specifies if this version is less than the specified version.
-     *
+     * 
      * @param version the version to check
      * @return true if this version is less or equal to <tt>version</tt>
      */
@@ -159,7 +156,7 @@ public class JavaEEVersion
 
     /**
      * Checks if the specified version string is valid.
-     *
+     * 
      * @param version the version string to check
      * @return <tt>true</tt> if the version is valid
      */
@@ -170,7 +167,7 @@ public class JavaEEVersion
             throw new IllegalArgumentException( "version could not be null." );
         }
         return VERSION_1_3.equals( version ) || VERSION_1_4.equals( version ) || VERSION_5.equals( version )
-            || VERSION_6.equals( version ) || VERSION_7.equals(version);
+            || VERSION_6.equals( version ) || VERSION_7.equals( version );
     }
 
     public int compareTo( JavaEEVersion otherVersion )

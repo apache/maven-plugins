@@ -22,9 +22,9 @@ package org.apache.maven.plugin.ear.output;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * A more sophisticated file name mapping which retains the version only for
- * library jars and leaves it out for for ejb-jars.
- *
+ * A more sophisticated file name mapping which retains the version only for library jars and leaves it out for for
+ * ejb-jars.
+ * 
  * @author <a href="mailto:philippe.marschall@gmail.com">Philippe Marschall</a>
  */
 public class NoVersionForEjbFileNameMapping

@@ -62,17 +62,15 @@ import java.util.zip.ZipException;
 
 /**
  * Builds J2EE Enterprise Archive (EAR) files.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo( name = "ear", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true,
-       requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "ear", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class EarMojo
     extends AbstractEarMojo
 {
-    private static final String[] EMPTY_STRING_ARRAY = { };
-
+    private static final String[] EMPTY_STRING_ARRAY = {};
 
     /**
      * Single directory for extra files to include in the EAR.
@@ -94,7 +92,7 @@ public class EarMojo
 
     /**
      * Specify that the EAR sources should be filtered.
-     *
+     * 
      * @since 2.3.2
      */
     @Parameter( defaultValue = "false" )
@@ -102,51 +100,45 @@ public class EarMojo
 
     /**
      * Filters (property files) to include during the interpolation of the pom.xml.
-     *
+     * 
      * @since 2.3.2
      */
     @Parameter
     private List filters;
 
     /**
-     * A list of file extensions that should not be filtered if
-     * filtering is enabled.
-     *
+     * A list of file extensions that should not be filtered if filtering is enabled.
+     * 
      * @since 2.3.2
      */
     @Parameter
     private List nonFilteredFileExtensions;
 
     /**
-     * To escape interpolated value with Windows path
-     * c:\foo\bar will be replaced with c:\\foo\\bar.
-     *
+     * To escape interpolated value with Windows path c:\foo\bar will be replaced with c:\\foo\\bar.
+     * 
      * @since 2.3.2
      */
     @Parameter( property = "maven.ear.escapedBackslashesInFilePath", defaultValue = "false" )
     private boolean escapedBackslashesInFilePath;
 
     /**
-     * Expression preceded with this String won't be interpolated
-     * \${foo} will be replaced with ${foo}.
-     *
+     * Expression preceded with this String won't be interpolated \${foo} will be replaced with ${foo}.
+     * 
      * @since 2.3.2
      */
     @Parameter( property = "maven.ear.escapeString" )
     protected String escapeString;
 
     /**
-     * The location of the manifest file to be used within the EAR file. If
-     * no value if specified, the default location in the workDirectory is
-     * taken. If the file does not exist, a manifest will be generated
-     * automatically.
+     * The location of the manifest file to be used within the EAR file. If no value if specified, the default location
+     * in the workDirectory is taken. If the file does not exist, a manifest will be generated automatically.
      */
     @Parameter
     private File manifestFile;
 
     /**
-     * The location of a custom application.xml file to be used
-     * within the EAR file.
+     * The location of a custom application.xml file to be used within the EAR file.
      */
     @Parameter
     private String applicationXml;
@@ -164,47 +156,41 @@ public class EarMojo
     private String finalName;
 
     /**
-     * The comma separated list of artifact's type(s) to unpack
-     * by default.
+     * The comma separated list of artifact's type(s) to unpack by default.
      */
     @Parameter
     private String unpackTypes;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will
-     * be an attachment instead.
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      */
     @Parameter
     private String classifier;
 
     /**
-     * A comma separated list of tokens to exclude when packaging the EAR.
-     * By default nothing is excluded. Note that you can use the Java Regular
-     * Expressions engine to include and exclude specific pattern using the
-     * expression %regex[].
-     * Hint: read the about (?!Pattern).
-     *
+     * A comma separated list of tokens to exclude when packaging the EAR. By default nothing is excluded. Note that you
+     * can use the Java Regular Expressions engine to include and exclude specific pattern using the expression
+     * %regex[]. Hint: read the about (?!Pattern).
+     * 
      * @since 2.7
      */
     @Parameter
     private String packagingExcludes;
 
     /**
-     * A comma separated list of tokens to include when packaging the EAR.
-     * By default everything is included. Note that you can use the Java Regular
-     * Expressions engine to include and exclude specific pattern using the
-     * expression %regex[].
-     *
+     * A comma separated list of tokens to include when packaging the EAR. By default everything is included. Note that
+     * you can use the Java Regular Expressions engine to include and exclude specific pattern using the expression
+     * %regex[].
+     * 
      * @since 2.7
      */
     @Parameter
     private String packagingIncludes;
 
     /**
-     * Whether to create skinny WARs or not. A skinny WAR is a WAR that does not
-     * have all of its dependencies in WEB-INF/lib. Instead those dependencies
-     * are shared between the WARs through the EAR.
-     *
+     * Whether to create skinny WARs or not. A skinny WAR is a WAR that does not have all of its dependencies in
+     * WEB-INF/lib. Instead those dependencies are shared between the WARs through the EAR.
+     * 
      * @since 2.7
      */
     @Parameter( property = "maven.ear.skinnyWars", defaultValue = "false" )
@@ -229,8 +215,8 @@ public class EarMojo
     private ZipUnArchiver zipUnArchiver;
 
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
      */
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -270,7 +256,6 @@ public class EarMojo
     @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "true" )
     private boolean useJvmChmod = true;
 
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -291,8 +276,8 @@ public class EarMojo
             {
                 if ( !EarModuleFactory.standardArtifactTypes.contains( type ) )
                 {
-                    throw new MojoExecutionException(
-                        "Invalid type [" + type + "] supported types are " + EarModuleFactory.standardArtifactTypes );
+                    throw new MojoExecutionException( "Invalid type [" + type + "] supported types are "
+                        + EarModuleFactory.standardArtifactTypes );
                 }
             }
             getLog().debug( "Initialized unpack types " + unpackTypesList );
@@ -315,23 +300,21 @@ public class EarMojo
                 final File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
                 if ( !sourceFile.isFile() )
                 {
-                    throw new MojoExecutionException(
-                        "Cannot copy a directory: " + sourceFile.getAbsolutePath() + "; Did you package/install " +
-                            module.getArtifact() + "?" );
+                    throw new MojoExecutionException( "Cannot copy a directory: " + sourceFile.getAbsolutePath()
+                        + "; Did you package/install " + module.getArtifact() + "?" );
                 }
 
                 if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
                 {
-                    getLog().info(
-                        "Skipping artifact [" + module + "], as it already exists at [" + module.getUri() + "]" );
+                    getLog().info( "Skipping artifact [" + module + "], as it already exists at [" + module.getUri()
+                                       + "]" );
                     continue;
                 }
 
                 // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
-                if ( ( unpackTypesList.contains( module.getType() ) &&
-                    ( module.shouldUnpack() == null || module.shouldUnpack()) ) ||
-                    ( module.shouldUnpack() != null && module.shouldUnpack()) )
+                if ( ( unpackTypesList.contains( module.getType() ) && ( module.shouldUnpack() == null || module.shouldUnpack() ) )
+                    || ( module.shouldUnpack() != null && module.shouldUnpack() ) )
                 {
                     getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)
@@ -357,9 +340,8 @@ public class EarMojo
                     }
                     else
                     {
-                        getLog().debug(
-                            "Skipping artifact [" + module + "], as it is already up to date at [" + module.getUri() +
-                                "]" );
+                        getLog().debug( "Skipping artifact [" + module + "], as it is already up to date at ["
+                                            + module.getUri() + "]" );
                     }
                 }
             }
@@ -385,14 +367,15 @@ public class EarMojo
             {
                 getLog().info( "Copy ear sources to " + getWorkDirectory().getAbsolutePath() );
                 String[] fileNames = getEarFiles( earSourceDir );
-                for (String fileName : fileNames) {
-                    copyFile(new File(earSourceDir, fileName), new File(getWorkDirectory(), fileName));
+                for ( String fileName : fileNames )
+                {
+                    copyFile( new File( earSourceDir, fileName ), new File( getWorkDirectory(), fileName ) );
                 }
             }
 
             if ( applicationXml != null && !"".equals( applicationXml ) )
             {
-                //rename to application.xml
+                // rename to application.xml
                 getLog().info( "Including custom application.xml[" + applicationXml + "]" );
                 File metaInfDir = new File( getWorkDirectory(), META_INF );
                 copyFile( new File( applicationXml ), new File( metaInfDir, "/application.xml" ) );
@@ -412,8 +395,7 @@ public class EarMojo
         File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
         if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.Five ) ) )
         {
-            throw new MojoExecutionException(
-                "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
+            throw new MojoExecutionException( "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
         }
 
         try
@@ -460,15 +442,14 @@ public class EarMojo
     }
 
     /**
-     * Returns a string array of the excludes to be used
-     * when assembling/copying the ear.
-     *
+     * Returns a string array of the excludes to be used when assembling/copying the ear.
+     * 
      * @return an array of tokens to exclude
      */
     protected String[] getExcludes()
     {
-        @SuppressWarnings( "unchecked" ) List<String> excludeList =
-            new ArrayList<String>( FileUtils.getDefaultExcludesAsList() );
+        @SuppressWarnings( "unchecked" )
+        List<String> excludeList = new ArrayList<String>( FileUtils.getDefaultExcludesAsList() );
         if ( earSourceExcludes != null && !"".equals( earSourceExcludes ) )
         {
             excludeList.addAll( Arrays.asList( StringUtils.split( earSourceExcludes, "," ) ) );
@@ -480,13 +461,12 @@ public class EarMojo
             excludeList.add( "**/" + META_INF + "/application.xml" );
         }
 
-        return excludeList.toArray(new String[excludeList.size()]);
+        return excludeList.toArray( new String[excludeList.size()] );
     }
 
     /**
-     * Returns a string array of the includes to be used
-     * when assembling/copying the ear.
-     *
+     * Returns a string array of the includes to be used when assembling/copying the ear.
+     * 
      * @return an array of tokens to include
      */
     protected String[] getIncludes()
@@ -515,7 +495,7 @@ public class EarMojo
     {
         if ( StringUtils.isEmpty( packagingIncludes ) )
         {
-            return new String[]{ "**" };
+            return new String[] { "**" };
         }
         else
         {
@@ -553,9 +533,9 @@ public class EarMojo
 
     /**
      * Returns the EAR file to generate, based on an optional classifier.
-     *
-     * @param basedir    the output directory
-     * @param finalName  the name of the ear file
+     * 
+     * @param basedir the output directory
+     * @param finalName the name of the ear file
      * @param classifier an optional classifier
      * @return the EAR file to generate
      */
@@ -574,9 +554,8 @@ public class EarMojo
     }
 
     /**
-     * Returns a list of filenames that should be copied
-     * over to the destination directory.
-     *
+     * Returns a list of filenames that should be copied over to the destination directory.
+     * 
      * @param sourceDir the directory to be scanned
      * @return the array of filenames, relative to the sourceDir
      */
@@ -596,8 +575,8 @@ public class EarMojo
 
     /**
      * Unpacks the module into the EAR structure.
-     *
-     * @param source  File to be unpacked.
+     * 
+     * @param source File to be unpacked.
      * @param destDir Location where to put the unpacked files.
      */
     public void unpack( File source, File destDir )
@@ -612,11 +591,10 @@ public class EarMojo
     }
 
     /**
-     * Returns the {@link JarArchiver} implementation used
-     * to package the EAR file.
+     * Returns the {@link JarArchiver} implementation used to package the EAR file.
      * <p/>
      * By default the archiver is obtained from the Plexus container.
-     *
+     * 
      * @return the archiver
      */
     protected JarArchiver getJarArchiver()
@@ -700,15 +678,13 @@ public class EarMojo
             boolean newMetaInfCreated = metaInfDirectory.mkdirs();
             if ( newMetaInfCreated )
             {
-                getLog().debug(
-                    "This project did not have a META-INF directory before, so a new directory was created." );
+                getLog().debug( "This project did not have a META-INF directory before, so a new directory was created." );
             }
             File manifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
             boolean newManifestCreated = manifestFile.createNewFile();
             if ( newManifestCreated )
             {
-                getLog().debug(
-                    "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
+                getLog().debug( "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
             }
 
             // Read the manifest from disk

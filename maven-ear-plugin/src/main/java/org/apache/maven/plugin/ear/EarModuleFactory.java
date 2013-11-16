@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Builds an {@link EarModule} based on an <tt>Artifact</tt>.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -55,22 +55,21 @@ public final class EarModuleFactory
     }
 
     /**
-     * Creates a new {@link EarModule} based on the
-     * specified {@link Artifact} and the specified
-     * execution configuration.
-     *
-     * @param artifact                the artifact
-     * @param javaEEVersion           the javaEE version to use
-     * @param defaultLibBundleDir     the default bundle dir for {@link org.apache.maven.plugin.ear.JarModule}
-     * @param includeInApplicationXml should {@link org.apache.maven.plugin.ear.JarModule} be included in application Xml
-     * @param typeMappingService      The artifact type mapping service
+     * Creates a new {@link EarModule} based on the specified {@link Artifact} and the specified execution
+     * configuration.
+     * 
+     * @param artifact the artifact
+     * @param javaEEVersion the javaEE version to use
+     * @param defaultLibBundleDir the default bundle dir for {@link org.apache.maven.plugin.ear.JarModule}
+     * @param includeInApplicationXml should {@link org.apache.maven.plugin.ear.JarModule} be included in application
+     *            Xml
+     * @param typeMappingService The artifact type mapping service
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
     @SuppressWarnings( "deprecation" )
     public static EarModule newEarModule( Artifact artifact, JavaEEVersion javaEEVersion, String defaultLibBundleDir,
-                                          Boolean includeInApplicationXml,
-                                          ArtifactTypeMappingService typeMappingService )
+                                          Boolean includeInApplicationXml, ArtifactTypeMappingService typeMappingService )
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)
@@ -144,7 +143,7 @@ public final class EarModuleFactory
 
     /**
      * Returns a list of standard artifact types.
-     *
+     * 
      * @return the standard artifact types
      */
     public static List<String> getStandardArtifactTypes()
@@ -153,9 +152,8 @@ public final class EarModuleFactory
     }
 
     /**
-     * Specify whether the specified type is standard artifact
-     * type.
-     *
+     * Specify whether the specified type is standard artifact type.
+     * 
      * @param type the type to check
      * @return true if the specified type is a standard artifact type
      */

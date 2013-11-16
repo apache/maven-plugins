@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * A fake {@link Artifact} test stub.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -54,7 +54,6 @@ public class ArtifactTestStub
 
     private String version;
 
-
     public ArtifactTestStub( String groupId, String artifactId, String type, String classifier, String version )
     {
         this.groupId = groupId;
@@ -68,7 +67,6 @@ public class ArtifactTestStub
     {
         this( groupId, artifactId, type, classifier, DEFAULT_VERSION );
     }
-
 
     public String getGroupId()
     {
@@ -352,4 +350,3 @@ public class ArtifactTestStub
         return result;
     }
 }
-

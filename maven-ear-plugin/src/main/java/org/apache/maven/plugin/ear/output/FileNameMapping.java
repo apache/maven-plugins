@@ -25,7 +25,7 @@ import org.apache.maven.artifact.Artifact;
  * Maps file name {@link Artifact}.
  * <p/>
  * TODO: it might be easier to use a token-based approach instead.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -33,14 +33,13 @@ public interface FileNameMapping
 {
 
     /**
-     * 
      * @param useBaseVersion
      */
     void setUseBaseVersion( boolean useBaseVersion );
 
     /**
      * Returns the file name of the specified artifact.
-     *
+     * 
      * @param a the artifact
      * @return the name of the file for the specified artifact
      */

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 /**
  * Ear module test case.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */

@@ -26,9 +26,8 @@ import java.util.List;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * An <tt>XmlWriter</tt> based implementation used to generate a
- * <tt>jboss-app.xml</tt> file
- *
+ * An <tt>XmlWriter</tt> based implementation used to generate a <tt>jboss-app.xml</tt> file
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -107,8 +106,7 @@ final class JbossAppXmlWriter
         }
 
         // classloader repository
-        if ( jbossConfiguration.getLoaderRepository() != null
-            || jbossConfiguration.getLoaderRepositoryConfig() != null )
+        if ( jbossConfiguration.getLoaderRepository() != null || jbossConfiguration.getLoaderRepositoryConfig() != null )
         {
             writer.startElement( JbossConfiguration.LOADER_REPOSITORY );
 

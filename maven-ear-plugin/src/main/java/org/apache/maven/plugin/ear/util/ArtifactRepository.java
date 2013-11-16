@@ -26,7 +26,7 @@ import org.apache.maven.artifact.Artifact;
 
 /**
  * An artifact repository used to resolve {@link org.apache.maven.plugin.ear.EarModule}.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -40,9 +40,9 @@ public class ArtifactRepository
 
     /**
      * Creates a new repository wih the specified artifacts.
-     *
-     * @param artifacts                  the artifacts
-     * @param mainArtifactId             the id to use for the main artifact (no classifier)
+     * 
+     * @param artifacts the artifacts
+     * @param mainArtifactId the id to use for the main artifact (no classifier)
      * @param artifactTypeMappingService
      */
     public ArtifactRepository( Set<Artifact> artifacts, String mainArtifactId,
@@ -56,17 +56,17 @@ public class ArtifactRepository
     /**
      * Returns the artifact with the specified parameters.
      * <p/>
-     * If the artifact is classified and is the only one with the specified
-     * groupI, artifactId and type, it will be returned.
+     * If the artifact is classified and is the only one with the specified groupI, artifactId and type, it will be
+     * returned.
      * <p/>
-     * If the artifact is classified and is not the only one with the specified
-     * groupI, artifactId and type, it returns null.
+     * If the artifact is classified and is not the only one with the specified groupI, artifactId and type, it returns
+     * null.
      * <p/>
      * If the artifact is not found, it returns null.
-     *
-     * @param groupId    the group id
+     * 
+     * @param groupId the group id
      * @param artifactId the artifact id
-     * @param type       the type
+     * @param type the type
      * @param classifier the classifier
      * @return the artifact or null if no artifact were found
      */
@@ -102,17 +102,17 @@ public class ArtifactRepository
     /**
      * Returns the artifact with the specified parameters.
      * <p/>
-     * If the artifact is classified and is the only one with the specified
-     * groupI, artifactId and type, it will be returned.
+     * If the artifact is classified and is the only one with the specified groupI, artifactId and type, it will be
+     * returned.
      * <p/>
-     * If the artifact is classified and is not the only one with the specified
-     * groupI, artifactId and type, it returns null.
+     * If the artifact is classified and is not the only one with the specified groupI, artifactId and type, it returns
+     * null.
      * <p/>
      * If the artifact is not found, it returns null.
-     *
-     * @param groupId    the group id
+     * 
+     * @param groupId the group id
      * @param artifactId the artifact id
-     * @param type       the type
+     * @param type the type
      * @return the artifact or null if no artifact were found
      */
     public Artifact getUniqueArtifact( String groupId, String artifactId, String type )
@@ -122,10 +122,10 @@ public class ArtifactRepository
 
     /**
      * Returns the artifacts with the specified parameters.
-     *
-     * @param groupId    the group id
+     * 
+     * @param groupId the group id
      * @param artifactId the artifact id
-     * @param type       the type
+     * @param type the type
      * @return the artifacts or an empty set if no artifact were found
      */
     public Set<Artifact> getArtifacts( String groupId, String artifactId, String type )

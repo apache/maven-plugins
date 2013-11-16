@@ -22,9 +22,8 @@ package org.apache.maven.plugin.ear.output;
 import org.apache.maven.artifact.Artifact;
 
 /**
- * The standard file name mapping. It returns the name
- * of the file in the local repository.
- *
+ * The standard file name mapping. It returns the name of the file in the local repository.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */

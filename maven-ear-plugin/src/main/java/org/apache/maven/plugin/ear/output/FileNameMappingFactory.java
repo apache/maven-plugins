@@ -27,7 +27,7 @@ package org.apache.maven.plugin.ear.output;
  * <li>standard: the default implementation</li>
  * <li>full: an implementation that maps to a 'full' file name, i.e. containing the groupId</li>
  * </ul>
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -51,9 +51,8 @@ public class FileNameMappingFactory
     }
 
     /**
-     * Returns the file name mapping implementation based on a logical name
-     * of a fully qualified name of the class.
-     *
+     * Returns the file name mapping implementation based on a logical name of a fully qualified name of the class.
+     * 
      * @param nameOrClass a name of the fqn of the implementation
      * @return the file name mapping implementation
      * @throws IllegalStateException if the implementation is not found
@@ -84,23 +83,23 @@ public class FileNameMappingFactory
         }
         catch ( ClassNotFoundException e )
         {
-            throw new IllegalStateException(
-                "File name mapping implementation[" + nameOrClass + "] was not found " + e.getMessage() );
+            throw new IllegalStateException( "File name mapping implementation[" + nameOrClass + "] was not found "
+                + e.getMessage() );
         }
         catch ( InstantiationException e )
         {
-            throw new IllegalStateException( "Could not instantiate file name mapping implementation[" + nameOrClass +
-                                                 "] make sure it has a default public constructor" );
+            throw new IllegalStateException( "Could not instantiate file name mapping implementation[" + nameOrClass
+                + "] make sure it has a default public constructor" );
         }
         catch ( IllegalAccessException e )
         {
-            throw new IllegalStateException( "Could not access file name mapping implementation[" + nameOrClass +
-                                                 "] make sure it has a default public constructor" );
+            throw new IllegalStateException( "Could not access file name mapping implementation[" + nameOrClass
+                + "] make sure it has a default public constructor" );
         }
         catch ( ClassCastException e )
         {
-            throw new IllegalStateException(
-                "Specified class[" + nameOrClass + "] does not implement[" + FileNameMapping.class.getName() + "]" );
+            throw new IllegalStateException( "Specified class[" + nameOrClass + "] does not implement["
+                + FileNameMapping.class.getName() + "]" );
         }
     }
 }

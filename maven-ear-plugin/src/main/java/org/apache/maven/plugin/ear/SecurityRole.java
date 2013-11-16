@@ -22,9 +22,8 @@ package org.apache.maven.plugin.ear;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
- * The representation of a security-role entry within an
- * application.xml file.
- *
+ * The representation of a security-role entry within an application.xml file.
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -89,7 +88,7 @@ class SecurityRole
 
     /**
      * Appends the <tt>XML</tt> representation of this security role.
-     *
+     * 
      * @param writer the writer to use
      */
     public void appendSecurityRole( XMLWriter writer )
@@ -132,6 +131,5 @@ class SecurityRole
     {
         return "Security role " + getRoleName();
     }
-
 
 }

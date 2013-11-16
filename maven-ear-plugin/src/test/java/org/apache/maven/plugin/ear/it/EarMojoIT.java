@@ -41,7 +41,7 @@ public class EarMojoIT
     public void testProject001()
         throws Exception
     {
-        doTestProject( "project-001", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-001", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -50,7 +50,7 @@ public class EarMojoIT
     public void testProject002()
         throws Exception
     {
-        doTestProject( "project-002", new String[]{ "APP-INF/lib/ejb-sample-one-1.0.jar", "ejb-sample-two.jar" } );
+        doTestProject( "project-002", new String[] { "APP-INF/lib/ejb-sample-one-1.0.jar", "ejb-sample-two.jar" } );
     }
 
     /**
@@ -59,18 +59,17 @@ public class EarMojoIT
     public void testProject003()
         throws Exception
     {
-        doTestProject( "project-003", new String[]{ "ejb-sample-one-1.0.jar", "APP-INF/lib/jar-sample-one-1.0.jar",
+        doTestProject( "project-003", new String[] { "ejb-sample-one-1.0.jar", "APP-INF/lib/jar-sample-one-1.0.jar",
             "APP-INF/lib/jar-sample-two-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with a default bundle directory for _java_ modules and a custom
-     * location overriding the default.
+     * Builds an EAR with a default bundle directory for _java_ modules and a custom location overriding the default.
      */
     public void testProject004()
         throws Exception
     {
-        doTestProject( "project-004", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar",
+        doTestProject( "project-004", new String[] { "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar",
             "APP-INF/lib/jar-sample-two-1.0.jar" } );
     }
 
@@ -80,7 +79,7 @@ public class EarMojoIT
     public void testProject005()
         throws Exception
     {
-        doTestProject( "project-005", new String[]{ "ejb-sample-one-1.0.jar", "libs/another-name.jar" } );
+        doTestProject( "project-005", new String[] { "ejb-sample-one-1.0.jar", "libs/another-name.jar" } );
     }
 
     /**
@@ -89,7 +88,7 @@ public class EarMojoIT
     public void testProject006()
         throws Exception
     {
-        doTestProject( "project-006", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-two-1.0.jar" } );
+        doTestProject( "project-006", new String[] { "ejb-sample-one-1.0.jar", "jar-sample-two-1.0.jar" } );
     }
 
     /**
@@ -98,7 +97,7 @@ public class EarMojoIT
     public void testProject007()
         throws Exception
     {
-        doTestProject( "project-007", new String[]{ "ejb-sample-one-1.0-classified.jar" } );
+        doTestProject( "project-007", new String[] { "ejb-sample-one-1.0-classified.jar" } );
     }
 
     /**
@@ -107,7 +106,7 @@ public class EarMojoIT
     public void testProject008()
         throws Exception
     {
-        doTestProject( "project-008", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-008", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -116,7 +115,7 @@ public class EarMojoIT
     public void testProject009()
         throws Exception
     {
-        doTestProject( "project-009", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-009", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -125,7 +124,7 @@ public class EarMojoIT
     public void testProject010()
         throws Exception
     {
-        doTestProject( "project-010", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-010", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -134,7 +133,7 @@ public class EarMojoIT
     public void testProject011()
         throws Exception
     {
-        doTestProject( "project-011", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-011", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -143,7 +142,7 @@ public class EarMojoIT
     public void testProject012()
         throws Exception
     {
-        doTestProject( "project-012", new String[]{ "README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-012", new String[] { "README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -152,7 +151,7 @@ public class EarMojoIT
     public void testProject013()
         throws Exception
     {
-        doTestProject( "project-013", new String[]{ "README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-013", new String[] { "README.txt", "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -161,7 +160,7 @@ public class EarMojoIT
     public void testProject014()
         throws Exception
     {
-        doTestProject( "project-014", new String[]{ "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-014", new String[] { "LICENSE.txt", "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -170,7 +169,7 @@ public class EarMojoIT
     public void testProject015()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-015", new String[]{ "ejb-sample-one-1.0.jar" } );
+        final File baseDir = doTestProject( "project-015", new String[] { "ejb-sample-one-1.0.jar" } );
         final File expectedManifest = new File( baseDir, "src/main/application/META-INF/MANIFEST.MF" );
         final File actualManifest = new File( getEarDirectory( baseDir, "project-015" ), "META-INF/MANIFEST.MF" );
         assertTrue( "Manifest was not copied", actualManifest.exists() );
@@ -185,10 +184,10 @@ public class EarMojoIT
     {
         System.out.println( "Skipped project-016: need a way to extract the EAR archive" );
         /*
-        final File baseDir = doTestProject( "project-016", new String[]{"ejb-sample-one-1.0.jar"} );
-        final File expectedManifest = new File(baseDir, "src/main/ear/META-INF/MANIFEST.MF");
-        // TODO: needs a way to extract the EAR archive
-        */
+         * final File baseDir = doTestProject( "project-016", new String[]{"ejb-sample-one-1.0.jar"} ); final File
+         * expectedManifest = new File(baseDir, "src/main/ear/META-INF/MANIFEST.MF"); // TODO: needs a way to extract
+         * the EAR archive
+         */
     }
 
     /**
@@ -197,7 +196,7 @@ public class EarMojoIT
     public void testProject017()
         throws Exception
     {
-        doTestProject( "project-017", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-017", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -217,9 +216,8 @@ public class EarMojoIT
     public void testProject019()
         throws Exception
     {
-        doTestProject( "project-019",
-                       new String[]{ "ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar" },
-                       new boolean[]{ false, true, true } );
+        doTestProject( "project-019", new String[] { "ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar",
+            "jar-sample-one-1.0.jar" }, new boolean[] { false, true, true } );
     }
 
     /**
@@ -228,9 +226,8 @@ public class EarMojoIT
     public void testProject020()
         throws Exception
     {
-        doTestProject( "project-020",
-                       new String[]{ "ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar" },
-                       new boolean[]{ true, false, false } );
+        doTestProject( "project-020", new String[] { "ejb-sample-one-1.0.jar", "sar-sample-one-1.0.sar",
+            "jar-sample-one-1.0.jar" }, new boolean[] { true, false, false } );
     }
 
     /**
@@ -239,10 +236,9 @@ public class EarMojoIT
     public void testProject021()
         throws Exception
     {
-        doTestProject( "project-021",
-                       new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
-                           "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar" },
-                       new boolean[]{ false, true, false, false, true } );
+        doTestProject( "project-021", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar",
+            "sar-sample-one-1.0.sar", "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar" }, new boolean[] { false,
+            true, false, false, true } );
     }
 
     /**
@@ -262,8 +258,8 @@ public class EarMojoIT
     public void testProject023()
         throws Exception
     {
-        doTestProject( "project-023", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar" },
-                       new boolean[]{ true, false } );
+        doTestProject( "project-023", new String[] { "ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar" },
+                       new boolean[] { true, false } );
     }
 
     /**
@@ -272,22 +268,24 @@ public class EarMojoIT
     public void testProject024()
         throws Exception
     {
-        doTestProject( "project-024", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar" },
-                       new boolean[]{ true, false } );
+        doTestProject( "project-024", new String[] { "ejb-sample-one-1.0-classified.jar", "ejb-sample-two-1.0.jar" },
+                       new boolean[] { true, false } );
     }
 
     /**
-     * Builds an EAR and make sure that a classified dependency with mutiple candidates is detected when specifying the classifier.
+     * Builds an EAR and make sure that a classified dependency with mutiple candidates is detected when specifying the
+     * classifier.
      */
     public void testProject025()
         throws Exception
     {
-        doTestProject( "project-025", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar" },
-                       new boolean[]{ true, false } );
+        doTestProject( "project-025", new String[] { "ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar" },
+                       new boolean[] { true, false } );
     }
 
     /**
-     * Builds an EAR and make sure that the build fails if a unclassifed module configuration with mutiple candidates is specified.
+     * Builds an EAR and make sure that the build fails if a unclassifed module configuration with mutiple candidates is
+     * specified.
      */
     public void testProject026()
         throws Exception
@@ -303,7 +301,7 @@ public class EarMojoIT
     public void testProject027()
         throws Exception
     {
-        doTestProject( "project-027", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-027", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -312,7 +310,7 @@ public class EarMojoIT
     public void testProject028()
         throws Exception
     {
-        doTestProject( "project-028", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-028", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -321,27 +319,27 @@ public class EarMojoIT
     public void testProject029()
         throws Exception
     {
-        doTestProject( "project-029", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-029", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR and make sure that ejb-client dependencies are detected and not added by default in the
-     * generated application.xml.
+     * Builds an EAR and make sure that ejb-client dependencies are detected and not added by default in the generated
+     * application.xml.
      */
     public void testProject030()
         throws Exception
     {
-        doTestProject( "project-030", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-030", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
-     * Builds an EAR with a Jboss 4 configuration specifying the security domain and the
-     * unauthenticated-principal to use.
+     * Builds an EAR with a Jboss 4 configuration specifying the security domain and the unauthenticated-principal to
+     * use.
      */
     public void testProject031()
         throws Exception
     {
-        doTestProject( "project-031", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-031", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -350,7 +348,7 @@ public class EarMojoIT
     public void testProject032()
         throws Exception
     {
-        doTestProject( "project-032", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-032", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -359,9 +357,8 @@ public class EarMojoIT
     public void testProject033()
         throws Exception
     {
-        doTestProject( "project-033",
-                       new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar", "sar-sample-one-1.0.sar",
-                           "har-sample-one-1.0.har" } );
+        doTestProject( "project-033", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar",
+            "sar-sample-one-1.0.sar", "har-sample-one-1.0.har" } );
     }
 
     /**
@@ -370,7 +367,7 @@ public class EarMojoIT
     public void testProject034()
         throws Exception
     {
-        doTestProject( "project-034", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-034", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -379,44 +376,43 @@ public class EarMojoIT
     public void testProject035()
         throws Exception
     {
-        doTestProject( "project-035",
-                       new String[]{ "foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
-                           "libs/eartest-jar-sample-one-1.0.jar", "libs/eartest-jar-sample-two-1.0.jar",
-                           "sar-sample-one.sar" } );
+        doTestProject( "project-035", new String[] { "foo/eartest-ejb-sample-one-1.0.jar",
+            "eartest-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
+            "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar" } );
     }
 
     /**
-     * Builds an EAR with a full filename mapping and make sure that groupIds with dots are replaced by dashes in filenames.
+     * Builds an EAR with a full filename mapping and make sure that groupIds with dots are replaced by dashes in
+     * filenames.
      */
     public void testProject036()
         throws Exception
     {
-        doTestProject( "project-036",
-                       new String[]{ "foo/eartest-ejb-sample-one-1.0.jar", "eartest-ejb-sample-two-1.0.jar",
-                           "com-foo-bar-ejb-sample-one-1.0.jar", "com-foo-bar-ejb-sample-two-1.0.jar",
-                           "libs/eartest-jar-sample-one-1.0.jar", "libs/eartest-jar-sample-two-1.0.jar",
-                           "sar-sample-one.sar" } );
+        doTestProject( "project-036", new String[] { "foo/eartest-ejb-sample-one-1.0.jar",
+            "eartest-ejb-sample-two-1.0.jar", "com-foo-bar-ejb-sample-one-1.0.jar",
+            "com-foo-bar-ejb-sample-two-1.0.jar", "libs/eartest-jar-sample-one-1.0.jar",
+            "libs/eartest-jar-sample-two-1.0.jar", "sar-sample-one.sar" } );
     }
 
     /**
-     * Builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml if
-     * includeInApplicationXml is set.
+     * Builds an EAR and make sure that ejb-client dependencies are detected and added in the generated application.xml
+     * if includeInApplicationXml is set.
      */
     public void testProject037()
         throws Exception
     {
-        doTestProject( "project-037", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-037", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
-     * Builds an EAR and make sure that a non-classified dependency with mutiple candidates is
-     * detected when specifying the mainArtifactId as classifier.
+     * Builds an EAR and make sure that a non-classified dependency with mutiple candidates is detected when specifying
+     * the mainArtifactId as classifier.
      */
     public void testProject038()
         throws Exception
     {
-        doTestProject( "project-038", new String[]{ "ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar" },
-                       new boolean[]{ false, true } );
+        doTestProject( "project-038", new String[] { "ejb-sample-one-1.0-classified.jar", "ejb-sample-one-1.0.jar" },
+                       new boolean[] { false, true } );
     }
 
     /**
@@ -425,17 +421,16 @@ public class EarMojoIT
     public void testProject039()
         throws Exception
     {
-        doTestProject( "project-039", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-039", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with deployment descriptor configuration for Java EE 5 and
-     * an alternative deployment descriptor.
+     * Builds an EAR with deployment descriptor configuration for Java EE 5 and an alternative deployment descriptor.
      */
     public void testProject040()
         throws Exception
     {
-        doTestProject( "project-040", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-040", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -444,7 +439,7 @@ public class EarMojoIT
     public void testProject041()
         throws Exception
     {
-        doTestProject( "project-041", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-041", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -453,9 +448,8 @@ public class EarMojoIT
     public void testProject042()
         throws Exception
     {
-        doTestProject( "project-042", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-042", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
-
 
     /**
      * Builds an EAR with a custom descriptor location (generatedDescriptorLocation setting).
@@ -463,7 +457,7 @@ public class EarMojoIT
     public void testProject043()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-043", new String[]{ "ejb-sample-one-1.0.jar" } );
+        final File baseDir = doTestProject( "project-043", new String[] { "ejb-sample-one-1.0.jar" } );
         final File expectedApplicationXml = new File( baseDir, "target/custom-descriptor-dir/application.xml" );
         assertTrue( "Application.xml file not found", expectedApplicationXml.exists() );
         assertFalse( "Application.xml file should not be empty", expectedApplicationXml.length() == 0 );
@@ -475,7 +469,7 @@ public class EarMojoIT
     public void testProject044()
         throws Exception
     {
-        doTestProject( "project-044", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+        doTestProject( "project-044", new String[] { "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -484,28 +478,26 @@ public class EarMojoIT
     public void testProject045()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-045", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
+        final File baseDir = doTestProject( "project-045", new String[] { "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-045" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue( "application name and version was not filtered properly", content.contains("my-app 99.0"));
-        assertTrue( "Escaping did not work properly",
-                content.contains("will not be filtered ${application.name}."));
+        assertTrue( "application name and version was not filtered properly", content.contains( "my-app 99.0" ) );
+        assertTrue( "Escaping did not work properly", content.contains( "will not be filtered ${application.name}." ) );
     }
 
     /**
-     * Builds an EAR and filter the content of the sources directory using
-     * a custom filter file.
+     * Builds an EAR and filter the content of the sources directory using a custom filter file.
      */
     public void testProject046()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-046", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
+        final File baseDir = doTestProject( "project-046", new String[] { "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-046" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue( "application name and version was not filtered properly", content.contains("my-app 99.0"));
-        assertTrue( "application build was not filtered properly", content.contains("(Build 2)"));
+        assertTrue( "application name and version was not filtered properly", content.contains( "my-app 99.0" ) );
+        assertTrue( "application build was not filtered properly", content.contains( "(Build 2)" ) );
         assertTrue( "Unknown property should not have been filtered",
-                content.contains("will not be filtered ${application.unknown}."));
+                    content.contains( "will not be filtered ${application.unknown}." ) );
     }
 
     /**
@@ -514,13 +506,11 @@ public class EarMojoIT
     public void testProject047()
         throws Exception
     {
-        final File baseDir = doTestProject( "project-047", new String[]{ "README.txt", "ejb-sample-one-1.0.jar" } );
+        final File baseDir = doTestProject( "project-047", new String[] { "README.txt", "ejb-sample-one-1.0.jar" } );
         final File actualReadme = new File( getEarDirectory( baseDir, "project-047" ), "README.txt" );
         final String content = IOUtil.toString( ReaderFactory.newReader( actualReadme, "UTF-8" ) );
-        assertTrue( "application name and version should not have been filtered",
-                !content.contains("my-app 99.0"));
-        assertTrue( "original properties not found",
-                content.contains("${application.name} ${project.version}"));
+        assertTrue( "application name and version should not have been filtered", !content.contains( "my-app 99.0" ) );
+        assertTrue( "original properties not found", content.contains( "${application.name} ${project.version}" ) );
     }
 
     /**
@@ -529,7 +519,7 @@ public class EarMojoIT
     public void testProject048()
         throws Exception
     {
-        doTestProject( "project-048", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-048", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -538,7 +528,7 @@ public class EarMojoIT
     public void testProject049()
         throws Exception
     {
-        doTestProject( "project-049", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-049", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -547,7 +537,7 @@ public class EarMojoIT
     public void testProject050()
         throws Exception
     {
-        doTestProject( "project-050", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-050", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -556,7 +546,7 @@ public class EarMojoIT
     public void testProject051()
         throws Exception
     {
-        doTestProject( "project-051", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-051", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -565,7 +555,7 @@ public class EarMojoIT
     public void testProject052()
         throws Exception
     {
-        doTestProject( "project-052", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-052", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -574,7 +564,7 @@ public class EarMojoIT
     public void testProject053()
         throws Exception
     {
-        doTestProject( "project-053", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-053", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -583,7 +573,7 @@ public class EarMojoIT
     public void testProject054()
         throws Exception
     {
-        doTestProject( "project-054", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-054", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -592,29 +582,26 @@ public class EarMojoIT
     public void testProject055()
         throws Exception
     {
-        doTestProject( "project-055", new String[]{ "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar",
+        doTestProject( "project-055", new String[] { "jar-sample-one-1.0.jar", "jar-sample-two-1.0.jar",
             "jar-sample-three-with-deps-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with deployment descriptor configuration for J2EE 1.4 and
-     * an alternative deployment descriptor.
+     * Builds an EAR with deployment descriptor configuration for J2EE 1.4 and an alternative deployment descriptor.
      */
     public void testProject056()
         throws Exception
     {
-        doTestProject( "project-056", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-056", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
-
     /**
-     * Builds an EAR with a complete JBoss 4.2 configuration and validate it
-     * matches the DTD (MEAR-104).
+     * Builds an EAR with a complete JBoss 4.2 configuration and validate it matches the DTD (MEAR-104).
      */
     public void testProject057()
         throws Exception
     {
-        doTestProject( "project-057", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-057", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -623,7 +610,7 @@ public class EarMojoIT
     public void testProject058()
         throws Exception
     {
-        doTestProject( "project-058", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-058", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
@@ -632,62 +619,62 @@ public class EarMojoIT
     public void testProject059()
         throws Exception
     {
-        doTestProject( "project-059", new String[]{ "ejb-sample-one-1.0.jar" } );
+        doTestProject( "project-059", new String[] { "ejb-sample-one-1.0.jar" } );
     }
 
     /**
      * Builds an EAR with ejb-client packaged for J2EE 1.3 (MEAR-85)
-     *
+     * 
      * @throws Exception
      */
     public void testProject060()
         throws Exception
     {
-        doTestProject( "project-060", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-060", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
      * Builds an EAR with ejb-client packaged for J2EE 1.4 (MEAR-85)
-     *
+     * 
      * @throws Exception
      */
     public void testProject061()
         throws Exception
     {
-        doTestProject( "project-061", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-061", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
      * Builds an EAR with ejb-client packaged for JavaEE 5 (MEAR-85)
-     *
+     * 
      * @throws Exception
      */
     public void testProject062()
         throws Exception
     {
-        doTestProject( "project-062", new String[]{ "ejb-sample-one-1.0.jar", "lib/ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-062", new String[] { "ejb-sample-one-1.0.jar", "lib/ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
      * Builds an EAR with ejb-client packaged for JavaEE 6 (MEAR-85)
-     *
+     * 
      * @throws Exception
      */
     public void testProject063()
         throws Exception
     {
-        doTestProject( "project-063", new String[]{ "lib/ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-063", new String[] { "lib/ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
      * Builds an EAR with ejb-client packaged for JavaEE 5 and still put it in the root (MEAR-85)
-     *
+     * 
      * @throws Exception
      */
     public void testProject064()
         throws Exception
     {
-        doTestProject( "project-064", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
+        doTestProject( "project-064", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0-client.jar" } );
     }
 
     /**
@@ -696,7 +683,7 @@ public class EarMojoIT
     public void testProject065()
         throws Exception
     {
-        doTestProject( "project-065", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-065", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -705,7 +692,7 @@ public class EarMojoIT
     public void testProject066()
         throws Exception
     {
-        doTestProject( "project-066", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-066", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -714,7 +701,7 @@ public class EarMojoIT
     public void testProject067()
         throws Exception
     {
-        doTestProject( "project-067", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-067", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -723,7 +710,7 @@ public class EarMojoIT
     public void testProject068()
         throws Exception
     {
-        doTestProject( "project-068", new String[]{ "ejb-sample-one.jar", "ejb-sample-two.jar" } );
+        doTestProject( "project-068", new String[] { "ejb-sample-one.jar", "ejb-sample-two.jar" } );
     }
 
     /**
@@ -732,7 +719,7 @@ public class EarMojoIT
     public void testProject069()
         throws Exception
     {
-        doTestProject( "project-069", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+        doTestProject( "project-069", new String[] { "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -741,7 +728,7 @@ public class EarMojoIT
     public void testProject070()
         throws Exception
     {
-        doTestProject( "project-070", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar" } );
+        doTestProject( "project-070", new String[] { "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -750,7 +737,7 @@ public class EarMojoIT
     public void testProject071()
         throws Exception
     {
-        doTestProject( "project-071", new String[]{ "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar" } );
+        doTestProject( "project-071", new String[] { "ejb-sample-one-1.0.jar", "jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -759,48 +746,47 @@ public class EarMojoIT
     public void testProject072()
         throws Exception
     {
-        doTestProject( "project-072", new String[]{ "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar" } );
+        doTestProject( "project-072", new String[] { "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with an application client module (app-client) and a default bundle directory for
-     * _java_ modules.
+     * Builds an EAR with an application client module (app-client) and a default bundle directory for _java_ modules.
      */
     public void testProject073()
         throws Exception
     {
-        doTestProject( "project-073", new String[]{ "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar",
+        doTestProject( "project-073", new String[] { "ejb-sample-one-1.0.jar", "app-client-sample-one-1.0.jar",
             "APP-INF/lib/jar-sample-one-1.0.jar", "APP-INF/lib/jar-sample-two-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with custom env entries settings and J2EE 1.3. Not supported by the specification
-     * so this should be ignored.
+     * Builds an EAR with custom env entries settings and J2EE 1.3. Not supported by the specification so this should be
+     * ignored.
      */
     public void testProject074()
         throws Exception
     {
-        doTestProject( "project-074", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-074", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with custom env entries settings and J2EE 1.4. Not supported by the specification
-     * so this should be ignored.
+     * Builds an EAR with custom env entries settings and J2EE 1.4. Not supported by the specification so this should be
+     * ignored.
      */
     public void testProject075()
         throws Exception
     {
-        doTestProject( "project-075", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-075", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
-     * Builds an EAR with custom env entries settings and JavaEE 5. Not supported by the specification
-     * so this should be ignored.
+     * Builds an EAR with custom env entries settings and JavaEE 5. Not supported by the specification so this should be
+     * ignored.
      */
     public void testProject076()
         throws Exception
     {
-        doTestProject( "project-076", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-076", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -809,7 +795,7 @@ public class EarMojoIT
     public void testProject077()
         throws Exception
     {
-        doTestProject( "project-077", new String[]{ "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+        doTestProject( "project-077", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
     /**
@@ -818,8 +804,8 @@ public class EarMojoIT
     public void testProject078()
         throws Exception
     {
-        doTestProject( "project-078",
-                       new String[]{ "ejb-sample-one.jar", "war-sample-one-1.0.war", "jar-sample-two-1.0.jar" } );
+        doTestProject( "project-078", new String[] { "ejb-sample-one.jar", "war-sample-one-1.0.war",
+            "jar-sample-two-1.0.jar" } );
     }
 
     /**
@@ -828,7 +814,7 @@ public class EarMojoIT
     public void testProject079()
         throws Exception
     {
-        doTestProject( "project-079", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+        doTestProject( "project-079", new String[] { "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -837,7 +823,7 @@ public class EarMojoIT
     public void testProject080()
         throws Exception
     {
-        doTestProject( "project-080", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+        doTestProject( "project-080", new String[] { "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
     /**
@@ -846,18 +832,18 @@ public class EarMojoIT
     public void testProject081()
         throws Exception
     {
-        doTestProject( "project-081", new String[]{ "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
+        doTestProject( "project-081", new String[] { "ejb-sample-one-1.0.jar", "myLibs/jar-sample-one-1.0.jar" } );
     }
 
     /**
-    * Builds an EAR with deployment descriptor configuration for JavaEE 7.
-    */
+     * Builds an EAR with deployment descriptor configuration for JavaEE 7.
+     */
     public void testProject082()
         throws Exception
     {
-        doTestProject( "project-082", new String[]{ "ejb-sample-one-1.0.jar"} );
+        doTestProject( "project-082", new String[] { "ejb-sample-one-1.0.jar" } );
     }
-    
+
     /**
      * Builds an EAR with a library directory and custom env entries. The library-directory element must come first
      * (MEAR-158).

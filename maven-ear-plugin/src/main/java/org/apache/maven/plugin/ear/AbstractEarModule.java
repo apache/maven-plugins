@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  * A base implementation of an {@link EarModule}.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -71,8 +71,7 @@ public abstract class AbstractEarModule
     protected EarExecutionContext earExecutionContext;
 
     /**
-     * Empty constructor to be used when the module
-     * is built based on the configuration.
+     * Empty constructor to be used when the module is built based on the configuration.
      */
     public AbstractEarModule()
     {
@@ -80,7 +79,7 @@ public abstract class AbstractEarModule
 
     /**
      * Creates an ear module from the artifact.
-     *
+     * 
      * @param a the artifact
      */
     public AbstractEarModule( Artifact a )
@@ -107,8 +106,8 @@ public abstract class AbstractEarModule
             // Make sure that at least the groupId and the artifactId are specified
             if ( groupId == null || artifactId == null )
             {
-                throw new MojoFailureException(
-                    "Could not resolve artifact[" + groupId + ":" + artifactId + ":" + getType() + "]" );
+                throw new MojoFailureException( "Could not resolve artifact[" + groupId + ":" + artifactId + ":"
+                    + getType() + "]" );
             }
             final ArtifactRepository ar = earExecutionContext.getArtifactRepository();
             artifact = ar.getUniqueArtifact( groupId, artifactId, getType(), classifier );
@@ -119,7 +118,7 @@ public abstract class AbstractEarModule
                 if ( candidates.size() > 1 )
                 {
                     throw new MojoFailureException( "Artifact[" + this + "] has " + candidates.size()
-                                                        + " candidates, please provide a classifier." );
+                        + " candidates, please provide a classifier." );
                 }
                 else
                 {
@@ -157,7 +156,7 @@ public abstract class AbstractEarModule
 
     /**
      * Returns the artifact's groupId.
-     *
+     * 
      * @return the group Id
      */
     public String getGroupId()
@@ -167,7 +166,7 @@ public abstract class AbstractEarModule
 
     /**
      * Returns the artifact's Id.
-     *
+     * 
      * @return the artifact Id
      */
     public String getArtifactId()
@@ -177,7 +176,7 @@ public abstract class AbstractEarModule
 
     /**
      * Returns the artifact's classifier.
-     *
+     * 
      * @return the artifact classifier
      */
     public String getClassifier()
@@ -186,9 +185,8 @@ public abstract class AbstractEarModule
     }
 
     /**
-     * Returns the bundle directory. If null, the module
-     * is bundled in the root of the EAR.
-     *
+     * Returns the bundle directory. If null, the module is bundled in the root of the EAR.
+     * 
      * @return the custom bundle directory
      */
     public String getBundleDir()
@@ -201,9 +199,8 @@ public abstract class AbstractEarModule
     }
 
     /**
-     * Returns the bundle file name. If null, the artifact's
-     * file name is returned.
-     *
+     * Returns the bundle file name. If null, the artifact's file name is returned.
+     * 
      * @return the bundle file name
      */
     public String getBundleFileName()
@@ -215,13 +212,11 @@ public abstract class AbstractEarModule
         return bundleFileName;
     }
 
-
     /**
-     * The alt-dd element specifies an optional URI to the post-assembly version
-     * of the deployment descriptor file for a particular Java EE module. The URI
-     * must specify the full pathname of the deployment descriptor file relative
-     * to the application's root directory.
-     *
+     * The alt-dd element specifies an optional URI to the post-assembly version of the deployment descriptor file for a
+     * particular Java EE module. The URI must specify the full pathname of the deployment descriptor file relative to
+     * the application's root directory.
+     * 
      * @return the alternative deployment descriptor for this module
      */
     public String getAltDeploymentDescriptor()
@@ -231,7 +226,7 @@ public abstract class AbstractEarModule
 
     /**
      * Specify whether this module should be excluded or not.
-     *
+     * 
      * @return true if this module should be skipped, false otherwise
      */
     public boolean isExcluded()
@@ -246,8 +241,8 @@ public abstract class AbstractEarModule
 
     /**
      * Writes the alternative deployment descriptor if necessary.
-     *
-     * @param writer  the writer to use
+     * 
+     * @param writer the writer to use
      * @param version the java EE version in use
      */
     protected void writeAltDeploymentDescriptor( XMLWriter writer, String version )
@@ -261,10 +256,9 @@ public abstract class AbstractEarModule
     }
 
     /**
-     * Starts a new {@link #MODULE_ELEMENT} on the specified writer, possibly
-     * including an id attribute.
-     *
-     * @param writer     the XML writer.
+     * Starts a new {@link #MODULE_ELEMENT} on the specified writer, possibly including an id attribute.
+     * 
+     * @param writer the XML writer.
      * @param generateId whether an id should be generated
      */
     protected void startModuleElement( XMLWriter writer, Boolean generateId )
@@ -276,7 +270,7 @@ public abstract class AbstractEarModule
         {
             writer.addAttribute( "id", getModuleId() );
         }
-        else if (generateId)
+        else if ( generateId )
         {
             // No module id was specified but one should be generated.
             Artifact artifact = getArtifact();
@@ -306,9 +300,8 @@ public abstract class AbstractEarModule
     }
 
     /**
-     * Cleans the bundle directory so that it might be used
-     * properly.
-     *
+     * Cleans the bundle directory so that it might be used properly.
+     * 
      * @param bundleDir the bundle directory to clean
      * @return the cleaned bundle directory
      */
@@ -339,8 +332,8 @@ public abstract class AbstractEarModule
 
     /**
      * Specify if the objects are both null or both equal.
-     *
-     * @param first  the first object
+     * 
+     * @param first the first object
      * @param second the second object
      * @return true if parameters are either both null or equal
      */
@@ -358,7 +351,7 @@ public abstract class AbstractEarModule
 
     /**
      * Sets the URI of the module explicitly for testing purposes.
-     *
+     * 
      * @param uri the uri
      */
     void setUri( String uri )

@@ -28,7 +28,7 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 /**
  * Tests for the {@link ArtifactTypeMappingService}
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -106,7 +106,7 @@ public class ArtifactTypeMappingServiceTest
         }
         catch ( EarPluginException e )
         {
-            //OK
+            // OK
         }
         catch ( PlexusConfigurationException e )
         {
@@ -132,7 +132,7 @@ public class ArtifactTypeMappingServiceTest
         }
         catch ( EarPluginException e )
         {
-            //OK
+            // OK
         }
         catch ( PlexusConfigurationException e )
         {
@@ -157,7 +157,7 @@ public class ArtifactTypeMappingServiceTest
         }
         catch ( EarPluginException e )
         {
-            //OK
+            // OK
         }
         catch ( PlexusConfigurationException e )
         {
@@ -182,7 +182,7 @@ public class ArtifactTypeMappingServiceTest
         }
         catch ( EarPluginException e )
         {
-            //OK
+            // OK
         }
         catch ( PlexusConfigurationException e )
         {
@@ -220,7 +220,6 @@ public class ArtifactTypeMappingServiceTest
         }
         // Won't occur
         return null;
-
 
     }
 

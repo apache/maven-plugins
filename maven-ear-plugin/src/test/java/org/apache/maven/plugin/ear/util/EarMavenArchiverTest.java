@@ -33,7 +33,6 @@ public class EarMavenArchiverTest
     extends AbstractEarTest
 {
 
-
     public void testSimpleEjbModule()
     {
         final List<EarModule> modules = new ArrayList<EarModule>();
