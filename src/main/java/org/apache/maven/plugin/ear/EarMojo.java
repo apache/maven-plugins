@@ -700,7 +700,6 @@ public class EarMojo
             else
             {
                 classPath = new Attribute( "Class-Path", "" );
-                mf.getMainSection().addConfiguredAttribute( classPath );
             }
 
             // Modify the classpath entries in the manifest
@@ -735,6 +734,7 @@ public class EarMojo
                 }
             }
             classPath.setValue( StringUtils.join( classPathElements.iterator(), " " ) );
+            mf.getMainSection().addConfiguredAttribute( classPath );
 
             // Write the manifest to disk
             PrintWriter pw = new PrintWriter( manifestFile );
