@@ -658,8 +658,9 @@ public class EarMojo
             if ( original.isFile() )
             {
                 // Create a temporary work directory
+                // MEAR-167 use uri as directory to prevent merging of artifacts with the same name
                 workDirectory =
-                    new File( new File( generatedDescriptorLocation, "temp" ), module.getArtifact().getArtifactId() );
+                    new File( new File( generatedDescriptorLocation, "temp" ), module.getUri() );
                 workDirectory.mkdirs();
                 getLog().debug( "Created a temporary work directory: " + workDirectory.getAbsolutePath() );
 
@@ -667,6 +668,7 @@ public class EarMojo
                 zipUnArchiver.setSourceFile( original );
                 zipUnArchiver.setDestDirectory( workDirectory );
                 zipUnArchiver.extract();
+                
             }
             else
             {
