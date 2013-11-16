@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.ear.output;
 
-import org.apache.maven.artifact.Artifact;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,6 +18,8 @@ import org.apache.maven.artifact.Artifact;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import org.apache.maven.artifact.Artifact;
 
 /**
  * A base class used to generate the standard name of an artifact instead of relying on the (potentially) wrong file

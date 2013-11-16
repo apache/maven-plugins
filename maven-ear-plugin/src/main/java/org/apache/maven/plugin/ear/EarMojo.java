@@ -580,7 +580,7 @@ public class EarMojo
      * @param destDir Location where to put the unpacked files.
      */
     public void unpack( File source, File destDir )
-        throws NoSuchArchiverException, IOException, ArchiverException
+        throws NoSuchArchiverException, IOException
     {
         UnArchiver unArchiver = archiverManager.getUnArchiver( "zip" );
         unArchiver.setSourceFile( source );
