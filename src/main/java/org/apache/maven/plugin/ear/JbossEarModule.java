@@ -35,5 +35,5 @@ public interface JbossEarModule
      * @param writer the writer to use
      * @param version the version of the <tt>jboss-app.xml</tt> file
      */
-    public void appendJbossModule( XMLWriter writer, String version );
+    void appendJbossModule( XMLWriter writer, String version );
 }

@@ -42,28 +42,28 @@ public interface EarModule
      * @return the artifact
      * @see #resolveArtifact(java.util.Set)
      */
-    public Artifact getArtifact();
+    Artifact getArtifact();
 
     /**
      * Returns the <tt>URI</tt> for this module.
      * 
      * @return the <tt>URI</tt>
      */
-    public String getUri();
+    String getUri();
 
     /**
      * Returns the type associated to the module.
      * 
      * @return the artifact's type of the module
      */
-    public String getType();
+    String getType();
 
     /**
      * Specify whether this module should be excluded or not.
      * 
      * @return true if this module should be skipped, false otherwise
      */
-    public boolean isExcluded();
+    boolean isExcluded();
 
     /**
      * Specify whether this module should be unpacked in the EAR archive or not.
@@ -72,7 +72,7 @@ public interface EarModule
      * 
      * @return true if this module should be bundled unpacked, false otherwise
      */
-    public Boolean shouldUnpack();
+    Boolean shouldUnpack();
 
     /**
      * The alt-dd element specifies an optional URI to the post-assembly version of the deployment descriptor file for a
@@ -82,7 +82,7 @@ public interface EarModule
      * @return the alternative deployment descriptor for this module
      * @since JavaEE 5
      */
-    public String getAltDeploymentDescriptor();
+    String getAltDeploymentDescriptor();
 
     /**
      * Appends the <tt>XML</tt> representation of this module.
@@ -91,7 +91,7 @@ public interface EarModule
      * @param version the version of the <tt>application.xml</tt> file
      * @param generateId whether an id should be generated
      */
-    public void appendModule( XMLWriter writer, String version, Boolean generateId );
+    void appendModule( XMLWriter writer, String version, Boolean generateId );
 
     /**
      * Resolves the {@link Artifact} represented by the module. Note that the {@link EarExecutionContext} might be used
@@ -101,13 +101,13 @@ public interface EarModule
      * @throws EarPluginException if the artifact could not be resolved
      * @throws MojoFailureException if an unexpected error occurred
      */
-    public void resolveArtifact( Set<Artifact> artifacts )
+    void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException;
 
-    public void setEarExecutionContext( EarExecutionContext earExecutionContext );
+    void setEarExecutionContext( EarExecutionContext earExecutionContext );
 
-    public boolean changeManifestClasspath();
+    boolean changeManifestClasspath();
 
-    public String getLibDir();
+    String getLibDir();
 
 }

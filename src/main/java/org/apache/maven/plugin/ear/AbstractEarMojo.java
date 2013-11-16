@@ -38,7 +38,7 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
 /**
  * A base class for EAR-processing related tasks.
- *
+ * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
@@ -52,8 +52,7 @@ public abstract class AbstractEarMojo
     public static final String UTF_8 = "UTF-8";
 
     /**
-     * The version of the application.xml to generate. Valid values
-     * are 1.3, 1.4, 5, 6 and 7.
+     * The version of the application.xml to generate. Valid values are 1.3, 1.4, 5, 6 and 7.
      */
     @Parameter( defaultValue = "1.3" )
     protected String version;
@@ -101,18 +100,17 @@ public abstract class AbstractEarMojo
     private Boolean includeLibInApplicationXml = Boolean.FALSE;
 
     /**
-     * The file name mapping to use for all dependencies included
-     * in the EAR file.
+     * The file name mapping to use for all dependencies included in the EAR file.
      */
     @Parameter
     private String fileNameMapping;
-    
+
     /**
      * When using a {@link #fileNameMapping} with versions, either use the {@code baseVersion} or the {@code version}.
-     * When the artifact is a SNAPSHOT, {@code version} will always return a value with a {@code -SNAPSHOT} postfix 
-     * instead of the possible timestamped value. 
-     *  
-     *  @since 2.9
+     * When the artifact is a SNAPSHOT, {@code version} will always return a value with a {@code -SNAPSHOT} postfix
+     * instead of the possible timestamped value.
+     * 
+     * @since 2.9
      */
     @Parameter
     private Boolean useBaseVersion;
@@ -125,16 +123,16 @@ public abstract class AbstractEarMojo
 
     /**
      * The JBoss specific configuration.
-     *
+     * 
      * @parameter
      */
     @Parameter
     private PlexusConfiguration jboss;
 
     /**
-     * The id to use to define the main artifact (e.g. the artifact without
-     * a classifier) when there is multiple candidates.
-     *
+     * The id to use to define the main artifact (e.g. the artifact without a classifier) when there is multiple
+     * candidates.
+     * 
      * @parameter
      */
     @Parameter
@@ -181,7 +179,7 @@ public abstract class AbstractEarMojo
         EarExecutionContext earExecutionContext =
             new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMapping,
                                      typeMappingService );
-        
+
         if ( useBaseVersion != null )
         {
             earExecutionContext.getFileNameMapping().setUseBaseVersion( useBaseVersion );
@@ -196,12 +194,13 @@ public abstract class AbstractEarMojo
                 // Let's validate user-defined modules
                 EarModule module;
 
-                for (EarModule module1 : modules) {
+                for ( EarModule module1 : modules )
+                {
                     module = module1;
-                    getLog().debug("Resolving ear module[" + module + "]");
-                    module.setEarExecutionContext(earExecutionContext);
-                    module.resolveArtifact(project.getArtifacts());
-                    allModules.add(module);
+                    getLog().debug( "Resolving ear module[" + module + "]" );
+                    module.setEarExecutionContext( earExecutionContext );
+                    module.resolveArtifact( project.getArtifacts() );
+                    allModules.add( module );
                 }
             }
 
@@ -222,8 +221,9 @@ public abstract class AbstractEarMojo
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional()
                     && filter.include( artifact ) )
                 {
-                    EarModule module = EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
-                                                                      includeLibInApplicationXml, typeMappingService );
+                    EarModule module =
+                        EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
+                                                       includeLibInApplicationXml, typeMappingService );
                     module.setEarExecutionContext( earExecutionContext );
                     allModules.add( module );
                 }
@@ -236,7 +236,7 @@ public abstract class AbstractEarMojo
 
         // Now we have everything let's built modules which have not been excluded
         earModules = new ArrayList<EarModule>();
-        for ( EarModule earModule :  allModules )
+        for ( EarModule earModule : allModules )
         {
             if ( earModule.isExcluded() )
             {
@@ -276,7 +276,7 @@ public abstract class AbstractEarMojo
 
     private static boolean isArtifactRegistered( Artifact a, List<EarModule> currentList )
     {
-        for( EarModule em : currentList )
+        for ( EarModule em : currentList )
         {
             if ( em.getArtifact().equals( a ) )
             {
@@ -288,7 +288,7 @@ public abstract class AbstractEarMojo
 
     /**
      * Initializes the JBoss configuration.
-     *
+     * 
      * @throws EarPluginException if the configuration is invalid
      */
     private void initializeJbossConfiguration()
@@ -332,16 +332,17 @@ public abstract class AbstractEarMojo
 
                     final PlexusConfiguration[] dataSourcesConfig =
                         dataSourcesEl.getChildren( JbossConfiguration.DATASOURCE );
-                    for (PlexusConfiguration dataSourceConfig : dataSourcesConfig) {
-                        dataSources.add(dataSourceConfig.getValue());
+                    for ( PlexusConfiguration dataSourceConfig : dataSourcesConfig )
+                    {
+                        dataSources.add( dataSourceConfig.getValue() );
 
                     }
                 }
                 final String libraryDirectory = jboss.getChild( JbossConfiguration.LIBRARY_DIRECTORY ).getValue();
-                jbossConfiguration = new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName,
-                                                             loaderRepository, moduleOrder, dataSources,
-                                                             libraryDirectory, loaderRepositoryConfig,
-                                                             loaderRepositoryClass, configParserClass );
+                jbossConfiguration =
+                    new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName,
+                                            loaderRepository, moduleOrder, dataSources, libraryDirectory,
+                                            loaderRepositoryConfig, loaderRepositoryClass, configParserClass );
             }
             catch ( PlexusConfigurationException e )
             {
