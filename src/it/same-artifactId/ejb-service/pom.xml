@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -23,36 +24,20 @@ under the License.
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>root</artifactId>
     <groupId>main</groupId>
+    <artifactId>root</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>main.root</groupId>
-  <artifactId>ejb</artifactId>
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>service</module>
-  </modules>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ejb-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-    </plugins>
-  </build>
+  <groupId>main.root.ejb</groupId>
+  <artifactId>service</artifactId>
+  <packaging>ejb</packaging>
 
   <dependencies>
     <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
-
 </project>
