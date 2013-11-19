@@ -51,6 +51,7 @@ under the License.
       <item name="Customize file name mapping" href="examples/customize-file-name-mapping.html"/>
       <item name="Generating modules ID" href="examples/generating-modules-id.html"/>
       <item name="Using JavaEE application clients" href="examples/using-app-client.html"/>
+      <item name="Eclipse and Maven Integration" href="examples/eclipse-and-maven-integration.html"/>
     </menu>
   </body>
 </project>
