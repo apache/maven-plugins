@@ -19,7 +19,6 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
-import com.google.common.collect.Sets;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -33,11 +32,7 @@ import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.shade.ShadeRequest;
 import org.apache.maven.plugins.shade.Shader;
 import org.apache.maven.plugins.shade.filter.Filter;
@@ -47,16 +42,10 @@ import org.apache.maven.plugins.shade.pom.PomWriter;
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.project.ProjectBuildingResult;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.project.*;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -66,20 +55,8 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 /**
  * Mojo that performs shading delegating to the Shader component.
@@ -404,6 +381,7 @@ public class ShadeMojo
         Set<File> artifacts = new LinkedHashSet<File>();
         Set<String> artifactIds = new LinkedHashSet<String>();
         Set<File> sourceArtifacts = new LinkedHashSet<File>();
+        Set<File> testArtifacts = new LinkedHashSet<File>();
 
         ArtifactSelector artifactSelector =
             new ArtifactSelector( project.getArtifact(), artifactSet, shadedGroupFilter );
@@ -434,6 +412,15 @@ public class ShadeMojo
                 if ( file.isFile() )
                 {
                     sourceArtifacts.add( file );
+                }
+            }
+
+            if ( shadeTestJar )
+            {
+                File file = shadedTestArtifactFile();
+                if ( file.isFile() )
+                {
+                    testArtifacts.add( file );
                 }
             }
         }
@@ -475,12 +462,12 @@ public class ShadeMojo
                 shader.shade( shadeSourcesRequest );
             }
 
-            if ( shadeTestJar && testJar.exists() )
+            if ( shadeTestJar )
             {
 
                 ShadeRequest shadeSourcesRequest = new ShadeRequest();
-                shadeSourcesRequest.setJars( Sets.newHashSet( testJar ) );
-                shadeSourcesRequest.setUberJar( sourcesJar );
+                shadeSourcesRequest.setJars( testArtifacts );
+                shadeSourcesRequest.setUberJar( testJar );
                 shadeSourcesRequest.setFilters( filters );
                 shadeSourcesRequest.setRelocators( relocators );
                 shadeSourcesRequest.setResourceTransformers( resourceTransformers );
@@ -527,6 +514,7 @@ public class ShadeMojo
 
                         if ( createSourcesJar )
                         {
+                            getLog().info( "Replacing original source artifact with shaded source artifact." );
                             File shadedSources = shadedSourcesArtifactFile();
 
                             replaceFile( shadedSources, sourcesJar );
@@ -534,10 +522,14 @@ public class ShadeMojo
                             projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
                         }
 
-                        if (shadeTestJar && testJar.exists())
+                        if (shadeTestJar)
                         {
+                            getLog().info( "Replacing original test artifact with shaded test artifact." );
+                            File shadedTests = shadedTestArtifactFile();
 
-                            projectHelper.attachArtifact( project, "jar", "tests", testJar );
+                            replaceFile( shadedTests, testJar );
+
+                            projectHelper.attachArtifact( project, "jar", "tests", shadedTests );
                         }
 
                         if ( createDependencyReducedPom )
@@ -821,7 +813,7 @@ public class ShadeMojo
     {
         Artifact artifact = project.getArtifact();
         final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + "tests."
+            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-tests."
                 + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
@@ -840,6 +832,25 @@ public class ShadeMojo
         {
             shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources."
                 + artifact.getArtifactHandler().getExtension();
+        }
+
+        return new File( outputDirectory, shadedName );
+    }
+
+    private File shadedTestArtifactFile()
+    {
+        Artifact artifact = project.getArtifact();
+
+        String shadedName;
+
+        if ( project.getBuild().getFinalName() != null )
+        {
+            shadedName = project.getBuild().getFinalName() + "-tests." + artifact.getArtifactHandler().getExtension();
+        }
+        else
+        {
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-tests."
+                    + artifact.getArtifactHandler().getExtension();
         }
 
         return new File( outputDirectory, shadedName );
