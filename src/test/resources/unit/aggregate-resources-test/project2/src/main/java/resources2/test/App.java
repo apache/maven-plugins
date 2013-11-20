@@ -21,7 +21,7 @@ package resources2.test;
 
 /**
  * Sample class inside the package to be included in the javadoc
- * <img src="doc-files/maven-feather.png" alt="Maven"/>
+ * <img src="doc-files/maven-feather.png" alt="Maven">
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */

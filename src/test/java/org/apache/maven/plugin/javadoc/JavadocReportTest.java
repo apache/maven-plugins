@@ -579,13 +579,13 @@ public class JavadocReportTest
         File app = new File( apidocs, "resources/test/App.html" );
         assertTrue( app.exists() );
         String content = readFile( app );
-        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
+        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
         assertTrue( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
 
         File app2 = new File( apidocs, "resources/test2/App2.html" );
         assertTrue( app2.exists() );
         content = readFile( app2 );
-        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
+        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
         assertFalse( new File( apidocs, "resources/test2/doc-files/maven-feather.png" ).exists() );
 
         // with excludes
@@ -598,13 +598,13 @@ public class JavadocReportTest
         app = new File( apidocs, "resources/test/App.html" );
         assertTrue( app.exists() );
         content = readFile( app );
-        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
+        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
         assertFalse( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
 
         app2 = new File( apidocs, "resources/test2/App2.html" );
         assertTrue( app2.exists() );
         content = readFile( app2 );
-        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
+        assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
         assertTrue( new File( apidocs, "resources/test2/doc-files/maven-feather.png" ).exists() );
     }
 
@@ -636,7 +636,7 @@ public class JavadocReportTest
         File app = new File( apidocs, "resources/test/App.html" );
         assertTrue( app.exists() );
         overview = readFile( app );
-        assertTrue( overview.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\"/>" ) );
+        assertTrue( overview.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
         assertTrue( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
     }
 
@@ -673,7 +673,8 @@ public class JavadocReportTest
         assertTrue( readed.contains( ">To do something:</" ) );
         assertTrue( readed.contains( ">Generator Class:</" ) );
         assertTrue( readed.contains( ">Version:</" ) );
-        assertTrue( readed.toLowerCase().contains( "</dt>" + LINE_SEPARATOR + "  <dd>1.0</dd>" ) );
+        assertTrue( readed.toLowerCase().contains( "</dt>" + LINE_SEPARATOR + "  <dd>1.0</dd>" )
+            || readed.toLowerCase().contains( "</dt>" + LINE_SEPARATOR + "<dd>1.0</dd>" /* JDK 8 */) );
     }
 
     /**

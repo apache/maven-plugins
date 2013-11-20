@@ -38,7 +38,7 @@ public class App
 
     /**
      * Sample method that prints out the parameter string.
-     * <img src="doc-files/included-dir1/sample-included1.gif">
+     * <img src="doc-files/included-dir1/sample-included1.gif" alt="sample-included1">
      *
      * @param str   The string value to be printed.
      */
