@@ -53,9 +53,9 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -377,6 +377,9 @@ public class ShadeMojo
     @Parameter( defaultValue = "false" )
     private boolean useBaseVersion;
 
+    @Parameter( defaultValue = "false" )
+    private boolean shadeTestJar;
+
     /**
      * @since 1.6
      */
@@ -400,6 +403,7 @@ public class ShadeMojo
         Set<File> artifacts = new LinkedHashSet<File>();
         Set<String> artifactIds = new LinkedHashSet<String>();
         Set<File> sourceArtifacts = new LinkedHashSet<File>();
+        Set<File> testArtifacts = new LinkedHashSet<File>();
 
         ArtifactSelector artifactSelector =
             new ArtifactSelector( project.getArtifact(), artifactSet, shadedGroupFilter );
@@ -432,12 +436,22 @@ public class ShadeMojo
                     sourceArtifacts.add( file );
                 }
             }
+
+            if ( shadeTestJar )
+            {
+                File file = shadedTestArtifactFile();
+                if ( file.isFile() )
+                {
+                    testArtifacts.add( file );
+                }
+            }
         }
 
         processArtifactSelectors( artifacts, artifactIds, sourceArtifacts, artifactSelector );
 
         File outputJar = ( outputFile != null ) ? outputFile : shadedArtifactFileWithClassifier();
         File sourcesJar = shadedSourceArtifactFileWithClassifier();
+        File testJar = shadedTestArtifactFileWithClassifier();
 
         // Now add our extra resources
         try
@@ -462,6 +476,20 @@ public class ShadeMojo
                 ShadeRequest shadeSourcesRequest = new ShadeRequest();
                 shadeSourcesRequest.setJars( sourceArtifacts );
                 shadeSourcesRequest.setUberJar( sourcesJar );
+                shadeSourcesRequest.setFilters( filters );
+                shadeSourcesRequest.setRelocators( relocators );
+                shadeSourcesRequest.setResourceTransformers( resourceTransformers );
+                shadeSourcesRequest.setShadeSourcesContent( shadeSourcesContent );
+
+                shader.shade( shadeSourcesRequest );
+            }
+
+            if ( shadeTestJar )
+            {
+
+                ShadeRequest shadeSourcesRequest = new ShadeRequest();
+                shadeSourcesRequest.setJars( testArtifacts );
+                shadeSourcesRequest.setUberJar( testJar );
                 shadeSourcesRequest.setFilters( filters );
                 shadeSourcesRequest.setRelocators( relocators );
                 shadeSourcesRequest.setResourceTransformers( resourceTransformers );
@@ -508,11 +536,22 @@ public class ShadeMojo
 
                         if ( createSourcesJar )
                         {
+                            getLog().info( "Replacing original source artifact with shaded source artifact." );
                             File shadedSources = shadedSourcesArtifactFile();
 
                             replaceFile( shadedSources, sourcesJar );
 
                             projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
+                        }
+
+                        if (shadeTestJar)
+                        {
+                            getLog().info( "Replacing original test artifact with shaded test artifact." );
+                            File shadedTests = shadedTestArtifactFile();
+
+                            replaceFile( shadedTests, testJar );
+
+                            projectHelper.attachArtifact( project, "jar", "tests", shadedTests );
                         }
 
                         if ( createDependencyReducedPom )
@@ -792,6 +831,15 @@ public class ShadeMojo
         return new File( outputDirectory, shadedName );
     }
 
+    private File shadedTestArtifactFileWithClassifier()
+    {
+        Artifact artifact = project.getArtifact();
+        final String shadedName =
+            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-tests."
+                + artifact.getArtifactHandler().getExtension();
+        return new File( outputDirectory, shadedName );
+    }
+
     private File shadedSourcesArtifactFile()
     {
         Artifact artifact = project.getArtifact();
@@ -806,6 +854,25 @@ public class ShadeMojo
         {
             shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources."
                 + artifact.getArtifactHandler().getExtension();
+        }
+
+        return new File( outputDirectory, shadedName );
+    }
+
+    private File shadedTestArtifactFile()
+    {
+        Artifact artifact = project.getArtifact();
+
+        String shadedName;
+
+        if ( project.getBuild().getFinalName() != null )
+        {
+            shadedName = project.getBuild().getFinalName() + "-tests." + artifact.getArtifactHandler().getExtension();
+        }
+        else
+        {
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-tests."
+                    + artifact.getArtifactHandler().getExtension();
         }
 
         return new File( outputDirectory, shadedName );
