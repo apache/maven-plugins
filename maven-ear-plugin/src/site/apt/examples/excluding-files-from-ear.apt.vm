@@ -187,3 +187,23 @@ Excluding Files From the EAR
   <<Note:>> You would also need to configure your application server to use
   <<<external-shared-libraries>>> as a shared library. How you do that is
   however out of scope for this example.
+
+* Transitive artifacts
+
+  For those who have good reason to exclude transitive dependencies, they can configure their <<<pom.xml>>> like this when using Maven3
+  
++---------------------
+  <dependency>
+    <groupId>GROUPID</groupId>
+    <artifactId>ARTIFACTID</artifactId>
+    <version>VERSION</version>
+    <exclusions>
+      <exclusion>
+        <groupId>*</groupId>
+        <artifactId>*</artifactId>
+      </exclusion>
+    </exclusions>
+  </dependency>
++---------------------
+
+  As you can see <<<exclusions>>> support wildcard expressions, so you can have fast and full control over all the dependencies you'd like to exclude.    
