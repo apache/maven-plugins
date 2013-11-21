@@ -133,4 +133,6 @@ ${project.name}
 
   * {{{./examples/using-app-client.html} Using JavaEE application clients}}
 
+  * {{{./examples/eclipse-and-maven-integration.html} Eclipse and Maven integration (without m2e)}}
+
   []
