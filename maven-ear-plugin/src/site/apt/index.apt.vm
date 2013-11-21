@@ -28,7 +28,7 @@
 
 ${project.name}
 
-  This plugin generates J2EE Enterprise Archive (EAR) file. It can also generate
+  This plugin generates Java EE Enterprise Archive (EAR) file. It can also generate
   the deployment descriptor file (e.g. application.xml).
 
   The EAR plugin supports the following artifacts:
@@ -60,8 +60,8 @@ ${project.name}
   For available configuration options for these artifacts, please see the
   {{{./modules.html}modules configuration}}.
 
-  For more information about the J2EE technology, please visit
-  {{http://java.sun.com/developer/technicalArticles/J2EE/Intro}}.
+  For more information about the Java EE technology, please visit
+  {{http://www.oracle.com/us/technologies/java/enterprise-edition/overview/index.html}}.
 
 * Goals Overview
 
