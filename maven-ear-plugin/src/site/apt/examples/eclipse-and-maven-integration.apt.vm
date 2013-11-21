@@ -25,7 +25,7 @@
 
 Eclipse and Maven Integration
 
-  This page describes how to integrate an EAR project in Eclipse or Eclipse-based IDE <<without>> M2Eclipse support.
+  This page describes how to integrate an EAR project in Eclipse or Eclipse-based IDE <<without>> {{{http://www.eclipse.org/m2e/}m2e}} support.
   
   If you have used <<<mvn eclipse:eclipse>>> to generate the metadata for an EAR project, it will want the <<<application.xml>>> file in the <<<src/main/application/META-INF>>> directory. 
 
@@ -45,7 +45,7 @@ Eclipse and Maven Integration
 </application>
 +------------------------+
 
-  Obviously this does not have the typical Maven based version naming convention applied to it. This allows us to run the application internally within eclipse/rsa using the test environments.
+  Obviously this does not have the typical Maven based version naming convention applied to it. This allows us to run the application internally within Eclipse using the test environments.
   When Maven is used to create the ear using <<<mvn package>>>, it will create the versionized <<<application.xml>>> file, if told to. 
   However, by default it will not pick up the generated (versionized) one, it will use the existing one in the <<<src/main/application/META-INF>>> directory.
 
