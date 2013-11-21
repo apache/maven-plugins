@@ -23,9 +23,10 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Eclipse and Maven Integration
+Eclipse and Maven Integration (without m2e)
 
   This page describes how to integrate an EAR project in Eclipse or Eclipse-based IDE <<without>> {{{http://www.eclipse.org/m2e/}m2e}} support.
+  Normally however, using m2e (and m2e-wtp) should be the preferred way to integrate Maven and Eclipse. But in some rare cases that might not be possible.
   
   If you have used <<<mvn eclipse:eclipse>>> to generate the metadata for an EAR project, it will want the <<<application.xml>>> file in the <<<src/main/application/META-INF>>> directory. 
 
