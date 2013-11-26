@@ -123,7 +123,7 @@ public class PmdReport
     /**
      * Controls whether the project's compile/test classpath should be passed to PMD to enable its type resolution
      * feature.
-     * 
+     *
      * @since 3.0
      */
     @Parameter( property = "pmd.typeResolution", defaultValue = "false" )
@@ -263,12 +263,16 @@ public class PmdReport
 
         RuleSetFactory ruleSetFactory = new RuleSetFactory();
         ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
-        String[] sets = new String[rulesets.length];
+
+        // Workaround for https://sourceforge.net/p/pmd/bugs/1155/: add a dummy ruleset.
+        String [] presentRulesets = rulesets.length > 0 ? rulesets : new String [] { "/rulesets/dummy.xml" };
+
+        String[] sets = new String[presentRulesets.length];
         try
         {
-            for ( int idx = 0; idx < rulesets.length; idx++ )
+            for ( int idx = 0; idx < presentRulesets.length; idx++ )
             {
-                String set = rulesets[idx];
+                String set = presentRulesets[idx];
                 getLog().debug( "Preparing ruleset: " + set );
                 RuleSetReferenceId id = new RuleSetReferenceId( set );
                 File ruleset = locator.getResourceAsFile( id.getRuleSetFileName(), getLocationTemp( set ) );
