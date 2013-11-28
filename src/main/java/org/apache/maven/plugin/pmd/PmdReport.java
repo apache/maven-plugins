@@ -138,6 +138,13 @@ public class PmdReport
     private PmdReportListener reportListener;
 
     /**
+     * per default pmd executions error are ignored to not break the whole
+     * @since 3.1
+     */
+    @Parameter( property = "pmd.skipPmdError", defaultValue = "true" )
+    private boolean skipPmdError;
+
+    /**
      * {@inheritDoc}
      */
     public String getName( Locale locale )
@@ -335,7 +342,12 @@ public class PmdReport
         }
         catch ( Exception e )
         {
-            getLog().warn( "Failure executing PMD: " + e.getLocalizedMessage(), e );
+            String message = "Failure executing PMD: " + e.getLocalizedMessage();
+            if ( !skipPmdError )
+            {
+                throw new MavenReportException( message, e );
+            }
+            getLog().warn( message, e );
         }
 
         // if format is XML, we need to output it even if the file list is empty or we have no violations

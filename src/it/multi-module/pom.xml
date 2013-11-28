@@ -68,6 +68,9 @@ under the License.
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
+        <configuration>
+          <skipPmdError>false</skipPmdError>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>

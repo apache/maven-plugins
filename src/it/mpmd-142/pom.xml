@@ -49,6 +49,7 @@ under the License.
           <excludeRoots>
             <excludeRoots>target/generated-sources</excludeRoots>
           </excludeRoots>
+          <skipPmdError>false</skipPmdError>
         </configuration>
       </plugin>
       <plugin>
