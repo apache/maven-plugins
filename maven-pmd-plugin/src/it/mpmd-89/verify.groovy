@@ -18,7 +18,4 @@
  */
 
 File pmdXml = new File( basedir, "target/pmd.xml" );
-if (!pmdXml.isFile())
-{
-    throw new IllegalStateException( pmdXml + " does not exist" );
-}
+assert pmdXml.exists()
