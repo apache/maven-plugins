@@ -42,6 +42,7 @@ under the License.
             <verbose>true</verbose>
             <printFailingErrors>true</printFailingErrors>
             <failurePriority>0</failurePriority>
+            <skipPmdError>false</skipPmdError>
           </configuration>
         </plugin>
       </plugins>

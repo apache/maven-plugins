@@ -53,6 +53,7 @@ under the License.
           <minimumTokens>25</minimumTokens>
           <sourceEncoding>UTF-8</sourceEncoding>
           <failOnViolation>false</failOnViolation> <!-- force execution of both goals, will be checked with verify-script -->
+          <skipPmdError>false</skipPmdError>
         </configuration>
       </plugin>
     </plugins>
@@ -65,6 +66,7 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <skipPmdError>false</skipPmdError>
 <!--           <skipEmptyReport>true</skipEmptyReport> it's by default true -->
         </configuration>
       </plugin>
