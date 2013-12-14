@@ -102,7 +102,7 @@ under the License.
       <artifactId>maven-archiver</artifactId>
       <version>${mavenArchiverVersion}</version>
     </dependency>
-    <dependency>
+    <dependency><!-- MJAR-173: dependency required to avoid bug in Maven 2.x -->
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>3.0.15</version>
