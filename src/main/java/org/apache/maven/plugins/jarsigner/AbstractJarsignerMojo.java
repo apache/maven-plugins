@@ -28,11 +28,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.jarsigner.JarSigner;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
-import org.apache.maven.shared.jarsigner.JarSignerResult;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.apache.maven.shared.utils.StringUtils;
 import org.apache.maven.shared.utils.cli.Commandline;
 import org.apache.maven.shared.utils.cli.javatool.JavaToolException;
+import org.apache.maven.shared.utils.cli.javatool.JavaToolResult;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
@@ -436,7 +436,7 @@ public abstract class AbstractJarsignerMojo
 
         try
         {
-            JarSignerResult result = jarSigner.execute( request );
+            JavaToolResult result = jarSigner.execute( request );
 
             Commandline commandLine = result.getCommandline();
 
