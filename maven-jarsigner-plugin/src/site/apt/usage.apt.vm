@@ -68,6 +68,11 @@ Usage
 </project>
 +-----------------+
 
+  <<Since version 1.3>> you can encrypt <<<keypass>>> and <<<storepass>>> using the
+  maven encryption mecanism.
+
+  See {{{Maven encryption guide}http://maven.apache.org/guides/mini/guide-encryption.html}}.
+
 * Verifying the signature of a project artifact and attachments
 
   If you need to verify the signatures of a project artifact and all attached
@@ -118,3 +123,7 @@ mvn ... -Djarsigner.skip=true
 +-----------------+
 
   For full documentation, please see the respective {{{./plugin-info.html}goal documentation}}.
+
+* How to use encrypted password
+
+  Since version 1.3, you can pass to the plugin some password encrypted by the maven encryption mecanism.
