@@ -57,5 +57,16 @@ under the License.
        </p>
      </answer>
    </faq>
+   <faq id="sign_and_assembly">
+        <question>Why if I want to sign an artifact and then assembly there is some problem under windows?</question>
+        <answer>
+          <p>
+            To fix the problem, just move the assembly execution so it comes <strong>after</strong> the jarsigner execution in the pom.
+          </p>
+          <p>
+           The hole story of the problem can be found in <a href="http://jira.codehaus.org/browse/MJARSIGNER-13">MJARSIGNER-13</a> issue.
+          </p>
+        </answer>
+      </faq>
   </part>
 </faqs>
