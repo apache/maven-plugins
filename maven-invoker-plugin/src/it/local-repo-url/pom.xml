@@ -49,12 +49,9 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
-          <pomIncludes>
-            <pomInclude>*/pom.xml</pomInclude>
-          </pomIncludes>
           <settingsFile>src/it/settings.xml</settingsFile>
           <goals>
-            <goal>org.apache.maven.plugins:maven-resources-plugin:2.2:resources</goal>
+            <goal>validate</goal>
           </goals>
         </configuration>
         <executions>
