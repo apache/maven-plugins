@@ -118,13 +118,6 @@ under the License.
             <releaseProfiles>apache-release,rat,run-its</releaseProfiles>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <configuration>
-            <skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -134,15 +127,6 @@ under the License.
         <configuration>
           <content>${project.reporting.outputDirectory}</content>
         </configuration>
-        <executions>
-          <execution>
-            <id>scm-publish</id>
-            <phase>site-deploy</phase><!-- deploy site with maven-scm-publish-plugin -->
-            <goals>
-              <goal>publish-scm</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
