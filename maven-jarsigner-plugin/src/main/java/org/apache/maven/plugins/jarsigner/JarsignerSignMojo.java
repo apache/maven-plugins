@@ -20,7 +20,6 @@ package org.apache.maven.plugins.jarsigner;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -29,8 +28,6 @@ import org.apache.maven.shared.jarsigner.JarSignerSignRequest;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
 import org.apache.maven.shared.utils.StringUtils;
 import org.apache.maven.shared.utils.cli.Commandline;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,12 +47,6 @@ public class JarsignerSignMojo
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
-    @Parameter( property = "jarsigner.storepass" )
-    private String storepass;
-
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
     @Parameter( property = "jarsigner.keypass" )
     private String keypass;
 
@@ -64,12 +55,6 @@ public class JarsignerSignMojo
      */
     @Parameter( property = "jarsigner.sigfile" )
     private String sigfile;
-
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
-    @Parameter( property = "jarsigner.storetype" )
-    private String storetype;
 
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
@@ -88,12 +73,6 @@ public class JarsignerSignMojo
      */
     @Parameter( property = "jarsigner.providerArg" )
     private String providerArg;
-
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
-    @Parameter( property = "jarsigner.alias", required = true )
-    private String alias;
 
     /**
      * Indicates whether existing signatures should be removed from the processed JAR files prior to signing them. If
@@ -120,12 +99,6 @@ public class JarsignerSignMojo
     @Parameter( property = "jarsigner.tsacert" )
     private String tsacert;
 
-    /**
-     * @since 1.3
-     */
-    @Component( hint = "mng-4384")
-    private SecDispatcher securityDispatcher;
-
     @Override
     protected String getCommandlineInfo( final Commandline commandLine )
     {
@@ -134,7 +107,6 @@ public class JarsignerSignMojo
         if ( commandLineInfo != null )
         {
             commandLineInfo = StringUtils.replace( commandLineInfo, this.keypass, "'*****'" );
-            commandLineInfo = StringUtils.replace( commandLineInfo, this.storepass, "'*****'" );
         }
 
         return commandLineInfo;
@@ -164,26 +136,15 @@ public class JarsignerSignMojo
         throws MojoExecutionException
     {
         JarSignerSignRequest request = new JarSignerSignRequest();
-        request.setAlias( alias );
         request.setProviderArg( providerArg );
         request.setProviderClass( providerClass );
         request.setProviderName( providerName );
         request.setSigfile( sigfile );
-        request.setStoretype( storetype );
         request.setTsaLocation( tsa );
         request.setTsaAlias( tsacert );
 
         // Special handling for passwords through the Maven Security Dispatcher
-        try
-        {
-            request.setKeypass( securityDispatcher.decrypt( keypass ) );
-            request.setStorepass( securityDispatcher.decrypt( storepass ) );
-        }
-        catch ( SecDispatcherException e )
-        {
-            getLog().error( "error using security dispatcher: " + e.getMessage(), e );
-            throw new MojoExecutionException( "error using security dispatcher: " + e.getMessage(), e );
-        }
+        request.setKeypass( decrypt( keypass ) );
         return request;
     }
 

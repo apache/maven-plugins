@@ -48,12 +48,6 @@ public class JarsignerVerifyMojo
     @Parameter( property = "jarsigner.certs", defaultValue = "false" )
     private boolean certs;
 
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
-    @Parameter( property = "jarsigner.alias" )
-    private String alias;
-
     /** When <code>true</code> this will make the execute() operation fail,
      * throwing an exception, when verifying a non signed jar.
      *
@@ -71,7 +65,6 @@ public class JarsignerVerifyMojo
     protected JarSignerRequest createRequest( File archive )
     {
         JarSignerVerifyRequest request = new JarSignerVerifyRequest();
-        request.setAlias( alias );
         request.setCerts( certs );
         return request;
     }

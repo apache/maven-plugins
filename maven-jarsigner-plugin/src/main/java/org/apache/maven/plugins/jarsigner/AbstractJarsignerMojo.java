@@ -36,6 +36,8 @@ import org.apache.maven.shared.utils.cli.javatool.JavaToolResult;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +69,24 @@ public abstract class AbstractJarsignerMojo
      */
     @Parameter( property = "jarsigner.keystore" )
     private String keystore;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.storetype" )
+    private String storetype;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.storepass" )
+    private String storepass;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.alias" )
+    private String alias;
 
     /**
      * The maximum memory available to the JAR signer, e.g. <code>256M</code>. See <a
@@ -208,6 +228,12 @@ public abstract class AbstractJarsignerMojo
     @Component
     private ToolchainManager toolchainManager;
 
+    /**
+     * @since 1.3.2
+     */
+    @Component( hint = "mng-4384" )
+    private SecDispatcher securityDispatcher;
+
     public final void execute()
         throws MojoExecutionException
     {
@@ -334,7 +360,19 @@ public abstract class AbstractJarsignerMojo
             throw new NullPointerException( "commandLine" );
         }
 
-        return commandLine.toString();
+        String commandLineInfo = commandLine.toString();
+        commandLineInfo = StringUtils.replace( commandLineInfo, this.storepass, "'*****'" );
+        return commandLineInfo;
+    }
+
+    public String getStoretype()
+    {
+        return storetype;
+    }
+
+    public String getStorepass()
+    {
+        return storepass;
     }
 
     /**
@@ -427,12 +465,17 @@ public abstract class AbstractJarsignerMojo
 
         JarSignerRequest request = createRequest( archive );
         request.setVerbose( verbose );
+        request.setAlias( alias );
         request.setArchive( archive );
         request.setKeystore( keystore );
+        request.setStoretype( storetype );
         request.setWorkingDirectory( workingDirectory );
         request.setMaxMemory( maxMemory );
         request.setArguments( arguments );
         request.setProtectedAuthenticationPath( protectedAuthenticationPath );
+
+        // Special handling for passwords through the Maven Security Dispatcher
+        request.setStorepass( decrypt( storepass ) );
 
         try
         {
@@ -452,6 +495,20 @@ public abstract class AbstractJarsignerMojo
         catch ( JavaToolException e )
         {
             throw new MojoExecutionException( getMessage( "commandLineException", e.getMessage() ), e );
+        }
+    }
+
+    protected String decrypt(String encoded)
+        throws MojoExecutionException
+    {
+        try
+        {
+            return securityDispatcher.decrypt( encoded );
+        }
+        catch ( SecDispatcherException e )
+        {
+            getLog().error( "error using security dispatcher: " + e.getMessage(), e );
+            throw new MojoExecutionException( "error using security dispatcher: " + e.getMessage(), e );
         }
     }
 
