@@ -77,6 +77,15 @@ under the License.
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-javadoc-plugin</artifactId>
               <version>2.7</version>
+              <configuration>
+                <tagletArtifacts>
+                  <tagletArtifact>
+                    <groupId>org.apache.maven.plugin-tools</groupId>
+                    <artifactId>maven-plugin-tools-javadoc</artifactId>
+                    <version>3.2</version>
+                  </tagletArtifact>
+                </tagletArtifacts>
+              </configuration>
             </plugin>
           </reportPlugins>
         </configuration>
