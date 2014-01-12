@@ -209,6 +209,8 @@ public abstract class AbstractScmPublishMojo
     @Parameter
     protected String[] extraNormalizeExtensions;
 
+    private Set<String> normalizeExtensions;
+
     protected ScmProvider scmProvider;
 
     protected ScmRepository scmRepository;
@@ -236,13 +238,16 @@ public abstract class AbstractScmPublishMojo
     protected boolean requireNormalizeNewlines( File f )
         throws IOException
     {
-        List<String> extensions = Arrays.asList( NORMALIZE_EXTENSIONS );
-        if ( extraNormalizeExtensions != null )
+        if ( normalizeExtensions == null )
         {
-            extensions.addAll( Arrays.asList( extraNormalizeExtensions ) );
+            normalizeExtensions = new HashSet<String>( Arrays.asList( NORMALIZE_EXTENSIONS ) );
+            if ( extraNormalizeExtensions != null )
+            {
+                normalizeExtensions.addAll( Arrays.asList( extraNormalizeExtensions ) );
+            }
         }
 
-        return FilenameUtils.isExtension( f.getName(), extensions );
+        return FilenameUtils.isExtension( f.getName(), normalizeExtensions );
     }
 
     private ReleaseDescriptor setupScm()
