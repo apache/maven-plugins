@@ -29,18 +29,18 @@
 
 Maven Multi Module Configuration
 
-  With a multi modules build you can not use: mvn site-deploy. You must stage your site first.
+  With a multi modules build, you cannot use: <<<mvn site-deploy>>>. You must stage your site first.
 
-  Cli command to use: <<mvn site site:stage scm-publish:publish-scm>>
+  Cli command to use: <<<mvn -Preporting site site:stage>>> then <<<mvn scm-publish:publish-scm>>>
 
 +-----------------------
 
   <properties>
     <!-- override the property in your settings -->
     <site.mainDirectory>${user.home}</site.mainDirectory>
-    // it's a default location for performance reason (not checkout the content all the time)
+    // it's a default location for performance reason (avoid checkout the content on every build)
     // you can override this value in your settings.
-    <scmCheckout.path>${site.mainDirectory}</scmCheckout.path>
+    <scmCheckout.path>${site.mainDirectory}/$\{project.artifactId}</scmCheckout.path>
   </properties>
 
   <plugin>
