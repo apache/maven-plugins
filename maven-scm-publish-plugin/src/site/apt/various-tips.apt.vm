@@ -53,7 +53,7 @@ Various tips for using this plugin
 
 * Git branch
 
-  To use git branch (by example: github gh-pages)
+  To use git branch (for example: github gh-pages)
 
 +----------------
   <distributionManagement>
@@ -74,7 +74,7 @@ Various tips for using this plugin
 +----------------
 
 
-* Some Tips to improve performance
+* Improving SCM Checkout Performance
 
   By default, a complete checkout is done. You can configure the plugin to try update rather than a full checkout/clone
 
