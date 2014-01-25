@@ -38,17 +38,16 @@ Importing maven.apache.org Content to Svn
 
 +--------
 # configuration
+ORIG_PATH=/www/maven.apache.org
+DEST_SVN_BASE=https://svn.apache.org/repos/infra/websites/production/maventest/content
+
 ARTIFACT=maven-clean-plugin
 DIR=plugins/${ARTIFACT}
 VERSIONS="2.3 2.4 2.4.1 2.5"
 
 
-# documentation import procedure
-
-MVNTEST_CONTENT=https://svn.apache.org/repos/infra/websites/production/maventest/content
-
-# initialize ${DIR}-latest entry in svn
-svn -m "prepare ${ARTIFACT} documentation publication" mkdir ${MVNTEST_CONTENT}/${DIR}-latest
+# initialize ${DIR}-LATEST entry in svn
+svn -m "prepare ${ARTIFACT} documentation publication" mkdir ${DEST_SVN_BASE}/${DIR}-LATEST
 
 # publish existing content for each version in ${VERSIONS}
 for VERSION in ${VERSIONS}
@@ -56,11 +55,11 @@ do
 
   echo "  ========== ${ARTIFACT} ${VERSION} =========="
   mvn -e scm-publish:publish-scm \
-    -Dscmpublish.pubScmUrl=scm:svn:${MVNTEST_CONTENT}/${DIR}-latest \
-    -Dscmpublish.content=/www/maven.apache.org/${DIR}-${VERSION} \
+    -Dscmpublish.content=${ORIG_PATH}/${DIR}-${VERSION} \
+    -Dscmpublish.pubScmUrl=scm:svn:${DEST_SVN_BASE}/${DIR}-LATEST \
     -Dscmpublish.checkinComment="published documentation for ${ARTIFACT} version ${VERSION}" \
   && \
-  svn cp ${MVNTEST_CONTENT}/${DIR}-latest ${MVNTEST_CONTENT}/${DIR}-${VERSION} -m "releasing ${ARTIFACT} ${VERSION} documentation"
+  svn cp ${DEST_SVN_BASE}/${DIR}-LATEST ${DEST_SVN_BASE}/${DIR}-${VERSION} -m "releasing ${ARTIFACT} ${VERSION} documentation"
 
 done
 +--------
