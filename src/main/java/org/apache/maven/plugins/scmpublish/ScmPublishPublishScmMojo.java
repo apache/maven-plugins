@@ -42,6 +42,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -275,7 +276,7 @@ public class ScmPublishPublishScmMojo
             deleteFiles( deleted );
         }
 
-        logInfo( "Checking in SCM..." );
+        logInfo( "Checking in SCM, starting at " + new Date() + "..." );
         checkinFiles();
     }
 }
