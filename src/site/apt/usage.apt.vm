@@ -44,24 +44,24 @@ mvn scm-publish:publish-scm
 
  There are two ways you can set this up for site in your POM.
 
-  * Use the Custom Lifecycle
+** Use the Custom Lifecycle
 
   Unfortunately, a Maven plugin can't define a top-level lifecycle
   like 'site'. However, it can come close. The plugin includes the 
   <scmpublish> goal. This goal does nothing except fork a custom
   <scmpublish> lifecycle, consisting of the following phases:
 
-    ** <<<scmpublish-prepare>>>
+  * <<<scmpublish-prepare>>>
 
-    ** <<<scmpublish-pre-site>>>
+  * <<<scmpublish-pre-site>>>
 
-    ** <<<scmpublish-site>>>
+  * <<<scmpublish-site>>>
 
-    ** <<<scmpublish-post-site>>>
+  * <<<scmpublish-post-site>>>
 
-    ** <<<scmpublish-publish>>>
+  * <<<scmpublish-publish>>>
 
-    []
+  []
 
   (Again unfortunately, Maven does not allow a custom lifecycle to share
   phases with some other lifecycle.)
@@ -96,7 +96,7 @@ mvn scm-publish:publish-scm
   <Notice>: this is actually not working, the 003-lifecycle IT has been disabled.
 
 
-  * Using the Site Lifecycle
+** Using the Site Lifecycle
 
    The alternative is to attach the necessary activities to the site lifecycle and deactivate
    maven-site-plugin's site deploy goal. This requires more XML in the POM, but it may be easier

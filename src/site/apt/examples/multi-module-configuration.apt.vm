@@ -29,33 +29,14 @@
 
 Maven Multi Module Configuration
 
-  With a multi modules build, you cannot use: <<<mvn site-deploy>>>. You must stage your site first.
+  With a multi modules build, you cannot simply use <<<mvn site-deploy>>>: you must stage your site first.
 
-  Cli command to use: <<<mvn -Preporting site site:stage>>> then <<<mvn scm-publish:publish-scm>>>
+  Cli commands to use:
 
-+-----------------------
++------------+
+mvn -Preporting site site:stage
+mvn scm-publish:publish-scm
++------------+
 
-  <properties>
-    <!-- override the property in your settings -->
-    <site.mainDirectory>${user.home}</site.mainDirectory>
-    // it's a default location for performance reason (avoid checkout the content on every build)
-    // you can override this value in your settings.
-    <scmCheckout.path>${site.mainDirectory}/$\{project.artifactId}</scmCheckout.path>
-  </properties>
-
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-scm-publish-plugin</artifactId>
-    <version>${project.version}</version>
-    <configuration>
-      <checkoutDirectory>${scmCheckout.path}</checkoutDirectory>
-    </configuration>
-  </plugin>
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-site-plugin</artifactId>
-  </plugin>
-
-+-----------------------
-
-
+  These commands work well with mono-module too, even if mono-module could permit some optimizations (everything can be run
+  in only one Maven invocation).
