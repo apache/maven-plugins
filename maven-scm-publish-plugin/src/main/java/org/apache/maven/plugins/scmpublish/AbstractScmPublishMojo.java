@@ -349,21 +349,50 @@ public abstract class AbstractScmPublishMojo
         {
             ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
 
-            ScmResult scmResult;
+            ScmResult scmResult = null;
             if ( tryUpdate && !forceCheckout )
             {
                 scmResult = scmProvider.update( scmRepository, fileSet );
             }
-            else if ( scmBranch == null )
-            {
-                scmResult = scmProvider.checkOut( scmRepository, fileSet );
-            }
             else
             {
-                ScmBranch scmBranch = new ScmBranch( this.scmBranch );
-                scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
+                int attempt = 0;
+                while ( scmResult == null )
+                {
+                    try
+                    {
+                        if ( scmBranch == null )
+                        {
+                            scmResult = scmProvider.checkOut( scmRepository, fileSet );
+                        }
+                        else
+                        {
+                            ScmBranch scmBranch = new ScmBranch( this.scmBranch );
+                            scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
+                        }
+                    }
+                    catch ( ScmException e )
+                    {
+                        // give it max 2 times to retry
+                        if ( attempt++ < 2 )
+                        {
+                            try
+                            {
+                                // wait 3 seconds
+                                Thread.sleep( 3 * 1000 );
+                            }
+                            catch ( InterruptedException ie )
+                            {
+                                // noop
+                            }
+                        }
+                        else
+                        {
+                            throw e;
+                        }
+                    }
+                }
             }
-
             checkScmResult( scmResult, "check out from SCM" );
         }
         catch ( ScmException e )
