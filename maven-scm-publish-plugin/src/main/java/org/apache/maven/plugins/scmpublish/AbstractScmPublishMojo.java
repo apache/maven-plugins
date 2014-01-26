@@ -64,15 +64,17 @@ public abstract class AbstractScmPublishMojo
     extends AbstractMojo
 {
     /**
-     * Location of the scm publication tree.
+     * Location of the scm publication tree:
+     * <code>scm:&lt;scm_provider&gt;&lt;delimiter&gt;&lt;provider_specific_part&gt;</code>.
+     * Example: <<<scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin-LATEST/>>>
      */
     @Parameter ( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}",
                  required = true )
     protected String pubScmUrl;
 
     /**
-     * If the checkout directory exists and this flag is activated, the plugin will try an SCM-update rather
-     * than delete then checkout.
+     * If the checkout directory exists and this flag is activated, the plugin will try an SCM-update instead
+     * of delete then checkout.
      */
     @Parameter ( property = "scmpublish.tryUpdate", defaultValue = "false" )
     protected boolean tryUpdate;
