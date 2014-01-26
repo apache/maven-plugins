@@ -66,7 +66,8 @@ public abstract class AbstractScmPublishMojo
     /**
      * Location of the scm publication tree:
      * <code>scm:&lt;scm_provider&gt;&lt;delimiter&gt;&lt;provider_specific_part&gt;</code>.
-     * Example: <<<scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin-LATEST/>>>
+     * Example:
+     * <code>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin-LATEST/</code>
      */
     @Parameter ( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}",
                  required = true )
