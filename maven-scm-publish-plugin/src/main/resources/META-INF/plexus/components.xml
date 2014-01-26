@@ -30,10 +30,10 @@
           <scmpublish-prepare>
           </scmpublish-prepare>
           <scmpublish-site>
-            org.apache.maven.plugins:maven-site-plugin:3.1:site
+            org.apache.maven.plugins:maven-site-plugin:3.3:site
           </scmpublish-site>
           <scmpublish-post-site>
-            org.apache.maven.plugins:maven-site-plugin:3.1:stage
+            org.apache.maven.plugins:maven-site-plugin:3.3:stage
           </scmpublish-post-site>
           <scmpublish-publish>
             org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish-scm
@@ -57,10 +57,10 @@
           <scmpublish-prepare>
           </scmpublish-prepare>
           <scmpublish-site>
-            org.apache.maven.plugins:maven-site-plugin:3.1:site
+            org.apache.maven.plugins:maven-site-plugin:3.3:site
           </scmpublish-site>
           <scmpublish-post-site>
-            org.apache.maven.plugins:maven-site-plugin:3.1:stage
+            org.apache.maven.plugins:maven-site-plugin:3.3:stage
           </scmpublish-post-site>
           <scmpublish-publish>
             org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish-scm
