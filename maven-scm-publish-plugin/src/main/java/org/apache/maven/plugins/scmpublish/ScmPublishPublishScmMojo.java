@@ -73,6 +73,10 @@ public class ScmPublishPublishScmMojo
 
     private List<File> updated = new ArrayList<File>();
 
+    private int directories = 0;
+    private int files = 0;
+    private long size = 0;
+
     /**
      * Update scm checkout directory with content.
      *
@@ -133,6 +137,7 @@ public class ScmPublishPublishScmMojo
 
             if ( source.isDirectory() )
             {
+                directories++;
                 if ( !checkoutContent.contains( name ) )
                 {
                     this.added.add( file );
@@ -176,6 +181,8 @@ public class ScmPublishPublishScmMojo
         {
             FileUtils.copyFile( srcFile, destFile );
         }
+        files++;
+        size += destFile.length();
     }
 
     /**
@@ -239,6 +246,8 @@ public class ScmPublishPublishScmMojo
         {
             logInfo( "Updating checkout directory with actual content: %s", content );
             update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
+            String displaySize = org.apache.commons.io.FileUtils.byteCountToDisplaySize( size );
+            logInfo( "Content has %d directories, %d files and takes %s", directories, files, displaySize );
         }
         catch ( IOException ioe )
         {
