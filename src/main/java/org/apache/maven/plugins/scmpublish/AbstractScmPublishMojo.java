@@ -71,7 +71,18 @@ public abstract class AbstractScmPublishMojo
     protected String pubScmUrl;
 
     /**
-     * Location where the scm check-out is done.
+     * If the checkout directory exists and this flag is activated, the plugin will try an SCM-update rather
+     * than delete then checkout.
+     */
+    @Parameter ( property = "scmpublish.tryUpdate", defaultValue = "false" )
+    protected boolean tryUpdate;
+
+   /**
+     * Location where the scm check-out is done. By default, scm checkout is done in build (target) directory,
+     * which is deleted on every <code>mvn clean</code>. To avoid this and get better performance, configure
+     * this location outside build structure and set <code>tryUpdate</code> to <code>true</code>.
+     * See <a href="http://maven.apache.org/plugins/maven-scm-publish-plugin/various-tips.html#Improving_SCM_Checkout_Performance">
+     * Improving SCM Checkout Performance</a> for more information.
      */
     @Parameter ( property = "scmpublish.checkoutDirectory",
                  defaultValue = "${project.build.directory}/scmpublish-checkout" )
@@ -154,13 +165,6 @@ public abstract class AbstractScmPublishMojo
      */
     @Parameter ( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     protected String siteOutputEncoding;
-
-    /**
-     * If the checkout directory exists and this flag is activated, the plugin will try an SCM-update rather
-     * than delete then checkout.
-     */
-    @Parameter ( property = "scmpublish.tryUpdate", defaultValue = "false" )
-    protected boolean tryUpdate;
 
     /**
      * Do not delete files to the scm
