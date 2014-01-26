@@ -53,7 +53,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <scmVersion>1.8.1</scmVersion>
+    <scmVersion>1.9</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <pluginTools>3.2</pluginTools>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
