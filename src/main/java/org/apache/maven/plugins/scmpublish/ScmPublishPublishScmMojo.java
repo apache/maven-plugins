@@ -244,10 +244,10 @@ public class ScmPublishPublishScmMojo
 
         try
         {
-            logInfo( "Updating checkout directory with actual content: %s", content );
+            logInfo( "Updating checkout directory with actual content in %s", content );
             update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
             String displaySize = org.apache.commons.io.FileUtils.byteCountToDisplaySize( size );
-            logInfo( "Content has %d directories, %d files and takes %s", directories, files, displaySize );
+            logInfo( "Content consists in %d directories and %d files = %s", directories, files, displaySize );
         }
         catch ( IOException ioe )
         {
