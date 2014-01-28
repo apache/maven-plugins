@@ -19,6 +19,17 @@ package org.apache.maven.plugins.scmpublish;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -38,24 +49,19 @@ import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.provider.ScmUrlUtils;
 import org.apache.maven.scm.provider.svn.AbstractSvnScmProvider;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Base class for the scm-publish mojos.
@@ -141,6 +147,12 @@ public abstract class AbstractScmPublishMojo
      */
     @Component
     protected ScmRepositoryConfigurator scmRepositoryConfigurator;
+    
+    /**
+     * The serverId specified in the settings.xml, which should be used for the authentication.
+     */
+    @Parameter
+    private String serverId;
 
     /**
      * The SCM username to use.
@@ -184,6 +196,10 @@ public abstract class AbstractScmPublishMojo
      */
     @Component
     protected Settings settings;
+    
+    @Component
+    private SettingsDecrypter settingsDecrypter;
+ 
 
     /**
      * Collections of paths not to delete when checking content to delete.
@@ -266,21 +282,50 @@ public abstract class AbstractScmPublishMojo
             // in the release phase we have to change the checkout URL
             // to do a local checkout instead of going over the network.
 
-            // the first step is a bit tricky, we need to know which provider! like e.g. "scm:jgit:http://"
-            // the offset of 4 is because 'scm:' has 4 characters...
-            String providerPart = pubScmUrl.substring( 0, pubScmUrl.indexOf( ':', 4 ) );
+            String provider = ScmUrlUtils.getProvider( pubScmUrl );
+            String delimiter = ScmUrlUtils.getDelimiter( pubScmUrl );
+            
+            String providerPart = "scm:" + provider + delimiter;
 
             // X TODO: also check the information from releaseDescriptor.getScmRelativePathProjectDirectory()
             // X TODO: in case our toplevel git directory has no pom.
             // X TODO: fix pathname once I understand this.
-            scmUrl = providerPart + ":file://" + "target/localCheckout";
+            scmUrl = providerPart + "file://" + "target/localCheckout";
             logInfo( "Performing a LOCAL checkout from " + scmUrl );
         }
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( settings.isInteractiveMode() );
 
-        //TODO use from settings with decrypt stuff
+        if ( username == null || password == null )
+        {
+            for ( Server server : settings.getServers() )
+            {
+                if ( server.getId().equals( serverId ) )
+                {
+                    SettingsDecryptionRequest decryptionRequest = new DefaultSettingsDecryptionRequest( server );
+
+                    SettingsDecryptionResult decryptionResult = settingsDecrypter.decrypt( decryptionRequest );
+
+                    if ( !decryptionResult.getProblems().isEmpty() )
+                    {
+                        // todo throw exception?
+                    }
+
+                    if ( username == null )
+                    {
+                        username = decryptionResult.getServer().getUsername();
+                    }
+
+                    if ( password == null )
+                    {
+                        password = decryptionResult.getServer().getPassword();
+                    }
+
+                    break;
+                }
+            }
+        }
 
         releaseDescriptor.setScmPassword( password );
         releaseDescriptor.setScmUsername( username );
