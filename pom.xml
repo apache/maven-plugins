@@ -89,7 +89,6 @@ under the License.
     <module>maven-toolchains-plugin</module>
     <module>maven-verifier-plugin</module>
     <module>maven-war-plugin</module>
-    <module>maven-scm-publish-plugin</module>
   </modules>
 
   <profiles>
@@ -106,6 +105,7 @@ under the License.
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
         <module>maven-shade-plugin</module>
+        <module>maven-scm-publish-plugin</module>
       </modules>
     </profile>
     
