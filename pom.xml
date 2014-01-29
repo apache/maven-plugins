@@ -101,9 +101,11 @@ under the License.
         </file>
       </activation>
       <modules>
+        <!--Moved to maven-3 profile as a workaround for MNG-3814 -->
         <module>maven-invoker-plugin</module>
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
+        <!--Moved to maven-3 profile as they require Maven 3.0 -->
         <module>maven-shade-plugin</module>
         <module>maven-scm-publish-plugin</module>
       </modules>
