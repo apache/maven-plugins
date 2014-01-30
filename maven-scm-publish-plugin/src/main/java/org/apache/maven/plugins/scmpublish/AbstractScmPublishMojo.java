@@ -738,6 +738,10 @@ public abstract class AbstractScmPublishMojo
         {
             this.pubScmUrl = pubScmUrl.replaceFirst( "file:/[/]*", "file:///" );
         }
+        else
+        {
+            this.pubScmUrl = pubScmUrl;
+        }
     }
 
 }
