@@ -603,7 +603,7 @@ public abstract class AbstractScmPublishMojo
 
             logInfo( "Checked in %d file(s) to revision %s in %s", checkinResult.getCheckedInFiles().size(),
                      checkinResult.getScmRevision(),
-                     DurationFormatUtils.formatPeriod( start, System.currentTimeMillis(), "H'h'm'm's's'" ) );
+                     DurationFormatUtils.formatPeriod( start, System.currentTimeMillis(), "H' h 'm' m 's' s'" ) );
         }
         catch ( ScmException e )
         {
@@ -736,12 +736,10 @@ public abstract class AbstractScmPublishMojo
         // Fix required for Windows, which fit other OS as well
         if ( pubScmUrl.startsWith( "scm:svn:" ) )
         {
-            this.pubScmUrl = pubScmUrl.replaceFirst( "file:/[/]*", "file:///" );
+            pubScmUrl = pubScmUrl.replaceFirst( "file:/[/]*", "file:///" );
         }
-        else
-        {
-            this.pubScmUrl = pubScmUrl;
-        }
+
+        this.pubScmUrl = pubScmUrl;
     }
 
 }
