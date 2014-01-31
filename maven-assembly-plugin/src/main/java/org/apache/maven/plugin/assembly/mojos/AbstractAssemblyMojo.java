@@ -269,6 +269,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
      * specify a Manifest file for the jar, in addition to other options.
+     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
      */
     @Parameter
     private MavenArchiveConfiguration archive;
