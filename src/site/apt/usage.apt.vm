@@ -30,9 +30,21 @@
 Usage
 
  The maven-scm-publish-plugin submits modified content to SCM, sites being the most classical case.
+
+ The standard use for sites is:
+
++-----------+
+mvn -Preporting site site:stage
+mvn scm-publish:publish-scm
++-----------+
+
+ which will work both for multi-and mono-modules sites.
+
+* Usage With Lifecycle (beta)
+
  There are two ways you can set this up for site in your POM.
 
-* Use the Custom Lifecycle
+** Use the Custom Lifecycle
 
   Unfortunately, a Maven plugin can't define a top-level lifecycle
   like 'site'. However, it can come close. The plugin includes the 
@@ -83,7 +95,8 @@ Usage
 
   <Notice>: this is actually not working, the 003-lifecycle IT has been disabled.
 
-* Using the Site Lifecycle
+
+** Using the Site Lifecycle
 
    The alternative is to attach the necessary activities to the site lifecycle and deactivate
    maven-site-plugin's site deploy goal. This requires more XML in the POM, but it may be easier

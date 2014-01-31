@@ -30,7 +30,7 @@
   <distributionManagement>
     <site>
       <id>site-lifecycle</id>
-      <url>scm:svn:file://${basedir}/target/svn-root</url>
+      <url>scm:svn:${project.baseUri}/target/svn-root</url>
     </site>
   </distributionManagement>
 
@@ -40,7 +40,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.0</version>
+          <version>3.3</version>
           <configuration>
             <skipDeploy>true</skipDeploy>
           </configuration>
@@ -48,7 +48,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>@project.version@</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -72,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>@project.version@</version>
         <executions>
           <execution>
             <id>scm-publish</id>

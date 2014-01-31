@@ -1,6 +1,0 @@
-import java.io.*;
-import org.apache.maven.scm.provider.svn.SvnScmTestUtils;
-
-SvnScmTestUtils.initializeRepository( new File( basedir, "target/svn-root" ) );
-
-return true;

@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>23</version>
+    <version>24</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -33,7 +33,7 @@ under the License.
   <version>1.0</version>
   <packaging>maven-plugin</packaging>
 
-  <name>SCM Publish Maven Plugin</name>
+  <name>Apache Maven SCM Publish Plugin</name>
   <url>http://maven.apache.org/plugins/maven-scm-publish-plugin</url>
 
   <scm>
@@ -41,23 +41,31 @@ under the License.
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-scm-publish-plugin-1.0</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-scm-publish-plugin-1.0</url>
   </scm>
-
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MSCMPUB</url>
+  </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-scm-publish-plugin</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
   <properties>
-    <scmVersion>1.8</scmVersion>
-    <mavenVersion>2.2.1</mavenVersion>
-    <pluginTools>3.1</pluginTools>
+    <scmVersion>1.9</scmVersion>
+    <mavenVersion>3.0</mavenVersion>
+    <pluginTools>3.2</pluginTools>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
 
     <!-- for documentation purpose -->
-    <maven-scm-provider-svnjava-version>2.0.5</maven-scm-provider-svnjava-version>
-    <svnkit-version>1.7.5-v1</svnkit-version>
+    <maven-scm-provider-svnjava-version>2.0.6</maven-scm-provider-svnjava-version>
+    <svnkit-version>1.7.11</svnkit-version>
   </properties>
+  
+  <prerequisites>
+    <maven>${mavenVersion}</maven>
+  </prerequisites>
 
   <dependencies>
     <dependency>
@@ -73,11 +81,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
@@ -131,10 +134,15 @@ under the License.
       <artifactId>commons-io</artifactId>
       <version>2.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.1</version>
+    </dependency>
     <dependency><!-- necessary for Maven 2 compatibility -->
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.5</version>
+      <version>3.0.15</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -156,6 +164,10 @@ under the License.
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
           <version>${pluginTools}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.3</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -195,6 +207,18 @@ under the License.
             <configuration>
               <addTestClassPath>true</addTestClassPath>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>reporting</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-publish-plugin</artifactId>
+            <version>${project.version}</version>
           </plugin>
         </plugins>
       </build>

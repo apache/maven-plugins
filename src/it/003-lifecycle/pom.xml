@@ -41,15 +41,15 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.0</version>
+          <version>3.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>@project.version@</version>
           <extensions>true</extensions>
           <configuration>
-            <pubScmUrl>scm:svn:file://${basedir}/target/svn-root</pubScmUrl>
+            <pubScmUrl>scm:svn:${project.baseUri}/target/svn-root</pubScmUrl>
             <providerImplementations>
               <svn>javasvn</svn>
             </providerImplementations>

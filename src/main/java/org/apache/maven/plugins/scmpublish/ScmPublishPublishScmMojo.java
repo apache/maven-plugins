@@ -42,23 +42,24 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Publish a content to scm in one step. By default, content is taken from default site staging directory
+ * Publish a content to scm. By default, content is taken from default site staging directory
  * <code>${project.build.directory}/staging</code>.
  * Can be used without project, so usable to update any SCM with any content.
  */
-@Mojo( name = "publish-scm", aggregator = true, requiresProject = false )
+@Mojo ( name = "publish-scm", aggregator = true, requiresProject = false )
 public class ScmPublishPublishScmMojo
-    extends ScmPublishPublishMojo
+    extends AbstractScmPublishMojo
 {
     /**
      * The content to be published.
      */
-    @Parameter( property = "scmpublish.content", defaultValue = "${project.build.directory}/staging" )
+    @Parameter ( property = "scmpublish.content", defaultValue = "${project.build.directory}/staging" )
     private File content;
 
     /**
@@ -71,6 +72,10 @@ public class ScmPublishPublishScmMojo
     private List<File> added = new ArrayList<File>();
 
     private List<File> updated = new ArrayList<File>();
+
+    private int directories = 0;
+    private int files = 0;
+    private long size = 0;
 
     /**
      * Update scm checkout directory with content.
@@ -105,9 +110,11 @@ public class ScmPublishPublishScmMojo
         {
             if ( ignoreDeleteMatchPatterns != null && ignoreDeleteMatchPatterns.matches( name, true ) )
             {
-                getLog().debug( name + " match one of the patterns '" + pathsAsList + "': do not add to deleted files" );
+                getLog().debug(
+                    name + " match one of the patterns '" + pathsAsList + "': do not add to deleted files" );
                 continue;
             }
+            getLog().debug( "file marked for deletion: " + name );
             File file = new File( checkout, name );
 
             if ( ( doNotDeleteDirs != null ) && file.isDirectory() && ( doNotDeleteDirs.contains( name ) ) )
@@ -130,6 +137,7 @@ public class ScmPublishPublishScmMojo
 
             if ( source.isDirectory() )
             {
+                directories++;
                 if ( !checkoutContent.contains( name ) )
                 {
                     this.added.add( file );
@@ -173,6 +181,8 @@ public class ScmPublishPublishScmMojo
         {
             FileUtils.copyFile( srcFile, destFile );
         }
+        files++;
+        size += destFile.length();
     }
 
     /**
@@ -234,30 +244,33 @@ public class ScmPublishPublishScmMojo
 
         try
         {
-            logInfo( "Updating content..." );
+            logInfo( "Updating checkout directory with actual content in %s", content );
             update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
+            String displaySize = org.apache.commons.io.FileUtils.byteCountToDisplaySize( size );
+            logInfo( "Content consists in %d directories and %d files = %s", directories, files, displaySize );
         }
         catch ( IOException ioe )
         {
-            throw new MojoExecutionException( "Could not copy content to scm checkout", ioe );
+            throw new MojoExecutionException( "Could not copy content to SCM checkout", ioe );
         }
 
-        logInfo( "Publish files: %d addition(s), %d update(s), %d delete(s)", added.size(), updated.size(),
-                 deleted.size() );
+        logInfo( "Publishing content into SCM will result in %d addition(s), %d update(s), %d delete(s)", added.size(),
+                 updated.size(), deleted.size() );
 
         if ( isDryRun() )
         {
+            int pos = checkoutDirectory.getAbsolutePath().length() + 1;
             for ( File addedFile : added )
             {
-                logInfo( "Added %s", addedFile.getAbsolutePath() );
-            }
-            for ( File deletedFile : deleted )
-            {
-                logInfo( "Deleted %s", deletedFile.getAbsolutePath() );
+                logInfo( "- addition %s", addedFile.getAbsolutePath().substring( pos ) );
             }
             for ( File updatedFile : updated )
             {
-                logInfo( "Updated %s", updatedFile.getAbsolutePath() );
+                logInfo( "- update   %s", updatedFile.getAbsolutePath().substring( pos ) );
+            }
+            for ( File deletedFile : deleted )
+            {
+                logInfo( "- delete   %s", deletedFile.getAbsolutePath().substring( pos ) );
             }
             return;
         }
@@ -272,7 +285,7 @@ public class ScmPublishPublishScmMojo
             deleteFiles( deleted );
         }
 
-        logInfo( "Checking in SCM..." );
+        logInfo( "Checking in SCM, starting at " + new Date() + "..." );
         checkinFiles();
     }
 }
