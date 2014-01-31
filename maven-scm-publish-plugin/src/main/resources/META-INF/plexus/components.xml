@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<component-set>
+  <components>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>scmpublish</role-hint>
+      <implementation>
+        org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+      </implementation>
+      <configuration>
+        <phases>
+          <scmpublish-prepare>
+          </scmpublish-prepare>
+          <scmpublish-site>
+            org.apache.maven.plugins:maven-site-plugin:3.3:site
+          </scmpublish-site>
+          <scmpublish-post-site>
+            org.apache.maven.plugins:maven-site-plugin:3.3:stage
+          </scmpublish-post-site>
+          <scmpublish-publish>
+            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish-scm
+          </scmpublish-publish>
+        </phases>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.Lifecycle</role>
+      <implementation>org.apache.maven.lifecycle.Lifecycle</implementation>
+      <role-hint>scmpublish</role-hint>
+      <configuration>
+        <id>scmpublish</id>
+        <phases>
+          <phase>scmpublish-prepare</phase>
+          <phase>scmpublish-site</phase>
+          <phase>scmpublish-post-site</phase>
+          <phase>scmpublish-publish</phase>
+        </phases>
+        <default-phases>
+          <scmpublish-prepare>
+          </scmpublish-prepare>
+          <scmpublish-site>
+            org.apache.maven.plugins:maven-site-plugin:3.3:site
+          </scmpublish-site>
+          <scmpublish-post-site>
+            org.apache.maven.plugins:maven-site-plugin:3.3:stage
+          </scmpublish-post-site>
+          <scmpublish-publish>
+            org.apache.maven.plugins:maven-site-scm-publish-plugin:${project.version}:publish-scm
+          </scmpublish-publish>
+        </default-phases>
+      </configuration>
+    </component>
+  </components>
+</component-set>
