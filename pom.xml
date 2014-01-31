@@ -171,6 +171,7 @@ under the License.
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
+          <version>2.4.2</version>
           <configuration>
             <releaseProfiles>apache-release,rat,run-its</releaseProfiles><!-- TODO add to parent pom -->
           </configuration>
