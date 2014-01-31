@@ -30,16 +30,16 @@ under the License.
   </parent>
 
   <artifactId>maven-scm-publish-plugin</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven SCM Publish Plugin</name>
   <url>http://maven.apache.org/plugins/maven-scm-publish-plugin</url>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-scm-publish-plugin-1.0</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-scm-publish-plugin-1.0</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-scm-publish-plugin-1.0</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-scm-publish-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-scm-publish-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-scm-publish-plugin/</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
