@@ -169,6 +169,12 @@ under the License.
           <artifactId>maven-site-plugin</artifactId>
           <version>3.3</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <releaseProfiles>apache-release,rat,run-its</releaseProfiles><!-- TODO add to parent pom -->
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
