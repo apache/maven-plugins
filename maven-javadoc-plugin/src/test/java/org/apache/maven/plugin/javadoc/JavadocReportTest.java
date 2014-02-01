@@ -599,7 +599,17 @@ public class JavadocReportTest
         assertTrue( app.exists() );
         content = readFile( app );
         assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
-        assertFalse( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
+
+        float javadocVersion = (Float) getVariableValueFromObject( mojo, "fJavadocVersion" );
+        if( Float.compare( 1.8f, javadocVersion ) == 0 )
+        {
+            // https://bugs.openjdk.java.net/browse/JDK-8032205
+            assertTrue( "This bug appeared in JDK8 and was planned to be fixed in JDK9, see JDK-8032205", new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
+        }
+        else
+        {
+            assertFalse( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
+        }
 
         app2 = new File( apidocs, "resources/test2/App2.html" );
         assertTrue( app2.exists() );
