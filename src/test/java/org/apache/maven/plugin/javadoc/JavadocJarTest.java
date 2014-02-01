@@ -63,7 +63,21 @@ public class JavadocJarTest
         }
 
         assertTrue( set.contains( "stylesheet.css" ) );
-        assertTrue( set.contains( "resources/inherit.gif" ) || set.contains( "resources/background.gif" ) /* JDK7 */ );
+        float javadocVersion = (Float) getVariableValueFromObject( mojo, "fJavadocVersion" );
+        if ( Float.compare( javadocVersion, 1.7f ) < 0 )
+        {
+            assertTrue( set.contains( "resources/inherit.gif" ) );
+        }
+        else if ( Float.compare( javadocVersion, 1.8f ) < 0 )
+        {
+            assertTrue( set.contains( "resources/background.gif" ) /* JDK7 */);
+        }
+        else
+        {
+            // JDK8 has no resources anymore
+            assertFalse( set.contains( "resources" ) );
+        }
+
         assertTrue( set.contains( "javadocjar/def/package-use.html" ) );
         assertTrue( set.contains( "javadocjar/def/package-tree.html" ) );
         assertTrue( set.contains( "javadocjar/def/package-summary.html" ) );
