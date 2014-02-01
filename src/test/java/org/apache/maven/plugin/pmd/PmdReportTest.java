@@ -80,9 +80,9 @@ public class PmdReportTest
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-        assertTrue(str.contains("/xref/def/configuration/App.html#31"));
+        assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
 
-        assertTrue(str.contains("/xref/def/configuration/AppSample.html#45"));
+        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
     }
 
 
@@ -156,9 +156,9 @@ public class PmdReportTest
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-        assertTrue(str.contains("/xref/def/configuration/App.html#31"));
+        assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
 
-        assertTrue(str.contains("/xref/def/configuration/AppSample.html#45"));
+        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
     }
 
     /**
