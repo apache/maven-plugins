@@ -332,6 +332,11 @@ under the License.
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.4</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-plugin-plugin</artifactId>
             <configuration>
               <requirements>
@@ -361,5 +366,5 @@ under the License.
 
 
   </profiles>
-  
+
 </project>
