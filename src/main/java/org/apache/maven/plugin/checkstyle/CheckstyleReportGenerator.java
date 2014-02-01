@@ -69,7 +69,7 @@ public class CheckstyleReportGenerator
     private SiteTool siteTool;
 
     private String xrefLocation;
-    
+
     private List<String> treeWalkerNames = Collections.singletonList( "TreeWalker" );
 
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
@@ -780,7 +780,7 @@ public class CheckstyleReportGenerator
             {
                 sink
                     .link(
-                        getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#" + event.getLine() );
+                        getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#L" + event.getLine() );
             }
             sink.text( String.valueOf( event.getLine() ) );
             if ( getXrefLocation() != null )
@@ -862,13 +862,13 @@ public class CheckstyleReportGenerator
     {
         this.checkstyleConfig = config;
     }
-    
-    
+
+
     public void setTreeWalkerNames( List<String> treeWalkerNames )
     {
         this.treeWalkerNames = treeWalkerNames;
     }
-    
+
     public List<String> getTreeWalkerNames()
     {
         return treeWalkerNames;
