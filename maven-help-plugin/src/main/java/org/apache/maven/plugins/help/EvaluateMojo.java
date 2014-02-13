@@ -212,7 +212,7 @@ public class EvaluateMojo
         {
             while ( true )
             {
-                getLog().info( "Enter the Maven expression i.e. ${project.groupId} or 0 to exit?:" );
+                System.out.print( "Enter the Maven expression i.e. ${project.groupId} or 0 to exit?: " );
 
                 try
                 {
@@ -373,7 +373,7 @@ public class EvaluateMojo
 
         if ( obj != null && expr.equals( obj.toString() ) )
         {
-            getLog().warn( "The Maven expression was invalid. Please use a valid expression." );
+            System.out.println( "The Maven expression was invalid. Please use a valid expression." );
             return;
         }
 
@@ -465,7 +465,7 @@ public class EvaluateMojo
             response.append( toXML( expr, obj ) );
         }
 
-        getLog().info( "\n" + response.toString() );
+        System.out.println( response.toString() );
     }
 
     /**
