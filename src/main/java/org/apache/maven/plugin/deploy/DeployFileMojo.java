@@ -114,12 +114,16 @@ public class DeployFileMojo
 
     /**
      * The bundled API docs for the artifact.
+     * 
+     * @since 2.6
      */
     @Parameter( property = "javadoc" )
     private File javadoc;
 
     /**
      * The bundled sources for the artifact.
+     * 
+     * @since 2.6
      */
     @Parameter( property = "sources" )
     private File sources;
@@ -141,7 +145,7 @@ public class DeployFileMojo
      * URL where the artifact will be deployed. <br/>
      * ie ( file:///C:/m2-repo or scp://host.com/path/to/repo )
      */
-    @Parameter( property = "url" )
+    @Parameter( property = "url", required = true )
     private String url;
 
     /**
