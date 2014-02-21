@@ -57,7 +57,10 @@ public class CheckstyleResults
         else
         {
             violations = new LinkedList<AuditEvent>();
-            this.files.put( file, violations );
+            if ( file != null )
+            {
+                this.files.put( file, violations );
+            }
         }
 
         return violations;
@@ -65,7 +68,10 @@ public class CheckstyleResults
 
     public void setFileViolations( String file, List<AuditEvent> violations )
     {
-        this.files.put( file, violations );
+        if ( file != null )
+        {
+            this.files.put( file, violations );
+        }
     }
 
     public Map<String, List<AuditEvent>> getFiles()
