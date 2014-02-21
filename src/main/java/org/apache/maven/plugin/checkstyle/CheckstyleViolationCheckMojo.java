@@ -499,8 +499,9 @@ public class CheckstyleViolationCheckMojo
             {
                 if ( logViolationsToConsole )
                 {
-                    final String logMessage = file + '[' + xpp.getAttributeValue( "", "line" ) + ':'
-                        + xpp.getAttributeValue( "", "column" ) + "] " + xpp.getAttributeValue( "", "message" );
+                    final String column = xpp.getAttributeValue( "", "column" ) == null ? "n/a" : xpp.getAttributeValue( "", "column" );
+                    final String logMessage = file + '[' + xpp.getAttributeValue( "", "line" ) + ':' + column + "] "
+                        + xpp.getAttributeValue( "", "message" );
                     if ( "info".equals( xpp.getAttributeValue( "", "severity" ) ) )
                     {
                         getLog().info( logMessage );
