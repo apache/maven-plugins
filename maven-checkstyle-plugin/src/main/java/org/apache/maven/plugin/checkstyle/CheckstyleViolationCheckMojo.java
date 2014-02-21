@@ -285,7 +285,7 @@ public class CheckstyleViolationCheckMojo
     /**
      * Output errors to console.
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( property = "checkstyle.consoleOutput", defaultValue = "false" )
     private boolean consoleOutput;
 
     /**
