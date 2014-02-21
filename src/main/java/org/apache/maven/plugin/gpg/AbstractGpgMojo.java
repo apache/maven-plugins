@@ -21,6 +21,7 @@ package org.apache.maven.plugin.gpg;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -61,12 +62,12 @@ public abstract class AbstractGpgMojo
      * optional as the agent will provide it.
      * For gpg2, specify true as --no-use-agent was removed in gpg2 and doesn't ask for a passphrase anymore.
      */
-    @Parameter( property = "gpg.useagent", defaultValue = "false" )
+    @Parameter( property = "gpg.useagent", defaultValue = "false")
     private boolean useAgent;
 
     /**
      */
-    @Parameter( defaultValue = "${settings.interactiveMode}", readonly = true )
+    @Parameter( defaultValue = "${settings.interactiveMode}", readonly = true)
     private boolean interactive;
 
     /**
@@ -107,6 +108,31 @@ public abstract class AbstractGpgMojo
     @Parameter( property = "gpg.publicKeyring" )
     private String publicKeyring;
 
+    /**
+     * The lock mode to use when invoking gpg. By default no lock mode will be specified. Valid values are {@code once},
+     * {@code multiple} and {@code never}. The lock mode gets translated into the corresponding {@code --lock-___}
+     * command line argument. Improper usage of this option may lead to data and key corruption.
+     *
+     * @see <a href="http://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html">the --lock-*
+     * options</a>
+     * @since 1.5
+     */
+    @Parameter( property = "gpg.lockMode" )
+    private String lockMode;
+
+    /**
+     * Sets the arguments to be passed to gpg. Example:
+     * <pre>
+     * &lt;gpgArguments&gt;
+     *   &lt;arg&gt;--no-random-seed-file&lt;/arg&gt;
+     *   &lt;arg&gt;--no-permission-warning&lt;/arg&gt;
+     * &lt;/gpgArguments&gt;
+     * </pre>
+     * @since 1.5
+     */
+    @Parameter
+    private List<String> gpgArguments;
+
     AbstractGpgSigner newSigner( MavenProject project )
         throws MojoExecutionException, MojoFailureException
     {
@@ -120,6 +146,8 @@ public abstract class AbstractGpgMojo
         signer.setDefaultKeyring( defaultKeyring );
         signer.setSecretKeyring( secretKeyring );
         signer.setPublicKeyring( publicKeyring );
+        signer.setLockMode( lockMode );
+        signer.setArgs( gpgArguments );
 
         signer.setPassPhrase( passphrase );
         if ( null == passphrase && !useAgent )
