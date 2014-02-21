@@ -23,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -240,30 +242,76 @@ public abstract class AbstractGpgSigner
         }
         if ( pass == null )
         {
-            // TODO: with JDK 1.6, we could call System.console().readPassword("GPG Passphrase: ", null);
-
-            BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
-            while ( System.in.available() != 0 )
-            {
-                // there's some junk already on the input stream, consume it
-                // so we can get the real passphrase
-                System.in.read();
-            }
-
-            System.out.print( "GPG Passphrase:  " );
-            MaskingThread thread = new MaskingThread();
-            thread.start();
-
-            pass = in.readLine();
-
-            // stop masking
-            thread.stopMasking();
+            pass = readPassword( "GPG Passphrase: " );
         }
         if ( project != null )
         {
             findReactorProject( project ).getProperties().setProperty( "gpg.passphrase", pass );
         }
         return pass;
+    }
+
+    private String readPassword( String prompt )
+        throws IOException
+    {
+        try {
+            return readPasswordJava16( prompt );
+        } catch ( IOException e ) {
+            throw e;
+        }
+        catch ( NoSuchMethodException e )
+        {
+            return readPasswordJava15( prompt );
+        }
+        catch ( IllegalAccessException e )
+        {
+            return readPasswordJava15( prompt );
+        }
+        catch ( InvocationTargetException e )
+        {
+            return readPasswordJava15( prompt );
+        }
+    }
+
+    private String readPasswordJava16( String prompt )
+        throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
+    {
+        Method consoleMethod = System.class.getMethod( "console" );
+        Object console = consoleMethod.invoke( null );
+        if ( console == null )
+        {
+            throw new IllegalAccessException( "console was null" );
+        }
+        Method readPasswordMethod = console.getClass().getMethod( "readPassword", String.class, Object[].class );
+        return new String( (char[]) readPasswordMethod.invoke( console, prompt, null ) );
+    }
+
+    private String readPasswordJava15( String prompt )
+        throws IOException
+    {
+        BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
+        while ( System.in.available() != 0 )
+        {
+            // there's some junk already on the input stream, consume it
+            // so we can get the real passphrase
+            System.in.read();
+        }
+
+        System.out.print( prompt );
+        System.out.print( ' ' );
+        MaskingThread thread = new MaskingThread();
+        thread.start();
+        try
+        {
+
+            return in.readLine();
+        }
+        finally
+        {
+            // stop masking
+            thread.stopMasking();
+
+        }
     }
 
     // based on ideas from http://java.sun.com/developer/technicalArticles/Security/pwordmask/
