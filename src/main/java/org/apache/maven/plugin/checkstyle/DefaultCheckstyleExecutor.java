@@ -85,8 +85,11 @@ public class DefaultCheckstyleExecutor
         {
             getLogger().debug( "executeCheckstyle start headerLocation : " + request.getHeaderLocation() );
         }
+
         MavenProject project = request.getProject();
-        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+
+        configureResourceLocator(request);
+
         File[] files;
         try
         {
@@ -97,7 +100,8 @@ public class DefaultCheckstyleExecutor
             throw new CheckstyleExecutorException( "Error getting files to process", e );
         }
 
-        FilterSet filterSet = getSuppressions( request );
+        final String suppressionsFilePath = getSuppressionsFilePath( request );
+        FilterSet filterSet = getSuppressionsFilterSet( suppressionsFilePath );
 
         Checker checker = new Checker();
 
@@ -465,11 +469,11 @@ public class DefaultCheckstyleExecutor
         }
         if ( request.getSuppressionsFileExpression() != null )
         {
-            String suppresionFile = request.getSuppressionsLocation();
+            String suppressionsFilePath = getSuppressionsFilePath( request );
 
-            if ( suppresionFile != null )
+            if ( suppressionsFilePath != null )
             {
-                p.setProperty( request.getSuppressionsFileExpression(), suppresionFile );
+                p.setProperty( request.getSuppressionsFileExpression(), suppressionsFilePath );
             }
         }
 
@@ -590,30 +594,48 @@ public class DefaultCheckstyleExecutor
         }
     }
 
-    private FilterSet getSuppressions( CheckstyleExecutorRequest request )
+    private FilterSet getSuppressionsFilterSet( final String suppressionsFilePath )
         throws CheckstyleExecutorException
     {
+
+        if ( suppressionsFilePath == null )
+        {
+            return null;
+        }
+
         try
         {
-            File suppressionsFile = locator.resolveLocation( request.getSuppressionsLocation(),
-                                                             "checkstyle-suppressions.xml" );
-
-            if ( suppressionsFile == null )
-            {
-                return null;
-            }
-
-            return SuppressionsLoader.loadSuppressions( suppressionsFile.getAbsolutePath() );
+            return SuppressionsLoader.loadSuppressions( suppressionsFilePath );
         }
         catch ( CheckstyleException ce )
         {
-            throw new CheckstyleExecutorException( "failed to load suppressions location: "
-                + request.getSuppressionsLocation(), ce );
+            throw new CheckstyleExecutorException( "Failed to load suppressions file from: "
+                + suppressionsFilePath, ce );
         }
-        catch ( IOException e )
+    }
+
+    private String getSuppressionsFilePath( final CheckstyleExecutorRequest request ) throws CheckstyleExecutorException
+    {
+        final String suppressionsLocation = request.getSuppressionsLocation();
+        if (StringUtils.isEmpty( suppressionsLocation ) )
         {
-            throw new CheckstyleExecutorException( "Failed to process supressions location: "
-                + request.getSuppressionsLocation(), e );
+            return null;
+        }
+        
+        try
+        {
+            File suppressionsFile = locator.getResourceAsFile( suppressionsLocation, "checkstyle-suppressions.xml" );
+            return suppressionsFile == null ? null : suppressionsFile.getAbsolutePath();
+        }
+        catch ( ResourceNotFoundException e )
+        {
+            throw new CheckstyleExecutorException( "Unable to find suppressions file at location: "
+                + suppressionsLocation, e );
+        }
+        catch ( FileResourceCreationException e )
+        {
+            throw new CheckstyleExecutorException( "Unable to process suppressions file location: "
+                + suppressionsLocation, e );
         }
     }
 
@@ -627,18 +649,6 @@ public class DefaultCheckstyleExecutor
                 getLogger().debug( "request.getConfigLocation() " + request.getConfigLocation() );
             }
 
-            MavenProject parent = request.getProject();
-            while ( parent != null && parent.getFile() != null )
-            {
-                // MCHECKSTYLE-131 ( olamy ) I don't like this hack.
-                // (dkulp) Me either.   It really pollutes the location stuff
-                // by allowing searches of stuff outside the current module.
-                File dir = parent.getFile().getParentFile();
-                locator.addSearchPath( FileResourceLoader.ID, dir.getAbsolutePath() );
-                parent = parent.getParent();
-            }
-            locator.addSearchPath( "url", "" );
-
             File configFile = locator.getResourceAsFile( request.getConfigLocation(), "checkstyle-checker.xml" );
             if ( configFile == null )
             {
@@ -647,16 +657,42 @@ public class DefaultCheckstyleExecutor
             }
             return configFile.getAbsolutePath();
         }
-        catch ( org.codehaus.plexus.resource.loader.ResourceNotFoundException e )
+        catch ( ResourceNotFoundException e )
         {
-            throw new CheckstyleExecutorException( "Unable to find configuration file at location "
+            throw new CheckstyleExecutorException( "Unable to find configuration file at location: "
                 + request.getConfigLocation(), e );
         }
         catch ( FileResourceCreationException e )
         {
-            throw new CheckstyleExecutorException( "Unable to process configuration file location "
+            throw new CheckstyleExecutorException( "Unable to process configuration file at location: "
                 + request.getConfigLocation(), e );
         }
 
+    }
+
+    /**
+     * Configures search paths in the resource locator.
+     * This method should only be called once per execution.
+     *
+     * @param request executor request data.
+     */
+    private void configureResourceLocator( final CheckstyleExecutorRequest request )
+    {
+        final MavenProject project = request.getProject();
+        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+
+        // Recurse up the parent hierarchy and add project directories to the search roots
+        MavenProject parent = project;
+        while ( parent != null && parent.getFile() != null )
+        {
+            // MCHECKSTYLE-131 ( olamy ) I don't like this hack.
+            // (dkulp) Me either.   It really pollutes the location stuff
+            // by allowing searches of stuff outside the current module.
+            File dir = parent.getFile().getParentFile();
+            locator.addSearchPath( FileResourceLoader.ID, dir.getAbsolutePath() );
+            parent = parent.getParent();
+        }
+
+        locator.addSearchPath( "url", "" );
     }
 }
