@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -62,14 +63,28 @@ public abstract class AbstractGpgSigner
 
     protected String publicKeyring;
 
+    protected String lockMode;
+
+    protected List<String> args;
+
     public Log getLog()
     {
         return log;
     }
 
+    public void setArgs( List<String> args )
+    {
+        this.args = args;
+    }
+
     public void setInteractive( boolean b )
     {
         isInteractive = b;
+    }
+
+    public void setLockMode( String lockMode )
+    {
+        this.lockMode = lockMode;
     }
 
     public void setUseAgent( boolean b )

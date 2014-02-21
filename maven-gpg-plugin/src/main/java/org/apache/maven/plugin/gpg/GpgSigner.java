@@ -22,6 +22,7 @@ package org.apache.maven.plugin.gpg;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.Os;
@@ -64,6 +65,14 @@ public class GpgSigner
         else
         {
             cmd.setExecutable( "gpg" + ( Os.isFamily( Os.FAMILY_WINDOWS ) ? ".exe" : "" ) );
+        }
+
+        if ( args != null )
+        {
+            for ( String arg : args )
+            {
+                cmd.createArg().setValue( arg );
+            }
         }
 
         if ( homeDir != null )
@@ -126,6 +135,19 @@ public class GpgSigner
         {
             cmd.createArg().setValue( "--keyring" );
             cmd.createArg().setValue( publicKeyring );
+        }
+
+        if ( "once".equalsIgnoreCase( lockMode ) )
+        {
+            cmd.createArg().setValue( "--lock-once" );
+        }
+        else if ( "multiple".equalsIgnoreCase( lockMode ) )
+        {
+            cmd.createArg().setValue( "--lock-multiple" );
+        }
+        else if ( "never".equalsIgnoreCase( lockMode ) )
+        {
+            cmd.createArg().setValue( "--lock-never" );
         }
 
         cmd.createArg().setValue( "--output" );
