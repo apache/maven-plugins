@@ -499,8 +499,20 @@ public class CheckstyleViolationCheckMojo
             {
                 if ( logViolationsToConsole )
                 {
-                    getLog().error( file + '[' + xpp.getAttributeValue( "", "line" ) + ':'
-                        + xpp.getAttributeValue( "", "column" ) + "] " + xpp.getAttributeValue( "", "message" ) );
+                    final String logMessage = file + '[' + xpp.getAttributeValue( "", "line" ) + ':'
+                        + xpp.getAttributeValue( "", "column" ) + "] " + xpp.getAttributeValue( "", "message" );
+                    if ( "info".equals( xpp.getAttributeValue( "", "severity" ) ) )
+                    {
+                        getLog().info( logMessage );
+                    }
+                    else if ( "warning".equals( xpp.getAttributeValue( "", "severity" ) ) )
+                    {
+                        getLog().warn( logMessage );
+                    }
+                    else
+                    {
+                        getLog().error( logMessage );
+                    }
                 }
                 count++;
             }
