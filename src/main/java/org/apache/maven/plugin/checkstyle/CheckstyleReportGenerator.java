@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -716,12 +718,11 @@ public class CheckstyleReportGenerator
             }
 
             sink.section2();
-            sink.sectionTitle2();
+            SinkEventAttributes attrs = new SinkEventAttributeSet();
+            attrs.addAttribute( SinkEventAttributes.ID, file.replace( '/', '.' ) );
+            sink.sectionTitle( Sink.SECTION_LEVEL_2, attrs );
             sink.text( file );
-            sink.sectionTitle2_();
-
-            sink.anchor( file.replace( '/', '.' ) );
-            sink.anchor_();
+            sink.sectionTitle_( Sink.SECTION_LEVEL_2 );
 
             sink.table();
             sink.tableRow();
