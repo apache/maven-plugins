@@ -283,7 +283,7 @@ public class CheckstyleReportGenerator
 
         sink.tableRow();
         sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.checkstyle.rules" ) );
+        sink.text( bundle.getString( "report.checkstyle.rule" ) );
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
@@ -634,7 +634,7 @@ public class CheckstyleReportGenerator
 
         sink.tableRow();
         sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.checkstyle.files" ) );
+        sink.text( bundle.getString( "report.checkstyle.file" ) );
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
         iconInfo();
