@@ -61,7 +61,6 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <checkstyleVersion>5.7</checkstyleVersion>
     <doxiaVersion>1.4</doxiaVersion>
-    <!-- Used only by ITs -->
     <sitePluginVersion>3.3</sitePluginVersion>
     <!-- Used only by dependency on maven-plugin-annotations -->
     <mavenPluginVersion>3.2</mavenPluginVersion>
@@ -302,6 +301,15 @@ under the License.
     </plugins>
   </build>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.7</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  
   <profiles>
     <profile>
       <id>run-its</id>
@@ -367,8 +375,6 @@ under the License.
         </plugins>
       </reporting>
     </profile>
-
-
   </profiles>
 
 </project>
