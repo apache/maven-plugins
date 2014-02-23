@@ -195,7 +195,7 @@ public class CheckstyleReportGenerator
         {
             iconWarning();
         }
-        else if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( level ) )
+         if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( level ) )
         {
             iconError();
         }
@@ -463,7 +463,20 @@ public class CheckstyleReportGenerator
         configSeverity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
         iconSeverity( configSeverity );
         sink.nonBreakingSpace();
-        sink.text( StringUtils.capitalise( configSeverity ) );
+
+        if ( SeverityLevel.INFO.getName().equalsIgnoreCase( configSeverity ) )
+        {
+            sink.text( bundle.getString( "report.checkstyle.info" ) );
+        }
+        else if ( SeverityLevel.WARNING.getName().equalsIgnoreCase( configSeverity ) )
+        {
+            sink.text( bundle.getString( "report.checkstyle.warning" ) );
+        }
+        else if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( configSeverity ) )
+        {
+            sink.text( bundle.getString( "report.checkstyle.error" ) );
+        }
+
         sink.tableCell_();
 
         sink.tableRow_();
