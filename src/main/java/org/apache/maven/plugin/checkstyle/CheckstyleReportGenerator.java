@@ -195,7 +195,7 @@ public class CheckstyleReportGenerator
         {
             iconWarning();
         }
-         if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( level ) )
+        else if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( level ) )
         {
             iconError();
         }
