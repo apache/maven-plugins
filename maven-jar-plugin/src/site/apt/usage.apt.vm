@@ -171,7 +171,7 @@ mvn package
 </project>
 +-----------------+
 
-  To reuse this artifact in an other project, you must declare this dependency with classifier test-jar :
+  To reuse this artifact in an other project, you must declare this dependency with type test-jar :
 
 +-----------------+
 <project>
