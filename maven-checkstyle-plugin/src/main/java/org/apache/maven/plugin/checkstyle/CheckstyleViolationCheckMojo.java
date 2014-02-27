@@ -33,6 +33,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.MXParser;
@@ -63,6 +65,10 @@ public class CheckstyleViolationCheckMojo
 {
 
     private static final String JAVA_FILES = "**\\/*.java";
+
+    private static final String CHECKSTYLE_FILE_HEADER = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE module PUBLIC \"-//Puppy Crawl//DTD Check Configuration 1.2//EN\"\n" +
+            "        \"http://www.puppycrawl.com/dtds/configuration_1_2.dtd\">\n";
 
     /**
      * Specifies the path and filename to save the Checkstyle output. The format
@@ -379,6 +385,15 @@ public class CheckstyleViolationCheckMojo
     @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
     private boolean includeTestResources = true;
 
+    @Parameter
+    private PlexusConfiguration checkstyleRules;
+
+    /**
+     * dump file for inlined checkstyle rules 
+     */
+    @Parameter( property = "checkstyle.output.rules.file", defaultValue = "${project.build.directory}/checkstyle-rules.xml" )
+    private File rulesFiles;
+
     private ByteArrayOutputStream stringOutputStream;
 
     /** {@inheritDoc} */
@@ -391,6 +406,30 @@ public class CheckstyleViolationCheckMojo
 
             if ( !skipExec )
             {
+
+                if (checkstyleRules != null)
+                {
+                    if (!"config/sun_checks.xml".equals(configLocation))
+                    {
+                        throw new MojoExecutionException("If you use inline configuration for rules don't specify a configLocation");
+                    }
+                    if (checkstyleRules.getChildCount() > 1)
+                    {
+                        throw new MojoExecutionException("Currently only one root module is supported");
+                    }
+                    PlexusConfiguration checkerModule = checkstyleRules.getChild(0);
+
+                    try
+                    {
+                        FileUtils.forceMkdir(rulesFiles.getParentFile());
+                        FileUtils.fileWrite(rulesFiles, CHECKSTYLE_FILE_HEADER + checkerModule.toString());
+                    }
+                    catch (final IOException e)
+                    {
+                        throw new MojoExecutionException(e.getMessage(), e);
+                    }
+                    configLocation = rulesFiles.getAbsolutePath();
+                }
 
                 ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
