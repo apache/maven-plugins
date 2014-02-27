@@ -385,6 +385,30 @@ public class CheckstyleViolationCheckMojo
     @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
     private boolean includeTestResources = true;
 
+    /**
+     * By using this property, you can specify the whole checkstyle rules
+     * inline directly inside this pom.
+     *
+     * <pre>
+     * &lt;plugin&gt;
+     *   ...
+     *   &lt;configuration&gt;
+     *     &lt;checkstyleRules&gt;
+     *       &lt;module name="Checker"&gt;
+     *         &lt;module name="FileTabCharacter"&gt;
+     *           &lt;property name="eachLine" value="true" /&gt;
+     *         &lt;/module&gt;
+     *         &lt;module name="TreeWalker"&gt;
+     *           &lt;module name="EmptyBlock"/&gt;
+     *         &lt;/module&gt;
+     *       &lt;/module&gt;
+     *     &lt;/checkstyleRules&gt;
+     *   &lt;/configuration&gt;
+     *   ...
+     * </pre>
+     *
+     * @since 2.12
+     */
     @Parameter
     private PlexusConfiguration checkstyleRules;
 
@@ -407,26 +431,26 @@ public class CheckstyleViolationCheckMojo
             if ( !skipExec )
             {
 
-                if (checkstyleRules != null)
+                if ( checkstyleRules != null )
                 {
-                    if (!"config/sun_checks.xml".equals(configLocation))
+                    if ( ! "config/sun_checks.xml".equals( configLocation ) )
                     {
-                        throw new MojoExecutionException("If you use inline configuration for rules don't specify a configLocation");
+                        throw new MojoExecutionException( "If you use inline configuration for rules don't specify a configLocation" );
                     }
-                    if (checkstyleRules.getChildCount() > 1)
+                    if ( checkstyleRules.getChildCount() > 1 )
                     {
-                        throw new MojoExecutionException("Currently only one root module is supported");
+                        throw new MojoExecutionException( "Currently only one root module is supported" );
                     }
-                    PlexusConfiguration checkerModule = checkstyleRules.getChild(0);
+                    PlexusConfiguration checkerModule = checkstyleRules.getChild( 0 );
 
                     try
                     {
-                        FileUtils.forceMkdir(rulesFiles.getParentFile());
-                        FileUtils.fileWrite(rulesFiles, CHECKSTYLE_FILE_HEADER + checkerModule.toString());
+                        FileUtils.forceMkdir( rulesFiles.getParentFile() );
+                        FileUtils.fileWrite( rulesFiles, CHECKSTYLE_FILE_HEADER + checkerModule.toString() );
                     }
-                    catch (final IOException e)
+                    catch ( final IOException e )
                     {
-                        throw new MojoExecutionException(e.getMessage(), e);
+                        throw new MojoExecutionException( e.getMessage(), e );
                     }
                     configLocation = rulesFiles.getAbsolutePath();
                 }
