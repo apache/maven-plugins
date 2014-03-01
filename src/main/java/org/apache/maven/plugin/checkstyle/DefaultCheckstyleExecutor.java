@@ -66,8 +66,11 @@ public class DefaultCheckstyleExecutor
     extends AbstractLogEnabled
     implements CheckstyleExecutor
 {
-    @Requirement
+    @Requirement( hint = "default" )
     private ResourceManager locator;
+    
+    @Requirement( hint = "license" )
+    private ResourceManager licenseLocator;
 
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
@@ -88,7 +91,9 @@ public class DefaultCheckstyleExecutor
 
         MavenProject project = request.getProject();
 
-        configureResourceLocator(request);
+        configureResourceLocator( locator, request);
+        
+        configureResourceLocator( licenseLocator, request );
 
         File[] files;
         try
@@ -278,6 +283,7 @@ public class DefaultCheckstyleExecutor
                 .loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
             String effectiveEncoding = StringUtils.isNotEmpty( request.getEncoding() ) ? request.getEncoding() : System
                 .getProperty( "file.encoding", "UTF-8" );
+            
             if ( StringUtils.isEmpty( request.getEncoding() ) )
             {
                 request.getLog().warn(
@@ -433,7 +439,7 @@ public class DefaultCheckstyleExecutor
             {
                 try
                 {
-                    File headerFile = locator.getResourceAsFile( headerLocation, "checkstyle-header.txt" );
+                    File headerFile = licenseLocator.getResourceAsFile( headerLocation, "checkstyle-header.txt" );
 
                     if ( headerFile != null )
                     {
@@ -442,11 +448,13 @@ public class DefaultCheckstyleExecutor
                 }
                 catch ( FileResourceCreationException e )
                 {
-                    throw new CheckstyleExecutorException( "Unable to process header location: " + headerLocation, e );
+                    getLogger().debug( "Unable to process header location: " + headerLocation );
+                    getLogger().debug( "Checkstyle will throw exception if ${checkstyle.header.file} is used" );
                 }
                 catch ( ResourceNotFoundException e )
                 {
-                    throw new CheckstyleExecutorException( "Unable to process header location: " + headerLocation, e );
+                    getLogger().debug( "Unable to process header location: " + headerLocation );
+                    getLogger().debug( "Checkstyle will throw exception if ${checkstyle.header.file} is used" );
                 }
             }
 
@@ -676,10 +684,10 @@ public class DefaultCheckstyleExecutor
      *
      * @param request executor request data.
      */
-    private void configureResourceLocator( final CheckstyleExecutorRequest request )
+    private void configureResourceLocator( final ResourceManager resourceManager, final CheckstyleExecutorRequest request )
     {
         final MavenProject project = request.getProject();
-        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+        resourceManager.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
         // Recurse up the parent hierarchy and add project directories to the search roots
         MavenProject parent = project;
@@ -689,10 +697,10 @@ public class DefaultCheckstyleExecutor
             // (dkulp) Me either.   It really pollutes the location stuff
             // by allowing searches of stuff outside the current module.
             File dir = parent.getFile().getParentFile();
-            locator.addSearchPath( FileResourceLoader.ID, dir.getAbsolutePath() );
+            resourceManager.addSearchPath( FileResourceLoader.ID, dir.getAbsolutePath() );
             parent = parent.getParent();
         }
 
-        locator.addSearchPath( "url", "" );
+        resourceManager.addSearchPath( "url", "" );
     }
 }
