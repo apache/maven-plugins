@@ -20,6 +20,7 @@ package org.apache.maven.plugin.checkstyle;
  */
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -213,6 +214,19 @@ public class DefaultCheckstyleExecutor
         int nbErrors = checker.process( filesList );
 
         checker.destroy();
+
+        if ( projectClassLoader instanceof Closeable )
+        {
+            try
+            {
+                ( ( Closeable ) projectClassLoader ).close();
+            }
+            catch ( IOException ex ) 
+            {
+                // Nothing we can do - and not detrimental to the build (save running out of file handles).
+                getLogger().info( "Failed to close custom Classloader - this indicated a bug in the code.", ex );
+            }
+        }
 
         if ( request.getStringOutputStream() != null )
         {
