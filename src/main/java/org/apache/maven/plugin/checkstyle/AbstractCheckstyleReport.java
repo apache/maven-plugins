@@ -64,6 +64,94 @@ public abstract class AbstractCheckstyleReport
     protected static final String JAVA_FILES = "**\\/*.java";
 
     /**
+     * Specifies the cache file used to speed up Checkstyle on successive runs.
+     */
+    @Parameter( defaultValue = "${project.build.directory}/checkstyle-cachefile" )
+    protected String cacheFile;
+
+    /**
+     * <p>
+     * Specifies the location of the XML configuration to use.
+     * </p>
+     * <p/>
+     * <p>
+     * Potential values are a filesystem path, a URL, or a classpath resource.
+     * This parameter expects that the contents of the location conform to the
+     * xml format (Checkstyle <a
+     * href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
+     * module</a>) configuration of rulesets.
+     * </p>
+     * <p/>
+     * <p>
+     * This parameter is resolved as resource, URL, then file. If successfully
+     * resolved, the contents of the configuration is copied into the
+     * <code>${project.build.directory}/checkstyle-configuration.xml</code>
+     * file before being passed to Checkstyle as a configuration.
+     * </p>
+     * <p/>
+     * <p>
+     * There are 4 predefined rulesets.
+     * </p>
+     * <p/>
+     * <ul>
+     * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
+     * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
+     * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
+     * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
+     * </ul>
+     */
+    @Parameter( property = "checkstyle.config.location", defaultValue = "config/sun_checks.xml" )
+    protected String configLocation;
+
+    /**
+     * Output errors to console.
+     */
+    @Parameter( property = "checkstyle.consoleOutput", defaultValue = "false" )
+    protected boolean consoleOutput;
+
+    /**
+     * The file encoding to use when reading the source files. If the property <code>project.build.sourceEncoding</code>
+     * is not set, the platform default encoding is used. <strong>Note:</strong> This parameter always overrides the
+     * property <code>charset</code> from Checkstyle's <code>TreeWalker</code> module.
+     *
+     * @since 2.2
+     */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
+    protected String encoding;
+
+    /**
+     * Specifies if the build should fail upon a violation.
+     */
+    @Parameter( defaultValue = "false" )
+    protected boolean failsOnError;
+
+    /**
+     * <p>
+     * Specifies the location of the License file (a.k.a. the header file) that
+     * can be used by Checkstyle to verify that source code has the correct
+     * license header.
+     * </p>
+     * <p>
+     * You need to use ${checkstyle.header.file} in your Checkstyle xml
+     * configuration to reference the name of this header file.
+     * </p>
+     * <p>
+     * For instance:
+     * </p>
+     * <p>
+     * <code>
+     * &lt;module name="RegexpHeader">
+     * &lt;property name="headerFile" value="${checkstyle.header.file}"/>
+     * &lt;/module>
+     * </code>
+     * </p>
+     *
+     * @since 2.0-beta-2
+     */
+    @Parameter( property = "checkstyle.header.file", defaultValue = "LICENSE.txt" )
+    protected String headerLocation;
+
+    /**
      * Skip entire check.
      *
      * @since 2.2
@@ -87,6 +175,36 @@ public abstract class AbstractCheckstyleReport
      */
     @Parameter( property = "checkstyle.output.file", defaultValue = "${project.build.directory}/checkstyle-result.xml" )
     private File outputFile;
+
+    /**
+     * <p>
+     * Specifies the location of the properties file.
+     * </p>
+     * <p/>
+     * <p>
+     * This parameter is resolved as URL, File then resource. If successfully
+     * resolved, the contents of the properties location is copied into the
+     * <code>${project.build.directory}/checkstyle-checker.properties</code>
+     * file before being passed to Checkstyle for loading.
+     * </p>
+     * <p/>
+     * <p>
+     * The contents of the <code>propertiesLocation</code> will be made
+     * available to Checkstyle for specifying values for parameters within the
+     * xml configuration (specified in the <code>configLocation</code>
+     * parameter).
+     * </p>
+     *
+     * @since 2.0-beta-2
+     */
+    @Parameter( property = "checkstyle.properties.location" )
+    protected String propertiesLocation;
+
+    /**
+     * Allows for specifying raw property expansion information.
+     */
+    @Parameter
+    protected String propertyExpansion;
 
     /**
      * Specifies the location of the resources to be used for Checkstyle.
@@ -145,6 +263,59 @@ public abstract class AbstractCheckstyleReport
      */
     @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
     protected boolean includeTestResources;
+
+    /**
+     * Specifies the location of the source directory to be used for Checkstyle.
+     */
+    @Parameter( defaultValue = "${project.build.sourceDirectory}", required = true )
+    protected File sourceDirectory;
+
+    /**
+     * Specifies the location of the test source directory to be used for
+     * Checkstyle.
+     *
+     * @since 2.2
+     */
+    @Parameter( defaultValue = "${project.build.testSourceDirectory}" )
+    protected File testSourceDirectory;
+
+    /**
+     * Include or not the test source directory to be used for Checkstyle.
+     *
+     * @since 2.2
+     */
+    @Parameter( defaultValue = "false" )
+    protected boolean includeTestSourceDirectory;
+
+    /**
+     * The key to be used in the properties for the suppressions file.
+     *
+     * @since 2.1
+     */
+    @Parameter( property = "checkstyle.suppression.expression", defaultValue = "checkstyle.suppressions.file" )
+    protected String suppressionsFileExpression;
+
+    /**
+     * <p>
+     * Specifies the location of the suppressions XML file to use.
+     * </p>
+     * <p/>
+     * <p>
+     * This parameter is resolved as resource, URL, then file. If successfully
+     * resolved, the contents of the suppressions XML is copied into the
+     * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
+     * before being passed to Checkstyle for loading.
+     * </p>
+     * <p/>
+     * <p>
+     * See <code>suppressionsFileExpression</code> for the property that will
+     * be made available to your checkstyle configuration.
+     * </p>
+     *
+     * @since 2.0-beta-2
+     */
+    @Parameter( property = "checkstyle.suppressions.location" )
+    protected String suppressionsLocation;
 
     /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.
