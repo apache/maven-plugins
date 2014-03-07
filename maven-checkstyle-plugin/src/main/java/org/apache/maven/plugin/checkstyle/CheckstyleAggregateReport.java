@@ -39,50 +39,6 @@ import java.util.List;
 public class CheckstyleAggregateReport
     extends AbstractCheckstyleReport
 {
-
-    /**
-     * Specifies the names filter of the source files to be used for Checkstyle.
-     */
-    @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
-    private String includes;
-
-    /**
-     * Specifies the names filter of the source files to be excluded for
-     * Checkstyle.
-     */
-    @Parameter( property = "checkstyle.excludes" )
-    private String excludes;
-
-    /**
-     * Specifies the names filter of the resource files to be used for Checkstyle.
-     * @since 2.11
-     */
-    @Parameter( property = "checkstyle.resourceIncludes", defaultValue = "**/*.properties", required = true )
-    private String resourceIncludes;
-
-    /**
-     * Specifies the names filter of the resource files to be excluded for
-     * Checkstyle.
-     * @since 2.11
-     */
-    @Parameter( property = "checkstyle.resourceExcludes" )
-    private String resourceExcludes;
-
-    /**
-     * Specifies whether to include the resource directories in the check.
-     * @since 2.11
-     */
-    @Parameter( property = "checkstyle.includeResources", defaultValue = "true", required = true )
-    private boolean includeResources;
-
-    /**
-     * Specifies whether to include the test resource directories in the check.
-     * @since 2.11
-     */
-    @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
-    private boolean includeTestResources;
-
-
     /**
      * <p>
      * Specifies the location of the XML configuration to use.
