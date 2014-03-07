@@ -57,24 +57,6 @@ public class JarsignerSignMojo
     private String sigfile;
 
     /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
-    @Parameter( property = "jarsigner.providerName" )
-    private String providerName;
-
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
-    @Parameter( property = "jarsigner.providerClass" )
-    private String providerClass;
-
-    /**
-     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
-     */
-    @Parameter( property = "jarsigner.providerArg" )
-    private String providerArg;
-
-    /**
      * Indicates whether existing signatures should be removed from the processed JAR files prior to signing them. If
      * enabled, the resulting JAR will appear as being signed only once.
      *
@@ -136,9 +118,6 @@ public class JarsignerSignMojo
         throws MojoExecutionException
     {
         JarSignerSignRequest request = new JarSignerSignRequest();
-        request.setProviderArg( providerArg );
-        request.setProviderClass( providerClass );
-        request.setProviderName( providerName );
         request.setSigfile( sigfile );
         request.setTsaLocation( tsa );
         request.setTsaAlias( tsacert );
