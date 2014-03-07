@@ -85,6 +85,24 @@ public abstract class AbstractJarsignerMojo
     /**
      * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
+    @Parameter( property = "jarsigner.providerName" )
+    private String providerName;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.providerClass" )
+    private String providerClass;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
+    @Parameter( property = "jarsigner.providerArg" )
+    private String providerArg;
+
+    /**
+     * See <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
+     */
     @Parameter( property = "jarsigner.alias" )
     private String alias;
 
@@ -469,6 +487,9 @@ public abstract class AbstractJarsignerMojo
         request.setArchive( archive );
         request.setKeystore( keystore );
         request.setStoretype( storetype );
+        request.setProviderArg( providerArg );
+        request.setProviderClass( providerClass );
+        request.setProviderName( providerName );
         request.setWorkingDirectory( workingDirectory );
         request.setMaxMemory( maxMemory );
         request.setArguments( arguments );
