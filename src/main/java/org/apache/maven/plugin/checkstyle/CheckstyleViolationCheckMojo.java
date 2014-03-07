@@ -368,14 +368,14 @@ public class CheckstyleViolationCheckMojo
     private File sourceDirectory;
 
     /**
-     * Whether to apply CheckStyle to resource directories.
+     * Whether to apply Checkstyle to resource directories.
      * @since 2.11
      */
     @Parameter( property = "checkstyle.includeResources", defaultValue = "true", required = true )
     private boolean includeResources = true;
 
     /**
-     * Whether to apply CheckStyle to test resource directories.
+     * Whether to apply Checkstyle to test resource directories.
      * @since 2.11
      */
     @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
