@@ -19,6 +19,7 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -186,7 +188,28 @@ public class CheckstyleReport
     public boolean canGenerateReport()
     {
         // TODO: would be good to scan the files here
-        return !skip && ( sourceDirectory.exists() || ( includeTestSourceDirectory && testSourceDirectory.exists() ) );
+        return !skip && ( sourceDirectory.exists()
+            || ( includeTestSourceDirectory && testSourceDirectory.exists() )
+            || ( includeResources && hasResources( resources ) )
+            || ( includeTestResources && hasResources( testResources ) )
+        );
+    }
+
+    /**
+     * Check if any of the resources exist.
+     * @param resources The resources to check
+     * @return <code>true</code> if the resource directory exist
+     */
+    private boolean hasResources( List<Resource> resources )
+    {
+        for( Resource resource : resources )
+        {
+            if ( new File( resource.getDirectory() ).exists() )
+            {
+                return true;
+            }
+        }
+      return false;
     }
 
     /**
