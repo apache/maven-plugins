@@ -42,8 +42,6 @@ public class CheckstyleAggregateReport
 
     /**
      * Specifies the names filter of the source files to be used for Checkstyle.
-     *
-     * <strong>Note:</strong> default value is {@code **\/*.java}.
      */
     @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
     private String includes;
@@ -57,8 +55,6 @@ public class CheckstyleAggregateReport
 
     /**
      * Specifies the names filter of the resource files to be used for Checkstyle.
-     *
-     * <strong>Note:</strong> default value is {@code **\/*.properties}.
      * @since 2.11
      */
     @Parameter( property = "checkstyle.resourceIncludes", defaultValue = "**/*.properties", required = true )
