@@ -105,6 +105,48 @@ public abstract class AbstractCheckstyleReport
     protected List<Resource> testResources;
 
     /**
+     * Specifies the names filter of the source files to be used for Checkstyle.
+     */
+    @Parameter( property = "checkstyle.includes", defaultValue = JAVA_FILES, required = true )
+    protected String includes;
+
+    /**
+     * Specifies the names filter of the source files to be excluded for
+     * Checkstyle.
+     */
+    @Parameter( property = "checkstyle.excludes" )
+    protected String excludes;
+
+    /**
+     * Specifies the names filter of the resource files to be used for Checkstyle.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceIncludes", defaultValue = "**/*.properties", required = true )
+    protected String resourceIncludes;
+
+    /**
+     * Specifies the names filter of the resource files to be excluded for
+     * Checkstyle.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.resourceExcludes" )
+    protected String resourceExcludes;
+
+    /**
+     * Specifies whether to include the resource directories in the check.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeResources", defaultValue = "true", required = true )
+    protected boolean includeResources;
+
+    /**
+     * Specifies whether to include the test resource directories in the check.
+     * @since 2.11
+     */
+    @Parameter( property = "checkstyle.includeTestResources", defaultValue = "true", required = true )
+    protected boolean includeTestResources;
+
+    /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.
      * Otherwise, a text file will be created with the violations.
      */
