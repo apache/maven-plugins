@@ -57,9 +57,11 @@ public class LicenseResourceManager
     {
         for ( ResourceLoader resourceLoader : resourceLoaders.values() )
         {
-            if ( resourceLoader instanceof ThreadContextClasspathResourceLoader && !"config/maven-header.txt".equals( name ) )
+            if ( resourceLoader instanceof ThreadContextClasspathResourceLoader
+                && !"config/maven-header.txt".equals( name ) )
             {
-                // MCHECKSTYLE-219: Don't load the license from the plugin classloader, only allow config/maven-header.txt
+                // MCHECKSTYLE-219: Don't load the license from the plugin
+                // classloader, only allow config/maven-header.txt
                 continue;
             }
 

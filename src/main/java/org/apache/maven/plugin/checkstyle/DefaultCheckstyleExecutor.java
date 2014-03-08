@@ -92,7 +92,7 @@ public class DefaultCheckstyleExecutor
 
         MavenProject project = request.getProject();
 
-        configureResourceLocator( locator, request);
+        configureResourceLocator( locator, request );
         
         configureResourceLocator( licenseLocator, request );
 
@@ -639,7 +639,7 @@ public class DefaultCheckstyleExecutor
     private String getSuppressionsFilePath( final CheckstyleExecutorRequest request ) throws CheckstyleExecutorException
     {
         final String suppressionsLocation = request.getSuppressionsLocation();
-        if (StringUtils.isEmpty( suppressionsLocation ) )
+        if ( StringUtils.isEmpty( suppressionsLocation ) )
         {
             return null;
         }
@@ -698,7 +698,8 @@ public class DefaultCheckstyleExecutor
      *
      * @param request executor request data.
      */
-    private void configureResourceLocator( final ResourceManager resourceManager, final CheckstyleExecutorRequest request )
+    private void configureResourceLocator( final ResourceManager resourceManager,
+                                           final CheckstyleExecutorRequest request )
     {
         final MavenProject project = request.getProject();
         resourceManager.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
