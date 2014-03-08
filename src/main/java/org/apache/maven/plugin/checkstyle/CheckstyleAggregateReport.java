@@ -25,11 +25,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 
-import java.io.File;
 import java.util.List;
 
 /**
- * A reporting task that performs Checkstyle analysis and generates an aggregate HTML report on the violations that checkstyle finds in a multi-module reactor build.
+ * A reporting task that performs Checkstyle analysis and generates an aggregate
+ * HTML report on the violations that Checkstyle finds in a multi-module reactor
+ * build.
  *
  * @version $Id$
  * @since 2.8
@@ -71,7 +72,7 @@ public class CheckstyleAggregateReport
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
             .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
             .setTestResources( testResources )
-            .setStringOutputStream(stringOutputStream).setSuppressionsLocation( suppressionsLocation )
+            .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
             .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
             .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
             .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )

@@ -52,7 +52,8 @@ import java.io.Reader;
 import java.util.List;
 
 /**
- * Performs Checkstyle analysis and outputs violations or a count of violations to the console, potentially failing the build.
+ * Performs Checkstyle analysis and outputs violations or a count of violations
+ * to the console, potentially failing the build.
  * It can also be configured to re-use an earlier analysis.
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
@@ -66,9 +67,9 @@ public class CheckstyleViolationCheckMojo
 
     private static final String JAVA_FILES = "**\\/*.java";
 
-    private static final String CHECKSTYLE_FILE_HEADER = "<?xml version=\"1.0\"?>\n" +
-            "<!DOCTYPE module PUBLIC \"-//Puppy Crawl//DTD Check Configuration 1.2//EN\"\n" +
-            "        \"http://www.puppycrawl.com/dtds/configuration_1_2.dtd\">\n";
+    private static final String CHECKSTYLE_FILE_HEADER = "<?xml version=\"1.0\"?>\n"
+            + "<!DOCTYPE module PUBLIC \"-//Puppy Crawl//DTD Check Configuration 1.2//EN\"\n"
+            + "        \"http://www.puppycrawl.com/dtds/configuration_1_2.dtd\">\n";
 
     /**
      * Specifies the path and filename to save the Checkstyle output. The format
@@ -463,7 +464,8 @@ public class CheckstyleViolationCheckMojo
                         .setIncludeResources( includeResources )
                         .setIncludeTestResources( includeTestResources )
                         .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
+                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
+                        .setResources( resources )
                         .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
                         .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
                         .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
