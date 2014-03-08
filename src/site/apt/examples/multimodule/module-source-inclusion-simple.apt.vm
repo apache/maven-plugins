@@ -108,7 +108,7 @@ Including Module Sources
         <version>${project.version}</version>
         <configuration>
           <descriptors>
-            <descriptor>src/assemble/src.xml</descriptor>
+            <descriptor>src/assembly/src.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>

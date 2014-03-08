@@ -136,7 +136,7 @@ Including Module Binaries
           <version>${project.version}</version>
           <configuration>
             <descriptors>
-              <descriptor>src/assemble/bin.xml</descriptor>
+              <descriptor>src/assembly/bin.xml</descriptor>
             </descriptors>
           </configuration>
         </plugin>
@@ -196,7 +196,7 @@ Including Module Binaries
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/assemble/bin.xml</descriptor>
+                <descriptor>src/assembly/bin.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>

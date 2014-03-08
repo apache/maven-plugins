@@ -96,7 +96,7 @@ Using Component Descriptors
 
   From the two descriptors shown, we can say that there are three artifacts
   common for both, thus we separate them into a common component descriptor
-  and save it as <<<src/assemble/component.xml>>>.  Its contents would
+  and save it as <<<src/assembly/component.xml>>>.  Its contents would
   be:
 
 +-----
@@ -125,7 +125,7 @@ Using Component Descriptors
     <format>zip</format>
   </formats>
   <componentDescriptors>
-    <componentDescriptor>src/assemble/component.xml</componentDescriptor>
+    <componentDescriptor>src/assembly/component.xml</componentDescriptor>
   </componentDescriptors>
   <dependencySets>
     <dependencySet>
@@ -149,7 +149,7 @@ Using Component Descriptors
     <format>zip</format>
   </formats>
   <componentDescriptors>
-    <componentDescriptor>src/assemble/component.xml</componentDescriptor>
+    <componentDescriptor>src/assembly/component.xml</componentDescriptor>
   </componentDescriptors>
   <dependencySets>
     <dependencySet>
@@ -179,8 +179,8 @@ Using Component Descriptors
         <version>${project.version}</version>
         <configuration>
           <descriptors>
-            <descriptor>src/assemble/appserverA-assembly.xml</descriptor>
-            <descriptor>src/assemble/appserverB-assembly.xml</descriptor>
+            <descriptor>src/assembly/appserverA-assembly.xml</descriptor>
+            <descriptor>src/assembly/appserverB-assembly.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>
