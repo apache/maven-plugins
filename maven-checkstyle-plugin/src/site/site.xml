@@ -28,7 +28,7 @@ under the License.
       <item name="FAQ" href="faq.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Using an 'Inline' Checkstyle Checker Configuration" href="/examples/inline-checker-config.html"/>
+      <item name="Using an Inline Checkstyle Checker Configuration" href="/examples/inline-checker-config.html"/>
       <item name="Using a Custom Checkstyle Checker Configuration" href="/examples/custom-checker-config.html"/>
       <item name="Using Custom Checkstyle Property Expansion Definitions" href="/examples/custom-property-expansion.html"/>
       <item name="Using a Suppressions Filter" href="/examples/suppressions-filter.html"/>

@@ -25,16 +25,16 @@
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
 
-Using an Inlined Checkstyle Checker Configuration
+Using an Inline Checkstyle Checker Configuration
 
   Since version 2.12, an inlined {{{http://checkstyle.sourceforge.net/config.html#Checker}Checker configuration}} can
-  be defined directly in the <<<configuration>>> section of the plugin itself inside your pom.
+  be defined directly in the <<<configuration>>> section of the plugin itself inside your <<<pom.xml>>>.
 
-  This is especially useful when the checkstyle checks should be executed with every compile
-  and you do not like to create an own project for your checkstyle rules and neither
-  like to have a separate parent pom structure.
+  This is especially useful when the Checkstyle checks should be executed with every compile
+  and you do not like to create an own project for your Checkstyle rules and neither
+  like to have a separate parent POM structure.
 
-  To define a custom Checkstyle Checker configuration inside your pom.xml, use the <<<checkstyleRules>>> parameter.
+  To define a custom Checkstyle checker configuration inside your <<<pom.xml>>>, use the <<<checkstyleRules>>> parameter.
 
 +-----+
 <project>
