@@ -58,7 +58,7 @@ Filtering Some Distribution Files
 
   All the above files are in the root directory of the project but only the
   README and the NOTICE files should be filtered. The property file used to
-  filter these are files is found in <<<src/assemble/filter.properties>>>.
+  filter these are files is found in <<<src/assembly/filter.properties>>>.
 
   A property file is a file which contains the names of the variables and their
   corresponding string value. The format of its contents is identical to how Java
@@ -166,10 +166,10 @@ variable2=value2
         <version>${project.version}</version>
         <configuration>
           <filters>
-            <filter>src/assemble/filter.properties</filter>
+            <filter>src/assembly/filter.properties</filter>
           </filters>
           <descriptors>
-            <descriptor>src/assemble/distribution.xml</descriptor>
+            <descriptor>src/assembly/distribution.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>

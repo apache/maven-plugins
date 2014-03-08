@@ -82,7 +82,7 @@ Using Repositories
         <version>${project.version}</version>
         <configuration>
           <descriptors>
-            <descriptor>src/assemble/repository.xml</descriptor>
+            <descriptor>src/assembly/repository.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>
