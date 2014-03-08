@@ -385,7 +385,8 @@ public abstract class AbstractCheckstyleReport
     private File xrefLocation;
 
     /**
-     * When using custom treeWalkers, specify their names here so the checks inside the treeWalker end up the the rule-summary
+     * When using custom treeWalkers, specify their names here so the checks
+     * inside the treeWalker end up the the rule-summary.
      * 
      * @since 2.11
      */

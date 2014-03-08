@@ -36,7 +36,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * A reporting task that performs Checkstyle analysis and generates an HTML report on any violations that Checkstyle finds.
+ * A reporting task that performs Checkstyle analysis and generates an HTML
+ * report on any violations that Checkstyle finds.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -202,7 +203,7 @@ public class CheckstyleReport
      */
     private boolean hasResources( List<Resource> resources )
     {
-        for( Resource resource : resources )
+        for ( Resource resource : resources )
         {
             if ( new File( resource.getDirectory() ).exists() )
             {
