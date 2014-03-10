@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2006-06-30
+ 2014-03-10
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,12 +29,17 @@
 Using Rule Sets
 
  The PMD plugin uses three default rule sets: <basic.xml>, <unusedcode.xml> and <imports.xml>. These rule sets are
- bundled in the PMD code analysis tool (see the {{{http://pmd.sourceforge.net/rules/index.html}ruleset index}}). To use other
+ bundled in the PMD code analysis tool (see the {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/rules/index.html}ruleset index}}). To use other
  rule sets, you can configure it in the plugin as shown below.
 
  The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the PMD tool,
  you do not need to specificy the absolute path of the file. It will be resolved by the plugin. But if the rule set is a
  custom rule set, you need to specify its absolute path.
+
+ <<Note:>> Starting with PMD 5.0 and Maven PMD Plugin 3.0 the paths to the
+ bundled rule sets for the Java language were changed from
+ <<</rulesets/xyz.xml>>> to <<</rulesets/java/xyz.xml>>>. So when upgrading to
+ Maven PMD Plugin 3.0 you may need to alter your plugin configuration.
 
 +-----+
 <project>
@@ -48,8 +53,8 @@ Using Rule Sets
         <configuration>
           <rulesets>
             <!-- Two rule sets that come bundled with PMD -->
-            <ruleset>/rulesets/braces.xml</ruleset>
-            <ruleset>/rulesets/naming.xml</ruleset>
+            <ruleset>/rulesets/java/braces.xml</ruleset>
+            <ruleset>/rulesets/java/naming.xml</ruleset>
             <!-- Custom local file system rule set -->
             <ruleset>d:\rulesets\strings.xml</ruleset>
             <!-- Custom remote rule set accessed via a URL -->
