@@ -167,7 +167,7 @@ public class CpdReport
                     result = cpd.getMatches().hasNext();
                     if ( result )
                     {
-                        getLog().debug("Skipping Report as skipEmptyReport is true and there are no CPD issues.");
+                        getLog().debug( "Skipping Report as skipEmptyReport is true and there are no CPD issues." );
                     }
                 }
             }
@@ -300,7 +300,8 @@ public class CpdReport
             writer.write( buffer );
             writer.close();
 
-            if ( includeXmlInSite ) {
+            if ( includeXmlInSite )
+            {
                 File siteDir = getReportOutputDirectory();
                 siteDir.mkdirs();
                 FileUtils.copyFile( targetFile, new File( siteDir, "cpd." + format ) );

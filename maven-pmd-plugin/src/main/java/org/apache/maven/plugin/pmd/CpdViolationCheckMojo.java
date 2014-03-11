@@ -90,7 +90,7 @@ public class CpdViolationCheckMojo
         int lines = item.getLines();
 
         StringBuilder buff = new StringBuilder( 100 );
-        buff.append("CPD ").append(severity).append(": Found ");
+        buff.append( "CPD " ).append( severity ).append( ": Found " );
         buff.append( lines ).append( " lines of duplicated code at locations:" );
         this.getLog().info( buff.toString() );
 
@@ -128,8 +128,8 @@ public class CpdViolationCheckMojo
         }
         for ( final Set<String> singleExclusionGroup : exclusionList )
         {
-            if ( uniquePaths.size() == singleExclusionGroup.size() && duplicationExcludedByGroup( uniquePaths,
-                                                                                                  singleExclusionGroup ) )
+            if ( uniquePaths.size() == singleExclusionGroup.size()
+                && duplicationExcludedByGroup( uniquePaths, singleExclusionGroup ) )
             {
                 return true;
             }
