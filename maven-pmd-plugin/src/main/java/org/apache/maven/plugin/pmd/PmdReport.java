@@ -135,12 +135,16 @@ public class PmdReport
 
     /**
      * Controls whether PMD will track benchmark information.
+     *
+     * @since 3.1
      */
     @Parameter( property = "pmd.benchmark", defaultValue = "false" )
     private boolean benchmark;
 
     /**
      * Benchmark output filename.
+     *
+     * @since 3.1
      */
     @Parameter( property = "pmd.benchmarkOutputFilename", defaultValue = "${project.build.directory}/pmd-benchmark.txt" )
     private String benchmarkOutputFilename;
