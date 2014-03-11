@@ -237,7 +237,7 @@ public class PmdReport
                     result = reportListener.hasViolations();
                     if ( result )
                     {
-                        getLog().debug("Skipping Report as skipEmptyReport is true and there are no PMD violations.");
+                        getLog().debug( "Skipping Report as skipEmptyReport is true and there are no PMD violations." );
                     }
                 }
             }
@@ -353,7 +353,8 @@ public class PmdReport
         {
             getLog().debug( "Executing PMD..." );
 
-            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext, Collections.<Renderer> emptyList() );
+            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
+                              Collections.<Renderer> emptyList() );
 
             if ( getLog().isDebugEnabled() )
             {
@@ -377,7 +378,8 @@ public class PmdReport
             writeNonHtml( reportListener.asReport() );
         }
 
-        if ( benchmark ) {
+        if ( benchmark )
+        {
             PrintStream benchmarkFileStream = null;
             try
             {
@@ -484,7 +486,8 @@ public class PmdReport
             r.end();
             writer.close();
 
-            if ( includeXmlInSite ) {
+            if ( includeXmlInSite )
+            {
                 File siteDir = getReportOutputDirectory();
                 siteDir.mkdirs();
                 FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );

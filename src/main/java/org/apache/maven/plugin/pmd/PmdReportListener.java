@@ -59,7 +59,8 @@ public class PmdReportListener
     /**
      * Create a new single report with all violations for further rendering into other formats than HTML.
      */
-    public Report asReport() {
+    public Report asReport()
+    {
         Report report = new Report();
         for ( RuleViolation v : violations )
         {

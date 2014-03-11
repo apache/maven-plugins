@@ -283,9 +283,11 @@ public abstract class AbstractPmdReport
 
         Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
 
-        for (File file : excludeRoots) {
-            if (file.isDirectory()) {
-                excludeRootFiles.add(file);
+        for ( File file : excludeRoots )
+        {
+            if ( file.isDirectory() )
+            {
+                excludeRootFiles.add( file );
             }
         }
 
@@ -367,8 +369,9 @@ public abstract class AbstractPmdReport
             {
                 @SuppressWarnings( "unchecked" ) List<File> newfiles =
                     FileUtils.getFiles( sourceDirectory, including, excluding );
-                for (File newfile : newfiles) {
-                    files.put(newfile.getCanonicalFile(), finfo);
+                for ( File newfile : newfiles )
+                {
+                    files.put( newfile.getCanonicalFile(), finfo );
                 }
             }
         }
