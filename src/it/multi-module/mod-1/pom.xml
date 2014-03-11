@@ -49,6 +49,7 @@ under the License.
             <ruleset>src/main/config/pmd/utf-8.xml</ruleset>
             <ruleset>src/main/config/pmd/latin-1.xml</ruleset>
           </rulesets>
+          <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
     </plugins>

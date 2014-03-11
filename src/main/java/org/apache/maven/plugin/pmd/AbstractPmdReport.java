@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -195,6 +194,18 @@ public abstract class AbstractPmdReport
     protected boolean includeXmlInSite;
 
     /**
+     * Skip the PMD/CPD report generation if there are no violations or duplications found.
+     * Defaults to <code>true</code>.
+     *
+     * @since 3.1
+     */
+    @Parameter( defaultValue = "true" )
+    protected boolean skipEmptyReport;
+
+    /** The files that are being analyzed. */
+    protected Map<File, PmdFileInfo> filesToProcess;
+
+    /**
      * {@inheritDoc}
      */
     protected MavenProject getProject()
@@ -260,9 +271,6 @@ public abstract class AbstractPmdReport
     protected Map<File, PmdFileInfo> getFilesToProcess()
         throws IOException
     {
-        String sourceXref = constructXRefLocation( false );
-        String testXref = includeTests ? constructXRefLocation( true ) : "";
-
         if ( aggregate && !project.isExecutionRoot() )
         {
             return Collections.emptyMap();
@@ -275,9 +283,8 @@ public abstract class AbstractPmdReport
 
         Collection<File> excludeRootFiles = new HashSet<File>( excludeRoots.length );
 
-        for ( int i = 0; i < excludeRoots.length; i++ )
+        for ( File file : excludeRoots )
         {
-            File file = excludeRoots[i];
             if ( file.isDirectory() )
             {
                 excludeRootFiles.add( file );
@@ -288,11 +295,14 @@ public abstract class AbstractPmdReport
 
         if ( compileSourceRoots != null )
         {
-
             for ( String root : compileSourceRoots )
             {
                 File sroot = new File( root );
-                directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
+                if ( sroot.exists() )
+                {
+                    String sourceXref = constructXRefLocation( false );
+                    directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
+                }
             }
 
         }
@@ -303,7 +313,11 @@ public abstract class AbstractPmdReport
                 for ( String root : testSourceRoots )
                 {
                     File sroot = new File( root );
-                    directories.add( new PmdFileInfo( project, sroot, testXref ) );
+                    if ( sroot.exists() )
+                    {
+                        String testXref = constructXRefLocation( true );
+                        directories.add( new PmdFileInfo( project, sroot, testXref ) );
+                    }
                 }
             }
         }
@@ -316,7 +330,11 @@ public abstract class AbstractPmdReport
                 for ( String root : localCompileSourceRoots )
                 {
                     File sroot = new File( root );
-                    directories.add( new PmdFileInfo( localProject, sroot, sourceXref ) );
+                    if ( sroot.exists() )
+                    {
+                        String sourceXref = constructXRefLocation( false );
+                        directories.add( new PmdFileInfo( localProject, sroot, sourceXref ) );
+                    }
                 }
                 if ( includeTests )
                 {
@@ -325,7 +343,11 @@ public abstract class AbstractPmdReport
                     for ( String root : localTestCompileSourceRoots )
                     {
                         File sroot = new File( root );
-                        directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
+                      if ( sroot.exists() )
+                      {
+                          String testXref = constructXRefLocation( true );
+                          directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
+                      }
                     }
                 }
             }
@@ -347,9 +369,9 @@ public abstract class AbstractPmdReport
             {
                 @SuppressWarnings( "unchecked" ) List<File> newfiles =
                     FileUtils.getFiles( sourceDirectory, including, excluding );
-                for ( Iterator<File> it2 = newfiles.iterator(); it2.hasNext(); )
+                for ( File newfile : newfiles )
                 {
-                    files.put( it2.next().getCanonicalFile(), finfo );
+                    files.put( newfile.getCanonicalFile(), finfo );
                 }
             }
         }
@@ -396,6 +418,10 @@ public abstract class AbstractPmdReport
     {
         return "html".equals( format );
     }
+    protected boolean isXml()
+    {
+        return "xml".equals( format );
+    }
 
     /**
      * {@inheritDoc}
@@ -414,13 +440,13 @@ public abstract class AbstractPmdReport
 
         // if format is XML, we need to output it even if the file list is empty
         // so the "check" goals can check for failures
-        if ( "xml".equals( format ) )
+        if ( isXml() )
         {
             return true;
         }
         try
         {
-            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
+            filesToProcess = getFilesToProcess();
             if ( filesToProcess.isEmpty() )
             {
                 return false;

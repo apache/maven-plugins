@@ -60,6 +60,7 @@ under the License.
           <verbose>true</verbose>
           <minimumTokens>25</minimumTokens>
           <failOnViolation>false</failOnViolation> <!-- force execution of both goals, will be checked with verify-script -->
+          <skipPmdError>false</skipPmdError>
         </configuration>
       </plugin>
     </plugins>

@@ -154,7 +154,7 @@ public class PmdViolationCheckMojo
     {
 
         StringBuilder buff = new StringBuilder( 100 );
-        buff.append( "PMD " + severity + ": " );
+        buff.append( "PMD " ).append( severity ).append( ": " );
         if ( item.getViolationClass() != null )
         {
             if ( item.getViolationPackage() != null )

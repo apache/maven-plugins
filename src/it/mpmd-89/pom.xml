@@ -54,6 +54,7 @@ under the License.
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <skipPmdError>false</skipPmdError>
           <includeTests>true</includeTests>
           <typeResolution>true</typeResolution>
           <rulesets>

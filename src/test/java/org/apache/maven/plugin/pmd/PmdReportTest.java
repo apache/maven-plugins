@@ -80,9 +80,9 @@ public class PmdReportTest
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-        assertTrue( str.indexOf( "/xref/def/configuration/App.html#31" ) != -1 );
+        assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
 
-        assertTrue( str.indexOf( "/xref/def/configuration/AppSample.html#45" ) != -1 );
+        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
     }
 
 
@@ -114,7 +114,7 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         String str = readFile( generatedFile );
-        assertTrue( str.indexOf( "Avoid using global variables" ) != -1 );
+        assertTrue(str.contains("Avoid using global variables"));
     }
 
     public void testFileURL()
@@ -156,9 +156,9 @@ public class PmdReportTest
         String str =
             readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-        assertTrue( str.indexOf( "/xref/def/configuration/App.html#31" ) != -1 );
+        assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
 
-        assertTrue( str.indexOf( "/xref/def/configuration/AppSample.html#45" ) != -1 );
+        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
     }
 
     /**
@@ -189,15 +189,13 @@ public class PmdReportTest
 
         //check if custom ruleset was applied
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
-        assertTrue( str.toLowerCase().indexOf( "Avoid using if statements without curly braces".toLowerCase() ) != -1 );
+        assertTrue(str.toLowerCase().contains("Avoid using if statements without curly braces".toLowerCase()));
 
         assertTrue(
-            str.toLowerCase().indexOf( "Avoid using if...else statements without curly braces".toLowerCase() ) != -1 );
+                str.toLowerCase().contains("Avoid using if...else statements without curly braces".toLowerCase()));
 
         assertTrue( "unnecessary constructor should not be triggered because of low priority",
-                    str.toLowerCase().indexOf(
-                        "Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase() )
-                        == -1 );
+                !str.toLowerCase().contains("Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase()));
 
     }
 
@@ -222,6 +220,32 @@ public class PmdReportTest
 
         generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" );
         assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    public void testSkipEmptyReportConfiguration()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/skip-empty-report-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // verify the generated files do not exist because PMD was skipped
+        File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
+        assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    public void testEmptyReportConfiguration()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/empty-report-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // verify the generated files do exist, even if there are no violations
+        File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" ) );
+        assertTrue(!str.toLowerCase().contains("Hello.java".toLowerCase()));
     }
 
     public void testInvalidFormat()

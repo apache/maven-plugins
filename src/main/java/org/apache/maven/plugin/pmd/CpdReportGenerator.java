@@ -132,7 +132,7 @@ public class CpdReportGenerator
         if ( xrefLocation != null )
         {
             sink.link(
-                xrefLocation + "/" + filename.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#" + line );
+                xrefLocation + "/" + filename.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#L" + line );
         }
         sink.text( String.valueOf( line ) );
         if ( xrefLocation != null )

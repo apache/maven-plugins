@@ -33,7 +33,7 @@ under the License.
   <version>3.1</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven PMD Plugin</name>
+  <name>Apache Maven PMD Plugin</name>
   <description>
     A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
     fragments,
@@ -44,9 +44,6 @@ under the License.
   <contributors>
     <contributor>
       <name>John Allen</name>
-    </contributor>
-    <contributor>
-      <name>Andreas Dangel</name>
     </contributor>
     <contributor>
       <name>Ryan Heinen</name>
@@ -75,13 +72,21 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MPMD</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.3</doxiaVersion>
-    <pmdVersion>5.0.2</pmdVersion>
-    <sitePluginVersion>3.2</sitePluginVersion>
+    <pmdVersion>5.0.5</pmdVersion>
+    <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
+    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -198,6 +203,12 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
+        <!-- TO remove when parent upgrade -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.9.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -256,6 +267,12 @@ under the License.
           </execution>
         </executions>
       </plugin>
+      <!-- TO remove when parent upgrade -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.3</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -265,6 +282,17 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>${mavenPluginVersion}</version>
+      </plugin>
+      <!-- TO remove when parent upgrade -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.7</version>
       </plugin>
     </plugins>
   </reporting>
@@ -299,6 +327,11 @@ under the License.
               It implies that the current version is already deployed to generate the site.
             -->
             <version>${project.version}</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.4</version>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
