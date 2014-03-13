@@ -70,7 +70,7 @@ public class InstallMojo
 
     /**
      * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
-     * set to {@code true} and the build fails, none of the reactor projects is installed.
+     * set to {@code true} and the build fails, none of the reactor projects is installed. <strong>(experimental)</strong>
      * 
      * @since 2.5
      */
