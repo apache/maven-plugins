@@ -96,7 +96,7 @@ public class JiraMojo
      *
      * @since 2.8
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( property = "changes.useJql", defaultValue = "false" )
     private boolean useJql;
 
     /**
