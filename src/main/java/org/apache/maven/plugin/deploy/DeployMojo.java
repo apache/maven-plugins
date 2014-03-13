@@ -75,7 +75,7 @@ public class DeployMojo
 
     /**
      * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build. If
-     * set to {@code true} and the build fails, none of the reactor projects is deployed
+     * set to {@code true} and the build fails, none of the reactor projects is deployed. <strong>(experimental)</strong>
      * 
      * @since 2.8
      */
