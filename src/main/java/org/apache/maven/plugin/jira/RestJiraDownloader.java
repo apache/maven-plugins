@@ -300,9 +300,14 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             val = fieldsNode.get( "comment" );
             processComments( issue, val );
 
+            val = fieldsNode.get( "components" );
+            processComponents( issue, val );
+
             val = fieldsNode.get( "fixVersions" );
             processFixVersions( issue, val );
 
+            val = fieldsNode.get( "issuetype" );
+            processIssueType( issue, val );
 
             val = fieldsNode.get( "priority" );
             processPriority( issue, val );
@@ -322,18 +327,17 @@ public class RestJiraDownloader extends AbstractJiraDownloader
                 issue.setSummary( val.asText() );
             }
 
-            val = issueNode.get( "title" );
+            val = fieldsNode.get( "title" );
             if ( val != null )
             {
                 issue.setTitle( val.asText() );
             }
 
-            val = issueNode.get( "updated" );
+            val = fieldsNode.get( "updated" );
             processUpdated( issue, val );
 
-            val = issueNode.get( "versions" );
+            val = fieldsNode.get( "versions" );
             processVersions( issue, val );
-
 
             issueList.add( issue );
         }
@@ -359,7 +363,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void processStatus( Issue issue, JsonNode val )
     {
-        if (val != null )
+        if ( val != null )
         {
             issue.setStatus( val.get( "name" ).asText() );
         }
@@ -367,7 +371,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void processPriority( Issue issue, JsonNode val )
     {
-        if (val != null )
+        if ( val != null )
         {
             issue.setPriority( val.get( "name" ).asText() );
         }
@@ -375,7 +379,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void processResolution( Issue issue, JsonNode val )
     {
-        if (val != null )
+        if ( val != null )
         {
             issue.setResolution( val.get( "name" ).asText() );
         }
@@ -447,7 +451,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             }
             catch ( ParseException e )
             {
-                getLog().warn( "Invalid created date " + val.asText() );
+                getLog().warn( "Invalid updated date " + val.asText() );
             }
         }
     }
@@ -460,7 +464,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void processFixVersions( Issue issue, JsonNode val )
     {
-        if (val != null)
+        if ( val != null)
         {
             assert val.isArray();
             for ( int vx = 0; vx < val.size(); vx++ )
@@ -481,6 +485,27 @@ public class RestJiraDownloader extends AbstractJiraDownloader
                 JsonNode cnode = commentsArray.get( cx );
                 issue.addComment( cnode.get( "body" ).asText() );
             }
+        }
+    }
+
+    private void processComponents( Issue issue, JsonNode val )
+    {
+        if ( val != null )
+        {
+            assert val.isArray();
+            for ( int cx = 0; cx < val.size(); cx++ )
+            {
+                JsonNode cnode = val.get( cx );
+                issue.addComponent( cnode.get( "name" ).asText() );
+            }
+        }
+    }
+
+    private void processIssueType( Issue issue, JsonNode val )
+    {
+        if ( val != null )
+        {
+            issue.setType( val.get( "name" ).asText() );
         }
     }
 
