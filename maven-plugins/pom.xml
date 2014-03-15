@@ -71,11 +71,6 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
-        <plugin><!-- TODO: remove when upgrading to asf parent 14 -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-invoker-plugin</artifactId>
-          <version>1.8</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changes-plugin</artifactId>
@@ -124,7 +119,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
         <configuration>
-          <content>${project.reporting.outputDirectory}</content>
+          <content>${project.reporting.outputDirectory}</content><!-- plugins are mono-module, no real need for site:stage -->
         </configuration>
       </plugin>
       <plugin>
@@ -170,11 +165,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.2</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.6</version>
       </plugin>
     </plugins>
   </reporting>
