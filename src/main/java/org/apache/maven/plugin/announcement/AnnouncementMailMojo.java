@@ -20,9 +20,11 @@ package org.apache.maven.plugin.announcement;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.mail.internet.AddressException;
@@ -41,6 +43,8 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.mailsender.MailMessage;
 import org.codehaus.plexus.mailsender.MailSenderException;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Goal which sends an announcement through email.
@@ -134,6 +138,8 @@ public class AnnouncementMailMojo
 
     /**
      * If the option startTls should be used.
+     *
+     * @since 2.10
      */
     @Parameter( property = "changes.startTls", defaultValue = "false" )
     private boolean startTls;
@@ -160,6 +166,14 @@ public class AnnouncementMailMojo
      */
     @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
     private File announcementDirectory;
+
+    /**
+     * The encoding used in the announcement template.
+     *
+     * @since 2.10
+     */
+    @Parameter( property = "changes.templateEncoding", defaultValue = "${project.build.sourceEncoding}" )
+    private String templateEncoding;
 
     /**
      * Directory which contains the template for announcement email.
@@ -284,7 +298,7 @@ public class AnnouncementMailMojo
         {
             MailMessage mailMsg = new MailMessage();
             mailMsg.setSubject( getSubject() );
-            mailMsg.setContent( IOUtil.toString( readAnnouncement( file ) ) );
+            mailMsg.setContent( readAnnouncement( file ) );
             mailMsg.setContentType( this.mailContentType );
             mailMsg.setFrom( fromAddress, fromName );
 
@@ -315,10 +329,6 @@ public class AnnouncementMailMojo
             mailer.send( mailMsg );
             getLog().info( "Sent..." );
         }
-        catch ( IOException ioe )
-        {
-            throw new MojoExecutionException( "Failed to send email.", ioe );
-        }
         catch ( MailSenderException e )
         {
             throw new MojoExecutionException( "Failed to send email < " + email + " >", e );
@@ -326,25 +336,48 @@ public class AnnouncementMailMojo
     }
 
     /**
-     * Read the announcement generated file.
+     * Read the content of the generated announcement file.
      *
      * @param file the file to be read
-     * @return fileReader Return the FileReader
-     * @throws MojoExecutionException if the file could not be found
+     * @return Return the announcement text
+     * @throws MojoExecutionException if the file could not be found, or if the encoding is unsupported
      */
-    protected FileReader readAnnouncement( File file )
+    protected String readAnnouncement( File file )
         throws MojoExecutionException
     {
-        FileReader fileReader;
+        InputStreamReader reader = null;
+        FileInputStream inputStream = null;
         try
         {
-            fileReader = new FileReader( file );
+            inputStream = new FileInputStream( file );
+
+            if ( StringUtils.isEmpty( templateEncoding ) )
+            {
+                templateEncoding = ReaderFactory.FILE_ENCODING;
+                getLog().warn( "File encoding has not been set, using platform encoding '" + templateEncoding
+                                   + "', i.e. build is platform dependent!" );
+            }
+
+            reader = new InputStreamReader( inputStream, templateEncoding );
+            return IOUtil.toString( reader );
         }
         catch ( FileNotFoundException fnfe )
         {
             throw new MojoExecutionException( "File not found. " + file );
         }
-        return fileReader;
+        catch ( UnsupportedEncodingException uee )
+        {
+            throw new MojoExecutionException( "Unsupported encoding: '" + templateEncoding + "'" );
+        }
+        catch ( IOException ioe )
+        {
+            throw new MojoExecutionException( "Failed to read the announcement file.", ioe );
+        }
+        finally
+        {
+            IOUtil.close( inputStream );
+            IOUtil.close( reader );
+        }
     }
 
     /**
