@@ -22,8 +22,8 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.plugin.pmd.its</groupId>
-  <artifactId>MPMD-172</artifactId>
+  <groupId>org.apache.maven.plugins.checkstyle.its</groupId>
+  <artifactId>MCHECKSTYLE-224</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <description>
@@ -43,7 +43,7 @@ under the License.
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
         <version>@project.version@</version>
       </plugin>
     </plugins>
