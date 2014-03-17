@@ -141,15 +141,27 @@ public class AnnouncementMailMojo
     private String subject;
 
     /**
-     * The Velocity template used to format the announcement.
+     * The file that contains the generated announcement.
+     *
+     * @since 2.10
      */
-    @Parameter( property = "changes.template", defaultValue = "announcement.vm", required = true )
-    private String template;
+    @Parameter( property = "changes.announcementFile", defaultValue = "announcement.vm", required = true )
+    private String announcementFile;
+
+    /**
+     * Directory where the generated announcement file exists.
+     *
+     * @since 2.10
+     */
+    @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
+    private File announcementDirectory;
 
     /**
      * Directory which contains the template for announcement email.
+     *
+     * @deprecated Starting with version 2.10 this parameter is no longer used. You must use {@link #announcementDirectory} instead.
      */
-    @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
+    @Parameter
     private File templateOutputDirectory;
 
     /**
@@ -185,6 +197,12 @@ public class AnnouncementMailMojo
     public void execute()
         throws MojoExecutionException
     {
+        // Fail build fast if it is using deprecated parameters
+        if( templateOutputDirectory != null )
+        {
+            throw new MojoExecutionException( "You are using the old parameter 'templateOutputDirectory'. You must use 'announcementDirectory' instead." );
+        }
+
         // Run only at the execution root
         if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
@@ -192,7 +210,7 @@ public class AnnouncementMailMojo
         }
         else
         {
-            File templateFile = new File( templateOutputDirectory, template );
+            File file = new File( announcementDirectory, announcementFile );
 
             ConsoleLogger logger = new ConsoleLogger( Logger.LEVEL_INFO, "base" );
 
@@ -226,7 +244,7 @@ public class AnnouncementMailMojo
                 getLog().debug( "fromDeveloperId: " + getFromDeveloperId() );
             }
 
-            if ( templateFile.isFile() )
+            if ( file.isFile() )
             {
                 getLog().info( "Connecting to Host: " + getSmtpHost() + ":" + getSmtpPort() );
 
@@ -234,7 +252,7 @@ public class AnnouncementMailMojo
             }
             else
             {
-                throw new MojoExecutionException( "Announcement template " + templateFile + " not found..." );
+                throw new MojoExecutionException( "Announcement file " + file + " not found..." );
             }
         }
     }
@@ -247,7 +265,7 @@ public class AnnouncementMailMojo
     protected void sendMessage()
         throws MojoExecutionException
     {
-        File templateFile = new File( templateOutputDirectory, template );
+        File file = new File( announcementDirectory, announcementFile );
         String email = "";
         final MailSender ms = getActualMailSender();
         final String fromName = ms.getName();
@@ -261,7 +279,7 @@ public class AnnouncementMailMojo
         {
             MailMessage mailMsg = new MailMessage();
             mailMsg.setSubject( getSubject() );
-            mailMsg.setContent( IOUtil.toString( readAnnouncement( templateFile ) ) );
+            mailMsg.setContent( IOUtil.toString( readAnnouncement( file ) ) );
             mailMsg.setContentType( this.mailContentType );
             mailMsg.setFrom( fromAddress, fromName );
 
@@ -494,24 +512,24 @@ public class AnnouncementMailMojo
         this.subject = subject;
     }
 
-    public String getTemplate()
+    public String getAnnouncementFile()
     {
-        return template;
+        return announcementFile;
     }
 
-    public void setTemplate( String template )
+    public void setAnnouncementFile( String announcementFile )
     {
-        this.template = template;
+        this.announcementFile = announcementFile;
     }
 
-    public File getTemplateOutputDirectory()
+    public File getAnnouncementDirectory()
     {
-        return templateOutputDirectory;
+        return announcementDirectory;
     }
 
-    public void setTemplateOutputDirectory( File templateOutputDirectory )
+    public void setAnnouncementDirectory( File announcementDirectory )
     {
-        this.templateOutputDirectory = templateOutputDirectory;
+        this.announcementDirectory = announcementDirectory;
     }
 
     public List getToAddresses()

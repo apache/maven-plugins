@@ -159,8 +159,18 @@ public class AnnouncementMojo
 
     /**
      * Directory where the announcement file will be generated.
+     *
+     * @since 2.10
      */
     @Parameter( defaultValue = "${project.build.directory}/announcement", required = true )
+    private File announcementDirectory;
+
+    /**
+     * Directory where the announcement file will be generated.
+     *
+     * @deprecated Starting with version 2.10 this parameter is no longer used. You must use {@link #announcementDirectory} instead.
+     */
+    @Parameter
     private File outputDirectory;
 
     /**
@@ -435,6 +445,12 @@ public class AnnouncementMojo
     public void execute()
         throws MojoExecutionException
     {
+        // Fail build fast if it is using deprecated parameters
+        if( outputDirectory != null )
+        {
+            throw new MojoExecutionException( "You are using the old parameter 'outputDirectory'. You must use 'announcementDirectory' instead." );
+        }
+
         // Run only at the execution root
         if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
         {
@@ -614,7 +630,7 @@ public class AnnouncementMojo
             }
 
 
-            processTemplate( context, getOutputDirectory(), template, announcementFile );
+            processTemplate( context, announcementDirectory, template, announcementFile );
         }
         catch ( ResourceNotFoundException rnfe )
         {
@@ -874,14 +890,14 @@ public class AnnouncementMojo
 		return issueTypes;
 	}
 
-    public File getOutputDirectory()
+    public File getAnnouncementDirectory()
     {
-        return outputDirectory;
+        return announcementDirectory;
     }
 
-    public void setOutputDirectory( File outputDirectory )
+    public void setAnnouncementDirectory( File announcementDirectory )
     {
-        this.outputDirectory = outputDirectory;
+        this.announcementDirectory = announcementDirectory;
     }
 
     public String getPackaging()
