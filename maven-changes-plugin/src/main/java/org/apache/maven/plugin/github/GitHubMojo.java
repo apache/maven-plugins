@@ -136,6 +136,12 @@ public class GitHubMojo
      */
     public boolean canGenerateReport()
     {
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
+        {
+            getLog().info( "Skipping the GitHub Report in this project because it's not the Execution Root" );
+            return false;
+        }
         return ProjectUtils.validateIfIssueManagementComplete( project, "GitHub", "GitHub Report", getLog() );
     }
 
