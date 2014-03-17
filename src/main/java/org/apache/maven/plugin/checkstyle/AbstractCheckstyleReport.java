@@ -666,7 +666,7 @@ public abstract class AbstractCheckstyleReport
                 }
             }
 
-            if ( generator.getXrefLocation() == null )
+            if ( generator.getXrefLocation() == null && results.getFileCount() > 0 )
             {
                 getLog().warn( "Unable to locate Source XRef to link to - DISABLED" );
             }
