@@ -38,7 +38,7 @@ try
     int indexOf = reportContent.indexOf( "maven-changes-plugin-test-1.1 release" );
     if ( indexOf < 0 )
     {
-      System.err.println( "test-announce.vm doesn't maven-changes-plugin-test-1.1 release" );
+      System.err.println( "test-announce.vm doesn't contain 'maven-changes-plugin-test-1.1 release'" );
       return false;
     }
 
