@@ -36,6 +36,7 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -67,6 +68,14 @@ public abstract class AbstractChangesReport
     extends AbstractMavenReport
 {
     /**
+     * The current project base directory.
+     *
+     * @since 2.10
+     */
+    @Parameter( property = "basedir", required = true )
+    protected String basedir;
+
+    /**
      * Report output directory. Note that this parameter is only relevant if the goal is run from the command line or
      * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output
      * directory configured in the Maven Site Plugin is used instead.
@@ -83,6 +92,24 @@ public abstract class AbstractChangesReport
      */
     @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String outputEncoding;
+
+    /**
+     * This will cause the execution to be run only at the top of a given module
+     * tree. That is, run in the project contained in the same folder where the
+     * mvn execution was launched.
+     *
+     * @since 2.10
+     */
+    @Parameter( property = "changes.runOnlyAtExecutionRoot", defaultValue = "false" )
+    protected boolean runOnlyAtExecutionRoot;
+
+    /**
+     * The Maven Session.
+     *
+     * @since 2.10
+     */
+    @Component
+    protected MavenSession mavenSession;
 
     /**
      * Doxia Site Renderer.
@@ -243,5 +270,27 @@ public abstract class AbstractChangesReport
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
+    }
+
+    /**
+     * Returns <code>true</code> if the current project is located at the
+     * Execution Root Directory (where mvn was launched).
+     *
+     * @return <code>true</code> if the current project is at the Execution Root
+     */
+    protected boolean isThisTheExecutionRoot()
+    {
+        getLog().debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
+        getLog().debug( "Current Folder:" + basedir );
+        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir );
+        if ( result )
+        {
+            getLog().debug( "This is the execution root." );
+        }
+        else
+        {
+            getLog().debug( "This is NOT the execution root." );
+        }
+        return result;
     }
 }

@@ -326,6 +326,12 @@ public class JiraMojo
      */
     public boolean canGenerateReport()
     {
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
+        {
+            getLog().info( "Skipping the JIRA Report in this project because it's not the Execution Root" );
+            return false;
+        }
         if ( skip )
         {
             return false;

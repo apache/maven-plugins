@@ -238,6 +238,12 @@ public class ChangesMojo
 
     public boolean canGenerateReport()
     {
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
+        {
+            getLog().info( "Skipping the Changes Report in this project because it's not the Execution Root" );
+            return false;
+        }
         return xmlPath.isFile();
     }
 

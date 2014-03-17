@@ -132,6 +132,12 @@ public class TracMojo
      */
     public boolean canGenerateReport()
     {
+        // Run only at the execution root
+        if ( runOnlyAtExecutionRoot && !isThisTheExecutionRoot() )
+        {
+            getLog().info( "Skipping the Trac Report in this project because it's not the Execution Root" );
+            return false;
+        }
         return ProjectUtils.validateIfIssueManagementComplete( project, "Trac", "Trac Report", getLog() );
     }
 
