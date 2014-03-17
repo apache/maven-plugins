@@ -30,6 +30,7 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
@@ -543,6 +544,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
         ClientConfiguration clientConfiguration = WebClient.getConfig( client );
         HTTPConduit http = clientConfiguration.getHttpConduit();
+        // MCHANGES-324 - Maintain the client session
+        clientConfiguration.getRequestContext().put( Message.MAINTAIN_SESSION, Boolean.TRUE );
 
         if ( getLog().isDebugEnabled() )
         {
