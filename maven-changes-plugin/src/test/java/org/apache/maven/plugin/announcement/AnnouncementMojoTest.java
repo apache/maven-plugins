@@ -42,18 +42,18 @@ public class AnnouncementMojoTest
 
         setVariableValueToObject( mojo, "xmlPath", new File( getBasedir(), "/src/test/unit/announce-changes.xml" ) );
 
-        File outputDirectory = new File( getBasedir(), "target/test" );
+        File announcementDirectory = new File( getBasedir(), "target/test" );
 
-        if ( outputDirectory.exists() )
+        if ( announcementDirectory.exists() )
         {
-            FileUtils.deleteDirectory( outputDirectory );
-            outputDirectory.mkdirs();
+            FileUtils.deleteDirectory( announcementDirectory );
+            announcementDirectory.mkdirs();
         }
         else
         {
-            outputDirectory.mkdirs();
+            announcementDirectory.mkdirs();
         }
-        setVariableValueToObject( mojo, "outputDirectory", outputDirectory );
+        setVariableValueToObject( mojo, "announcementDirectory", announcementDirectory );
         setVariableValueToObject( mojo, "version", "1.1" );
         setVariableValueToObject( mojo, "template", "announcement.vm" );
         setVariableValueToObject( mojo, "templateDirectory",
@@ -62,7 +62,7 @@ public class AnnouncementMojoTest
         setVariableValueToObject( mojo, "introduction", "Nice library" );
         mojo.execute();
 
-        FileReader fileReader = new FileReader( new File( outputDirectory, "announcement.vm" ) );
+        FileReader fileReader = new FileReader( new File( announcementDirectory, "announcement.vm" ) );
         String result = IOUtil.toString( fileReader );
 
         assertContains( "Nice library", result );
