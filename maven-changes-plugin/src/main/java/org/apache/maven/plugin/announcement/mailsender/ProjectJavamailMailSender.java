@@ -103,6 +103,12 @@ public class ProjectJavamailMailSender
                 getLogger().error( "You can't use sslMode because your system is missing an SSL Provider.", e );
             }
         }
+
+        if ( isTlsEnabled() )
+        {
+            props.put("mail.smtp.starttls.enable", "true");
+        }
+
         if ( userProperties != null )
         {
             for (Object o : userProperties.keySet()) {

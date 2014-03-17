@@ -132,6 +132,11 @@ public class AnnouncementMailMojo
     @Parameter( property = "changes.sslMode", defaultValue = "false" )
     private boolean sslMode;
 
+    /**
+     * If the option startTls should be used.
+     */
+    @Parameter( property = "changes.startTls", defaultValue = "false" )
+    private boolean startTls;
 
     /**
      * Subject for the email.
@@ -225,7 +230,7 @@ public class AnnouncementMailMojo
 
             mailer.setSmtpPort( getSmtpPort() );
 
-            mailer.setSslMode( sslMode );
+            mailer.setSslMode( sslMode, startTls );
 
             if ( username != null )
             {
@@ -500,6 +505,16 @@ public class AnnouncementMailMojo
     public void setSslMode( boolean sslMode )
     {
         this.sslMode = sslMode;
+    }
+
+    public boolean isStartTls()
+    {
+        return startTls;
+    }
+
+    public void setStartTls( boolean startTls )
+    {
+        this.startTls = startTls;
     }
 
     public String getSubject()
