@@ -52,7 +52,7 @@ public class ProjectResourceLoader
      * so that we can properly check the modification
      * times of the files.
      */
-    private Hashtable<String,String> templatePaths = new Hashtable<String,String>();
+    private Hashtable<String, String> templatePaths = new Hashtable<String, String>();
 
     public void init( ExtendedProperties configuration )
     {
@@ -69,8 +69,9 @@ public class ProjectResourceLoader
 
         paths.add( path );
         
-        for (String path1 : paths) {
-            rsvc.getLog().info("ProjectResourceLoader : adding path '" + path1 + "'");
+        for ( String path1 : paths )
+        {
+            rsvc.getLog().info( "ProjectResourceLoader : adding path '" + path1 + "'" );
         }
         rsvc.getLog().info( "ProjectResourceLoader : initialization complete." );
     }

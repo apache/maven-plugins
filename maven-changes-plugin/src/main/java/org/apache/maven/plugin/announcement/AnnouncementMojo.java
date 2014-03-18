@@ -418,7 +418,7 @@ public class AnnouncementMojo
      * 
      * @since 2.9
      */
-    @Parameter( defaultValue = "http", property = "changes.githubAPIScheme")
+    @Parameter( defaultValue = "http", property = "changes.githubAPIScheme" )
     private String githubAPIScheme;
 
     /**
@@ -426,7 +426,7 @@ public class AnnouncementMojo
      * 
      * @since 2.9
      */
-    @Parameter( defaultValue = "80", property = "changes.githubAPIPort")
+    @Parameter( defaultValue = "80", property = "changes.githubAPIPort" )
     private int githubAPIPort;
 
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
@@ -446,7 +446,7 @@ public class AnnouncementMojo
         throws MojoExecutionException
     {
         // Fail build fast if it is using deprecated parameters
-        if( outputDirectory != null )
+        if ( outputDirectory != null )
         {
             throw new MojoExecutionException( "You are using the old parameter 'outputDirectory'. You must use 'announcementDirectory' instead." );
         }
@@ -882,13 +882,13 @@ public class AnnouncementMojo
     
     public void setIssueTypes( Map<String, String> issueTypes )
     {
-		this.issueTypes = issueTypes;
-	}
+        this.issueTypes = issueTypes;
+    }
 
     public Map<String, String> getIssueTypes()
     {
-		return issueTypes;
-	}
+        return issueTypes;
+    }
 
     public File getAnnouncementDirectory()
     {

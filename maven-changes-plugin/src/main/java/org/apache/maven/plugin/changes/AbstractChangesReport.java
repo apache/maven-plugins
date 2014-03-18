@@ -232,7 +232,8 @@ public abstract class AbstractChangesReport
             throw new MojoExecutionException(
                 "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
         }
-        finally {
+        finally
+        {
             IOUtils.closeQuietly( fileOutputStream );
         }
     }

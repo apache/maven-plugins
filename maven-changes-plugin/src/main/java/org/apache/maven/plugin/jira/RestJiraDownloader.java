@@ -73,7 +73,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private String jiraProject;
 
-    public static class NoRest extends Exception {
+    public static class NoRest extends Exception
+    {
         public NoRest( )
         {
             // blank on purpose.
@@ -84,7 +85,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         }
     }
 
-    public RestJiraDownloader() {
+    public RestJiraDownloader()
+    {
         jsonFactory = new MappingJsonFactory(  );
         //2012-07-17T06:26:47.723-0500
         dateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ" );
@@ -218,7 +220,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         {
             return;
         }
-        if ( listUrlArgs != null && listUrlArgs.length != 0)
+        if ( listUrlArgs != null && listUrlArgs.length != 0 )
         {
             client.replacePath( "/" );
             client.path( listRestUrlPattern, listUrlArgs );
@@ -237,7 +239,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
         JsonNode items = getResponseTree( resp );
         String[] pieces = input.split( "," );
-        for (String item : pieces ) {
+        for ( String item : pieces )
+        {
             targetList.add( resolveOneItem( items, what, item ) );
         }
     }
@@ -257,7 +260,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
                 return item.get( "id" ).asText();
             }
         }
-        throw new MojoFailureException( String.format("Could not find %s %s.", what, nameOrId ) );
+        throw new MojoFailureException( String.format( "Could not find %s %s.", what, nameOrId ) );
     }
 
     private MediaType getResponseMediaType( Response response )
@@ -286,7 +289,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             if ( val != null )
             {
                 issue.setKey( val.asText() );
-                issue.setLink( String.format( "%s/browse/%s", jiraUrl, val.asText()) );
+                issue.setLink( String.format( "%s/browse/%s", jiraUrl, val.asText() ) );
             }
 
             // much of what we want is in here.
@@ -465,7 +468,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void processFixVersions( Issue issue, JsonNode val )
     {
-        if ( val != null)
+        if ( val != null )
         {
             assert val.isArray();
             for ( int vx = 0; vx < val.size(); vx++ )
@@ -555,9 +558,9 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
 
-        httpClientPolicy.setConnectionTimeout(36000);
-        httpClientPolicy.setAllowChunking(false);
-        httpClientPolicy.setReceiveTimeout(32000);
+        httpClientPolicy.setConnectionTimeout( 36000 );
+        httpClientPolicy.setAllowChunking( false );
+        httpClientPolicy.setReceiveTimeout( 32000 );
 
         if ( proxyHost != null )
         {
@@ -584,7 +587,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             http.setAuthorization( authPolicy );
         }
 
-        http.setClient(httpClientPolicy);
+        http.setClient( httpClientPolicy );
         return client;
     }
 

@@ -42,13 +42,13 @@ public class ParameterQueryBuilder
     private StringBuilder query = new StringBuilder();
 
     /** Mapping containing all allowed JIRA priority values. */
-    private final Map<String,String> priorityMap = new HashMap<String,String>( 8 );
+    private final Map<String, String> priorityMap = new HashMap<String, String>( 8 );
     /** Mapping containing all allowed JIRA resolution values. */
-    private final Map<String,String> resolutionMap = new HashMap<String,String>( 8 );
+    private final Map<String, String> resolutionMap = new HashMap<String, String>( 8 );
     /** Mapping containing all allowed JIRA status values. */
-    private final Map<String,String> statusMap = new HashMap<String,String>( 8 );
+    private final Map<String, String> statusMap = new HashMap<String, String>( 8 );
     /** Mapping containing all allowed JIRA type values. */
-    private final Map<String,String> typeMap = new HashMap<String,String>( 8 );
+    private final Map<String, String> typeMap = new HashMap<String, String>( 8 );
 
     public ParameterQueryBuilder( Log log )
     {
@@ -152,9 +152,11 @@ public class ParameterQueryBuilder
         {
             String[] fixVersions = fixVersionIds.split( "," );
 
-            for (String fixVersion : fixVersions) {
-                if (fixVersion.length() > 0) {
-                    query.append("&fixfor=").append(fixVersion.trim());
+            for ( String fixVersion : fixVersions )
+            {
+                if ( fixVersion.length() > 0 )
+                {
+                    query.append( "&fixfor=" ).append( fixVersion.trim() );
                 }
             }
         }

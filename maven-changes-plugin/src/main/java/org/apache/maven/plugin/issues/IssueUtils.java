@@ -51,14 +51,18 @@ public class IssueUtils
         boolean isFound = false;
         Issue issue;
 
-        for (Issue issue1 : issues) {
+        for ( Issue issue1 : issues )
+        {
             issue = issue1;
 
-            if (issue.getFixVersions() != null) {
-                for (String fixVersion : issue.getFixVersions()) {
-                    if (prefix == null || fixVersion.startsWith(prefix)) {
+            if ( issue.getFixVersions() != null )
+            {
+                for ( String fixVersion : issue.getFixVersions() )
+                {
+                    if ( prefix == null || fixVersion.startsWith( prefix ) )
+                    {
                         isFound = true;
-                        filteredIssues.add(issue);
+                        filteredIssues.add( issue );
                         break;
                     }
                 }
@@ -99,12 +103,14 @@ public class IssueUtils
             releaseVersion = version.substring( 0, version.length() - SNAPSHOT_SUFFIX.length() );
         }
 
-        for (Issue issue1 : issues) {
+        for ( Issue issue1 : issues )
+        {
             issue = issue1;
 
-            if (issue.getFixVersions() != null && issue.getFixVersions().contains(releaseVersion)) {
+            if ( issue.getFixVersions() != null && issue.getFixVersions().contains( releaseVersion ) )
+            {
                 isFound = true;
-                issuesForVersion.add(issue);
+                issuesForVersion.add( issue );
             }
         }
 
@@ -116,9 +122,11 @@ public class IssueUtils
         return issuesForVersion;
     }
 
-    public static String toString( List<Issue> issues ) {
+    public static String toString( List<Issue> issues )
+    {
         List<String> issueStrings = new ArrayList<String>( issues.size() );
-        for ( Issue issue : issues ) {
+        for ( Issue issue : issues )
+        {
             issueStrings.add( issue.toString() );
         }
         return issueStrings.toString();

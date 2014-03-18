@@ -115,12 +115,13 @@ public class ReleaseUtils
     protected void logRelease( Release release )
     {
         Action action;
-        for (Action action1 : release.getActions()) {
+        for ( Action action1 : release.getActions() )
+        {
             action = action1;
-            getLog().debug("o " + action.getType());
-            getLog().debug("issue : " + action.getIssue());
-            getLog().debug("action : " + action.getAction());
-            getLog().debug("dueTo : " + action.getDueTo());
+            getLog().debug( "o " + action.getType() );
+            getLog().debug( "issue : " + action.getIssue() );
+            getLog().debug( "action : " + action.getAction() );
+            getLog().debug( "dueTo : " + action.getDueTo() );
         }
     }
 
@@ -186,14 +187,16 @@ public class ReleaseUtils
      * @return A type List of Release objects
      * @todo When Modello can generate typed collections this method is no longer needed
      */
-    public List<Release> convertReleaseList( List changesReleases ) {
+    public List<Release> convertReleaseList( List changesReleases )
+    {
         List<Release> releases = new ArrayList<Release>();
 
         // Loop through the List of releases from changes.xml and casting each
         // release to a Release
-        for (Object changesRelease : changesReleases) {
+        for ( Object changesRelease : changesReleases )
+        {
             Release release = (Release) changesRelease;
-            releases.add(release);
+            releases.add( release );
         }
         return releases;
     }
@@ -209,7 +212,8 @@ public class ReleaseUtils
      * @param componentReleases Releases from the child component
      * @return A list containing the merged releases
      */
-    public List mergeReleases( final List releases, final String componentName, final List componentReleases ) {
+    public List mergeReleases( final List releases, final String componentName, final List componentReleases )
+    {
         if ( releases == null && componentReleases == null )
         {
             return Collections.EMPTY_LIST;
@@ -223,32 +227,37 @@ public class ReleaseUtils
 
         if ( releases != null )
         {
-            for (Object release1 : releases) {
+            for ( Object release1 : releases )
+            {
                 final Release release = (Release) release1;
-                final Release componentRelease = getRelease(componentReleases, release.getVersion());
-                if (componentRelease != null) {
-                    release.addComponent(componentName, componentRelease);
+                final Release componentRelease = getRelease( componentReleases, release.getVersion() );
+                if ( componentRelease != null )
+                {
+                    release.addComponent( componentName, componentRelease );
                 }
-                mergedReleases.add(release);
+                mergedReleases.add( release );
             }
         }
 
-        for (Object componentRelease1 : componentReleases) {
+        for ( Object componentRelease1 : componentReleases )
+        {
             final Release release = (Release) componentRelease1;
-            final Release mergedRelease = getRelease(mergedReleases, release.getVersion());
-            if (mergedRelease == null) {
+            final Release mergedRelease = getRelease( mergedReleases, release.getVersion() );
+            if ( mergedRelease == null )
+            {
                 final Release componentRelease = new Release();
-                componentRelease.setVersion(release.getVersion());
-                componentRelease.setDateRelease(release.getDateRelease());
-                componentRelease.addComponent(componentName, release);
-                mergedReleases.add(componentRelease);
+                componentRelease.setVersion( release.getVersion() );
+                componentRelease.setDateRelease( release.getDateRelease() );
+                componentRelease.addComponent( componentName, release );
+                mergedReleases.add( componentRelease );
             }
         }
 
         return mergedReleases;
     }
 
-    private static String toString(Release release) {
+    private static String toString( Release release )
+    {
         return release.getClass().getSimpleName()
                 + "[version='" + release.getVersion() + "'"
                 + ", date='" + release.getDateRelease() + "'"
@@ -257,9 +266,11 @@ public class ReleaseUtils
                 + "]";
     }
 
-    public static String toString( List<Release> releases ) {
+    public static String toString( List<Release> releases )
+    {
         List<String> releaseStrings = new ArrayList<String>( releases.size() );
-        for ( Release release : releases ) {
+        for ( Release release : releases )
+        {
             releaseStrings.add( toString( release ) );
         }
         return releaseStrings.toString();

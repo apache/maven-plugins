@@ -318,7 +318,7 @@ public final class ClassicJiraDownloader
     {
         final String loginFailureResponse = "your username and password are incorrect";
 
-        return !loginGet.getResponseBodyAsString().contains(loginFailureResponse);
+        return !loginGet.getResponseBodyAsString().contains( loginFailureResponse );
     }
 
     /**
