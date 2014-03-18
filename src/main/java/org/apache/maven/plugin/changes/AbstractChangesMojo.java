@@ -69,7 +69,7 @@ public abstract class AbstractChangesMojo
     {
         getLog().debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
         getLog().debug( "Current Folder:" + basedir );
-        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase(basedir);
+        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir );
         if ( result )
         {
             getLog().debug( "This is the execution root." );

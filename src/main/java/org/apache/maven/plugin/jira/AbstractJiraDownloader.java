@@ -142,7 +142,7 @@ public abstract class AbstractJiraDownloader
             {
                 url = new URL( jiraUrl );
             }
-            catch( MalformedURLException e )
+            catch ( MalformedURLException e )
             {
                 getLog().error( "Invalid JIRA URL: " + jiraUrl + ". " + e.getMessage() );
             }

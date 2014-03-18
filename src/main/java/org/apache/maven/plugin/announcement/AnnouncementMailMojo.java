@@ -217,7 +217,7 @@ public class AnnouncementMailMojo
         throws MojoExecutionException
     {
         // Fail build fast if it is using deprecated parameters
-        if( templateOutputDirectory != null )
+        if ( templateOutputDirectory != null )
         {
             throw new MojoExecutionException( "You are using the old parameter 'templateOutputDirectory'. You must use 'announcementDirectory' instead." );
         }
@@ -302,27 +302,30 @@ public class AnnouncementMailMojo
             mailMsg.setContentType( this.mailContentType );
             mailMsg.setFrom( fromAddress, fromName );
 
-            for (Object o1 : getToAddresses()) {
+            for ( Object o1 : getToAddresses() )
+            {
                 email = o1.toString();
-                getLog().info("Sending mail to " + email + "...");
-                mailMsg.addTo(email, "");
+                getLog().info( "Sending mail to " + email + "..." );
+                mailMsg.addTo( email, "" );
             }
 
             if ( getCcAddresses() != null )
             {
-                for (Object o : getCcAddresses()) {
+                for ( Object o : getCcAddresses() )
+                {
                     email = o.toString();
-                    getLog().info("Sending cc mail to " + email + "...");
-                    mailMsg.addCc(email, "");
+                    getLog().info( "Sending cc mail to " + email + "..." );
+                    mailMsg.addCc( email, "" );
                 }
             }
 
             if ( getBccAddresses() != null )
             {
-                for (Object o : getBccAddresses()) {
+                for ( Object o : getBccAddresses() )
+                {
                     email = o.toString();
-                    getLog().info("Sending bcc mail to " + email + "...");
-                    mailMsg.addBcc(email, "");
+                    getLog().info( "Sending bcc mail to " + email + "..." );
+                    mailMsg.addBcc( email, "" );
                 }
             }
 
@@ -424,11 +427,13 @@ public class AnnouncementMailMojo
         }
         else
         {
-            for (Object aFrom : from) {
+            for ( Object aFrom : from )
+            {
                 Developer developer = (Developer) aFrom;
 
-                if (fromDeveloperId.equals(developer.getId())) {
-                    return new MailSender(developer.getName(), developer.getEmail());
+                if ( fromDeveloperId.equals( developer.getId() ) )
+                {
+                    return new MailSender( developer.getName(), developer.getEmail() );
                 }
             }
             throw new MojoExecutionException(

@@ -46,7 +46,7 @@ public class AdaptiveJiraDownloader extends AbstractJiraDownloader
         {
             effectiveDownloader.doExecute();
         }
-        catch( RestJiraDownloader.NoRest nre )
+        catch ( RestJiraDownloader.NoRest nre )
         {
             getLog().info( "Falling back to RSS for issue download: " + nre.getMessage() );
             effectiveDownloader = new ClassicJiraDownloader();

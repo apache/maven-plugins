@@ -50,7 +50,7 @@ public class UrlBuilder
             {
                 query.append( QUESTION_MARK );
             }
-            query.append(key).append("=").append(value);
+            query.append( key ).append( "=" ).append( value );
         }
         return this;
     }
