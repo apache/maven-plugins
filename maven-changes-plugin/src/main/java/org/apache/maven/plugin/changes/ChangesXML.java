@@ -29,6 +29,7 @@ import org.apache.maven.plugins.changes.model.Body;
 import org.apache.maven.plugins.changes.model.ChangesDocument;
 import org.apache.maven.plugins.changes.model.Properties;
 import org.apache.maven.plugins.changes.model.io.xpp3.ChangesXpp3Reader;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * A facade for a changes.xml file.
@@ -57,12 +58,15 @@ public class ChangesXML
             return;
         }
 
+        FileInputStream fileInputStream = null;
+
         try
         {
 
             ChangesXpp3Reader reader = new ChangesXpp3Reader();
 
-            changesDocument = reader.read( new FileInputStream( xmlPath ), false );
+            fileInputStream = new FileInputStream( xmlPath );
+            changesDocument = reader.read( fileInputStream, false );
 
             if ( changesDocument == null )
             {
@@ -96,6 +100,10 @@ public class ChangesXML
         {
             // FIXME throw an Exception ?
             log.error( "An error occurred when parsing the changes.xml file: ", e );
+        }
+        finally
+        {
+            IOUtil.close( fileInputStream );
         }
     }
 
