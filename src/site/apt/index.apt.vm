@@ -48,13 +48,23 @@ javadoc.exe(or .sh) @options @packages | @argfile
 
 * Goals Overview
 
-   The Javadoc Plugin has ten goals:
+   The Javadoc Plugin has twelve goals:
 
    * {{{./javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
 
    * {{{./test-javadoc-mojo.html}javadoc:test-javadoc}} generates the test Javadoc files for the project. It executes
      the standard Javadoc tool and supports the parameters used by the tool.
+
+   * {{{./javadoc-nofork-mojo.html}javadoc:javadoc-nofork}} generates the Javadoc files for the project.
+     It executes the standard Javadoc tool and supports the parameters used by the tool without forking the 
+     <<<generate-sources>>> phase again. Note that this goal does require generation of test sources before site generation, e.g.
+     by invoking <<<mvn clean deploy site>>>.
+
+   * {{{./test-javadoc-nofork-mojo.html}javadoc:test-javadoc-nofork}} generates the test Javadoc files for the project. 
+     It executes the standard Javadoc tool and supports the parameters used by the tool without forking the 
+     <<<generate-test-sources>>> phase again. Note that this goal does require generation of test sources before site generation,
+     e.g. by invoking <<<mvn clean deploy site>>>.
 
    * {{{./aggregate-mojo.html}javadoc:aggregate}} generates the Javadoc files for an aggregator project. It executes
      the standard Javadoc tool and supports the parameters used by the tool.
@@ -137,5 +147,7 @@ javadoc.exe(or .sh) @options @packages | @argfile
    * {{{./examples/selective-javadocs-report.html}Selective Javadocs Reports}}
 
    * {{{./examples/fix-javadocs.html}Fixing Javadoc Comments}}
+
+   * {{{./examples/javadoc-nofork.html}Generate Javadoc without duplicate execution of phase generate-sources}}
 
    []
