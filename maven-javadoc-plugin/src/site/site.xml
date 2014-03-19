@@ -51,6 +51,7 @@ under the License.
       <item name="Selective Javadocs Reports" href="/examples/selective-javadocs-report.html"/>
       <item name="Fixing Javadoc Comments" href="/examples/fix-javadocs.html"/>
       <item name="Adding additionnal dependencies" href="/examples/additionnal-dependencies.html"/>
+      <item name="Generate Javadoc without duplicate execution of phase generate-sources" href="/examples/javadoc-nofork.html"/>
     </menu>
   </body>
 </project>
