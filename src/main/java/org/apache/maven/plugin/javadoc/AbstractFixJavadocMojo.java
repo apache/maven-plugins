@@ -531,7 +531,7 @@ public abstract class AbstractFixJavadocMojo
             for (String aSplit : split) {
                 String s = aSplit.trim();
                 if (JavadocUtil.equalsIgnoreCase(s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
-                        THROWS_TAG, LINK_TAG)) {
+                        THROWS_TAG, LINK_TAG, RETURN_TAG)) {
                     filtered.add(s);
                 } else {
                     if (getLog().isWarnEnabled()) {
