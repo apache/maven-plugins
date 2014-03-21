@@ -574,6 +574,35 @@ public class FixJavadocMojoTest
                 javaMethod, tag } );
         assertEquals( "     * @return A map configured.", tagJavadoc );
     }
+    
+    public void testInitParameters() 
+        throws Throwable
+    {
+        AbstractFixJavadocMojo mojoInstance = new FixJavadocMojo();
+        setVariableValueToObject( mojoInstance, "fixTags", "author, version, since, param, return, throws, link" );
+        setVariableValueToObject(mojoInstance, "defaultSince", "1.0");
+        setVariableValueToObject(mojoInstance, "level", "protected");
+        
+        PrivateAccessor.invoke( mojoInstance, "init", new Class[] { }, new String[] { } );
+        
+        String[] fixTags = (String[]) getVariableValueFromObject(mojoInstance, "fixTagsSplitted");
+        
+        assertEquals("author", fixTags[0]);
+        assertEquals("version", fixTags[1]);
+        assertEquals("since", fixTags[2]);
+        assertEquals("param", fixTags[3]);
+        assertEquals("return", fixTags[4]);
+        assertEquals("throws", fixTags[5]);
+        assertEquals("link", fixTags[6]);
+        assertEquals(7, fixTags.length);
+        
+        setVariableValueToObject( mojoInstance, "fixTags", "return, fake_value" );
+        PrivateAccessor.invoke( mojoInstance, "init", new Class[] { }, new String[] { } );
+        fixTags = (String[]) getVariableValueFromObject(mojoInstance, "fixTagsSplitted");
+        
+        assertEquals("return", fixTags[0]);
+        assertEquals(1, fixTags.length);
+    }
 
     // ----------------------------------------------------------------------
     // private methods
