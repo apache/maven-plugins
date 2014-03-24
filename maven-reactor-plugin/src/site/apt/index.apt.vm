@@ -25,6 +25,15 @@
 
 ${project.name}
 
++----
+
+THIS PLUGIN IS RETIRED. IT IS NO LONGER MAINTAINED.
+THIS PLUGIN IS RETIRED. IT IS NO LONGER MAINTAINED.
+THIS PLUGIN IS RETIRED. IT IS NO LONGER MAINTAINED.
+THIS PLUGIN IS RETIRED. IT IS NO LONGER MAINTAINED.
+
++----
+
  This plugin can build a subset of interdependent projects in a
  reactor.  It should be useful in large reactor builds that include
  irrelevant stuff you're not working on.
