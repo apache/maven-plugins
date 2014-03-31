@@ -342,9 +342,12 @@ public final class ResourceResolver
         }
 
         final ArtifactResolver resolver = config.artifactResolver();
-
+        
+        @SuppressWarnings( "rawtypes" )
+        Map managed = config.project().getManagedVersionMap();
+        
         final ArtifactResolutionResult resolutionResult = resolver.resolveTransitively(
-                artifactSet, pomArtifact, localRepo, remoteRepos, metadataSource, resolutionFilter );
+                artifactSet, pomArtifact, managed, localRepo, remoteRepos, metadataSource, resolutionFilter );
 
         final List<String> result = new ArrayList<String>( artifacts.size() );
         for ( final Artifact a : (Collection<Artifact>) resolutionResult.getArtifacts() )
