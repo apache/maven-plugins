@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -86,7 +86,6 @@ under the License.
     <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -203,12 +202,6 @@ under the License.
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
         </plugin>
-        <!-- TO remove when parent upgrade -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.9.1</version>
-        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -267,35 +260,8 @@ under the License.
           </execution>
         </executions>
       </plugin>
-      <!-- TO remove when parent upgrade -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.3</version>
-      </plugin>
     </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginVersion}</version>
-      </plugin>
-      <!-- TO remove when parent upgrade -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.7</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
     <profile>
@@ -327,11 +293,6 @@ under the License.
               It implies that the current version is already deployed to generate the site.
             -->
             <version>${project.version}</version>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jxr-plugin</artifactId>
-            <version>2.4</version>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
