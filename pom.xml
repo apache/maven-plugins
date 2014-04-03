@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -56,7 +56,6 @@ under the License.
     <scmVersion>1.9</scmVersion>
     <mavenVersion>3.0</mavenVersion>
     <pluginTools>3.2</pluginTools>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
 
     <!-- for documentation purpose -->
     <maven-scm-provider-svnjava-version>2.0.6</maven-scm-provider-svnjava-version>
@@ -165,17 +164,6 @@ under the License.
           <artifactId>maven-plugin-plugin</artifactId>
           <version>${pluginTools}</version>
         </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.4.2</version>
-          <configuration>
-            <releaseProfiles>apache-release,rat,run-its</releaseProfiles><!-- TODO add to parent pom -->
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -191,12 +179,6 @@ under the License.
               <goal>descriptor</goal>
             </goals>
           </execution>
-          <execution>
-            <id>generated-helpmojo</id>
-            <goals>
-              <goal>helpmojo</goal>
-            </goals>
-          </execution>
         </executions>
       </plugin>
     </plugins>
@@ -210,7 +192,6 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.7</version>
             <configuration>
               <addTestClassPath>true</addTestClassPath>
             </configuration>
