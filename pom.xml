@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -59,7 +59,6 @@ under the License.
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencyManagement>
@@ -154,14 +153,14 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
       </testResource>
     </testResources>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -219,7 +218,7 @@ under the License.
       <properties>
         <localRepositoryUrl>${project.build.directory}/it-repo</localRepositoryUrl>
       </properties>
-      
+
       <build>
         <testResources>
           <testResource>
@@ -227,7 +226,7 @@ under the License.
             <filtering>true</filtering>
           </testResource>
         </testResources>
-        
+
         <pluginManagement>
           <plugins>
             <plugin>
@@ -253,7 +252,7 @@ under the License.
             </plugin>
           </plugins>
         </pluginManagement>
-        
+
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
