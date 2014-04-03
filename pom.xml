@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -62,7 +62,6 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <maven.test.jvmargs>-Xmx1024m</maven.test.jvmargs>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
