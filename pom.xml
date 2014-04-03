@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -66,7 +66,6 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <mavenFilteringVersion>1.2-SNAPSHOT</mavenFilteringVersion> <!-- Due to JDK8, see MSHARED-319 -->
     <sitePluginVersion>3.3</sitePluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -205,11 +204,6 @@ under the License.
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>${sitePluginVersion}</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
             <includes>
@@ -220,7 +214,6 @@ under the License.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.9</version>
           <configuration>
             <excludes>
               <!--
@@ -338,16 +331,6 @@ under the License.
       </plugin>
     </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginVersion}</version>
-      </plugin>
-    </plugins>
-  </reporting>
   
   <profiles>
     <profile>
@@ -376,7 +359,6 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.12</version>
             <executions>
               <execution>
                 <id>integration-tests</id>
