@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -74,7 +74,6 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -402,7 +401,6 @@ under the License.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.9</version>
           <configuration>
             <excludes>
               <!--
@@ -430,12 +428,6 @@ under the License.
             <id>mojo-descriptor</id>
             <goals>
               <goal>descriptor</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>help-goal</id>
-            <goals>
-              <goal>helpmojo</goal>
             </goals>
           </execution>
         </executions>
@@ -567,11 +559,6 @@ under the License.
                 </reports>
               </reportSet>
             </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <version>${mavenPluginPluginVersion}</version>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>

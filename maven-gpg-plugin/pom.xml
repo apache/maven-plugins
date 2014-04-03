@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -59,7 +59,6 @@ under the License.
   <properties>
     <mavenVersion>2.0.6</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -185,13 +184,6 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <version>1.5</version>
           </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <version>${mavenPluginPluginVersion}</version>
-          </plugin>
-
         </plugins>
       </reporting>
     </profile>

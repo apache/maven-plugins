@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -68,7 +68,6 @@ under the License.
   <properties>
     <mavenVersion>2.1.0</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -116,10 +115,6 @@ under the License.
 
     <pluginManagement>
       <plugins>
-        <plugin><!-- TODO: remove when upgrading to maven-plugins 25 -->
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
@@ -131,7 +126,6 @@ under the License.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.10</version>
           <configuration>
             <excludes>
               <!--
@@ -159,47 +153,6 @@ under the License.
       </plugin>
     </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
-      </plugin>
-      <!-- TODO: remove when upgrading to maven-plugins 25 -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled><!-- waiting for MPIR-267 -->
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-              <report>summary</report>
-              <report>dependency-info</report>
-              <report>modules</report>
-              <report>license</report>
-              <report>project-team</report>
-              <report>scm</report>
-              <report>issue-tracking</report>
-              <report>mailing-list</report>
-              <report>dependency-management</report>
-              <report>dependencies</report>
-              <report>dependency-convergence</report>
-              <report>cim</report>
-              <report>plugin-management</report>
-              <report>plugins</report>
-              <report>distribution-management</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
     <profile>

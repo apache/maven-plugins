@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -68,7 +68,6 @@ under the License.
     <mavenFilteringVersion>1.1</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <contributors>
@@ -176,27 +175,11 @@ under the License.
                 <goal>descriptor</goal>
               </goals>
             </execution>
-            <execution>
-              <id>help-goal</id>
-              <goals>
-                <goal>helpmojo</goal>
-              </goals>
-            </execution>
           </executions>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
-
-  <reporting>
-     <plugins>
-       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-plugin-plugin</artifactId>
-         <version>${mavenPluginPluginVersion}</version>
-       </plugin>
-     </plugins>
-   </reporting>
 
   <profiles>
     <profile>
@@ -207,7 +190,6 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>1.7</version>
               <configuration>
                 <debug>true</debug>
                 <postBuildHookScript>verify</postBuildHookScript>
