@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -42,9 +42,7 @@ under the License.
 
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ear-plugin/</connection>
-    <developerConnection>
-      scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ear-plugin/
-    </developerConnection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-ear-plugin/</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ear-plugin/</url>
   </scm>
   <issueManagement>
@@ -81,7 +79,6 @@ under the License.
     <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
     <mavenVersion>2.0.6</mavenVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -177,7 +174,6 @@ under the License.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.10</version>
           <configuration>
             <excludes>
               <!--
@@ -229,16 +225,6 @@ under the License.
     </plugins>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginVersion}</version>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <profiles>
 
     <profile>
@@ -282,7 +268,6 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.8</version>
             <configuration>
               <!-- NOTE: Must be synced with the repo path used by AbstractEarPluginIT -->
               <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
