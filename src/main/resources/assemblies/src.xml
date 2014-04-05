@@ -39,7 +39,7 @@
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     <fileSet>
-      <directory>\${project.build.sourceDirectory}</directory>
+      <directory>\${project.basedir}/src</directory>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>
