@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -60,7 +60,6 @@ under the License.
     <mavenVersion>2.2.0</mavenVersion>
     <scmVersion>1.7</scmVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
-    <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
   </properties>
 
   <dependencies>
@@ -78,7 +77,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -170,14 +168,6 @@ under the License.
           <version>${mavenPluginVersion}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.modello</groupId>
-          <artifactId>modello-maven-plugin</artifactId>
-          <version>1.4.1</version>
-          <configuration>
-            <useJava5>true</useJava5>
           </configuration>
         </plugin>
       </plugins>
@@ -273,7 +263,6 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>1.7</version>
               <configuration>
                 <debug>true</debug>
                 <projectsDirectory>src/it</projectsDirectory>

@@ -730,15 +730,15 @@ public class DoapMojo
         writeReleases( writer, project );
 
         // Developers
-        @SuppressWarnings( "unchecked" ) List<Contributor> developers = project.getDevelopers();
+        List<Contributor> developers = project.getDevelopers();
         writeContributors( writer, developers );
 
         // Contributors
-        @SuppressWarnings( "unchecked" ) List<Contributor> contributors = project.getContributors();
+        List<Contributor> contributors = project.getContributors();
         writeContributors( writer, contributors );
 
         // Extra DOAP
-        @SuppressWarnings( "unchecked" ) Map<String, String> map = doapOptions.getExtra();
+        Map<Object, String> map = doapOptions.getExtra();
         writeExtra( writer, project, "Extra DOAP vocabulary.", map, doapOptions.getXmlnsPrefix() );
 
         // ASFext
@@ -2040,7 +2040,7 @@ public class DoapMojo
 
         writeASFImplements( writer );
 
-        @SuppressWarnings( "unchecked" ) Map<String, String> map = asfExtOptions.getExtra();
+        Map<Object, String> map = asfExtOptions.getExtra();
         writeExtra( writer, project, "Extra ASFExt vocabulary.", map, asfExtOptions.getXmlnsPrefix() );
     }
 
@@ -2357,7 +2357,7 @@ public class DoapMojo
      * @param xmlnsPrefix not null
      * @since 1.1
      */
-    private void writeExtra( XMLWriter writer, MavenProject project, String comment, Map<String, String> map,
+    private void writeExtra( XMLWriter writer, MavenProject project, String comment, Map<Object, String> map,
                              String xmlnsPrefix )
     {
         if ( map == null || map.isEmpty() )
@@ -2366,9 +2366,9 @@ public class DoapMojo
         }
 
         boolean addComment = false;
-        for ( Map.Entry<String, String> entry : map.entrySet() )
+        for ( Map.Entry<Object, String> entry : map.entrySet() )
         {
-            String key = entry.getKey();
+            String key = (String)entry.getKey();
             String value = entry.getValue();
 
             if ( value == null )
@@ -2416,7 +2416,7 @@ public class DoapMojo
 
         for ( ExtOptions extOption : extOptions )
         {
-            @SuppressWarnings( "unchecked" ) Map<String, String> map = extOption.getExtensions();
+            Map<Object, String> map = extOption.getExtensions();
             writeExtra( writer, project, "Other extension vocabulary.", map, extOption.getXmlnsPrefix() );
         }
     }
