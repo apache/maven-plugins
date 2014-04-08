@@ -22,6 +22,7 @@ package org.apache.maven.plugin.changes;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,10 +44,19 @@ public class ChangesCheckMojo
 {
     /**
      * The format that a correct release date should have. This value will be
-     * used as a pattern to try to create a date.
+     * used as a pattern to try to parse a date.
      */
     @Parameter( property = "changes.releaseDateFormat", defaultValue = "yyyy-MM-dd" )
     private String releaseDateFormat;
+
+    /**
+     * The locale that a correct release date should have. This value will be
+     * used as a locale to try to parse a date.
+     *
+     * @since 2.10
+     */
+    @Parameter( property = "changes.releaseDateLocale" )
+    private String releaseDateLocale;
 
     /**
      * Version of the artifact.
@@ -96,7 +106,7 @@ public class ChangesCheckMojo
                 Release release =
                     releaseUtils.getLatestRelease( releaseUtils.convertReleaseList( xml.getReleaseList() ), version );
 
-                if ( !isValidDate( release.getDateRelease(), releaseDateFormat ) )
+                if ( !isValidDate( release.getDateRelease(), releaseDateFormat, releaseDateLocale ) )
                 {
                     throw new MojoExecutionException(
                         "The file " + xmlPath.getAbsolutePath() + " has an invalid release date." );
@@ -111,13 +121,28 @@ public class ChangesCheckMojo
     }
 
     /**
-     * Use the pattern to try to parse a Date from the given string.
+     * Use the pattern to try to parse a Date from the given string. Kept for
+     * backward compatibility with existing unit tests.
      *
      * @param string A date as text
      * @param pattern A pattern that can be used by {@link SimpleDateFormat}
      * @return <code>true</code> if the string can be parsed as a date using the pattern, otherwise <code>false</code>
      */
     protected static boolean isValidDate( String string, String pattern )
+    {
+        return isValidDate( string, pattern, null );
+    }
+
+    /**
+     * Use the pattern to try to parse a Date from the given string using the
+     * given Locale.
+     *
+     * @param string A date as text
+     * @param pattern A pattern that can be used by {@link SimpleDateFormat}
+     * @param locale A locale that can be used by {@link SimpleDateFormat}
+     * @return <code>true</code> if the string can be parsed as a date using the pattern, otherwise <code>false</code>
+     */
+    protected static boolean isValidDate( String string, String pattern, String locale )
     {
         if ( StringUtils.isEmpty( string ) )
         {
@@ -131,7 +156,36 @@ public class ChangesCheckMojo
 
         try
         {
-            SimpleDateFormat df = new SimpleDateFormat( pattern );
+            Locale usedLocale = null;
+
+            if ( StringUtils.isEmpty( locale ) )
+            {
+                // No locale specified, use the default locale as default value
+                // The same behavior as before the locale parameter was added
+                usedLocale = Locale.getDefault();
+            }
+            else
+            {
+                // Try to find the specified locale on this system
+                Locale[] locales = Locale.getAvailableLocales();
+                for ( int i = 0 ; i < locales.length ; i++ )
+                {
+                    if ( locales[i].toString().equals( locale ) )
+                    {
+                        usedLocale = locales[i];
+                        break;
+                    }
+                }
+
+                if ( usedLocale == null )
+                {
+                    // The use specified locale was not found on this system,
+                    // use the default locale as default value
+                    usedLocale = Locale.getDefault();
+                }
+            }
+
+            SimpleDateFormat df = new SimpleDateFormat( pattern, usedLocale );
             df.parse( string );
             return true;
         }
