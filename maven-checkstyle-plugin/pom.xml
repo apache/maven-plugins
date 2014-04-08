@@ -257,9 +257,10 @@ under the License.
               -->
               <exclude>src/it/multi-modules-aggregate/child-b/src/test/java/org/apache/maven/plugins/checkstyle/its/AppTest.java</exclude>
               <!--
-                This is a license header template.
+                These are license header templates.
               -->
               <exclude>src/main/resources/config/maven-header.txt</exclude>
+              <exclude>src/it/MCHECKSTYLE-225/build-tools/src/main/resources/test/custom-header.txt</exclude>
               <!--
                 File from the Checkstyle distribution - do not add our own license header.
               -->
