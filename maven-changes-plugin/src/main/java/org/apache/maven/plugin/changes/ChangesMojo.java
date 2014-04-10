@@ -257,7 +257,10 @@ public class ChangesMojo
         additionalProperties.put( "publishDate", simpleDateFormat.format( now ) );
 
         ChangesXML changesXml = getChangesFromFile( xmlPath, project, additionalProperties );
-        if ( changesXml == null ) return;
+        if ( changesXml == null )
+        {
+            return;
+        }
 
         if ( aggregated )
         {
@@ -278,7 +281,8 @@ public class ChangesMojo
                 final ChangesXML childXml = getChangesFromFile( changesFile, childProject, additionalProperties );
                 if ( childXml != null )
                 {
-                    releaseList = releaseUtils.mergeReleases( releaseList, childProject.getName(), childXml.getReleaseList() );
+                    releaseList = releaseUtils.mergeReleases( releaseList, childProject.getName(),
+                                                              childXml.getReleaseList() );
                 }
             }
             changesXml.setReleaseList( releaseList );
@@ -405,11 +409,12 @@ public class ChangesMojo
                 // so we get encoding from the file itself
                 xmlStreamReader = new XmlStreamReader( changesXml );
                 String encoding = xmlStreamReader.getEncoding();
-                File resultFile = new File( filteredOutputDirectory, project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
+                File resultFile = new File( filteredOutputDirectory,
+                                            project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
 
                 final MavenFileFilterRequest mavenFileFilterRequest =
-                        new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.EMPTY_LIST, false,
-                                encoding, session, additionalProperties );
+                        new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.EMPTY_LIST,
+                                                    false, encoding, session, additionalProperties );
                 mavenFileFilter.copyFile( mavenFileFilterRequest );
                 changesXml = resultFile;
             }

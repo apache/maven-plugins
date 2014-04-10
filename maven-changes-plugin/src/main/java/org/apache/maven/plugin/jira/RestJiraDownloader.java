@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.jira;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugin.jira;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -204,8 +204,10 @@ public class RestJiraDownloader extends AbstractJiraDownloader
     private void resolveIds( WebClient client, String jiraProject )
         throws IOException, MojoExecutionException, MojoFailureException
     {
-        resolveList( resolvedComponentIds, client, "components",  component, "/rest/api/2/project/{key}/components", jiraProject );
-        resolveList( resolvedFixVersionIds, client, "fixVersions", fixVersionIds, "/rest/api/2/project/{key}/versions", jiraProject );
+        resolveList( resolvedComponentIds, client, "components",  component, "/rest/api/2/project/{key}/components",
+                     jiraProject );
+        resolveList( resolvedFixVersionIds, client, "fixVersions", fixVersionIds, "/rest/api/2/project/{key}/versions",
+                     jiraProject );
         resolveList( resolvedStatusIds, client, "status", statusIds, "/rest/api/2/status" );
         resolveList( resolvedResolutionIds, client, "resolution", resolutionIds, "/rest/api/2/resolution" );
         resolveList( resolvedTypeIds, client, "type", typeIds, "/rest/api/2/issuetype" );
@@ -536,7 +538,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
                     // if not one of the documented failures, assume that there's no rest in there in the first place.
                     throw new NoRest();
                 }
-                throw new MojoExecutionException( String.format( "Authentication failure status %d.", authRes.getStatus() ) );
+                throw new MojoExecutionException( String.format( "Authentication failure status %d.",
+                                                                 authRes.getStatus() ) );
             }
         }
     }

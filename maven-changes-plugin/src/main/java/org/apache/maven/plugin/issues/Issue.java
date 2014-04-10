@@ -252,7 +252,8 @@ public class Issue
         this.version = version;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return this.getClass().getSimpleName()
             + "[id='" + this.getId() + "'"
             + ", title='" + this.getTitle() + "'"
