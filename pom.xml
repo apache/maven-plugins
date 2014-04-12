@@ -94,6 +94,11 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-descriptor</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
@@ -260,7 +265,8 @@ under the License.
                 These are license header templates.
               -->
               <exclude>src/main/resources/config/maven-header.txt</exclude>
-              <exclude>src/it/MCHECKSTYLE-225/build-tools/src/main/resources/test/custom-header.txt</exclude>
+              <exclude>src/it/MCHECKSTYLE-225-customHeader/build-tools/src/main/resources/test/custom-header.txt</exclude>
+              <exclude>src/it/MCHECKSTYLE-225-LICENSE.txt/build-tools/src/main/resources/LICENSE.txt</exclude>
               <!--
                 File from the Checkstyle distribution - do not add our own license header.
               -->

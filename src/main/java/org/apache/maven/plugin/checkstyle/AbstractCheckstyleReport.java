@@ -19,16 +19,28 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
-import com.puppycrawl.tools.checkstyle.DefaultLogger;
-import com.puppycrawl.tools.checkstyle.XMLLogger;
-import com.puppycrawl.tools.checkstyle.api.AuditListener;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator;
 import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -39,16 +51,10 @@ import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import com.puppycrawl.tools.checkstyle.DefaultLogger;
+import com.puppycrawl.tools.checkstyle.XMLLogger;
+import com.puppycrawl.tools.checkstyle.api.AuditListener;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 
 /**
  * Base abstract class for Checkstyle reports.
@@ -366,8 +372,15 @@ public abstract class AbstractCheckstyleReport
     /**
      * The Maven Project Object.
      */
-    @Component
+    @Parameter( defaultValue = "${project}" )
     protected MavenProject project;
+    
+    
+    /**
+     * The Plugin Descriptor
+     */
+    @Parameter( defaultValue= "${plugin}" )
+    private PluginDescriptor plugin;
 
     /**
      * Link the violation line numbers to the source xref. Will link
@@ -469,7 +482,8 @@ public abstract class AbstractCheckstyleReport
 
         try
         {
-            CheckstyleExecutorRequest request = createRequest();
+            CheckstyleExecutorRequest request = createRequest().setLicenseArtifacts( collectArtifacts( "license" ) )
+                            .setConfigurationArtifacts( collectArtifacts( "configuration" ) );
 
             CheckstyleResults results = checkstyleExecutor.executeCheckstyle( request );
 
@@ -508,6 +522,25 @@ public abstract class AbstractCheckstyleReport
     protected abstract CheckstyleExecutorRequest createRequest()
             throws MavenReportException;
 
+    private List<Artifact> collectArtifacts( String hint )
+    {
+        List<Artifact> artifacts = new ArrayList<Artifact>();
+
+        Plugin checkstylePlugin =
+            (Plugin) project.getBuild().getPluginsAsMap().get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
+        if ( checkstylePlugin != null )
+        {
+            for ( Dependency dep : checkstylePlugin.getDependencies() )
+            {
+             // @todo if we can filter on hints, it should be done here...
+                String depKey = dep.getGroupId() + ":" + dep.getArtifactId();
+                artifacts.add( (Artifact) plugin.getArtifactMap().get( depKey ) );
+            }
+        }
+
+        return artifacts;
+    }
+    
     /**
      * Creates and returns the report generation listener.
      *
@@ -689,4 +722,6 @@ public abstract class AbstractCheckstyleReport
         super.setReportOutputDirectory( reportOutputDirectory );
         this.outputDirectory = reportOutputDirectory;
     }
+    
+    
 }

@@ -23,10 +23,15 @@ import com.puppycrawl.tools.checkstyle.DefaultLogger;
 import com.puppycrawl.tools.checkstyle.XMLLogger;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -49,6 +54,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -298,8 +304,14 @@ public class CheckstyleViolationCheckMojo
     /**
      * The Maven Project Object.
      */
-    @Component
+    @Parameter ( defaultValue = "${project}" )
     protected MavenProject project;
+    
+    /**
+     * The Plugin Descriptor
+     */
+    @Parameter( defaultValue= "${plugin}" )
+    private PluginDescriptor plugin;
 
     /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.
@@ -468,7 +480,8 @@ public class CheckstyleViolationCheckMojo
                         .setResources( resources )
                         .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
                         .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
-                        .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
+                        .setConfigurationArtifacts( collectArtifacts( "config" ) ).setPropertyExpansion( propertyExpansion )
+                        .setHeaderLocation( headerLocation ).setLicenseArtifacts( collectArtifacts( "license" ) )
                         .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
                         .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
                     checkstyleExecutor.executeCheckstyle( request );
@@ -679,6 +692,25 @@ public class CheckstyleViolationCheckMojo
         }
 
         return listener;
+    }
+    
+    private List<Artifact> collectArtifacts( String hint )
+    {
+        List<Artifact> artifacts = new ArrayList<Artifact>();
+
+        Plugin checkstylePlugin =
+            (Plugin) project.getBuild().getPluginsAsMap().get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
+        if ( checkstylePlugin != null )
+        {
+            for ( Dependency dep : checkstylePlugin.getDependencies() )
+            {
+                // @todo if we can filter on hints, it should be done here...
+                String depKey = dep.getGroupId() + ":" + dep.getArtifactId();
+                artifacts.add( (Artifact) plugin.getArtifactMap().get( depKey ) );
+            }
+        }
+
+        return artifacts;
     }
 
 }

@@ -26,10 +26,12 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 
+
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.util.FileUtils;
@@ -167,6 +169,11 @@ public class CheckstyleReportTest
         CheckstyleReport mojo = (CheckstyleReport) lookupMojo( "checkstyle", pluginXmlFile );
 
         assertNotNull( "Mojo found.", mojo );
+        
+        PluginDescriptor descriptorStub = new PluginDescriptor();
+        descriptorStub.setGroupId( "org.apache.maven.plugins" );
+        descriptorStub.setArtifactId( "maven-checkstyle-plugin" );
+        setVariableValueToObject( mojo, "plugin", descriptorStub );
 
         mojo.execute();
 
