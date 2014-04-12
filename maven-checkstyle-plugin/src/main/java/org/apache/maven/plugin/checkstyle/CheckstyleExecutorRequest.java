@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -113,7 +114,17 @@ public class CheckstyleExecutorRequest
      * @since 2.8
      */
     private List<MavenProject> reactorProjects;
+    
+    /**
+     * @since 2.12.1
+     */
+    private List<Artifact> licenseArtifacts;
 
+    /**
+     * @since 2.12.1
+     */
+    private List<Artifact> configurationArtifacts;
+    
     /**
      * Constructor.
      */
@@ -434,6 +445,50 @@ public class CheckstyleExecutorRequest
         return this;
     }
 
+    /**
+     * Returns a list of license artifacts, which may contain the license.
+     * 
+     * @return the license artifacts
+     */
+    public List<Artifact> getLicenseArtifacts()
+    {
+        return licenseArtifacts;
+    }
+
+    /**
+     * Sets a list of license artifacts, which may contain the license.
+     * 
+     * @param licenseArtifacts
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setLicenseArtifacts( List<Artifact> licenseArtifacts )
+    {
+        this.licenseArtifacts = licenseArtifacts;
+        return this;
+    }
+    
+    /**
+     * Returns a list of artifacts, which may contain the checkstyle configuration.
+     * 
+     * @return the license artifacts
+     */
+    public List<Artifact> getConfigurationArtifacts()
+    {
+        return configurationArtifacts;
+    }
+
+    /**
+     * Sets a list of artifacts, which may contain the checkstyle configuration.
+     * 
+     * @param configArtifacts
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setConfigurationArtifacts( List<Artifact> configArtifacts )
+    {
+        this.configurationArtifacts = configArtifacts;
+        return this;
+    }
+    
     public boolean isIncludeResources()
     {
         return includeResources;
