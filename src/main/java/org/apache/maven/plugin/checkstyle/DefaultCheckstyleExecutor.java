@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
@@ -92,9 +93,12 @@ public class DefaultCheckstyleExecutor
 
         MavenProject project = request.getProject();
 
-        configureResourceLocator( locator, request );
+        configureResourceLocator( locator, request, null );
         
-        configureResourceLocator( licenseLocator, request );
+        configureResourceLocator( licenseLocator, request, request.getLicenseArtifacts() );
+
+        // Config is less critical than License, locator can still be used.
+        // configureResourceLocator( configurationLocator, request, request.getConfigurationArtifacts() );
 
         File[] files;
         try
@@ -699,7 +703,8 @@ public class DefaultCheckstyleExecutor
      * @param request executor request data.
      */
     private void configureResourceLocator( final ResourceManager resourceManager,
-                                           final CheckstyleExecutorRequest request )
+                                           final CheckstyleExecutorRequest request,
+                                           final List<Artifact> additionalArtifacts )
     {
         final MavenProject project = request.getProject();
         resourceManager.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
@@ -715,7 +720,22 @@ public class DefaultCheckstyleExecutor
             resourceManager.addSearchPath( FileResourceLoader.ID, dir.getAbsolutePath() );
             parent = parent.getParent();
         }
-
         resourceManager.addSearchPath( "url", "" );
+        
+        // MCHECKSTYLE-225: load licenses from additional artifacts, not from classpath
+        if ( additionalArtifacts != null )
+        {
+            for ( Artifact licenseArtifact : additionalArtifacts )
+            {
+                try
+                {
+                    resourceManager.addSearchPath( "jar", "jar:" + licenseArtifact.getFile().toURI().toURL() );
+                }
+                catch ( MalformedURLException e )
+                {
+                    // noop
+                }
+            }
+        }
     }
 }
