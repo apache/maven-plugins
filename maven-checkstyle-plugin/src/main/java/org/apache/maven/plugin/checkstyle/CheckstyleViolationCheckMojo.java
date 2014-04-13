@@ -29,6 +29,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
@@ -312,6 +313,10 @@ public class CheckstyleViolationCheckMojo
      */
     @Parameter( defaultValue= "${plugin}" )
     private PluginDescriptor plugin;
+
+    // remove when requiring Maven 3.x, just use #plugin 
+    @Parameter( defaultValue= "${mojoExecution}" )
+    private MojoExecution mojoExecution;
 
     /**
      * If <code>null</code>, the Checkstyle plugin will display violations on stdout.
@@ -696,6 +701,12 @@ public class CheckstyleViolationCheckMojo
     
     private List<Artifact> collectArtifacts( String hint )
     {
+        if ( plugin == null || plugin.getGroupId() == null )
+        {
+            // Maven 2.x workaround
+            plugin = mojoExecution.getMojoDescriptor().getPluginDescriptor();
+        }
+        
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
         Plugin checkstylePlugin =
