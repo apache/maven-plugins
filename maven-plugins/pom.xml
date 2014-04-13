@@ -55,6 +55,7 @@ under the License.
 
   <properties>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
+    <mavenPluginToolsVersion>3.2</mavenPluginToolsVersion>
   </properties>
 
   <repositories>
@@ -67,6 +68,24 @@ under the License.
       </releases>
     </repository>
   </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>${mavenPluginToolsVersion}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <!-- dependencies to annotations -->
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement>
@@ -112,9 +131,35 @@ under the License.
             <releaseProfiles>apache-release,rat,run-its</releaseProfiles>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${mavenPluginToolsVersion}</version>
+          <configuration>
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          </configuration>
+          <executions>
+            <execution>
+              <id>mojo-descriptor</id>
+              <goals>
+                <goal>descriptor</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>generated-helpmojo</id>
+              <goals>
+                <goal>helpmojo</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
@@ -144,18 +189,6 @@ under the License.
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generated-helpmojo</id>
-            <goals>
-              <goal>helpmojo</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -164,7 +197,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.2</version>
+        <version>${mavenPluginToolsVersion}</version>
       </plugin>
     </plugins>
   </reporting>
@@ -267,6 +300,6 @@ under the License.
           </plugin>
         </plugins>        
       </build>   
-    </profile> 	
+    </profile>
   </profiles>
 </project>
