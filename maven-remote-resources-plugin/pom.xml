@@ -64,7 +64,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenFilteringVersion>1.2-SNAPSHOT</mavenFilteringVersion> <!-- Due to JDK8, see MSHARED-319 -->
+    <mavenFilteringVersion>1.2</mavenFilteringVersion> <!-- Due to JDK8, see MSHARED-319 -->
     <sitePluginVersion>3.3</sitePluginVersion>
   </properties>
 
