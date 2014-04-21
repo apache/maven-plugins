@@ -133,7 +133,9 @@ public class TreeMojo
     private String scope;
 
     /**
-     * Whether to include omitted nodes in the serialized dependency tree.
+     * Whether to include omitted nodes in the serialized dependency tree. Notice this feature actually uses Maven 2
+     * algorithm and <a href="http://maven.apache.org/shared/maven-dependency-tree/">may give wrong results when used
+     * with Maven 3</a>.
      *
      * @since 2.0-alpha-6
      */
@@ -243,6 +245,11 @@ public class TreeMojo
             if ( verbose )
             {
                 // verbose mode force Maven 2 dependency tree component use
+                if ( ! isMaven2x() )
+                {
+                    getLog().warn( "Using Maven 2 dependency tree to get verbose output, "
+                                       + "which may be inconsistent with actual Maven 3 resolution" );
+                }
                 dependencyTreeString =
                     serializeVerboseDependencyTree( dependencyTreeBuilder.buildDependencyTree( project,
                                                                                                localRepository,
@@ -601,4 +608,25 @@ public class TreeMojo
         return recommendedVersion.compareTo( theVersion ) <= 0;
     }
 
+    /**
+     * Check the current Maven version to see if it's Maven 2.x.
+     */
+    protected static boolean isMaven2x()
+    {
+        return !canFindCoreClass( "org.apache.maven.project.DependencyResolutionRequest" ); // Maven 3 specific
+    }
+
+    private static boolean canFindCoreClass( String className)
+    {
+        try
+        {
+            Thread.currentThread().getContextClassLoader().loadClass( className );
+
+            return true;
+        }
+        catch ( ClassNotFoundException e )
+        {
+            return false;
+        }
+    }
 }
