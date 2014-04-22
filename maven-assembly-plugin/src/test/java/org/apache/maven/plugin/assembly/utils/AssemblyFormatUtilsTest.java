@@ -51,6 +51,7 @@ public class AssemblyFormatUtilsTest
         throws AssemblyFormattingException
     {
         assertEquals( "some/path/", AssemblyFormatUtils.fixRelativeRefs( "some/./path/" ) );
+        assertEquals( "some\\path\\", AssemblyFormatUtils.fixRelativeRefs( "some\\.\\path\\" ) );
     }
 
     public void testFixRelativePathRefs_ShouldRemoveEmbeddedParentDirRef()
