@@ -19,10 +19,17 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
-import com.puppycrawl.tools.checkstyle.DefaultLogger;
-import com.puppycrawl.tools.checkstyle.XMLLogger;
-import com.puppycrawl.tools.checkstyle.api.AuditListener;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
@@ -47,16 +54,10 @@ import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import com.puppycrawl.tools.checkstyle.DefaultLogger;
+import com.puppycrawl.tools.checkstyle.XMLLogger;
+import com.puppycrawl.tools.checkstyle.api.AuditListener;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 
 /**
  * Performs Checkstyle analysis and outputs violations or a count of violations
@@ -311,11 +312,11 @@ public class CheckstyleViolationCheckMojo
     /**
      * The Plugin Descriptor
      */
-    @Parameter( defaultValue= "${plugin}" )
+    @Parameter( defaultValue= "${plugin}", readonly = true )
     private PluginDescriptor plugin;
 
     // remove when requiring Maven 3.x, just use #plugin 
-    @Parameter( defaultValue= "${mojoExecution}" )
+    @Parameter( defaultValue= "${mojoExecution}", readonly = true )
     private MojoExecution mojoExecution;
 
     /**
@@ -699,6 +700,7 @@ public class CheckstyleViolationCheckMojo
         return listener;
     }
     
+    @SuppressWarnings( "unchecked" )
     private List<Artifact> collectArtifacts( String hint )
     {
         if ( plugin == null || plugin.getGroupId() == null )
@@ -709,19 +711,31 @@ public class CheckstyleViolationCheckMojo
         
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
-        Plugin checkstylePlugin =
-            (Plugin) project.getBuild().getPluginsAsMap().get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
-        if ( checkstylePlugin != null )
+        if ( project.getBuild().getPluginManagement() != null )
         {
-            for ( Dependency dep : checkstylePlugin.getDependencies() )
-            {
-                // @todo if we can filter on hints, it should be done here...
-                String depKey = dep.getGroupId() + ":" + dep.getArtifactId();
-                artifacts.add( (Artifact) plugin.getArtifactMap().get( depKey ) );
-            }
+            artifacts.addAll(  getCheckstylePluginDependenciesAsArtifacts(  project.getBuild().getPluginManagement().getPluginsAsMap(), hint ) );
         }
+                        
+        artifacts.addAll(  getCheckstylePluginDependenciesAsArtifacts(  project.getBuild().getPluginsAsMap(), hint ) );
 
         return artifacts;
     }
 
+    private List<Artifact> getCheckstylePluginDependenciesAsArtifacts( Map<String, Plugin> plugins, String hint )
+    {
+        List<Artifact> artifacts = new ArrayList<Artifact>();
+        
+        Plugin checkstylePlugin = plugins.get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
+        if ( checkstylePlugin != null )
+        {
+            for ( Dependency dep : checkstylePlugin.getDependencies() )
+            {
+             // @todo if we can filter on hints, it should be done here...
+                String depKey = dep.getGroupId() + ":" + dep.getArtifactId();
+                artifacts.add( (Artifact) plugin.getArtifactMap().get( depKey ) );
+            }
+        }
+        return artifacts;
+    }
+    
 }

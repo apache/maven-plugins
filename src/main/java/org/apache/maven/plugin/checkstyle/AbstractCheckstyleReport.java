@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.Artifact;
@@ -38,6 +39,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator;
 import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
@@ -379,9 +381,13 @@ public abstract class AbstractCheckstyleReport
     /**
      * The Plugin Descriptor
      */
-    @Parameter( defaultValue= "${plugin}" )
+    @Parameter( defaultValue= "${plugin}", readonly = true )
     private PluginDescriptor plugin;
 
+    // remove when requiring Maven 3.x, just use #plugin 
+    @Parameter( defaultValue= "${mojoExecution}", readonly = true )
+    private MojoExecution mojoExecution;
+    
     /**
      * Link the violation line numbers to the source xref. Will link
      * automatically if Maven JXR plugin is being used.
@@ -522,12 +528,32 @@ public abstract class AbstractCheckstyleReport
     protected abstract CheckstyleExecutorRequest createRequest()
             throws MavenReportException;
 
+    @SuppressWarnings( "unchecked" )
     private List<Artifact> collectArtifacts( String hint )
     {
+        if ( plugin == null || plugin.getGroupId() == null )
+        {
+            // Maven 2.x workaround
+            plugin = mojoExecution.getMojoDescriptor().getPluginDescriptor();
+        }
+        
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
-        Plugin checkstylePlugin =
-            (Plugin) project.getBuild().getPluginsAsMap().get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
+        if ( project.getBuild().getPluginManagement() != null )
+        {
+            artifacts.addAll(  getCheckstylePluginDependenciesAsArtifacts(  project.getBuild().getPluginManagement().getPluginsAsMap(), hint ) );
+        }
+                        
+        artifacts.addAll(  getCheckstylePluginDependenciesAsArtifacts(  project.getBuild().getPluginsAsMap(), hint ) );
+
+        return artifacts;
+    }
+
+    private List<Artifact> getCheckstylePluginDependenciesAsArtifacts( Map<String, Plugin> plugins, String hint )
+    {
+        List<Artifact> artifacts = new ArrayList<Artifact>();
+        
+        Plugin checkstylePlugin = plugins.get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
         if ( checkstylePlugin != null )
         {
             for ( Dependency dep : checkstylePlugin.getDependencies() )
@@ -537,10 +563,9 @@ public abstract class AbstractCheckstyleReport
                 artifacts.add( (Artifact) plugin.getArtifactMap().get( depKey ) );
             }
         }
-
         return artifacts;
     }
-    
+
     /**
      * Creates and returns the report generation listener.
      *
