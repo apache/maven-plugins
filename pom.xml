@@ -63,6 +63,7 @@ under the License.
     <mavenVersion>3.0</mavenVersion>
     <currentVersion>${project.version}</currentVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
+    <asmVersion>5.0.2</asmVersion>
   </properties>
 
   <contributors>
@@ -122,14 +123,14 @@ under the License.
 
     <!-- Others -->
     <dependency>
-      <groupId>asm</groupId>
+      <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>3.3.1</version>
+      <version>${asmVersion}</version>
     </dependency>
     <dependency>
-      <groupId>asm</groupId>
+      <groupId>org.ow2.asm</groupId>
       <artifactId>asm-commons</artifactId>
-      <version>3.3.1</version>
+      <version>${asmVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
@@ -144,7 +145,7 @@ under the License.
     <dependency>
       <groupId>org.vafer</groupId>
       <artifactId>jdependency</artifactId>
-      <version>0.7</version>
+      <version>0.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
