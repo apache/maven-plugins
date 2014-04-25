@@ -37,6 +37,12 @@ import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.objectweb.asm.Attribute;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 /**
  * @author Jason van Zyl
@@ -102,7 +108,58 @@ public class DefaultShaderTest
         shaderWithPattern( "org/shaded/plexus/util", new File( "target/foo-custom-without-excludes.jar" ), new String[] {} );
     }
 
-    public void shaderWithPattern( String shadedPattern, File jar, String[] excludes )
+    public void testShaderWithRelocatedClassname()
+        throws Exception
+    {
+            DefaultShader s = newShader();
+
+            Set<File> set = new LinkedHashSet<File>();
+
+            set.add( new File( "src/test/jars/test-project-1.0-SNAPSHOT.jar" ) );
+
+            set.add( new File( "src/test/jars/plexus-utils-1.4.1.jar" ) );
+
+            List<Relocator> relocators = new ArrayList<Relocator>();
+
+            relocators.add( new SimpleRelocator( "org/codehaus/plexus/util/", "_plexus/util/__", null, Arrays.<String> asList() ) );
+
+            List<ResourceTransformer> resourceTransformers = new ArrayList<ResourceTransformer>();
+
+            resourceTransformers.add( new ComponentsXmlResourceTransformer() );
+
+            List<Filter> filters = new ArrayList<Filter>();
+
+            File file = new File( "target/foo-relocate-class.jar" );
+
+            ShadeRequest shadeRequest = new ShadeRequest();
+            shadeRequest.setJars( set );
+            shadeRequest.setUberJar( file );
+            shadeRequest.setFilters( filters );
+            shadeRequest.setRelocators( relocators );
+            shadeRequest.setResourceTransformers( resourceTransformers );
+
+            s.shade( shadeRequest );
+
+            URLClassLoader cl = new URLClassLoader( new URL[]{file.toURI().toURL()} );
+            Class<?> c = cl.loadClass( "_plexus.util.__StringUtils" );
+            // first, ensure it works:
+            Object o = c.newInstance();
+            assertEquals("", c.getMethod("clean", String.class).invoke(o, (String) null));
+            
+            // now, check that its source file was rewritten:
+            final String[] source = { null };
+            final ClassReader classReader = new ClassReader(cl.getResourceAsStream("_plexus/util/__StringUtils.class"));
+            classReader.accept(new ClassVisitor( Opcodes.ASM4 ) {
+            	@Override
+            	public void visitSource(String arg0, String arg1) {
+            		super.visitSource(arg0, arg1);
+            		source[0] = arg0;
+            	}
+            }, ClassReader.SKIP_CODE);
+            assertEquals("__StringUtils.java", source[0]);
+    }
+
+    private void shaderWithPattern( String shadedPattern, File jar, String[] excludes )
         throws Exception
     {
         DefaultShader s = newShader();

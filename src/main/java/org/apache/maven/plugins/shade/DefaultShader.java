@@ -21,9 +21,11 @@ package org.apache.maven.plugins.shade;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.shade.filter.Filter;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+
 import org.apache.maven.plugins.shade.relocation.Relocator;
 import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
 import org.apache.maven.plugins.shade.resource.ResourceTransformer;
@@ -335,7 +337,20 @@ public class DefaultShader
         // that use the constant pool to determine the dependencies of a class.
         ClassWriter cw = new ClassWriter( 0 );
 
-        ClassVisitor cv = new RemappingClassAdapter( cw, remapper );
+        final String pkg = name.substring(0, name.lastIndexOf('/') + 1);
+        ClassVisitor cv = new RemappingClassAdapter( cw, remapper ) {
+            @Override
+            public void visitSource(final String source, final String debug) {
+                if (source == null) {
+                    super.visitSource(source, debug);
+                } else {
+                    final String fqSource = pkg + source;
+                    final String mappedSource = remapper.map(fqSource);
+                    final String filename = mappedSource.substring(mappedSource.lastIndexOf('/') + 1);
+                    super.visitSource(filename, debug);
+                }
+            }
+        };
 
         try
         {
