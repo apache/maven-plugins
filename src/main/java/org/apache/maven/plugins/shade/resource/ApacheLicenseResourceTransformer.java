@@ -46,7 +46,7 @@ public class ApacheLicenseResourceTransformer
     public void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException
     {
-
+        // no op
     }
 
     public boolean hasTransformedResource()
@@ -57,5 +57,6 @@ public class ApacheLicenseResourceTransformer
     public void modifyOutputStream( JarOutputStream os )
         throws IOException
     {
+        // no op
     }
 }

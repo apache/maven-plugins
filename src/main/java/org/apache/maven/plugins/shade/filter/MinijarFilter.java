@@ -19,6 +19,14 @@ package org.apache.maven.plugins.shade.filter;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
+import org.vafer.jdependency.Clazz;
+import org.vafer.jdependency.Clazzpath;
+import org.vafer.jdependency.ClazzpathUnit;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,14 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipException;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.IOUtil;
-import org.vafer.jdependency.Clazz;
-import org.vafer.jdependency.Clazzpath;
-import org.vafer.jdependency.ClazzpathUnit;
 
 /**
  * A filter that prevents the inclusion of classes not required in the final jar.
@@ -62,10 +62,9 @@ public class MinijarFilter
     }
 
     /**
-     *
      * @since 1.6
      */
-    @SuppressWarnings( { "unchecked" } )
+    @SuppressWarnings({ "unchecked" })
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -104,27 +103,28 @@ public class MinijarFilter
         catch ( ZipException e )
         {
             log.warn( dependency.getFile()
-                + " could not be unpacked/read for minimization; dependency is probably malformed." );
-            IOException ioe =
-                new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile()
-                    + " could not be unpacked. File is probably corrupt" );
+                          + " could not be unpacked/read for minimization; dependency is probably malformed." );
+            IOException ioe = new IOException(
+                "Dependency " + dependency.toString() + " in file " + dependency.getFile()
+                    + " could not be unpacked. File is probably corrupt"
+            );
             ioe.initCause( e );
             throw ioe;
         }
         catch ( ArrayIndexOutOfBoundsException e )
         {
             //trap ArrayIndexOutOfBoundsExceptions caused by malformed dependency classes (MSHADE-107)
-            log.warn( dependency.toString()
-                + " could not be analyzed for minimization; dependency is probably malformed." );
+            log.warn(
+                dependency.toString() + " could not be analyzed for minimization; dependency is probably malformed." );
         }
         finally
         {
             IOUtil.close( is );
         }
-        
+
         return clazzpathUnit;
     }
-    
+
     private void removePackages( ClazzpathUnit artifactUnit )
     {
         Set<String> packageNames = new HashSet<String>();
@@ -132,16 +132,19 @@ public class MinijarFilter
         removePackages( artifactUnit.getTransitiveDependencies(), packageNames );
     }
 
-    @SuppressWarnings( "rawtypes" )
+    @SuppressWarnings("rawtypes")
     private void removePackages( Set clazzes, Set<String> packageNames )
     {
-        for (Object clazze : clazzes) {
+        for ( Object clazze : clazzes )
+        {
             Clazz clazz = (Clazz) clazze;
             String name = clazz.getName();
-            while (name.contains(".")) {
-                name = name.substring(0, name.lastIndexOf('.'));
-                if (packageNames.add(name)) {
-                    removable.remove(new Clazz(name + ".package-info"));
+            while ( name.contains( "." ) )
+            {
+                name = name.substring( 0, name.lastIndexOf( '.' ) );
+                if ( packageNames.add( name ) )
+                {
+                    removable.remove( new Clazz( name + ".package-info" ) );
                 }
             }
         }
@@ -168,7 +171,7 @@ public class MinijarFilter
                         {
                             Clazz clazz = j.next();
 
-                            if ( depClazzpathUnit.getClazzes().contains( clazz )
+                            if ( depClazzpathUnit.getClazzes().contains( clazz ) //
                                 && simpleFilter.isSpecificallyIncluded( clazz.getName().replace( '.', '/' ) ) )
                             {
                                 log.info( clazz.getName() + " not removed because it was specifically included" );
@@ -205,8 +208,6 @@ public class MinijarFilter
     public void finished()
     {
         int classesTotal = classesRemoved + classesKept;
-        log.info(
-            "Minimized " + classesTotal + " -> " + classesKept + " (" + 100 * classesKept / classesTotal
-                + "%)" );
+        log.info( "Minimized " + classesTotal + " -> " + classesKept + " (" + 100 * classesKept / classesTotal + "%)" );
     }
 }
