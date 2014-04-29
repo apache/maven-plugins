@@ -19,11 +19,6 @@ package org.apache.maven.plugins.shade.pom;
  * under the License.
  */
 
-//package org.apache.maven.model.io.jdom;
-
-//---------------------------------/
-//- Imported classes and packages -/
-//---------------------------------/
 
 import org.apache.maven.model.ActivationFile;
 import org.apache.maven.model.ActivationOS;
@@ -139,7 +134,7 @@ public class MavenJDOMWriter
                 String key = entry.getKey();
                 findAndReplaceSimpleElement( innerCounter, element, key, entry.getValue(), null );
             }
-            ArrayList lst = new ArrayList( props.keySet() );
+            List lst = new ArrayList( props.keySet() );
             Iterator it = element.getChildren().iterator();
             while ( it.hasNext() )
             {
