@@ -26,7 +26,7 @@ package org.apache.maven.plugin.changes;
  */
 public enum IssueType
 {
-    ADD( "add" ), FIX( "fix" ), UPDATE( "update" );
+    ADD( "add" ), FIX( "fix" ), UPDATE( "update" ), REMOVE( "remove" );
 
     private String configurationKey;
 
