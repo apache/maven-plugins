@@ -22,7 +22,6 @@ package org.apache.maven.plugin.issues;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
-import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.ResourceBundle;
@@ -94,7 +93,11 @@ public abstract class AbstractIssuesReportGenerator
 
         sink.section1();
 
-        sinkSectionTitle1Anchor( sink, title, title );
+        sink.sectionTitle1();
+
+        sink.text( title );
+
+        sink.sectionTitle1_();
     }
 
     protected void sinkCell( Sink sink, String text )
@@ -158,28 +161,6 @@ public abstract class AbstractIssuesReportGenerator
         sink.text( text );
 
         sink.link_();
-    }
-
-    protected void sinkSectionTitle1Anchor( Sink sink, String text, String anchor )
-    {
-        sink.sectionTitle1();
-
-        sink.text( text );
-
-        sink.sectionTitle1_();
-
-        sink.anchor( HtmlTools.encodeId( anchor ) );
-        sink.anchor_();
-    }
-
-    protected void sinkSectionTitle2Anchor( Sink sink, String text, String anchor )
-    {
-        sink.sectionTitle2();
-        sink.text( text );
-        sink.sectionTitle2_();
-
-        sink.anchor( HtmlTools.encodeId( anchor ) );
-        sink.anchor_();
     }
 
     protected void sinkShowTypeIcon( Sink sink, String type )
