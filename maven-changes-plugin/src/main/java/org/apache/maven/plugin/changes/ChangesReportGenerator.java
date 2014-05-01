@@ -523,7 +523,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         sink.section2();
 
-        final String date = ( release.getDateRelease() == null ) ? "" : " - " + release.getDateRelease();
+        final String date = ( release.getDateRelease() == null ) ? "" : " \u2013 " + release.getDateRelease();
 
         sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
                 + release.getVersion() + date, release.getVersion() );
