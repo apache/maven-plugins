@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.plugin.issues.AbstractIssuesReportGenerator;
 import org.apache.maven.plugins.changes.model.Action;
@@ -449,8 +451,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     {
         sink.section2();
 
-        sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.releasehistory" ),
-                                 bundle.getString( "report.changes.label.releasehistory" ) );
+        sink.sectionTitle2();
+        sink.text( bundle.getString( "report.changes.label.releasehistory" ) );
+        sink.sectionTitle2_();
 
         sink.table();
 
@@ -525,8 +528,12 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         final String date = ( release.getDateRelease() == null ) ? "" : " \u2013 " + release.getDateRelease();
 
-        sinkSectionTitle2Anchor( sink, bundle.getString( "report.changes.label.release" ) + " "
-                + release.getVersion() + date, release.getVersion() );
+        SinkEventAttributes attrs = new SinkEventAttributeSet();
+        attrs.addAttribute( SinkEventAttributes.ID, HtmlTools.encodeId( release.getVersion() ) );
+        sink.sectionTitle( Sink.SECTION_LEVEL_2, attrs );
+        sink.text( bundle.getString( "report.changes.label.release" ) + " "
+            + release.getVersion() + date );
+        sink.sectionTitle_( Sink.SECTION_LEVEL_2 );
 
         if ( isReleaseEmpty( release ) )
         {
