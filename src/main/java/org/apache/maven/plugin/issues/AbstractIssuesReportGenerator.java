@@ -190,27 +190,27 @@ public abstract class AbstractIssuesReportGenerator
         if ( type == null )
         {
             image = "images/icon_help_sml.gif";
-            altText = "?";
+            altText = "Unknown";
         }
         else if ( type.equals( "fix" ) )
         {
             image = "images/fix.gif";
-            altText = "fix";
+            altText = "Fix";
         }
         else if ( type.equals( "update" ) )
         {
             image = "images/update.gif";
-            altText = "update";
+            altText = "Update";
         }
         else if ( type.equals( "add" ) )
         {
             image = "images/add.gif";
-            altText = "add";
+            altText = "Add";
         }
         else if ( type.equals( "remove" ) )
         {
             image = "images/remove.gif";
-            altText = "remove";
+            altText = "Remove";
         }
 
         sink.tableCell();
