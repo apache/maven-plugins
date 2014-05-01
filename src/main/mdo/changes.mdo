@@ -126,7 +126,7 @@ under the License.
           <description>
             <![CDATA[
             The date of this release.
-            <p>This field can be any string, such as "in SVN" when the version isn't yet released.</p>
+            <p>This field can be any string, such as "in SVN" when the version isn't yet released but the ISO 8601 date format is recommended.</p>
           ]]>
           </description>
         </field>
