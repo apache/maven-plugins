@@ -36,10 +36,10 @@ try
     }
     String reportContent = FileUtils.fileRead( report );
 
-    int indexOf = reportContent.indexOf( "Changes Report" );
+    int indexOf = reportContent.indexOf( "Changes" );
     if ( indexOf < 0 )
     {
-      System.err.println( "changes-report.html doesn't contains Changes Report title" );
+      System.err.println( "changes-report.html doesn't contains Changes title" );
       return false;
     }
 
