@@ -76,12 +76,12 @@ under the License.
           <version>1.0.0</version>
           <required>true</required>
           <type>String</type>
-          <description>Page Title.</description>
+          <description>The page title.</description>
         </field>
         <field>
           <name>author</name>
           <version>1.0.0</version>
-          <description>Page Author</description>
+          <description>The page author.</description>
           <association>
             <type>Author</type>
             <multiplicity>1</multiplicity>
@@ -125,8 +125,8 @@ under the License.
           <type>String</type>
           <description>
             <![CDATA[
-            <p>The date of this release.</p>
-            <p>This field can be any String, such as "in SVN" when the version isn't yet released. </p>
+            The date of this release.
+            <p>This field can be any string, such as "in SVN" when the version isn't yet released.</p>
           ]]>
           </description>
         </field>
@@ -271,7 +271,7 @@ under the License.
           <type>String</type>
           <description>
             <![CDATA[
-            <p>Name of developer who committed the change.</p>
+            Name of developer who committed the change.
             <p>This can be either the id of the developer, as specified in the developers section of the pom.xml file, or the name of the developer. If you generate a changes report and specify the id of the developer, a link is created to that developer in the team-list.html page.</p>
             ]]>
           </description>
@@ -299,7 +299,7 @@ under the License.
           <type>String</type>
           <description>
             <![CDATA[
-              <p>Id of the issue related to this change. This is the id in your issue tracking system.</p>
+              Id of the issue related to this change. This is the id in your issue tracking system.
               <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplate parameter.</p>
               <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
             ]]>
@@ -314,10 +314,10 @@ under the License.
             <![CDATA[
             Supported action types are the following:
             <ul>
-              <li>add : added functionnality to the project.</li>
-              <li>fix : bug fix for the project.</li>
-              <li>update : updated some part of the project.</li>
-              <li>remove : removed some functionnality from the project.</li>
+              <li>add: added functionnality to the project.</li>
+              <li>fix: bug fix for the project.</li>
+              <li>update: updated some part of the project.</li>
+              <li>remove: removed some functionnality from the project.</li>
             </ul>
             ]]>
           </description>
@@ -328,7 +328,7 @@ under the License.
           <type>String</type>
           <description>
             <![CDATA[
-              <p>Id of issue tracking system. If empty 'default' value will be use.</p>
+              Id of issue tracking system. If empty 'default' value will be used.
               <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplatePerSystem parameter.</p>
               <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
             ]]>
@@ -378,7 +378,7 @@ under the License.
       <name>DueTo</name>
       <version>1.0.0</version>
       <description>
-        Name and Email of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
+        Name and email of the person to be credited for this change. This can be used when a patch is submitted by a non-committer.
       </description>
       <fields>
         <field xml.attribute="true">
@@ -408,7 +408,7 @@ under the License.
           <type>String</type>
           <description>
             <![CDATA[
-              <p>Id of the issue related to this change. This is the id in your issue tracking system.</p>
+              Id of the issue related to this change. This is the id in your issue tracking system.
               <p>The Changes plugin will generate a URL out of this id. The URL is constructed using the value of the issueLinkTemplate parameter.</p>
               <p>See the <a href="changes-report.html">changes-report mojo</a> for more details.</p>
             ]]>
