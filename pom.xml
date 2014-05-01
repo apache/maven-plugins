@@ -57,8 +57,8 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.0</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
+    <doxiaVersion>1.4</doxiaVersion>
+    <doxia-sitetoolsVersion>1.4</doxia-sitetoolsVersion>
     <mavenVersion>2.0.9</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
@@ -104,7 +104,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4.2</version>
+      <version>2.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
