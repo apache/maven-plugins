@@ -188,6 +188,13 @@ public abstract class AbstractScmPublishMojo
     protected boolean skipDeletedFiles;
 
     /**
+     * Add each directory in a separated SCM command: this can be necessary if SCM does not support
+     * adding subdirectories in one command.
+     */
+    @Parameter( defaultValue = "false" )
+    protected boolean addUniqueDirectory;
+
+    /**
      */
     @Parameter ( defaultValue = "${basedir}", readonly = true )
     protected File basedir;
@@ -672,16 +679,37 @@ public abstract class AbstractScmPublishMojo
             addedList.add( relativize( checkoutDirectory, f ) );
         }
 
-        for ( File relativized : dirsToAdd )
-        {
+        if ( addUniqueDirectory )
+        { // add one directory at a time
+            for ( File relativized : dirsToAdd )
+            {
+                try
+                {
+                    ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
+                    getLog().debug( "scm add directory: " + relativized );
+                    AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
+                    if ( !addDirResult.isSuccess() )
+                    {
+                        getLog().warn( " Error adding directory " + relativized + ": " + addDirResult.getCommandOutput() );
+                    }
+                }
+                catch ( ScmException e )
+                {
+                    //
+                }
+            }
+        }
+        else
+        { // add all directories in one command
             try
             {
-                ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
-                getLog().debug( "scm add directory: " + relativized );
-                AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
+                List<File> dirs = new ArrayList<File>( dirsToAdd );
+                ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, dirs );
+                getLog().debug( "scm add directories: " + dirs );
+                AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directories" );
                 if ( !addDirResult.isSuccess() )
                 {
-                    getLog().debug( " Error adding directory " + relativized + ": " + addDirResult.getCommandOutput() );
+                    getLog().warn( " Error adding directories " + dirs + ": " + addDirResult.getCommandOutput() );
                 }
             }
             catch ( ScmException e )
@@ -697,13 +725,11 @@ public abstract class AbstractScmPublishMojo
         getLog().debug( "scm add files: " + addedList );
         try
         {
-
                 CommandParameters commandParameters = new CommandParameters();
                 commandParameters.setString( CommandParameter.MESSAGE, "Adding new site files." );
                 commandParameters.setString( CommandParameter.FORCE_ADD, Boolean.TRUE.toString() );
                 checkScmResult( scmProvider.add( scmRepository, addedFileSet, commandParameters ),
                                 "add new files to SCM" );
-
         }
         catch ( ScmException e )
         {
