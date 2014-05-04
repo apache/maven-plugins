@@ -40,3 +40,33 @@ mvn scm-publish:publish-scm
 
   These commands work well with mono-module too, even if mono-module could permit some optimizations (everything can be run
   in only one Maven invocation).
+
+* Avoiding Extra Path During Staging
+
+  When staging the site, sometimes extra directories appear between <<<target/staging>>> and the effective root of the site:
+  this is caused by the auto-detection algorithm of site root, which cannot detect at which level to stop.
+
+  This can be fixed by configuring the {{{/plugins/maven-site-plugin/stage-mojo.html#topSiteURL}site plugin's topSiteURL parameter}}
+  (added in version 3.3) with top distribution management site url in a parent pom:
+
++-----+
+  <distributionManagement>
+    <site>
+      <id>site</id>
+      <url>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</url>
+    </site>
+  </distributionManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <topSiteURL>scm:svn:https://svn.apache.org/repos/asf/maven/sandbox/bimargulies/site-test</topSiteURL>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
++-----+
