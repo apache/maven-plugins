@@ -634,7 +634,7 @@ public abstract class AbstractScmPublishMojo
         ScmFileSet deletedFileSet = new ScmFileSet( checkoutDirectory, deletedList );
         try
         {
-            getLog().debug( "Deleting files: " + deletedList );
+            getLog().info( "Deleting files: " + deletedList );
 
             checkScmResult( scmProvider.remove( scmRepository, deletedFileSet, "Deleting obsolete site files." ),
                             "delete files from SCM" );
@@ -686,7 +686,7 @@ public abstract class AbstractScmPublishMojo
                 try
                 {
                     ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, relativized );
-                    getLog().debug( "scm add directory: " + relativized );
+                    getLog().info( "scm add directory: " + relativized );
                     AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
                     if ( !addDirResult.isSuccess() )
                     {
@@ -705,7 +705,7 @@ public abstract class AbstractScmPublishMojo
             {
                 List<File> dirs = new ArrayList<File>( dirsToAdd );
                 ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, dirs );
-                getLog().debug( "scm add directories: " + dirs );
+                getLog().info( "scm add directories: " + dirs );
                 AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directories" );
                 if ( !addDirResult.isSuccess() )
                 {
@@ -722,7 +722,7 @@ public abstract class AbstractScmPublishMojo
         addedList.removeAll( dirsToAdd );
 
         ScmFileSet addedFileSet = new ScmFileSet( checkoutDirectory, addedList );
-        getLog().debug( "scm add files: " + addedList );
+        getLog().info( "scm add files: " + addedList );
         try
         {
                 CommandParameters commandParameters = new CommandParameters();
