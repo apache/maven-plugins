@@ -81,7 +81,7 @@ mvn scm-publish:publish-scm
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>${project.version}</version>
           <extensions>true</extensions>
           <configuration>
             <!-- svn location for publication -->                  
@@ -141,7 +141,7 @@ mvn scm-publish:publish-scm
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>scm-publish</id>
