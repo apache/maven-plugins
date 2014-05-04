@@ -404,7 +404,15 @@ public abstract class AbstractScmPublishMojo
             ScmResult scmResult = null;
             if ( tryUpdate && !forceCheckout )
             {
-                scmResult = scmProvider.update( scmRepository, fileSet );
+                if ( scmBranch == null )
+                {
+                    scmResult = scmProvider.update( scmRepository, fileSet );
+                }
+                else
+                {
+                    ScmBranch scmBranch = new ScmBranch( this.scmBranch );
+                    scmResult = scmProvider.update( scmRepository, fileSet, scmBranch );
+                }
             }
             else
             {
