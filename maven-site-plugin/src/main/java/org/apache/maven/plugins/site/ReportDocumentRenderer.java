@@ -59,7 +59,7 @@ public class ReportDocumentRenderer
 
     private final RenderingContext renderingContext;
 
-    private final String pluginInfo;
+    private final String reportMojoInfo;
 
     private final ClassLoader classLoader;
     
@@ -73,12 +73,15 @@ public class ReportDocumentRenderer
 
         if ( mavenReportExecution.getPlugin() == null )
         {
-            this.pluginInfo = getPluginInfo( report );
+            // Maven 2: report has been prepared in Maven Core, MavenReportExecution contains only the report
+            this.reportMojoInfo = getPluginInfo( report );
         }
         else
         {
-            this.pluginInfo =
-                mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion();
+            // Maven 3: full MavenReportExecution prepared by maven-reporting-impl
+            this.reportMojoInfo =
+                mavenReportExecution.getPlugin().getArtifactId() + ':' + mavenReportExecution.getPlugin().getVersion()
+                    + ':' + mavenReportExecution.getGoal();
         }
 
         this.classLoader = mavenReportExecution.getClassLoader();
@@ -198,7 +201,7 @@ public class ReportDocumentRenderer
         String localReportName = report.getName( locale );
 
         log.info( "Generating \"" + localReportName + "\" report"
-                  + ( pluginInfo == null ? "." : ( "    --- " + pluginInfo ) ) );
+                  + ( reportMojoInfo == null ? "." : ( "    --- " + reportMojoInfo ) ) );
 
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
