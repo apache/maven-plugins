@@ -401,8 +401,14 @@ public abstract class AbstractSiteRenderingMojo
             {
                 String displayLanguage = locale.getDisplayLanguage( Locale.ENGLISH );
 
-                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report, file \"" + outputName
-                                   + "\" already exists for the " + displayLanguage + " version." );
+                String reportMojoInfo =
+                    ( mavenReportExecution.getGoal() == null ) ? "" : ( " ("
+                        + mavenReportExecution.getPlugin().getArtifactId() + ':'
+                        + mavenReportExecution.getPlugin().getVersion() + ':' + mavenReportExecution.getGoal() + ')' );
+
+                getLog().info( "Skipped \"" + report.getName( locale ) + "\" report" + reportMojoInfo + ", file \""
+                                   + outputName + "\" already exists for the " + displayLanguage + " version." );
+
                 reports.remove( mavenReportExecution );
             }
             else
