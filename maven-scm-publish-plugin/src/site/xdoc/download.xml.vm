@@ -114,6 +114,12 @@ under the License.
         </tbody>
       </table>
       </subsection>
+
+      <subsection name="Previous Versions">
+        
+      <p>Older non-recommended releases can be found on our <a href="http://archive.apache.org/dist/maven/plugins/">archive site</a>.</p>
+
+      </subsection>
     </section>
   </body>
 </document>
