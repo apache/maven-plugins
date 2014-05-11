@@ -246,7 +246,7 @@ public class JavadocReport
         }
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( " canGenerateReport " + canGenerate + " project " + this.project );
+            getLog().debug( " canGenerateReport = " + canGenerate + " for project " + this.project );
         }
         return canGenerate;
     }
