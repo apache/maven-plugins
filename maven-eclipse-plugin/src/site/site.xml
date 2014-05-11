@@ -29,6 +29,9 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
       <item name="Trouble Shooting" href="trouble-shooting/index.html"/>
+      <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
+      <item name="License" href="http://www.apache.org/licenses/"/>
+      <item name="Download" href="download.html"/>
     </menu>
     <menu name="Configuration">
       <item name="Multiple Module Projects" href="reactor.html"/>
