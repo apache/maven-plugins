@@ -29,6 +29,9 @@ under the License.
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
       <item name="Change Scm implementation" href="changing-scm-impl.html"/>
+      <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
+      <item name="License" href="http://www.apache.org/licenses/"/>
+      <item name="Download" href="download.html"/>
     </menu>
     <menu name="Examples">
       <item name="Changing the Heading Date Format" href="/examples/changing-heading-date-format.html"/>
