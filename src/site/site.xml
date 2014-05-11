@@ -30,6 +30,9 @@ under the License.
       <item name="FAQ" href="faq.html"/>
       <item name="Release Notes" href="jira-report.html"/>
       <item name="Further Links" href="links.html"/>
+      <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
+      <item name="License" href="http://www.apache.org/licenses/"/>
+      <item name="Download" href="download.html"/>
     </menu>
     <menu name="Examples">
       <item name="Using DOAP File" href="examples/doap-in-use.html"/>
