@@ -39,7 +39,7 @@ Importing maven.apache.org Content to Svn
 +--------
 # configuration
 ORIG_PATH=/www/maven.apache.org
-DEST_SVN_BASE=https://svn.apache.org/repos/infra/websites/production/maventest/content
+DEST_SVN_BASE=https://svn.apache.org/repos/infra/websites/production/maven/content
 
 ARTIFACT=maven-clean-plugin
 DIR=plugins/${ARTIFACT}

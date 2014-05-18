@@ -36,7 +36,7 @@ Various tips for using this plugin
   scm:<scm_provider><delimiter><provider_specific_part>
 +----------------
 
-  Example for svn: <<<scm:svn:https://svn.apache.org/repos/infra/websites/production/maventest/content/plugins/maven-scm-publish-plugin/>>>
+  Example for svn: <<<scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin/>>>
 
   And configure is as it:
 
@@ -44,7 +44,7 @@ Various tips for using this plugin
   <distributionManagement>
     <site>
       <id>site_id</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maventest/content/plugins/maven-scm-publish-plugin/</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin/</url>
     </site>
   </distributionManagement>
 +----------------
