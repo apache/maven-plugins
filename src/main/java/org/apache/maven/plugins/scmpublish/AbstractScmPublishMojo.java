@@ -401,18 +401,12 @@ public abstract class AbstractScmPublishMojo
         {
             ScmFileSet fileSet = new ScmFileSet( checkoutDirectory, includes, excludes );
 
+            ScmBranch branch = ( scmBranch == null ) ? null : new ScmBranch( scmBranch );
+
             ScmResult scmResult = null;
             if ( tryUpdate && !forceCheckout )
             {
-                if ( scmBranch == null )
-                {
-                    scmResult = scmProvider.update( scmRepository, fileSet );
-                }
-                else
-                {
-                    ScmBranch scmBranch = new ScmBranch( this.scmBranch );
-                    scmResult = scmProvider.update( scmRepository, fileSet, scmBranch );
-                }
+                scmResult = scmProvider.update( scmRepository, fileSet, branch );
             }
             else
             {
@@ -421,15 +415,7 @@ public abstract class AbstractScmPublishMojo
                 {
                     try
                     {
-                        if ( scmBranch == null )
-                        {
-                            scmResult = scmProvider.checkOut( scmRepository, fileSet );
-                        }
-                        else
-                        {
-                            ScmBranch scmBranch = new ScmBranch( this.scmBranch );
-                            scmResult = scmProvider.checkOut( scmRepository, fileSet, scmBranch );
-                        }
+                        scmResult = scmProvider.checkOut( scmRepository, fileSet, branch );
                     }
                     catch ( ScmException e )
                     {
