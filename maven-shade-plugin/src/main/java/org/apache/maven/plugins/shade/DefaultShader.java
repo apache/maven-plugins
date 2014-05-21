@@ -219,7 +219,7 @@ public class DefaultShader
             for ( String clazz : overlapping.get( jarz ) )
                 classes.add( clazz.replace( ".class", "" ).replace( "/", "." ) );
 
-            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size() + " overlappping classes: " );
+            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
 
             int max = 10;
 
@@ -233,13 +233,12 @@ public class DefaultShader
 
         if ( overlapping.keySet().size() > 0 )
         {
-            getLogger().warn( "maven-shade-plugin has detected that some .class files" );
-            getLogger().warn( "are present in two or more JARs. When this happens, only" );
-            getLogger().warn( "one single version of the class is copied in the uberjar." );
-            getLogger().warn( "Usually this is not harmful and you can skeep these" );
-            getLogger().warn( "warnings, otherwise try to manually exclude artifacts" );
-            getLogger().warn( "based on mvn dependency:tree -Ddetail=true and the above" );
-            getLogger().warn( "output" );
+            getLogger().warn( "maven-shade-plugin has detected that some class files are" );
+            getLogger().warn( "present in two or more JARs. When this happens, only one" );
+            getLogger().warn( "single version of the class is copied to the uber jar." );
+            getLogger().warn( "Usually this is not harmful and you can skip these warnings," );
+            getLogger().warn( "otherwise try to manually exclude artifacts based on" );
+            getLogger().warn( "mvn dependency:tree -Ddetail=true and the above output." );
             getLogger().warn( "See http://docs.codehaus.org/display/MAVENUSER/Shade+Plugin" );
         }
 
