@@ -624,7 +624,7 @@ public class TeamListReport
                     requiredHeaders.put( TIME_ZONE, Boolean.TRUE );
                 }
                 Properties properties = unit.getProperties();
-                boolean hasPicUrl = properties.contains( "picUrl" );
+                boolean hasPicUrl = properties.containsKey( "picUrl" );
                 if ( hasPicUrl )
                 {
                     requiredHeaders.put( IMAGE, Boolean.TRUE );
