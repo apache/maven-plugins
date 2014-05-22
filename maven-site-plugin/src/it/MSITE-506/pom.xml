@@ -62,6 +62,14 @@ under the License.
           <includeDependencySources>true</includeDependencySources>
           <detectOfflineLinks>false</detectOfflineLinks>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
