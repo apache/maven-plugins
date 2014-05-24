@@ -55,7 +55,7 @@ under the License.
 
   <properties>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
-    <mavenPluginToolsVersion>3.2</mavenPluginToolsVersion>
+    <mavenPluginToolsVersion>3.3</mavenPluginToolsVersion><!-- TODO remove when upgrading parent to 25 -->
   </properties>
 
   <repositories>
@@ -69,7 +69,7 @@ under the License.
     </repository>
   </repositories>
 
-  <dependencyManagement>
+  <dependencyManagement><!-- TODO remove when upgrading parent to 25 -->
     <dependencies>
       <dependency>
         <groupId>org.apache.maven.plugin-tools</groupId>
