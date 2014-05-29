@@ -444,6 +444,13 @@ public abstract class AbstractSiteRenderingMojo
         return categories;
     }
 
+    /**
+     * Locate every document to be rendered for given locale:<ul>
+     * <li>handwritten content,</li>
+     * <li>reports,</li>
+     * <li>"Project Information" and "Project Reports" category summaries.</li>
+     * </ul>
+     */
     protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports,
                                                              Locale locale )
         throws IOException, RendererException
@@ -460,6 +467,7 @@ public abstract class AbstractSiteRenderingMojo
 
         if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_INFORMATION ) && generateProjectInfo )
         {
+            // add "Project Information" category summary document
             List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
 
             RenderingContext renderingContext = new RenderingContext( siteDirectory, "project-info.html" );
@@ -481,6 +489,7 @@ public abstract class AbstractSiteRenderingMojo
 
         if ( categories.containsKey( MavenReport.CATEGORY_PROJECT_REPORTS ) )
         {
+            // add "Project Reports" category summary document
             List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
             RenderingContext renderingContext = new RenderingContext( siteDirectory, "project-reports.html" );
             String title = i18n.getString( "site-plugin", locale, "report.project.title" );
