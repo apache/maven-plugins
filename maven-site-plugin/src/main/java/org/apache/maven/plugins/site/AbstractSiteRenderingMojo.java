@@ -231,9 +231,23 @@ public abstract class AbstractSiteRenderingMojo
             {
                 throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
             }
-            return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+
+            List<MavenReportExecution> allReports = mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+
+            // filter out reports that can't be generated
+            List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( allReports.size() );
+            for ( MavenReportExecution exec : allReports )
+            {
+                if ( canGenerateReport( exec ) )
+                {
+                    reportExecutions.add( exec );
+                }
+            }
+
+            return reportExecutions;
         }
 
+        // Maven 2
         List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.size() );
         for ( MavenReport report : reports )
         {
@@ -243,6 +257,21 @@ public abstract class AbstractSiteRenderingMojo
             }
         }
         return reportExecutions;
+    }
+
+    private boolean canGenerateReport( MavenReportExecution exec )
+    {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader( exec.getClassLoader() );
+
+            return exec.getMavenReport().canGenerateReport();
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
+        } 
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )
