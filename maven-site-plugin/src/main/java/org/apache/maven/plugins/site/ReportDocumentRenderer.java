@@ -203,16 +203,19 @@ public class ReportDocumentRenderer
         log.info( "Generating \"" + localReportName + "\" report"
                   + ( reportMojoInfo == null ? "." : ( "    --- " + reportMojoInfo ) ) );
 
+        // main sink
+        SiteRendererSink sink = new SiteRendererSink( renderingContext );
+        // sink factory, for multi-page reports that need sub-sinks
         MySinkFactory sf = new MySinkFactory( renderingContext );
 
-        SiteRendererSink sink = new SiteRendererSink( renderingContext );
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        if ( classLoader != null )
-        {
-            Thread.currentThread().setContextClassLoader( classLoader );
-        }
         try
         {
+            if ( classLoader != null )
+            {
+                Thread.currentThread().setContextClassLoader( classLoader );
+            }
+
             if ( report instanceof MavenMultiPageReport )
             {
                 // extended multi-page API
@@ -248,41 +251,46 @@ public class ReportDocumentRenderer
             sink.close();
         }
 
-        if ( !report.isExternalReport() )
+        if ( report.isExternalReport() )
         {
-            try
+            // external reports are rendered from their own: no Doxia site rendering needed
+            return;
+        }
+
+        // render main sink
+        renderer.generateDocument( writer, sink, siteRenderingContext );
+
+        // render sub-sinks, eventually created by multi-page reports
+        try
+        {
+            List<MySink> sinks = sf.sinks();
+
+            log.debug( "Multipage report: " + sinks.size() + " subreports" );
+
+            for ( MySink mySink : sinks )
             {
-                List<MySink> sinks = sf.sinks();
+                mySink.enableLogging( new MojoLogWrapper( log ) );
 
-                log.debug( "Multipage report: " + sinks.size() + " subreports" );
+                log.debug( "  Rendering " + mySink.getOutputName() );
 
-                for ( MySink mySink : sinks )
+                File outputFile = new File( mySink.getOutputDir(), mySink.getOutputName() );
+
+                Writer out = null;
+                try
                 {
-                    mySink.enableLogging( new MojoLogWrapper( log ) );
-
-                    log.debug( "  Rendering " + mySink.getOutputName() );
-
-                    File outputFile = new File( mySink.getOutputDir(), mySink.getOutputName() );
-
-                    Writer out = null;
-                    try
-                    {
-                        out = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
-                        renderer.generateDocument( out, mySink, siteRenderingContext );
-                    }
-                    finally
-                    {
-                        mySink.close();
-                        IOUtil.close( out );
-                    }
+                    out = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
+                    renderer.generateDocument( out, mySink, siteRenderingContext );
+                }
+                finally
+                {
+                    mySink.close();
+                    IOUtil.close( out );
                 }
             }
-            catch ( IOException e )
-            {
-                throw new RendererException( "Cannot create writer", e );
-            }
-
-            renderer.generateDocument( writer, sink, siteRenderingContext );
+        }
+        catch ( IOException e )
+        {
+            throw new RendererException( "Cannot create writer", e );
         }
     }
 
