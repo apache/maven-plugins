@@ -220,7 +220,7 @@ public class ReportDocumentRenderer
             }
             else if ( generateMultiPage( locale, sf, sink ) )
             {
-             // extended multi-page API for Maven 2.2, only accessible by reflection API
+                // extended multi-page API for Maven 2.2, only accessible by reflection API
             }
             else
             {
@@ -230,11 +230,13 @@ public class ReportDocumentRenderer
         }
         catch ( MavenReportException e )
         {
-            throw new RendererException( "Error rendering Maven report: " + e.getMessage(), e );
+            String report = ( reportMojoInfo == null ) ? ( '"' + localReportName + "\" report" ) : reportMojoInfo;
+            throw new RendererException( "Error generating " + report + ": " + e.getMessage(), e );
         }
         catch ( LinkageError e )
         {
-            log.warn( "An issue has occurred with report " + report.getClass().getName() + ", skip LinkageError "
+            String report = ( reportMojoInfo == null ) ? ( '"' + localReportName + "\" report" ) : reportMojoInfo;
+            log.warn( "An issue has occurred with " + report + ", skipping LinkageError "
                           + e.getMessage() + ", please report an issue to Maven dev team.", e );
         }
         finally
