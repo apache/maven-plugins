@@ -210,7 +210,7 @@ public class SiteMojo
         Map<String, DocumentRenderer> doxiaDocuments = new TreeMap<String, DocumentRenderer>();
         List<DocumentRenderer> nonDoxiaDocuments = new ArrayList<DocumentRenderer>();
 
-        Map<String, Integer> counts = new HashMap<String, Integer>();
+        Map<String, Integer> counts = new TreeMap<String, Integer>();
 
         for ( Map.Entry<String, DocumentRenderer> entry: documents.entrySet() )
         {
