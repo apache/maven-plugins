@@ -122,14 +122,14 @@ public class ReportDocumentRenderer
         return null;
     }
 
-    private static class MySink
+    private static class MultiPageSubSink
         extends SiteRendererSink
     {
         private File outputDir;
 
         private String outputName;
 
-        public MySink( File outputDir, String outputName, RenderingContext ctx )
+        public MultiPageSubSink( File outputDir, String outputName, RenderingContext ctx )
         {
             super( ctx );
             this.outputName = outputName;
@@ -148,21 +148,21 @@ public class ReportDocumentRenderer
 
     }
 
-    private static class MySinkFactory
+    private static class MultiPageSinkFactory
         implements SinkFactory
     {
         private RenderingContext context;
 
-        private List<MySink> sinks = new ArrayList<MySink>();
+        private List<MultiPageSubSink> sinks = new ArrayList<MultiPageSubSink>();
 
-        public MySinkFactory( RenderingContext ctx )
+        public MultiPageSinkFactory( RenderingContext ctx )
         {
             this.context = ctx;
         }
 
         public Sink createSink( File outputDir, String outputName )
         {
-            MySink sink = new MySink( outputDir, outputName, context );
+            MultiPageSubSink sink = new MultiPageSubSink( outputDir, outputName, context );
             sinks.add( sink );
             return sink;
         }
@@ -188,7 +188,7 @@ public class ReportDocumentRenderer
             return null;
         }
 
-        public List<MySink> sinks()
+        public List<MultiPageSubSink> sinks()
         {
             return sinks;
         }
@@ -204,9 +204,9 @@ public class ReportDocumentRenderer
                   + ( reportMojoInfo == null ? "." : ( "    --- " + reportMojoInfo ) ) );
 
         // main sink
-        SiteRendererSink sink = new SiteRendererSink( renderingContext );
+        SiteRendererSink mainSink = new SiteRendererSink( renderingContext );
         // sink factory, for multi-page reports that need sub-sinks
-        MySinkFactory sf = new MySinkFactory( renderingContext );
+        MultiPageSinkFactory multiPageSinkFactory = new MultiPageSinkFactory( renderingContext );
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
@@ -219,16 +219,16 @@ public class ReportDocumentRenderer
             if ( report instanceof MavenMultiPageReport )
             {
                 // extended multi-page API
-                ( (MavenMultiPageReport) report ).generate( sink, sf, locale );
+                ( (MavenMultiPageReport) report ).generate( mainSink, multiPageSinkFactory, locale );
             }
-            else if ( generateMultiPage( locale, sf, sink ) )
+            else if ( generateMultiPage( locale, multiPageSinkFactory, mainSink ) )
             {
                 // extended multi-page API for Maven 2.2, only accessible by reflection API
             }
             else
             {
                 // old single-page-only API
-                report.generate( sink, locale );
+                report.generate( mainSink, locale );
             }
         }
         catch ( MavenReportException e )
@@ -248,7 +248,7 @@ public class ReportDocumentRenderer
             {
                 Thread.currentThread().setContextClassLoader( originalClassLoader );
             }
-            sink.close();
+            mainSink.close();
         }
 
         if ( report.isExternalReport() )
@@ -258,16 +258,16 @@ public class ReportDocumentRenderer
         }
 
         // render main sink
-        renderer.generateDocument( writer, sink, siteRenderingContext );
+        renderer.generateDocument( writer, mainSink, siteRenderingContext );
 
         // render sub-sinks, eventually created by multi-page reports
         try
         {
-            List<MySink> sinks = sf.sinks();
+            List<MultiPageSubSink> sinks = multiPageSinkFactory.sinks();
 
             log.debug( "Multipage report: " + sinks.size() + " subreports" );
 
-            for ( MySink mySink : sinks )
+            for ( MultiPageSubSink mySink : sinks )
             {
                 mySink.enableLogging( new MojoLogWrapper( log ) );
 
