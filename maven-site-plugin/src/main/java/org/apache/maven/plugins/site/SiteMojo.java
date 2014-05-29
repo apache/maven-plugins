@@ -140,7 +140,7 @@ public class SiteMojo
         }
         catch ( RendererException e )
         {
-            throw new MojoExecutionException( "Error during page generation", e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( IOException e )
         {
