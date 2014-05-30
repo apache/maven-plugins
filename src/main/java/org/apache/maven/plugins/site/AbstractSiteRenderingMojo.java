@@ -214,8 +214,11 @@ public abstract class AbstractSiteRenderingMojo
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
+        List<MavenReportExecution> allReports;
+
         if ( isMaven3OrMore() )
         {
+            // Maven 3
             MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
             mavenReportExecutorRequest.setLocalRepository( localRepository );
             mavenReportExecutorRequest.setMavenSession( mavenSession );
@@ -232,46 +235,29 @@ public abstract class AbstractSiteRenderingMojo
                 throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
             }
 
-            List<MavenReportExecution> allReports = mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
-
-            // filter out reports that can't be generated
-            List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( allReports.size() );
-            for ( MavenReportExecution exec : allReports )
-            {
-                if ( canGenerateReport( exec ) )
-                {
-                    reportExecutions.add( exec );
-                }
-            }
-
-            return reportExecutions;
+            allReports = mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
         }
-
-        // Maven 2
-        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.size() );
-        for ( MavenReport report : reports )
+        else
         {
-            if ( report.canGenerateReport() )
+            // Maven 2
+            allReports = new ArrayList<MavenReportExecution>( reports.size() );
+            for ( MavenReport report : reports )
             {
-                reportExecutions.add( new MavenReportExecution( report ) );
+                allReports.add( new MavenReportExecution( report ) );
             }
         }
+
+        // filter out reports that can't be generated
+        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( allReports.size() );
+        for ( MavenReportExecution exec : allReports )
+        {
+            if ( exec.canGenerateReport() )
+            {
+                reportExecutions.add( exec );
+            }
+        }
+
         return reportExecutions;
-    }
-
-    private boolean canGenerateReport( MavenReportExecution exec )
-    {
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            Thread.currentThread().setContextClassLoader( exec.getClassLoader() );
-
-            return exec.getMavenReport().canGenerateReport();
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( originalClassLoader );
-        } 
     }
 
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )
