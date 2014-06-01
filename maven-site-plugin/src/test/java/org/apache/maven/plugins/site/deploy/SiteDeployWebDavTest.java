@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.deploy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,6 +22,7 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.site.deploy.SiteDeployMojo;
 
 /**
  * @author Olivier Lamy

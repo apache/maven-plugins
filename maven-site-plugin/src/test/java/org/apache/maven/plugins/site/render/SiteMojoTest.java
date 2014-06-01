@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.render;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.site.render.SiteMojo;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class SiteMojoTest
 
         SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
         siteDescriptorContent =
-            siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), siteMojo.project,
+            siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), siteMojo.getProject(),
                                                            siteDescriptorContent, "UTF-8", "UTF-8" );
         assertNotNull( siteDescriptorContent );
         assertTrue(!siteDescriptorContent.contains("${project.name}"));

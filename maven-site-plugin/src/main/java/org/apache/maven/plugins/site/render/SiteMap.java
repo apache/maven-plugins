@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.render;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -41,7 +41,7 @@ import org.codehaus.plexus.i18n.I18N;
  * @since 2.1
  */
 public class SiteMap
- {
+{
 
     private String encoding;
     private I18N i18n;

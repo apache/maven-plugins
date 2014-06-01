@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site.webapp;
+package org.apache.maven.plugins.site.run;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,7 @@ import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
-import org.apache.maven.plugins.site.ReportDocumentRenderer;
+import org.apache.maven.plugins.site.render.ReportDocumentRenderer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

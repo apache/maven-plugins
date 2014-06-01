@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.deploy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugins.site.SimpleDavServerHandler.HttpRequest;
+import org.apache.maven.plugins.site.deploy.SimpleDavServerHandler.HttpRequest;
 import org.mortbay.jetty.security.B64Code;
 import org.mortbay.proxy.AsyncProxyServlet;
 import org.slf4j.Logger;

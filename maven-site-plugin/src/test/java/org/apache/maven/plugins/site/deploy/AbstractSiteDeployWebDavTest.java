@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.deploy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,7 +34,7 @@ import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.site.SimpleDavServerHandler.HttpRequest;
+import org.apache.maven.plugins.site.deploy.SimpleDavServerHandler.HttpRequest;
 import org.apache.maven.plugins.site.stubs.SiteMavenProjectStub;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
