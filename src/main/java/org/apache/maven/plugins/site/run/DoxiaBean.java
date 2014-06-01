@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site.webapp;
+package org.apache.maven.plugins.site.run;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

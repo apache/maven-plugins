@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.render;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,6 +37,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 
@@ -282,5 +283,10 @@ public class SiteMojo
         }
 
         return file;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 }

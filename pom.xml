@@ -197,7 +197,7 @@ under the License.
     <wagonVersion>1.0</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
     <scmVersion>1.4</scmVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
     <!-- for ITs -->
     <javadocPluginVersion>2.9.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>

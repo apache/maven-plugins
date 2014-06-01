@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.deploy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.site.wagon.BugFixedRepository;
+import org.apache.maven.plugins.site.AbstractSiteMojo;
+import org.apache.maven.plugins.site.deploy.wagon.BugFixedRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;

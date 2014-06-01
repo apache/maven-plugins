@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site.wagon;
+package org.apache.maven.plugins.site.deploy.wagon;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
