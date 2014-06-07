@@ -134,13 +134,13 @@ public abstract class AbstractDeployMojo
     /**
      * The current user system settings for use in Maven.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}" )
     private Settings settings;
 
     /**
      * @since 3.0-beta-2
      */
-    @Component
+    @Parameter( defaultValue = "${session}" )
     protected MavenSession mavenSession;
 
     private String topDistributionManagementSiteUrl;
