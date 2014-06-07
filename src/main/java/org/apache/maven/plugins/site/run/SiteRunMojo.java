@@ -125,7 +125,7 @@ public class SiteRunMojo
         FileOutputStream outStream = null;
         try
         {
-            inStream = getClass().getResourceAsStream( "/webapp/web.xml" );
+            inStream = getClass().getResourceAsStream( "/run/web.xml" );
             outStream = new FileOutputStream( webXml );
             IOUtil.copy( inStream, outStream );
         }
