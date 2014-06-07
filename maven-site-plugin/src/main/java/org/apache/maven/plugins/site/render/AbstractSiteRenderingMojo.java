@@ -166,7 +166,7 @@ public abstract class AbstractSiteRenderingMojo
     /**
      * The current Maven session.
      */
-    @Component
+    @Parameter( defaultValue = "${session}" )
     protected MavenSession mavenSession;
 
     /**

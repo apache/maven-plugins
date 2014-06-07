@@ -74,7 +74,7 @@ public abstract class AbstractSiteMojo
     /**
      * The maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}" )
     protected MavenProject project;
 
     /**
