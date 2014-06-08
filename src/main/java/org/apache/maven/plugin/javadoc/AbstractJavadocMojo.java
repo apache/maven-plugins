@@ -3531,7 +3531,8 @@ public abstract class AbstractJavadocMojo
             javadocExe =
                 new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh", javadocCommand );
         }
-        else if ( SystemUtils.IS_OS_MAC_OSX )
+        // For Apple's JDK 1.6.x (and older?) on Mac OSX
+        else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
         {
             javadocExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", javadocCommand );
         }
