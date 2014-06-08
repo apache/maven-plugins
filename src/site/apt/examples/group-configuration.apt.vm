@@ -33,7 +33,7 @@ Grouping Packages
  below. Each group will be consist of a \<title/\> and a \<packages/\> (as String). The \<packages/\> element supports
  wildcard (*) to allow subpackages. If more than one package is to be included, each package name must be separated
  colon (:) separated (similar to the
- {{{http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html#group}Javadoc Tool}}).
+ {{{http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#group}Javadoc Tool}}).
 
  For instance, with the following packages:
 
