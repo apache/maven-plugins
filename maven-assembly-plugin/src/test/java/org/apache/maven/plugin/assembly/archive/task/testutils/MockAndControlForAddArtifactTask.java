@@ -19,6 +19,11 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
+import java.io.File;
+import java.util.List;
+
+import junit.framework.Assert;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
@@ -26,11 +31,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.util.List;
-
-import junit.framework.Assert;
 
 public class MockAndControlForAddArtifactTask
 {

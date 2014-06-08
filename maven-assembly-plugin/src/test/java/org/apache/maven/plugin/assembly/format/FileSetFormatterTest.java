@@ -19,6 +19,11 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.FileSet;
@@ -31,11 +36,6 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class FileSetFormatterTest
     extends PlexusTestCase

@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import java.util.Properties;
+
+import junit.framework.TestCase;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -30,10 +34,6 @@ import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
-
-import java.util.Properties;
-
-import junit.framework.TestCase;
 
 public class AssemblyFormatUtilsTest
     extends TestCase

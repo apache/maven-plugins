@@ -27,6 +27,9 @@ import java.io.StringWriter;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Collections;
+
+import junit.framework.TestCase;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
@@ -37,8 +40,6 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.IOUtil;
-
-import junit.framework.TestCase;
 import org.easymock.MockControl;
 
 public class ManifestCreationFinalizerTest

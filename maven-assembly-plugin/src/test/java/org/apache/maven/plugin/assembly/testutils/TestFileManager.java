@@ -19,9 +19,6 @@ package org.apache.maven.plugin.assembly.testutils;
  * under the License.
  */
 
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,6 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Assert;
+
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 public class TestFileManager
 {

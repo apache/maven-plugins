@@ -19,6 +19,10 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
@@ -41,11 +45,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -151,7 +150,6 @@ public abstract class AbstractAssemblyMojo
      * @deprecated Please use the Assembly's id for classifier instead
      */
     @Deprecated
-    @SuppressWarnings( "unused" )
     @Parameter( property = "classifier" )
     private String classifier;
 

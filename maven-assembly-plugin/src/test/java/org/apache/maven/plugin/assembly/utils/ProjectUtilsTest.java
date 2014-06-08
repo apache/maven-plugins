@@ -19,11 +19,6 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
-import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +28,11 @@ import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 public class ProjectUtilsTest
     extends TestCase

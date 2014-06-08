@@ -19,6 +19,13 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
@@ -44,13 +51,6 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.StringUtils;
 import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 public class RepositoryAssemblyPhaseTest
     extends TestCase

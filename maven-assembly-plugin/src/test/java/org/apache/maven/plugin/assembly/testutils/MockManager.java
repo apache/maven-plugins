@@ -19,12 +19,12 @@ package org.apache.maven.plugin.assembly.testutils;
  * under the License.
  */
 
-import org.easymock.MockControl;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.AssertionFailedError;
+
+import org.easymock.MockControl;
 
 public class MockManager
 {

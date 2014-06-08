@@ -23,6 +23,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.testutils.TrackingArchiverStub;
 import org.apache.maven.plugin.assembly.testutils.TrackingArchiverStub.Addition;
@@ -38,11 +43,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
 import org.junit.AfterClass;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AssemblyProxyArchiverTest
 {

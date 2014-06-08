@@ -19,6 +19,11 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
+import junit.framework.TestCase;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -31,11 +36,6 @@ import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.io.IOException;
-
-import junit.framework.TestCase;
 
 public class FileSetAssemblyPhaseTest
     extends TestCase
