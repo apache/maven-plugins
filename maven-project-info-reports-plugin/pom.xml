@@ -85,6 +85,10 @@ under the License.
     <contributor>
       <name>Gabriel Belingueres</name>
     </contributor>
+    <contributor>
+      <name>Simon Wang</name>
+      <email>wangyf2010@gmail.com</email>
+    </contributor>
   </contributors>
 
   <prerequisites>
@@ -185,6 +189,11 @@ under the License.
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-common-artifact-filters</artifactId>
+      <version>1.4</version>
     </dependency>
 
     <!-- Wagon -->

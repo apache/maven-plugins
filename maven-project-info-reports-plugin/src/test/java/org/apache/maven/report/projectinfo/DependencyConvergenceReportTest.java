@@ -63,10 +63,10 @@ public class DependencyConvergenceReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.dependency-convergence.title" ), response.getTitle() );
+        assertEquals( getString( "report.dependency-convergence.reactor.title" ), response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( getString( "report.dependency-convergence.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.dependency-convergence.reactor.name" ), textBlocks[0].getText() );
     }
 }
