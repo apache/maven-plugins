@@ -19,6 +19,12 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import junit.framework.TestCase;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
@@ -29,12 +35,6 @@ import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import junit.framework.TestCase;
 
 public class AddFileSetsTaskTest
     extends TestCase

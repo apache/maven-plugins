@@ -19,14 +19,14 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.easymock.MockControl;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 public class ArtifactMock
 {

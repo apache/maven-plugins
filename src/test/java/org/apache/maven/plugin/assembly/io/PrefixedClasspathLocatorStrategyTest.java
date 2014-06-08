@@ -19,12 +19,12 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
+import junit.framework.TestCase;
+
 import org.apache.maven.shared.io.location.Location;
 import org.apache.maven.shared.io.location.LocatorStrategy;
 import org.apache.maven.shared.io.logging.DefaultMessageHolder;
 import org.apache.maven.shared.io.logging.MessageHolder;
-
-import junit.framework.TestCase;
 
 /**
  * @author Benjamin Bentmann

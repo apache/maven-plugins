@@ -19,6 +19,11 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.Properties;
+
+import junit.framework.TestCase;
+
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
@@ -32,11 +37,6 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
-
-import java.io.IOException;
-import java.util.Properties;
-
-import junit.framework.TestCase;
 
 public class AssemblyExpressionEvaluatorTest
     extends TestCase

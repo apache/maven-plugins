@@ -19,17 +19,16 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
-import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 public class TypeConversionUtilsTest
     extends TestCase
