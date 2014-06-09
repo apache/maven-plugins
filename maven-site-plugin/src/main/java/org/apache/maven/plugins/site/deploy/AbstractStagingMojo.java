@@ -35,6 +35,8 @@ public abstract class AbstractStagingMojo
     /**
      * Top distribution management site url, for manual configuration when auto-calculated value
      * doesn't match expectations. Relative module directory will be calculated from this url.
+     *
+     * @since 3.3
      */
     @Parameter( property = "topSiteURL" )
     protected String topSiteURL;

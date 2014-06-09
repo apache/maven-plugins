@@ -49,6 +49,8 @@ public abstract class AbstractSiteMojo
     /**
      * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
      * for this instance of the Java Virtual Machine.
+     *
+     * @since 2.3
      */
     @Parameter( property = "locales" )
     protected String locales;
@@ -67,6 +69,8 @@ public abstract class AbstractSiteMojo
 
     /**
      * Directory containing the site.xml file and the source for apt, fml and xdoc docs.
+     *
+     * @since 2.3
      */
     @Parameter( defaultValue = "${basedir}/src/site" )
     protected File siteDirectory;
@@ -74,7 +78,7 @@ public abstract class AbstractSiteMojo
     /**
      * The maven project.
      */
-    @Parameter( defaultValue = "${project}" )
+    @Parameter( defaultValue = "${project}", readonly = true )
     protected MavenProject project;
 
     /**
@@ -91,12 +95,16 @@ public abstract class AbstractSiteMojo
 
     /**
      * Specifies the input encoding.
+     *
+     * @since 2.3
      */
     @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String inputEncoding;
 
     /**
      * Specifies the output encoding.
+     *
+     * @since 2.3
      */
     @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String outputEncoding;
