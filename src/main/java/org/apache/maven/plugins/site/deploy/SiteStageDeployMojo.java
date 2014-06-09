@@ -58,6 +58,8 @@ public class SiteStageDeployMojo
      * </p>
      *
      * @see <a href="http://maven.apache.org/maven-model/maven.html#class_site">MavenModel#class_site</a>
+     *
+     * @since 2.3
      */
     @Parameter( property = "stagingSiteURL" )
     private String stagingSiteURL;

@@ -50,6 +50,8 @@ public class SiteStageMojo
      * <code>C:\stagingArea\myProject\</code> on Windows or
      * <code>/stagingArea/myProject/</code> on Unix.
      * If this is not specified, the site will be staged in ${project.build.directory}/staging.
+     *
+     * @since 2.3
      */
     @Parameter( property = "stagingDirectory" )
     private File stagingDirectory;

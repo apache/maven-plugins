@@ -87,6 +87,8 @@ public abstract class AbstractDeployMojo
 {
     /**
      * Directory containing the generated project sites and report distributions.
+     *
+     * @since 2.3
      */
     @Parameter( alias = "outputDirectory", defaultValue = "${project.reporting.outputDirectory}", required = true )
     private File inputDirectory;
@@ -134,13 +136,13 @@ public abstract class AbstractDeployMojo
     /**
      * The current user system settings for use in Maven.
      */
-    @Parameter( defaultValue = "${settings}" )
+    @Parameter( defaultValue = "${settings}", readonly = true )
     private Settings settings;
 
     /**
      * @since 3.0-beta-2
      */
-    @Parameter( defaultValue = "${session}" )
+    @Parameter( defaultValue = "${session}", readonly = true )
     protected MavenSession mavenSession;
 
     private String topDistributionManagementSiteUrl;
