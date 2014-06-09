@@ -35,6 +35,7 @@ import org.apache.maven.plugins.annotations.Mojo;
  *
  * @author <a href="mailto:michal@org.codehaus.org">Michal Maczka</a>
  * @version $Id$
+ * @since 2.0
  */
 @Mojo( name = "deploy" )
 public class SiteDeployMojo
