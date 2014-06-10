@@ -21,6 +21,7 @@ package org.apache.maven.plugin.war.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
@@ -229,7 +230,8 @@ public abstract class AbstractWarPackagingTask
                 }
                 // fix for MWAR-36, ensures that the parent dir are created first
                 targetFile.getParentFile().mkdirs();
-                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), encoding );
+                
+                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), encoding);
             }
             catch ( MavenFilteringException e )
             {
