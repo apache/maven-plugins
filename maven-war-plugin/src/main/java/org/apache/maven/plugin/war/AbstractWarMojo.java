@@ -474,6 +474,9 @@ public abstract class AbstractWarMojo
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
             mavenResourcesExecution.setMavenProject( project );
+            if (filters == null) {
+                filters = getProject().getBuild().getFilters();
+            }
             mavenResourcesExecution.setFilters( filters );
             mavenResourcesExecution.setEscapedBackslashesInFilePath( escapedBackslashesInFilePath );
             mavenResourcesExecution.setMavenSession( this.session );
