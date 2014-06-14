@@ -53,9 +53,7 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id:
  */
-@SuppressWarnings( { "UnqualifiedStaticUsage", "IfStatementWithNegatedCondition" } )
-@Mojo( name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
-       defaultPhase = LifecyclePhase.PACKAGE )
+@Mojo( name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE )
 public class AcrMojo
     extends AbstractMojo
 {
@@ -88,12 +86,15 @@ public class AcrMojo
     /**
      * The files and directories to exclude from the main Application Client jar. Usage:
      * <p/>
+     * 
      * <pre>
      * &lt;excludes&gt;
      *   &lt;exclude&gt;**&#47;*DevOnly.class&lt;&#47;exclude&gt;
      * &lt;&#47;excludes&gt;
      * </pre>
-     * <br/>Default exclusions: META-INF&#47;application-client.xml,
+     * 
+     * <br/>
+     * Default exclusions: META-INF&#47;application-client.xml,
      */
     @Parameter
     private List<String> excludes;
@@ -101,7 +102,7 @@ public class AcrMojo
     /**
      * The Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
 
     /**
@@ -111,22 +112,20 @@ public class AcrMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
      */
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * To escape interpolated value with windows path.
-     * c:\foo\bar will be replaced with c:\\foo\\bar.
+     * To escape interpolated value with windows path. c:\foo\bar will be replaced with c:\\foo\\bar.
      */
     @Parameter( property = "acr.escapeBackslashesInFilePath", defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
 
     /**
-     * An expression preceded with this String won't be interpolated.
-     * \${foo} will be replaced with ${foo}.
+     * An expression preceded with this String won't be interpolated. \${foo} will be replaced with ${foo}.
      */
     @Parameter( property = "acr.escapeString" )
     protected String escapeString;
@@ -150,7 +149,7 @@ public class AcrMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true )
     private MavenSession session;
 
     /**
@@ -191,8 +190,7 @@ public class AcrMojo
             }
             else
             {
-                getLog().info(
-                    "JAR will only contain the META-INF/application-client.xml as no content was marked for inclusion" );
+                getLog().info( "JAR will only contain the META-INF/application-client.xml as no content was marked for inclusion" );
             }
 
             if ( deploymentDescriptor.exists() )
@@ -222,41 +220,41 @@ public class AcrMojo
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException(
-                "There was a problem creating the JavaEE Application Client  archive: " + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem creating the JavaEE Application Client  archive: "
+                + e.getMessage(), e );
         }
         catch ( ManifestException e )
         {
             throw new MojoExecutionException(
-                "There was a problem reading / creating the manifest for the JavaEE Application Client  archive: "
-                    + e.getMessage(), e );
+                                              "There was a problem reading / creating the manifest for the JavaEE Application Client  archive: "
+                                                  + e.getMessage(), e );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException(
-                "There was a I/O problem creating the JavaEE Application Client archive: " + e.getMessage(), e );
+                                              "There was a I/O problem creating the JavaEE Application Client archive: "
+                                                  + e.getMessage(), e );
         }
         catch ( DependencyResolutionRequiredException e )
         {
             throw new MojoExecutionException(
-                "There was a problem resolving dependencies while creating the JavaEE Application Client archive: "
-                    + e.getMessage(), e );
+                                              "There was a problem resolving dependencies while creating the JavaEE Application Client archive: "
+                                                  + e.getMessage(), e );
         }
         catch ( MavenFilteringException e )
         {
-            throw new MojoExecutionException(
-                "There was a problem filtering the deployment descriptor: " + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem filtering the deployment descriptor: "
+                + e.getMessage(), e );
         }
 
         project.getArtifact().setFile( jarFile );
-
 
     }
 
     /**
      * Returns the App-client Jar file to generate.
      *
-     * @param basedir   the output directory
+     * @param basedir the output directory
      * @param finalName the name of the ear file
      * @return the Application client JAR file to generate
      */
