@@ -101,6 +101,11 @@ public abstract class AbstractEarMojo
 
     /**
      * The file name mapping to use for all dependencies included in the EAR file.
+     * The following values are valid {@code standard}, {code no-version}, {@code full}, {@code no-version-for-ejb}.
+     * The {@code standard} means the filename is the artifactId incl. the version of the artifact.
+     * The {@code no-version} means the files is only the artifactId without the version.
+     * The {@code full} means the filename is the groupId+artifactId+version of the artifact.
+     * The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of {@code EJB} type.
      */
     @Parameter
     private String fileNameMapping;
