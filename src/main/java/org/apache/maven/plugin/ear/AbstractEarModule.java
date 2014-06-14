@@ -21,6 +21,8 @@ package org.apache.maven.plugin.ear;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.ear.output.FileNameMappingFactory;
+import org.apache.maven.plugin.ear.output.StandardFileNameMapping;
 import org.apache.maven.plugin.ear.util.ArtifactRepository;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -210,6 +212,16 @@ public abstract class AbstractEarModule
             bundleFileName = earExecutionContext.getFileNameMapping().mapFileName( artifact );
         }
         return bundleFileName;
+    }
+
+    /**
+     * Based on MEAR-189 we need to get back
+     * the original file name under any circumstances. 
+     * @return The original file name.
+     */
+    public String getOriginalBundleFileName()
+    {
+        return FileNameMappingFactory.getDefaultFileNameMapping().mapFileName( artifact );
     }
 
     /**

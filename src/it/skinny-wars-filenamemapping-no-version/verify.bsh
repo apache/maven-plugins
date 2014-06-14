@@ -1,0 +1,94 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
+
+File jarFile = new File( basedir, "ear-module/target/ear-module-1.0/war-module.war" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new IllegalStateException( "Missing file: " + jarFile );
+}
+
+JarFile jar = new JarFile( jarFile );
+
+String[] includedEntries = {
+    "WEB-INF/web.xml",
+    "META-INF/MANIFEST.MF"
+};
+for ( String included : includedEntries )
+{
+    System.out.println( "Checking for included archive entry " + included );
+    if ( jar.getEntry( included ) == null )
+    {
+        throw new IllegalStateException( "Missing archive entry: " + included );
+    }
+}
+
+Manifest manifest = jar.getManifest();
+String manifestClassPath = manifest.getMainAttributes().getValue("Class-Path");
+if ( !manifestClassPath.equals("lib/commons-lang.jar") )
+{
+    throw new IllegalStateException( "Missing entry in war MANIFEST.MF: lib/commons-lang.jar");
+}
+
+String[] excludedEntries = {
+    "WEB-INF/lib/commons-lang-2.5.jar"
+};
+for ( String excluded : excludedEntries )
+{
+    System.out.println( "Checking for excluded artifact " + excluded );
+    if ( jar.getEntry( excluded ) != null )
+    {
+        throw new IllegalStateException( "Archive entry should be excluded: " + excluded );
+    }
+}
+
+jar.close();
+
+
+File jarFile = new File( basedir, "war-module/target/war-module-1.0.war" );
+System.out.println( "Checking for existence of " + jarFile );
+if ( !jarFile.isFile() )
+{
+    throw new IllegalStateException( "Missing file: " + jarFile );
+}
+
+JarFile jar = new JarFile( jarFile );
+
+String[] includedEntries = {
+    "WEB-INF/web.xml",
+    "META-INF/MANIFEST.MF",
+    "WEB-INF/lib/commons-lang-2.5.jar"
+};
+for ( String included : includedEntries )
+{
+    System.out.println( "Checking for included archive entry " + included );
+    if ( jar.getEntry( included ) == null )
+    {
+        throw new IllegalStateException( "Missing archive entry: " + included );
+    }
+}
+
+jar.close();
+
+return true;

@@ -659,8 +659,7 @@ public class EarMojo
             {
                 // Create a temporary work directory
                 // MEAR-167 use uri as directory to prevent merging of artifacts with the same artifactId
-                workDirectory =
-                    new File( new File( generatedDescriptorLocation, "temp" ), module.getUri() );
+                workDirectory = new File( new File( generatedDescriptorLocation, "temp" ), module.getUri() );
                 workDirectory.mkdirs();
                 getLog().debug( "Created a temporary work directory: " + workDirectory.getAbsolutePath() );
 
@@ -711,11 +710,16 @@ public class EarMojo
 
                     if ( module.getLibDir() != null )
                     {
+                        //MEAR-189:
+                        //We use the original name, cause in case of fileNameMapping to no-version/full 
+                        //we coulnd not not delete it and it will end up in the resulting EAR and the WAR 
+                        //will not be cleaned up.
                         File artifact =
-                            new File( new File( workDirectory, module.getLibDir() ), jm.getBundleFileName() );
+                            new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
 
                         if ( artifact.exists() )
                         {
+                            getLog().debug( " -> Artifact to delete: " + artifact );
                             if ( !artifact.delete() )
                             {
                                 getLog().error( "Could not delete '" + artifact + "'" );
