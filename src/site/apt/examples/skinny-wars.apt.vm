@@ -55,7 +55,7 @@ Creating Skinny WARs
         <artifactId>maven-ear-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <defaultJavaBundleDir>lib/</defaultJavaBundleDir>
+          <defaultLibBundleDir>lib/</defaultLibBundleDir>
           <skinnyWars>true</skinnyWars>
         </configuration>
       </plugin>

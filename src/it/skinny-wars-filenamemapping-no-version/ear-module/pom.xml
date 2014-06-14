@@ -49,7 +49,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <skinnyWars>true</skinnyWars>
-          <defaultJavaBundleDir>lib/</defaultJavaBundleDir>
+          <defaultLibBundleDir>lib/</defaultLibBundleDir>
           <fileNameMapping>no-version</fileNameMapping>
         </configuration>
       </plugin>
