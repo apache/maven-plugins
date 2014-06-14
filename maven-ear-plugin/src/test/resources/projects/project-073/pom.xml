@@ -58,7 +58,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <version>6</version>
-          <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
+          <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
         </configuration>
       </plugin>
       <plugin>

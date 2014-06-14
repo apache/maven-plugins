@@ -51,7 +51,7 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <defaultJavaBundleDir>APP-INF/lib</defaultJavaBundleDir>
+          <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
         </configuration>
       </plugin>
     </plugins>
