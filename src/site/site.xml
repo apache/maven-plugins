@@ -37,6 +37,9 @@ under the License.
       <item name="Manifest Customization" href="examples/manifest-customization.html"/>
       <item name="Using a Default Manifest File" href="examples/default-manifest-file.html"/>
       <item name="Using Your Own Manifest File" href="http://maven.apache.org/shared/maven-archiver/examples/manifestFile.html"/>
+      <item name="Additional attached JAR" href="examples/attached-jar.html"/>
+      <item name="Create Test JAR" href="examples/create-test-jar.html"/>
+      <item name="Include/Exclude clases" href="examples/include-exclude.html"/>
     </menu>
   </body>
 </project>

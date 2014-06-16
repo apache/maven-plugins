@@ -32,9 +32,9 @@ ${project.name}
 
 * Goals Overview
 
-  * {{{./jar-mojo.html}jar:jar}} create a jar file for your project sources.
+  * {{{./jar-mojo.html}jar:jar}} create a jar file for your project classes inclusive resources.
 
-  * {{{./test-jar-mojo.html}jar:test-jar}} create a jar file for your project test classes.
+  * {{{./test-jar-mojo.html}jar:test-jar}} create a jar file for your project test classes .
 
   []
 
@@ -75,5 +75,11 @@ ${project.name}
   * {{{./examples/manifest-customization.html}Manifest Customization}}
 
   * {{{./examples/default-manifest-file.html}Using a Default Manifest File}}
+
+  * {{{./examples/include-exclude.html}Howto include/exclude Content from a jar archive}}
+
+  * {{{./examples/attached-jar.html}How to create an additional attached jar artifact from the project}}
+
+  * {{{./examples/create-test-jar.html}How to create a jar containing test classes}}
 
   []
