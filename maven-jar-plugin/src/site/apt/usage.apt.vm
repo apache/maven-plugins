@@ -47,35 +47,36 @@ Usage
 
 * How to build a JAR file
 
-  If the packaging of your project is set to 'jar', this plugin is executed
-  whenever it passes the "package" phase. The following is a simple example
-  of a project which should produce a 'jar' as an artifact.  
+  When you want to create a JAR-file with Maven, you first have to create a <<<pom.xml>>>-file with at least the following content:
 
 +----------+
 <project>
-  ...
+  <modelVersion>4.0.0</modelVersion>
+  
   <groupId>com.mycompany.project</groupId>
   <artifactId>core</artifactId>
   <version>1.0-SNAPSHOT</version>
-  ...
+  <!-- <packaging>jar</packaging>  -->
 </project>
 +----------+
-
-  The packing 'jar' type is not needed to mentioned, cause 'jar' is the default packaging type.  
-  Apart from the above you need to create some real classes which should be located within
-  <<<src/main/java>>>. If you need some resources (for example property files) as well they 
-  should be located in <<<src/main/resources>>>. Now we can create a 'jar' file by using the 
-  command below:
+  
+  Since 'jar' is the default packaging type it is not required to set it in this case.
+  Apart from the above you will normally want some real java source files which should be located within
+  <<<src/main/java>>>. If you need extra resources on your classpath (for example property files) 
+  they should be located in <<<src/main/resources>>>.
+  Now we can create a JAR-file by using the command below:
 
 +-----------------+
 mvn package
 +-----------------+
 
-  In your project's <<<target>>> directory you'll able to see the generated jar file which is named like:
+  The 'package' phase is always responsible for bundling all the files in the artifact, in this case a JAR-file.
+
+  In your project's <<<target>>> directory you'll see the generated jar file which is named like:
   'core-1.0-SNAPSHOT.jar'. The resulting 'jar' file contains the compiled java class files as well as
-  the files from <<<src/main/resources>>> which have been copied into <<<target/classes>>>.
+  the files from <<<src/main/resources>>>.
 
   Usually there is no need to mentioned the 'maven-jar-plugin' explicit cause it's bound to
-  the {{{http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html}Maven Build Life Cylce}}.
+  the {{{http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html}Maven Build Life Cycle}}.
 
   For full documentation, click {{{./plugin-info.html}here}}.
