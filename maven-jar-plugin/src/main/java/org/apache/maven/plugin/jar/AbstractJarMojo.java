@@ -244,7 +244,7 @@ public abstract class AbstractJarMojo
     {
         if ( skipIfEmpty && (!getClassesDirectory().exists() || getClassesDirectory().list().length < 1 ) )
         {
-            getLog().info( "Skipping packaging of the test-jar" );
+            getLog().info( "Skipping packaging of the " + getType() );
         }
         else
         {
