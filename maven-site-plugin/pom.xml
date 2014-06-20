@@ -337,7 +337,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-integration-tools</artifactId>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.maven</groupId>
