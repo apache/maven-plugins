@@ -180,7 +180,7 @@ public final class DependencyInformationReport
 
             // sbt
 
-            renderDependencyInfo( "SBT", new Formatter().format( "libraryDependencies += \"%s\" %%%% \"%s\" %% \"%s\"",
+            renderDependencyInfo( "SBT", new Formatter().format( "libraryDependencies += \"%s\" %% \"%s\" %% \"%s\"",
                                                                  groupId, artifactId, version ) );
 
             endSection();
