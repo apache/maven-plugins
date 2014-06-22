@@ -43,14 +43,16 @@ public class SiteMavenProjectStub
         this( null );
     }    
     
-    public SiteMavenProjectStub(String pomFilePath)
+    public SiteMavenProjectStub( String pomFilePath )
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model;
 
         try
         {
-            File pomFile = new File( getBasedir(),pomFilePath == null ? "/src/test/resources/unit/interpolated-site/pom.xml" : pomFilePath );
+            File pomFile =
+                new File( getBasedir(), pomFilePath == null ? "/src/test/resources/unit/interpolated-site/pom.xml"
+                                : pomFilePath );
             model = pomReader.read( ReaderFactory.newXmlReader( pomFile ) );
             setModel( model );
         }
