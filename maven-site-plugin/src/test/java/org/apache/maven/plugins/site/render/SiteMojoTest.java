@@ -75,7 +75,7 @@ public class SiteMojoTest
         SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
         siteDescriptorContent =
             siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), siteMojo.getProject(),
-                                                           siteDescriptorContent, "UTF-8", "UTF-8" );
+                                                           siteDescriptorContent );
         assertNotNull( siteDescriptorContent );
         assertTrue(!siteDescriptorContent.contains("${project.name}"));
     }
