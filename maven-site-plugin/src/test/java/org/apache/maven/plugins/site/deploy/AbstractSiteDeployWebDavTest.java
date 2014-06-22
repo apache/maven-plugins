@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @author Olivier Lamy
  * @version $Id$
  */
-@RunWith(JUnit4.class)
+@RunWith( JUnit4.class )
 public abstract class AbstractSiteDeployWebDavTest
     extends AbstractMojoTestCase
 {

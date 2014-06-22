@@ -20,7 +20,7 @@ package org.apache.maven.plugins.site.deploy;
  */
 
 import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.wagon.repository.Repository;
+//import org.apache.maven.wagon.repository.Repository;
 import org.codehaus.plexus.PlexusTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +30,13 @@ import org.junit.runners.JUnit4;
 /**
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  */
-@RunWith(JUnit4.class)
+@RunWith( JUnit4.class )
 public class SiteDeployMojoTest
     extends PlexusTestCase
 {
     private WagonManager wagonManager;
 
-    private Repository repository;
+    //private Repository repository;
 
     @Before
     public void setUp()
@@ -44,7 +44,7 @@ public class SiteDeployMojoTest
     {
         super.setUp();
         wagonManager = getContainer().lookup( WagonManager.class );
-        repository = new Repository( "my-repository", "scp://repository-host/var/maven2" );
+        //repository = new Repository( "my-repository", "scp://repository-host/var/maven2" );
     }
 
     @Test

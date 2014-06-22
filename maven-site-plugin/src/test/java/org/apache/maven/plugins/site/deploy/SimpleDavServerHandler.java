@@ -78,7 +78,7 @@ public class SimpleDavServerHandler
 
                 @SuppressWarnings( "rawtypes" )
                 Enumeration headerNames = request.getHeaderNames();
-                while (headerNames.hasMoreElements())
+                while ( headerNames.hasMoreElements() )
                 {
                     String name = (String) headerNames.nextElement();
                     rq.headers.put( name, request.getHeader( name ) );
