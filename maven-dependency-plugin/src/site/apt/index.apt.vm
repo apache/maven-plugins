@@ -61,6 +61,10 @@ ${project.name}
   optionally transitive dependencies and copies them to a specified location, stripping the version if desired.
   This goal can also be run from the command line.
 
+  *{{{./display-ancestors-mojo.html}dependency:display-ancestors}} displays all ancestor POMs of the project. 
+  This may be useful in a continuous integration system where you want to know all parent poms of the project.
+  This goal can also be run from the command line.
+
   *{{{./get-mojo.html}dependency:get}} resolves a single artifact, eventually transitively, from a specified remote repository.
 
   *{{{./go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve everything this project is dependent on
