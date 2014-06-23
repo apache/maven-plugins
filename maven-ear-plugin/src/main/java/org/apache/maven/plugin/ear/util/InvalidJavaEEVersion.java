@@ -28,6 +28,11 @@ public class InvalidJavaEEVersion
     extends MojoExecutionException
 {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3189028517550801372L;
+
     private final String invalidVersion;
 
     public InvalidJavaEEVersion( String message, String invalidVersion )
