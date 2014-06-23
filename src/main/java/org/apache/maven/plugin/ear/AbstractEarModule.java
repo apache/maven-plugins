@@ -19,14 +19,13 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.output.FileNameMappingFactory;
-import org.apache.maven.plugin.ear.output.StandardFileNameMapping;
 import org.apache.maven.plugin.ear.util.ArtifactRepository;
 import org.codehaus.plexus.util.xml.XMLWriter;
-
-import java.util.Set;
 
 /**
  * A base implementation of an {@link EarModule}.

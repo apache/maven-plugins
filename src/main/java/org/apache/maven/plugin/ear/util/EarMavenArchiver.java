@@ -114,7 +114,6 @@ public class EarMavenArchiver
     {
         if ( config.getManifestEntries() != null )
         {
-            @SuppressWarnings( "unchecked" )
             final Set<String> keys = config.getManifestEntries().keySet();
             for ( String key : keys )
             {

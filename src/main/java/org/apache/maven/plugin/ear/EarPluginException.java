@@ -29,6 +29,11 @@ public class EarPluginException
     extends Exception
 {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5540929953103327928L;
+
     public EarPluginException()
     {
     }

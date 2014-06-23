@@ -448,7 +448,6 @@ public class EarMojo
      */
     protected String[] getExcludes()
     {
-        @SuppressWarnings( "unchecked" )
         List<String> excludeList = new ArrayList<String>( FileUtils.getDefaultExcludesAsList() );
         if ( earSourceExcludes != null && !"".equals( earSourceExcludes ) )
         {

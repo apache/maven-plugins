@@ -29,6 +29,11 @@ public class UnknownArtifactTypeException
     extends EarPluginException
 {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2738931967722457793L;
+
     public UnknownArtifactTypeException()
     {
     }
