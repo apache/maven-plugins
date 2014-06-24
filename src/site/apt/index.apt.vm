@@ -28,7 +28,9 @@
 
 ${project.name}
 
-  This plugin provides the capability to build and sign jars.
+  This plugin provides the capability to build jars.
+  If you like to sign jars please use the 
+  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}}.
 
 * Goals Overview
 
