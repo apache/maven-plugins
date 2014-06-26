@@ -50,7 +50,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -65,10 +64,8 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.MavenSettingsBuilder;
-import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
-import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
