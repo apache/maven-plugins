@@ -1105,15 +1105,6 @@ public abstract class AbstractInvokerMojo
                     SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
                     Settings dominantSettings = settingsReader.read( reader );
 
-                    // MINVOKER-137: NPE on dominantSettings.getRuntimeInfo()
-                    // DefaultMavenSettingsBuilder does the same trick
-                    if ( dominantSettings.getRuntimeInfo() == null )
-                    {
-                        RuntimeInfo rtInfo = new RuntimeInfo( dominantSettings );
-                        rtInfo.setFile( interpolatedSettingsFile );
-                        dominantSettings.setRuntimeInfo( rtInfo );
-                    }
-
                     Settings recessiveSettings = cloneSettings();
 
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
