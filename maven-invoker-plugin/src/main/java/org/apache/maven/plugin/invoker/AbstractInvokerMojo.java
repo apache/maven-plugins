@@ -64,6 +64,7 @@ import org.apache.maven.plugin.registry.TrackableBase;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.MavenSettingsBuilder;
 import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
@@ -256,6 +257,9 @@ public abstract class AbstractInvokerMojo
      */
     @Component
     private Invoker invoker;
+
+    @Component
+    private MavenSettingsBuilder settingsBuilder;
 
     /**
      * Relative path of a selector script to run prior in order to decide if the build should be executed. This script
@@ -1098,15 +1102,10 @@ public abstract class AbstractInvokerMojo
             if ( interpolatedSettingsFile != null )
             {
                 // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
-                Reader reader = null;
                 try
                 {
-                    reader = new XmlStreamReader( interpolatedSettingsFile );
-                    SettingsXpp3Reader settingsReader = new SettingsXpp3Reader();
-                    Settings dominantSettings = settingsReader.read( reader );
-
-                    Settings recessiveSettings = cloneSettings();
-
+                    Settings dominantSettings = settingsBuilder.buildSettings(interpolatedSettingsFile, false);
+					Settings recessiveSettings = cloneSettings();
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
 
                     mergedSettings = dominantSettings;
@@ -1119,10 +1118,6 @@ public abstract class AbstractInvokerMojo
                 catch ( IOException e )
                 {
                     throw new MojoExecutionException( "Could not read specified settings file", e );
-                }
-                finally
-                {
-                    IOUtil.close( reader );
                 }
             }
         }
