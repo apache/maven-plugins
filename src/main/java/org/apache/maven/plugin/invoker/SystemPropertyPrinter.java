@@ -20,9 +20,8 @@ package org.apache.maven.plugin.invoker;
  */
 
 /**
- * Print specified system properties to the output stream.
- * Useful to detect certain values from a JVM different to the default JAVA_HOME. 
- * 
+ * Print specified system properties to the output stream. Useful to detect certain values from a JVM different to the
+ * default JAVA_HOME.
  * 
  * @author Robert Scholte
  * @since 1.8

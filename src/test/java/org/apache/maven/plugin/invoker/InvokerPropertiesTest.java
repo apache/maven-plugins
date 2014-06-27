@@ -258,15 +258,15 @@ public class InvokerPropertiesTest
     {
         Properties props = new Properties();
         InvokerProperties facade = new InvokerProperties( props );
-        
-        assertFalse( facade.isInvocationDefined( 1 ));
-        
+
+        assertFalse( facade.isInvocationDefined( 1 ) );
+
         props.setProperty( "invoker.goals", "install" );
-        assertFalse( facade.isInvocationDefined( 1 ));
+        assertFalse( facade.isInvocationDefined( 1 ) );
 
         props.setProperty( "invoker.goals.2", "install" );
-        assertFalse( facade.isInvocationDefined( 1 ));
-        assertTrue( facade.isInvocationDefined( 2 ));
-        assertFalse( facade.isInvocationDefined( 3 ));
+        assertFalse( facade.isInvocationDefined( 1 ) );
+        assertTrue( facade.isInvocationDefined( 2 ) );
+        assertFalse( facade.isInvocationDefined( 3 ) );
     }
 }

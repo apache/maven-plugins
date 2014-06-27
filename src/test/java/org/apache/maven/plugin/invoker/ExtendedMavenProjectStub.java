@@ -32,6 +32,7 @@ public class ExtendedMavenProjectStub
     extends MavenProjectStub
 {
     private Scm scm;
+
     private Properties properties;
 
     public Scm getScm()
@@ -51,6 +52,6 @@ public class ExtendedMavenProjectStub
 
     public void setProperties( Properties properties )
     {
-        this.properties= properties;
+        this.properties = properties;
     }
 }

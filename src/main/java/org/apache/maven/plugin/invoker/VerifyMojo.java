@@ -75,7 +75,7 @@ public class VerifyMojo
      */
     @Parameter( defaultValue = "false" )
     private boolean suppressSummaries;
-    
+
     /**
      * Set this to <code>true</code> to cause a failure if there are no projects to invoke.
      *
@@ -96,7 +96,7 @@ public class VerifyMojo
         if ( skipInvocation )
         {
             getLog().info( "Skipping invocation per configuration."
-                + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
+                               + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
             return;
         }
 

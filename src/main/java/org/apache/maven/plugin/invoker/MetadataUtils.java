@@ -98,8 +98,9 @@ class MetadataUtils
                     {
 
                         Xpp3Dom[] children = versions.getChildren( "version" );
-                        for (Xpp3Dom aChildren : children) {
-                            allVersions.add(aChildren.getValue());
+                        for ( Xpp3Dom aChildren : children )
+                        {
+                            allVersions.add( aChildren.getValue() );
                         }
                     }
                 }

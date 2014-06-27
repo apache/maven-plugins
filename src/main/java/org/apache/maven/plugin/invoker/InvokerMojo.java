@@ -30,13 +30,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * outputting the results to the command line.
  *
  * @since 1.0
- *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @version $Id$
  */
-@Mojo( name = "run", defaultPhase = LifecyclePhase.INTEGRATION_TEST,
-       requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+@Mojo( name = "run", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class InvokerMojo
     extends AbstractInvokerMojo
 {
@@ -57,7 +55,7 @@ public class InvokerMojo
      */
     @Parameter( property = "invoker.failIfNoProjects" )
     private Boolean failIfNoProjects;
-    
+
     void processResults( InvokerSession invokerSession )
         throws MojoFailureException
     {
@@ -68,12 +66,12 @@ public class InvokerMojo
 
         invokerSession.handleFailures( getLog(), ignoreFailures );
     }
-    
+
     @Override
     protected void doFailIfNoProjects()
         throws MojoFailureException
     {
-        if( Boolean.TRUE.equals( failIfNoProjects ) )
+        if ( Boolean.TRUE.equals( failIfNoProjects ) )
         {
             throw new MojoFailureException( "No projects to invoke!" );
         }

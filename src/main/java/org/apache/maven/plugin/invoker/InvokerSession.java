@@ -131,7 +131,7 @@ class InvokerSession
         updateStats();
 
         return errorJobs;
-    } 
+    }
 
     /**
      * Gets the skipped build jobs in this session.
