@@ -1,0 +1,13 @@
+import java.io.*;
+
+try
+{
+    File itRoot = new File( basedir, "target/it/clone-clean" );
+    itRoot.mkdirs();
+    return new File(itRoot, "foobar.log").createNewFile();
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}

@@ -1,0 +1,13 @@
+import java.io.*;
+import java.util.*;
+
+File reportFile = new File( basedir, "target/site/invoker-report.html");
+
+System.out.println( "Checking for existence of report file: " + reportFile );
+if ( !reportFile.exists() )
+{
+    System.out.println( "FAILED!" );
+    return false;
+}
+
+return true;

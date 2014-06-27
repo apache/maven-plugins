@@ -1,0 +1,21 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+File touchFile;
+
+touchFile = new File( basedir, "src/it/beanshell/touch.txt" );
+System.out.println( "Checking for existence of touch file: " + touchFile );
+if ( !touchFile.exists() )
+{
+    throw new FileNotFoundException( "Did not find marker file: " + touchFile );
+}
+
+touchFile = new File( basedir, "src/it/groovy/touch.txt" );
+System.out.println( "Checking for existence of touch file: " + touchFile );
+if ( !touchFile.exists() )
+{
+    throw new FileNotFoundException( "Did not find marker file: " + touchFile );
+}
+
+return true;

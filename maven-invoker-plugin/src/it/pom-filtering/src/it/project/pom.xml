@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>test</groupId>
+  <artifactId>pom-filtering</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- ${...} must be left unfiltered -->
+    <prop0>${project.version}</prop0>
+    <!-- these must be filtered -->
+    <prop1>@project.version@</prop1>
+    <prop2>@propertyFromPluginConfig@</prop2>
+    <prop3>@propertyFromPropertiesSection@</prop3>
+    <!-- this must not be resolved to project.version, i.e. the prefix matters -->
+    <prop4>@project-is-not-the-pom.version@</prop4>
+    <!-- POM values must precede other properties -->
+    <prop5>@project.name@</prop5>
+    <prop6>@pom.name@</prop6>
+    <!-- properties from the plugin config must precede values from the POM's <properties> section -->
+    <prop7>@itProperty@</prop7>
+    <!-- properties with prefix "project"/"pom" must fallback to plugin config if no matching POM value exists -->
+    <prop8>@project.nonExistingPomValue@</prop8>
+    <!-- built-in properties must not be overridden by properties from the plugin configuration -->
+    <prop9>@basedir@</prop9>
+    <prop10>@baseurl@</prop10>
+    <prop11>@localRepository@</prop11>
+    <prop12>@localRepositoryUrl@</prop12>
+  </properties>
+
+  <build>
+    <!-- using the Resources Plugin to create a backup of the executed POM for later inspection by the parent build -->
+    <resources>
+      <resource>
+        <directory>${basedir}</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.2</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>

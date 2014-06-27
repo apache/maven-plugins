@@ -1,0 +1,13 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+File itRepoDir = new File( basedir, "target/it-repo" );
+System.out.println( "Checking for absence of: " + itRepoDir );
+if ( itRepoDir.isDirectory() )
+{
+    throw new IllegalStateException( "Creation of staging repository was not skipped: " + itRepoDir );
+    return false;
+}
+
+return true;

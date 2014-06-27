@@ -1,0 +1,22 @@
+import java.io.*;
+import java.util.*;
+
+try
+{
+    System.out.println( hello );
+    if ( !hello.equals( "world" ) )
+    {
+        throw new Exception( "Additional script variable declared in mojo configuration not defined: hello" );
+    }
+
+    System.out.println( version );
+    if ( !version.equals( "1.0-SNAPSHOT" ) )
+    {
+        throw new Exception( "Additional script variable declared in mojo configuration not defined: version" );
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    throw t;
+}

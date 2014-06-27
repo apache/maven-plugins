@@ -1,0 +1,55 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File testFile = new File( basedir, "target/it projects/project/target/classes/test.txt" );
+    System.out.println( "Checking for existence of test file: " + testFile );
+    if ( !testFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+
+    String[] values = {
+        "value with spaces from settings",
+        "value with spaces from cli",
+    };
+
+    BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( testFile ), "UTF-8" ) );
+    try
+    {
+        for ( String value : values )
+        {
+            String line = reader.readLine();
+            System.out.println( "Checking for occurrence of: " + value );
+            if ( !value.equals( line ) )
+            {
+                System.out.println( "FAILED!" );
+                return false;
+            }
+        }
+    }
+    finally
+    {
+        reader.close();
+    }
+
+    File installedFile = new File( basedir, "target/it repo/test/spacy-pom/0.1-SNAPSHOT/spacy-pom-0.1-SNAPSHOT.jar" );
+    System.out.println( "Checking for existence of installed file: " + installedFile );
+    if ( !installedFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
+return true;

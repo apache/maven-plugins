@@ -1,0 +1,136 @@
+ ------
+ Filtering Files
+ ------
+ Benjamin Bentmann
+ ------
+ 2008-08-30
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Filtering Files
+ 
+  Some files of the sub projects can be filtered, i.e. special tokens will be replaced by some other string before the
+  actual build is started. In detail, the following files will be filtered:
+
+  * POM files selected by the include/exclude patterns. The tokens to be filtered must be enclosed in <<<@...@>>> to
+    avoid interferences with Maven's normal POM interpolation, i.e. use <<<@project.version@>>> instead of
+    <<<$\{project.version\}>>>. Starting with version 1.3, the plugin will also (recursively) filter all POM files
+    referenced via <<<\<parent\>>>> or <<<\<module\>>>> tags, if the projects are cloned to a temporary location.
+
+  * The custom user setting file. Again, the tokens to be filtered in this file must be enclosed in <<<@...@>>>.
+
+  * The invoker properties, the goals file and the profiles file. Tokens in these files must use the usual Maven syntax
+    <<<$\{...\}>>>.
+
+  []
+
+  The following example directory structure highlights the files which are filtered by the Invoker Plugin:
+
++------------------
+./
++- pom.xml
++- src/
+   +- it/
+      +- settings.xml                  <- Filtered
+      +- aggregator-project/
+         +- child-module-1/
+         |  +- pom.xml                 <- Filtered
+         +- child-module-2/
+         |  +- pom.xml                 <- Filtered
+         +- pom.xml                    <- Filtered
+         +- invoker.properties         <- Filtered
+         +- goals.txt                  <- Filtered
+         +- profiles.txt               <- Filtered
++------------------
+
+  Below is the corresponding POM snippet for the plugin configuration:
+
++------------------
+<project>
+  <properties>
+    <projectPropertyUsedForFiltering>another-value</projectPropertyUsedForFiltering>
+  </properties>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <projectsDirectory>src/it</projectsDirectory>
+          <cloneProjectsTo>\${project.build.directory}/it</cloneProjectsTo>
+          <pomIncludes>
+            <pomInclude>*/pom.xml</pomInclude>
+          </pomIncludes>
+          <settingsFile>src/it/settings.xml</settingsFile>
+          <filterProperties>
+            <pluginPropertyUsedForFiltering>some-value</pluginPropertyUsedForFiltering>
+          </filterProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+       </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++------------------
+
+  When filtering the files, the plugin searches various data sources for a token's replacement value in the order
+  indicated below. The search terminates as soon as an existing replacement value has been found, i.e. the value
+  is not <<<null>>>.
+
+  [[1]] Tokens of the form <<<project.*>>> and <<<pom.*>>> will be expanded to the referenced POM value if possible,
+        e.g. <<<project.version>>> refers to the version given in the <<<pom.xml>>> that executed the Invoker Plugin.
+        If no such POM element exists, the value lookup continues as outlined next.
+
+  [[2]] Built-in properties defined by the Invoker Plugin will be processed. See this table for a list of available
+        built-in properties:
+
+*--------------------------+----------------------------------------------------------------------------------+--------+
+|| Built-in Property       || Value                                                                           || Since |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<basedir>>>            | The absolute path to the project base directory of the main build.               | 1.1    |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<baseurl>>>            | The <<<file:>>> URL to the project base directory of the main build.             | 1.4    |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<localRepository>>>    | The absolute path to the local repository used for the main build.               | 1.2    |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+| <<<localRepositoryUrl>>> | The <<<file:>>> URL to the local repository used for the main build.             | 1.3    |
+*--------------------------+----------------------------------------------------------------------------------+--------+
+
+  [[3]] The properties given by the parameter <<<filterProperties>>> in the plugin configuration will be consulted for
+        a property whose key equals the token. For the example POM shown above, the value <<<some-value>>> has been
+        associated with the token <<<pluginPropertyUsedForFiltering>>>.
+
+  [[4]] The properties given by the POM's <<<\<properties\>>>> section will be searched for a property whose key equals
+        the token. Regarding the example POM, the value <<<another-value>>> has been associated with the token
+        <<<projectPropertyUsedForFiltering>>>.
+
+  []
+
+  Tokens for which no replacement value could be determined will be left unchanged.

@@ -1,0 +1,2 @@
+throw new IllegalStateException( "The post-build script failed as expected." );
+

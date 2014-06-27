@@ -1,0 +1,137 @@
+ ------
+ Usage
+ ------
+ Jason van Zyl
+ ------
+ 2008-08-02
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Usage
+
+  This page provides general usage information along with a basic example.  The plugin
+  is commonly used to run and verify integration tests for a project, say a Maven plugin.  This is done using
+  the <<<{{{./run-mojo.html} invoker:run }}>>> goal. And as a preparation for the integration tests, one usually wants to
+  stage the artifacts under tests into a testing repository. For this job, the
+  <<<{{{./install-mojo.html} invoker:install }}>>> goal can be used.
+
+* Basic Example
+
+  The following example demonstrates a basic plugin configuration for running integration tests. Let's assume the following
+  directory structure of your project:
+
++------------------
+./
++- pom.xml
++- src/
+   +- it/
+      +- settings.xml
+      +- first-it/
+      |  +- pom.xml
+      |  +- src/
+      +- second-it/
+         +- pom.xml
+         +- invoker.properties
+         +- test.properties
+         +- verify.bsh
+         +- src/
++------------------
+
+  In this example, the directory <<<src/it>>> is the location where all the IT projects reside. You simply put each
+  integration test into a distinct sub directory, like shown by <<<first-it>>> and <<<second-it>>>. The plugin
+  configuration for this example would look like this:
+
++------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <cloneProjectsTo>\${project.build.directory}/it</cloneProjectsTo>
+          <settingsFile>src/it/settings.xml</settingsFile>
+          <localRepositoryPath>\${project.build.directory}/local-repo</localRepositoryPath>
+          <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>install</goal>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++------------------
+
+  Now, to get things going, just tell Maven to execute the lifecycle phase <<<integration-test>>>:
+
++------------------
+  mvn integration-test
++------------------
+
+  First, the <<<invoker:install>>> goal will be executed during the phase <<<pre-integration-test>>> and will copy the
+  main artifact of the project along with any attached artifacts over to <<<target/local-repo>>>. Furthermore, any
+  locally reachable parent POMs of the project will be copied to the staging repository. Last but not least, if you are
+  running a reactor build, all project dependencies that reside in the reactor will be staged, too.
+
+  Next up, the <<<invoker:run>>> goal will execute during the phase <<<integration-test>>> and will use the configured
+  include/exclude patterns to search the directory <<<src/it>>> for IT POMs. Every directory where an IT POM is found
+  will be copied over to <<<target/it>>>. Additionally, the IT POMs will be filtered, i.e. expressions like
+  <<<@project.version@>>> will be replaced with the corresponding values from the project's POM. This is especially
+  handy to make sure your IT POMs always reference the currently built version of the project artifact. You can also
+  define other properties via the plugin configuration that you wish to use for filtering.
+
+  Once the IT POMs have been filtered, a Maven build will be started on them. By default, the Invoker Plugin will execute the
+  phase <<<package>>> on the IT POMs but that can be changed globally in the plugin configuration or for an individual
+  integration test by using the <<<{{{./examples/invoker-properties.html}invoker.properties}}>>> as done in the example
+  for <<<second-it>>>. Likewise, system properties can be passed to the IT builds via the file <<<test.properties>>>.
+  And the file <<<src/it/settings.xml>>> can be used to specify custom user settings for the tests. Among others, this
+  allows you to make the integration tests use your local repository as a remote repository, avoiding time-consuming
+  downloads from <<<central>>> in order to fill up the initially empty staging repository. Please see the example
+  {{{./examples/fast-use.html}Fast Invoker Plugin Configuration}} for more details on this technique. The output of the
+  IT builds is written to a log file named <<<build.log>>> (e.g. <<<target/it/first-it/build.log>>>) and allows
+  diagnostics in case an integration test fails.
+
+  When an integration test has finished, the plugin will invoke an optional post build hook script. In the example,
+  this is the case for <<<second-it>>> where <<<verify.bsh>>> will be run. The purpose of this script is usually to
+  check that the build of the integration test did not only succeed but also produced the intended output. Have a look
+  at the example {{{./examples/post-build-script.html}Using a Post Build Script}} for a code snippet.
+
+* Running Only Some Tests
+
+  The plugin also supports a parameter <<<-Dinvoker.test>>> to run only ITs in the directories matched by the patterns
+  used in the parameter. This enables you to quickly rerun individual tests. See this example command line:
+
++---
+  mvn invoker:run -Dinvoker.test=*MWAR*,simple*
++---
+
+  Assuming the base directory of the sub projects is <<<src/it>>>, the plugin will only run projects from directories
+  matching the path <<<src/it/*MWAR*>>> and <<<src/it/simple*>>>.

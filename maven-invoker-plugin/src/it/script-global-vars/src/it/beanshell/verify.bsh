@@ -1,0 +1,37 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+try
+{
+    System.out.println( basedir );
+    if ( !( basedir instanceof File ) )
+    {
+        System.out.println( "Global script variable not defined: basedir" );
+        return false;
+    }
+
+    System.out.println( localRepositoryPath );
+    if ( !( localRepositoryPath instanceof File ) )
+    {
+        System.out.println( "Global script variable not defined: localRepositoryPath" );
+        return false;
+    }
+
+    System.out.println( mavenVersion );
+    if ( mavenVersion == null )
+    {
+        System.out.println( "Global script variable not defined: mavenVersion" );
+        return false;
+    }
+    if ( mavenVersion.trim().equals( "" ) )
+    {
+        System.out.println( "Global script variable empty: mavenVersion" );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}

@@ -1,0 +1,1 @@
+This file ensures the directory is cloned, to be deleted once MINVOKER-48 is released.

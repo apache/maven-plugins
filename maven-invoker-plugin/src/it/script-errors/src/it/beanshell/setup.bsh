@@ -1,0 +1,8 @@
+import java.io.*;
+
+// marker for parent build that this sub build was indeed run
+File touchFile = new File( basedir, "touch.txt" );
+touchFile.createNewFile();
+
+// BeanShell does not allow us to simply throw an error, so will we try to trigger an OutOfMemoryError...
+long[] arr = new long[ Integer.MAX_VALUE ];

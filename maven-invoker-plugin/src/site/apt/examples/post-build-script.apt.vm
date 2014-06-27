@@ -1,0 +1,97 @@
+ ------
+ Using a Post-Build Script
+ ------
+ Paul Gier
+ ------
+ 2008-08-02
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Using a Post-Build Script
+ 
+  Here is an example of how the Invoker Plugin can be used to run a set of Maven projects and then verify their output
+  with a {{{http://www.beanshell.org/}BeanShell}} or {{{http://groovy.codehaus.org/}Groovy}} script. The name of the
+  script file in this case is <<<verify.bsh>>>.
+
++------------------
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <debug>true</debug>
+          <projectsDirectory>src/it</projectsDirectory>
+          <preBuildHookScript>setup.bsh</preBuildHookScript>
+          <postBuildHookScript>verify.bsh</postBuildHookScript>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+       </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++------------------
+
+  Below is an example post-build BeanShell script (<<<verify.bsh>>>) that checks for the existence of a JAR file after
+  the build has run.  If the JAR file does not exist, the script throws an exception which causes the Invoker Plugin to
+  log that the build failed. More precisely, any non-null return value which does not equal <<<true>>> will be interpreted
+  as a failure condition. And of course, if the script exists abnormally due to an exception, the plugin will flag the
+  corresponding build as a failure, too.
+
++------------------
+import java.io.*;
+
+File file = new File( basedir, "target/my-test-project-1.0-SNAPSHOT.jar" );
+if ( !file.isFile() )
+{
+    throw new FileNotFoundException( "Could not find generated JAR: " + file );
+}
++------------------
+
+  Complementary to the post-build hook script, you can also create a pre-build hook script that will be run before
+  the invocation of Maven. This can be used to do some preparations for the build.
+
+  To allow the scripts to access some useful data about the test project, the following global variables will be
+  defined by the Invoker Plugin before running the script:
+
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
+|| Name                    || Type                || Description                                              || Since |
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
+| <<<basedir>>>            | <<<java.io.File>>>   | The absolute path to the base directory of the test project. | 1.0   |
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
+| <<<localRepositoryPath>>>| <<<java.io.File>>>   | The absolute path to the local repository used for the Maven invocation on the test project. | 1.3   |
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
+| <<<context>>>            | <<<java.util.Map>>>  | The storage of key-value pairs used to pass data from the pre-build hook script to the post-build hook script. | 1.4   |
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
+| <<<mavenVersion>>>       | <<<java.lang.String>>> | The version of Maven executing on the test project.     | 1.9    |
+*--------------------------+----------------------+-----------------------------------------------------------+--------+
+
+  Additional variables that can be accessed in the hook scripts can be defined through the
+  <<<{{{../run-mojo.html#scriptVariables}scriptVariables}}>>> parameter in the Invoker Plugin's configuration.

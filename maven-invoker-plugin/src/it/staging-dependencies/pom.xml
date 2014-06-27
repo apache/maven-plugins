@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>test</groupId>
+  <artifactId>staging-dependencies</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <description>
+    Test to check for staging of (runtime) dependencies directly from local repository (MINVOKER-64, MINVOKER-70).
+  </description>
+
+  <dependencies>
+    <!-- released version -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
+    <!-- snapshot version, must be staged using the base version and not the timestamped version -->
+    <dependency>
+      <groupId>org.apache.maven.its</groupId>
+      <artifactId>minvoker-70</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <!-- a dependency that does not contribute to the class path but must be staged, too -->
+    <dependency>
+      <groupId>org.apache.maven.its</groupId>
+      <artifactId>pom</artifactId>
+      <version>0.3-SNAPSHOT</version>
+      <type>pom</type>
+    </dependency>
+    <!-- two dependencies from the same g:a but with different versions -->
+    <dependency>
+      <groupId>org.apache.maven.its</groupId>
+      <artifactId>dep</artifactId>
+      <version>1.0</version>
+      <classifier>tests</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.its</groupId>
+      <artifactId>dep</artifactId>
+      <version>2.0</version>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>maven-invoker-plugin-it</id>
+      <url>file:///${basedir}/repo</url>
+      <releases>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+      <snapshots>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>@pom.version@</version>
+        <configuration>
+          <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

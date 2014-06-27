@@ -1,0 +1,106 @@
+ ------
+ Fast Build Configuration
+ ------
+ Olivier Lamy
+ ------
+ 2008-08-02
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Fast Build Configuration
+
+  If you follow the recommended approach and use a dedicated local repository for the integration tests (e.g.
+  <<<target/local-repo>>>), you will likely encounter long build times. If the test repository has been cleaned, the
+  plugin needs to re-download all artifacts from the central repo and the resulting network traffic slows the test
+  execution down.
+
+  But you can configure the plugin to download released artifacts from your local repo.
+  <Note:> This will work without optional settings with Maven >= 2.0.9 because many plugins 
+  versions are locked in the super POM. For older versions, you have to lock plugins versions.
+  
+  To enable this feature, you have to add a <<<settings.xml>>> file in your project (for example in <<<src/it/settings.xml>>>)
+  and modify the plugin configuration as this:  
+  
++------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          ...
+          <settingsFile>src/it/settings.xml</settingsFile>
+          ...
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++------------------
+
+  The settings must contain the following content which effectively tells Maven to use the local repository as a remote
+  repository:
+  
++------------------
+<?xml version="1.0"?>
+<settings>
+  <profiles>
+    <profile>
+      <id>it-repo</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>local.central</id>
+          <url>@localRepositoryUrl@</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>local.central</id>
+          <url>@localRepositoryUrl@</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+</settings>
++------------------
+
+  The token <<<@localRepositoryUrl@>>> will be automatically replaced by the Invoker Plugin with the URL to the local
+  repository used for the Maven invocation.
