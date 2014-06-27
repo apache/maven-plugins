@@ -70,8 +70,6 @@ under the License.
     <groovy-artifactId>groovy-all</groovy-artifactId>
     <groovy-version>2.0.1</groovy-version>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-
-    <invokerPluginVersion>1.8</invokerPluginVersion><!-- workaround for MRELEASE-803 -->
   </properties>
 
   <dependencies>
@@ -308,7 +306,7 @@ under the License.
               <!-- m-release-p-2.3.2 doesn't allow to specify a different version then the project.
                  This would be true for jar projects, but not always for plugins.
                -->
-              <version>${invokerPluginVersion}</version>
+              <version>1.8</version>
               <configuration>
                 <debug>true</debug>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
