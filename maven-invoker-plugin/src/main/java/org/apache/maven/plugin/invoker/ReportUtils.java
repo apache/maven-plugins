@@ -32,7 +32,7 @@ class ReportUtils
     /**
      * Gets the paths to the invoker reports available in the specified directory.
      * 
-     *@param reportsDirectory The base directory where the invoker reports are located in, may be <code>null</code>.
+     * @param reportsDirectory The base directory where the invoker reports are located in, may be <code>null</code>.
      * @return The paths to the invoker reports, can be empty but never <code>null</code>.
      */
     public static File[] getReportFiles( File reportsDirectory )

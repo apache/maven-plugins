@@ -41,26 +41,27 @@ class InvokerProperties
         PROJECT( "invoker.project" ),
         GOALS( "invoker.goals" ),
         PROFILES( "invoker.profiles" ),
-        MAVEN_OPTS ( "invoker.mavenOpts" ),
+        MAVEN_OPTS( "invoker.mavenOpts" ),
         FAILURE_BEHAVIOR( "invoker.failureBehavior" ),
         NON_RECURSIVE( "invoker.nonRecursive" ),
         OFFLINE( "invoker.offline" ),
         SYSTEM_PROPERTIES_FILE( "invoker.systemPropertiesFile" ),
         DEBUG( "invoker.debug" );
-        
+
         private final String key;
-        
-        private InvocationProperty(final String s)
+
+        private InvocationProperty( final String s )
         {
             this.key = s;
         }
 
         @Override
-        public String toString() {
+        public String toString()
+        {
             return key;
         }
     }
-    
+
     /**
      * The invoker properties being wrapped.
      */
@@ -208,19 +209,19 @@ class InvokerProperties
         String nonRecursive = get( InvocationProperty.NON_RECURSIVE, index );
         if ( nonRecursive != null )
         {
-            request.setRecursive( !Boolean.valueOf(nonRecursive));
+            request.setRecursive( !Boolean.valueOf( nonRecursive ) );
         }
 
         String offline = get( InvocationProperty.OFFLINE, index );
         if ( offline != null )
         {
-            request.setOffline(Boolean.valueOf(offline));
+            request.setOffline( Boolean.valueOf( offline ) );
         }
-        
+
         String debug = get( InvocationProperty.DEBUG, index );
         if ( debug != null )
         {
-            request.setDebug(Boolean.valueOf(debug));
+            request.setDebug( Boolean.valueOf( debug ) );
         }
     }
 
@@ -276,6 +277,6 @@ class InvokerProperties
 
     private String get( InvocationProperty prop, int index )
     {
-        return get( prop.toString(), index);
+        return get( prop.toString(), index );
     }
 }

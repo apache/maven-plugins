@@ -149,10 +149,9 @@ public abstract class AbstractInvokerMojo
     private File projectsDirectory;
 
     /**
-     * Base directory where all build reports are written to.
-     * Every execution of an integration test will produce an XML file which contains the information
-     * about success or failure of that particular build job. The format of the resulting XML
-     * file is documented in the given <a href="./build-job.html">build-job</a> reference.
+     * Base directory where all build reports are written to. Every execution of an integration test will produce an XML
+     * file which contains the information about success or failure of that particular build job. The format of the
+     * resulting XML file is documented in the given <a href="./build-job.html">build-job</a> reference.
      *
      * @since 1.4
      */
@@ -261,12 +260,12 @@ public abstract class AbstractInvokerMojo
     /**
      * Relative path of a selector script to run prior in order to decide if the build should be executed. This script
      * may be written with either BeanShell or Groovy. If the file extension is omitted (e.g. <code>selector</code>),
-     * the plugin searches for the file by trying out the well-known extensions <code>.bsh</code> and <code>.groovy</code>.
-     * If this script exists for a particular project but returns any non-null value different from <code>true</code>,
-     * the corresponding build is flagged as skipped. In this case, none of the pre-build hook script,
-     * Maven nor the post-build hook script will be invoked. If this script throws an exception, the corresponding
-     * build is flagged as in error, and none of the pre-build hook script, Maven not the post-build hook script will
-     * be invoked.
+     * the plugin searches for the file by trying out the well-known extensions <code>.bsh</code> and
+     * <code>.groovy</code>. If this script exists for a particular project but returns any non-null value different
+     * from <code>true</code>, the corresponding build is flagged as skipped. In this case, none of the pre-build hook
+     * script, Maven nor the post-build hook script will be invoked. If this script throws an exception, the
+     * corresponding build is flagged as in error, and none of the pre-build hook script, Maven not the post-build hook
+     * script will be invoked.
      *
      * @since 1.5
      */
@@ -366,19 +365,18 @@ public abstract class AbstractInvokerMojo
      */
     @Component
     private MavenProject project;
-    
+
     @Component
     private MojoExecution mojoExecution;
 
     /**
-     * A comma separated list of projectname patterns to run. Specify this parameter to run individual tests by file name,
-     * overriding the {@link #setupIncludes}, {@link #pomIncludes} and {@link #pomExcludes} parameters. Each pattern you
-     * specify here will be used to create an include/exclude pattern formatted like
-     * <code>${projectsDirectory}/<i>pattern</i></code>. To exclude a test, prefix the pattern with a '<code>!</code>'. 
-     * So you can just type
-     * <nobr><code>-Dinvoker.test=SimpleTest,Comp*Test,!Compare*</code></nobr> to run builds in 
-     * <code>${projectsDirectory}/SimpleTest</code> and
-     * <code>${projectsDirectory}/ComplexTest</code>, but not <code>${projectsDirectory}/CompareTest</code> 
+     * A comma separated list of projectname patterns to run. Specify this parameter to run individual tests by file
+     * name, overriding the {@link #setupIncludes}, {@link #pomIncludes} and {@link #pomExcludes} parameters. Each
+     * pattern you specify here will be used to create an include/exclude pattern formatted like
+     * <code>${projectsDirectory}/<i>pattern</i></code>. To exclude a test, prefix the pattern with a '<code>!</code>'.
+     * So you can just type <nobr><code>-Dinvoker.test=SimpleTest,Comp*Test,!Compare*</code></nobr> to run builds in
+     * <code>${projectsDirectory}/SimpleTest</code> and <code>${projectsDirectory}/ComplexTest</code>, but not
+     * <code>${projectsDirectory}/CompareTest</code>
      *
      * @since 1.1 (exclusion since 1.8)
      */
@@ -432,7 +430,7 @@ public abstract class AbstractInvokerMojo
      */
     @Parameter( property = "invoker.mavenExecutable" )
     private String mavenExecutable;
-    
+
     /**
      * The <code>JAVA_HOME</code> environment variable to use for forked Maven invocations. Defaults to the current Java
      * home directory.
@@ -460,10 +458,10 @@ public abstract class AbstractInvokerMojo
 
     /**
      * A flag whether the test class path of the project under test should be included in the class path of the
-     * pre-/post-build scripts. If set to <code>false</code>, the class path of script interpreter consists only of
-     * the <a href="dependencies.html">runtime dependencies</a> of the Maven Invoker Plugin. If set the
-     * <code>true</code>, the project's test class path will be prepended to the interpreter class path. Among
-     * others, this feature allows the scripts to access utility classes from the test sources of your project.
+     * pre-/post-build scripts. If set to <code>false</code>, the class path of script interpreter consists only of the
+     * <a href="dependencies.html">runtime dependencies</a> of the Maven Invoker Plugin. If set the <code>true</code>,
+     * the project's test class path will be prepended to the interpreter class path. Among others, this feature allows
+     * the scripts to access utility classes from the test sources of your project.
      *
      * @since 1.2
      */
@@ -483,59 +481,60 @@ public abstract class AbstractInvokerMojo
      * <code>${project.version}</code> to reference project properties or values from the parameter
      * {@link #filterProperties}. The snippet below describes the supported properties:
      * <p/>
+     * 
      * <pre>
      * # A comma or space separated list of goals/phases to execute, may
      * # specify an empty list to execute the default goal of the IT project
      * invoker.goals = clean install
-     *
+     * 
      * # Optionally, a list of goals to run during further invocations of Maven
      * invoker.goals.2 = ${project.groupId}:${project.artifactId}:${project.version}:run
-     *
+     * 
      * # A comma or space separated list of profiles to activate
      * invoker.profiles = its,jdk15
-     *
+     * 
      * # The path to an alternative POM or base directory to invoke Maven on, defaults to the
      * # project that was originally specified in the plugin configuration
      * # Since plugin version 1.4
      * invoker.project = sub-module
-     *
+     * 
      * # The value for the environment variable MAVEN_OPTS
      * invoker.mavenOpts = -Dfile.encoding=UTF-16 -Xms32m -Xmx256m
-     *
+     * 
      * # Possible values are &quot;fail-fast&quot; (default), &quot;fail-at-end&quot; and &quot;fail-never&quot;
      * invoker.failureBehavior = fail-never
-     *
+     * 
      * # The expected result of the build, possible values are &quot;success&quot; (default) and &quot;failure&quot;
      * invoker.buildResult = failure
-     *
+     * 
      * # A boolean value controlling the aggregator mode of Maven, defaults to &quot;false&quot;
      * invoker.nonRecursive = true
-     *
+     * 
      * # A boolean value controlling the network behavior of Maven, defaults to &quot;false&quot;
      * # Since plugin version 1.4
      * invoker.offline = true
-     *
+     * 
      * # The path to the properties file from which to load system properties, defaults to the
      * # filename given by the plugin parameter testPropertiesFile
      * # Since plugin version 1.4
      * invoker.systemPropertiesFile = test.properties
-     *
+     * 
      * # An optional human friendly name for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.name = Test Build 01
-     *
+     * 
      * # An optional description for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.description = Checks the support for build reports.
-     *
+     * 
      * # A comma separated list of JRE versions on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.java.version = 1.4+, !1.4.1, 1.7-
-     *
+     * 
      * # A comma separated list of OS families on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.os.family = !windows, unix, mac
-     *
+     * 
      * # A comma separated list of Maven versions on which this build should be run.
      * # Since plugin version 1.5
      * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
@@ -559,8 +558,7 @@ public abstract class AbstractInvokerMojo
     private boolean showVersion;
 
     /**
-     * number of threads for running tests in parallel.
-     * This will be the number of maven forked process in parallel.
+     * number of threads for running tests in parallel. This will be the number of maven forked process in parallel.
      *
      * @since 1.6
      */
@@ -574,7 +572,8 @@ public abstract class AbstractInvokerMojo
     private List<Artifact> pluginArtifacts;
 
     /**
-     * If enable and if you have a settings file configured for the execution, it will be merged with your user settings.
+     * If enable and if you have a settings file configured for the execution, it will be merged with your user
+     * settings.
      *
      * @since 1.6
      */
@@ -583,17 +582,19 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Additional environment variables to set on the command line.
+     * 
      * @since 1.8
      */
     @Parameter
-    private Map<String, String> environmentVariables;  
+    private Map<String, String> environmentVariables;
 
     /**
      * Additional variables for use in the hook scripts.
+     * 
      * @since 1.9
      */
     @Parameter
-    private Map<String, String> scriptVariables;  
+    private Map<String, String> scriptVariables;
 
     /**
      * The scripter runner that is responsible to execute hook scripts.
@@ -611,7 +612,7 @@ public abstract class AbstractInvokerMojo
      * The format for elapsed build time.
      */
     private final DecimalFormat secFormat = new DecimalFormat( "(0.0 s)", new DecimalFormatSymbols( Locale.ENGLISH ) );
-    
+
     /**
      * The version of Maven which is used to run the builds
      */
@@ -621,20 +622,17 @@ public abstract class AbstractInvokerMojo
      * The version of the JRE which is used to run the builds
      */
     private String actualJreVersion;
-    
-    
+
     private void setActualJreVersion( String actualJreVersion )
     {
         this.actualJreVersion = actualJreVersion;
     }
-    
+
     /**
      * Invokes Maven on the configured test projects.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the goal encountered severe errors.
-     * @throws org.apache.maven.plugin.MojoFailureException
-     *          If any of the Maven builds failed.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the goal encountered severe errors.
+     * @throws org.apache.maven.plugin.MojoFailureException If any of the Maven builds failed.
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -662,10 +660,11 @@ public abstract class AbstractInvokerMojo
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                    "Failed to discover projectsDirectory from pom File parameter. Reason: " + e.getMessage(), e );
+                                                  "Failed to discover projectsDirectory from pom File parameter. Reason: "
+                                                      + e.getMessage(), e );
             }
 
-            buildJobs = new BuildJob[]{ new BuildJob( pom.getName(), BuildJob.Type.NORMAL ) };
+            buildJobs = new BuildJob[] { new BuildJob( pom.getName(), BuildJob.Type.NORMAL ) };
         }
         else
         {
@@ -676,8 +675,8 @@ public abstract class AbstractInvokerMojo
             catch ( final IOException e )
             {
                 throw new MojoExecutionException(
-                    "Error retrieving POM list from includes, excludes, and projects directory. Reason: "
-                        + e.getMessage(), e );
+                                                  "Error retrieving POM list from includes, excludes, and projects directory. Reason: "
+                                                      + e.getMessage(), e );
             }
         }
 
@@ -743,8 +742,8 @@ public abstract class AbstractInvokerMojo
         processResults( new InvokerSession( buildJobs ) );
     }
 
-    
-    protected void doFailIfNoProjects() throws MojoFailureException
+    protected void doFailIfNoProjects()
+        throws MojoFailureException
     {
         // should only be used during run and verify
     }
@@ -783,16 +782,15 @@ public abstract class AbstractInvokerMojo
      * Collects all projects locally reachable from the specified project. The method will as such try to read the POM
      * and recursively follow its parent/module elements.
      *
-     * @param projectsDir  The base directory of all projects, must not be <code>null</code>.
-     * @param projectPath  The relative path of the current project, can denote either the POM or its base directory,
-     *                     must not be <code>null</code>.
+     * @param projectsDir The base directory of all projects, must not be <code>null</code>.
+     * @param projectPath The relative path of the current project, can denote either the POM or its base directory,
+     *            must not be <code>null</code>.
      * @param projectPaths The set of already collected projects to add new projects to, must not be <code>null</code>.
-     *                     This set will hold the relative paths to either a POM file or a project base directory.
-     * @param included     A flag indicating whether the specified project has been explicitly included via the parameter
-     *                     {@link #pomIncludes}. Such projects will always be added to the result set even if there is no
-     *                     corresponding POM.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the project tree could not be traversed.
+     *            This set will hold the relative paths to either a POM file or a project base directory.
+     * @param included A flag indicating whether the specified project has been explicitly included via the parameter
+     *            {@link #pomIncludes}. Such projects will always be added to the result set even if there is no
+     *            corresponding POM.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the project tree could not be traversed.
      */
     private void collectProjects( File projectsDir, String projectPath, Collection<String> projectPaths,
                                   boolean included )
@@ -874,9 +872,8 @@ public abstract class AbstractInvokerMojo
      * by a path to a POM file or merely by a path to a base directory. During cloning, the POM files will be filtered.
      *
      * @param projectPaths The paths to the projects to clone, relative to the projects directory, must not be
-     *                     <code>null</code> nor contain <code>null</code> elements.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the the projects could not be copied/filtered.
+     *            <code>null</code> nor contain <code>null</code> elements.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the the projects could not be copied/filtered.
      */
     private void cloneProjects( Collection<String> projectPaths )
         throws MojoExecutionException
@@ -889,8 +886,8 @@ public abstract class AbstractInvokerMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                    "Could not clean the cloneProjectsTo directory. Reason: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Could not clean the cloneProjectsTo directory. Reason: "
+                    + e.getMessage(), e );
             }
         }
 
@@ -961,9 +958,8 @@ public abstract class AbstractInvokerMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                "Failed to clone projects from: " + projectsDirectory + " to: " + cloneProjectsTo + ". Reason: "
-                    + e.getMessage(), e );
+            throw new MojoExecutionException( "Failed to clone projects from: " + projectsDirectory + " to: "
+                + cloneProjectsTo + ". Reason: " + e.getMessage(), e );
         }
 
         // filter cloned POMs
@@ -997,7 +993,7 @@ public abstract class AbstractInvokerMojo
      * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
      *
      * @param sourceDir The source directory to copy, must not be <code>null</code>.
-     * @param destDir   The target directory to copy to, must not be <code>null</code>.
+     * @param destDir The target directory to copy to, must not be <code>null</code>.
      * @throws java.io.IOException If the directory structure could not be copied.
      */
     private void copyDirectoryStructure( File sourceDir, File destDir )
@@ -1033,9 +1029,9 @@ public abstract class AbstractInvokerMojo
      * Determines whether the specified sub path has already been cloned, i.e. whether one of its ancestor directories
      * was already cloned.
      *
-     * @param subpath        The sub path to check, must not be <code>null</code>.
+     * @param subpath The sub path to check, must not be <code>null</code>.
      * @param clonedSubpaths The list of already cloned paths, must not be <code>null</code> nor contain
-     *                       <code>null</code> elements.
+     *            <code>null</code> elements.
      * @return <code>true</code> if the specified path has already been cloned, <code>false</code> otherwise.
      */
     static boolean alreadyCloned( String subpath, List<String> clonedSubpaths )
@@ -1055,9 +1051,8 @@ public abstract class AbstractInvokerMojo
      * Runs the specified build jobs.
      *
      * @param projectsDir The base directory of all projects, must not be <code>null</code>.
-     * @param buildJobs   The build jobs to run must not be <code>null</code> nor contain <code>null</code> elements.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If any build could not be launched.
+     * @param buildJobs The build jobs to run must not be <code>null</code> nor contain <code>null</code> elements.
+     * @throws org.apache.maven.plugin.MojoExecutionException If any build could not be launched.
      */
     private void runBuilds( final File projectsDir, BuildJob[] buildJobs )
         throws MojoExecutionException
@@ -1067,9 +1062,9 @@ public abstract class AbstractInvokerMojo
             localRepositoryPath.mkdirs();
         }
 
-        //-----------------------------------------------
+        // -----------------------------------------------
         // interpolate settings file
-        //-----------------------------------------------
+        // -----------------------------------------------
 
         File interpolatedSettingsFile = null;
         if ( settingsFile != null )
@@ -1086,9 +1081,9 @@ public abstract class AbstractInvokerMojo
             buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
         }
 
-        //-----------------------------------------------
+        // -----------------------------------------------
         // merge settings file
-        //-----------------------------------------------
+        // -----------------------------------------------
 
         SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
 
@@ -1101,8 +1096,8 @@ public abstract class AbstractInvokerMojo
                 // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
                 try
                 {
-                    Settings dominantSettings = settingsBuilder.buildSettings(interpolatedSettingsFile, false);
-					Settings recessiveSettings = cloneSettings();
+                    Settings dominantSettings = settingsBuilder.buildSettings( interpolatedSettingsFile, false );
+                    Settings recessiveSettings = cloneSettings();
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
 
                     mergedSettings = dominantSettings;
@@ -1141,8 +1136,8 @@ public abstract class AbstractInvokerMojo
 
                 if ( getLog().isDebugEnabled() )
                 {
-                    getLog().debug(
-                        "Created temporary file for invoker settings.xml: " + mergedSettingsFile.getAbsolutePath() );
+                    getLog().debug( "Created temporary file for invoker settings.xml: "
+                                        + mergedSettingsFile.getAbsolutePath() );
                 }
             }
             catch ( IOException e )
@@ -1151,7 +1146,7 @@ public abstract class AbstractInvokerMojo
             }
         }
         final File finalSettingsFile = mergedSettingsFile;
-        
+
         if ( mavenHome != null )
         {
             actualMavenVersion = SelectorUtils.getMavenVersion( mavenHome );
@@ -1161,7 +1156,7 @@ public abstract class AbstractInvokerMojo
             actualMavenVersion = SelectorUtils.getMavenVersion();
         }
         scriptRunner.setGlobalVariable( "mavenVersion", actualMavenVersion );
-        
+
         if ( javaHome != null )
         {
             resolveExternalJreVersion();
@@ -1170,7 +1165,7 @@ public abstract class AbstractInvokerMojo
         {
             actualJreVersion = SelectorUtils.getJreVersion();
         }
-        
+
         try
         {
             if ( isParallelRun() )
@@ -1259,11 +1254,12 @@ public abstract class AbstractInvokerMojo
         try
         {
             ReflectionUtils.setVariableValueInObject( trackable, "sourceLevelSet", Boolean.FALSE );
-            getLog().debug( "sourceLevelSet: " + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
+            getLog().debug( "sourceLevelSet: "
+                                + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
         }
         catch ( IllegalAccessException e )
         {
-            //noop
+            // noop
         }
     }
 
@@ -1271,14 +1267,14 @@ public abstract class AbstractInvokerMojo
     {
         Artifact pluginArtifact = mojoExecution.getMojoDescriptor().getPluginDescriptor().getPluginArtifact();
         pluginArtifact.getFile();
-        
+
         Commandline commandLine = new Commandline();
         commandLine.setExecutable( new File( javaHome, "bin/java" ).getAbsolutePath() );
         commandLine.createArg().setValue( "-cp" );
         commandLine.createArg().setFile( pluginArtifact.getFile() );
         commandLine.createArg().setValue( SystemPropertyPrinter.class.getName() );
         commandLine.createArg().setValue( "java.version" );
-        
+
         StreamConsumer consumer = new StreamConsumer()
         {
             public void consumeLine( String line )
@@ -1299,12 +1295,11 @@ public abstract class AbstractInvokerMojo
     /**
      * Runs the specified project.
      *
-     * @param projectsDir  The base directory of all projects, must not be <code>null</code>.
-     * @param buildJob     The build job to run, must not be <code>null</code>.
+     * @param projectsDir The base directory of all projects, must not be <code>null</code>.
+     * @param buildJob The build job to run, must not be <code>null</code>.
      * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code> to use
-     *                     the current user settings.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the project could not be launched.
+     *            the current user settings.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
      */
     private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile )
         throws MojoExecutionException
@@ -1353,7 +1348,7 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            int selection = getSelection( invokerProperties ); 
+            int selection = getSelection( invokerProperties );
             if ( selection == 0 )
             {
                 long milliseconds = System.currentTimeMillis();
@@ -1417,7 +1412,7 @@ public abstract class AbstractInvokerMojo
                 {
                     getLog().info( "..SKIPPED due to " + message.toString() );
                 }
-                
+
                 // Abuse failureMessage, the field in the report which should contain the reason for skipping
                 // Consider skipCode + I18N
                 buildJob.setFailureMessage( "Skipped due to " + message.toString() );
@@ -1459,8 +1454,8 @@ public abstract class AbstractInvokerMojo
      * Determines whether selector conditions of the specified invoker properties match the current environment.
      *
      * @param invokerProperties The invoker properties to check, must not be <code>null</code>.
-     * @return <code>0</code> if the job corresponding to the properties should be run, 
-     *   otherwise a bitwise value representing the reason why it should be skipped.
+     * @return <code>0</code> if the job corresponding to the properties should be run, otherwise a bitwise value
+     *         representing the reason why it should be skipped.
      */
     private int getSelection( InvokerProperties invokerProperties )
     {
@@ -1487,8 +1482,7 @@ public abstract class AbstractInvokerMojo
      * Writes the XML report for the specified build job unless report generation has been disabled.
      *
      * @param buildJob The build job whose report should be written, must not be <code>null</code>.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the report could not be written.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the report could not be written.
      */
     private void writeBuildReport( BuildJob buildJob )
         throws MojoExecutionException
@@ -1540,17 +1534,16 @@ public abstract class AbstractInvokerMojo
     /**
      * Runs the specified project.
      *
-     * @param basedir           The base directory of the project, must not be <code>null</code>.
-     * @param pomFile           The (already interpolated) POM file, may be <code>null</code> for a POM-less Maven invocation.
-     * @param settingsFile      The (already interpolated) user settings file for the build, may be <code>null</code>. Will be
-     *                          merged with the settings file of the invoking Maven process.
+     * @param basedir The base directory of the project, must not be <code>null</code>.
+     * @param pomFile The (already interpolated) POM file, may be <code>null</code> for a POM-less Maven invocation.
+     * @param settingsFile The (already interpolated) user settings file for the build, may be <code>null</code>. Will
+     *            be merged with the settings file of the invoking Maven process.
      * @param invokerProperties The properties to use.
      * @return <code>true</code> if the project was launched or <code>false</code> if the selector script indicated that
      *         the project should be skipped.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the project could not be launched.
-     * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException
-     *          If either a hook script or the build itself failed.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
+     * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException If either a hook script or the build itself
+     *             failed.
      */
     private boolean runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
         throws MojoExecutionException, RunFailureException
@@ -1603,7 +1596,7 @@ public abstract class AbstractInvokerMojo
             request.setDebug( debug );
 
             request.setShowVersion( showVersion );
-            
+
             if ( logger != null )
             {
                 request.setErrorHandler( logger );
@@ -1616,7 +1609,7 @@ public abstract class AbstractInvokerMojo
                 invoker.setMavenHome( mavenHome );
                 request.addShellEnvironment( "M2_HOME", mavenHome.getAbsolutePath() );
             }
-            
+
             if ( mavenExecutable != null )
             {
                 invoker.setMavenExecutable( new File( mavenExecutable ) );
@@ -1626,7 +1619,7 @@ public abstract class AbstractInvokerMojo
             {
                 request.setJavaHome( javaHome );
             }
-            
+
             if ( environmentVariables != null )
             {
                 for ( Map.Entry<String, String> variable : environmentVariables.entrySet() )
@@ -1635,7 +1628,7 @@ public abstract class AbstractInvokerMojo
                 }
             }
 
-            for ( int invocationIndex = 1; ; invocationIndex++ )
+            for ( int invocationIndex = 1;; invocationIndex++ )
             {
                 if ( invocationIndex > 1 && !invokerProperties.isInvocationDefined( invocationIndex ) )
                 {
@@ -1713,8 +1706,7 @@ public abstract class AbstractInvokerMojo
      *
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @return The build logger or <code>null</code> if logging has been disabled.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the log file could not be created.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the log file could not be created.
      */
     private FileLogger setupLogger( File basedir )
         throws MojoExecutionException
@@ -1749,18 +1741,17 @@ public abstract class AbstractInvokerMojo
     /**
      * Gets the system properties to use for the specified project.
      *
-     * @param basedir  The base directory of the project, must not be <code>null</code>.
+     * @param basedir The base directory of the project, must not be <code>null</code>.
      * @param filename The filename to the properties file to load, may be <code>null</code> to use the default path
-     *                 given by {@link #testPropertiesFile}.
+     *            given by {@link #testPropertiesFile}.
      * @return The system properties to use, may be empty but never <code>null</code>.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the properties file exists but could not be read.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the properties file exists but could not be read.
      */
     private Properties getSystemProperties( final File basedir, final String filename )
         throws MojoExecutionException
     {
         Properties collectedTestProperties = new Properties();
-        
+
         if ( testProperties != null )
         {
             collectedTestProperties.putAll( testProperties );
@@ -1815,12 +1806,12 @@ public abstract class AbstractInvokerMojo
     /**
      * Verifies the invocation result.
      *
-     * @param result            The invocation result to check, must not be <code>null</code>.
-     * @param invocationIndex   The index of the invocation for which to check the exit code, must not be negative.
+     * @param result The invocation result to check, must not be <code>null</code>.
+     * @param invocationIndex The index of the invocation for which to check the exit code, must not be negative.
      * @param invokerProperties The invoker properties used to check the exit code, must not be <code>null</code>.
-     * @param logger            The build logger, may be <code>null</code> if logging is disabled.
-     * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException
-     *          If the invocation result indicates a build failure.
+     * @param logger The build logger, may be <code>null</code> if logging is disabled.
+     * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException If the invocation result indicates a build
+     *             failure.
      */
     private void verify( InvocationResult result, int invocationIndex, InvokerProperties invokerProperties,
                          FileLogger logger )
@@ -1828,8 +1819,8 @@ public abstract class AbstractInvokerMojo
     {
         if ( result.getExecutionException() != null )
         {
-            throw new RunFailureException(
-                "The Maven invocation failed. " + result.getExecutionException().getMessage(), BuildJob.Result.ERROR );
+            throw new RunFailureException( "The Maven invocation failed. "
+                + result.getExecutionException().getMessage(), BuildJob.Result.ERROR );
         }
         else if ( !invokerProperties.isExpectedResult( result.getExitCode(), invocationIndex ) )
         {
@@ -1854,8 +1845,7 @@ public abstract class AbstractInvokerMojo
      *
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @return The list of goals to run when building the project, may be empty but never <code>null</code>.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the profile file could not be read.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the profile file could not be read.
      */
     List<String> getGoals( final File basedir )
         throws MojoExecutionException
@@ -1875,8 +1865,7 @@ public abstract class AbstractInvokerMojo
      *
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @return The list of profiles to activate when building the project, may be empty but never <code>null</code>.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the profile file could not be read.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the profile file could not be read.
      */
     List<String> getProfiles( File basedir )
         throws MojoExecutionException
@@ -1904,7 +1893,7 @@ public abstract class AbstractInvokerMojo
 
         if ( ( pom != null ) && pom.exists() )
         {
-            buildJobs = new BuildJob[]{ new BuildJob( pom.getAbsolutePath(), BuildJob.Type.NORMAL ) };
+            buildJobs = new BuildJob[] { new BuildJob( pom.getAbsolutePath(), BuildJob.Type.NORMAL ) };
         }
         else if ( invokerTest != null )
         {
@@ -1980,7 +1969,7 @@ public abstract class AbstractInvokerMojo
      *
      * @param includes The include patterns for the scanner, may be <code>null</code>.
      * @param excludes The exclude patterns for the scanner, may be <code>null</code> to exclude nothing.
-     * @param type     The type to assign to the resulting build jobs, must not be <code>null</code>.
+     * @param type The type to assign to the resulting build jobs, must not be <code>null</code>.
      * @return The build jobs matching the patterns, never <code>null</code>.
      * @throws java.io.IOException If the project directory could not be scanned.
      */
@@ -2035,7 +2024,7 @@ public abstract class AbstractInvokerMojo
      * it is returned as is.
      *
      * @param buildJobs The build jobs whose project paths should be relativized, must not be <code>null</code> nor
-     *                  contain <code>null</code> elements.
+     *            contain <code>null</code> elements.
      * @throws java.io.IOException If any path could not be relativized.
      */
     private void relativizeProjectPaths( BuildJob[] buildJobs )
@@ -2069,7 +2058,7 @@ public abstract class AbstractInvokerMojo
      * Relativizes the specified path against the given base directory. Besides relativization, the returned path will
      * also be normalized, e.g. directory references like ".." will be removed.
      *
-     * @param path    The path to relativize, must not be <code>null</code>.
+     * @param path The path to relativize, must not be <code>null</code>.
      * @param basedir The (canonical path of the) base directory to relativize against, must not be <code>null</code>.
      * @return The relative path in normal form or <code>null</code> if the input path does not denote a sub path of the
      *         base directory.
@@ -2147,11 +2136,11 @@ public abstract class AbstractInvokerMojo
      * Gets goal/profile names for the specified project, either directly from the plugin configuration or from an
      * external token file.
      *
-     * @param basedir       The base directory of the test project, must not be <code>null</code>.
-     * @param filename      The (simple) name of an optional file in the project base directory from which to read
-     *                      goals/profiles, may be <code>null</code>.
+     * @param basedir The base directory of the test project, must not be <code>null</code>.
+     * @param filename The (simple) name of an optional file in the project base directory from which to read
+     *            goals/profiles, may be <code>null</code>.
      * @param defaultTokens The list of tokens to return in case the specified token file does not exist, may be
-     *                      <code>null</code>.
+     *            <code>null</code>.
      * @return The list of goal/profile names, may be empty but never <code>null</code>.
      * @throws java.io.IOException If the token file exists but could not be parsed.
      */
@@ -2233,11 +2222,10 @@ public abstract class AbstractInvokerMojo
      * Interpolates the specified POM/settings file to a temporary file. The destination file may be same as the input
      * file, i.e. interpolation can be performed in-place.
      *
-     * @param originalFile     The XML file to interpolate, must not be <code>null</code>.
+     * @param originalFile The XML file to interpolate, must not be <code>null</code>.
      * @param interpolatedFile The target file to write the interpolated contents of the original file to, must not be
-     *                         <code>null</code>.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If the target file could not be created.
+     *            <code>null</code>.
+     * @throws org.apache.maven.plugin.MojoExecutionException If the target file could not be created.
      */
     void buildInterpolatedFile( File originalFile, File interpolatedFile )
         throws MojoExecutionException
@@ -2286,8 +2274,7 @@ public abstract class AbstractInvokerMojo
      *
      * @param projectDirectory The base directory of the IT project, must not be <code>null</code>.
      * @return The invoker properties, may be empty but never <code>null</code>.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If an I/O error occurred during reading the properties.
+     * @throws org.apache.maven.plugin.MojoExecutionException If an I/O error occurred during reading the properties.
      */
     private InvokerProperties getInvokerProperties( final File projectDirectory )
         throws MojoExecutionException
@@ -2325,8 +2312,7 @@ public abstract class AbstractInvokerMojo
                 }
                 catch ( InterpolationException e )
                 {
-                    throw new MojoExecutionException( "Failed to interpolate invoker properties: " + propertiesFile,
-                                                      e );
+                    throw new MojoExecutionException( "Failed to interpolate invoker properties: " + propertiesFile, e );
                 }
                 props.setProperty( key, value );
             }

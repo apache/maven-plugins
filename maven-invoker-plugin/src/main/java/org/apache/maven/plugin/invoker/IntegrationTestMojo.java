@@ -29,14 +29,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * never fail the build, designed to be used in conjunction with the verify mojo.
  *
  * @since 1.4
- *
  * @author <a href="mailto:stephenconnolly at codehaus">Stephen Connolly</a>
  * @version $Id$
  */
-@Mojo( name = "integration-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST,
-       requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+@Mojo( name = "integration-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class IntegrationTestMojo
-extends AbstractInvokerMojo
+    extends AbstractInvokerMojo
 {
 
     void processResults( InvokerSession invokerSession )

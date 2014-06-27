@@ -55,38 +55,38 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class InvokerReport
     extends AbstractMavenReport
 {
-    
+
     /**
      * The Maven Project.
      */
     @Component
     protected MavenProject project;
-    
+
     /**
      * Doxia Site Renderer component.
      */
     @Component
-    protected Renderer siteRenderer;    
-    
+    protected Renderer siteRenderer;
+
     /**
      * Internationalization component.
      */
     @Component
-    protected I18N i18n;    
-    
+    protected I18N i18n;
+
     /**
      * The output directory for the report. Note that this parameter is only evaluated if the goal is run directly from
      * the command line. If the goal is run indirectly as part of a site generation, the output directory configured in
      * the Maven Site Plugin is used instead.
      */
     @Parameter( defaultValue = "${project.reporting.outputDirectory}", required = true )
-    protected File outputDirectory;    
-    
+    protected File outputDirectory;
+
     /**
      * Base directory where all build reports have been written to.
      */
     @Parameter( defaultValue = "${project.build.directory}/invoker-reports", property = "invoker.reportsDirectory" )
-    private File reportsDirectory; 
+    private File reportsDirectory;
 
     /**
      * The number format used to print percent values in the report locale.
@@ -127,7 +127,7 @@ public class InvokerReport
         sink.section1_();
 
         // ----------------------------------
-        //  build buildJob beans
+        // build buildJob beans
         // ----------------------------------
         File[] reportFiles = ReportUtils.getReportFiles( reportsDirectory );
         if ( reportFiles.length <= 0 )
@@ -155,14 +155,14 @@ public class InvokerReport
         }
 
         // ----------------------------------
-        //  summary
+        // summary
         // ----------------------------------
-        
+
         constructSummarySection( buildJobs, locale );
-        
+
         // ----------------------------------
-        //  per file/it detail
-        // ----------------------------------        
+        // per file/it detail
+        // ----------------------------------
 
         sink.section2();
         sink.sectionTitle2();
