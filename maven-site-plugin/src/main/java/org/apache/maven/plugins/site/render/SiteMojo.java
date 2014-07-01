@@ -251,11 +251,11 @@ public class SiteMojo
                     sb.append( ", " );
                 }
                 sb.append( entry.getValue() );
-                sb.append(' ');
+                sb.append( ' ' );
                 sb.append( entry.getKey() );
             }
 
-            getLog().info( "Rendering " + doxiaDocuments.size() + ( generated ? " generated " : "" )
+            getLog().info( "Rendering " + doxiaDocuments.size() + ( generated ? " generated" : "" )
                                + " Doxia document" + ( doxiaDocuments.size() > 1 ? "s" : "" ) + ": " + sb.toString() );
 
             siteRenderer.render( doxiaDocuments.values(), context, outputDir );
