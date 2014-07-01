@@ -45,6 +45,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
@@ -200,8 +201,9 @@ public class ReportDocumentRenderer
         Locale locale = siteRenderingContext.getLocale();
         String localReportName = report.getName( locale );
 
-        log.info( "Generating \"" + localReportName + "\" report"
-                  + ( reportMojoInfo == null ? "." : ( "    --- " + reportMojoInfo ) ) );
+        String msg = "Generating \"" + localReportName + "\" report";
+        log.info( reportMojoInfo == null ? ( msg + '.' )
+                        : ( StringUtils.rightPad( msg, 40 ) + " --- " + reportMojoInfo ) );
 
         // main sink
         SiteRendererSink mainSink = new SiteRendererSink( renderingContext );
