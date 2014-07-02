@@ -46,7 +46,7 @@ Maven Mono Module Configuration
       <artifactId>maven-scm-publish-plugin</artifactId>
       <version>${project.version}</version>
       <configuration>
-        <content>${project.reporting.outputDirectory}</content><!-- mono-module doesn't require site:stage -->
+        <content>\${project.reporting.outputDirectory}</content><!-- mono-module doesn't require site:stage -->
       </configuration>
       <executions>
         <execution>
