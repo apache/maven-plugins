@@ -623,7 +623,9 @@ public abstract class AbstractDeployMojo
                             proxyInfo.setUserName( proxy.getUsername() );
                             proxyInfo.setPassword( proxy.getPassword() );
 
-                            getLog().debug("found proxyInfo " + ("host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort() + ", " + proxyInfo.getUserName()));
+                            getLog().debug( "found proxyInfo "
+                                                + ( "host:port " + proxyInfo.getHost() + ":" + proxyInfo.getPort()
+                                                    + ", " + proxyInfo.getUserName() ) );
 
                             return proxyInfo;
                         }
