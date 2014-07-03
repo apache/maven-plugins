@@ -21,10 +21,13 @@ package org.apache.maven.plugin.deploy;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -33,11 +36,17 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -149,6 +158,14 @@ public class DeployMojo
     @Parameter( property = "maven.deploy.skip", defaultValue = "false" )
     private boolean skip;
 
+    /**
+     * Set this to 'true' to enable flat pom
+     *
+     * @since 2.9
+     */
+    @Parameter( property = "enableFlatPom", defaultValue = "false" )
+    private boolean enableFlatPom;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -224,6 +241,11 @@ public class DeployMojo
         boolean isPomArtifact = "pom".equals( packaging );
         if ( !isPomArtifact )
         {
+            if ( "jar".equals( packaging ) && enableFlatPom )
+            {
+                useFlatPom( request.getProject() );
+                pomFile = request.getProject().getFile();
+            }
             ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
             artifact.addMetadata( metadata );
         }
@@ -283,6 +305,114 @@ public class DeployMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+
+    private void useFlatPom( MavenProject project )
+        throws MojoExecutionException
+    {
+        generateFlatPom( project );
+        applyFlatPom( project );
+    }
+
+    private void generateFlatPom( MavenProject project )
+        throws MojoExecutionException
+    {
+        getLog().info( "Generating flat pom for project " + project.getName() );
+        File flatPomFile = createFlatPomFile( project );
+        Model flatPomModel = createFlatModel( project );
+        MavenXpp3Writer pomWriter = new MavenXpp3Writer();
+        Writer fileWriter = null;
+        try
+        {
+            fileWriter = WriterFactory.newXmlWriter( flatPomFile );
+            pomWriter.write( fileWriter, flatPomModel );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Cannot write to flat pom file for project " + project.getName(), e );
+        }
+        finally
+        {
+            IOUtil.close( fileWriter );
+        }
+    }
+
+    private static File createFlatPomFile( MavenProject project )
+        throws MojoExecutionException
+    {
+        File pomFile = project.getFile();
+        if ( pomFile == null )
+        {
+            throw new MojoExecutionException( "Cannot create flat pom file for project " + project.getName()
+                + ": pom file is null" );
+        }
+        String flatPomDir = getFlatPomDir( project.getBasedir() );
+        new File( flatPomDir ).mkdirs();
+        File flatPomFile = new File( flatPomDir, "pom.xml" );
+        try
+        {
+            flatPomFile.createNewFile();
+            return flatPomFile;
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Cannot create flat pom file for project " + project.getName(), e );
+        }
+    }
+
+    private static Model createFlatModel( MavenProject project )
+    {
+        Model flatModel = new Model();
+        flatModel.setModelVersion( project.getModelVersion() );
+        flatModel.setGroupId( project.getGroupId() );
+        flatModel.setArtifactId( project.getArtifactId() );
+        flatModel.setVersion( project.getVersion() );
+        flatModel.setPackaging( project.getPackaging() );
+        flatModel.setDependencies( project.getDependencies() );
+        return flatModel;
+    }
+
+    private void applyFlatPom( MavenProject project )
+        throws MojoExecutionException
+    {
+        getLog().info( "Applying flat pom for project " + project.getName() );
+        File flatPomFile = new File( getFlatPomDir( project.getBasedir() ), "pom.xml" );
+        if ( !flatPomFile.exists() )
+        {
+            throw new MojoExecutionException( "Cannot find flat pom file in path " + flatPomFile.getAbsolutePath()
+                + " for project " + project.getName() );
+        }
+        project.setFile( flatPomFile );
+        Artifact artifact = project.getArtifact();
+        if ( artifact instanceof DefaultArtifact )
+        {
+            ArtifactMetadata flatMetadata = new ProjectArtifactMetadata( artifact, flatPomFile );
+            try
+            {
+                Field fldMetadataMap = DefaultArtifact.class.getDeclaredField( "metadataMap" );
+                fldMetadataMap.setAccessible( true );
+                Map metadataMap = (Map) fldMetadataMap.get( artifact );
+                metadataMap.put( flatMetadata.getKey(), flatMetadata );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "Cannot add flat pom metadata. Artifact: " + artifact, e );
+            }
+        }
+        else
+        {
+            throw new MojoExecutionException( "Artifact is not DefaultArtifact. Class name: "
+                + artifact.getClass().getName() + " Artifact: " + artifact );
+        }
+    }
+
+    private static String getFlatPomDir( File baseDir )
+    {
+        if ( baseDir == null )
+        {
+            return null;
+        }
+        return baseDir.getAbsolutePath() + File.separator + "target" + File.separator + "flat-pom";
     }
 
     ArtifactRepository getDeploymentRepository( MavenProject project, String altDeploymentRepository,
