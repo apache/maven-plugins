@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.util.ArrayList;
@@ -41,24 +41,26 @@ import java.util.Locale;
  */
 @Mojo( name = "display-ancestors", threadSafe = true, requiresProject = true, defaultPhase = LifecyclePhase.VALIDATE )
 public class DisplayAncestorsMojo
-    extends AbstractMojo {
+    extends AbstractMojo
+{
 
     /**
      * POM
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
 
-    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-
         final List<String> ancestors = collectAncestors();
 
-        if ( ancestors.isEmpty() ) {
+        if ( ancestors.isEmpty() )
+        {
             getLog().info( "No Ancestor POMs!" );
-        } else {
+        }
+        else
+        {
             getLog().info( String.format( Locale.US, "Ancestor POMs: %s", StringUtils.join( ancestors, " <- " ) ) );
         }
 
@@ -67,14 +69,18 @@ public class DisplayAncestorsMojo
     private ArrayList<String> collectAncestors()
     {
         final ArrayList<String> ancestors = new ArrayList<String>();
+
         MavenProject currentAncestor = project.getParent();
         while ( currentAncestor != null )
         {
             final String gav = String.format( Locale.US, "%s:%s:%s",
                     currentAncestor.getGroupId(), currentAncestor.getArtifactId(), currentAncestor.getVersion() );
+
             ancestors.add( gav );
+
             currentAncestor = currentAncestor.getParent();
         }
+
         return ancestors;
     }
 
