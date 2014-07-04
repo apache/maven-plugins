@@ -374,7 +374,7 @@ public abstract class AbstractCheckstyleReport
     /**
      * The Maven Project Object.
      */
-    @Parameter( defaultValue = "${project}" )
+    @Parameter( defaultValue = "${project}", readonly = true )
     protected MavenProject project;
     
     
