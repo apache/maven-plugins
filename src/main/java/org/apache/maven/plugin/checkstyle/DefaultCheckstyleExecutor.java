@@ -640,7 +640,8 @@ public class DefaultCheckstyleExecutor
         }
     }
 
-    private String getSuppressionsFilePath( final CheckstyleExecutorRequest request ) throws CheckstyleExecutorException
+    private String getSuppressionsFilePath( final CheckstyleExecutorRequest request )
+        throws CheckstyleExecutorException
     {
         final String suppressionsLocation = request.getSuppressionsLocation();
         if ( StringUtils.isEmpty( suppressionsLocation ) )

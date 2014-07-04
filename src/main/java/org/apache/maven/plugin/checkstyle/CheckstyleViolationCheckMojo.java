@@ -713,10 +713,11 @@ public class CheckstyleViolationCheckMojo
 
         if ( project.getBuild().getPluginManagement() != null )
         {
-            artifacts.addAll(  getCheckstylePluginDependenciesAsArtifacts(  project.getBuild().getPluginManagement().getPluginsAsMap(), hint ) );
+            artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( project.getBuild().getPluginManagement().getPluginsAsMap(),
+                                                                          hint ) );
         }
-                        
-        artifacts.addAll(  getCheckstylePluginDependenciesAsArtifacts(  project.getBuild().getPluginsAsMap(), hint ) );
+
+        artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( project.getBuild().getPluginsAsMap(), hint ) );
 
         return artifacts;
     }

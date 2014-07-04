@@ -414,7 +414,7 @@ public class CheckstyleExecutorRequest
     /**
      * Sets the aggregate parameter.
      *
-     * @param pAggregate <code>true</code> if an aggregated report is desidered.
+     * @param pAggregate <code>true</code> if an aggregated report is desired.
      * @return This object.
      */
     public CheckstyleExecutorRequest setAggregate( boolean pAggregate )

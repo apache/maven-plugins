@@ -69,13 +69,13 @@ public class LicenseResourceManager
             {
                 PlexusResource resource = resourceLoader.getResource( name );
 
-                getLogger().debug( "The resource " + "'" + name + "'" + " was found as " + resource.getName() + "." );
+                getLogger().debug( "The resource '" + name + "' was found as " + resource.getName() + "." );
 
                 return resource;
             }
             catch ( ResourceNotFoundException e )
             {
-                getLogger().debug( "The resource " + "'" + name + "'" + " was not found with resourceLoader "
+                getLogger().debug( "The resource '" + name + "' was not found with resourceLoader "
                                        + resourceLoader.getClass().getName() + "." );
             }
         }

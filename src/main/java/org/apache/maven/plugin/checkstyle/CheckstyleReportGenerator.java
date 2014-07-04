@@ -881,7 +881,6 @@ public class CheckstyleReportGenerator
         this.checkstyleConfig = config;
     }
 
-
     public void setTreeWalkerNames( List<String> treeWalkerNames )
     {
         this.treeWalkerNames = treeWalkerNames;
