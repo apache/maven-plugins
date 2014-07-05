@@ -25,6 +25,7 @@ import com.puppycrawl.tools.checkstyle.api.AutomaticBean;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;

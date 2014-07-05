@@ -19,7 +19,7 @@ package org.apache.maven.plugin.checkstyle.rss;
  * under the License.
  */
 
-import org.apache.maven.plugin.checkstyle.CheckstyleResults;
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 import org.apache.maven.reporting.MavenReportException;
 
 /**

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.checkstyle;
+package org.apache.maven.plugin.checkstyle.exec;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,7 @@ package org.apache.maven.plugin.checkstyle;
  */
 
 import junit.framework.TestCase;
+
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessage;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 
 /**
  * @author Edwin Punzalan

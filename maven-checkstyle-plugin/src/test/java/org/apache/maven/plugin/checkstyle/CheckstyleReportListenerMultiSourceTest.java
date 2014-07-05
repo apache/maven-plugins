@@ -22,11 +22,14 @@ package org.apache.maven.plugin.checkstyle;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessage;
 import com.puppycrawl.tools.checkstyle.api.SeverityLevel;
+
 import junit.framework.TestCase;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 
 /**
  *
