@@ -711,22 +711,7 @@ public class CheckstyleReportGenerator
             sink.tableRow();
 
             sink.tableCell();
-
-            switch( level )
-            {
-            case INFO:
-                iconTool.iconInfo( IconTool.TEXT_SIMPLE );
-                break;
-            case WARNING:
-                iconTool.iconWarning( IconTool.TEXT_SIMPLE );
-                break;
-            case ERROR:
-                iconTool.iconError( IconTool.TEXT_SIMPLE );
-                break;
-            default:
-                break;
-            }
-
+            iconTool.iconSeverity( level.getName(), IconTool.TEXT_SIMPLE );
             sink.tableCell_();
 
             sink.tableCell();
@@ -734,21 +719,16 @@ public class CheckstyleReportGenerator
             sink.tableCell_();
 
             sink.tableCell();
-
-            int line = event.getLine();
             if ( getXrefLocation() != null )
             {
-                sink
-                    .link(
-                        getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#L" + line );
+                sink.link( getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#L"
+                    + event.getLine() );
+                sink.text( String.valueOf( event.getLine() ) );
+                sink.link_();
             }
-            if ( line != 0 )
+            else
             {
                 sink.text( String.valueOf( event.getLine() ) );
-            }
-            if ( getXrefLocation() != null )
-            {
-                sink.link_();
             }
             sink.tableCell_();
 
