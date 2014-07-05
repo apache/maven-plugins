@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.checkstyle.CheckstyleReport;
-import org.apache.maven.plugin.checkstyle.CheckstyleResults;
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -48,7 +48,7 @@ public class DefaultCheckstyleRssGenerator
     private VelocityComponent velocityComponent;
 
     /**
-     * @see org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator#generateRSS(org.apache.maven.plugin.checkstyle.CheckstyleResults)
+     * @see org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGenerator#generateRSS(org.apache.maven.plugin.checkstyle.exec.CheckstyleResults)
      */
     public void generateRSS( CheckstyleResults results, CheckstyleRssGeneratorRequest checkstyleRssGeneratorRequest )
         throws MavenReportException
