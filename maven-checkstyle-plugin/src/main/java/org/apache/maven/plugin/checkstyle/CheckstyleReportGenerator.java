@@ -681,6 +681,9 @@ public class CheckstyleReportGenerator
             sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
+            sink.text( bundle.getString( "report.checkstyle.rule" ) );
+            sink.tableHeaderCell_();
+            sink.tableHeaderCell();
             sink.text( bundle.getString( "report.checkstyle.column.message" ) );
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
@@ -712,6 +715,14 @@ public class CheckstyleReportGenerator
 
             sink.tableCell();
             iconTool.iconSeverity( level.getName(), IconTool.TEXT_SIMPLE );
+            sink.tableCell_();
+
+            sink.tableCell();
+            String ruleName = getRuleName( event );
+            if ( ruleName != null )
+            {
+                sink.text( ruleName );
+            }
             sink.tableCell_();
 
             sink.tableCell();
