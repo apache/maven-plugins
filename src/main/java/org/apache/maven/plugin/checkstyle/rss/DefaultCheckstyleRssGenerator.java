@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.checkstyle.CheckstyleReport;
 import org.apache.maven.plugin.checkstyle.CheckstyleResults;
-import org.apache.maven.plugin.checkstyle.VelocityTemplate;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
