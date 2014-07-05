@@ -75,6 +75,8 @@ public class CheckstyleReportGenerator
 
     private List<String> treeWalkerNames = Collections.singletonList( "TreeWalker" );
 
+    private final IconTool iconTool;
+
     public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
     {
         this.bundle = bundle;
@@ -89,6 +91,7 @@ public class CheckstyleReportGenerator
         this.enableSeveritySummary = true;
         this.enableFilesSummary = true;
         this.enableRSS = true;
+        this.iconTool = new IconTool( sink, bundle );
     }
 
     public Log getLog()
@@ -186,43 +189,6 @@ public class CheckstyleReportGenerator
 
         sink.paragraph_();
         sink.section1_();
-    }
-
-    private void iconSeverity( String level )
-    {
-        if ( SeverityLevel.INFO.getName().equalsIgnoreCase( level ) )
-        {
-            iconInfo();
-        }
-        else if ( SeverityLevel.WARNING.getName().equalsIgnoreCase( level ) )
-        {
-            iconWarning();
-        }
-        else if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( level ) )
-        {
-            iconError();
-        }
-    }
-
-    private void iconInfo()
-    {
-        sink.figure();
-        sink.figureGraphics( "images/icon_info_sml.gif" );
-        sink.figure_();
-    }
-
-    private void iconWarning()
-    {
-        sink.figure();
-        sink.figureGraphics( "images/icon_warning_sml.gif" );
-        sink.figure_();
-    }
-
-    private void iconError()
-    {
-        sink.figure();
-        sink.figureGraphics( "images/icon_error_sml.gif" );
-        sink.figure_();
     }
 
     /**
@@ -464,22 +430,7 @@ public class CheckstyleReportGenerator
         // Grab the severity from the rule configuration, this time use error as default value
         // Also pass along all parent configurations, so that we can try to find the severity there
         configSeverity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
-        iconSeverity( configSeverity );
-        sink.nonBreakingSpace();
-
-        if ( SeverityLevel.INFO.getName().equalsIgnoreCase( configSeverity ) )
-        {
-            sink.text( bundle.getString( "report.checkstyle.info" ) );
-        }
-        else if ( SeverityLevel.WARNING.getName().equalsIgnoreCase( configSeverity ) )
-        {
-            sink.text( bundle.getString( "report.checkstyle.warning" ) );
-        }
-        else if ( SeverityLevel.ERROR.getName().equalsIgnoreCase( configSeverity ) )
-        {
-            sink.text( bundle.getString( "report.checkstyle.error" ) );
-        }
-
+        iconTool.iconSeverity( configSeverity, IconTool.TEXT_SIMPLE );
         sink.tableCell_();
 
         sink.tableRow_();
@@ -588,21 +539,15 @@ public class CheckstyleReportGenerator
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        iconInfo();
-        sink.nonBreakingSpace();
-        sink.text( bundle.getString( "report.checkstyle.infos" ) );
+        iconTool.iconInfo( IconTool.TEXT_TITLE );
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        iconWarning();
-        sink.nonBreakingSpace();
-        sink.text( bundle.getString( "report.checkstyle.warnings" ) );
+        iconTool.iconWarning( IconTool.TEXT_TITLE );
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
-        iconError();
-        sink.nonBreakingSpace();
-        sink.text( bundle.getString( "report.checkstyle.errors" ) );
+        iconTool.iconError( IconTool.TEXT_TITLE );
         sink.tableHeaderCell_();
         sink.tableRow_();
 
@@ -640,19 +585,13 @@ public class CheckstyleReportGenerator
         sink.text( bundle.getString( "report.checkstyle.file" ) );
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        iconInfo();
-        sink.nonBreakingSpace();
-        sink.text( bundle.getString( "report.checkstyle.infos.abbrev" ) );
+        iconTool.iconInfo( IconTool.TEXT_ABBREV );
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        iconWarning();
-        sink.nonBreakingSpace();
-        sink.text( bundle.getString( "report.checkstyle.warnings.abbrev" ) );
+        iconTool.iconWarning( IconTool.TEXT_ABBREV );
         sink.tableHeaderCell_();
         sink.tableHeaderCell();
-        iconError();
-        sink.nonBreakingSpace();
-        sink.text( bundle.getString( "report.checkstyle.errors.abbrev" ) );
+        iconTool.iconError( IconTool.TEXT_ABBREV );
         sink.tableHeaderCell_();
         sink.tableRow_();
 
@@ -765,19 +704,13 @@ public class CheckstyleReportGenerator
             switch( level )
             {
             case INFO:
-                iconInfo();
-                sink.nonBreakingSpace();
-                sink.text( bundle.getString( "report.checkstyle.info" ) );
+                iconTool.iconInfo( IconTool.TEXT_SIMPLE );
                 break;
             case WARNING:
-                iconWarning();
-                sink.nonBreakingSpace();
-                sink.text( bundle.getString( "report.checkstyle.warning" ) );
+                iconTool.iconWarning( IconTool.TEXT_SIMPLE );
                 break;
             case ERROR:
-                iconError();
-                sink.nonBreakingSpace();
-                sink.text( bundle.getString( "report.checkstyle.error" ) );
+                iconTool.iconError( IconTool.TEXT_SIMPLE );
                 break;
             default:
                 break;
