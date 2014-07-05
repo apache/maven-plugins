@@ -252,6 +252,10 @@ public class CheckstyleReportGenerator
 
         sink.tableRow();
         sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
+        sink.tableHeaderCell_();
+
+        sink.tableHeaderCell();
         sink.text( bundle.getString( "report.checkstyle.rule" ) );
         sink.tableHeaderCell_();
 
@@ -259,9 +263,6 @@ public class CheckstyleReportGenerator
         sink.text( bundle.getString( "report.checkstyle.violations" ) );
         sink.tableHeaderCell_();
 
-        sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
-        sink.tableHeaderCell_();
         sink.tableRow_();
 
         // Top level should be the checker.
@@ -349,7 +350,15 @@ public class CheckstyleReportGenerator
     {
         sink.tableRow();
 
-        // column 1: Rule name + configured attributes
+        // column 1: severity
+        sink.tableCell();
+        // Grab the severity from the rule configuration, this time use error as default value
+        // Also pass along all parent configurations, so that we can try to find the severity there
+        String severity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
+        iconTool.iconSeverity( severity, IconTool.TEXT_SIMPLE );
+        sink.tableCell_();
+
+        // column 2: Rule name + configured attributes
         sink.tableCell();
         sink.text( ruleName );
 
@@ -419,21 +428,18 @@ public class CheckstyleReportGenerator
 
         sink.tableCell_();
 
-        // column 2: rule violation count
+        // column 3: rule violation count
         sink.tableCell();
         String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
         // Grab the severity from the rule configuration, use null as default value
         String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
-        sink.text( countRuleViolation( results.getFiles().values(), ruleName, fixedmessage,
-                                       configSeverity ) );
-        sink.tableCell_();
-
-        // column 3: severity
-        sink.tableCell();
-        // Grab the severity from the rule configuration, this time use error as default value
-        // Also pass along all parent configurations, so that we can try to find the severity there
-        configSeverity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
-        iconTool.iconSeverity( configSeverity, IconTool.TEXT_SIMPLE );
+        long violations = countRuleViolation( results.getFiles().values(), ruleName, fixedmessage, configSeverity );
+        sink.text( String.valueOf( violations ) );
+        if ( violations > 0 )
+        {
+            sink.nonBreakingSpace();
+            iconTool.iconSeverity( severity );
+        }
         sink.tableCell_();
 
         sink.tableRow_();
@@ -444,12 +450,12 @@ public class CheckstyleReportGenerator
      *
      * @param files A collection over the set of files that has violations
      * @param ruleName The name of the rule
-     * @param message A message that, if it's not null, will be matched to the message from the violation
-     * @param severity A severity that, if it's not null, will be matched to the severity from the violation
+     * @param expectedMessage A message that, if it's not null, will be matched to the message from the violation
+     * @param expectedSeverity A severity that, if it's not null, will be matched to the severity from the violation
      * @return The number of rule violations
      */
-    private String countRuleViolation( Collection<List<AuditEvent>> files, String ruleName, String message,
-                                       String severity )
+    public long countRuleViolation( Collection<List<AuditEvent>> files, String ruleName, String expectedMessage,
+                                    String expectedSeverity )
     {
         long count = 0;
 
@@ -459,19 +465,18 @@ public class CheckstyleReportGenerator
             {
                 String eventSrcName = event.getSourceName();
                 if ( eventSrcName != null
-                        && ( eventSrcName.endsWith( ruleName )
-                        || eventSrcName.endsWith( ruleName + "Check" ) ) )
+                    && ( eventSrcName.endsWith( ruleName ) || eventSrcName.endsWith( ruleName + "Check" ) ) )
                 {
                     // check message too, for those that have a specific one.
                     // like GenericIllegalRegexp and Regexp
-                    if ( message != null )
+                    if ( expectedMessage != null )
                     {
                         // event.getMessage() uses java.text.MessageFormat in its implementation.
                         // Read MessageFormat Javadoc about single quote:
                         // http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html
-                        String msgWithoutSingleQuote = StringUtils.replace( message, "'", "" );
-                        if ( message.equals( event.getMessage() )
-                            || msgWithoutSingleQuote.equals( event.getMessage() ) )
+                        String msgWithoutSingleQuote = StringUtils.replace( expectedMessage, "'", "" );
+
+                        if ( expectedMessage.equals( event.getMessage() ) || msgWithoutSingleQuote.equals( event.getMessage() ) )
                         {
                             count++;
                         }
@@ -480,9 +485,9 @@ public class CheckstyleReportGenerator
                     // different configurations for the same rule, where each
                     // configuration has a different severity, like JavadocMetod.
                     // See also http://jira.codehaus.org/browse/MCHECKSTYLE-41
-                    else if ( severity != null )
+                    else if ( expectedSeverity != null )
                     {
-                        if ( severity.equals( event.getSeverityLevel().getName() ) )
+                        if ( expectedSeverity.equals( event.getSeverityLevel().getName() ) )
                         {
                             count++;
                         }
@@ -494,7 +499,7 @@ public class CheckstyleReportGenerator
                 }
             }
         }
-        return String.valueOf( count );
+        return count;
     }
 
     private void doSeveritySummary( CheckstyleResults results )
