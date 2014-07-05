@@ -320,19 +320,18 @@ public class CheckstyleReportGenerator
             }
         }
 
-        Configuration configChildren[] = configuration.getChildren();
-        for ( Configuration aConfigChildren : configChildren )
+        for ( Configuration configChild : configuration.getChildren() )
         {
-            String ruleName = aConfigChildren.getName();
+            String ruleName = configChild.getName();
 
             if ( treeWalkerNames.contains( ruleName ) )
             {
-                // special sub-case
-                doRuleChildren( aConfigChildren, parentConfigurations, results );
+                // special sub-case: TreeWalker is the parent of multiple rules, not an effective rule
+                doRuleChildren( configChild, parentConfigurations, results );
             }
             else
             {
-                doRuleRow( aConfigChildren, parentConfigurations, ruleName, results );
+                doRuleRow( configChild, parentConfigurations, ruleName, results );
             }
         }
     }
@@ -349,6 +348,8 @@ public class CheckstyleReportGenerator
                             CheckstyleResults results )
     {
         sink.tableRow();
+
+        // column 1: Rule name + configured attributes
         sink.tableCell();
         sink.text( ruleName );
 
@@ -369,7 +370,7 @@ public class CheckstyleReportGenerator
                 // special case, Header.header and RegexpHeader.header
                 if ( "header".equals( name ) && ( "Header".equals( ruleName ) || "RegexpHeader".equals( ruleName ) ) )
                 {
-                    List<String> lines = stringSplit( value, "\\n" );
+                    String[] lines = StringUtils.split( value, "\\n" );
                     int linenum = 1;
                     for ( String line : lines )
                     {
@@ -418,6 +419,7 @@ public class CheckstyleReportGenerator
 
         sink.tableCell_();
 
+        // column 2: rule violation count
         sink.tableCell();
         String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
         // Grab the severity from the rule configuration, use null as default value
@@ -426,6 +428,7 @@ public class CheckstyleReportGenerator
                                        configSeverity ) );
         sink.tableCell_();
 
+        // column 3: severity
         sink.tableCell();
         // Grab the severity from the rule configuration, this time use error as default value
         // Also pass along all parent configurations, so that we can try to find the severity there
@@ -434,36 +437,6 @@ public class CheckstyleReportGenerator
         sink.tableCell_();
 
         sink.tableRow_();
-    }
-
-    /**
-     * Splits a string against a delim consisting of a string (not a single character).
-     *
-     * @param input
-     * @param delim
-     * @return
-     */
-    private List<String> stringSplit( String input, String delim )
-    {
-        List<String> ret = new ArrayList<String>();
-
-        int delimLen = delim.length();
-        int offset = 0;
-        int lastOffset = 0;
-        String line;
-
-        while ( ( offset = input.indexOf( delim, offset ) ) >= 0 )
-        {
-            line = input.substring( lastOffset, offset );
-            ret.add( line );
-            offset += delimLen;
-            lastOffset = offset;
-        }
-
-        line = input.substring( lastOffset );
-        ret.add( line );
-
-        return ret;
     }
 
     /**
