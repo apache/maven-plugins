@@ -446,6 +446,68 @@ public class CheckstyleReportGenerator
     }
 
     /**
+     * Get the rule name from a violation.
+     *
+     * @param event the violation
+     * @return the rule name, which is the class name without package and removed eventual "Check" suffix
+     */
+    public String getRuleName( AuditEvent event )
+    {
+        String eventSrcName = event.getSourceName();
+
+        if ( eventSrcName == null )
+        {
+            return null;
+        }
+
+        if ( eventSrcName.endsWith( "Check" ) )
+        {
+            eventSrcName = eventSrcName.substring( 0,  eventSrcName.length() - 5 );
+        }
+
+        return eventSrcName.substring( eventSrcName.lastIndexOf( '.' ) + 1 );
+    }
+
+    /**
+     * Check if a violation matches a rule.
+     *
+     * @param event the violation to check
+     * @param ruleName The name of the rule
+     * @param expectedMessage A message that, if it's not null, will be matched to the message from the violation
+     * @param expectedSeverity A severity that, if it's not null, will be matched to the severity from the violation
+     * @return The number of rule violations
+     */
+    public boolean matchRule( AuditEvent event, String ruleName, String expectedMessage, String expectedSeverity )
+    {
+        if ( !ruleName.equals( getRuleName( event ) ) )
+        {
+            return false;
+        }
+
+        // check message too, for those that have a specific one.
+        // like GenericIllegalRegexp and Regexp
+        if ( expectedMessage != null )
+        {
+            // event.getMessage() uses java.text.MessageFormat in its implementation.
+            // Read MessageFormat Javadoc about single quote:
+            // http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html
+            String msgWithoutSingleQuote = StringUtils.replace( expectedMessage, "'", "" );
+
+            return expectedMessage.equals( event.getMessage() ) || msgWithoutSingleQuote.equals( event.getMessage() );
+        }
+        // Check the severity. This helps to distinguish between
+        // different configurations for the same rule, where each
+        // configuration has a different severity, like JavadocMetod.
+        // See also http://jira.codehaus.org/browse/MCHECKSTYLE-41
+        if ( expectedSeverity != null )
+        {
+            return expectedSeverity.equals( event.getSeverityLevel().getName() );
+        }
+
+        return true;
+    }
+
+    /**
      * Count the number of violations for the given rule.
      *
      * @param files A collection over the set of files that has violations
@@ -463,42 +525,13 @@ public class CheckstyleReportGenerator
         {
             for ( AuditEvent event : errors )
             {
-                String eventSrcName = event.getSourceName();
-                if ( eventSrcName != null
-                    && ( eventSrcName.endsWith( ruleName ) || eventSrcName.endsWith( ruleName + "Check" ) ) )
+                if ( matchRule( event, ruleName, expectedMessage, expectedSeverity ) )
                 {
-                    // check message too, for those that have a specific one.
-                    // like GenericIllegalRegexp and Regexp
-                    if ( expectedMessage != null )
-                    {
-                        // event.getMessage() uses java.text.MessageFormat in its implementation.
-                        // Read MessageFormat Javadoc about single quote:
-                        // http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html
-                        String msgWithoutSingleQuote = StringUtils.replace( expectedMessage, "'", "" );
-
-                        if ( expectedMessage.equals( event.getMessage() ) || msgWithoutSingleQuote.equals( event.getMessage() ) )
-                        {
-                            count++;
-                        }
-                    }
-                    // Check the severity. This helps to distinguish between
-                    // different configurations for the same rule, where each
-                    // configuration has a different severity, like JavadocMetod.
-                    // See also http://jira.codehaus.org/browse/MCHECKSTYLE-41
-                    else if ( expectedSeverity != null )
-                    {
-                        if ( expectedSeverity.equals( event.getSeverityLevel().getName() ) )
-                        {
-                            count++;
-                        }
-                    }
-                    else
-                    {
-                        count++;
-                    }
+                    count++;
                 }
             }
         }
+
         return count;
     }
 
