@@ -51,11 +51,11 @@ public class CheckstyleReportGenerator
 {
     private Log log;
 
-    private File basedir;
+    private final File basedir;
 
-    private ResourceBundle bundle;
+    private final ResourceBundle bundle;
 
-    private Sink sink;
+    private final Sink sink;
 
     private SeverityLevel severityLevel;
 
@@ -69,7 +69,7 @@ public class CheckstyleReportGenerator
 
     private boolean enableRSS;
 
-    private SiteTool siteTool;
+    private final SiteTool siteTool;
 
     private String xrefLocation;
 
