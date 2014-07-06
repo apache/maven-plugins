@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.checkstyle;
+package org.apache.maven.plugin.checkstyle.exec;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleReportListener;
 import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 
 /**

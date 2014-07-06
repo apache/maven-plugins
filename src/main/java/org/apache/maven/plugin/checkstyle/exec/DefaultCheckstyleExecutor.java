@@ -36,7 +36,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.checkstyle.CheckstyleReportListener;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -198,22 +197,22 @@ public class DefaultCheckstyleExecutor
             checker.addListener( request.getConsoleListener() );
         }
 
-        CheckstyleReportListener sinkListener = new CheckstyleReportListener( configuration );
+        CheckstyleReportListener checkerListener = new CheckstyleReportListener( configuration );
         if ( request.isAggregate() )
         {
             for ( MavenProject childProject : request.getReactorProjects() )
             {
-                addSourceDirectory( sinkListener, new File( childProject.getBuild().getSourceDirectory() ),
+                addSourceDirectory( checkerListener, new File( childProject.getBuild().getSourceDirectory() ),
                                     new File( childProject.getBuild().getTestSourceDirectory() ),
                                     childProject.getResources(), request );
             }
         }
         else
         {
-            addSourceDirectory( sinkListener, sourceDirectory, testSourceDirectory, request.getResources(), request );
+            addSourceDirectory( checkerListener, sourceDirectory, testSourceDirectory, request.getResources(), request );
         }
 
-        checker.addListener( sinkListener );
+        checker.addListener( checkerListener );
 
         List<File> filesList = Arrays.asList( files );
         int nbErrors = checker.process( filesList );
@@ -250,7 +249,7 @@ public class DefaultCheckstyleExecutor
             request.getLog().info( "There are " + nbErrors + " checkstyle errors." );
         }
 
-        return sinkListener.getResults();
+        return checkerListener.getResults();
     }
 
     protected void addSourceDirectory( CheckstyleReportListener sinkListener, File sourceDirectory,
