@@ -29,7 +29,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.maven.plugin.checkstyle.exec.CheckstyleReportListener;
+import org.apache.maven.plugin.checkstyle.exec.CheckstyleCheckerListener;
 import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 
 /**
@@ -39,27 +39,27 @@ import org.apache.maven.plugin.checkstyle.exec.CheckstyleResults;
 public class CheckstyleReportListenerTest
     extends TestCase
 {
-    private Map<SeverityLevel, CheckstyleReportListener> listenerMap;
+    private Map<SeverityLevel, CheckstyleCheckerListener> listenerMap;
 
     /** {@inheritDoc} */
     protected void setUp()
         throws Exception
     {
-        listenerMap = new HashMap<SeverityLevel, CheckstyleReportListener>();
+        listenerMap = new HashMap<SeverityLevel, CheckstyleCheckerListener>();
 
-        CheckstyleReportListener listener = new CheckstyleReportListener( new File( "/source/path" ) );
+        CheckstyleCheckerListener listener = new CheckstyleCheckerListener( new File( "/source/path" ) );
         listener.setSeverityLevelFilter( SeverityLevel.INFO );
         listenerMap.put( listener.getSeverityLevelFilter(), listener );
 
-        listener = new CheckstyleReportListener( new File( "/source/path" ) );
+        listener = new CheckstyleCheckerListener( new File( "/source/path" ) );
         listener.setSeverityLevelFilter( SeverityLevel.WARNING );
         listenerMap.put( listener.getSeverityLevelFilter(), listener );
 
-        listener = new CheckstyleReportListener( new File( "/source/path" ) );
+        listener = new CheckstyleCheckerListener( new File( "/source/path" ) );
         listener.setSeverityLevelFilter( SeverityLevel.ERROR );
         listenerMap.put( listener.getSeverityLevelFilter(), listener );
 
-        listener = new CheckstyleReportListener( new File( "/source/path" ) );
+        listener = new CheckstyleCheckerListener( new File( "/source/path" ) );
         listener.setSeverityLevelFilter( SeverityLevel.IGNORE );
         listenerMap.put( listener.getSeverityLevelFilter(), listener );
     }
@@ -100,7 +100,7 @@ public class CheckstyleReportListenerTest
 
         fireAuditFinished( null );
 
-        CheckstyleReportListener listener = listenerMap.get( SeverityLevel.INFO );
+        CheckstyleCheckerListener listener = listenerMap.get( SeverityLevel.INFO );
         CheckstyleResults results = listener.getResults();
         assertEquals( "Test total files", 4, results.getFiles().size() );
         assertEquals( "Test file count", 4, results.getFileCount() );
@@ -143,7 +143,7 @@ public class CheckstyleReportListenerTest
 
     private void fireAuditStarted( AuditEvent event )
     {
-        for ( CheckstyleReportListener listener : listenerMap.values() )
+        for ( CheckstyleCheckerListener listener : listenerMap.values() )
         {
             listener.auditStarted( event );
         }
@@ -151,7 +151,7 @@ public class CheckstyleReportListenerTest
 
     private void fireAuditFinished( AuditEvent event )
     {
-        for ( CheckstyleReportListener listener : listenerMap.values() )
+        for ( CheckstyleCheckerListener listener : listenerMap.values() )
         {
             listener.auditFinished( event );
         }
@@ -159,7 +159,7 @@ public class CheckstyleReportListenerTest
 
     private void fireFileStarted( AuditEvent event )
     {
-        for ( CheckstyleReportListener listener : listenerMap.values() )
+        for ( CheckstyleCheckerListener listener : listenerMap.values() )
         {
             listener.fileStarted( event );
         }
@@ -167,7 +167,7 @@ public class CheckstyleReportListenerTest
 
     private void fireFileFinished( AuditEvent event )
     {
-        for ( CheckstyleReportListener listener : listenerMap.values() )
+        for ( CheckstyleCheckerListener listener : listenerMap.values() )
         {
             listener.fileFinished( event );
         }
@@ -175,7 +175,7 @@ public class CheckstyleReportListenerTest
 
     private void fireAddError( AuditEvent event )
     {
-        for ( CheckstyleReportListener listener : listenerMap.values() )
+        for ( CheckstyleCheckerListener listener : listenerMap.values() )
         {
             listener.addError( event );
         }
