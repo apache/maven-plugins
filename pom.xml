@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>23</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -33,13 +33,8 @@ under the License.
   <version>2.3</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Source Plugin</name>
+  <name>Apache Maven Source Plugin</name>
   <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
-
-  <properties>
-    <mavenVersion>2.0.9</mavenVersion>
-    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
-  </properties>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
@@ -64,6 +59,17 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MSOURCES</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
+
+  <properties>
+    <mavenVersion>2.0.9</mavenVersion>
+    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -103,7 +109,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>2.2</version>
+      <version>2.4.4</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -118,7 +124,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.8</version>
+      <version>3.0.15</version>
     </dependency>
 
     <dependency>
@@ -165,16 +171,6 @@ under the License.
     </pluginManagement>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <profiles>
     <profile>
       <id>run-its</id>
@@ -183,7 +179,7 @@ under the License.
           <plugins>
             <plugin>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>1.6</version>
+              <version>1.9</version>
               <configuration>
                 <debug>true</debug>
                 <projectsDirectory>src/it</projectsDirectory>
