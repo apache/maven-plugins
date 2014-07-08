@@ -197,7 +197,7 @@ public class DefaultCheckstyleExecutor
             checker.addListener( request.getConsoleListener() );
         }
 
-        CheckstyleReportListener checkerListener = new CheckstyleReportListener( configuration );
+        CheckstyleCheckerListener checkerListener = new CheckstyleCheckerListener( configuration );
         if ( request.isAggregate() )
         {
             for ( MavenProject childProject : request.getReactorProjects() )
@@ -252,7 +252,7 @@ public class DefaultCheckstyleExecutor
         return checkerListener.getResults();
     }
 
-    protected void addSourceDirectory( CheckstyleReportListener sinkListener, File sourceDirectory,
+    protected void addSourceDirectory( CheckstyleCheckerListener sinkListener, File sourceDirectory,
                                        File testSourceDirectory, List<Resource> resources,
                                        CheckstyleExecutorRequest request )
     {
