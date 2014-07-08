@@ -38,7 +38,7 @@ import java.util.List;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class CheckstyleReportListener
+public class CheckstyleCheckerListener
     extends AutomaticBean
     implements AuditListener
 {
@@ -57,7 +57,7 @@ public class CheckstyleReportListener
     /**
      * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
      */
-    public CheckstyleReportListener( File sourceDirectory )
+    public CheckstyleCheckerListener( File sourceDirectory )
     {
         this.sourceDirectories = new ArrayList<File>();
         this.sourceDirectories.add( sourceDirectory );
@@ -67,7 +67,7 @@ public class CheckstyleReportListener
      * @param configuration checkstyle configuration
      * @since 2.5
      */
-    public CheckstyleReportListener( File sourceDirectory, Configuration configuration )
+    public CheckstyleCheckerListener( File sourceDirectory, Configuration configuration )
     {
         this.sourceDirectories = new ArrayList<File>();
         this.sourceDirectories.add( sourceDirectory );
@@ -78,7 +78,7 @@ public class CheckstyleReportListener
      * @param configuration checkstyle configuration
      * @since 2.5
      */
-    public CheckstyleReportListener( Configuration configuration )
+    public CheckstyleCheckerListener( Configuration configuration )
     {
         this.sourceDirectories = new ArrayList<File>();
         this.checkstyleConfiguration = configuration;
