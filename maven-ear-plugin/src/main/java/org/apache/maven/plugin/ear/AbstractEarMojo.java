@@ -143,6 +143,12 @@ public abstract class AbstractEarMojo
     @Parameter
     private String mainArtifactId = "none";
 
+    /**
+     * temp folder location.
+     */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
+    private File tempFolder;
+    
     private List<EarModule> earModules;
 
     private List<EarModule> allModules;
@@ -277,6 +283,11 @@ public abstract class AbstractEarMojo
     protected JbossConfiguration getJbossConfiguration()
     {
         return jbossConfiguration;
+    }
+
+    public File getTempFolder()
+    {
+        return tempFolder;
     }
 
     private static boolean isArtifactRegistered( Artifact a, List<EarModule> currentList )

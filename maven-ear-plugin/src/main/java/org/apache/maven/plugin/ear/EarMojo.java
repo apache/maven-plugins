@@ -658,7 +658,7 @@ public class EarMojo
             {
                 // Create a temporary work directory
                 // MEAR-167 use uri as directory to prevent merging of artifacts with the same artifactId
-                workDirectory = new File( new File( generatedDescriptorLocation, "temp" ), module.getUri() );
+                workDirectory = new File( new File( getTempFolder(), "temp" ), module.getUri() );
                 workDirectory.mkdirs();
                 getLog().debug( "Created a temporary work directory: " + workDirectory.getAbsolutePath() );
 
