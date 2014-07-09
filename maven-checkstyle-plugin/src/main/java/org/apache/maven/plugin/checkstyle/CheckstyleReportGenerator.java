@@ -348,6 +348,17 @@ public class CheckstyleReportGenerator
     private void doRuleRow( Configuration checkerConfig, List<Configuration> parentConfigurations, String ruleName,
                             CheckstyleResults results )
     {
+        String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
+        // Grab the severity from the rule configuration, use null as default value
+        String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
+        long violations = countRuleViolation( results.getFiles().values(), ruleName, fixedmessage, configSeverity );
+
+        if ( violations == 0 )
+        {
+            // skip rules without violations
+            return;
+        }
+
         sink.tableRow();
 
         // column 1: severity
@@ -430,16 +441,7 @@ public class CheckstyleReportGenerator
 
         // column 3: rule violation count
         sink.tableCell();
-        String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
-        // Grab the severity from the rule configuration, use null as default value
-        String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
-        long violations = countRuleViolation( results.getFiles().values(), ruleName, fixedmessage, configSeverity );
         sink.text( String.valueOf( violations ) );
-        if ( violations > 0 )
-        {
-            sink.nonBreakingSpace();
-            iconTool.iconSeverity( severity );
-        }
         sink.tableCell_();
 
         sink.tableRow_();
