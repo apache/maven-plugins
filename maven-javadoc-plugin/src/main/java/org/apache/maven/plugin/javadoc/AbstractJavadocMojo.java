@@ -2438,8 +2438,6 @@ public abstract class AbstractJavadocMojo
 
         classpathElements.addAll( getProjectBuildOutputDirs( project ) );
 
-        populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
-
         if ( isAggregator() && project.isExecutionRoot() )
         {
             try
