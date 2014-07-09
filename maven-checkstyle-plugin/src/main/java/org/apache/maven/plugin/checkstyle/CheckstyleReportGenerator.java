@@ -730,16 +730,18 @@ public class CheckstyleReportGenerator
             sink.tableCell_();
 
             sink.tableCell();
-            if ( getXrefLocation() != null )
+
+            int line = event.getLine();
+            if ( getXrefLocation() != null && line != 0 )
             {
                 sink.link( getXrefLocation() + "/" + filename.replaceAll( "\\.java$", ".html" ) + "#L"
-                    + event.getLine() );
-                sink.text( String.valueOf( event.getLine() ) );
+                    + line );
+                sink.text( String.valueOf( line ) );
                 sink.link_();
             }
-            else
+            else if ( line != 0 )
             {
-                sink.text( String.valueOf( event.getLine() ) );
+                sink.text( String.valueOf( line ) );
             }
             sink.tableCell_();
 
