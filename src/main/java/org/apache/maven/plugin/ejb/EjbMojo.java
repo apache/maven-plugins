@@ -19,7 +19,12 @@ package org.apache.maven.plugin.ejb;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -41,11 +46,6 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
-import org.apache.commons.io.input.XmlStreamReader;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Build an EJB (and optional client) from the current project.
@@ -67,8 +67,6 @@ public class EjbMojo
 
     private static final String[] DEFAULT_CLIENT_EXCLUDES =
         new String[]{ "**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html" };
-
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * The directory for the generated EJB.
@@ -114,7 +112,7 @@ public class EjbMojo
      * <br/>Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
      */
     @Parameter
-    private List clientExcludes;
+    private List<String> clientExcludes;
 
     /**
      * The files and directories to include in the client jar. Usage:
@@ -128,7 +126,7 @@ public class EjbMojo
      * <br/>Default value: **&#47;**
      */
     @Parameter
-    private List clientIncludes;
+    private List<String> clientIncludes;
 
     /**
      * The files and directories to exclude from the main EJB jar. Usage:
@@ -142,7 +140,7 @@ public class EjbMojo
      * <br/>Default exclusions: META-INF&#47;ejb-jar.xml, **&#47;package.html
      */
     @Parameter
-    private List excludes;
+    private List<String> excludes;
 
     /**
      * The Maven project.
