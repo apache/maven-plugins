@@ -172,6 +172,12 @@ public class CheckstyleReportGenerator
         sink.link( "http://checkstyle.sourceforge.net/" );
         sink.text( "Checkstyle" );
         sink.link_();
+        String version = getCheckstyleVersion();
+        if ( version != null )
+        {
+            sink.text( " " );
+            sink.text( version );
+        }
         sink.text( "." );
 
         if ( enableRSS )
@@ -831,4 +837,14 @@ public class CheckstyleReportGenerator
         return treeWalkerNames;
     }
 
+    /**
+     * Get the effective Checkstyle version at runtime.
+     * @return the MANIFEST implementation version of Checkstyle API package (can be <code>null</code>)
+     */
+    private String getCheckstyleVersion()
+    {
+        Package checkstyleApiPackage = Configuration.class.getPackage();
+
+        return ( checkstyleApiPackage == null ) ? null : checkstyleApiPackage.getImplementationVersion();
+    }
 }
