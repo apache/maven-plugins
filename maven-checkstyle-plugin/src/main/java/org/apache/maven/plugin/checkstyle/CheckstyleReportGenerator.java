@@ -258,7 +258,7 @@ public class CheckstyleReportGenerator
 
         sink.tableRow();
         sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
+        sink.text( bundle.getString( "report.checkstyle.rule.category" ) );
         sink.tableHeaderCell_();
 
         sink.tableHeaderCell();
@@ -267,6 +267,10 @@ public class CheckstyleReportGenerator
 
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.checkstyle.violations" ) );
+        sink.tableHeaderCell_();
+
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
         sink.tableHeaderCell_();
 
         sink.tableRow_();
@@ -367,17 +371,24 @@ public class CheckstyleReportGenerator
 
         sink.tableRow();
 
-        // column 1: severity
+        // column 1: rule category
         sink.tableCell();
-        // Grab the severity from the rule configuration, this time use error as default value
-        // Also pass along all parent configurations, so that we can try to find the severity there
-        String severity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
-        iconTool.iconSeverity( severity, IconTool.TEXT_SIMPLE );
+        String category = getRuleCategoryName( lastMatchedEvent );
+        sink.text( category );
         sink.tableCell_();
 
         // column 2: Rule name + configured attributes
         sink.tableCell();
-        sink.text( ruleName );
+        if ( !"extension".equals( category ) )
+        {
+            sink.link( "http://checkstyle.sourceforge.net/config_" + category + ".html#" + ruleName );
+            sink.text( ruleName );
+            sink.link_();
+        }
+        else
+        {
+            sink.text( ruleName );
+        }
 
         List<String> attribnames = new ArrayList<String>( Arrays.asList( checkerConfig.getAttributeNames() ) );
         attribnames.remove( "severity" ); // special value (deserves unique column)
@@ -450,6 +461,14 @@ public class CheckstyleReportGenerator
         sink.text( String.valueOf( violations ) );
         sink.tableCell_();
 
+        // column 4: severity
+        sink.tableCell();
+        // Grab the severity from the rule configuration, this time use error as default value
+        // Also pass along all parent configurations, so that we can try to find the severity there
+        String severity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
+        iconTool.iconSeverity( severity, IconTool.TEXT_SIMPLE );
+        sink.tableCell_();
+
         sink.tableRow_();
     }
 
@@ -471,6 +490,36 @@ public class CheckstyleReportGenerator
         if ( eventSrcName.endsWith( "Check" ) )
         {
             eventSrcName = eventSrcName.substring( 0,  eventSrcName.length() - 5 );
+        }
+
+        return eventSrcName.substring( eventSrcName.lastIndexOf( '.' ) + 1 );
+    }
+
+    /**
+     * Get the rule category from a violation.
+     *
+     * @param event the violation
+     * @return the rule category, which is the last package name or "misc" or "extension"
+     */
+    public String getRuleCategoryName( AuditEvent event )
+    {
+        String eventSrcName = event.getSourceName();
+
+        if ( eventSrcName == null )
+        {
+            return null;
+        }
+
+        int end = eventSrcName.lastIndexOf( '.' );
+        eventSrcName = eventSrcName.substring( 0,  end );
+
+        if ( "com.puppycrawl.tools.checkstyle.checks".equals( eventSrcName ) )
+        {
+            return "misc";
+        }
+        else if ( eventSrcName.startsWith( "com.puppycrawl.tools.checkstyle.checks" ) )
+        {
+            return "extension";
         }
 
         return eventSrcName.substring( eventSrcName.lastIndexOf( '.' ) + 1 );
@@ -515,6 +564,7 @@ public class CheckstyleReportGenerator
         return true;
     }
 
+    private AuditEvent lastMatchedEvent = null; // TODO better implementation...
     /**
      * Count the number of violations for the given rule.
      *
@@ -528,6 +578,7 @@ public class CheckstyleReportGenerator
                                     String expectedSeverity )
     {
         long count = 0;
+        lastMatchedEvent = null;
 
         for ( List<AuditEvent> errors : files )
         {
@@ -535,6 +586,7 @@ public class CheckstyleReportGenerator
             {
                 if ( matchRule( event, ruleName, expectedMessage, expectedSeverity ) )
                 {
+                    lastMatchedEvent = event;
                     count++;
                 }
             }
@@ -689,6 +741,9 @@ public class CheckstyleReportGenerator
             sink.text( bundle.getString( "report.checkstyle.column.severity" ) );
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
+            sink.text( bundle.getString( "report.checkstyle.rule.category" ) );
+            sink.tableHeaderCell_();
+            sink.tableHeaderCell();
             sink.text( bundle.getString( "report.checkstyle.rule" ) );
             sink.tableHeaderCell_();
             sink.tableHeaderCell();
@@ -723,6 +778,14 @@ public class CheckstyleReportGenerator
 
             sink.tableCell();
             iconTool.iconSeverity( level.getName(), IconTool.TEXT_SIMPLE );
+            sink.tableCell_();
+
+            sink.tableCell();
+            String category = getRuleCategoryName( event );
+            if ( category != null )
+            {
+                sink.text( category );
+            }
             sink.tableCell_();
 
             sink.tableCell();
