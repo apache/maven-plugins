@@ -517,7 +517,7 @@ public class CheckstyleReportGenerator
         {
             return "misc";
         }
-        else if ( eventSrcName.startsWith( "com.puppycrawl.tools.checkstyle.checks" ) )
+        else if ( !eventSrcName.startsWith( "com.puppycrawl.tools.checkstyle.checks" ) )
         {
             return "extension";
         }
