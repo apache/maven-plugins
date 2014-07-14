@@ -30,7 +30,7 @@ public interface CheckstyleExecutor
 {
 
     /**
-     * @param {@link CheckstyleExecutorRequest}
+     * @param request {@link CheckstyleExecutorRequest}
      * @return {@link CheckstyleResults}
      * @throws CheckstyleExecutorException
      * @throws CheckstyleException

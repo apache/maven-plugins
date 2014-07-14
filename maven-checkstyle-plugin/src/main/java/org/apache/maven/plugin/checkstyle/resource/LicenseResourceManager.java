@@ -30,6 +30,11 @@ import org.codehaus.plexus.resource.loader.ResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.resource.loader.ThreadContextClasspathResourceLoader;
 
+/**
+ * License resource manager, to avoid defaulting license to maven-checkstyle-plugin license.
+ *
+ * @since 2.12
+ */
 @Component( role = ResourceManager.class, hint = "license" )
 public class LicenseResourceManager
     extends DefaultResourceManager
