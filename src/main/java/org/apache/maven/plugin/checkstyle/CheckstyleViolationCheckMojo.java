@@ -315,11 +315,11 @@ public class CheckstyleViolationCheckMojo
     /**
      * The Plugin Descriptor
      */
-    @Parameter( defaultValue= "${plugin}", readonly = true )
+    @Parameter( defaultValue = "${plugin}", readonly = true )
     private PluginDescriptor plugin;
 
     // remove when requiring Maven 3.x, just use #plugin 
-    @Parameter( defaultValue= "${mojoExecution}", readonly = true )
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true )
     private MojoExecution mojoExecution;
 
     /**
@@ -433,7 +433,8 @@ public class CheckstyleViolationCheckMojo
     /**
      * dump file for inlined checkstyle rules 
      */
-    @Parameter( property = "checkstyle.output.rules.file", defaultValue = "${project.build.directory}/checkstyle-rules.xml" )
+    @Parameter( property = "checkstyle.output.rules.file",
+                    defaultValue = "${project.build.directory}/checkstyle-rules.xml" )
     private File rulesFiles;
 
     private ByteArrayOutputStream stringOutputStream;
@@ -489,7 +490,8 @@ public class CheckstyleViolationCheckMojo
                         .setResources( resources )
                         .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
                         .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
-                        .setConfigurationArtifacts( collectArtifacts( "config" ) ).setPropertyExpansion( propertyExpansion )
+                        .setConfigurationArtifacts( collectArtifacts( "config" ) )
+                        .setPropertyExpansion( propertyExpansion )
                         .setHeaderLocation( headerLocation ).setLicenseArtifacts( collectArtifacts( "license" ) )
                         .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
                         .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
@@ -582,7 +584,8 @@ public class CheckstyleViolationCheckMojo
             {
                 if ( logViolationsToConsole )
                 {
-                    final String column = xpp.getAttributeValue( "", "column" ) == null ? "n/a" : xpp.getAttributeValue( "", "column" );
+                    final String column =
+                        xpp.getAttributeValue( "", "column" ) == null ? "n/a" : xpp.getAttributeValue( "", "column" );
                     final String logMessage = file + '[' + xpp.getAttributeValue( "", "line" ) + ':' + column + "] "
                         + xpp.getAttributeValue( "", "message" );
                     if ( "info".equals( xpp.getAttributeValue( "", "severity" ) ) )

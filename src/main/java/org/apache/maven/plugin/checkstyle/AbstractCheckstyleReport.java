@@ -385,11 +385,11 @@ public abstract class AbstractCheckstyleReport
     /**
      * The Plugin Descriptor
      */
-    @Parameter( defaultValue= "${plugin}", readonly = true )
+    @Parameter( defaultValue = "${plugin}", readonly = true )
     private PluginDescriptor plugin;
 
     // remove when requiring Maven 3.x, just use #plugin 
-    @Parameter( defaultValue= "${mojoExecution}", readonly = true )
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true )
     private MojoExecution mojoExecution;
     
     /**
