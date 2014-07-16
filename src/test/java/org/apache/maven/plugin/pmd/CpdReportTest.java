@@ -195,7 +195,10 @@ public class CpdReportTest
         tMatch.setSourceCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
         tList.add( tMatch );
 
-        CPDConfiguration cpdConfiguration = new CPDConfiguration( 100, new JavaLanguage(), "UTF-8" );
+        CPDConfiguration cpdConfiguration = new CPDConfiguration();
+        cpdConfiguration.setMinimumTileSize( 100 );
+        cpdConfiguration.setLanguage( new JavaLanguage() );
+        cpdConfiguration.setEncoding( "UTF-8" );
         CPD tCpd = new MockCpd( cpdConfiguration, tList.iterator() );
 
         tCpd.go();

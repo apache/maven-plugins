@@ -223,7 +223,11 @@ public class CpdReport
 
             String encoding = determineEncoding( !filesToProcess.isEmpty() );
 
-            CPDConfiguration cpdConfiguration = new CPDConfiguration( minimumTokens, new JavaLanguage( p ), encoding );
+            CPDConfiguration cpdConfiguration = new CPDConfiguration();
+            cpdConfiguration.setMinimumTileSize( minimumTokens );
+            cpdConfiguration.setLanguage( new JavaLanguage( p ) );
+            cpdConfiguration.setEncoding( encoding );
+
             cpd = new CPD( cpdConfiguration );
 
             for ( File file : filesToProcess.keySet() )
