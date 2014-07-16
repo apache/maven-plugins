@@ -82,6 +82,10 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.4</doxiaVersion>
+    <!-- Because PMD 5.1+ requires Java 6 -->
+    <javaVersion>1.6</javaVersion>
+    <maven.compiler.source>${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <pmdVersion>5.1.1</pmdVersion>
     <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
@@ -206,6 +210,27 @@ under the License.
     </pluginManagement>
 
     <plugins>
+      <!-- Override the Java version inherited from maven-parent -->
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-bytecode-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <enforceBytecodeVersion>
+                  <maxJdkVersion>${javaVersion}</maxJdkVersion>
+                </enforceBytecodeVersion>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
@@ -246,13 +271,13 @@ under the License.
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java15</artifactId>
+            <artifactId>java16</artifactId>
             <version>1.0</version>
           </signature>
         </configuration>
         <executions>
           <execution>
-            <id>check-java-1.5-compat</id>
+            <id>check-java-1.6-compat</id>
             <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
@@ -293,6 +318,10 @@ under the License.
               It implies that the current version is already deployed to generate the site.
             -->
             <version>${project.version}</version>
+            <!-- Override the Java version inherited from maven-parent -->
+            <configuration>
+              <targetJdk>${javaVersion}</targetJdk>
+            </configuration>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
