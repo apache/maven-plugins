@@ -74,7 +74,8 @@ under the License.
     <module>maven-linkcheck-plugin</module>
     <module>maven-patch-plugin</module>
     <module>maven-pdf-plugin</module>
-    <module>maven-pmd-plugin</module>
+    <!-- Disabled because it requires Java 6. We need to discuss how to handle such plugins in Jenkins jobs. -->
+    <!-- <module>maven-pmd-plugin</module> -->
     <!--Moved to maven-3 profile as a workaround for MNG-3814
     <module>maven-project-info-reports-plugin</module>-->
     <module>maven-rar-plugin</module>
