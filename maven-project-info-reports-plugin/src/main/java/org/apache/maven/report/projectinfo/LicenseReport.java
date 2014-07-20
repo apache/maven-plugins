@@ -23,7 +23,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.apache.maven.model.License;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -54,12 +53,6 @@ public class LicenseReport
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
-
-    /**
-     * The Maven Settings.
-     */
-    @Component
-    private Settings settings;
 
     /**
      * Whether the system is currently offline.

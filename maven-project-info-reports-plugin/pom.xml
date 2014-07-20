@@ -117,8 +117,8 @@ under the License.
     <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
     <scmVersion>1.8</scmVersion>
-    <sitePluginVersion>3.3</sitePluginVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
+    <sitePluginVersion>3.4</sitePluginVersion>
+    <mavenPluginVersion>3.3</mavenPluginVersion>
   </properties>
 
   <dependencies>

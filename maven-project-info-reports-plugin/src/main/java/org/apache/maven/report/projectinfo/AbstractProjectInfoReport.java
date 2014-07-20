@@ -128,7 +128,7 @@ public abstract class AbstractProjectInfoReport
     /**
      * The Maven Project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true )
     protected MavenProject project;
 
     /**
@@ -150,7 +150,7 @@ public abstract class AbstractProjectInfoReport
      *
      * @since 2.3
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true )
     protected Settings settings;
 
     /**
