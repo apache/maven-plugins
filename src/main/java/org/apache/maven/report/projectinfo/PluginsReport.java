@@ -98,8 +98,8 @@ public class PluginsReport
     @Override
     public boolean canGenerateReport()
     {
-        return ( project.getPluginArtifacts() != null && !project.getPluginArtifacts().isEmpty() )
-            || ( project.getReportArtifacts() != null && !project.getReportArtifacts().isEmpty() );
+        return super.canGenerateReport()
+            && !( isEmpty( project.getPluginArtifacts() ) && isEmpty( project.getReportArtifacts() ) );
     }
 
     // ----------------------------------------------------------------------

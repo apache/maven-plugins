@@ -97,8 +97,8 @@ public class PluginManagementReport
     @Override
     public boolean canGenerateReport()
     {
-        return project.getPluginManagement() != null && project.getPluginManagement().getPlugins() != null
-            && !project.getPluginManagement().getPlugins().isEmpty();
+        return super.canGenerateReport() && project.getPluginManagement() != null
+            && !isEmpty( project.getPluginManagement().getPlugins() );
     }
 
     // ----------------------------------------------------------------------

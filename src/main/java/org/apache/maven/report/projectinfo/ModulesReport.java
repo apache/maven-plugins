@@ -65,7 +65,7 @@ public class ModulesReport
     @Override
     public boolean canGenerateReport()
     {
-        return ( getProject().getModel().getModules() != null && !getProject().getModel().getModules().isEmpty() );
+        return !isEmpty( getProject().getModel().getModules() );
     }
 
     // ----------------------------------------------------------------------

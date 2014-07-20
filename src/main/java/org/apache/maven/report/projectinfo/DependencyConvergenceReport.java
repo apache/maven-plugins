@@ -134,8 +134,8 @@ public class DependencyConvergenceReport
     @Override
     public boolean canGenerateReport()
     {
-        // should generate the convergency report, even its single maven project.
-        return reactorProjects.size() >= 1;
+        // should generate the convergency report, even its single Maven project.
+        return super.canGenerateReport() && reactorProjects.size() >= 1;
     }
 
     // ----------------------------------------------------------------------
