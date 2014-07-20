@@ -93,6 +93,11 @@ public class LicenseReport
     @Override
     public boolean canGenerateReport()
     {
+        if ( !super.canGenerateReport() )
+        {
+            return false;
+        }
+
         if ( !offline )
         {
             return true;

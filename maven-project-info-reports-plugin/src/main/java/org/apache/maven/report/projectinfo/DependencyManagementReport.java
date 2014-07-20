@@ -129,7 +129,7 @@ public class DependencyManagementReport
     @Override
     public boolean canGenerateReport()
     {
-        return getManagementDependencies().hasDependencies();
+        return super.canGenerateReport() && getManagementDependencies().hasDependencies();
     }
 
     // ----------------------------------------------------------------------

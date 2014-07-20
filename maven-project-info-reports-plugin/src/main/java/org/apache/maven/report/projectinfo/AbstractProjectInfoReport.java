@@ -50,7 +50,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -60,6 +59,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -162,9 +162,23 @@ public abstract class AbstractProjectInfoReport
     @Parameter( defaultValue = "${project.basedir}/src/site/custom/project-info-report.properties" )
     protected String customBundle;
 
+    /**
+     * Skip report.
+     *
+     * @since 2.8
+     */
+    @Parameter( property = "mpir.skip", defaultValue = "false" )
+    private boolean skip;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
+
+    @Override
+    public boolean canGenerateReport()
+    {
+        return !skip;
+    }
 
     @Override
     public void execute()
@@ -245,6 +259,11 @@ public abstract class AbstractProjectInfoReport
     // ----------------------------------------------------------------------
     // Protected methods
     // ----------------------------------------------------------------------
+
+    protected boolean isEmpty( Collection<?> coll )
+    {
+        return coll == null || coll.isEmpty();
+    }
 
     @Override
     protected String getOutputDirectory()
