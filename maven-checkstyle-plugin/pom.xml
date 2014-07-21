@@ -271,6 +271,7 @@ under the License.
               -->
               <exclude>src/main/resources/config/maven-header.txt</exclude>
               <exclude>src/it/MCHECKSTYLE-225-customHeader/build-tools/src/main/resources/test/custom-header.txt</exclude>
+              <exclude>src/it/MCHECKSTYLE-225-pluginManagement/build-tools/src/main/resources/test/custom-header.txt</exclude>
               <exclude>src/it/MCHECKSTYLE-225-LICENSE.txt/build-tools/src/main/resources/LICENSE.txt</exclude>
               <!--
                 File from the Checkstyle distribution - do not add our own license header.
@@ -308,6 +309,18 @@ under the License.
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>      
     </plugins>
   </build>
 
