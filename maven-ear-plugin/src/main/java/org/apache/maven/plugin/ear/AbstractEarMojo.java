@@ -90,7 +90,7 @@ public abstract class AbstractEarMojo
     /**
      * The default bundle dir for libraries.
      */
-    @Parameter( alias = "defaultJavaBundleDir" )
+    @Parameter
     protected String defaultLibBundleDir;
 
     /**
