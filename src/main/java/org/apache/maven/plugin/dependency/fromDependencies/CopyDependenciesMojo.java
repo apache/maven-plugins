@@ -93,7 +93,7 @@ public class CopyDependenciesMojo
      * Add parent poms to the list of copied dependencies (both current project pom parents and dependencies parents).
      * @since 2.8
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( property = "mdep.addParentPoms", defaultValue = "false" )
     protected boolean addParentPoms;
 
     /**
