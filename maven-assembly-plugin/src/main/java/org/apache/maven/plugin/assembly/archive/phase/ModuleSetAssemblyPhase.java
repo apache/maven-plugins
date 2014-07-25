@@ -70,6 +70,9 @@ public class ModuleSetAssemblyPhase
     implements AssemblyArchiverPhase
 {
 
+    //TODO: Remove if using something like commons-lang instead.
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     @Requirement
     private MavenProjectBuilder projectBuilder;
 
@@ -222,9 +225,21 @@ public class ModuleSetAssemblyPhase
                 ds.setUseProjectArtifact(false);
             }
 
-            // FIXME: This will produce unpredictable results when module dependencies have a version conflict.
-            getLogger().warn( "NOTE: Currently, inclusion of module dependencies may produce unpredictable "
-                                  + "results if a version conflict occurs." );
+            //TODO: The following should be moved into a shared component, cause this
+            //test is the same as in maven-enforce rules ReactorModuleConvergence.
+            List<MavenProject> validateModuleVersions = validateModuleVersions( moduleProjects );
+            if (!validateModuleVersions.isEmpty()) {
+                getLogger().warn( "The current modules seemed to be having different versions." );
+                
+                StringBuilder sb = new StringBuilder().append( LINE_SEPARATOR );
+                for ( MavenProject mavenProject : validateModuleVersions )
+                {
+                    sb.append( " --> " );
+                    sb.append( mavenProject.getId() );
+                    sb.append( LINE_SEPARATOR );
+                }
+                getLogger().warn( sb.toString() );
+            }
 
             for (final MavenProject moduleProject : moduleProjects) {
                 getLogger().debug("Processing binary dependencies for module project: " + moduleProject.getId());
@@ -243,6 +258,24 @@ public class ModuleSetAssemblyPhase
         }
     }
 
+    private List<MavenProject> validateModuleVersions (Set<MavenProject> moduleProjects) {
+        List<MavenProject> result = new ArrayList<MavenProject>();
+
+        if (moduleProjects != null && !moduleProjects.isEmpty()) {
+            String version = moduleProjects.iterator().next().getVersion();
+            getLogger().debug( "First version:" + version );
+            for ( MavenProject mavenProject : moduleProjects )
+            {
+                getLogger().debug( " -> checking " + mavenProject.getId() );
+                if ( !version.equals( mavenProject.getVersion() ) )
+                {
+                    result.add( mavenProject );
+                }
+            }
+        }
+        return result;
+    }
+    
     public static List<DependencySet> getDependencySets( final ModuleBinaries binaries )
     {
         List<DependencySet> depSets = binaries.getDependencySets();
