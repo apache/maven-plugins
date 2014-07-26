@@ -115,8 +115,7 @@ public class DefaultCheckstyleExecutor
 
         Checker checker = new Checker();
 
-        // setup classloader, needed to avoid "Unable to get class information
-        // for ..." errors
+        // setup classloader, needed to avoid "Unable to get class information for ..." errors
         List<String> classPathStrings = new ArrayList<String>();
         List<String> outputDirectories = new ArrayList<String>();
         File sourceDirectory = request.getSourceDirectory();
@@ -209,7 +208,8 @@ public class DefaultCheckstyleExecutor
         }
         else
         {
-            addSourceDirectory( checkerListener, sourceDirectory, testSourceDirectory, request.getResources(), request );
+            addSourceDirectory( checkerListener, sourceDirectory, testSourceDirectory, request.getResources(),
+                                request );
         }
 
         checker.addListener( checkerListener );
@@ -623,7 +623,6 @@ public class DefaultCheckstyleExecutor
     private FilterSet getSuppressionsFilterSet( final String suppressionsFilePath )
         throws CheckstyleExecutorException
     {
-
         if ( suppressionsFilePath == null )
         {
             return null;
