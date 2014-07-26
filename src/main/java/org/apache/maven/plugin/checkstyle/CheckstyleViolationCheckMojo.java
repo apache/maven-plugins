@@ -573,35 +573,46 @@ public class CheckstyleViolationCheckMojo
         String file = "";
         while ( eventType != XmlPullParser.END_DOCUMENT )
         {
-            if ( eventType == XmlPullParser.START_TAG && "file".equals( xpp.getName() ) )
+            if ( eventType == XmlPullParser.START_TAG )
             {
-                file = xpp.getAttributeValue( "", "name" );
-                file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
-            }
+                String severity;
 
-            if ( eventType == XmlPullParser.START_TAG && "error".equals( xpp.getName() )
-                && isViolation( xpp.getAttributeValue( "", "severity" ) ) )
-            {
-                if ( logViolationsToConsole )
+                if ( "file".equals( xpp.getName() ) )
                 {
-                    final String column =
-                        xpp.getAttributeValue( "", "column" ) == null ? "n/a" : xpp.getAttributeValue( "", "column" );
-                    final String logMessage = file + '[' + xpp.getAttributeValue( "", "line" ) + ':' + column + "] "
-                        + xpp.getAttributeValue( "", "message" );
-                    if ( "info".equals( xpp.getAttributeValue( "", "severity" ) ) )
+                    file = xpp.getAttributeValue( "", "name" );
+                    file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
+                }
+                else if ( "error".equals( xpp.getName() )
+                    && isViolation( severity = xpp.getAttributeValue( "", "severity" ) ) )
+                {
+                    count++;
+
+                    if ( logViolationsToConsole )
                     {
-                        getLog().info( logMessage );
-                    }
-                    else if ( "warning".equals( xpp.getAttributeValue( "", "severity" ) ) )
-                    {
-                        getLog().warn( logMessage );
-                    }
-                    else
-                    {
-                        getLog().error( logMessage );
+                        String line = xpp.getAttributeValue( "", "line" );
+                        String column = xpp.getAttributeValue( "", "column" );
+                        String message = xpp.getAttributeValue( "", "message" );
+                        String source = xpp.getAttributeValue( "", "source" );
+                        String rule = RuleUtil.getName( source );
+                        String category = RuleUtil.getCategory( source );
+
+                        String logMessage =
+                            file + '[' + line + ( ( column == null ) ? "" : ( ':' + column ) ) + "] (" + category
+                                + ") " + rule + ": " + message;
+                        if ( "info".equals( severity ) )
+                        {
+                            getLog().info( logMessage );
+                        }
+                        else if ( "warning".equals( severity ) )
+                        {
+                            getLog().warn( logMessage );
+                        }
+                        else
+                        {
+                            getLog().error( logMessage );
+                        }
                     }
                 }
-                count++;
             }
             eventType = xpp.next();
         }

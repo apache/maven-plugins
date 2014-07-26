@@ -373,7 +373,7 @@ public class CheckstyleReportGenerator
 
         // column 1: rule category
         sink.tableCell();
-        String category = getRuleCategoryName( lastMatchedEvent );
+        String category = RuleUtil.getCategory( lastMatchedEvent );
         sink.text( category );
         sink.tableCell_();
 
@@ -473,59 +473,6 @@ public class CheckstyleReportGenerator
     }
 
     /**
-     * Get the rule name from a violation.
-     *
-     * @param event the violation
-     * @return the rule name, which is the class name without package and removed eventual "Check" suffix
-     */
-    public String getRuleName( AuditEvent event )
-    {
-        String eventSrcName = event.getSourceName();
-
-        if ( eventSrcName == null )
-        {
-            return null;
-        }
-
-        if ( eventSrcName.endsWith( "Check" ) )
-        {
-            eventSrcName = eventSrcName.substring( 0,  eventSrcName.length() - 5 );
-        }
-
-        return eventSrcName.substring( eventSrcName.lastIndexOf( '.' ) + 1 );
-    }
-
-    /**
-     * Get the rule category from a violation.
-     *
-     * @param event the violation
-     * @return the rule category, which is the last package name or "misc" or "extension"
-     */
-    public String getRuleCategoryName( AuditEvent event )
-    {
-        String eventSrcName = event.getSourceName();
-
-        if ( eventSrcName == null )
-        {
-            return null;
-        }
-
-        int end = eventSrcName.lastIndexOf( '.' );
-        eventSrcName = eventSrcName.substring( 0,  end );
-
-        if ( "com.puppycrawl.tools.checkstyle.checks".equals( eventSrcName ) )
-        {
-            return "misc";
-        }
-        else if ( !eventSrcName.startsWith( "com.puppycrawl.tools.checkstyle.checks" ) )
-        {
-            return "extension";
-        }
-
-        return eventSrcName.substring( eventSrcName.lastIndexOf( '.' ) + 1 );
-    }
-
-    /**
      * Check if a violation matches a rule.
      *
      * @param event the violation to check
@@ -536,7 +483,7 @@ public class CheckstyleReportGenerator
      */
     public boolean matchRule( AuditEvent event, String ruleName, String expectedMessage, String expectedSeverity )
     {
-        if ( !ruleName.equals( getRuleName( event ) ) )
+        if ( !ruleName.equals( RuleUtil.getName( event ) ) )
         {
             return false;
         }
@@ -781,7 +728,7 @@ public class CheckstyleReportGenerator
             sink.tableCell_();
 
             sink.tableCell();
-            String category = getRuleCategoryName( event );
+            String category = RuleUtil.getCategory( event );
             if ( category != null )
             {
                 sink.text( category );
@@ -789,7 +736,7 @@ public class CheckstyleReportGenerator
             sink.tableCell_();
 
             sink.tableCell();
-            String ruleName = getRuleName( event );
+            String ruleName = RuleUtil.getName( event );
             if ( ruleName != null )
             {
                 sink.text( ruleName );
