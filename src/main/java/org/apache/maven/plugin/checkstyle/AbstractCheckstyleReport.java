@@ -37,6 +37,7 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecution;
@@ -543,10 +544,10 @@ public abstract class AbstractCheckstyleReport
         
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
-        if ( project.getBuild().getPluginManagement() != null )
+        PluginManagement pluginManagement = project.getBuild().getPluginManagement();
+        if ( pluginManagement != null )
         {
-            artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( project.getBuild().getPluginManagement().getPluginsAsMap(),
-                                                                          hint ) );
+            artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( pluginManagement.getPluginsAsMap(), hint ) );
         }
 
         artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( project.getBuild().getPluginsAsMap(), hint ) );

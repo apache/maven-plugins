@@ -34,6 +34,7 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -51,6 +52,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.MXParser;
@@ -443,124 +445,129 @@ public class CheckstyleViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-
-        if ( !skip )
+        if ( skip )
         {
+            return;
+        }
 
-            if ( !skipExec )
+        if ( !skipExec )
+        {
+            if ( checkstyleRules != null )
             {
-
-                if ( checkstyleRules != null )
+                if ( !"config/sun_checks.xml".equals( configLocation ) )
                 {
-                    if ( ! "config/sun_checks.xml".equals( configLocation ) )
-                    {
-                        throw new MojoExecutionException( "If you use inline configuration for rules don't specify a configLocation" );
-                    }
-                    if ( checkstyleRules.getChildCount() > 1 )
-                    {
-                        throw new MojoExecutionException( "Currently only one root module is supported" );
-                    }
-                    PlexusConfiguration checkerModule = checkstyleRules.getChild( 0 );
-
-                    try
-                    {
-                        FileUtils.forceMkdir( rulesFiles.getParentFile() );
-                        FileUtils.fileWrite( rulesFiles, CHECKSTYLE_FILE_HEADER + checkerModule.toString() );
-                    }
-                    catch ( final IOException e )
-                    {
-                        throw new MojoExecutionException( e.getMessage(), e );
-                    }
-                    configLocation = rulesFiles.getAbsolutePath();
+                    throw new MojoExecutionException( "If you use inline configuration for rules, don't specify "
+                        + "a configLocation" );
+                }
+                if ( checkstyleRules.getChildCount() > 1 )
+                {
+                    throw new MojoExecutionException( "Currently only one root module is supported" );
                 }
 
-                ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+                PlexusConfiguration checkerModule = checkstyleRules.getChild( 0 );
 
                 try
                 {
-                    CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
-                    request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
-                        .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
-                        .setResourceIncludes( resourceIncludes )
-                        .setResourceExcludes( resourceExcludes )
-                        .setIncludeResources( includeResources )
-                        .setIncludeTestResources( includeTestResources )
-                        .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-                        .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
-                        .setResources( resources )
-                        .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-                        .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
-                        .setConfigurationArtifacts( collectArtifacts( "config" ) )
-                        .setPropertyExpansion( propertyExpansion )
-                        .setHeaderLocation( headerLocation ).setLicenseArtifacts( collectArtifacts( "license" ) )
-                        .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
-                        .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
-                    checkstyleExecutor.executeCheckstyle( request );
-
+                    FileUtils.forceMkdir( rulesFiles.getParentFile() );
+                    FileUtils.fileWrite( rulesFiles, CHECKSTYLE_FILE_HEADER + checkerModule.toString() );
                 }
-                catch ( CheckstyleException e )
+                catch ( final IOException e )
                 {
-                    throw new MojoExecutionException( "Failed during checkstyle configuration", e );
+                    throw new MojoExecutionException( e.getMessage(), e );
                 }
-                catch ( CheckstyleExecutorException e )
-                {
-                    throw new MojoExecutionException( "Failed during checkstyle execution", e );
-                }
-                finally
-                {
-                    //be sure to restore original context classloader
-                    Thread.currentThread().setContextClassLoader( currentClassLoader );
-                }
-
-            }
-            if ( !"xml".equals( outputFileFormat ) )
-            {
-                throw new MojoExecutionException( "Output format is '" + outputFileFormat
-                    + "', checkstyle:check requires format to be 'xml'." );
+                configLocation = rulesFiles.getAbsolutePath();
             }
 
-            if ( !outputFile.exists() )
-            {
-                getLog().info(
-                               "Unable to perform checkstyle:check, "
-                                   + "unable to find checkstyle:checkstyle outputFile." );
-                return;
-            }
+            ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
             try
             {
-                XmlPullParser xpp = new MXParser();
-                Reader freader = ReaderFactory.newXmlReader( outputFile );
-                BufferedReader breader = new BufferedReader( freader );
-                xpp.setInput( breader );
+                CheckstyleExecutorRequest request = new CheckstyleExecutorRequest();
+                request.setConsoleListener( getConsoleListener() ).setConsoleOutput( consoleOutput )
+                    .setExcludes( excludes ).setFailsOnError( failsOnError ).setIncludes( includes )
+                    .setResourceIncludes( resourceIncludes )
+                    .setResourceExcludes( resourceExcludes )
+                    .setIncludeResources( includeResources )
+                    .setIncludeTestResources( includeTestResources )
+                    .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
+                    .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
+                    .setResources( resources )
+                    .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
+                    .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+                    .setConfigurationArtifacts( collectArtifacts( "config" ) )
+                    .setPropertyExpansion( propertyExpansion )
+                    .setHeaderLocation( headerLocation ).setLicenseArtifacts( collectArtifacts( "license" ) )
+                    .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
+                    .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
+                checkstyleExecutor.executeCheckstyle( request );
 
-                int violations = countViolations( xpp );
-                if ( violations > maxAllowedViolations )
+            }
+            catch ( CheckstyleException e )
+            {
+                throw new MojoExecutionException( "Failed during checkstyle configuration", e );
+            }
+            catch ( CheckstyleExecutorException e )
+            {
+                throw new MojoExecutionException( "Failed during checkstyle execution", e );
+            }
+            finally
+            {
+                //be sure to restore original context classloader
+                Thread.currentThread().setContextClassLoader( currentClassLoader );
+            }
+        }
+
+        if ( !"xml".equals( outputFileFormat ) )
+        {
+            throw new MojoExecutionException( "Output format is '" + outputFileFormat
+                + "', checkstyle:check requires format to be 'xml'." );
+        }
+
+        if ( !outputFile.exists() )
+        {
+            getLog().info( "Unable to perform checkstyle:check, unable to find checkstyle:checkstyle outputFile." );
+            return;
+        }
+
+        Reader reader = null;
+        try
+        {
+            reader = new BufferedReader( ReaderFactory.newXmlReader( outputFile ) );
+
+            XmlPullParser xpp = new MXParser();
+            xpp.setInput( reader );
+
+            int violations = countViolations( xpp );
+
+            if ( violations > maxAllowedViolations )
+            {
+                if ( failOnViolation )
                 {
-                    if ( failOnViolation )
+                    String msg =
+                        "You have " + violations + " Checkstyle violation" + ( ( violations > 1 ) ? "s" : "" ) + ".";
+                    if ( maxAllowedViolations > 0 )
                     {
-                        String msg = "You have " + violations + " Checkstyle violation"
-                            + ( ( violations > 1 ) ? "s" : "" ) + ".";
-                        if ( maxAllowedViolations > 0 )
-                        {
-                            msg += " The maximum number of allowed violations is " + maxAllowedViolations + ".";
-                        }
-                        throw new MojoFailureException( msg );
+                        msg += " The maximum number of allowed violations is " + maxAllowedViolations + ".";
                     }
-
-                    getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
+                    throw new MojoFailureException( msg );
                 }
+
+                getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
             }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
-                    + outputFile.getAbsolutePath(), e );
-            }
-            catch ( XmlPullParserException e )
-            {
-                throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
-                    + outputFile.getAbsolutePath(), e );
-            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
+                                              e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
+                                              e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
     }
 
@@ -575,41 +582,42 @@ public class CheckstyleViolationCheckMojo
         {
             if ( eventType == XmlPullParser.START_TAG )
             {
-                String severity;
-
                 if ( "file".equals( xpp.getName() ) )
                 {
                     file = xpp.getAttributeValue( "", "name" );
                     file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
                 }
-                else if ( "error".equals( xpp.getName() )
-                    && isViolation( severity = xpp.getAttributeValue( "", "severity" ) ) )
+                else if ( "error".equals( xpp.getName() ) )
                 {
-                    count++;
-
-                    if ( logViolationsToConsole )
+                    String severity = xpp.getAttributeValue( "", "severity" );
+                    if ( isViolation( severity ) )
                     {
-                        String line = xpp.getAttributeValue( "", "line" );
-                        String column = xpp.getAttributeValue( "", "column" );
-                        String message = xpp.getAttributeValue( "", "message" );
-                        String source = xpp.getAttributeValue( "", "source" );
-                        String rule = RuleUtil.getName( source );
-                        String category = RuleUtil.getCategory( source );
+                        count++;
 
-                        String logMessage =
-                            file + '[' + line + ( ( column == null ) ? "" : ( ':' + column ) ) + "] (" + category
-                                + ") " + rule + ": " + message;
-                        if ( "info".equals( severity ) )
+                        if ( logViolationsToConsole )
                         {
-                            getLog().info( logMessage );
-                        }
-                        else if ( "warning".equals( severity ) )
-                        {
-                            getLog().warn( logMessage );
-                        }
-                        else
-                        {
-                            getLog().error( logMessage );
+                            String line = xpp.getAttributeValue( "", "line" );
+                            String column = xpp.getAttributeValue( "", "column" );
+                            String message = xpp.getAttributeValue( "", "message" );
+                            String source = xpp.getAttributeValue( "", "source" );
+                            String rule = RuleUtil.getName( source );
+                            String category = RuleUtil.getCategory( source );
+
+                            String logMessage =
+                                file + '[' + line + ( ( column == null ) ? "" : ( ':' + column ) ) + "] (" + category
+                                    + ") " + rule + ": " + message;
+                            if ( "info".equals( severity ) )
+                            {
+                                getLog().info( logMessage );
+                            }
+                            else if ( "warning".equals( severity ) )
+                            {
+                                getLog().warn( logMessage );
+                            }
+                            else
+                            {
+                                getLog().error( logMessage );
+                            }
                         }
                     }
                 }
@@ -728,10 +736,10 @@ public class CheckstyleViolationCheckMojo
         
         List<Artifact> artifacts = new ArrayList<Artifact>();
 
-        if ( project.getBuild().getPluginManagement() != null )
+        PluginManagement pluginManagement = project.getBuild().getPluginManagement();
+        if ( pluginManagement != null )
         {
-            artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( project.getBuild().getPluginManagement().getPluginsAsMap(),
-                                                                          hint ) );
+            artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( pluginManagement.getPluginsAsMap(), hint ) );
         }
 
         artifacts.addAll( getCheckstylePluginDependenciesAsArtifacts( project.getBuild().getPluginsAsMap(), hint ) );

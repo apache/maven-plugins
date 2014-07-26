@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.checkstyle;
 
-import com.puppycrawl.tools.checkstyle.api.AuditEvent;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,6 +18,8 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
 /**
  * Tooling for Checkstyle rules conventions: names, categories.
