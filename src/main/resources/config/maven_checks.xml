@@ -133,6 +133,7 @@ under the License.
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
         <!-- module name="MethodParamPad"/ -->
+        <module name="GenericWhitespace"/>
 
 
         <!-- Modifier Checks                                    -->
