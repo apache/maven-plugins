@@ -229,9 +229,9 @@ public class ModuleSetAssemblyPhase
             //test is the same as in maven-enforce rules ReactorModuleConvergence.
             List<MavenProject> validateModuleVersions = validateModuleVersions( moduleProjects );
             if (!validateModuleVersions.isEmpty()) {
-                getLogger().warn( "The current modules seemed to be having different versions." );
                 
-                StringBuilder sb = new StringBuilder().append( LINE_SEPARATOR );
+                StringBuilder sb = new StringBuilder().append( "The current modules seemed to be having different versions.");
+                sb.append (LINE_SEPARATOR);
                 for ( MavenProject mavenProject : validateModuleVersions )
                 {
                     sb.append( " --> " );
