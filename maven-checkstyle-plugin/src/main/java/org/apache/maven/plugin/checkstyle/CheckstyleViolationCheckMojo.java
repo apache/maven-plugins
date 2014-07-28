@@ -127,6 +127,15 @@ public class CheckstyleViolationCheckMojo
     private String violationSeverity = "error";
 
     /**
+     * Violations to ignore. This is a comma-separated list, each value being either
+     * a rule name, a rule category or a java package name of rule class.
+     *
+     * @since 2.13
+     */
+    @Parameter( property = "checkstyle.violation.ignore" )
+    private String violationIgnore;
+
+    /**
      * Skip entire check.
      *
      * @since 2.2
@@ -575,6 +584,8 @@ public class CheckstyleViolationCheckMojo
         throws XmlPullParserException, IOException
     {
         int count = 0;
+        RuleUtil.Matcher[] ignores =
+            ( violationIgnore == null ) ? null : RuleUtil.parseMatchers( violationIgnore.split( "," ) );
 
         int eventType = xpp.getEventType();
         String file = "";
@@ -590,7 +601,9 @@ public class CheckstyleViolationCheckMojo
                 else if ( "error".equals( xpp.getName() ) )
                 {
                     String severity = xpp.getAttributeValue( "", "severity" );
-                    if ( isViolation( severity ) )
+                    String source = xpp.getAttributeValue( "", "source" );
+
+                    if ( isViolation( severity ) && !ignore( ignores, source ) )
                     {
                         count++;
 
@@ -599,7 +612,6 @@ public class CheckstyleViolationCheckMojo
                             String line = xpp.getAttributeValue( "", "line" );
                             String column = xpp.getAttributeValue( "", "column" );
                             String message = xpp.getAttributeValue( "", "message" );
-                            String source = xpp.getAttributeValue( "", "source" );
                             String rule = RuleUtil.getName( source );
                             String category = RuleUtil.getCategory( source );
 
@@ -654,6 +666,23 @@ public class CheckstyleViolationCheckMojo
             return false;
         }
     }
+
+    private boolean ignore( RuleUtil.Matcher[] ignores, String source )
+    {
+        if ( ignores != null )
+        {
+            for ( RuleUtil.Matcher ignore : ignores )
+            {
+                if ( ignore.match( source ) )
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private DefaultLogger getConsoleListener()
         throws MojoExecutionException
     {

@@ -29,6 +29,8 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
  */
 public class RuleUtil
 {
+    private static final String CHECKSTYLE_PACKAGE = "com.puppycrawl.tools.checkstyle.checks";
+
     /**
      * Get the rule name from an audit event.
      *
@@ -87,15 +89,110 @@ public class RuleUtil
         int end = eventSrcName.lastIndexOf( '.' );
         eventSrcName = eventSrcName.substring( 0,  end );
 
-        if ( "com.puppycrawl.tools.checkstyle.checks".equals( eventSrcName ) )
+        if ( CHECKSTYLE_PACKAGE.equals( eventSrcName ) )
         {
             return "misc";
         }
-        else if ( !eventSrcName.startsWith( "com.puppycrawl.tools.checkstyle.checks" ) )
+        else if ( !eventSrcName.startsWith( CHECKSTYLE_PACKAGE ) )
         {
             return "extension";
         }
 
         return eventSrcName.substring( eventSrcName.lastIndexOf( '.' ) + 1 );
+    }
+
+    public static Matcher[] parseMatchers( String[] specs )
+    {
+        Matcher[] matchers = new Matcher[specs.length];
+        int i = 0;
+        for ( String spec: specs )
+        {
+            spec = spec.trim();
+            Matcher matcher;
+            if ( Character.isUpperCase( spec.charAt( 0 ) ) )
+            {
+                // spec starting with uppercase is a rule name
+                matcher = new RuleMatcher( spec );
+            }
+            else if ( "misc".equals( spec ) )
+            {
+                // "misc" is a special case
+                matcher = new PackageMatcher( CHECKSTYLE_PACKAGE );
+            }
+            else if ( "extension".equals( spec ) )
+            {
+                // "extension" is a special case
+                matcher = new ExtensionMatcher();
+            }
+            else if ( !spec.contains( "." ) )
+            {
+                matcher = new PackageMatcher( CHECKSTYLE_PACKAGE + '.' + spec );
+            }
+            else
+            {
+                // by default, spec is a package name
+                matcher = new PackageMatcher( spec );
+            }
+            matchers[i++] = matcher;
+        }
+        return matchers;
+    }
+
+    /**
+     * Audit event source name matcher.
+     */
+    public static interface Matcher
+    {
+        /**
+         * Does the event source name match?
+         * @param eventSrcName the event source name
+         * @return boolean
+         */
+        boolean match( String eventSrcName );
+    }
+
+    private static class RuleMatcher
+        implements Matcher
+    {
+        private final String rule;
+
+        public RuleMatcher( String rule )
+        {
+            this.rule = rule;
+        }
+
+        public boolean match( String eventSrcName )
+        {
+            return rule.equals( getName( eventSrcName ) );
+        }
+    }
+
+    private static class PackageMatcher
+        implements Matcher
+    {
+        private final String packageName;
+
+        public PackageMatcher( String packageName )
+        {
+            this.packageName = packageName;
+        }
+
+        public boolean match( String eventSrcName )
+        {
+            return eventSrcName.startsWith( packageName )
+                && !eventSrcName.substring( packageName.length() + 1 ).contains( "." );
+        }
+    }
+
+    /**
+     * An extension does not start with Checkstyle package.
+     */
+    private static class ExtensionMatcher
+        implements Matcher
+    {
+        public boolean match( String eventSrcName )
+        {
+            return !eventSrcName.startsWith( CHECKSTYLE_PACKAGE );
+        }
     }
 }
