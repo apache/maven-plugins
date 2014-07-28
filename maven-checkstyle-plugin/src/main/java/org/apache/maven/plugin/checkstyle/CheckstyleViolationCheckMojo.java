@@ -156,7 +156,7 @@ public class CheckstyleViolationCheckMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "checkstyle.console", defaultValue = "false" )
+    @Parameter( property = "checkstyle.console", defaultValue = "true" )
     private boolean logViolationsToConsole;
 
     /**
