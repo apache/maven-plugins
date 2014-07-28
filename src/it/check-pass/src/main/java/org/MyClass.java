@@ -23,4 +23,7 @@ package org;
  * Yada yada yada.
  */
 public class MyClass {
+    public static void main(String[] args) {
+        // no op
+    }
 }
