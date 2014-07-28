@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2013-07-22
+ 2014-07-28
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@ ${project.name}
   on your project's source code and generate a site report with its results. It also supports the separate
   Copy/Paste Detector tool (or CPD) distributed with PMD.
 
-  This version of Maven PMD Plugin uses PMD ${pmdVersion}.
+  This version of Maven PMD Plugin uses PMD ${pmdVersion} and requires Java ${javaVersion}.
 
   The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
 
