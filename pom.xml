@@ -301,23 +301,54 @@ under the License.
     <profile>
       <id>run-its</id>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-invoker-plugin</artifactId>
-              <configuration>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+              <goals>
+                <goal>clean</goal>
+                <goal>process-sources</goal>
+              </goals>
+              <projectsDirectory>src/it/projects</projectsDirectory>
+              <pomExcludes>
+                <pomExclude>purge-local-repository-bad-pom/pom.xml</pomExclude>
+              </pomExcludes>
+              <!-- for mrm -->
+              <settingsFile>src/it/mrm/settings.xml</settingsFile>
+              <filterProperties>
+                <repository.proxy.url>${repository.proxy.url}</repository.proxy.url>
+              </filterProperties>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>mrm-maven-plugin</artifactId>
+            <version>1.0-beta-2</version>
+            <executions>
+              <execution>
                 <goals>
-                  <goal>clean</goal>
-                  <goal>process-sources</goal>
+                  <goal>start</goal>
+                  <goal>stop</goal>
                 </goals>
-                <pomExcludes>
-                  <pomExclude>purge-local-repository-bad-pom/pom.xml</pomExclude>
-                </pomExcludes>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
+              </execution>
+            </executions>
+            <configuration>
+              <propertyName>repository.proxy.url</propertyName>
+              <repositories>
+                <mockRepo>
+                  <source>src/it/mrm/repository</source>
+                </mockRepo>
+                <!-- 
+                <mockRepo>
+                  <source>src/test/resources/m2repo</source>
+                </mockRepo>
+                 -->
+                <proxyRepo/>
+              </repositories>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
     <profile>
