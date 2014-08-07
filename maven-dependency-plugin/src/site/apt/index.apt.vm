@@ -21,7 +21,7 @@
   Allan Ramirez
   Brian Fox
   ------
-  2013-07-22
+  2014-08-07
   ------
 
 ${project.name}
@@ -72,6 +72,8 @@ ${project.name}
 
   *{{{./list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
 
+  *{{{./list-repositories-mojo.html}dependency:list-repositories}} displays all project dependencies and then lists the repositories used.
+
   *{{{./properties-mojo.html}dependency:properties}} set a property for each project dependency containing the
   to the artifact on the file system.
 
@@ -80,7 +82,7 @@ ${project.name}
 
   *{{{./resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
 
-  *{{{./resolve-plugins-mojo.html}dependency:resolve-plugins}} Tells Maven to resolve plugins and their dependencies.
+  *{{{./resolve-plugins-mojo.html}dependency:resolve-plugins}} tells Maven to resolve plugins and their dependencies.
 
   *{{{./sources-mojo.html}dependency:sources}} tells Maven to resolve all dependencies and their source attachments,
   and displays the version.
