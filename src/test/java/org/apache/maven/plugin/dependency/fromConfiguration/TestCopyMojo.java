@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
@@ -716,7 +717,15 @@ public class TestCopyMojo
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setArtifactItems( list );
-        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
+        ArtifactRepository local = new StubArtifactRepository( this.testDir.getAbsolutePath() )
+        {
+            @Override
+            public String getId()
+            {
+                return "ID";
+            }
+        }; 
+        mojo.setLocal( local );
         
         File execLocalRepo =  new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
         assertFalse( execLocalRepo.exists() );
