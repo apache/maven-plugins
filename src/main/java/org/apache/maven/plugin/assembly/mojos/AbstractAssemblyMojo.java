@@ -228,7 +228,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * The Maven Session Object
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession mavenSession;
 
     /**
