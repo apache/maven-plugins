@@ -71,7 +71,7 @@ public class MavenProjectBasicStub
 
         artifact.populate( this );
 
-        // this is ugly but needed to ensure that the copy constructor 
+        // this is ugly but needed to ensure that the copy constructor
         // works correctly
         initializeParentFields();
     }
@@ -105,7 +105,7 @@ public class MavenProjectBasicStub
 
     public File getBasedir()
     {
-        // create an isolated environment 
+        // create an isolated environment
         // see setupTestEnvironment for details
         return new File( testRootDir );
     }
@@ -148,7 +148,7 @@ public class MavenProjectBasicStub
     // to prevent the MavenProject copy constructor from blowing up
     private void initializeParentFields()
     {
-        // the pom should be located in the isolated dummy root         
+        // the pom should be located in the isolated dummy root
         super.setFile( new File( getBasedir(), "pom.xml" ) );
         super.setDependencyArtifacts( new HashSet() );
         super.setArtifacts( new HashSet() );

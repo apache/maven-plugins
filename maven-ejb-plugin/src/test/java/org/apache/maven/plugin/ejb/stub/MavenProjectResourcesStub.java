@@ -21,7 +21,6 @@ package org.apache.maven.plugin.ejb.stub;
 
 import org.apache.maven.model.Resource;
 
-
 /**
  * Stub
  */
@@ -89,7 +88,7 @@ public class MavenProjectResourcesStub
     {
         Resource resource = new Resource();
 
-        // see MavenProjectBasicStub for details 
+        // see MavenProjectBasicStub for details
         // of getBasedir
 
         // setup default resources
@@ -103,10 +102,10 @@ public class MavenProjectResourcesStub
     {
         Resource resource = new Resource();
 
-        // see MavenProjectBasicStub for details 
-        // of getBasedir      
+        // see MavenProjectBasicStub for details
+        // of getBasedir
 
-        // setup default test resources         
+        // setup default test resources
         resource.setDirectory( getBasedir().getPath() + "/src/test/resources" );
         resource.setFiltering( false );
         resource.setTargetPath( null );
