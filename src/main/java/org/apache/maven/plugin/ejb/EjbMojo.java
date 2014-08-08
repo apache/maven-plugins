@@ -156,7 +156,7 @@ public class EjbMojo
     /**
      * The Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -240,7 +240,7 @@ public class EjbMojo
     /**
      * @since 2.3
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
