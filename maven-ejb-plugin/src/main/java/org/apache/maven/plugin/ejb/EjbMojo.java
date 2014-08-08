@@ -242,6 +242,12 @@ public class EjbMojo
     public void execute()
         throws MojoExecutionException
     {
+        
+        if (!outputDirectory.exists()) {
+            getLog().warn( "The created EJB jar will be empty cause the " + outputDirectory.toString() + " did not exist." );
+            outputDirectory.mkdirs();
+        }
+
         if ( getLog().isInfoEnabled() )
         {
             getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
