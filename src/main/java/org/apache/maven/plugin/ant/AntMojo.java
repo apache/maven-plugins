@@ -19,6 +19,10 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -31,10 +35,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Generate Ant build files.
@@ -70,7 +70,7 @@ public class AntMojo
     /**
      * The project to create a build for.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -100,7 +100,7 @@ public class AntMojo
     /**
      * The current Maven session.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
