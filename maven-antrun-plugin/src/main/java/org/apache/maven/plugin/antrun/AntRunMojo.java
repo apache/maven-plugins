@@ -19,6 +19,17 @@ package org.apache.maven.plugin.antrun;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -43,17 +54,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 /**
  * Maven AntRun Mojo. <br/>
  * This plugin provides the capability of calling Ant tasks from a POM by running the nested ant tasks inside the
@@ -64,7 +64,6 @@ import java.util.Set;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@SuppressWarnings( "JavaDoc" )
 @Mojo(name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
 public class AntRunMojo
     extends AbstractMojo
@@ -107,7 +106,7 @@ public class AntRunMojo
     /**
      * The Maven project object
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
