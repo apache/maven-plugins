@@ -354,7 +354,7 @@ under the License.
       </pluginRepositories>
 
       <properties>
-        <invokerPluginVersion>1.5</invokerPluginVersion>
+        <invokerPluginVersion>1.9</invokerPluginVersion>
         <itParent>${project.build.directory}/it/it-project-parent</itParent>
         <itProjects>${project.build.directory}/it/projects</itProjects>
         <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
@@ -369,26 +369,9 @@ under the License.
       <build>
         <plugins>
           <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>del-IT-clone-destination</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <target>
-                    <delete dir="${itProjects}" failonerror="false" />
-                  </target>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>${invokerPluginVersion}</version>
-
             <configuration>
               <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
               <properties>
@@ -425,6 +408,7 @@ under the License.
                 <phase>integration-test</phase>
                 <configuration>
                   <projectsDirectory>src/it/projects</projectsDirectory>
+                  <cloneClean>true</cloneClean>
                   <cloneProjectsTo>${itProjects}</cloneProjectsTo>
                   <testPropertiesFile>test.properties</testPropertiesFile>
                   <properties>
