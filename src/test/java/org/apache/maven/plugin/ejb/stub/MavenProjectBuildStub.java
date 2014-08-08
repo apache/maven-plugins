@@ -88,7 +88,7 @@ public class MavenProjectBuildStub
         targetClassesList = new ArrayList();
         dataMap = new HashMap();
         setupBuild();
-        
+
         model.setBuild( build );
     }
 
@@ -150,10 +150,7 @@ public class MavenProjectBuildStub
     }
 
     /**
-     * returns true if the path is relative
-     * and false if absolute
-     * also returns false if it is relative to
-     * the parent
+     * returns true if the path is relative and false if absolute also returns false if it is relative to the parent
      *
      * @param path
      * @return
@@ -173,7 +170,7 @@ public class MavenProjectBuildStub
     private void setupBuild()
     {
         // check getBasedir method for the exact path
-        // we need to recreate the dir structure in 
+        // we need to recreate the dir structure in
         // an isolated environment
         srcDirectory = testRootDir + "/src";
         buildDirectory = testRootDir + "/target";
@@ -207,7 +204,7 @@ public class MavenProjectBuildStub
         createFiles( resourcesDirectory, testResourcesDirectory );
         setupRootFiles();
 
-        // setup target dir        
+        // setup target dir
         if ( !FileUtils.fileExists( outputDirectory ) )
         {
             FileUtils.mkdir( outputDirectory );
@@ -225,17 +222,20 @@ public class MavenProjectBuildStub
     {
         File currentDirectory;
 
-        for (Object aDirectoryList : directoryList) {
-            currentDirectory = new File(parent, "/" + aDirectoryList);
+        for ( Object aDirectoryList : directoryList )
+        {
+            currentDirectory = new File( parent, "/" + aDirectoryList );
 
-            if (!currentDirectory.exists()) {
+            if ( !currentDirectory.exists() )
+            {
                 currentDirectory.mkdirs();
             }
 
             // duplicate dir structure in test resources
-            currentDirectory = new File(testparent, "/" + aDirectoryList);
+            currentDirectory = new File( testparent, "/" + aDirectoryList );
 
-            if (!currentDirectory.exists()) {
+            if ( !currentDirectory.exists() )
+            {
                 currentDirectory.mkdirs();
             }
         }
@@ -247,16 +247,16 @@ public class MavenProjectBuildStub
 
         switch ( type )
         {
-            case SOURCE_FILE :
+            case SOURCE_FILE:
                 retVal = sourceFileList;
                 break;
-            case OUTPUT_FILE :
+            case OUTPUT_FILE:
                 retVal = targetClassesList;
                 break;
-            case RESOURCES_FILE :
+            case RESOURCES_FILE:
                 retVal = resourcesFileList;
                 break;
-            case ROOT_FILE :
+            case ROOT_FILE:
                 retVal = rootFileList;
                 break;
         }
@@ -275,21 +275,27 @@ public class MavenProjectBuildStub
             return;
         }
 
-        for (Object aList : list) {
-            currentFile = new File(parent, (String) aList);
+        for ( Object aList : list )
+        {
+            currentFile = new File( parent, (String) aList );
 
             // create the necessary parent directories
             // before we create the files
-            if (!currentFile.getParentFile().exists()) {
+            if ( !currentFile.getParentFile().exists() )
+            {
                 currentFile.getParentFile().mkdirs();
             }
 
-            if (!currentFile.exists()) {
-                try {
+            if ( !currentFile.exists() )
+            {
+                try
+                {
                     currentFile.createNewFile();
-                    populateFile(currentFile, RESOURCES_FILE);
-                } catch (IOException io) {
-                    //TODO: handle exception
+                    populateFile( currentFile, RESOURCES_FILE );
+                }
+                catch ( IOException io )
+                {
+                    // TODO: handle exception
                 }
             }
         }

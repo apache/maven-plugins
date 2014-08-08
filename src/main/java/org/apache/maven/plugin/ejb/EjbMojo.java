@@ -53,16 +53,15 @@ import org.codehaus.plexus.util.FileUtils;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
-@Mojo( name = "ejb", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true,
-       defaultPhase = LifecyclePhase.PACKAGE )
+@Mojo( name = "ejb", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE )
 public class EjbMojo
     extends AbstractMojo
 {
     // TODO: will null work instead?
-    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
-    private static final String[] DEFAULT_CLIENT_EXCLUDES =
-        new String[]{ "**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html" };
+    private static final String[] DEFAULT_CLIENT_EXCLUDES = new String[] { "**/*Bean.class", "**/*CMP.class",
+        "**/*Session.class", "**/package.html" };
 
     /**
      * The directory for the generated EJB.
@@ -83,8 +82,7 @@ public class EjbMojo
     private String jarName;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will
-     * be an attachment instead.
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      */
     @Parameter( property = "ejb.classifier" )
     private String classifier;
@@ -93,7 +91,7 @@ public class EjbMojo
      * You can define the location of <code>ejb-jar.xml</code> file.
      */
     @Parameter( property = "ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
-    //The initalization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
+    // The initalization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
     private String ejbJar = "META-INF/ejb-jar.xml";
 
     /**
@@ -105,14 +103,17 @@ public class EjbMojo
     /**
      * The files and directories to exclude from the client jar. Usage:
      * <p/>
+     * 
      * <pre>
      * &lt;clientExcludes&gt;
      * &nbsp;&nbsp;&lt;clientExclude&gt;**&#47;*Ejb.class&lt;&#47;clientExclude&gt;
      * &nbsp;&nbsp;&lt;clientExclude&gt;**&#47;*Bean.class&lt;&#47;clientExclude&gt;
      * &lt;&#47;clientExcludes&gt;
      * </pre>
-     * <br/>Attribute is used only if client jar is generated.
-     * <br/>Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
+     * 
+     * <br/>
+     * Attribute is used only if client jar is generated. <br/>
+     * Default exclusions: **&#47;*Bean.class, **&#47;*CMP.class, **&#47;*Session.class, **&#47;package.html
      */
     @Parameter
     private List<String> clientExcludes;
@@ -120,13 +121,16 @@ public class EjbMojo
     /**
      * The files and directories to include in the client jar. Usage:
      * <p/>
+     * 
      * <pre>
      * &lt;clientIncludes&gt;
      * &nbsp;&nbsp;&lt;clientInclude&gt;**&#47;*&lt;&#47;clientInclude&gt;
      * &lt;&#47;clientIncludes&gt;
      * </pre>
-     * <br/>Attribute is used only if client jar is generated.
-     * <br/>Default value: **&#47;**
+     * 
+     * <br/>
+     * Attribute is used only if client jar is generated. <br/>
+     * Default value: **&#47;**
      */
     @Parameter
     private List<String> clientIncludes;
@@ -134,13 +138,16 @@ public class EjbMojo
     /**
      * The files and directories to exclude from the main EJB jar. Usage:
      * <p/>
+     * 
      * <pre>
      * &lt;excludes&gt;
      *   &lt;exclude&gt;**&#47;*Ejb.class&lt;&#47;exclude&gt;
      *   &lt;exclude&gt;**&#47;*Bean.class&lt;&#47;exclude&gt;
      * &lt;&#47;excludes&gt;
      * </pre>
-     * <br/>Default exclusions: META-INF&#47;ejb-jar.xml, **&#47;package.html
+     * 
+     * <br/>
+     * Default exclusions: META-INF&#47;ejb-jar.xml, **&#47;package.html
      */
     @Parameter
     private List<String> excludes;
@@ -158,11 +165,11 @@ public class EjbMojo
     private JarArchiver jarArchiver;
 
     /**
-     * What EJB version should the EJB Plugin generate? Valid values are "2.x" or "3.x"
-     * (where x is a digit).  When ejbVersion is "3.x", the
-     * <code>ejb-jar.xml</code> file is optional.
+     * What EJB version should the EJB Plugin generate? Valid values are "2.x" or "3.x" (where x is a digit). When
+     * ejbVersion is "3.x", the <code>ejb-jar.xml</code> file is optional.
      * <p/>
      * Usage:
+     * 
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
@@ -185,15 +192,14 @@ public class EjbMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
      */
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * To escape interpolated value with windows path.
-     * c:\foo\bar will be replaced with c:\\foo\\bar.
+     * To escape interpolated value with windows path. c:\foo\bar will be replaced with c:\\foo\\bar.
      *
      * @since 2.3
      */
@@ -201,8 +207,7 @@ public class EjbMojo
     private boolean escapeBackslashesInFilePath;
 
     /**
-     * An expression preceded with this String won't be interpolated.
-     * \${foo} will be replaced with ${foo}.
+     * An expression preceded with this String won't be interpolated. \${foo} will be replaced with ${foo}.
      *
      * @since 2.3
      */
@@ -245,7 +250,7 @@ public class EjbMojo
     public void execute()
         throws MojoExecutionException
     {
-        
+
         if ( !outputDirectory.exists() )
         {
             getLog().warn( "The created EJB jar will be empty cause the " + outputDirectory.getPath()
@@ -271,25 +276,24 @@ public class EjbMojo
         /* test EJB version compliance */
         if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
         {
-            throw new MojoExecutionException(
-                "ejbVersion is not valid: " + ejbVersion + ". Must be 2.x or 3.x (where x is a digit)" );
+            throw new MojoExecutionException( "ejbVersion is not valid: " + ejbVersion
+                + ". Must be 2.x or 3.x (where x is a digit)" );
         }
 
         if ( ejbVersion.matches( "\\A2\\.[0-9]\\z" ) && !deploymentDescriptor.exists() )
         {
-            throw new MojoExecutionException(
-                "Error assembling EJB: " + ejbJar + " is required for ejbVersion 2.x" );
+            throw new MojoExecutionException( "Error assembling EJB: " + ejbJar + " is required for ejbVersion 2.x" );
         }
 
         try
         {
-            //TODO: This should be handled different.
+            // TODO: This should be handled different.
             String[] mainJarExcludes = new String[] { ejbJar, "**/package.html" };
 
             if ( excludes != null && !excludes.isEmpty() )
             {
                 excludes.add( ejbJar );
-                mainJarExcludes = (String[]) excludes.toArray(new String[excludes.size()]);
+                mainJarExcludes = (String[]) excludes.toArray( new String[excludes.size()] );
             }
 
             archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
@@ -302,10 +306,9 @@ public class EjbMojo
                     getLog().debug( "Filtering deployment descriptor." );
                     MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                     mavenResourcesExecution.setEscapeString( escapeString );
-                    List filterWrappers = mavenFileFilter.getDefaultFilterWrappers( project, filters,
-                                                                                    escapeBackslashesInFilePath,
-                                                                                    this.session,
-                                                                                    mavenResourcesExecution );
+                    List filterWrappers =
+                        mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
+                                                                  this.session, mavenResourcesExecution );
 
                     // Create a temporary file that we can copy-and-filter
                     File unfilteredDeploymentDescriptor = new File( outputDirectory, ejbJar + ".unfiltered" );
@@ -339,7 +342,8 @@ public class EjbMojo
         }
         catch ( MavenFilteringException e )
         {
-            throw new MojoExecutionException( "There was a problem filtering the deployment descriptor: " + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem filtering the deployment descriptor: "
+                + e.getMessage(), e );
         }
 
         // Handle the classifier if necessary
@@ -367,12 +371,12 @@ public class EjbMojo
 
             if ( clientIncludes != null && !clientIncludes.isEmpty() )
             {
-                includes = (String[]) clientIncludes.toArray(new String[clientIncludes.size()]);
+                includes = (String[]) clientIncludes.toArray( new String[clientIncludes.size()] );
             }
 
             if ( clientExcludes != null && !clientExcludes.isEmpty() )
             {
-                excludes = (String[]) clientExcludes.toArray(new String[clientExcludes.size()]);
+                excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
             }
 
             File clientJarFile = new File( basedir, clientJarName + "-client.jar" );
@@ -393,23 +397,23 @@ public class EjbMojo
             }
             catch ( ArchiverException e )
             {
-                throw new MojoExecutionException(
-                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                    + e.getMessage(), e );
             }
             catch ( ManifestException e )
             {
-                throw new MojoExecutionException(
-                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                    + e.getMessage(), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                    + e.getMessage(), e );
             }
             catch ( DependencyResolutionRequiredException e )
             {
-                throw new MojoExecutionException(
-                    "There was a problem creating the EJB client archive: " + e.getMessage(), e );
+                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                    + e.getMessage(), e );
             }
 
             // TODO: shouldn't need classifer
@@ -427,8 +431,8 @@ public class EjbMojo
     /**
      * Returns the EJB Jar file to generate, based on an optional classifier.
      *
-     * @param basedir    the output directory
-     * @param finalName  the name of the ear file
+     * @param basedir the output directory
+     * @param finalName the name of the ear file
      * @param classifier an optional classifier
      * @return the EJB file to generate
      */

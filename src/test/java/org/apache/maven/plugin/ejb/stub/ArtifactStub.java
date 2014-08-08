@@ -34,7 +34,6 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-
 /**
  * Stub
  */
@@ -79,7 +78,6 @@ public class ArtifactStub
     String version;
 
     VersionRange versionRange;
-
 
     public ArtifactStub()
     {
@@ -276,7 +274,6 @@ public class ArtifactStub
     {
         resolvedVersion = version;
     }
-
 
     public void setArtifactHandler( ArtifactHandler handler )
     {
