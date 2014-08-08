@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.mojos;
 
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -51,7 +52,7 @@ public class DirectoryInlineMojo
 {
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     @Override
