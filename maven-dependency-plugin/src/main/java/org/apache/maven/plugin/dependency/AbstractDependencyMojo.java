@@ -117,7 +117,7 @@ public abstract class AbstractDependencyMojo
     /**
      * POM
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**

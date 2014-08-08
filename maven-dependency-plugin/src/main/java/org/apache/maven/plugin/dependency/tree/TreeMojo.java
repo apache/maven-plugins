@@ -77,7 +77,7 @@ public class TreeMojo
     /**
      * The Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**

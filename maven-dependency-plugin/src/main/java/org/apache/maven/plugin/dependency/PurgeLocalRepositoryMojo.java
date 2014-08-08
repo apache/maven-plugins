@@ -73,7 +73,7 @@ public class PurgeLocalRepositoryMojo
     /**
      * The current Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
