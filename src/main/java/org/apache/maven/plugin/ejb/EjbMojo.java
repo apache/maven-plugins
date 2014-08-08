@@ -243,8 +243,10 @@ public class EjbMojo
         throws MojoExecutionException
     {
         
-        if (!outputDirectory.exists()) {
-            getLog().warn( "The created EJB jar will be empty cause the " + outputDirectory.toString() + " did not exist." );
+        if ( !outputDirectory.exists() )
+        {
+            getLog().warn( "The created EJB jar will be empty cause the " + outputDirectory.getPath()
+                               + " did not exist." );
             outputDirectory.mkdirs();
         }
 
