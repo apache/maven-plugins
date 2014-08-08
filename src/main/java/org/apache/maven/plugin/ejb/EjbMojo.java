@@ -41,6 +41,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
+import org.apache.maven.shared.utils.io.FileUtils.FilterWrapper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -306,7 +307,7 @@ public class EjbMojo
                     getLog().debug( "Filtering deployment descriptor." );
                     MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                     mavenResourcesExecution.setEscapeString( escapeString );
-                    List filterWrappers =
+                    List<FilterWrapper> filterWrappers =
                         mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
                                                                   this.session, mavenResourcesExecution );
 
