@@ -59,8 +59,7 @@ under the License.
   <properties>
     <mavenArchiverVersion>2.5</mavenArchiverVersion>
     <mavenFilteringVersion>1.0</mavenFilteringVersion>
-    <mavenVersion>2.0.6</mavenVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
+    <mavenVersion>2.2.1</mavenVersion>
   </properties>
 
   <dependencies>
@@ -93,7 +92,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -116,6 +114,11 @@ under the License.
           <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interpolation</artifactId>
+      <version>1.19</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

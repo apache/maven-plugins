@@ -325,8 +325,15 @@ public class ArtifactStub
         return true;
     }
 
-    public int compareTo( Object object )
+    public int compareTo( Artifact o )
     {
+        // TODO Auto-generated method stub
         return 0;
+    }
+
+    public ArtifactMetadata getMetadata( Class<?> arg0 )
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
