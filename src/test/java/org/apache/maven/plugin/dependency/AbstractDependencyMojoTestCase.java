@@ -22,10 +22,8 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.fromDependencies.AbstractDependencyFilterMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
