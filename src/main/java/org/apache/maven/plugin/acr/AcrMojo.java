@@ -19,6 +19,10 @@ package org.apache.maven.plugin.acr;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.archiver.MavenArchiveConfiguration;
@@ -36,15 +40,12 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
+import org.apache.maven.shared.utils.io.FileUtils.FilterWrapper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Build a JavaEE Application Client jar file from the current project.
@@ -200,7 +201,7 @@ public class AcrMojo
                     getLog().debug( "Filtering deployment descriptor." );
                     MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
                     mavenResourcesExecution.setEscapeString( escapeString );
-                    List<FileUtils.FilterWrapper> filterWrappers =
+                    List<FilterWrapper> filterWrappers =
                         mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
                                                                   this.session, mavenResourcesExecution );
 
