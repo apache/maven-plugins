@@ -102,7 +102,7 @@ public class AcrMojo
     /**
      * The Maven project.
      */
-    @Parameter( defaultValue = "${project}", readonly = true )
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -149,7 +149,7 @@ public class AcrMojo
 
     /**
      */
-    @Parameter( defaultValue = "${session}", readonly = true )
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
