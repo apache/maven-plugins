@@ -58,12 +58,8 @@ import org.codehaus.plexus.util.FileUtils;
 public class EjbMojo
     extends AbstractMojo
 {
-    private static final String EJB_JAR_XML = "META-INF/ejb-jar.xml";
-
     // TODO: will null work instead?
     private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
-
-    private static final String[] DEFAULT_EXCLUDES = new String[]{ EJB_JAR_XML, "**/package.html" };
 
     private static final String[] DEFAULT_CLIENT_EXCLUDES =
         new String[]{ "**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html" };
@@ -92,6 +88,13 @@ public class EjbMojo
      */
     @Parameter( property = "ejb.classifier" )
     private String classifier;
+
+    /**
+     * You can define the location of <code>ejb-jar.xml</code> file.
+     */
+    @Parameter( property = "ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
+    //The initalization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
+    private String ejbJar = "META-INF/ejb-jar.xml";
 
     /**
      * Whether the EJB client jar should be generated or not.
@@ -263,7 +266,7 @@ public class EjbMojo
 
         archiver.setOutputFile( jarFile );
 
-        File deploymentDescriptor = new File( outputDirectory, EJB_JAR_XML );
+        File deploymentDescriptor = new File( outputDirectory, ejbJar );
 
         /* test EJB version compliance */
         if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
@@ -275,16 +278,17 @@ public class EjbMojo
         if ( ejbVersion.matches( "\\A2\\.[0-9]\\z" ) && !deploymentDescriptor.exists() )
         {
             throw new MojoExecutionException(
-                "Error assembling EJB: " + EJB_JAR_XML + " is required for ejbVersion 2.x" );
+                "Error assembling EJB: " + ejbJar + " is required for ejbVersion 2.x" );
         }
 
         try
         {
-            String[] mainJarExcludes = DEFAULT_EXCLUDES;
+            //TODO: This should be handled different.
+            String[] mainJarExcludes = new String[] { ejbJar, "**/package.html" };
 
             if ( excludes != null && !excludes.isEmpty() )
             {
-                excludes.add( EJB_JAR_XML );
+                excludes.add( ejbJar );
                 mainJarExcludes = (String[]) excludes.toArray(new String[excludes.size()]);
             }
 
@@ -304,14 +308,14 @@ public class EjbMojo
                                                                                     mavenResourcesExecution );
 
                     // Create a temporary file that we can copy-and-filter
-                    File unfilteredDeploymentDescriptor = new File( outputDirectory, EJB_JAR_XML + ".unfiltered" );
+                    File unfilteredDeploymentDescriptor = new File( outputDirectory, ejbJar + ".unfiltered" );
                     FileUtils.copyFile( deploymentDescriptor, unfilteredDeploymentDescriptor );
                     mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true,
                                               filterWrappers, getEncoding( unfilteredDeploymentDescriptor ) );
                     // Remove the temporary file
                     FileUtils.forceDelete( unfilteredDeploymentDescriptor );
                 }
-                archiver.getArchiver().addFile( deploymentDescriptor, EJB_JAR_XML );
+                archiver.getArchiver().addFile( deploymentDescriptor, ejbJar );
             }
 
             // create archive
