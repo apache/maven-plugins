@@ -74,7 +74,7 @@ public abstract class AbstractWarMojo
     /**
      * The Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -270,7 +270,7 @@ public abstract class AbstractWarMojo
     /**
      * @since 2.1-alpha-2
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
