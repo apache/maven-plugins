@@ -88,13 +88,13 @@ public class LinkcheckReport
     /**
      * The Maven Project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
      * Local Repository.
      */
-    @Parameter( property = "localRepository", required = true, readonly = true )
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
@@ -106,7 +106,7 @@ public class LinkcheckReport
     /**
      * The Maven Settings.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     // ----------------------------------------------------------------------
