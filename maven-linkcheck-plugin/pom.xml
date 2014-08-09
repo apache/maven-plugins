@@ -59,7 +59,7 @@ under the License.
   <properties>
     <doxiaVersion>1.4</doxiaVersion>
     <doxia-sitetoolsVersion>1.4</doxia-sitetoolsVersion>
-    <mavenVersion>2.0.9</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
