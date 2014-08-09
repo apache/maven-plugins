@@ -295,18 +295,6 @@ public class ArtifactTestStub
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
 
-    public int compareTo( Object o )
-    {
-        if ( this.equals( o ) )
-        {
-            return 0;
-        }
-        else
-        {
-            return 1;
-        }
-    }
-
     public boolean equals( Object o )
     {
         if ( this == o )
@@ -348,5 +336,23 @@ public class ArtifactTestStub
         result = 31 * result + ( type != null ? type.hashCode() : 0 );
         result = 31 * result + ( classifier != null ? classifier.hashCode() : 0 );
         return result;
+    }
+
+    public int compareTo( Artifact o )
+    {
+        if ( this.equals( o ) )
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
+    public ArtifactMetadata getMetadata( Class<?> metadataClass )
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
