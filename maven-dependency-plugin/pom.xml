@@ -239,18 +239,24 @@ under the License.
       <version>1.1</version>
       <scope>test</scope>
     </dependency>
+    <!-- org.apache.maven.plugin-testing:*:2.1 depends on maven-artifact-3.0+ and on Sonatypes Aether,
+         however, for build we'd still like to depend on maven-artifact-2.2.1
+         Replace when depending on Maven3 
+     -->
+    <!-- 
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-tools</artifactId>
       <version>${pluginTestingVersion}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <dependency> 
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>${pluginTestingVersion}</version>
       <scope>test</scope>
     </dependency>
+     -->
    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
