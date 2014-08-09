@@ -57,7 +57,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>2.2.0</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <scmVersion>1.7</scmVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
