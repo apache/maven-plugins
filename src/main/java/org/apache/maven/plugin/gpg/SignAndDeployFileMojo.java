@@ -199,7 +199,7 @@ public class SignAndDeployFileMojo
      *
      * @since 1.3
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
