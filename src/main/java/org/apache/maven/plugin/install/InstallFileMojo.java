@@ -156,7 +156,6 @@ public class InstallFileMojo
     /**
      * Map that contains the repository layouts.
      */
-    @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
