@@ -194,7 +194,7 @@ public abstract class AbstractSourceJarMojo
     /**
      * The Maven session.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
     
     // ----------------------------------------------------------------------
