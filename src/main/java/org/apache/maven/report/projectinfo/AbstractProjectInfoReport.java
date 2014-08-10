@@ -19,6 +19,23 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -49,23 +66,6 @@ import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Base class with the things that should be in AbstractMavenReport anyway.
@@ -128,7 +128,7 @@ public abstract class AbstractProjectInfoReport
     /**
      * The Maven Project.
      */
-    @Parameter( defaultValue = "${project}", readonly = true )
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
@@ -150,7 +150,7 @@ public abstract class AbstractProjectInfoReport
      *
      * @since 2.3
      */
-    @Parameter( defaultValue = "${settings}", readonly = true )
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     protected Settings settings;
 
     /**
