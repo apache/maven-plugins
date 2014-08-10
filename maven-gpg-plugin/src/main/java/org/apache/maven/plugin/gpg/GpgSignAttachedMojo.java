@@ -76,7 +76,7 @@ public class GpgSignAttachedMojo
     /**
      * The maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
