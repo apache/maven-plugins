@@ -267,7 +267,7 @@ public class RarMojo
     /**
      * The maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
