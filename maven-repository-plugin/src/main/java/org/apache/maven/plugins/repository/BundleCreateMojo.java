@@ -58,7 +58,7 @@ public class BundleCreateMojo
     /**
      * The current Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -82,7 +82,7 @@ public class BundleCreateMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     protected Settings settings;
 
     public void execute()

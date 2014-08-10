@@ -136,7 +136,7 @@ public class BundlePackMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     protected Settings settings;
 
     /**
