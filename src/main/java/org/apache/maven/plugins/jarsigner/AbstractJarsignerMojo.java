@@ -213,7 +213,7 @@ public abstract class AbstractJarsignerMojo
     /**
      * The Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -235,7 +235,7 @@ public abstract class AbstractJarsignerMojo
      *
      * @since 1.3
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
