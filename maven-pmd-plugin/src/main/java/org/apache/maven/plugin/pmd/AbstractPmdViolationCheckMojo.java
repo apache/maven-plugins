@@ -95,7 +95,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     /**
      * The project to analyze.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     protected void executeCheck( final String filename, final String tagName, final String key,
