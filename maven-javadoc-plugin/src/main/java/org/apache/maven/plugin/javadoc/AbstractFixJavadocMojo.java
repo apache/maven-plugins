@@ -350,13 +350,13 @@ public abstract class AbstractFixJavadocMojo
     /**
      * The Maven Project Object.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
      * The current user system settings for use in Maven.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     // ----------------------------------------------------------------------

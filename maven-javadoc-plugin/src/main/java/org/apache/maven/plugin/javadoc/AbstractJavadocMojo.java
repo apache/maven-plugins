@@ -320,7 +320,7 @@ public abstract class AbstractJavadocMojo
      * The current build session instance. This is used for
      * toolchain manager API calls.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
 
     /**
@@ -328,13 +328,13 @@ public abstract class AbstractJavadocMojo
      *
      * @since 2.3
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
      * The Maven Project Object
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
