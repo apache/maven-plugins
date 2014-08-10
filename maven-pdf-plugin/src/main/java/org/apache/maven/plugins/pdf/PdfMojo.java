@@ -204,7 +204,7 @@ public class PdfMojo
     /**
      * The Maven Project Object.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -212,7 +212,7 @@ public class PdfMojo
      *
      * @since 1.1
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
@@ -220,7 +220,7 @@ public class PdfMojo
      *
      * @since 1.1
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
