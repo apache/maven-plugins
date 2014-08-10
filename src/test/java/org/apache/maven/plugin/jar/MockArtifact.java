@@ -19,6 +19,10 @@ package org.apache.maven.plugin.jar;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
@@ -27,10 +31,6 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.artifact.versioning.VersionRange;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @todo move to maven-artifact-test
@@ -321,9 +321,15 @@ class MockArtifact
         this.classifier = classifier;
     }
 
-    public int compareTo( Object o )
+    public int compareTo( Artifact o )
     {
-        // TODO
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public ArtifactMetadata getMetadata( Class<?> metadataClass )
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
