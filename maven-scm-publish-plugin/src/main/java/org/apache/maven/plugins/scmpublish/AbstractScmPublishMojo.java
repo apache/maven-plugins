@@ -201,7 +201,7 @@ public abstract class AbstractScmPublishMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     protected Settings settings;
     
     @Component
