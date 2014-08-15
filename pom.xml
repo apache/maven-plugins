@@ -311,11 +311,6 @@ under the License.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <excludes>
-              <exclude>**/BasicAbstractAssemblyMojoFeaturesTest*</exclude>
-              <exclude>**/AllTests*</exclude>
-              <exclude>**/testutils/*</exclude>
-            </excludes>
             <redirectTestOutputToFile>${testOutputToFile}</redirectTestOutputToFile>
             <systemPropertyVariables>
               <!-- NOTE: Ensure the tmp dir configured for Surefire exists or some JREs (e.g. 1.5) will fail to create temp files -->
@@ -400,7 +395,7 @@ under the License.
                   <pomIncludes>
                     <pomInclude>pom.xml</pomInclude>
                   </pomIncludes>
-                  <streamLogs>true</streamLogs>
+                  <streamLogs>${it.streamLogs}</streamLogs>
                 </configuration>
               </execution>
               <execution>
