@@ -191,4 +191,8 @@
     <!-- see http://checkstyle.sourceforge.net/config.html#SuppressWarningsFilter -->
     <module name="SuppressWarningsFilter"/>
 
+    <!-- Checks properties file for a duplicated properties. -->
+    <!-- See http://checkstyle.sourceforge.net/config_misc.html#UniqueProperties -->
+    <module name="UniqueProperties"/>
+
 </module>
