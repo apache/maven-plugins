@@ -67,6 +67,10 @@ under the License.
         <!-- see http://checkstyle.sourceforge.net/config_annotation.html#SuppressWarningsHolder -->
         <module name="SuppressWarningsHolder"/>
 
+        <!-- required for SuppressionCommentFilter -->
+        <!-- see http://checkstyle.sourceforge.net/config.html#SuppressionCommentFilter -->
+        <module name="FileContentsHolder"/>
+
         <module name="LeftCurly">
           <property name="option" value="nl"/>
         </module>
@@ -205,5 +209,13 @@ under the License.
     <!-- Checks properties file for a duplicated properties. -->
     <!-- See http://checkstyle.sourceforge.net/config_misc.html#UniqueProperties -->
     <module name="UniqueProperties"/>
+
+    <!-- Support CHECKSTYLE_OFF: regexp and CHECKSTYLE_ON: regexp comments to disable/enable some checks -->
+    <!-- see http://checkstyle.sourceforge.net/config.html#SuppressionCommentFilter -->
+    <module name="SuppressionCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE_OFF\: (.+)"/>
+        <property name="onCommentFormat" value="CHECKSTYLE_ON\: (.+)"/>
+        <property name="checkFormat" value="$1"/>
+    </module>
 
 </module>
