@@ -23,6 +23,9 @@ package org;
  * Yada yada yada.
  */
 public class MyClass {
+    @SuppressWarnings("checkstyle:constantname")
+    private static final int testSuppressionFilter = 0;
+
     public static void main(String[] args) {
         // no op
     }

@@ -23,7 +23,7 @@ under the License.
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <!--
-  Checkstyle configuration that checks the maven coding conventions from:
+  Checkstyle configuration that checks the Maven coding conventions from:
 -->
 
 <module name="Checker">
@@ -62,6 +62,10 @@ under the License.
         <property name="cacheFile" value="${checkstyle.cache.file}"/>
 
         <property name="tabWidth" value="4"/>
+
+        <!-- required for SuppressWarningsFilter (and other Suppress* rules not used here) -->
+        <!-- see http://checkstyle.sourceforge.net/config_annotation.html#SuppressWarningsHolder -->
+        <module name="SuppressWarningsHolder"/>
 
         <module name="LeftCurly">
           <property name="option" value="nl"/>
@@ -193,5 +197,9 @@ under the License.
         <module name="UpperEll"/>
 
     </module>
+
+    <!-- Support @SuppressWarnings (added in Checkstyle 5.7) -->
+    <!-- see http://checkstyle.sourceforge.net/config.html#SuppressWarningsFilter -->
+    <module name="SuppressWarningsFilter"/>
 
 </module>
