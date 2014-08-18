@@ -35,7 +35,7 @@ import org.codehaus.plexus.resource.loader.ThreadContextClasspathResourceLoader;
  *
  * @since 2.12
  */
-@Component( role = ResourceManager.class, hint = "license" )
+@Component( role = ResourceManager.class, hint = "license", instantiationStrategy = "per-lookup" )
 public class LicenseResourceManager
     extends DefaultResourceManager
 {
