@@ -19,6 +19,14 @@ package org.apache.maven.plugin.checkstyle;
  * under the License.
  */
 
+import java.io.File;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.checkstyle.exec.CheckstyleExecutorRequest;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -27,14 +35,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * A reporting task that performs Checkstyle analysis and generates an HTML
@@ -171,9 +171,9 @@ public class CheckstyleReport
             .setIncludeResources( includeResources )
             .setIncludeTestResources( includeTestResources )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-            .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
+            .setLog( getLog() ).setProject( project ).setSourceDirectories( getSourceDirectories() ).setResources( resources )
             .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-            .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+            .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )
             .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
             .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
             .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
@@ -189,10 +189,32 @@ public class CheckstyleReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
+        if ( skip )
+        {
+            return false;
+        }
+        
         // TODO: would be good to scan the files here
-        return !skip && ( sourceDirectory.exists()
-            || ( includeTestSourceDirectory && testSourceDirectory.exists() )
-            || ( includeResources && hasResources( resources ) )
+        for ( File sourceDirectory : getSourceDirectories() )
+        {
+            if ( sourceDirectory.exists() )
+            {
+                return true;
+            }
+        }
+        
+        if ( includeTestSourceDirectory )
+        {
+            for ( File testSourceDirectory : getTestSourceDirectories() )
+            {
+                if ( testSourceDirectory.exists() )
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return ( ( includeResources && hasResources( resources ) )
             || ( includeTestResources && hasResources( testResources ) )
         );
     }

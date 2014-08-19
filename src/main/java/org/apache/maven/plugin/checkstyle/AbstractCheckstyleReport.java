@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -55,6 +56,7 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -279,21 +281,40 @@ public abstract class AbstractCheckstyleReport
 
     /**
      * Specifies the location of the source directory to be used for Checkstyle.
+     * 
+     * @deprecated instead use {@link #sourceDirectories}
      */
-    @Parameter( defaultValue = "${project.build.sourceDirectory}", required = true )
-    protected File sourceDirectory;
+    @Deprecated
+    @Parameter
+    private File sourceDirectory;
 
+    /**
+     * Specifies the location of the source directories to be used for Checkstyle.
+     * @since 2.13
+     */
+    @Parameter( defaultValue = "${project.compileSourceRoots}" )
+    private List<String> sourceDirectories;
+    
     /**
      * Specifies the location of the test source directory to be used for
      * Checkstyle.
      *
      * @since 2.2
+     * @deprecated instead use {@link #testSourceDirectories}
      */
-    @Parameter( defaultValue = "${project.build.testSourceDirectory}" )
-    protected File testSourceDirectory;
+    @Parameter
+    @Deprecated
+    private File testSourceDirectory;
+    
+    /**
+     * Specifies the location of the test source directories to be used for Checkstyle.
+     * @since 2.13
+     */
+    @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
+    private List<String> testSourceDirectories;
 
     /**
-     * Include or not the test source directory to be used for Checkstyle.
+     * Include or not the test source directory/directories to be used for Checkstyle.
      *
      * @since 2.2
      */
@@ -754,5 +775,44 @@ public abstract class AbstractCheckstyleReport
         this.outputDirectory = reportOutputDirectory;
     }
     
-    
+    protected List<File> getSourceDirectories()
+    {
+        List<File> sourceDirs = null;
+        // if sourceDirectory is explicitly set, use it
+        if( sourceDirectory != null )
+        {
+            sourceDirs = Collections.singletonList( sourceDirectory );
+        }
+        else
+        {
+            sourceDirs = new ArrayList<File>( sourceDirectories.size() );
+            for ( String sourceDir : sourceDirectories )
+            {
+                sourceDirs.add( FileUtils.resolveFile( project.getBasedir(), sourceDir ) );
+            }
+        }
+        
+        return sourceDirs;
+    }
+
+    protected List<File> getTestSourceDirectories()
+    {
+        List<File> testSourceDirs = null;
+        // if testSourceDirectory is explicitly set, use it
+        if( testSourceDirectory != null )
+        {
+            testSourceDirs = Collections.singletonList( testSourceDirectory );
+        }
+        // probably null-check only required due to MavenProjectStubs
+        else if ( testSourceDirectories != null )
+        {
+            testSourceDirs = new ArrayList<File>( testSourceDirectories.size() );
+            for ( String testSourceDir : testSourceDirectories )
+            {
+                testSourceDirs.add( FileUtils.resolveFile( project.getBasedir(), testSourceDir ) );
+            }
+        }
+        
+        return testSourceDirs;
+    }
 }

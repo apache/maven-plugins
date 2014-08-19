@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -382,9 +383,19 @@ public class CheckstyleViolationCheckMojo
      * Checkstyle.
      *
      * @since 2.2
+     * @deprecated instead use {@link #testSourceDirectories} 
      */
-    @Parameter( defaultValue = "${project.build.testSourceDirectory}" )
+    @Deprecated
+    @Parameter
     private File testSourceDirectory;
+
+    /**
+     * Specifies the location of the test source directories to be used for
+     * Checkstyle.
+     * @since 2.13
+     */
+    @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
+    private List<String> testSourceDirectories;
 
     /**
      * Include or not the test source directory to be used for Checkstyle.
@@ -396,9 +407,19 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Specifies the location of the source directory to be used for Checkstyle.
+     * 
+     * @deprecated instead use {@link #sourceDirectories}
      */
-    @Parameter( defaultValue = "${project.build.sourceDirectory}", required = true )
+    @Deprecated
+    @Parameter
     private File sourceDirectory;
+
+    /**
+     * Specifies the location of the source directories to be used for Checkstyle.
+     * @since 2.13
+     */
+    @Parameter( defaultValue = "${project.compileSourceRoots}" )
+    private List<String> sourceDirectories;
 
     /**
      * Whether to apply Checkstyle to resource directories.
@@ -499,10 +520,10 @@ public class CheckstyleViolationCheckMojo
                     .setIncludeResources( includeResources )
                     .setIncludeTestResources( includeTestResources )
                     .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-                    .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory )
+                    .setLog( getLog() ).setProject( project ).setSourceDirectories( getSourceDirectories() )
                     .setResources( resources )
                     .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-                    .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+                    .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )
                     .setConfigurationArtifacts( collectArtifacts( "config" ) )
                     .setPropertyExpansion( propertyExpansion )
                     .setHeaderLocation( headerLocation ).setLicenseArtifacts( collectArtifacts( "license" ) )
@@ -791,6 +812,47 @@ public class CheckstyleViolationCheckMojo
             }
         }
         return artifacts;
+    }
+    
+    private List<File> getSourceDirectories()
+    {
+        List<File> sourceDirs = null;
+        // if sourceDirectory is explicitly set, use it
+        if( sourceDirectory != null )
+        {
+            sourceDirs = Collections.singletonList( sourceDirectory );
+        }
+        else
+        {
+            sourceDirs = new ArrayList<File>( sourceDirectories.size() );
+            for ( String sourceDir : sourceDirectories )
+            {
+                sourceDirs.add( FileUtils.resolveFile( project.getBasedir(), sourceDir ) );
+            }
+        }
+        
+        return sourceDirs;
+    }
+    
+    private List<File> getTestSourceDirectories()
+    {
+        List<File> testSourceDirs = null;
+        // if testSourceDirectory is explicitly set, use it
+        if( testSourceDirectory != null )
+        {
+            testSourceDirs = Collections.singletonList( testSourceDirectory );
+        }
+        // probably null-check only required due to MavenProjectStubs
+        else if ( testSourceDirectories != null )
+        {
+            testSourceDirs = new ArrayList<File>( testSourceDirectories.size() );
+            for ( String testSourceDir : testSourceDirectories )
+            {
+                testSourceDirs.add( FileUtils.resolveFile( project.getBasedir(), testSourceDir ) );
+            }
+        }
+        
+        return testSourceDirs;
     }
     
 }
