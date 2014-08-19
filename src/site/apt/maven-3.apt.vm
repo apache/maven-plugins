@@ -231,7 +231,7 @@ Using maven-site-plugin with Maven 3
 
 * Configuration formats
 
-  The <<<\<reporting\>>>> section of the POM has been added to the Site Plugin's configuration in Maven 3.
+  The <<<\<reporting\>>>> section of the POM has been added to the Site Plugin's configuration as <<<\<reportPlugins\>>>> in Maven 3.
   The content of the configuration has been kept as similar as possible to Maven 2 and 
   the <<<{{{/shared/maven-reporting-exec/}maven-reporting-exec}}>>> component transforms the configuration on the fly.
 
@@ -241,6 +241,8 @@ Using maven-site-plugin with Maven 3
   <<This stays the recommended configuration format.>>
 
 +-----+
+<project>
+...
   <reporting>
     <excludeDefaults>true</excludeDefaults>
     <outputDirectory>\${project.build.directory}/site</outputDirectory>
@@ -269,6 +271,8 @@ Using maven-site-plugin with Maven 3
       </plugin>
     </plugins>
   </reporting>
+...
+</project>
 +-----+
 
 ** New Configuration (Maven 3 only, no reports configuration inheritance)
