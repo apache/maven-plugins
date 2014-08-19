@@ -82,15 +82,14 @@ public class ItFilter
         <version>${project.version}</version>
         <configuration>
           ...
-          <dependencies>
-            <dependency>
-              <groupId>custom resources filters artifact groupId</groupId>
-              <artifactId>custom resources filters artifact artifactId</artifactId>
-              <version>custom resources filters artifact version</version>
-            </dependency>
-          </dependencies>
-          ...
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>custom resources filters artifact groupId</groupId>
+            <artifactId>custom resources filters artifact artifactId</artifactId>
+            <version>custom resources filters artifact version</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
     ...
