@@ -71,10 +71,10 @@ public class CheckstyleAggregateReport
             .setResourceIncludes( resourceIncludes )
             .setResourceExcludes( resourceExcludes )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-            .setLog( getLog() ).setProject( project ).setSourceDirectory( sourceDirectory ).setResources( resources )
+            .setLog( getLog() ).setProject( project ).setSourceDirectories( getSourceDirectories() ).setResources( resources )
             .setTestResources( testResources )
             .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
-            .setTestSourceDirectory( testSourceDirectory ).setConfigLocation( configLocation )
+            .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )
             .setPropertyExpansion( propertyExpansion ).setHeaderLocation( headerLocation )
             .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
             .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );

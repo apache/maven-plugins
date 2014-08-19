@@ -29,8 +29,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
@@ -118,21 +123,44 @@ public class DefaultCheckstyleExecutor
         // setup classloader, needed to avoid "Unable to get class information for ..." errors
         List<String> classPathStrings = new ArrayList<String>();
         List<String> outputDirectories = new ArrayList<String>();
-        File sourceDirectory = request.getSourceDirectory();
-        File testSourceDirectory = request.getTestSourceDirectory();
+        
+        // stand-alone
+        Collection<File> sourceDirectories = null;
+        Collection<File> testSourceDirectories = request.getTestSourceDirectories();
+        
+        // aggregator
+        Map<MavenProject, Collection<File>> sourceDirectoriesByProject = new HashMap<MavenProject, Collection<File>>();
+        Map<MavenProject, Collection<File>> testSourceDirectoriesByProject = new HashMap<MavenProject, Collection<File>>();
+        
         if ( request.isAggregate() )
         {
             for ( MavenProject childProject : request.getReactorProjects() )
             {
+                sourceDirectories = new ArrayList<File>( childProject.getCompileSourceRoots().size() );
+                List<String> compileSourceRoots = childProject.getCompileSourceRoots();
+                for ( String compileSourceRoot : compileSourceRoots )
+                {
+                    sourceDirectories.add( new File( compileSourceRoot ) );
+                }
+                sourceDirectoriesByProject.put( childProject, sourceDirectories );
+                
+                testSourceDirectories = new ArrayList<File>( childProject.getTestCompileSourceRoots().size() );
+                List<String> testCompileSourceRoots = childProject.getTestCompileSourceRoots();
+                for ( String testCompileSourceRoot : testCompileSourceRoots )
+                {
+                    sourceDirectories.add( new File( testCompileSourceRoot ) );
+                }
+                sourceDirectoriesByProject.put( childProject, sourceDirectories );
+                
                 prepareCheckstylePaths( request, childProject, classPathStrings, outputDirectories,
-                                        new File( childProject.getBuild().getSourceDirectory() ),
-                                        new File( childProject.getBuild().getTestSourceDirectory() ) );
+                                        sourceDirectories, testSourceDirectories );
             }
         }
         else
         {
-            prepareCheckstylePaths( request, project, classPathStrings, outputDirectories, sourceDirectory,
-                                    testSourceDirectory );
+            sourceDirectories = request.getSourceDirectories();
+            prepareCheckstylePaths( request, project, classPathStrings, outputDirectories, sourceDirectories,
+                                    testSourceDirectories );
         }
 
         List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
@@ -201,14 +229,16 @@ public class DefaultCheckstyleExecutor
         {
             for ( MavenProject childProject : request.getReactorProjects() )
             {
-                addSourceDirectory( checkerListener, new File( childProject.getBuild().getSourceDirectory() ),
-                                    new File( childProject.getBuild().getTestSourceDirectory() ),
+                sourceDirectories = sourceDirectoriesByProject.get( childProject );
+                testSourceDirectories = sourceDirectoriesByProject.get( childProject );
+                addSourceDirectory( checkerListener, sourceDirectories,
+                                    testSourceDirectories,
                                     childProject.getResources(), request );
             }
         }
         else
         {
-            addSourceDirectory( checkerListener, sourceDirectory, testSourceDirectory, request.getResources(),
+            addSourceDirectory( checkerListener, sourceDirectories, testSourceDirectories, request.getResources(),
                                 request );
         }
 
@@ -252,19 +282,30 @@ public class DefaultCheckstyleExecutor
         return checkerListener.getResults();
     }
 
-    protected void addSourceDirectory( CheckstyleCheckerListener sinkListener, File sourceDirectory,
-                                       File testSourceDirectory, List<Resource> resources,
+    protected void addSourceDirectory( CheckstyleCheckerListener sinkListener, Collection<File> sourceDirectories,
+                                       Collection<File> testSourceDirectories, List<Resource> resources,
                                        CheckstyleExecutorRequest request )
     {
-        if ( sourceDirectory != null )
+        if ( sourceDirectories != null )
         {
-            sinkListener.addSourceDirectory( sourceDirectory );
+            for ( File sourceDirectory : sourceDirectories )
+            {
+                if ( sourceDirectory.exists() )
+                {
+                    sinkListener.addSourceDirectory( sourceDirectory );
+                }
+            }
         }
 
-        if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
-            && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
+        if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectories != null ) )
         {
-            sinkListener.addSourceDirectory( testSourceDirectory );
+            for ( File testSourceDirectory : testSourceDirectories )
+            {
+                if( testSourceDirectory.isDirectory() )
+                {
+                    sinkListener.addSourceDirectory( testSourceDirectory );
+                }
+            }
         }
 
         if ( resources != null )
@@ -373,15 +414,15 @@ public class DefaultCheckstyleExecutor
 
     private void prepareCheckstylePaths( CheckstyleExecutorRequest request, MavenProject project,
                                          List<String> classPathStrings, List<String> outputDirectories,
-                                         File sourceDirectory, File testSourceDirectory )
+                                         Collection<File> sourceDirectories, Collection<File> testSourceDirectories )
         throws CheckstyleExecutorException
     {
         try
         {
             outputDirectories.add( project.getBuild().getOutputDirectory() );
 
-            if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
-                && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
+            if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectories != null )
+                && anyDirectoryExists( testSourceDirectories ) )
             {
                 classPathStrings.addAll( project.getTestClasspathElements() );
                 outputDirectories.add( project.getBuild().getTestOutputDirectory() );
@@ -395,6 +436,18 @@ public class DefaultCheckstyleExecutor
         {
             throw new CheckstyleExecutorException( e.getMessage(), e );
         }
+    }
+    
+    private boolean anyDirectoryExists( Collection<File> files )
+    {
+        for ( File file : files )
+        {
+            if ( file.isDirectory() )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Properties getOverridingProperties( CheckstyleExecutorRequest request )
@@ -527,23 +580,37 @@ public class DefaultCheckstyleExecutor
             excludesStr.append( defaultExclude );
         }
 
-        File sourceDirectory = request.getSourceDirectory();
-
         List<File> files = new ArrayList<File>();
         if ( request.isAggregate() )
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
-                addFilesToProcess( request, new File( project.getBuild().getSourceDirectory() ),
-                                   project.getResources(), project.getTestResources(),
-                                   files, new File( project.getBuild().getTestSourceDirectory() )
-                );
+                Set<File> sourceDirectories = new LinkedHashSet<File>();
+                
+                // CompileSourceRoots are absolute paths
+                List<String> compileSourceRoots = project.getCompileSourceRoots(); 
+                for ( String compileSourceRoot : compileSourceRoots )
+                {
+                    sourceDirectories.add( new File( compileSourceRoot ) );
+                }
+
+                Set<File> testSourceDirectories = new LinkedHashSet<File>();
+                // CompileSourceRoots are absolute paths
+                List<String> testCompileSourceRoots = project.getTestCompileSourceRoots(); 
+                for ( String testCompileSourceRoot : testCompileSourceRoots )
+                {
+                    testSourceDirectories.add( new File( testCompileSourceRoot ) );
+                }
+
+                addFilesToProcess( request, sourceDirectories, project.getResources(), project.getTestResources(),
+                                   files, testSourceDirectories );
             }
         }
         else
         {
-            addFilesToProcess( request, sourceDirectory, request.getResources(),
-                request.getTestResources(), files, request.getTestSourceDirectory() );
+            Collection<File> sourceDirectories = request.getSourceDirectories();
+            addFilesToProcess( request, sourceDirectories, request.getResources(),
+                request.getTestResources(), files, request.getTestSourceDirectories() );
         }
 
         getLogger().debug( "Added " + files.size() + " files to process." );
@@ -551,27 +618,39 @@ public class DefaultCheckstyleExecutor
         return files.toArray( new File[files.size()] );
     }
 
-    private void addFilesToProcess( CheckstyleExecutorRequest request, File sourceDirectory, List<Resource> resources,
-                                    List<Resource> testResources, List<File> files, File testSourceDirectory )
+    private void addFilesToProcess( CheckstyleExecutorRequest request, Collection<File> sourceDirectories, List<Resource> resources,
+                                    List<Resource> testResources, List<File> files, Collection<File> testSourceDirectories )
         throws IOException
     {
-        if ( sourceDirectory != null && sourceDirectory.exists() )
+        if ( sourceDirectories != null )
         {
-            final List<File> sourceFiles =
-                FileUtils.getFiles( sourceDirectory, request.getIncludes(), request.getExcludes() );
-            files.addAll( sourceFiles );
-            getLogger().debug( "Added " + sourceFiles.size() + " source files found in '"
-                    + sourceDirectory.getAbsolutePath() + "'." );
+            for ( File sourceDirectory : sourceDirectories )
+            {
+                if ( sourceDirectory.isDirectory() )
+                {
+                    final List<File> sourceFiles =
+                        FileUtils.getFiles( sourceDirectory, request.getIncludes(), request.getExcludes() );
+                    files.addAll( sourceFiles );
+                    getLogger().debug( "Added " + sourceFiles.size() + " source files found in '"
+                                           + sourceDirectory.getAbsolutePath() + "'." );
+                }
+            }
         }
 
-        if ( request.isIncludeTestSourceDirectory() && ( testSourceDirectory != null )
-            && ( testSourceDirectory.exists() ) && ( testSourceDirectory.isDirectory() ) )
+        if ( request.isIncludeTestSourceDirectory() && testSourceDirectories != null )
         {
-            final List<File> testSourceFiles =
-                FileUtils.getFiles( testSourceDirectory, request.getIncludes(), request.getExcludes() );
-            files.addAll( testSourceFiles );
-            getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '"
-                    + testSourceDirectory.getAbsolutePath() + "'." );
+            for ( File testSourceDirectory : testSourceDirectories )
+            {
+                if ( testSourceDirectory.isDirectory() )
+                {
+                    final List<File> testSourceFiles =
+                                    FileUtils.getFiles( testSourceDirectory, request.getIncludes(), request.getExcludes() );
+                    
+                    files.addAll( testSourceFiles );
+                    getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '"
+                            + testSourceDirectory.getAbsolutePath() + "'." );
+                }
+            }
         }
 
         if ( resources != null && request.isIncludeResources() )
