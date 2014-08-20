@@ -134,6 +134,8 @@ public class CheckstyleCheckerListener
                 currentFile = StringUtils.substring( fileName, sourceDirectoryPath.length() + 1 );
 
                 events = getResults().getFileViolations( currentFile );
+                
+                break;
             }
         }
 
