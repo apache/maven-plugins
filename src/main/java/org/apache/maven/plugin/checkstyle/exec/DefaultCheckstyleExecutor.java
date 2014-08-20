@@ -148,9 +148,9 @@ public class DefaultCheckstyleExecutor
                 List<String> testCompileSourceRoots = childProject.getTestCompileSourceRoots();
                 for ( String testCompileSourceRoot : testCompileSourceRoots )
                 {
-                    sourceDirectories.add( new File( testCompileSourceRoot ) );
+                    testSourceDirectories.add( new File( testCompileSourceRoot ) );
                 }
-                sourceDirectoriesByProject.put( childProject, sourceDirectories );
+                testSourceDirectoriesByProject.put( childProject, testSourceDirectories );
                 
                 prepareCheckstylePaths( request, childProject, classPathStrings, outputDirectories,
                                         sourceDirectories, testSourceDirectories );
@@ -230,7 +230,7 @@ public class DefaultCheckstyleExecutor
             for ( MavenProject childProject : request.getReactorProjects() )
             {
                 sourceDirectories = sourceDirectoriesByProject.get( childProject );
-                testSourceDirectories = sourceDirectoriesByProject.get( childProject );
+                testSourceDirectories = testSourceDirectoriesByProject.get( childProject );
                 addSourceDirectory( checkerListener, sourceDirectories,
                                     testSourceDirectories,
                                     childProject.getResources(), request );
