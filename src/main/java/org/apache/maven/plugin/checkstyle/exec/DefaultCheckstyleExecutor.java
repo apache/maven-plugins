@@ -105,7 +105,7 @@ public class DefaultCheckstyleExecutor
         // Config is less critical than License, locator can still be used.
         // configureResourceLocator( configurationLocator, request, request.getConfigurationArtifacts() );
 
-        File[] files;
+        List<File> files;
         try
         {
             files = getFilesToProcess( request );
@@ -244,8 +244,7 @@ public class DefaultCheckstyleExecutor
 
         checker.addListener( checkerListener );
 
-        List<File> filesList = Arrays.asList( files );
-        int nbErrors = checker.process( filesList );
+        int nbErrors = checker.process( files );
 
         checker.destroy();
 
@@ -559,7 +558,7 @@ public class DefaultCheckstyleExecutor
         return p;
     }
 
-    private File[] getFilesToProcess( CheckstyleExecutorRequest request )
+    private List<File> getFilesToProcess( CheckstyleExecutorRequest request )
         throws IOException
     {
         StringBuilder excludesStr = new StringBuilder();
@@ -580,7 +579,7 @@ public class DefaultCheckstyleExecutor
             excludesStr.append( defaultExclude );
         }
 
-        List<File> files = new ArrayList<File>();
+        Set<File> files = new LinkedHashSet<File>();
         if ( request.isAggregate() )
         {
             for ( MavenProject project : request.getReactorProjects() )
@@ -615,11 +614,11 @@ public class DefaultCheckstyleExecutor
 
         getLogger().debug( "Added " + files.size() + " files to process." );
 
-        return files.toArray( new File[files.size()] );
+        return new ArrayList<File>( files );
     }
 
     private void addFilesToProcess( CheckstyleExecutorRequest request, Collection<File> sourceDirectories, List<Resource> resources,
-                                    List<Resource> testResources, List<File> files, Collection<File> testSourceDirectories )
+                                    List<Resource> testResources, Collection<File> files, Collection<File> testSourceDirectories )
         throws IOException
     {
         if ( sourceDirectories != null )
@@ -673,7 +672,7 @@ public class DefaultCheckstyleExecutor
     }
 
     private void addResourceFilesToProcess( CheckstyleExecutorRequest request, List<Resource> resources,
-                                            List<File> files )
+                                            Collection<File> files )
         throws IOException
     {
         for ( Resource resource : resources )
@@ -681,11 +680,37 @@ public class DefaultCheckstyleExecutor
             if ( resource.getDirectory() != null )
             {
                 File resourcesDirectory = new File( resource.getDirectory() );
-                if ( resourcesDirectory.exists() && resourcesDirectory.isDirectory() )
+                if ( resourcesDirectory.isDirectory() )
                 {
+                    String includes = request.getResourceIncludes();
+                    String excludes = request.getResourceExcludes();
+
+                    // MCHECKSTYLE-214: Only with project-root respect in/excludes, otherwise you'll get every file
+                    if ( resourcesDirectory.equals( request.getProject().getBasedir() ) )
+                    {
+                        String resourceIncludes = StringUtils.join( resource.getIncludes().iterator(), "," );
+                        if ( StringUtils.isEmpty( includes ) )
+                        {
+                            includes = resourceIncludes;
+                        }
+                        else
+                        {
+                            includes += "," + resourceIncludes;
+                        }
+                        
+                        String resourceExcludes = StringUtils.join( resource.getExcludes().iterator(), "," );
+                        if( StringUtils.isEmpty( excludes ) )
+                        {
+                            excludes = resourceExcludes;
+                        }
+                        else
+                        {
+                            excludes += "," + resourceExcludes;
+                        }
+                    }
+                    
                     List<File> resourceFiles =
-                        FileUtils.getFiles( resourcesDirectory, request.getResourceIncludes(),
-                                            request.getResourceExcludes() );
+                        FileUtils.getFiles( resourcesDirectory, includes, excludes );
                     files.addAll( resourceFiles );
                     getLogger().debug( "Added " + resourceFiles.size() + " resource files found in '"
                             + resourcesDirectory.getAbsolutePath() + "'." );
