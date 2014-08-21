@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -163,7 +165,7 @@ public class DefaultCheckstyleExecutor
                                     testSourceDirectories );
         }
 
-        List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
+        final List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
 
         for ( String path : classPathStrings )
         {
@@ -200,7 +202,14 @@ public class DefaultCheckstyleExecutor
             }
         }
 
-        URLClassLoader projectClassLoader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
+        URLClassLoader projectClassLoader = AccessController.doPrivileged( new PrivilegedAction<URLClassLoader>()
+        {
+            public URLClassLoader run()
+            {
+                return new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
+            }
+        } );
+
         checker.setClassloader( projectClassLoader );
 
         checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
