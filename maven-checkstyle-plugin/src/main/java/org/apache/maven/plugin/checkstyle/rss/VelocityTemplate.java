@@ -89,27 +89,21 @@ public class VelocityTemplate
     public void generate( String outputFilename, String template, Context context )
         throws VelocityException, MojoExecutionException, IOException
     {
-        File f;
+        Writer writer = null;
 
         try
         {
-            f = new File( outputFilename );
+            File f = new File( outputFilename );
 
             if ( !f.getParentFile().exists() )
             {
                 f.getParentFile().mkdirs();
             }
 
-            Writer writer = new FileWriter( f );
+            writer = new FileWriter( f );
 
             getVelocity().getEngine().mergeTemplate( templateDirectory + "/" + template, context, writer );
-
-            writer.flush();
-            writer.close();
-
-            getLog().debug( "File " + outputFilename + " created..." );
         }
-
         catch ( ResourceNotFoundException e )
         {
             throw new ResourceNotFoundException( "Template not found: " + templateDirectory + "/" + template, e );
@@ -125,6 +119,16 @@ public class VelocityTemplate
         catch ( Exception e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+        finally
+        {
+            if ( writer != null )
+            {
+                writer.flush();
+                writer.close();
+
+                getLog().debug( "File " + outputFilename + " created..." );
+            }
         }
     }
 
