@@ -27,8 +27,13 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
  * @author Hervé Boutemy
  * @since 2.13
  */
-public class RuleUtil
+public final class RuleUtil
 {
+    private RuleUtil()
+    {
+        // hide utility class constructor
+    }
+    
     private static final String CHECKSTYLE_PACKAGE = "com.puppycrawl.tools.checkstyle.checks";
 
     /**
