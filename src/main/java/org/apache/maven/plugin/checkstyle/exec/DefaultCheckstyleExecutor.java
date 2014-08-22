@@ -257,14 +257,17 @@ public class DefaultCheckstyleExecutor
 
         checker.destroy();
 
-        try
+        if ( projectClassLoader instanceof Closeable )
         {
-            projectClassLoader.close();
-        }
-        catch ( IOException ex )
-        {
-            // Nothing we can do - and not detrimental to the build (save running out of file handles).
-            getLogger().info( "Failed to close custom Classloader - this indicated a bug in the code.", ex );
+            try
+            {
+                ( ( Closeable ) projectClassLoader ).close();
+            }
+            catch ( IOException ex ) 
+            {
+                // Nothing we can do - and not detrimental to the build (save running out of file handles).
+                getLogger().info( "Failed to close custom Classloader - this indicated a bug in the code.", ex );
+            }
         }
 
         if ( request.getStringOutputStream() != null )
