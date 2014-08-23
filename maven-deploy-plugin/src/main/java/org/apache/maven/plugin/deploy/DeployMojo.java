@@ -67,7 +67,7 @@ public class DeployMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
