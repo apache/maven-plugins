@@ -64,7 +64,7 @@ public class DeployFileMojo
     /**
      * The default Maven project created when building the plugin
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
