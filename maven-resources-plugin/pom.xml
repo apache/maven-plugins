@@ -66,7 +66,7 @@ under the License.
 
   <properties>
     <mavenFilteringVersion>1.2</mavenFilteringVersion>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
