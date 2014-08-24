@@ -259,7 +259,7 @@ public class ChangeLogReport
     /**
      * The Maven Project Object
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -285,7 +285,7 @@ public class ChangeLogReport
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
