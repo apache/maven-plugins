@@ -74,7 +74,7 @@ public abstract class AbstractPmdReport
     /**
      * The project to analyse.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
