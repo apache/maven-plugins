@@ -162,7 +162,7 @@ public class DoapMojo
     /**
      * The POM from which information will be extracted to create a DOAP file.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -224,7 +224,7 @@ public class DoapMojo
      *
      * @since 1.1
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     protected Settings settings;
 
     // ----------------------------------------------------------------------
