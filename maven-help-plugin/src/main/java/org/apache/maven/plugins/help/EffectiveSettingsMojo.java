@@ -20,7 +20,6 @@ package org.apache.maven.plugins.help;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Profile;
@@ -61,7 +60,7 @@ public class EffectiveSettingsMojo
      * The system settings for Maven. This is the instance resulting from
      * merging global and user-level settings files.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
