@@ -26,7 +26,6 @@ import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssueUtils;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
@@ -206,7 +205,7 @@ public class JiraMojo
     /**
      * Settings XML configuration.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
