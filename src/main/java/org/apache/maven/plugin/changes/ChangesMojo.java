@@ -183,7 +183,7 @@ public class ChangesMojo
     /**
      * @since 2.2
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
 
     /**
