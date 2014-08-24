@@ -363,10 +363,10 @@ public abstract class AbstractInvokerMojo
      *
      * @since 1.1
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
-    @Component
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
     private MojoExecution mojoExecution;
 
     /**
@@ -453,7 +453,7 @@ public abstract class AbstractInvokerMojo
      *
      * @since 1.2
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
