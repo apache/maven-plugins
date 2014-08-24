@@ -55,7 +55,7 @@ public class ToolchainMojo
      * The current build session instance. This is used for
      * toolchain manager API calls.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
