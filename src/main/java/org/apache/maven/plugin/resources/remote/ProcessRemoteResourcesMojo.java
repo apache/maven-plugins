@@ -199,7 +199,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The current Maven project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -342,7 +342,7 @@ public class ProcessRemoteResourcesMojo
     /**
      * The Maven session.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession mavenSession;
 
     /**
