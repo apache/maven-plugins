@@ -36,7 +36,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.docck.reports.DocumentationReport;
 import org.apache.maven.plugin.docck.reports.DocumentationReporter;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
@@ -97,7 +96,7 @@ public abstract class AbstractCheckDocumentationMojo
     /**
      * The current user system settings for use in Maven.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     private HttpClient httpClient;
