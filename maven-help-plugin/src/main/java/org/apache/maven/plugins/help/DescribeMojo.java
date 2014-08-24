@@ -133,14 +133,14 @@ public class DescribeMojo
      * parameter is empty at execution time, this Mojo will instead use the
      * super-project.
      */
-    @Component
+    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
      * The current build session instance. This is used for
      * plugin manager API calls.
      */
-    @Component
+    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**

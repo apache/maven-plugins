@@ -144,7 +144,7 @@ public class EvaluateMojo
     /**
      * The current Maven project or the super pom.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
@@ -156,13 +156,13 @@ public class EvaluateMojo
     /**
      * The system settings for Maven.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     protected Settings settings;
 
     /**
      * The current Maven session.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     // ----------------------------------------------------------------------
