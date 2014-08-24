@@ -182,7 +182,7 @@ public class AnnouncementMojo
     /**
      * The Maven Project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
@@ -334,7 +334,7 @@ public class AnnouncementMojo
     /**
      * Settings XML configuration.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**

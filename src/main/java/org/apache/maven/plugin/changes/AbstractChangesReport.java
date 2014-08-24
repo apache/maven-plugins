@@ -108,7 +108,7 @@ public abstract class AbstractChangesReport
      *
      * @since 2.10
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession mavenSession;
 
     /**
@@ -120,7 +120,7 @@ public abstract class AbstractChangesReport
     /**
      * The Maven Project.
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**

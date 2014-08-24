@@ -33,7 +33,6 @@ import javax.mail.internet.InternetAddress;
 import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.announcement.mailsender.ProjectJavamailMailSender;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -115,7 +114,7 @@ public class AnnouncementMailMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**

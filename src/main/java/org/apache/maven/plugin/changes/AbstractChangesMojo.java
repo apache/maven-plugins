@@ -21,7 +21,6 @@ package org.apache.maven.plugin.changes;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
@@ -46,7 +45,7 @@ public abstract class AbstractChangesMojo
      *
      * @since 2.3
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession mavenSession;
 
     /**
