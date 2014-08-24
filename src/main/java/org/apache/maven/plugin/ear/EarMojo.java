@@ -245,7 +245,7 @@ public class EarMojo
     /**
      * @since 2.3.2
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     private List filterWrappers;
