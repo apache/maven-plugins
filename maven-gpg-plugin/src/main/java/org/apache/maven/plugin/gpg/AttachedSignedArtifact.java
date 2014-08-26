@@ -19,6 +19,12 @@ package org.apache.maven.plugin.gpg;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
@@ -27,12 +33,6 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.artifact.versioning.VersionRange;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * A wrapper class for attached artifacts which have a GPG signature. Needed as attached artifacts in general do not
@@ -211,11 +211,6 @@ public class AttachedSignedArtifact
         return delegate.equals( o );
     }
 
-    public int compareTo( Object o )
-    {
-        return delegate.compareTo( o );
-    }
-
     public void updateVersion( String version, ArtifactRepository localRepository )
     {
         delegate.updateVersion( version, localRepository );
@@ -307,5 +302,16 @@ public class AttachedSignedArtifact
             result.add( signature );
         }
         return result;
+    }
+
+    public int compareTo( Artifact o )
+    {
+        return delegate.compareTo( o );
+    }
+
+    public ArtifactMetadata getMetadata( Class<?> metadataClass )
+    {
+        // TODO Auto-generated method stub
+        return delegate.getMetadata( metadataClass );
     }
 }
