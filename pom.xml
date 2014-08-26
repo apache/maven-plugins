@@ -57,7 +57,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>2.0.6</mavenVersion>
+    <mavenVersion>2.2.1</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
@@ -81,6 +81,11 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-repository-metadata</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
