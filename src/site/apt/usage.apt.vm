@@ -38,8 +38,6 @@ Usage
   mvn package
 +--------------+
 
-  Pay attention that prior to Maven 3.0.4, the plugin's extension must be enabled since the <<<app-client>>>
-  packaging type is new.
 
 +-------+
 <project>
