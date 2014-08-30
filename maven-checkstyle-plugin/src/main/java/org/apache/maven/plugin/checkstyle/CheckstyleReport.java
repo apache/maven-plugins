@@ -108,7 +108,7 @@ public class CheckstyleReport
      * defines a Checkstyle property named
      * <code>checkstyle.suppressions.file</code> with the value of this
      * property. This allows using the Checkstyle property in your own custom
-     * checkstyle configuration file when specifying a suppressions file.
+     * Checkstyle configuration file when specifying a suppressions file.
      *
      * @deprecated Use suppressionsLocation instead.
      */

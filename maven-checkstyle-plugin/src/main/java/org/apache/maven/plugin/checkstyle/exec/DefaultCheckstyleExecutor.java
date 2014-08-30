@@ -30,7 +30,6 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -86,10 +85,10 @@ public class DefaultCheckstyleExecutor
     public CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException
     {
-        // checkstyle will always use the context classloader in order
+        // Checkstyle will always use the context classloader in order
         // to load resources (dtds),
         // so we have to fix it
-        // olamy this hack is not anymore needed in maven 3.x
+        // olamy this hack is not anymore needed in Maven 3.x
         ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();
         Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
 
@@ -339,7 +338,7 @@ public class DefaultCheckstyleExecutor
     {
         try
         {
-            // checkstyle will always use the context classloader in order
+            // Checkstyle will always use the context classloader in order
             // to load resources (dtds),
             // so we have to fix it
             ClassLoader checkstyleClassLoader = PackageNamesLoader.class.getClassLoader();

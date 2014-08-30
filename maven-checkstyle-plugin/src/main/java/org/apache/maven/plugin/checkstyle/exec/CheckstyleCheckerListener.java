@@ -64,7 +64,7 @@ public class CheckstyleCheckerListener
     }
     /**
      * @param sourceDirectory assume that is <code>sourceDirectory</code> is a not null directory and exists
-     * @param configuration checkstyle configuration
+     * @param configuration Checkstyle configuration
      * @since 2.5
      */
     public CheckstyleCheckerListener( File sourceDirectory, Configuration configuration )
@@ -75,7 +75,7 @@ public class CheckstyleCheckerListener
     }
 
     /**
-     * @param configuration checkstyle configuration
+     * @param configuration Checkstyle configuration
      * @since 2.5
      */
     public CheckstyleCheckerListener( Configuration configuration )
