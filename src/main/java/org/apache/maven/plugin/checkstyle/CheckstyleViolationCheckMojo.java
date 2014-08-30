@@ -95,7 +95,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Specifies the format of the output to be used when writing to the output
-     * file. Valid values are "plain" and "xml".
+     * file. Valid values are "<code>plain</code>" and "<code>xml</code>".
      */
     @Parameter( property = "checkstyle.output.format", defaultValue = "xml" )
     private String outputFileFormat;
@@ -120,7 +120,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * The lowest severity level that is considered a violation.
-     * Valid values are "error", "warning" and "info".
+     * Valid values are "<code>error</code>", "<code>warning</code>" and "<code>info</code>".
      *
      * @since 2.2
      */
@@ -145,7 +145,7 @@ public class CheckstyleViolationCheckMojo
     private boolean skip;
 
     /**
-     * Skip checktyle execution will only scan the outputFile.
+     * Skip Checkstyle execution will only scan the outputFile.
      *
      * @since 2.5
      */
@@ -282,13 +282,13 @@ public class CheckstyleViolationCheckMojo
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the suppressions XML is copied into the
-     * <code>${project.build.directory}/checkstyle-supressions.xml</code> file
+     * <code>${project.build.directory}/checkstyle-suppressions.xml</code> file
      * before being passed to Checkstyle for loading.
      * </p>
      * <p/>
      * <p>
      * See <code>suppressionsFileExpression</code> for the property that will
-     * be made available to your checkstyle configuration.
+     * be made available to your Checkstyle configuration.
      * </p>
      *
      * @since 2.0-beta-2
@@ -321,17 +321,17 @@ public class CheckstyleViolationCheckMojo
     /**
      * The Maven Project Object.
      */
-    @Parameter ( defaultValue = "${project}", readonly = true )
+    @Parameter ( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
     
     /**
      * The Plugin Descriptor
      */
-    @Parameter( defaultValue = "${plugin}", readonly = true )
+    @Parameter( defaultValue = "${plugin}", readonly = true, required = true )
     private PluginDescriptor plugin;
 
     // remove when requiring Maven 3.x, just use #plugin 
-    @Parameter( defaultValue = "${mojoExecution}", readonly = true )
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
     private MojoExecution mojoExecution;
 
     /**
@@ -370,8 +370,8 @@ public class CheckstyleViolationCheckMojo
     private String resourceIncludes;
 
     /**
-     * If this is true, and checkstyle reported any violations or errors,
-     * the build fails immediately after running checkstyle, before checking the log
+     * If this is true, and Checkstyle reported any violations or errors,
+     * the build fails immediately after running Checkstyle, before checking the log
      * for {@link #logViolationsToConsole}. If you want to use {@link #logViolationsToConsole},
      * use {@link #failOnViolation} instead of this.
      */
@@ -436,7 +436,7 @@ public class CheckstyleViolationCheckMojo
     private boolean includeTestResources = true;
 
     /**
-     * By using this property, you can specify the whole checkstyle rules
+     * By using this property, you can specify the whole Checkstyle rules
      * inline directly inside this pom.
      *
      * <pre>
@@ -463,7 +463,7 @@ public class CheckstyleViolationCheckMojo
     private PlexusConfiguration checkstyleRules;
 
     /**
-     * dump file for inlined checkstyle rules 
+     * dump file for inlined Checkstyle rules 
      */
     @Parameter( property = "checkstyle.output.rules.file",
                     defaultValue = "${project.build.directory}/checkstyle-rules.xml" )

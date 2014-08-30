@@ -184,7 +184,7 @@ public abstract class AbstractCheckstyleReport
     private File outputDirectory;
 
     /**
-     * Specifies the path and filename to save the checkstyle output. The format
+     * Specifies the path and filename to save the Checkstyle output. The format
      * of the output file is determined by the <code>outputFileFormat</code>
      * parameter.
      */
@@ -343,7 +343,7 @@ public abstract class AbstractCheckstyleReport
      * <p/>
      * <p>
      * See <code>suppressionsFileExpression</code> for the property that will
-     * be made available to your checkstyle configuration.
+     * be made available to your Checkstyle configuration.
      * </p>
      *
      * @since 2.0-beta-2
@@ -360,7 +360,7 @@ public abstract class AbstractCheckstyleReport
 
     /**
      * Specifies the format of the output to be used when writing to the output
-     * file. Valid values are "plain" and "xml".
+     * file. Valid values are "<code>plain</code>" and "<code>xml</code>".
      */
     @Parameter( property = "checkstyle.output.format", defaultValue = "xml" )
     private String outputFileFormat;
@@ -400,18 +400,18 @@ public abstract class AbstractCheckstyleReport
     /**
      * The Maven Project Object.
      */
-    @Parameter( defaultValue = "${project}", readonly = true )
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
     
     
     /**
      * The Plugin Descriptor
      */
-    @Parameter( defaultValue = "${plugin}", readonly = true )
+    @Parameter( defaultValue = "${plugin}", readonly = true, required = true )
     private PluginDescriptor plugin;
 
     // remove when requiring Maven 3.x, just use #plugin 
-    @Parameter( defaultValue = "${mojoExecution}", readonly = true )
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
     private MojoExecution mojoExecution;
     
     /**
@@ -503,12 +503,10 @@ public abstract class AbstractCheckstyleReport
 
         locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
 
-        // for when we start using maven-shared-io and
-        // maven-shared-monitor...
+        // for when we start using maven-shared-io and maven-shared-monitor...
         // locator = new Locator( new MojoLogMonitorAdaptor( getLog() ) );
 
-        // locator = new Locator( getLog(), new File(
-        // project.getBuild().getDirectory() ) );
+        // locator = new Locator( getLog(), new File( project.getBuild().getDirectory() ) );
 
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
