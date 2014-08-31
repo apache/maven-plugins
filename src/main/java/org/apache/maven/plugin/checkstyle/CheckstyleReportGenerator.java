@@ -22,9 +22,7 @@ package org.apache.maven.plugin.checkstyle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -205,12 +203,12 @@ public class CheckstyleReportGenerator
      * specified default value will be returned.
      *
      * @param config The current Checkstyle configuration
-     * @param parentConfigurations The configurations for the parents of the current configuration
+     * @param parentConfiguration The configuration of the parent of the current configuration
      * @param attributeName The name of the attribute
      * @param defaultValue The default value to use if the attribute cannot be found in any configuration
      * @return The value of the specified attribute
      */
-    private String getConfigAttribute( Configuration config, List<Configuration> parentConfigurations,
+    private String getConfigAttribute( Configuration config, ChainedItem<Configuration> parentConfiguration,
                                        String attributeName, String defaultValue )
     {
         String ret;
@@ -221,13 +219,11 @@ public class CheckstyleReportGenerator
         catch ( CheckstyleException e )
         {
             // Try to find the attribute in a parent, if there are any
-            if ( parentConfigurations != null && !parentConfigurations.isEmpty() )
+            if ( parentConfiguration != null )
             {
-                Configuration parentConfiguration = parentConfigurations.get( parentConfigurations.size() - 1 );
-                List<Configuration> newParentConfigurations = new ArrayList<Configuration>( parentConfigurations );
-                // Remove the last parent
-                newParentConfigurations.remove( parentConfiguration );
-                ret = getConfigAttribute( parentConfiguration, newParentConfigurations, attributeName, defaultValue );
+                ret =
+                    getConfigAttribute( parentConfiguration.value, parentConfiguration.parent, attributeName,
+                                        defaultValue );
             }
             else
             {
@@ -278,7 +274,10 @@ public class CheckstyleReportGenerator
         // Top level should be the checker.
         if ( "checker".equalsIgnoreCase( checkstyleConfig.getName() ) )
         {
-            doRuleChildren( checkstyleConfig, null, results );
+            for ( ConfReference ref: sortConfiguration( results ) )
+            {
+                doRuleRow( ref, results );
+            }
         }
         else
         {
@@ -295,59 +294,6 @@ public class CheckstyleReportGenerator
     }
 
     /**
-     * Create a summary for each Checkstyle rule.
-     *
-     * @param configuration The Checkstyle configuration
-     * @param parentConfigurations A List of configurations for the chain of parents to the current configuration
-     * @param results The results to summarize
-     */
-    private void doRuleChildren( Configuration configuration, List<Configuration> parentConfigurations,
-                                 CheckstyleResults results )
-    {
-        // Remember the chain of parent configurations
-        if ( parentConfigurations == null )
-        {
-            parentConfigurations = new ArrayList<Configuration>();
-        }
-        // The "oldest" parent will be first in the list
-        parentConfigurations.add( configuration );
-
-        if ( getLog().isDebugEnabled() )
-        {
-            // Log the parent configuration path
-            StringBuilder parentPath = new StringBuilder();
-            for ( Iterator<Configuration> iterator = parentConfigurations.iterator(); iterator.hasNext(); )
-            {
-                Configuration parentConfiguration = iterator.next();
-                parentPath.append( parentConfiguration.getName() );
-                if ( iterator.hasNext() )
-                {
-                    parentPath.append( " --> " );
-                }
-            }
-            if ( parentPath.length() > 0 )
-            {
-                getLog().debug( "Parent Configuration Path: " + parentPath.toString() );
-            }
-        }
-
-        for ( Configuration configChild : configuration.getChildren() )
-        {
-            String ruleName = configChild.getName();
-
-            if ( treeWalkerNames.contains( ruleName ) )
-            {
-                // special sub-case: TreeWalker is the parent of multiple rules, not an effective rule
-                doRuleChildren( configChild, parentConfigurations, results );
-            }
-            else
-            {
-                doRuleRow( configChild, parentConfigurations, ruleName, results );
-            }
-        }
-    }
-
-    /**
      * Create a summary for one Checkstyle rule.
      *
      * @param checkerConfig Configuration for the Checkstyle rule
@@ -355,25 +301,17 @@ public class CheckstyleReportGenerator
      * @param ruleName The name of the rule, for example "JavadocMethod"
      * @param results The results to summarize
      */
-    private void doRuleRow( Configuration checkerConfig, List<Configuration> parentConfigurations, String ruleName,
-                            CheckstyleResults results )
+    private void doRuleRow( ConfReference ref, CheckstyleResults results )
     {
-        String fixedmessage = getConfigAttribute( checkerConfig, null, "message", null );
-        // Grab the severity from the rule configuration, use null as default value
-        String configSeverity = getConfigAttribute( checkerConfig, null, "severity", null );
-        long violations = countRuleViolation( results.getFiles().values(), ruleName, fixedmessage, configSeverity );
-
-        if ( violations == 0 )
-        {
-            // skip rules without violations
-            return;
-        }
+        Configuration checkerConfig = ref.configuration;
+        ChainedItem<Configuration> parentConfiguration = ref.parentConfiguration;
+        String ruleName = checkerConfig.getName();
 
         sink.tableRow();
 
         // column 1: rule category
         sink.tableCell();
-        String category = RuleUtil.getCategory( lastMatchedEvent );
+        String category = ref.category;
         sink.text( category );
         sink.tableCell_();
 
@@ -458,14 +396,14 @@ public class CheckstyleReportGenerator
 
         // column 3: rule violation count
         sink.tableCell();
-        sink.text( String.valueOf( violations ) );
+        sink.text( String.valueOf( ref.violations ) );
         sink.tableCell_();
 
         // column 4: severity
         sink.tableCell();
         // Grab the severity from the rule configuration, this time use error as default value
         // Also pass along all parent configurations, so that we can try to find the severity there
-        String severity = getConfigAttribute( checkerConfig, parentConfigurations, "severity", "error" );
+        String severity = getConfigAttribute( checkerConfig, parentConfiguration, "severity", "error" );
         iconTool.iconSeverity( severity, IconTool.TEXT_SIMPLE );
         sink.tableCell_();
 
@@ -509,37 +447,6 @@ public class CheckstyleReportGenerator
         }
 
         return true;
-    }
-
-    private AuditEvent lastMatchedEvent = null; // TODO better implementation...
-    /**
-     * Count the number of violations for the given rule.
-     *
-     * @param files A collection over the set of files that has violations
-     * @param ruleName The name of the rule
-     * @param expectedMessage A message that, if it's not null, will be matched to the message from the violation
-     * @param expectedSeverity A severity that, if it's not null, will be matched to the severity from the violation
-     * @return The number of rule violations
-     */
-    public long countRuleViolation( Collection<List<AuditEvent>> files, String ruleName, String expectedMessage,
-                                    String expectedSeverity )
-    {
-        long count = 0;
-        lastMatchedEvent = null;
-
-        for ( List<AuditEvent> errors : files )
-        {
-            for ( AuditEvent event : errors )
-            {
-                if ( matchRule( event, ruleName, expectedMessage, expectedSeverity ) )
-                {
-                    lastMatchedEvent = event;
-                    count++;
-                }
-            }
-        }
-
-        return count;
     }
 
     private void doSeveritySummary( CheckstyleResults results )
@@ -857,4 +764,102 @@ public class CheckstyleReportGenerator
 
         return ( checkstyleApiPackage == null ) ? null : checkstyleApiPackage.getImplementationVersion();
     }
+
+    public List<ConfReference> sortConfiguration( CheckstyleResults results )
+    {
+        List<ConfReference> result = new ArrayList<ConfReference>();
+
+        sortConfiguration( result, checkstyleConfig, null, results );
+
+        Collections.sort( result );
+
+        return result;
+    }
+
+    private void sortConfiguration( List<ConfReference> result, Configuration config,
+                                    ChainedItem<Configuration> parent, CheckstyleResults results )
+    {
+        for ( Configuration childConfig : config.getChildren() )
+        {
+            String ruleName = childConfig.getName();
+
+            if ( treeWalkerNames.contains( ruleName ) )
+            {
+                // special sub-case: TreeWalker is the parent of multiple rules, not an effective rule
+                sortConfiguration( result, childConfig, new ChainedItem<Configuration>( config, parent ), results );
+            }
+            else
+            {
+                String fixedmessage = getConfigAttribute( childConfig, null, "message", null );
+                // Grab the severity from the rule configuration, use null as default value
+                String configSeverity = getConfigAttribute( childConfig, null, "severity", null );
+
+                // count rule violations
+                long violations = 0;
+                AuditEvent lastMatchedEvent = null;
+                for ( List<AuditEvent> errors : results.getFiles().values() )
+                {
+                    for ( AuditEvent event : errors )
+                    {
+                        if ( matchRule( event, ruleName, fixedmessage, configSeverity ) )
+                        {
+                            lastMatchedEvent = event;
+                            violations++;
+                        }
+                    }
+                }
+
+                if ( violations > 0 ) // forget rules without violations
+                {
+                    String category = RuleUtil.getCategory( lastMatchedEvent );
+
+                    result.add( new ConfReference( category, childConfig, parent, violations, result.size() ) );
+                }
+            }
+        }
+    }
+
+    private static class ConfReference
+        implements Comparable<ConfReference>
+    {
+        private final String category;
+        private final Configuration configuration;
+        private final ChainedItem<Configuration> parentConfiguration;
+        private final long violations;
+        private final int count;
+
+        public ConfReference( String category, Configuration configuration,
+                              ChainedItem<Configuration> parentConfiguration, long violations, int count )
+        {
+            this.category = category;
+            this.configuration = configuration;
+            this.parentConfiguration = parentConfiguration;
+            this.violations = violations;
+            this.count = count;
+        }
+
+        public int compareTo( ConfReference o )
+        {
+            int compare = category.compareTo( o.category );
+            if ( compare == 0 )
+            {
+                compare = configuration.getName().compareTo( o.configuration.getName() );
+            }
+            return ( compare == 0 ) ? ( o.count - count ) : compare;
+        }
+    }
+
+    private static class ChainedItem<T>
+    {
+        private final ChainedItem<T> parent;
+
+        private final T value;
+
+        public ChainedItem( T value, ChainedItem<T> parent )
+        {
+            this.parent = parent;
+            this.value = value;
+        }
+    }
+
 }
