@@ -208,6 +208,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected MavenProject getProject()
     {
         return project;
@@ -216,6 +217,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -426,6 +428,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canGenerateReport()
     {
         if ( aggregate && !project.isExecutionRoot() )
@@ -462,6 +465,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();

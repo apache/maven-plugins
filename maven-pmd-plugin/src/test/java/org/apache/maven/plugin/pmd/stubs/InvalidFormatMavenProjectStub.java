@@ -74,7 +74,7 @@ public class InvalidFormatMavenProjectStub
         setBuild( build );
 
         String basedir = getBasedir().getAbsolutePath();
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( basedir + "/src/test/resources/unit/invalid-format/invalid/format" );
         setCompileSourceRoots( compileSourceRoots );
 
@@ -87,12 +87,14 @@ public class InvalidFormatMavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Build getBuild()
     {
         return build;
