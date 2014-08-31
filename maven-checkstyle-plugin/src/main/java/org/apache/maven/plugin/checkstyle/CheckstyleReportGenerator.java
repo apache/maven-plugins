@@ -274,9 +274,12 @@ public class CheckstyleReportGenerator
         // Top level should be the checker.
         if ( "checker".equalsIgnoreCase( checkstyleConfig.getName() ) )
         {
+            String category = null;
             for ( ConfReference ref: sortConfiguration( results ) )
             {
-                doRuleRow( ref, results );
+                doRuleRow( ref, results, category );
+
+                category = ref.category;
             }
         }
         else
@@ -296,12 +299,11 @@ public class CheckstyleReportGenerator
     /**
      * Create a summary for one Checkstyle rule.
      *
-     * @param checkerConfig Configuration for the Checkstyle rule
-     * @param parentConfigurations Configurations for the parents of this rule
-     * @param ruleName The name of the rule, for example "JavadocMethod"
+     * @param ref The configuration reference for the row
      * @param results The results to summarize
+     * @param previousCategory The previous row's category
      */
-    private void doRuleRow( ConfReference ref, CheckstyleResults results )
+    private void doRuleRow( ConfReference ref, CheckstyleResults results, String previousCategory )
     {
         Configuration checkerConfig = ref.configuration;
         ChainedItem<Configuration> parentConfiguration = ref.parentConfiguration;
@@ -312,7 +314,10 @@ public class CheckstyleReportGenerator
         // column 1: rule category
         sink.tableCell();
         String category = ref.category;
-        sink.text( category );
+        if ( !category.equals( previousCategory ) )
+        {
+            sink.text( category );
+        }
         sink.tableCell_();
 
         // column 2: Rule name + configured attributes
