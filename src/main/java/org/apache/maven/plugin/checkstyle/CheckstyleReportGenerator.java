@@ -342,9 +342,7 @@ public class CheckstyleReportGenerator
             {
                 sink.listItem();
 
-                sink.bold();
                 sink.text( name );
-                sink.bold_();
 
                 String value = getConfigAttribute( checkerConfig, null, name, "" );
                 // special case, Header.header and RegexpHeader.header
