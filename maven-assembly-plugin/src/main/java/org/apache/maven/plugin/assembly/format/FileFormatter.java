@@ -19,8 +19,18 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Locale;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.codehaus.plexus.logging.Logger;
@@ -28,15 +38,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Locale;
 
 /**
  * @version $Id$
@@ -79,7 +80,7 @@ public class FileFormatter
             result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString() );
         }
 
-        String lineEndingChars = AssemblyFileUtils.getLineEndingCharacters( lineEnding );
+        String lineEndingChars = LineEndingsUtils.getLineEndingCharacters( lineEnding );
         if ( lineEndingChars != null )
         {
             result = formatLineEndings( lineEndingChars, result, tempRoot, encoding );
@@ -121,7 +122,7 @@ public class FileFormatter
         {
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
-            AssemblyFileUtils.convertLineEndings( source, target, lineEndingChars, null, encoding );
+            LineEndingsUtils.convertLineEndings( source, target, lineEndingChars, null, encoding );
 
             return target;
         }

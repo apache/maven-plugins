@@ -19,16 +19,18 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
-
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @version $Id$
@@ -51,7 +53,7 @@ public class FileSetFormatter
     {
         String lineEndingHint = set.getLineEnding();
 
-        String lineEnding = AssemblyFileUtils.getLineEndingCharacters( lineEndingHint );
+        String lineEnding = LineEndingsUtils.getLineEndingCharacters( lineEndingHint );
 
         if ( ( lineEnding != null ) || set.isFiltered() )
         {

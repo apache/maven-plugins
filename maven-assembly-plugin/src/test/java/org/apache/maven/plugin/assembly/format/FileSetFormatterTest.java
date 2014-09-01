@@ -29,7 +29,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
@@ -92,7 +92,7 @@ public class FileSetFormatterTest
         throws AssemblyFormattingException, IOException
     {
         final FileSet fs = new FileSet();
-        fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_KEEP );
+        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_KEEP );
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
@@ -110,7 +110,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_LF );
+        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_LF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addExclude( "**/*" );
 
@@ -133,7 +133,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addInclude( "**/*.txt" );
 
@@ -175,7 +175,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addExclude( "**/two.txt" );
 
@@ -217,7 +217,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addInclude( "**/one.txt" );
 
@@ -258,7 +258,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( AssemblyFileUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
         fs.setDirectory( dir.getCanonicalPath() );
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
