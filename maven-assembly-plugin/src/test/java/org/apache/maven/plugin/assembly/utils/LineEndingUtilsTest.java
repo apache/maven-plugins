@@ -43,61 +43,6 @@ public class LineEndingUtilsTest
     extends TestCase
 {
 
-    private TestFileManager fileManager = new TestFileManager( "file-utils.test.", "" );
-
-    public void tearDown()
-        throws IOException
-    {
-        fileManager.cleanUp();
-    }
-
-    public void testUnpack_ShouldSetSourceAndDestinationAndCallExtract()
-        throws IOException, ArchiveExpansionException, NoSuchArchiverException
-    {
-        MockManager mockManager = new MockManager();
-
-        File source = fileManager.createTempFile();
-        File destDir = fileManager.createTempDir();
-
-        MockControl unarchiverCtl = MockControl.createControl( UnArchiver.class );
-        mockManager.add( unarchiverCtl );
-
-        UnArchiver unarchiver = (UnArchiver) unarchiverCtl.getMock();
-
-        MockControl archiverManagerCtl = MockControl.createControl( ArchiverManager.class );
-        mockManager.add( archiverManagerCtl );
-
-        ArchiverManager archiverManager = (ArchiverManager) archiverManagerCtl.getMock();
-
-        try
-        {
-            archiverManager.getUnArchiver( source );
-            archiverManagerCtl.setReturnValue( unarchiver );
-        }
-        catch ( NoSuchArchiverException e )
-        {
-            fail( "Should never happen." );
-        }
-
-        unarchiver.setSourceFile( source );
-        unarchiver.setDestDirectory( destDir );
-
-        try
-        {
-            unarchiver.extract();
-        }
-        catch ( ArchiverException e )
-        {
-            fail( "Should never happen." );
-        }
-
-        mockManager.replayAll();
-
-        AssemblyFileUtils.unpack( source, destDir, archiverManager );
-
-        mockManager.verifyAll();
-    }
-
     public void testGetLineEndingChars_ShouldReturnDosLineEnding()
         throws AssemblyFormattingException
     {
