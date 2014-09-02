@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-acr-plugin</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven ACR Plugin</name>
@@ -41,9 +41,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-acr-plugin-1.1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-acr-plugin-1.1</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-acr-plugin-1.1</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-acr-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-acr-plugin/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-acr-plugin/</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
