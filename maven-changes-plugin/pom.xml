@@ -141,11 +141,6 @@ under the License.
     <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9-stable-1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-mail-sender-api</artifactId>
       <version>1.0-alpha-7</version>
       <exclusions>
