@@ -29,7 +29,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
+import org.apache.maven.plugin.assembly.utils.LineEndings;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
@@ -52,7 +52,8 @@ public class FileSetFormatterTest
     private MockControl configSourceControl;
 
     @Override
-    public void setUp() throws Exception
+    public void setUp()
+        throws Exception
     {
         super.setUp();
 
@@ -69,7 +70,8 @@ public class FileSetFormatterTest
     }
 
     @Override
-    public void tearDown() throws IOException
+    public void tearDown()
+        throws IOException
     {
         fileManager.cleanUp();
     }
@@ -92,7 +94,7 @@ public class FileSetFormatterTest
         throws AssemblyFormattingException, IOException
     {
         final FileSet fs = new FileSet();
-        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_KEEP );
+        fs.setLineEnding( LineEndings.keep.name() );
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
 
@@ -110,7 +112,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_LF );
+        fs.setLineEnding( LineEndings.lf.name() );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addExclude( "**/*" );
 
@@ -121,7 +123,8 @@ public class FileSetFormatterTest
         assertEquals( dir, result );
     }
 
-    public void testShouldConvertLineEndingsOnTwoFiles() throws AssemblyFormattingException, IOException
+    public void testShouldConvertLineEndingsOnTwoFiles()
+        throws AssemblyFormattingException, IOException
     {
         final File dir = fileManager.createTempDir();
 
@@ -133,7 +136,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndings.crlf.name() );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addInclude( "**/*.txt" );
 
@@ -146,7 +149,7 @@ public class FileSetFormatterTest
         configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
 
         mockManager.replayAll();
-        
+
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -175,7 +178,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndings.crlf.name() );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addExclude( "**/two.txt" );
 
@@ -188,7 +191,7 @@ public class FileSetFormatterTest
         configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
 
         mockManager.replayAll();
-        
+
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -217,7 +220,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndings.crlf.name() );
         fs.setDirectory( dir.getCanonicalPath() );
         fs.addInclude( "**/one.txt" );
 
@@ -230,7 +233,7 @@ public class FileSetFormatterTest
         configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
 
         mockManager.replayAll();
-        
+
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -258,7 +261,7 @@ public class FileSetFormatterTest
 
         final FileSet fs = new FileSet();
 
-        fs.setLineEnding( LineEndingsUtils.LINE_ENDING_CRLF );
+        fs.setLineEnding( LineEndings.crlf.name() );
         fs.setDirectory( dir.getCanonicalPath() );
 
         final FileSetFormatter formatter = new FileSetFormatter( configSource, logger );
@@ -270,7 +273,7 @@ public class FileSetFormatterTest
         configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
 
         mockManager.replayAll();
-        
+
         final File result = formatter.formatFileSetForAssembly( dir, fs );
 
         assertFalse( dir.equals( result ) );
@@ -286,7 +289,8 @@ public class FileSetFormatterTest
         }
     }
 
-    public void testShouldFilterSeveralFiles() throws Exception
+    public void testShouldFilterSeveralFiles()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -338,8 +342,7 @@ public class FileSetFormatterTest
         model.setVersion( "version" );
 
         final MavenProject project = new MavenProject( model );
-        project.getBuild()
-               .setFilters( filterFilenames );
+        project.getBuild().setFilters( filterFilenames );
 
         configSource.getProject();
         configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );

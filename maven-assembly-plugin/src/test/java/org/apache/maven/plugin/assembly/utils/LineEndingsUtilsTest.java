@@ -19,6 +19,9 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -26,23 +29,46 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
-
-import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.IOUtil;
-import org.easymock.MockControl;
+import org.junit.Test;
 
-public class LineEndingUtilsTest
-    extends TestCase
+public class LineEndingsUtilsTest
 {
 
+    public static final String CRLF = "\r\n";
+
+    public static final String LF = "\n";
+
+    @Test
+    public void shouldWorkCauseWeTestJdkEnumConversion()
+    {
+        LineEndings lineEnding = LineEndings.valueOf( "windows" );
+        assertEquals( CRLF, lineEnding.getLineEndingCharacters() );
+    }
+
+    @Test
+    public void shouldReturnDosLineEnding()
+    {
+        assertEquals( CRLF, LineEndings.windows.getLineEndingCharacters() );
+        assertEquals( CRLF, LineEndings.dos.getLineEndingCharacters() );
+        assertEquals( CRLF, LineEndings.crlf.getLineEndingCharacters() );
+    }
+
+    @Test
+    public void shouldReturnUnixLineEnding()
+    {
+        assertEquals( LF, LineEndings.unix.getLineEndingCharacters() );
+        assertEquals( LF, LineEndings.lf.getLineEndingCharacters() );
+    }
+
+    @Test
+    public void shouldReturnNullAsLineEndingForKeep()
+    {
+        assertEquals( null, LineEndings.keep.getLineEndingCharacters() );
+    }
+
+    @Test
     public void testGetLineEndingChars_ShouldReturnDosLineEnding()
         throws AssemblyFormattingException
     {
@@ -51,6 +77,7 @@ public class LineEndingUtilsTest
         assertEquals( "\r\n", LineEndingsUtils.getLineEndingCharacters( "crlf" ) );
     }
 
+    @Test
     public void testGetLineEndingChars_ShouldReturnUnixLineEnding()
         throws AssemblyFormattingException
     {
@@ -58,177 +85,188 @@ public class LineEndingUtilsTest
         assertEquals( "\n", LineEndingsUtils.getLineEndingCharacters( "lf" ) );
     }
 
+    @Test
     public void testGetLineEndingChars_ShouldReturnNullLineEnding()
         throws AssemblyFormattingException
     {
         assertNull( LineEndingsUtils.getLineEndingCharacters( "keep" ) );
     }
 
+    @Test( expected = AssemblyFormattingException.class )
     public void testGetLineEndingChars_ShouldThrowFormattingExceptionWithInvalidHint()
+        throws AssemblyFormattingException
     {
-        try
-        {
-            LineEndingsUtils.getLineEndingCharacters( "invalid" );
-
-            fail( "Invalid line-ending hint should throw a formatting exception." );
-        }
-        catch ( AssemblyFormattingException e )
-        {
-        }
+        LineEndingsUtils.getLineEndingCharacters( "invalid" );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceLFWithCRLF()
         throws IOException
     {
         String test = "This is a \ntest.";
         String check = "This is a \r\ntest.";
 
-        testConversion( test, check, "\r\n", null );
+        testConversion( test, check, LineEndings.crlf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceLFWithCRLFAtEOF()
         throws IOException
     {
         String test = "This is a \ntest.\n";
         String check = "This is a \r\ntest.\r\n";
 
-        testConversion( test, check, "\r\n", null );
+        testConversion( test, check, LineEndings.crlf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceCRLFWithLF()
         throws IOException
     {
         String test = "This is a \r\ntest.";
         String check = "This is a \ntest.";
 
-        testConversion( test, check, "\n", null );
+        testConversion( test, check, LineEndings.lf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceCRLFWithLFAtEOF()
         throws IOException
     {
         String test = "This is a \r\ntest.\r\n";
         String check = "This is a \ntest.\n";
 
-        testConversion( test, check, "\n", null );
+        testConversion( test, check, LineEndings.lf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceLFWithLF()
         throws IOException
     {
         String test = "This is a \ntest.";
         String check = "This is a \ntest.";
 
-        testConversion( test, check, "\n", null );
+        testConversion( test, check, LineEndings.lf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceLFWithLFAtEOF()
         throws IOException
     {
         String test = "This is a \ntest.\n";
         String check = "This is a \ntest.\n";
 
-        testConversion( test, check, "\n", null );
+        testConversion( test, check, LineEndings.lf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceCRLFWithCRLF()
         throws IOException
     {
         String test = "This is a \r\ntest.";
         String check = "This is a \r\ntest.";
 
-        testConversion( test, check, "\r\n", null );
+        testConversion( test, check, LineEndings.crlf, null );
     }
 
+    @Test
     public void testConvertLineEndings_ShouldReplaceCRLFWithCRLFAtEOF()
         throws IOException
     {
         String test = "This is a \r\ntest.\r\n";
         String check = "This is a \r\ntest.\r\n";
 
-        testConversion( test, check, "\r\n", null );
+        testConversion( test, check, LineEndings.crlf, null );
     }
 
+    @Test
     public void testConvertLineEndings_LFToCRLFNoEOFForceEOF()
         throws IOException
     {
         String test = "This is a \ntest.";
         String check = "This is a \r\ntest.\r\n";
 
-        testConversion( test, check, "\r\n", true );
+        testConversion( test, check, LineEndings.crlf, true );
     }
 
+    @Test
     public void testConvertLineEndings_LFToCRLFWithEOFForceEOF()
         throws IOException
     {
         String test = "This is a \ntest.\n";
         String check = "This is a \r\ntest.\r\n";
 
-        testConversion( test, check, "\r\n", true );
+        testConversion( test, check, LineEndings.crlf, true );
     }
 
+    @Test
     public void testConvertLineEndings_LFToCRLFNoEOFStripEOF()
         throws IOException
     {
         String test = "This is a \ntest.";
         String check = "This is a \r\ntest.";
 
-        testConversion( test, check, "\r\n", false );
+        testConversion( test, check, LineEndings.crlf, false );
     }
 
+    @Test
     public void testConvertLineEndings_LFToCRLFWithEOFStripEOF()
         throws IOException
     {
         String test = "This is a \ntest.\n";
         String check = "This is a \r\ntest.";
 
-        testConversion( test, check, "\r\n", false );
+        testConversion( test, check, LineEndings.crlf, false );
     }
 
+    @Test
     public void testConvertLineEndings_CRLFToLFNoEOFForceEOF()
         throws IOException
     {
         String test = "This is a \r\ntest.";
         String check = "This is a \ntest.\n";
 
-        testConversion( test, check, "\n", true );
+        testConversion( test, check, LineEndings.lf, true );
     }
 
+    @Test
     public void testConvertLineEndings_CRLFToLFWithEOFForceEOF()
         throws IOException
     {
         String test = "This is a \r\ntest.\r\n";
         String check = "This is a \ntest.\n";
 
-        testConversion( test, check, "\n", true );
+        testConversion( test, check, LineEndings.lf, true );
     }
 
+    @Test
     public void testConvertLineEndings_CRLFToLFNoEOFStripEOF()
         throws IOException
     {
         String test = "This is a \r\ntest.";
         String check = "This is a \ntest.";
 
-        testConversion( test, check, "\n", false );
+        testConversion( test, check, LineEndings.lf, false );
     }
 
+    @Test
     public void testConvertLineEndings_CRLFToLFWithEOFStripEOF()
         throws IOException
     {
         String test = "This is a \r\ntest.\r\n";
         String check = "This is a \ntest.";
 
-        testConversion( test, check, "\n", false );
+        testConversion( test, check, LineEndings.lf, false );
     }
 
-    private void testConversion( String test, String check, String lineEndingChars, Boolean eof )
+    private void testConversion( String test, String check, LineEndings lineEndingChars, Boolean eof )
         throws IOException
     {
         File source = File.createTempFile( "line-conversion-test-in.", "" );
         source.deleteOnExit();
         File dest = File.createTempFile( "line-conversion-test-out.", "" );
         dest.deleteOnExit();
-        
+
         FileWriter sourceWriter = null;
         StringReader sourceReader = new StringReader( test );
         try
