@@ -78,7 +78,7 @@ public class WarMojoTest
         File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
@@ -107,7 +107,7 @@ public class WarMojoTest
         File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
@@ -140,7 +140,7 @@ public class WarMojoTest
         File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "projectHelper", projectHelper );
         setVariableValueToObject( mojo, "classifier", "test-classifier" );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
@@ -173,7 +173,7 @@ public class WarMojoTest
 
         warArtifact.setFile( new File( "error.war" ) );
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "projectHelper", projectHelper );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
@@ -209,7 +209,7 @@ public class WarMojoTest
 
         warArtifact.setFile( new File( "error.war" ) );
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "projectHelper", projectHelper );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
@@ -243,7 +243,7 @@ public class WarMojoTest
         createFile( configFile, "<config></config>" );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
@@ -277,7 +277,7 @@ public class WarMojoTest
         createFile( configFile, "<config></config>" );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
@@ -309,7 +309,7 @@ public class WarMojoTest
         File classesDir = createClassesDir( testId, true );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setFailOnMissingWebXml( false );
@@ -317,7 +317,7 @@ public class WarMojoTest
 
         //validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        final Map jarContent = assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "pansit.jsp",
+        final Map<String, JarEntry> jarContent = assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "pansit.jsp",
             "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
                                                                   new String[]{null, null, null, null, null} );
@@ -339,7 +339,7 @@ public class WarMojoTest
         File classesDir = createClassesDir( testId, true );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setFailOnMissingWebXml( true );
@@ -369,7 +369,7 @@ public class WarMojoTest
         File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
@@ -397,7 +397,7 @@ public class WarMojoTest
         File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
 
         project.setArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
@@ -413,13 +413,13 @@ public class WarMojoTest
     }
 
 
-    protected Map assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
+    protected Map<String, JarEntry> assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
         throws IOException
     {
         return assertJarContent( expectedJarFile, files, filesContent, null );
     }
 
-    protected Map assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent, final String[] mustNotBeInJar )
+    protected Map<String, JarEntry> assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent, final String[] mustNotBeInJar )
         throws IOException
     {
         // Sanity check
@@ -427,11 +427,11 @@ public class WarMojoTest
                       filesContent.length );
 
         assertTrue( "war file not created: " + expectedJarFile.toString(), expectedJarFile.exists() );
-        final Map jarContent = new HashMap();
+        final Map<String, JarEntry> jarContent = new HashMap<String, JarEntry>();
         final JarFile jarFile = new JarFile( expectedJarFile );
 
         JarEntry entry;
-        Enumeration enumeration = jarFile.entries();
+        Enumeration<JarEntry> enumeration = jarFile.entries();
         while ( enumeration.hasMoreElements() )
         {
             entry = (JarEntry) enumeration.nextElement();

@@ -27,16 +27,21 @@ import org.apache.maven.model.Resource;
 public class ResourceStub
     extends Resource
 {
-    String directory;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7685068931840967662L;
 
-    public List getIncludes()
+    private String directory;
+
+    public List<String> getIncludes()
     {
-        return new ArrayList();
+        return new ArrayList<String>();
     }
 
-    public List getExcludes()
+    public List<String> getExcludes()
     {
-        return new ArrayList();
+        return new ArrayList<String>();
     }
 
     public void setDirectory( String _directory )
