@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.apache.maven.plugin.assembly.utils.LineEndings;
 import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
@@ -61,7 +62,7 @@ public class FileFormatter
         return format( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
     }
 
-    public File format( @Nonnull File source, boolean filter, String lineEnding, @Nullable File tempRoot,
+    public File format( @Nonnull File source, boolean filter, String lineEndingCharacters, @Nullable File tempRoot,
                         String encoding )
         throws AssemblyFormattingException
     {
@@ -72,7 +73,7 @@ public class FileFormatter
         if ( StringUtils.isEmpty( encoding ) && filter )
         {
             logger.warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                             + ", i.e. build is platform dependent!" );
+                + ", i.e. build is platform dependent!" );
         }
 
         if ( filter )
@@ -80,10 +81,10 @@ public class FileFormatter
             result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString() );
         }
 
-        String lineEndingChars = LineEndingsUtils.getLineEndingCharacters( lineEnding );
-        if ( lineEndingChars != null )
+        LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingCharacters );
+        if ( !LineEndings.keep.equals( lineEnding ) )
         {
-            result = formatLineEndings( lineEndingChars, result, tempRoot, encoding );
+            result = formatLineEndings( lineEnding, result, tempRoot, encoding );
         }
 
         return result;
@@ -96,7 +97,7 @@ public class FileFormatter
         {
             File target = FileUtils.createTempFile( source.getName() + ".", ".filtered", tempRoot );
 
-            //@todo this test can be improved
+            // @todo this test can be improved
             boolean isPropertiesFile = source.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
 
             MavenFileFilterRequest filterRequest =
@@ -114,7 +115,7 @@ public class FileFormatter
         }
     }
 
-    private File formatLineEndings( String lineEndingChars, File source, File tempRoot, String encoding )
+    private File formatLineEndings( LineEndings lineEnding, File source, File tempRoot, String encoding )
         throws AssemblyFormattingException
     {
         Reader contentReader = null;
@@ -122,7 +123,7 @@ public class FileFormatter
         {
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
 
-            LineEndingsUtils.convertLineEndings( source, target, lineEndingChars, null, encoding );
+            LineEndingsUtils.convertLineEndings( source, target, lineEnding, null, encoding );
 
             return target;
         }
@@ -132,8 +133,7 @@ public class FileFormatter
         }
         catch ( IOException e )
         {
-            throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(),
-                                                   e );
+            throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(), e );
         }
         finally
         {

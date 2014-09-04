@@ -36,24 +36,10 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
- * Line Ending class which contains
- * convenience methods to change line endings. 
- *
+ * Line Ending class which contains convenience methods to change line endings.
  */
 public final class LineEndingsUtils
 {
-
-    public static final String LINE_ENDING_KEEP = "keep";
-
-    public static final String LINE_ENDING_DOS = "dos";
-
-    public static final String LINE_ENDING_WINDOWS = "windows";
-
-    public static final String LINE_ENDING_UNIX = "unix";
-
-    public static final String LINE_ENDING_CRLF = "crlf";
-
-    public static final String LINE_ENDING_LF = "lf";
 
     private LineEndingsUtils()
     {
@@ -73,7 +59,7 @@ public final class LineEndingsUtils
      *            based on the input file
      * @param encoding The encoding to use, null for platform encoding
      */
-    public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, String lineEndings,
+    public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, LineEndings lineEndings,
                                            Boolean atEndOfFile, String encoding )
         throws IOException
     {
@@ -94,7 +80,7 @@ public final class LineEndingsUtils
                     byte last = raf.readByte();
                     if ( last == '\n' )
                     {
-                        eofChars = lineEndings;
+                        eofChars = lineEndings.getLineEndingCharacters();
                     }
                 }
             }
@@ -115,7 +101,7 @@ public final class LineEndingsUtils
         }
         else if ( atEndOfFile == true )
         {
-            eofChars = lineEndings;
+            eofChars = lineEndings.getLineEndingCharacters();
         }
 
         BufferedReader in = null;
@@ -144,7 +130,7 @@ public final class LineEndingsUtils
                 line = in.readLine();
                 if ( line != null )
                 {
-                    out.write( lineEndings );
+                    out.write( lineEndings.getLineEndingCharacters() );
                 }
                 else
                 {
@@ -161,29 +147,41 @@ public final class LineEndingsUtils
         }
     }
 
+    public static LineEndings getLineEnding( @Nullable String lineEnding )
+        throws AssemblyFormattingException
+    {
+        LineEndings result = LineEndings.keep;
+        if ( lineEnding != null )
+        {
+            try
+            {
+                result = LineEndings.valueOf( lineEnding );
+            }
+            catch ( IllegalArgumentException e )
+            {
+                throw new AssemblyFormattingException( "Illegal lineEnding specified: '" + lineEnding + "'", e );
+            }
+        }
+        return result;
+    }
+
     @Nullable
     public static String getLineEndingCharacters( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
+
         String value = lineEnding;
+
         if ( lineEnding != null )
         {
-            if ( LINE_ENDING_KEEP.equals( lineEnding ) )
+
+            try
             {
-                value = null;
+                value = LineEndings.valueOf( lineEnding ).getLineEndingCharacters();
             }
-            else if ( LINE_ENDING_DOS.equals( lineEnding ) || LINE_ENDING_WINDOWS.equals( lineEnding )
-                || LINE_ENDING_CRLF.equals( lineEnding ) )
+            catch ( IllegalArgumentException e )
             {
-                value = "\r\n";
-            }
-            else if ( LINE_ENDING_UNIX.equals( lineEnding ) || LINE_ENDING_LF.equals( lineEnding ) )
-            {
-                value = "\n";
-            }
-            else
-            {
-                throw new AssemblyFormattingException( "Illegal lineEnding specified: '" + lineEnding + "'" );
+                throw new AssemblyFormattingException( "Illegal lineEnding specified: '" + lineEnding + "'", e );
             }
         }
 
