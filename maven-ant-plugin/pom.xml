@@ -60,7 +60,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <antVersion>1.7.1</antVersion>
+    <antVersion>1.8.1</antVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
