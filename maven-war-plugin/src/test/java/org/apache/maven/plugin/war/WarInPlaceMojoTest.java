@@ -73,7 +73,7 @@ public class WarInPlaceMojoTest
 
         // configure mojo
         resources[0].setDirectory( webAppResource.getAbsolutePath() );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, null, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, null, project );
         setVariableValueToObject( mojo, "webResources", resources );
         mojo.execute();
 

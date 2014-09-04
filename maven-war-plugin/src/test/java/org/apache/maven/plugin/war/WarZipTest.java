@@ -82,7 +82,7 @@ public class WarZipTest
         File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
         project.setArtifact( warArtifact );
 
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         setVariableValueToObject( mojo, "workDirectory", new File( getTestDirectory(), "work" ) );

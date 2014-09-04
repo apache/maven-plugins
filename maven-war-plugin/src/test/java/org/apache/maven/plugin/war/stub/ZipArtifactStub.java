@@ -31,14 +31,12 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 public class ZipArtifactStub
     extends AbstractArtifactStub
 {
-    private ArtifactHandler artifactHandler;
-
     private File zip;
 
     public ZipArtifactStub( String basedir, ArtifactHandler artifactHandler, File zipFile )
     {
         super( basedir );
-        this.artifactHandler = artifactHandler;
+        super.setArtifactHandler( artifactHandler );
         this.zip = zipFile;
     }
 

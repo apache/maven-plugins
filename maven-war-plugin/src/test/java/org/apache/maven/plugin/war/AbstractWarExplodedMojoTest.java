@@ -109,7 +109,7 @@ public abstract class AbstractWarExplodedMojoTest
             }
         }
 
-        configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
 
         return webAppDirectory;
@@ -152,7 +152,7 @@ public abstract class AbstractWarExplodedMojoTest
      * @param webAppDirectory the webapp directory
      * @return a list of File objects that have been asserted
      */
-    protected List assertDefaultContent( File webAppDirectory )
+    protected List<File> assertDefaultContent( File webAppDirectory )
     {
         // Validate content of the webapp
         File expectedWebSourceFile = new File( webAppDirectory, "pansit.jsp" );
@@ -161,7 +161,7 @@ public abstract class AbstractWarExplodedMojoTest
         assertTrue( "source file not found: " + expectedWebSourceFile.toString(), expectedWebSourceFile.exists() );
         assertTrue( "source file not found: " + expectedWebSource2File.toString(), expectedWebSource2File.exists() );
 
-        final List content = new ArrayList();
+        final List<File> content = new ArrayList<File>();
         content.add( expectedWebSourceFile );
         content.add( expectedWebSource2File );
 
@@ -176,12 +176,12 @@ public abstract class AbstractWarExplodedMojoTest
      * @param webAppDirectory the webapp directory
      * @return a list with the web.xml File object
      */
-    protected List assertWebXml( File webAppDirectory )
+    protected List<File> assertWebXml( File webAppDirectory )
     {
         File expectedWEBXMLFile = new File( webAppDirectory, "WEB-INF/web.xml" );
         assertTrue( "web xml not found: " + expectedWEBXMLFile.toString(), expectedWEBXMLFile.exists() );
 
-        final List content = new ArrayList();
+        final List<File> content = new ArrayList<File>();
         content.add( expectedWEBXMLFile );
 
         return content;
@@ -196,9 +196,9 @@ public abstract class AbstractWarExplodedMojoTest
      * @param customMessage   a custom message if an assertion fails
      * @return a list of File objects that have been inspected
      */
-    protected List assertCustomContent( File webAppDirectory, String[] filePaths, String customMessage )
+    protected List<File> assertCustomContent( File webAppDirectory, String[] filePaths, String customMessage )
     {
-        final List content = new ArrayList();
+        final List<File> content = new ArrayList<File>();
         for (String filePath : filePaths) {
             final File expectedFile = new File(webAppDirectory, filePath);
             if (customMessage != null) {
@@ -218,9 +218,9 @@ public abstract class AbstractWarExplodedMojoTest
      * @param expectedFiles   the expected files
      * @param filter          an optional filter to ignore some resources
      */
-    protected void assertWebAppContent( File webAppDirectory, List expectedFiles, FileFilter filter )
+    protected void assertWebAppContent( File webAppDirectory, List<File> expectedFiles, FileFilter filter )
     {
-        final List webAppContent = new ArrayList();
+        final List<File> webAppContent = new ArrayList<File>();
         if ( filter != null )
         {
             buildFilesList( webAppDirectory, filter, webAppContent );
@@ -248,7 +248,7 @@ public abstract class AbstractWarExplodedMojoTest
      * @param filter  the filter
      * @param content the current content, updated recursivly
      */
-    private void buildFilesList( final File dir, FileFilter filter, final List content )
+    private void buildFilesList( final File dir, FileFilter filter, final List<File> content )
     {
         final File[] files = dir.listFiles();
 
@@ -270,7 +270,7 @@ public abstract class AbstractWarExplodedMojoTest
         implements FileFilter
     {
 
-        private final List rejectedFilePaths;
+        private final List<String> rejectedFilePaths;
 
         private final int webAppDirIndex;
 
@@ -283,7 +283,7 @@ public abstract class AbstractWarExplodedMojoTest
             }
             else
             {
-                this.rejectedFilePaths = new ArrayList();
+                this.rejectedFilePaths = new ArrayList<String>();
             }
             this.webAppDirIndex = webAppDirectory.getAbsolutePath().length() + 1;
         }

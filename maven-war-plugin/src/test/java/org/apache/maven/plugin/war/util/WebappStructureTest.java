@@ -36,7 +36,7 @@ public class WebappStructureTest
 
     public void testDependencyAnalysisNoChange()
     {
-        final List dependencies = new ArrayList();
+        final List<Dependency> dependencies = new ArrayList<Dependency>();
         dependencies.add( createDependency( "groupTest", "artifactTest", "1.0" ) );
         final WebappStructure cache = new WebappStructure( dependencies );
 
@@ -95,10 +95,10 @@ public class WebappStructureTest
 
     public void testDependencyAnalysisWithNewDependency()
     {
-        final List dependencies = new ArrayList();
+        final List<Dependency> dependencies = new ArrayList<Dependency>();
         dependencies.add( createDependency( "groupTest", "artifactTest", "1.0" ) );
         final WebappStructure cache = new WebappStructure( dependencies );
-        final List newDependencies = new ArrayList( dependencies );
+        final List<Dependency> newDependencies = new ArrayList<Dependency>( dependencies );
         final Dependency newDependency = createDependency( "groupTest", "nexArtifact", "2.0" );
         newDependencies.add( newDependency );
 
@@ -159,13 +159,13 @@ public class WebappStructureTest
 
     public void testDependencyAnalysisWithRemovedDependency()
     {
-        final List dependencies = new ArrayList();
+        final List<Dependency> dependencies = new ArrayList<Dependency>();
         dependencies.add( createDependency( "groupTest", "artifactTest", "1.0" ) );
         final Dependency removedDependency = createDependency( "groupTest", "removedDep", "5.2" );
         dependencies.add( removedDependency );
         final WebappStructure cache = new WebappStructure( dependencies );
 
-        final List newDependencies = new ArrayList( dependencies );
+        final List<Dependency> newDependencies = new ArrayList<Dependency>( dependencies );
         newDependencies.remove( removedDependency );
         final WebappStructure webappStructure = new WebappStructure( newDependencies, cache );
 
@@ -224,13 +224,13 @@ public class WebappStructureTest
 
     public void testUnknownFileNotAvailable()
     {
-        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        final WebappStructure structure = new WebappStructure( new ArrayList<Dependency>() );
         assertFalse( structure.isRegistered( "/foo/bar.txt" ) );
     }
 
     public void testRegisterSamePathTwice()
     {
-        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        final WebappStructure structure = new WebappStructure( new ArrayList<Dependency>() );
         structure.registerFile( "overlay1", "WEB-INF/web.xml" );
         assertFalse( structure.registerFile( "currentBuild", "WEB-INF/web.xml" ) );
 
@@ -239,7 +239,7 @@ public class WebappStructureTest
     public void testRegisterForced()
     {
         final String path = "WEB-INF/web.xml";
-        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        final WebappStructure structure = new WebappStructure( new ArrayList<Dependency>() );
         assertFalse("New file should return false",
                     structure.registerFileForced( "overlay1", path ));
         assertEquals( "overlay1", structure.getOwner( path ) );         
@@ -248,7 +248,7 @@ public class WebappStructureTest
     public void testRegisterSamePathTwiceForced()
     {
         final String path = "WEB-INF/web.xml";
-        final WebappStructure structure = new WebappStructure( new ArrayList() );
+        final WebappStructure structure = new WebappStructure( new ArrayList<Dependency>() );
         structure.registerFile( "overlay1", path );
         assertEquals( "overlay1", structure.getOwner( path ) );
         assertTrue("owner replacement should have returned true",

@@ -58,7 +58,7 @@ public abstract class AbstractWarMojoTest
      * @param project
      * @throws Exception
      */
-    protected void configureMojo( AbstractWarMojo mojo, List filters, File classesDir, File webAppSource,
+    protected void configureMojo( AbstractWarMojo mojo, List<String> filters, File classesDir, File webAppSource,
                                   File webAppDir, MavenProjectBasicStub project )
         throws Exception
     {

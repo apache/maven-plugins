@@ -67,11 +67,13 @@ public class ProjectHelperStub
         artifactFile = _artifactFile;
     }
 
+    @SuppressWarnings( "rawtypes" )
     public void addResource( MavenProject project, String resourceDirectory, List includes, List excludes )
     {
 
     }
 
+    @SuppressWarnings( "rawtypes" )
     public void addTestResource( MavenProject project, String resourceDirectory, List includes, List excludes )
     {
 

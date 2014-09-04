@@ -64,7 +64,7 @@ public class WarExplodedMojoFilteringTest
         File webAppResource = new File( getTestDirectory(), testId + "-test-data/resources" );
         File sampleResource = new File( webAppResource, "custom-setting.cfg" );
         File sampleResourceWDir = new File( webAppResource, "custom-config/custom-setting.cfg" );
-        List filterList = new LinkedList();
+        List<String> filterList = new LinkedList<String>();
         ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
 
         createFile( sampleResource );

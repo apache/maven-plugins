@@ -94,7 +94,7 @@ public class PathSetTest
     {
         PathSet ps = new PathSet();
         assertEquals( "Unexpected PathSet size", ps.size(), 0 );
-        Iterator iter = ps.iterator();
+        Iterator<String> iter = ps.iterator();
         assertNotNull( "Iterator is null", iter );
         assertFalse( "Can iterate on empty set", iter.hasNext() );
 
@@ -152,7 +152,7 @@ public class PathSetTest
      */
     public void testPathsSetAddAlls()
     {
-        Set s1set = new HashSet();
+        Set<String> s1set = new HashSet<String>();
         s1set.add( "/a/b" );
         s1set.add( "a/b/c" );
         s1set.add( "a\\b/c" );

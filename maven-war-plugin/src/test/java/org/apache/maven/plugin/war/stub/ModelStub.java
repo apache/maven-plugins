@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.Profile;
 
 /**
  * Stub
@@ -82,13 +83,13 @@ public class ModelStub
         return new LinkedList();
     }
 
-    public List getProfiles()
+    public List<Profile> getProfiles()
     {
-        return new LinkedList();
+        return new LinkedList<Profile>();
     }
 
-    public List getModules()
+    public List<String> getModules()
     {
-        return new LinkedList();
+        return new LinkedList<String>();
     }
 }
