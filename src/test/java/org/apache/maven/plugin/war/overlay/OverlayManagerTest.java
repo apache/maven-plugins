@@ -45,7 +45,7 @@ public class OverlayManagerTest
         throws Exception
     {
         final MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
-        final List overlays = new ArrayList();
+        final List<Overlay> overlays = new ArrayList<Overlay>();
         try
         {
             final Overlay currentProjectOVerlay = Overlay.createInstance();
@@ -70,7 +70,7 @@ public class OverlayManagerTest
         final ArtifactStub first = newWarArtifact( "test", "test-webapp" );
         project.addArtifact( first );
 
-        final List overlays = new ArrayList();
+        final List<Overlay> overlays = new ArrayList<Overlay>();
 
         try
         {
@@ -97,7 +97,7 @@ public class OverlayManagerTest
         final ArtifactStub first = newWarArtifact( "test", "test-webapp" );
         project.addArtifact( first );
 
-        final List overlays = new ArrayList();
+        final List<Overlay> overlays = new ArrayList<Overlay>();
         overlays.add( new DefaultOverlay( first ) );
 
         try
@@ -125,7 +125,7 @@ public class OverlayManagerTest
         final ArtifactStub first = newWarArtifact( "test", "test-webapp" );
         project.addArtifact( first );
 
-        final List overlays = new ArrayList();
+        final List<Overlay> overlays = new ArrayList<Overlay>();
         overlays.add( new Overlay( "test", "test-webapp-2" ) );
 
         try
@@ -150,7 +150,7 @@ public class OverlayManagerTest
         project.addArtifact( first );
         project.addArtifact( second );
 
-        final List overlays = new ArrayList();
+        final List<Overlay> overlays = new ArrayList<Overlay>();
         overlays.add( new DefaultOverlay( first ) );
         final Overlay currentProjectOverlay = Overlay.createInstance();
         overlays.add( currentProjectOverlay );
@@ -184,7 +184,7 @@ public class OverlayManagerTest
         project.addArtifact( first );
         project.addArtifact( second );
 
-        final List overlays = new ArrayList();
+        final List<Overlay> overlays = new ArrayList<Overlay>();
         overlays.add( new DefaultOverlay( first ) );
         overlays.add( new DefaultOverlay( second ) );
 

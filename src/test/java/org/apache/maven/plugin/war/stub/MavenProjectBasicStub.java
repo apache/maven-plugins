@@ -19,14 +19,15 @@ package org.apache.maven.plugin.war.stub;
  * under the License.
  */
 
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Organization;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Organization;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Stub
@@ -45,9 +46,9 @@ public class MavenProjectBasicStub
         properties = new Properties();
     }
 
-    public Set getArtifacts()
+    public Set<Artifact> getArtifacts()
     {
-        return new HashSet();
+        return new HashSet<Artifact>();
     }
 
     public String getName()

@@ -31,12 +31,12 @@ import java.util.TreeSet;
 public class MavenProjectArtifactsStub
     extends MavenProjectBasicStub
 {
-    TreeSet artifacts;
+    TreeSet<Artifact> artifacts;
 
     public MavenProjectArtifactsStub()
         throws Exception
     {
-        artifacts = new TreeSet();
+        artifacts = new TreeSet<Artifact>();
     }
 
     public void addArtifact( ArtifactStub stub )
@@ -44,18 +44,18 @@ public class MavenProjectArtifactsStub
         artifacts.add( stub );
     }
 
-    public Set getArtifacts()
+    public Set<Artifact> getArtifacts()
     {
         return artifacts;
     }
 
-    public List getDependencies()
+    public List<Dependency> getDependencies()
     {
         if ( getArtifacts() == null )
         {
-            return new ArrayList();
+            return new ArrayList<Dependency>();
         }
-        final List dependencies = new ArrayList();
+        final List<Dependency> dependencies = new ArrayList<Dependency>();
         for (Object o : getArtifacts()) {
             Artifact a = (Artifact) o;
             Dependency dependency = new Dependency();
