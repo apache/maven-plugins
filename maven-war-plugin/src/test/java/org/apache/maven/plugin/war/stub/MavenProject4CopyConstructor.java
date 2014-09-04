@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
+
 public class MavenProject4CopyConstructor
     extends MavenProjectBasicStub
 {
@@ -35,9 +37,9 @@ public class MavenProject4CopyConstructor
         initializeParentFields();
     }
 
-    public List getAttachedArtifacts()
+    public List<Artifact> getAttachedArtifacts()
     {
-        return new LinkedList();
+        return new LinkedList<Artifact>();
     }
 
     // to prevent the MavenProject copy constructor from blowing up
@@ -45,15 +47,15 @@ public class MavenProject4CopyConstructor
     {
         // the pom should be located in the isolated dummy root         
         super.setFile( new File( getBasedir(), "pom.xml" ) );
-        super.setDependencyArtifacts( new HashSet() );
-        super.setArtifacts( new HashSet() );
-        super.setPluginArtifacts( new HashSet() );
-        super.setReportArtifacts( new HashSet() );
-        super.setExtensionArtifacts( new HashSet() );
-        super.setRemoteArtifactRepositories( new LinkedList() );
-        super.setPluginArtifactRepositories( new LinkedList() );
-        super.setCollectedProjects( new LinkedList() );
-        super.setActiveProfiles( new LinkedList() );
+        super.setDependencyArtifacts( new HashSet<Artifact>() );
+        super.setArtifacts( new HashSet<Artifact>() );
+        super.setPluginArtifacts( new HashSet<Artifact>() );
+        super.setReportArtifacts( new HashSet<Artifact>() );
+        super.setExtensionArtifacts( new HashSet<Artifact>() );
+        super.setRemoteArtifactRepositories( new LinkedList<Artifact>() );
+        super.setPluginArtifactRepositories( new LinkedList<Artifact>() );
+        super.setCollectedProjects( new LinkedList<Artifact>() );
+        super.setActiveProfiles( new LinkedList<Artifact>() );
         super.setOriginalModel( null );
         super.setExecutionProject( this );
         super.setBuild( getBuild() );

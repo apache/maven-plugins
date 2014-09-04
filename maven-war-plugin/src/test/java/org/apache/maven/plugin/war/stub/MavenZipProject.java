@@ -32,21 +32,21 @@ import org.apache.maven.artifact.Artifact;
 public class MavenZipProject
     extends MavenProject4CopyConstructor
 {
-    private Set artifacts;
+    private Set<Artifact> artifacts;
 
     public MavenZipProject()
         throws Exception
     {
         super();
-        this.artifacts = new HashSet();
+        this.artifacts = new HashSet<Artifact>();
     }
 
-    public Set getArtifacts()
+    public Set<Artifact> getArtifacts()
     {
         return this.artifacts;
     }
     
-    public Set getDependencyArtifacts()
+    public Set<Artifact> getDependencyArtifacts()
     {
         return this.artifacts;
     }

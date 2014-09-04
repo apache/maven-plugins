@@ -116,6 +116,7 @@ under the License.
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- FIXME: Check for Maven 2.2.1 / Maven 3 compatibility. -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
@@ -147,6 +148,7 @@ under the License.
       <version>1.19</version>
     </dependency>
 
+    <!-- FIXME: This can be removed with upgrade to Maven 2.2.1 minimum version -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
