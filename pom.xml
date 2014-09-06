@@ -347,6 +347,7 @@ under the License.
               <exclude>src/it/**/*.txt</exclude>
               <!-- The following is used to exclude files with the extension *.file -->
               <exclude>src/it/**/*.file</exclude>
+              <exclude>src/it/projects/filtering-feature/filters-defined-in-build/src/main/config/**</exclude>
             </excludes>
           </configuration>
         </plugin>
