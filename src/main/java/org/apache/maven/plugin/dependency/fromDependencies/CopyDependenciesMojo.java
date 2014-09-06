@@ -153,7 +153,7 @@ public class CopyDependenciesMojo
         Set<Artifact> skippedArtifacts = dss.getSkippedDependencies();
         for ( Artifact artifact : skippedArtifacts )
         {
-            getLog().info( artifact.getFile().getName() + " already exists in destination." );
+            getLog().info( artifact.getId() + " already exists in destination." ) ;
         }
 
         if ( isCopyPom() && !useRepositoryLayout )
