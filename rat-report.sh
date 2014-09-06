@@ -11,6 +11,6 @@ done;
 # Printout the reports only first 19 lines which contain the usefull information.
 head -n19 `find . -maxdepth 3 -type f -name "rat.txt"`
 # Removing report logs.
-for i in $FOLDERS; do
-  rm $i.log
-done;
+#for i in $FOLDERS; do
+#  rm $i.log
+#done;
