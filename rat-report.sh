@@ -1,6 +1,7 @@
 #!/bin/bash
 FOLDERS=`find . -maxdepth 1 -type d -not -path "./.svn" -and -not -path "."`
-RAT_REPORT="mvn org.apache.rat:apache-rat-plugin:0.11:check -Drat.ignoreErrors=true -Drat.excludeSubProjects=false"
+MVN="/home/build/tools/maven/apache-maven-3.1.1/bin/mvn"
+RAT_REPORT="${MVN} org.apache.rat:apache-rat-plugin:0.11:check -Drat.ignoreErrors=true -Drat.excludeSubProjects=false"
 for i in $FOLDERS; do
   echo "Checking $i"
   cd $i
