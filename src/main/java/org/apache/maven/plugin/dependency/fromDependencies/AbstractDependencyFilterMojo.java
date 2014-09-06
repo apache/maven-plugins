@@ -181,6 +181,8 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma separated list of Artifact names to include.
+     * Empty String indicates include
+     * everything (default).
      *
      * @since 2.0
      */
@@ -197,6 +199,8 @@ public abstract class AbstractDependencyFilterMojo
 
     /**
      * Comma separated list of GroupIds to include.
+     * Empty String indicates include
+     * everything (default).
      *
      * @since 2.0
      */
