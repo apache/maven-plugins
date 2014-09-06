@@ -3,8 +3,9 @@
  ------
  Maria Odea Ching
  Vincent Siveton
+ Dennis Lundberg
  ------
- 2013-07-22
+ 2014-09-06
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -48,7 +49,7 @@ javadoc.exe(or .sh) @options @packages | @argfile
 
 * Goals Overview
 
-   The Javadoc Plugin has twelve goals:
+   The Javadoc Plugin has 14 goals:
 
    * {{{./javadoc-mojo.html}javadoc:javadoc}} generates the Javadoc files for the project. It executes the standard
      Javadoc tool and supports the parameters used by the tool.
@@ -89,6 +90,12 @@ javadoc.exe(or .sh) @options @packages | @argfile
 
    * {{{./test-fix-mojo.html}javadoc:test-fix}} is an interactive goal which fixes the Javadoc documentation and tags
      for the test Java files.
+
+   * {{{./resource-bundle-mojo.html}javadoc:resource-bundle}} bundles the <<<javadocDirectory>>> along with Javadoc
+     configuration options such as taglet, doclet, and link information into a deployable artifact.
+
+   * {{{./test-resource-bundle-mojo.html}javadoc:test-resource-bundle}} bundles the <<<testJavadocDirectory>>> along
+     with Javadoc configuration options such as taglet, doclet, and link information into a deployable artifact.
 
    []
 
