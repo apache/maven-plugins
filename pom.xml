@@ -41,6 +41,19 @@ under the License.
     <url>http://svn.apache.org/viewvc/maven/plugins/trunk/</url>
   </scm>
 
+  <!-- TODO: Added to use version 0.11 till we change to apache:15 -->
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.11</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <modules>
     <module>maven-plugins</module>
     <module>maven-acr-plugin</module>
