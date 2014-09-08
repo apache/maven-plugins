@@ -168,12 +168,6 @@ under the License.
       <artifactId>file-management</artifactId>
       <version>1.2.1</version>
     </dependency>
-    <!-- TODO: Check if we can remove this dependency. -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9-stable-1</version>
-    </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
