@@ -40,7 +40,7 @@ Generate Javadoc without duplicate execution of phase generate-sources.
 
  * See {{{https://jira.codehaus.org/browse/MJAVADOC-369}MJAVADOC-369}} as well.
 
- * As of version 2.9.2 two new reports are defined, <<<javadoc-no-fork>>> and <<<test-javadoc-no-fork>>>
+ * As of version 2.10 two new reports are defined, <<<javadoc-no-fork>>> and <<<test-javadoc-no-fork>>>
  which will not trigger above phases a second time.
 
  * Configure this in your <<<reporting>>> section as follows:
