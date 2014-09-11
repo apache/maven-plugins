@@ -151,7 +151,7 @@ public class JavadocJar
     private boolean useDefaultManifestFile;
 
     /**
-     * @since 2.9.2
+     * @since 2.10
      */
     @Parameter( property = "maven.javadoc.classifier", defaultValue = "javadoc", required = true )
     private String classifier;

@@ -31,7 +31,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  *
  * @author <a href="mailto:mfriedenhagen@apache.org">Mirko Friedenhagen</a>
  * @version $Id$
- * @since 2.9.2
+ * @since 2.10
  * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>
  * @see <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options</a>
  */

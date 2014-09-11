@@ -109,7 +109,7 @@ public class TestJavadocJar
     private File testJavadocDirectory;
 
     /**
-     * @since 2.9.2
+     * @since 2.10
      */
     @Parameter( property = "maven.javadoc.testClassifier", defaultValue = "test-javadoc", required = true )
     private String testClassifier;
