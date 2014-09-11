@@ -286,6 +286,24 @@ under the License.
           <artifactId>maven-shade-plugin</artifactId>
           <version>1.7.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!-- Photoshop files are binary -->
+              <exclude>**/*.psd</exclude>
+              <!-- Checksum files cannot contain a license header -->
+              <exclude>**/*.sha1</exclude>
+              <!-- Javadoc package list files cannot contain a license header -->
+              <exclude>**/*package-list*</exclude>
+              <!-- This file is used to patch the generated Javadoc html files -->
+              <exclude>src/main/resources/org/apache/maven/plugin/javadoc/frame-injection-fix.txt</exclude>
+              <!-- Original POM file tha is used in a repository -->
+              <exclude>src/test/resources/unit/test-javadoc-test/junit/junit/3.8.1/junit-3.8.1.pom</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
