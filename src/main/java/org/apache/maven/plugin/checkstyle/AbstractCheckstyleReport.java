@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
@@ -51,7 +50,6 @@ import org.apache.maven.plugin.checkstyle.rss.CheckstyleRssGeneratorRequest;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
@@ -173,15 +171,6 @@ public abstract class AbstractCheckstyleReport
      */
     @Parameter( property = "checkstyle.skip", defaultValue = "false" )
     protected boolean skip;
-
-    /**
-     * The output directory for the report. Note that this parameter is only
-     * evaluated if the goal is run directly from the command line. If the goal
-     * is run indirectly as part of a site generation, the output directory
-     * configured in Maven Site Plugin is used instead.
-     */
-    @Parameter( defaultValue = "${project.reporting.outputDirectory}", required = true )
-    private File outputDirectory;
 
     /**
      * Specifies the path and filename to save the Checkstyle output. The format
@@ -398,13 +387,6 @@ public abstract class AbstractCheckstyleReport
     protected SiteTool siteTool;
 
     /**
-     * The Maven Project Object.
-     */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    protected MavenProject project;
-    
-    
-    /**
      * The Plugin Descriptor
      */
     @Parameter( defaultValue = "${plugin}", readonly = true, required = true )
@@ -441,11 +423,6 @@ public abstract class AbstractCheckstyleReport
     /**
      */
     @Component
-    private Renderer siteRenderer;
-
-    /**
-     */
-    @Component
     protected ResourceManager locator;
 
     /**
@@ -474,24 +451,6 @@ public abstract class AbstractCheckstyleReport
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.checkstyle.description" );
-    }
-
-    /** {@inheritDoc} */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory.getAbsolutePath();
-    }
-
-    /** {@inheritDoc} */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /** {@inheritDoc} */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     /** {@inheritDoc} */
@@ -766,13 +725,6 @@ public abstract class AbstractCheckstyleReport
         return ResourceBundle.getBundle( "checkstyle-report", locale, AbstractCheckstyleReport.class.getClassLoader() );
     }
 
-    /** {@inheritDoc} */
-    public void setReportOutputDirectory( File reportOutputDirectory )
-    {
-        super.setReportOutputDirectory( reportOutputDirectory );
-        this.outputDirectory = reportOutputDirectory;
-    }
-    
     protected List<File> getSourceDirectories()
     {
         List<File> sourceDirs = null;
