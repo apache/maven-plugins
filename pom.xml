@@ -174,11 +174,10 @@ under the License.
     </dependency>
 
     <!-- shared -->
-    <!-- FIXME: Before we can release we need either go down to 1.4 or release maven-shared component first. -->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-analyzer</artifactId>
-      <version>1.5-SNAPSHOT</version>
+      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
