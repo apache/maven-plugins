@@ -299,7 +299,7 @@ under the License.
               <exclude>**/*package-list*</exclude>
               <!-- This file is used to patch the generated Javadoc html files -->
               <exclude>src/main/resources/org/apache/maven/plugin/javadoc/frame-injection-fix.txt</exclude>
-              <!-- Original POM file tha is used in a repository -->
+              <!-- Original POM file that is used in a repository -->
               <exclude>src/test/resources/unit/test-javadoc-test/junit/junit/3.8.1/junit-3.8.1.pom</exclude>
             </excludes>
           </configuration>
