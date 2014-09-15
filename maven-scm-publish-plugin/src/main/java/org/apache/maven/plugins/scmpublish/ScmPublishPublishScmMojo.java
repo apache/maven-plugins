@@ -246,14 +246,14 @@ public class ScmPublishPublishScmMojo
             logInfo( "Updating checkout directory with actual content in %s", content );
             update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
             String displaySize = org.apache.commons.io.FileUtils.byteCountToDisplaySize( size );
-            logInfo( "Content consists in %d directories and %d files = %s", directories, files, displaySize );
+            logInfo( "Content consists of %d directories and %d files = %s", directories, files, displaySize );
         }
         catch ( IOException ioe )
         {
             throw new MojoExecutionException( "Could not copy content to SCM checkout", ioe );
         }
 
-        logInfo( "Publishing content into SCM will result in %d addition(s), %d update(s), %d delete(s)", added.size(),
+        logInfo( "Publishing content to SCM will result in %d addition(s), %d update(s), %d delete(s)", added.size(),
                  updated.size(), deleted.size() );
 
         if ( isDryRun() )
