@@ -442,5 +442,16 @@ mvn deploy:deploy-file \
         </dl>
       </answer>
     </faq>
+    <faq id="Why do I get errors when using links under Java 8">
+      <question>Why do I get errors when using links under Java 8?</question>
+      <answer>
+        <p>
+          Due to <a href="https://bugs.openjdk.java.net/browse/JDK-8040771">a bug in JDK 8</a>
+          you need at least Java 8u20 for this to work. See
+          <a href="http://jira.codehaus.org/browse/MJAVADOC-393">MJAVADOC-393</a>
+          for more info.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
