@@ -281,6 +281,21 @@ under the License.
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!--
+                These files contain results for integration tests which can't contain license header
+                otherwise the IT's will fail.
+              -->
+              <exclude>src/it/projects/tree/expected.txt</exclude>
+              <exclude>src/it/projects/tree-includes/expected.txt</exclude>
+              <exclude>src/it/projects/tree-verbose/expected.txt</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
