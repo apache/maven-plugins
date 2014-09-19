@@ -19,13 +19,12 @@ package org.apache.maven.plugins.repository.testutil;
  * under the License.
  */
 
-import org.codehaus.plexus.archiver.zip.ZipFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.ZipFile;
 
 import junit.framework.Assert;
 
