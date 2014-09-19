@@ -93,6 +93,8 @@ public abstract class AbstractJiraDownloader
     protected int proxyPort;
     protected String proxyUser;
     protected String proxyPass;
+    protected int connectionTimeout;
+    protected int receiveTimout;
 
     /**
      * Execute the query on the JIRA server.
@@ -404,5 +406,13 @@ public abstract class AbstractJiraDownloader
     public void setVersionPrefix( String versionPrefix )
     {
         this.versionPrefix = versionPrefix;
+    }
+
+    public void setConnectionTimeout( int connectionTimeout ) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public void setReceiveTimout( int receiveTimout ) {
+        this.receiveTimout = receiveTimout;
     }
 }

@@ -561,9 +561,12 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
 
-        httpClientPolicy.setConnectionTimeout( 36000 );
+        // MCHANGES-341 Externalize JIRA server timeout values to the configuration section
+        getLog().debug( "connectionTimeout" + connectionTimeout );
+        httpClientPolicy.setConnectionTimeout( connectionTimeout );
         httpClientPolicy.setAllowChunking( false );
-        httpClientPolicy.setReceiveTimeout( 32000 );
+        getLog().debug( "receiveTimout" + receiveTimout );
+        httpClientPolicy.setReceiveTimeout( receiveTimout );
 
         if ( proxyHost != null )
         {
