@@ -20,7 +20,6 @@ package org.apache.maven.plugin.source;
 */
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.archiver.zip.ZipFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +28,7 @@ import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Stephane Nicoll
@@ -47,7 +47,6 @@ public abstract class AbstractSourcePluginTestCase
      * Execute the source plugin for the specified project.
      *
      * @param projectName the name of the project
-     * @return the base directory of the project
      * @throws Exception if an error occurred
      */
     protected void executeMojo( final String projectName, String classifier )
@@ -174,7 +173,7 @@ public abstract class AbstractSourcePluginTestCase
         throws IOException
     {
         ZipFile jar = new ZipFile( jarFile );
-        Enumeration entries = jar.getEntries();
+        Enumeration<? extends ZipEntry> entries = jar.entries();
 
         if ( expectedFiles.length == 0 )
         {
@@ -184,11 +183,11 @@ public abstract class AbstractSourcePluginTestCase
         {
             assertTrue( entries.hasMoreElements() );
 
-            Set expected = new TreeSet( Arrays.asList( expectedFiles ) );
+            Set<String> expected = new TreeSet<String>( Arrays.asList( expectedFiles ) );
 
             while ( entries.hasMoreElements() )
             {
-                ZipEntry entry = (ZipEntry) entries.nextElement();
+                ZipEntry entry = entries.nextElement();
 
                 assertTrue( "Not expecting " + entry.getName() + " in " + jarFile, expected.remove( entry.getName() ) );
             }

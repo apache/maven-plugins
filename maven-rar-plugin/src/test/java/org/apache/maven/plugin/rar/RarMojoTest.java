@@ -23,10 +23,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.archiver.zip.ZipEntry;
-import org.codehaus.plexus.archiver.zip.ZipFile;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -124,7 +124,7 @@ public class RarMojoTest
 
         ZipFile rar = new ZipFile( rarFile );
 
-        Enumeration entries = rar.getEntries();
+        Enumeration<? extends ZipEntry> entries = rar.entries();
 
         assertTrue( entries.hasMoreElements() );
 
@@ -195,7 +195,7 @@ public class RarMojoTest
 
         ZipFile rar = new ZipFile( rarFile );
 
-        Enumeration entries = rar.getEntries();
+        Enumeration<? extends ZipEntry> entries = rar.entries();
 
         assertTrue( entries.hasMoreElements() );
 
@@ -268,18 +268,18 @@ public class RarMojoTest
 
         ZipFile rar = new ZipFile( rarFile );
 
-        Enumeration entries = rar.getEntries();
+        Enumeration<? extends ZipEntry> entries = rar.entries();
 
         assertTrue( entries.hasMoreElements() );
 
         assertEquals( 0, getSizeOfExpectedFiles( entries, expectedFiles ) );
     }
 
-    private int getSizeOfExpectedFiles( Enumeration entries, List expectedFiles )
+    private int getSizeOfExpectedFiles( Enumeration<? extends ZipEntry> entries, List expectedFiles )
     {
         while ( entries.hasMoreElements() )
         {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
+            ZipEntry entry = entries.nextElement();
 
             if ( expectedFiles.contains( entry.getName() ) )
             {

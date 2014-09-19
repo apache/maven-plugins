@@ -274,7 +274,7 @@ public abstract class AbstractSourceJarMojo
             archiveProjectContent( subProject, archiver.getArchiver() );
         }
 
-        if ( !archiver.getArchiver().getFiles().isEmpty() || forceCreation )
+        if ( archiver.getArchiver().getResources().hasNext() || forceCreation )
         {
 
             if ( useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null )
