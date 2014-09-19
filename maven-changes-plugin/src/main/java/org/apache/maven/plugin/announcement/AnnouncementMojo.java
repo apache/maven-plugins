@@ -379,6 +379,28 @@ public class AnnouncementMojo
     @Parameter( property = "changes.versionPrefix", defaultValue = "" )
     private String versionPrefix;
 
+    /**
+     * Defines the connection timeout in milliseconds when accessing JIRA's REST-API.
+     * <p>
+     * Might help when you have a lot of different resolutions in your JIRA instance.
+     * </p>
+     *
+     * @since 2.11
+     */
+    @Parameter( property = "changes.connectionTimeout", defaultValue = "36000" )
+    private int connectionTimeout;
+
+    /**
+     * Defines the receive timeout in milliseconds when accessing JIRA's REST-API.
+     * <p>
+     * Might help when you have a lot of different resolutions in your JIRA instance.
+     * </p>
+     *
+     * @since 2.11
+     */
+    @Parameter( property = "changes.receiveTimout", defaultValue = "32000" )
+    private int receiveTimout;
+
     //=======================================//
     //  Trac Parameters                      //
     //=======================================//
@@ -747,6 +769,10 @@ public class AnnouncementMojo
         jiraDownloader.setWebUser( webUser );
 
         jiraDownloader.setWebPassword( webPassword );
+
+        jiraDownloader.setConnectionTimeout( connectionTimeout );
+
+        jiraDownloader.setReceiveTimout( receiveTimout );
 
         try
         {
