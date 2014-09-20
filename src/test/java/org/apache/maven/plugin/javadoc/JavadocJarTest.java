@@ -20,14 +20,14 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.archiver.zip.ZipEntry;
-import org.codehaus.plexus.archiver.zip.ZipFile;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -56,7 +56,7 @@ public class JavadocJarTest
         //validate contents of jar file
         ZipFile jar = new ZipFile( generatedFile );
         Set<String> set = new HashSet<String>();
-        for( Enumeration<ZipEntry> entries = jar.getEntries(); entries.hasMoreElements(); )
+        for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
         {
             ZipEntry entry = entries.nextElement();
             set.add( entry.getName() );
