@@ -56,6 +56,7 @@ public final class Assertions
             }
         }
 
+        zf.close();
         if ( !missing.isEmpty() || !banned.isEmpty() )
         {
             StringBuilder msg = new StringBuilder();
