@@ -129,6 +129,8 @@ public class RarMojoTest
         assertTrue( entries.hasMoreElements() );
 
         assertEquals( 0, getSizeOfExpectedFiles( entries, expectedFiles ) );
+
+        rar.close();
     }
 
     public void testBasicRarWithDescriptor()

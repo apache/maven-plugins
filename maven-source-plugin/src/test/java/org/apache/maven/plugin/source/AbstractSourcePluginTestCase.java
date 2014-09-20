@@ -194,6 +194,8 @@ public abstract class AbstractSourcePluginTestCase
 
             assertTrue( "Missing entries " + expected.toString() + " in " + jarFile, expected.isEmpty() );
         }
+
+        jar.close();
     }
 
     protected File getTestTargetDir( String projectName )
