@@ -387,8 +387,8 @@ public class AnnouncementMojo
      *
      * @since 2.11
      */
-    @Parameter( property = "changes.connectionTimeout", defaultValue = "36000" )
-    private int connectionTimeout;
+    @Parameter( property = "changes.jiraConnectionTimeout", defaultValue = "36000" )
+    private int jiraConnectionTimeout;
 
     /**
      * Defines the receive timeout in milliseconds when accessing JIRA's REST-API.
@@ -398,8 +398,8 @@ public class AnnouncementMojo
      *
      * @since 2.11
      */
-    @Parameter( property = "changes.receiveTimout", defaultValue = "32000" )
-    private int receiveTimout;
+    @Parameter( property = "changes.jiraReceiveTimout", defaultValue = "32000" )
+    private int jiraReceiveTimout;
 
     //=======================================//
     //  Trac Parameters                      //
@@ -770,9 +770,9 @@ public class AnnouncementMojo
 
         jiraDownloader.setWebPassword( webPassword );
 
-        jiraDownloader.setConnectionTimeout( connectionTimeout );
+        jiraDownloader.setConnectionTimeout( jiraConnectionTimeout );
 
-        jiraDownloader.setReceiveTimout( receiveTimout );
+        jiraDownloader.setReceiveTimout( jiraReceiveTimout );
 
         try
         {
