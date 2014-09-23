@@ -568,6 +568,9 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         getLog().debug( "RestJiraDownloader: receiveTimout: " + receiveTimout );
         httpClientPolicy.setReceiveTimeout( receiveTimout );
 
+        // MCHANGES-334 RestJiraDownloader doesn't honor proxy settings
+        getProxyInfo( jiraUrl );
+
         if ( proxyHost != null )
         {
             getLog().debug( "Using proxy: " + proxyHost + " at port " + proxyPort );
