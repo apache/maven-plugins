@@ -78,6 +78,8 @@ public class AdaptiveJiraDownloader extends AbstractJiraDownloader
         target.setUseJql( useJql );
         target.setOnlyCurrentVersion( onlyCurrentVersion );
         target.setVersionPrefix( versionPrefix );
+        target.setConnectionTimeout( connectionTimeout );
+        target.setReceiveTimout( receiveTimout );
     }
 
 
