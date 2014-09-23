@@ -170,7 +170,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
     private JsonNode getResponseTree( Response response )
         throws IOException
     {
-        JsonParser jsonParser = jsonFactory.createJsonParser( (InputStream) response.getEntity() );
+        JsonParser jsonParser = jsonFactory.createParser( (InputStream) response.getEntity() );
         return (JsonNode) jsonParser.readValueAsTree();
     }
 
@@ -243,7 +243,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         String[] pieces = input.split( "," );
         for ( String item : pieces )
         {
-            targetList.add( resolveOneItem( items, what, item ) );
+            targetList.add( resolveOneItem( items, what, item.trim() ) );
         }
     }
 
