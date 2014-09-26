@@ -2436,7 +2436,7 @@ public abstract class AbstractJavadocMojo
         List<String> classpathElements = new ArrayList<String>();
         Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
 
-        classpathElements.addAll( getProjectBuildOutputDirs( project ) );
+        populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
         if ( isAggregator() && project.isExecutionRoot() )
         {
