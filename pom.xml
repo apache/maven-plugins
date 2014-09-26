@@ -418,6 +418,7 @@ under the License.
                 <pomInclude>MJAVADOC-320/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-325/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-369/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-407/pom.xml</pomInclude>
               </pomIncludes>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
             </configuration>
