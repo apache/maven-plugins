@@ -70,8 +70,6 @@ import java.util.zip.ZipException;
 public class EarMojo
     extends AbstractEarMojo
 {
-    private static final String[] EMPTY_STRING_ARRAY = {};
-
     /**
      * Single directory for extra files to include in the EAR.
      */
