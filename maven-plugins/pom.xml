@@ -23,7 +23,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>24</version>
+    <version>25-SNAPSHOT</version>
     <relativePath>../../pom/maven/pom.xml</relativePath>
   </parent>
 
@@ -55,7 +55,6 @@ under the License.
 
   <properties>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
-    <mavenPluginToolsVersion>3.3</mavenPluginToolsVersion><!-- TODO remove when upgrading parent to 25 -->
   </properties>
 
   <repositories>
@@ -69,16 +68,6 @@ under the License.
     </repository>
   </repositories>
 
-  <dependencyManagement><!-- TODO remove when upgrading parent to 25 -->
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.maven.plugin-tools</groupId>
-        <artifactId>maven-plugin-annotations</artifactId>
-        <version>${mavenPluginToolsVersion}</version>
-        <scope>provided</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <!-- dependencies to annotations -->
     <dependency>
