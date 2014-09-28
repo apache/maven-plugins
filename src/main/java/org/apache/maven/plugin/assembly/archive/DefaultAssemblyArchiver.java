@@ -288,7 +288,7 @@ public class DefaultAssemblyArchiver
         Archiver archiver;
         if ( format.startsWith( "tar" ) )
         {
-            archiver = createTarArchiver( format, configSource.getTarLongFileMode() );
+            archiver = createTarArchiver( format, TarLongFileMode.valueOf( configSource.getTarLongFileMode()) );
         }
         else if ( "war".equals( format ) )
         {
@@ -483,26 +483,24 @@ public class DefaultAssemblyArchiver
         return warArchiver;
     }
 
-    protected Archiver createTarArchiver( final String format, final String tarLongFileMode )
+    protected Archiver createTarArchiver( final String format, final TarLongFileMode tarLongFileMode )
         throws NoSuchArchiverException, ArchiverException
     {
         final TarArchiver tarArchiver = (TarArchiver) archiverManager.getArchiver( "tar" );
         final int index = format.indexOf( '.' );
         if ( index >= 0 )
         {
-            // TODO: this needs a cleanup in plexus archiver - use a real
-            // typesafe enum
-            final TarArchiver.TarCompressionMethod tarCompressionMethod = new TarArchiver.TarCompressionMethod();
+             TarArchiver.TarCompressionMethod tarCompressionMethod;
             // TODO: this should accept gz and bz2 as well so we can skip
             // over the switch
             final String compression = format.substring( index + 1 );
             if ( "gz".equals( compression ) )
             {
-                tarCompressionMethod.setValue( "gzip" );
+                tarCompressionMethod = TarArchiver.TarCompressionMethod.gzip;
             }
             else if ( "bz2".equals( compression ) )
             {
-                tarCompressionMethod.setValue( "bzip2" );
+                tarCompressionMethod = TarArchiver.TarCompressionMethod.bzip2;
             }
             else
             {
@@ -512,11 +510,7 @@ public class DefaultAssemblyArchiver
             tarArchiver.setCompression( tarCompressionMethod );
         }
 
-        final TarLongFileMode tarFileMode = new TarLongFileMode();
-
-        tarFileMode.setValue( tarLongFileMode );
-
-        tarArchiver.setLongfile( tarFileMode );
+        tarArchiver.setLongfile( tarLongFileMode );
 
         return tarArchiver;
     }

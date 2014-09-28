@@ -299,7 +299,7 @@ public class DefaultAssemblyArchiverTest
         final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
 
         configSource.getTarLongFileMode();
-        configCtl.setReturnValue( TarLongFileMode.FAIL, MockControl.ZERO_OR_MORE );
+        configCtl.setReturnValue( TarLongFileMode.fail.toString(), MockControl.ZERO_OR_MORE );
 
         configSource.isDryRun();
         configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
@@ -332,7 +332,7 @@ public class DefaultAssemblyArchiverTest
         subject.createArchiver( "tar", false, "finalName", configSource, null, false);
 
         assertNull( ttArchiver.compressionMethod );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
@@ -571,10 +571,10 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createTarArchiver( "tar", TarLongFileMode.FAIL );
+        subject.createTarArchiver( "tar", TarLongFileMode.fail );
 
         assertNull( ttArchiver.compressionMethod );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
@@ -596,10 +596,10 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createTarArchiver( "tar.gz", TarLongFileMode.FAIL );
+        subject.createTarArchiver( "tar.gz", TarLongFileMode.fail );
 
-        assertEquals( "gzip", ttArchiver.compressionMethod.getValue() );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarArchiver.TarCompressionMethod.gzip, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
@@ -621,10 +621,10 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createTarArchiver( "tar.bz2", TarLongFileMode.FAIL );
+        subject.createTarArchiver( "tar.bz2", TarLongFileMode.fail );
 
-        assertEquals( "bzip2", ttArchiver.compressionMethod.getValue() );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarArchiver.TarCompressionMethod.bzip2, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
@@ -907,6 +907,18 @@ public class DefaultAssemblyArchiverTest
         public void addResource( final PlexusIoResource arg0, final String arg1, final int arg2 )
             throws ArchiverException
         {
+        }
+
+        public void addSymlink( String s, String s2 )
+            throws ArchiverException
+        {
+
+        }
+
+        public void addSymlink( String s, int i, String s2 )
+            throws ArchiverException
+        {
+
         }
 
         public void addResources( final PlexusIoResourceCollection arg0 )

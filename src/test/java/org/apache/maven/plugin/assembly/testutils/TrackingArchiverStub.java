@@ -118,6 +118,19 @@ public class TrackingArchiverStub
         added.add( new Addition( archiveFile, prefix, null, null, -1 ) );
     }
 
+    public void addSymlink( String s, String s2 )
+        throws ArchiverException
+    {
+        added.add( new Addition( s, null, null, null, -1 ) );
+    }
+
+    public void addSymlink( String s, int i, String s2 )
+        throws ArchiverException
+    {
+        added.add( new Addition( s, null, null, null, -1 ) );
+
+    }
+
     public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
         throws ArchiverException
     {

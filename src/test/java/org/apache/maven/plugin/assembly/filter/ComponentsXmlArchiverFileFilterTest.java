@@ -462,6 +462,18 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
+        public void addSymlink( String s, String s2 )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
+        public void addSymlink( String s, int i, String s2 )
+            throws ArchiverException
+        {
+            throw new UnsupportedOperationException( "not supported" );
+        }
+
         @SuppressWarnings( "rawtypes" )
         public Map getFiles()
         {

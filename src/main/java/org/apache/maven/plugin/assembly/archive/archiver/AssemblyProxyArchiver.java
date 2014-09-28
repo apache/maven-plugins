@@ -349,6 +349,46 @@ public class AssemblyProxyArchiver
         }
     }
 
+    public void addSymlink( String symlinkName, String symlinkDestination)
+        throws ArchiverException
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try {
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addSymlink( symlinkName, symlinkDestination );
+            }
+        } finally {
+            inPublicApi.set( null );
+        }
+
+
+    }
+
+    public void addSymlink(String symlinkName, int permissions, String symlinkDestination )
+        throws ArchiverException
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try {
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addSymlink( symlinkName, permissions, symlinkDestination );
+            }
+
+        } finally {
+            inPublicApi.set( null );
+        }
+
+    }
+
     public void addDirectory( final File directory, final String prefix )
         throws ArchiverException
     {
@@ -862,6 +902,10 @@ public class AssemblyProxyArchiver
             return inputFile.isFile();
         }
 
+        public boolean isSymbolicLink()
+        {
+            return false;
+        }
     }
 
     public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
