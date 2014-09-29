@@ -290,7 +290,7 @@ public class WarExplodedMojoTest
 
         // configure mojo
         project.addArtifact( warArtifact );
-        this.configureMojo( mojo, new LinkedList(), classesDir, webAppSource, webAppDirectory, project );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
         mojo.execute();
 

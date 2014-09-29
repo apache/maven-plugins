@@ -132,7 +132,7 @@ public class WarDependenciesAnalysisTest
             mojo.setWebXml( new File( xmlSource, "web.xml" ) );
             mojo.execute();
 
-            final List assertedFiles = new ArrayList();
+            final List<File> assertedFiles = new ArrayList<File>();
             assertedFiles.addAll( assertDefaultContent( webAppDirectory ) );
             assertedFiles.addAll( assertWebXml( webAppDirectory ) );
             assertedFiles.addAll( assertCustomContent( webAppDirectory, firstCustomContent, "library not found" ) );
@@ -146,7 +146,7 @@ public class WarDependenciesAnalysisTest
 
             mojo.execute();
 
-            final List assertedFiles2 = new ArrayList();
+            final List<File> assertedFiles2 = new ArrayList<File>();
             assertedFiles2.addAll( assertDefaultContent( webAppDirectory ) );
             assertedFiles2.addAll( assertWebXml( webAppDirectory ) );
             if ( secondCustomContent != null )

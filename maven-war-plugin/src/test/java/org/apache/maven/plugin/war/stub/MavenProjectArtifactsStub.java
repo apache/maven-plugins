@@ -72,9 +72,9 @@ public class MavenProjectArtifactsStub
 
     }
 
-    public List getRuntimeClasspathElements()
+    public List<String> getRuntimeClasspathElements()
     {
-        List artifacts = new ArrayList();
+        List<String> artifacts = new ArrayList<String>();
 
         artifacts.add(
             "src/test/resources/unit/manifest/manifest-with-classpath/sample-artifacts/maven-artifact1-1.0-SNAPSHOT.jar" );
