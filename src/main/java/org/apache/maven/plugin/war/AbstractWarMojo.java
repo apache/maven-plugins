@@ -447,6 +447,7 @@ public abstract class AbstractWarMojo
      * @throws MojoFailureException   if an unexpected error occurred while packaging the webapp
      * @throws IOException            if an error occurred while copying the files
      */
+    @SuppressWarnings( "unchecked" )
     public void buildWebapp( MavenProject project, File webappDirectory )
         throws MojoExecutionException, MojoFailureException, IOException
     {
