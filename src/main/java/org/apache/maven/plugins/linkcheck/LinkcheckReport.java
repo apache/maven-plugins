@@ -24,12 +24,10 @@ import org.apache.maven.doxia.linkcheck.HttpBean;
 import org.apache.maven.doxia.linkcheck.LinkCheck;
 import org.apache.maven.doxia.linkcheck.LinkCheckException;
 import org.apache.maven.doxia.linkcheck.model.LinkcheckModel;
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
@@ -70,12 +68,6 @@ public class LinkcheckReport
     private I18N i18n;
 
     /**
-     * Doxia Site Renderer.
-     */
-    @Component
-    private Renderer siteRenderer;
-
-    /**
      * LinkCheck component.
      */
     @Component
@@ -86,22 +78,10 @@ public class LinkcheckReport
     // ----------------------------------------------------------------------
 
     /**
-     * The Maven Project.
-     */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    private MavenProject project;
-
-    /**
      * Local Repository.
      */
     @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     private ArtifactRepository localRepository;
-
-    /**
-     * Report output directory.
-     */
-    @Parameter( property = "project.reporting.outputDirectory", required = true )
-    private File outputDirectory;
 
     /**
      * The Maven Settings.
@@ -286,12 +266,7 @@ public class LinkcheckReport
     /** {@inheritDoc} */
     public boolean canGenerateReport()
     {
-        if ( skip )
-        {
-            return false;
-        }
-
-        return true;
+        return !skip;
     }
 
     /** {@inheritDoc} */
@@ -318,24 +293,6 @@ public class LinkcheckReport
     // ----------------------------------------------------------------------
     // Protected methods
     // ----------------------------------------------------------------------
-
-    /** {@inheritDoc} */
-    protected String getOutputDirectory()
-    {
-        return outputDirectory.getAbsolutePath();
-    }
-
-    /** {@inheritDoc} */
-    protected MavenProject getProject()
-    {
-        return project;
-    }
-
-    /** {@inheritDoc} */
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
-    }
 
     /** {@inheritDoc} */
     protected void executeReport( Locale locale )
