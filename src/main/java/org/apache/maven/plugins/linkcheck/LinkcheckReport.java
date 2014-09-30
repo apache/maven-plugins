@@ -183,7 +183,7 @@ public class LinkcheckReport
      * The file encoding to use when Linkcheck reads the source files. If the property
      * <code>project.build.sourceEncoding</code> is not set, the platform default encoding is used.
      */
-    @Parameter( property = "encoding", defaultValue = "project.build.sourceEncoding" )
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /**
