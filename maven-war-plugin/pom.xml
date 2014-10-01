@@ -148,13 +148,6 @@ under the License.
       <version>1.19</version>
     </dependency>
 
-    <!-- FIXME: This can be removed with upgrade to Maven 2.2.1 minimum version -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9-stable-1</version>
-    </dependency>
-
     <!-- 1.4.2 to avoid http://jira.codehaus.org/browse/XSTR-709 -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
