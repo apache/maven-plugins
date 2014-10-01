@@ -55,21 +55,8 @@ public class DependenciesAnalysisPackagingTask
         {
             context.getLog().debug( notBundledMessage );
         }
-        else if ( "war".equals( dependency.getType() ) || "zip".equals( dependency.getType() ) )
-        {
-            context.getLog().warn( warOrZipMessage );
-        }
-        else if ( "tld".equals( dependency.getType() ) || "aar".equals( dependency.getType() )
-            || "mar".equals( dependency.getType() ) || "xar".equals( dependency.getType() )
-            || "jar".equals( dependency.getType() ) || "ejb".equals( dependency.getType() )
-            || "ejb-client".equals( dependency.getType() ) || "test-jar".equals( dependency.getType() )
-            || "par".equals( dependency.getType() ) )
-        {
-            context.getLog().info( standardMessage );
-            if ( removeFile )
-            {
-                removeDependency( context, dependency );
-            }
+        else {
+            handleDependencyScope( context, dependency, warOrZipMessage, standardMessage, removeFile );
         }
     }
 
