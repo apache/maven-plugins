@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- *
  * @author Stephane Nicoll
  */
 public class WarDependenciesAnalysisTest
@@ -47,7 +45,6 @@ public class WarDependenciesAnalysisTest
         return new File( getBasedir(), "target/test-classes/unit/dependenciesanalysis/test-dir" );
     }
 
-
     public void testNoChange()
         throws Exception
     {
@@ -58,9 +55,10 @@ public class WarDependenciesAnalysisTest
         jarArtifact.setArtifactId( "lib-test" );
         jarArtifact.setVersion( "1.0" );
 
-        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[]{jarArtifact}, new ArtifactStub[]{jarArtifact},
-                                          new String[]{"WEB-INF/lib/lib-test-1.0.jar"},
-                                          new String[]{"WEB-INF/lib/lib-test-1.0.jar"} );
+        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[] { jarArtifact },
+                                          new ArtifactStub[] { jarArtifact },
+                                          new String[] { "WEB-INF/lib/lib-test-1.0.jar" },
+                                          new String[] { "WEB-INF/lib/lib-test-1.0.jar" } );
 
     }
 
@@ -74,8 +72,8 @@ public class WarDependenciesAnalysisTest
         jarArtifact.setArtifactId( "lib-test" );
         jarArtifact.setVersion( "1.0" );
 
-        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[]{jarArtifact}, null,
-                                          new String[]{"WEB-INF/lib/lib-test-1.0.jar"}, null );
+        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[] { jarArtifact }, null,
+                                          new String[] { "WEB-INF/lib/lib-test-1.0.jar" }, null );
 
     }
 
@@ -93,9 +91,10 @@ public class WarDependenciesAnalysisTest
         jarArtifact2.setArtifactId( "lib-test" );
         jarArtifact2.setVersion( "2.0" );
 
-        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[]{jarArtifact}, new ArtifactStub[]{jarArtifact2},
-                                          new String[]{"WEB-INF/lib/lib-test-1.0.jar"},
-                                          new String[]{"WEB-INF/lib/lib-test-2.0.jar"} );
+        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[] { jarArtifact },
+                                          new ArtifactStub[] { jarArtifact2 },
+                                          new String[] { "WEB-INF/lib/lib-test-1.0.jar" },
+                                          new String[] { "WEB-INF/lib/lib-test-2.0.jar" } );
 
     }
 
@@ -114,8 +113,9 @@ public class WarDependenciesAnalysisTest
         jarArtifact2.setVersion( "1.0" );
         jarArtifact2.setScope( Artifact.SCOPE_PROVIDED );
 
-        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[]{jarArtifact}, new ArtifactStub[]{jarArtifact2},
-                                          new String[]{"WEB-INF/lib/lib-test-1.0.jar"}, null );
+        doTestTwiceWithUpdatedDependency( testId, new ArtifactStub[] { jarArtifact },
+                                          new ArtifactStub[] { jarArtifact2 },
+                                          new String[] { "WEB-INF/lib/lib-test-1.0.jar" }, null );
 
     }
 
@@ -125,7 +125,7 @@ public class WarDependenciesAnalysisTest
         throws Exception
     {
         // setup test data
-        final File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        final File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
         final File webAppDirectory = setUpMojoWithCache( testId, firstStubs );
         try
         {
@@ -138,7 +138,7 @@ public class WarDependenciesAnalysisTest
             assertedFiles.addAll( assertCustomContent( webAppDirectory, firstCustomContent, "library not found" ) );
 
             // Ok now check that there is no more files/directories
-            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[]{MANIFEST_PATH} );
+            final FileFilter filter = new FileFilterImpl( webAppDirectory, new String[] { MANIFEST_PATH } );
             assertWebAppContent( webAppDirectory, assertedFiles, filter );
 
             // Run the thing again and check it's ok
@@ -151,8 +151,7 @@ public class WarDependenciesAnalysisTest
             assertedFiles2.addAll( assertWebXml( webAppDirectory ) );
             if ( secondCustomContent != null )
             {
-                assertedFiles2.addAll(
-                    assertCustomContent( webAppDirectory, secondCustomContent, "library not found" ) );
+                assertedFiles2.addAll( assertCustomContent( webAppDirectory, secondCustomContent, "library not found" ) );
 
             }
             assertWebAppContent( webAppDirectory, assertedFiles2, filter );
@@ -169,7 +168,7 @@ public class WarDependenciesAnalysisTest
     /**
      * Configures the exploded mojo for the specified test.
      *
-     * @param testId        the id of the test
+     * @param testId the id of the test
      * @param artifactStubs the dependencies (may be null)
      * @return the webapp directory
      * @throws Exception if an error occurs while configuring the mojo
@@ -184,6 +183,5 @@ public class WarDependenciesAnalysisTest
 
         return webappDir;
     }
-
 
 }

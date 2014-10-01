@@ -40,16 +40,16 @@ import java.io.Writer;
 public class WebappStructureSerializer
 {
 
-    private static final XStream xStream;
+    private static final XStream xstream;
 
     static
     {
-        xStream = new XStream( new DomDriver() );
+        xstream = new XStream( new DomDriver() );
 
         // Register aliases
-        xStream.alias( "webapp-structure", WebappStructure.class );
-        xStream.alias( "path-set", PathSet.class );
-        xStream.alias( "dependency", Dependency.class );
+        xstream.alias( "webapp-structure", WebappStructure.class );
+        xstream.alias( "path-set", PathSet.class );
+        xstream.alias( "dependency", Dependency.class );
 
     }
 
@@ -59,7 +59,6 @@ public class WebappStructureSerializer
     public WebappStructureSerializer()
     {
     }
-
 
     /**
      * Reads the {@link WebappStructure} from the specified file.
@@ -76,7 +75,7 @@ public class WebappStructureSerializer
         try
         {
             reader = ReaderFactory.newXmlReader( file );
-            return (WebappStructure) xStream.fromXML( reader );
+            return (WebappStructure) xstream.fromXML( reader );
         }
         finally
         {
@@ -88,7 +87,7 @@ public class WebappStructureSerializer
      * Saves the {@link WebappStructure} to the specified file.
      *
      * @param webappStructure the structure to save
-     * @param targetFile      the file to use to save the structure
+     * @param targetFile the file to use to save the structure
      * @throws IOException if an error occurred while saving the webapp structure
      */
     public void toXml( WebappStructure webappStructure, File targetFile )
@@ -99,8 +98,7 @@ public class WebappStructureSerializer
         {
             if ( !targetFile.getParentFile().exists() && !targetFile.getParentFile().mkdirs() )
             {
-                throw new IOException(
-                    "Could not create parent [" + targetFile.getParentFile().getAbsolutePath() + "]" );
+                throw new IOException( "Could not create parent [" + targetFile.getParentFile().getAbsolutePath() + "]" );
             }
 
             if ( !targetFile.exists() && !targetFile.createNewFile() )
@@ -108,7 +106,7 @@ public class WebappStructureSerializer
                 throw new IOException( "Could not create file [" + targetFile.getAbsolutePath() + "]" );
             }
             writer = WriterFactory.newXmlWriter( targetFile );
-            xStream.toXML( webappStructure, writer );
+            xstream.toXML( webappStructure, writer );
         }
         finally
         {

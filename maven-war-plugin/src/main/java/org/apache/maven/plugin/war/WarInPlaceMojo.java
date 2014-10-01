@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  *
  * @version $Id$
  */
-@Mojo( name = "inplace", requiresDependencyResolution = ResolutionScope.RUNTIME , threadSafe = true )
+@Mojo( name = "inplace", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true )
 public class WarInPlaceMojo
     extends AbstractWarMojo
 {

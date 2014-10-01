@@ -38,14 +38,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Generate a manifest for this webapp. The manifest file is created in the
- * <code>warSourceDirectory</code>.
+ * Generate a manifest for this webapp. The manifest file is created in the <code>warSourceDirectory</code>.
  *
  * @author Mike Perham
  * @version $Id$
  */
-@Mojo( name = "manifest", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true,
-       requiresDependencyResolution = ResolutionScope.RUNTIME )
+@Mojo( name = "manifest", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class WarManifestMojo
     extends AbstractWarMojo
 {
@@ -54,7 +52,6 @@ public class WarManifestMojo
      */
     @Component( role = Archiver.class, hint = "war" )
     private WarArchiver warArchiver;
-
 
     /**
      * Executes this mojo on the current project.

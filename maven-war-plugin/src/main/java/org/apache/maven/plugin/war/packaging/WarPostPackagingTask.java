@@ -34,12 +34,11 @@ public interface WarPostPackagingTask
     /**
      * Executes the post packaging task.
      * <p/>
-     * The packaging context hold all information regarding the webapp that
-     * has been packaged.
+     * The packaging context hold all information regarding the webapp that has been packaged.
      *
      * @param context the packaging context
      * @throws MojoExecutionException if an error occurred
-     * @throws MojoFailureException   if a failure occurred
+     * @throws MojoFailureException if a failure occurred
      */
     void performPostPackaging( WarPackagingContext context )
         throws MojoExecutionException, MojoFailureException;

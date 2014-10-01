@@ -25,25 +25,28 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- *
  * @author Stephane Nicoll
  * @version $Id$
  */
 public class WarUtils
 {
 
-
     public static Artifact getArtifact( MavenProject project, Dependency dependency )
     {
-        for (Object o : project.getArtifacts()) {
+        for ( Object o : project.getArtifacts() )
+        {
             Artifact artifact = (Artifact) o;
-            if (artifact.getGroupId().equals(dependency.getGroupId())
-                    && artifact.getArtifactId().equals(dependency.getArtifactId())
-                    && artifact.getType().equals(dependency.getType())) {
-                if (artifact.getClassifier() == null && dependency.getClassifier() == null) {
+            if ( artifact.getGroupId().equals( dependency.getGroupId() )
+                && artifact.getArtifactId().equals( dependency.getArtifactId() )
+                && artifact.getType().equals( dependency.getType() ) )
+            {
+                if ( artifact.getClassifier() == null && dependency.getClassifier() == null )
+                {
                     return artifact;
-                } else if (dependency.getClassifier() != null
-                        && dependency.getClassifier().equals(artifact.getClassifier())) {
+                }
+                else if ( dependency.getClassifier() != null
+                    && dependency.getClassifier().equals( artifact.getClassifier() ) )
+                {
                     return artifact;
                 }
             }
@@ -67,22 +70,22 @@ public class WarUtils
             return false;
         }
         if ( artifact.getVersion() != null ? !artifact.getVersion().equals( dependency.getVersion() )
-            : dependency.getVersion() != null )
+                        : dependency.getVersion() != null )
         {
             return false;
         }
         if ( artifact.getType() != null ? !artifact.getType().equals( dependency.getType() )
-            : dependency.getType() != null )
+                        : dependency.getType() != null )
         {
             return false;
         }
         if ( artifact.getClassifier() != null ? !artifact.getClassifier().equals( dependency.getClassifier() )
-            : dependency.getClassifier() != null )
+                        : dependency.getClassifier() != null )
         {
             return false;
         }
         if ( artifact.getScope() != null ? !artifact.getScope().equals( dependency.getScope() )
-            : dependency.getScope() != null )
+                        : dependency.getScope() != null )
         {
             return false;
         }
@@ -110,12 +113,12 @@ public class WarUtils
             return false;
         }
         if ( first.getClassifier() != null ? !first.getClassifier().equals( second.getClassifier() )
-            : second.getClassifier() != null )
+                        : second.getClassifier() != null )
         {
             return false;
         }
         if ( first.getExclusions() != null ? !first.getExclusions().equals( second.getExclusions() )
-            : second.getExclusions() != null )
+                        : second.getExclusions() != null )
         {
             return false;
         }
@@ -128,7 +131,7 @@ public class WarUtils
             return false;
         }
         if ( first.getSystemPath() != null ? !first.getSystemPath().equals( second.getSystemPath() )
-            : second.getSystemPath() != null )
+                        : second.getSystemPath() != null )
         {
             return false;
         }
@@ -137,12 +140,11 @@ public class WarUtils
             return false;
         }
         if ( first.getVersion() != null ? !first.getVersion().equals( second.getVersion() )
-            : second.getVersion() != null )
+                        : second.getVersion() != null )
         {
             return false;
         }
         return true;
     }
-
 
 }

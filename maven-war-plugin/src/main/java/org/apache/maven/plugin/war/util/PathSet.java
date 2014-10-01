@@ -32,15 +32,15 @@ import java.util.Set;
 /**
  * Set of file's paths.
  * <p/>
- * The class extends functionality of a "normal" set of strings by a process of
- * the paths normalization. All paths are converted to unix form (slashes) and
- * they don't start with starting /.
+ * The class extends functionality of a "normal" set of strings by a process of the paths normalization. All paths are
+ * converted to unix form (slashes) and they don't start with starting /.
  *
  * @author Piotr Tabor
  * @version $Id$
  */
 
-public class PathSet implements Iterable<String>
+public class PathSet
+    implements Iterable<String>
 {
 
     /**
@@ -71,12 +71,11 @@ public class PathSet implements Iterable<String>
      */
     public PathSet()
     {
-        /*Empty default constructor*/
+        /* Empty default constructor */
     }
 
     /**
-     * Creates paths set and normalizate and adds all 'paths'.
-     * The source 'paths' will not be changed
+     * Creates paths set and normalizate and adds all 'paths'. The source 'paths' will not be changed
      *
      * @param paths to be added
      */
@@ -86,8 +85,7 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Creates paths set and normalizate and adds all 'paths'.
-     * The source 'paths' will not be changed
+     * Creates paths set and normalizate and adds all 'paths'. The source 'paths' will not be changed
      *
      * @param paths to be added
      */
@@ -107,10 +105,9 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Normalizes and adds given paths (collection of strings)
-     * to the set. The source collection will not be changed
+     * Normalizes and adds given paths (collection of strings) to the set. The source collection will not be changed
      *
-     * @param paths  - collection of strings to be added
+     * @param paths - collection of strings to be added
      * @param prefix added to all given paths
      */
     public void addAll( Collection<String> paths, String prefix )
@@ -122,10 +119,9 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Normalizes and adds given paths to the set.
-     * The source collection will not be changed
+     * Normalizes and adds given paths to the set. The source collection will not be changed
      *
-     * @param paths  to be added
+     * @param paths to be added
      * @param prefix added to all given paths
      */
     public void addAll( String[] paths, String prefix )
@@ -137,10 +133,9 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Adds given paths to the set.
-     * The source collection will not be changed
+     * Adds given paths to the set. The source collection will not be changed
      *
-     * @param paths  to be added
+     * @param paths to be added
      * @param prefix added to all given paths
      */
     public void addAll( PathSet paths, String prefix )
@@ -152,8 +147,7 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Normalizes and adds given paths (collection of strings)
-     * to the set. The source collection will not be changed
+     * Normalizes and adds given paths (collection of strings) to the set. The source collection will not be changed
      *
      * @param paths - collection of strings to be added
      */
@@ -163,8 +157,7 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Normalizes and adds given paths to the set.
-     * The source collection will not be changed
+     * Normalizes and adds given paths to the set. The source collection will not be changed
      *
      * @param paths to be added
      */
@@ -174,8 +167,7 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Adds given paths to the set.
-     * The source collection will not be changed
+     * Adds given paths to the set. The source collection will not be changed
      *
      * @param paths to be added
      */
@@ -185,8 +177,7 @@ public class PathSet implements Iterable<String>
     }
 
     /**
-     * Checks if the set constains given path. The path is normalized
-     * before check.
+     * Checks if the set constains given path. The path is normalized before check.
      *
      * @param path we are looking for in the set.
      * @return information if the set constains the path.
@@ -255,7 +246,7 @@ public class PathSet implements Iterable<String>
      * Adds to the set all files in the given directory
      *
      * @param directory that will be searched for file's paths to add
-     * @param prefix    to be added to all found files
+     * @param prefix to be added to all found files
      */
     public void addAllFilesInDirectory( File directory, String prefix )
     {

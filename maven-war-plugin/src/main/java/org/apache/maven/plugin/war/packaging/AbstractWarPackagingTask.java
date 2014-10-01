@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.IOUtil;
 public abstract class AbstractWarPackagingTask
     implements WarPackagingTask
 {
-    public static final String[] DEFAULT_INCLUDES = {"**/**"};
+    public static final String[] DEFAULT_INCLUDES = { "**/**" };
 
     public static final String WEB_INF_PATH = "WEB-INF";
 
@@ -58,20 +58,18 @@ public abstract class AbstractWarPackagingTask
     /**
      * Copies the files if possible with an optional target prefix.
      * <p/>
-     * Copy uses a first-win strategy: files that have already been copied by previous
-     * tasks are ignored. This method makes sure to update the list of protected files
-     * which gives the list of files that have already been copied.
+     * Copy uses a first-win strategy: files that have already been copied by previous tasks are ignored. This method
+     * makes sure to update the list of protected files which gives the list of files that have already been copied.
      * <p/>
-     * If the structure of the source directory is not the same as the root of the
-     * webapp, use the <tt>targetPrefix</tt> parameter to specify in which particular
-     * directory the files should be copied. Use <tt>null</tt> to copy the files with
-     * the same structure
+     * If the structure of the source directory is not the same as the root of the webapp, use the <tt>targetPrefix</tt>
+     * parameter to specify in which particular directory the files should be copied. Use <tt>null</tt> to copy the
+     * files with the same structure
      *
-     * @param sourceId       the source id
-     * @param context        the context to use
-     * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
+     * @param sourceId the source id
+     * @param context the context to use
+     * @param sourceBaseDir the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
-     * @param targetPrefix   the prefix to add to the target file name
+     * @param targetPrefix the prefix to add to the target file name
      * @throws IOException if an error occurred while copying the files
      */
     protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
@@ -92,9 +90,7 @@ public abstract class AbstractWarPackagingTask
                 destinationFileName = targetPrefix + fileToCopyName;
             }
 
-
-            if ( filtered
-                && !context.isNonFilteredExtension( sourceFile.getName() ) )
+            if ( filtered && !context.isNonFilteredExtension( sourceFile.getName() ) )
             {
                 copyFilteredFile( sourceId, context, sourceFile, destinationFileName );
             }
@@ -108,13 +104,12 @@ public abstract class AbstractWarPackagingTask
     /**
      * Copies the files if possible as is.
      * <p/>
-     * Copy uses a first-win strategy: files that have already been copied by previous
-     * tasks are ignored. This method makes sure to update the list of protected files
-     * which gives the list of files that have already been copied.
+     * Copy uses a first-win strategy: files that have already been copied by previous tasks are ignored. This method
+     * makes sure to update the list of protected files which gives the list of files that have already been copied.
      *
-     * @param sourceId       the source id
-     * @param context        the context to use
-     * @param sourceBaseDir  the base directory from which the <tt>sourceFilesSet</tt> will be copied
+     * @param sourceId the source id
+     * @param context the context to use
+     * @param sourceBaseDir the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
      * @throws IOException if an error occurred while copying the files
      */
@@ -128,62 +123,79 @@ public abstract class AbstractWarPackagingTask
     /**
      * Copy the specified file if the target location has not yet already been used.
      * <p/>
-     * The <tt>targetFileName</tt> is the relative path according to the root of
-     * the generated web application.
+     * The <tt>targetFileName</tt> is the relative path according to the root of the generated web application.
      *
-     * @param sourceId       the source id
-     * @param context        the context to use
-     * @param file           the file to copy
+     * @param sourceId the source id
+     * @param context the context to use
+     * @param file the file to copy
      * @param targetFilename the relative path according to the root of the webapp
      * @throws IOException if an error occurred while copying
      */
-    protected void copyFile( String sourceId, final WarPackagingContext context, final File file,
-                             String targetFilename )
+    protected void copyFile( String sourceId, final WarPackagingContext context, final File file, String targetFilename )
         throws IOException
     {
         final File targetFile = new File( context.getWebappDirectory(), targetFilename );
-        
-        if( file.isFile() )
+
+        if ( file.isFile() )
         {
-            context.getWebappStructure().registerFile( sourceId, targetFilename, new WebappStructure.RegistrationCallback()
-            {
-                public void registered( String ownerId, String targetFilename )
-                    throws IOException
-                {
-                    copyFile( context, file, targetFile, targetFilename, false );
-                }
-
-                public void alreadyRegistered( String ownerId, String targetFilename )
-                    throws IOException
-                {
-                    copyFile( context, file, targetFile, targetFilename, true );
-                }
-
-                public void refused( String ownerId, String targetFilename, String actualOwnerId )
-                    throws IOException
-                {
-                    context.getLog().debug( " - " + targetFilename + " wasn't copied because it has "
-                        + "already been packaged for overlay [" + actualOwnerId + "]." );
-                }
-
-                public void superseded( String ownerId, String targetFilename, String deprecatedOwnerId )
-                    throws IOException
-                {
-                    context.getLog().info( "File [" + targetFilename + "] belonged to overlay [" + deprecatedOwnerId
-                        + "] so it will be overwritten." );
-                    copyFile( context, file, targetFile, targetFilename, false );
-                }
-
-                public void supersededUnknownOwner( String ownerId, String targetFilename, String unknownOwnerId )
-                    throws IOException
-                {
-                    context.getLog()
-                        .warn( "File [" + targetFilename + "] belonged to overlay [" + unknownOwnerId
-                            + "] which does not exist anymore in the current project. It is recommended to invoke "
-                            + "clean if the dependencies of the project changed." );
-                    copyFile( context, file, targetFile, targetFilename, false );
-                }
-            } );
+            context.getWebappStructure().registerFile( sourceId, targetFilename,
+           new WebappStructure.RegistrationCallback()
+           {
+               public void registered( String ownerId, String targetFilename )
+                   throws IOException
+               {
+                   copyFile( context, file, targetFile, targetFilename,
+                             false );
+               }
+    
+               public void alreadyRegistered( String ownerId,
+                                              String targetFilename )
+                   throws IOException
+               {
+                   copyFile( context, file, targetFile, targetFilename,
+                             true );
+               }
+    
+               public void refused( String ownerId, String targetFilename,
+                                    String actualOwnerId )
+                   throws IOException
+               {
+                   context.getLog().debug( " - "
+                                               + targetFilename
+                                               + " wasn't copied because it has "
+                                               + "already been packaged for overlay ["
+                                               + actualOwnerId + "]." );
+               }
+    
+               public void superseded( String ownerId,
+                                       String targetFilename,
+                                       String deprecatedOwnerId )
+                   throws IOException
+               {
+                   context.getLog().info( "File ["
+                                              + targetFilename
+                                              + "] belonged to overlay ["
+                                              + deprecatedOwnerId
+                                              + "] so it will be overwritten." );
+                   copyFile( context, file, targetFile, targetFilename,
+                             false );
+               }
+    
+               public void supersededUnknownOwner( String ownerId,
+                                                   String targetFilename,
+                                                   String unknownOwnerId )
+                   throws IOException
+               {
+                   context.getLog().warn( "File ["
+                                              + targetFilename
+                                              + "] belonged to overlay ["
+                                              + unknownOwnerId
+                                              + "] which does not exist anymore in the current project. It is recommended to invoke "
+                                              + "clean if the dependencies of the project changed." );
+                   copyFile( context, file, targetFile, targetFilename,
+                             false );
+               }
+           } );
         }
         else if ( !targetFile.exists() && !targetFile.mkdirs() )
         {
@@ -192,18 +204,17 @@ public abstract class AbstractWarPackagingTask
     }
 
     /**
-     * Copy the specified file if the target location has not yet already been
-     * used and filter its content with the configured filter properties.
+     * Copy the specified file if the target location has not yet already been used and filter its content with the
+     * configured filter properties.
      * <p/>
-     * The <tt>targetFileName</tt> is the relative path according to the root of
-     * the generated web application.
+     * The <tt>targetFileName</tt> is the relative path according to the root of the generated web application.
      *
-     * @param sourceId       the source id
-     * @param context        the context to use
-     * @param file           the file to copy
+     * @param sourceId the source id
+     * @param context the context to use
+     * @param file the file to copy
      * @param targetFilename the relative path according to the root of the webapp
      * @return true if the file has been copied, false otherwise
-     * @throws IOException            if an error occurred while copying
+     * @throws IOException if an error occurred while copying
      * @throws MojoExecutionException if an error occurred while retrieving the filter properties
      */
     protected boolean copyFilteredFile( String sourceId, final WarPackagingContext context, File file,
@@ -229,8 +240,8 @@ public abstract class AbstractWarPackagingTask
                 }
                 // fix for MWAR-36, ensures that the parent dir are created first
                 targetFile.getParentFile().mkdirs();
-                
-                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), encoding);
+
+                context.getMavenFileFilter().copyFile( file, targetFile, true, context.getFilterWrappers(), encoding );
             }
             catch ( MavenFilteringException e )
             {
@@ -242,8 +253,8 @@ public abstract class AbstractWarPackagingTask
         }
         else
         {
-            context.getLog().debug(
-                " - " + targetFilename + " wasn't copied because it has already been packaged (filtered)." );
+            context.getLog().debug( " - " + targetFilename
+                                        + " wasn't copied because it has already been packaged (filtered)." );
             return false;
         }
     }
@@ -251,8 +262,8 @@ public abstract class AbstractWarPackagingTask
     /**
      * Unpacks the specified file to the specified directory.
      *
-     * @param context         the packaging context
-     * @param file            the file to unpack
+     * @param context the packaging context
+     * @param file the file to unpack
      * @param unpackDirectory the directory to use for th unpacked file
      * @throws MojoExecutionException if an error occurred while unpacking the file
      */
@@ -278,25 +289,25 @@ public abstract class AbstractWarPackagingTask
         catch ( NoSuchArchiverException e )
         {
             context.getLog().warn( "Skip unpacking dependency file [" + file.getAbsolutePath()
-                + " with unknown extension [" + archiveExt + "]" );
+                                       + " with unknown extension [" + archiveExt + "]" );
         }
     }
 
     /**
-     * Copy file from source to destination. The directories up to <code>destination</code>
-     * will be created if they don't already exist. if the <code>onlyIfModified</code> flag
-     * is <tt>false</tt>, <code>destination</code> will be overwritten if it already exists. If the
-     * flag is <tt>true</tt> destination will be overwritten if it's not up to date.
+     * Copy file from source to destination. The directories up to <code>destination</code> will be created if they
+     * don't already exist. if the <code>onlyIfModified</code> flag is <tt>false</tt>, <code>destination</code> will be
+     * overwritten if it already exists. If the flag is <tt>true</tt> destination will be overwritten if it's not up to
+     * date.
      * <p/>
      *
-     * @param context        the packaging context
-     * @param source         an existing non-directory <code>File</code> to copy bytes from
-     * @param destination    a non-directory <code>File</code> to write bytes to (possibly overwriting).
+     * @param context the packaging context
+     * @param source an existing non-directory <code>File</code> to copy bytes from
+     * @param destination a non-directory <code>File</code> to write bytes to (possibly overwriting).
      * @param targetFilename the relative path of the file from the webapp root directory
      * @param onlyIfModified if true, copy the file only if the source has changed, always copy otherwise
      * @return true if the file has been copied/updated, false otherwise
-     * @throws IOException if <code>source</code> does not exist, <code>destination</code> cannot
-     *                     be written to, or an IO error occurs during copying
+     * @throws IOException if <code>source</code> does not exist, <code>destination</code> cannot be written to, or an
+     *             IO error occurs during copying
      */
     protected boolean copyFile( WarPackagingContext context, File source, File destination, String targetFilename,
                                 boolean onlyIfModified )
@@ -360,12 +371,11 @@ public abstract class AbstractWarPackagingTask
             IOUtil.close( xmlReader );
         }
     }
-    
+
     /**
-     * Returns the file to copy. If the includes are <tt>null</tt> or empty, the
-     * default includes are used.
+     * Returns the file to copy. If the includes are <tt>null</tt> or empty, the default includes are used.
      *
-     * @param baseDir  the base directory to start from
+     * @param baseDir the base directory to start from
      * @param includes the includes
      * @param excludes the excludes
      * @return the files to copy
@@ -376,10 +386,9 @@ public abstract class AbstractWarPackagingTask
     }
 
     /**
-     * Returns the file to copy. If the includes are <tt>null</tt> or empty, the
-     * default includes are used.
+     * Returns the file to copy. If the includes are <tt>null</tt> or empty, the default includes are used.
      *
-     * @param baseDir  the base directory to start from
+     * @param baseDir the base directory to start from
      * @param includes the includes
      * @param excludes the excludes
      * @return the files to copy
@@ -407,22 +416,21 @@ public abstract class AbstractWarPackagingTask
         scanner.scan();
 
         PathSet pathSet = new PathSet( scanner.getIncludedFiles() );
-        
+
         if ( includeDirectories )
         {
             pathSet.addAll( scanner.getIncludedDirectories() );
         }
-        
+
         return pathSet;
     }
 
     /**
      * Returns the final name of the specified artifact.
      * <p/>
-     * If the <tt>outputFileNameMapping</tt> is set, it is used, otherwise
-     * the standard naming scheme is used.
+     * If the <tt>outputFileNameMapping</tt> is set, it is used, otherwise the standard naming scheme is used.
      *
-     * @param context  the packaging context
+     * @param context the packaging context
      * @param artifact the artifact
      * @return the converted filename of the artifact
      */
@@ -437,8 +445,7 @@ public abstract class AbstractWarPackagingTask
         String classifier = artifact.getClassifier();
         if ( ( classifier != null ) && !( "".equals( classifier.trim() ) ) )
         {
-            return MappingUtils.evaluateFileNameMapping( MappingUtils.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER,
-                                                         artifact );
+            return MappingUtils.evaluateFileNameMapping( MappingUtils.DEFAULT_FILE_NAME_MAPPING_CLASSIFIER, artifact );
         }
         else
         {
@@ -448,9 +455,8 @@ public abstract class AbstractWarPackagingTask
     }
 
     /**
-     * Returns <code>true</code> if the <code>File</code>-object is a file (not
-     * a directory) that is not <code>null</code> and has a file name that ends
-     * in ".xml".
+     * Returns <code>true</code> if the <code>File</code>-object is a file (not a directory) that is not
+     * <code>null</code> and has a file name that ends in ".xml".
      *
      * @param file The file to check
      * @return <code>true</code> if the file is an xml-file, otherwise <code>false</code>

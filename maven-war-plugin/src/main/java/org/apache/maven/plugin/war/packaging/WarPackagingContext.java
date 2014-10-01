@@ -49,8 +49,7 @@ public interface WarPackagingContext
     MavenProject getProject();
 
     /**
-     * Returns the webapp directory. Packaging tasks should use this
-     * directory to generate the webapp.
+     * Returns the webapp directory. Packaging tasks should use this directory to generate the webapp.
      *
      * @return the webapp directory
      */
@@ -92,8 +91,7 @@ public interface WarPackagingContext
     File getClassesDirectory();
 
     /**
-     * Specify whether the classes resources should be archived in
-     * the <tt>WEB-INF/lib</tt> of the generated web app.
+     * Specify whether the classes resources should be archived in the <tt>WEB-INF/lib</tt> of the generated web app.
      *
      * @return true if the classes should be archived, false otherwise
      */
@@ -128,16 +126,14 @@ public interface WarPackagingContext
     MavenArchiveConfiguration getArchive();
 
     /**
-     * Returns the Jar archiver needed for archiving classes directory into
-     * jar file under WEB-INF/lib.
+     * Returns the Jar archiver needed for archiving classes directory into jar file under WEB-INF/lib.
      *
      * @return the jar archiver to user
      */
     JarArchiver getJarArchiver();
 
     /**
-     * Returns the output file name mapping to use, if any. Returns <tt>null</tt>
-     * if no file name mapping is set.
+     * Returns the output file name mapping to use, if any. Returns <tt>null</tt> if no file name mapping is set.
      *
      * @return the output file name mapping or <tt>null</tt>
      */
@@ -158,15 +154,14 @@ public interface WarPackagingContext
     WebappStructure getWebappStructure();
 
     /**
-     * Returns the list of registered overlays for this session. This list might
-     * differ from the one returned by the cache; in this case, it means that the
-     * project's configuration has changed. The plugin will handle those cases nicely
-     * but it would be better in general to invoke the clean goal.
+     * Returns the list of registered overlays for this session. This list might differ from the one returned by the
+     * cache; in this case, it means that the project's configuration has changed. The plugin will handle those cases
+     * nicely but it would be better in general to invoke the clean goal.
      *
      * @return the list of registered overlays, including the current project
      */
     List<String> getOwnerIds();
-    
+
     /**
      * Returns the {@link MavenFileFilter} instance to use.
      *
@@ -174,25 +169,24 @@ public interface WarPackagingContext
      * @since 2.1-alpha-2
      */
     MavenFileFilter getMavenFileFilter();
-    
+
     /**
      * @return {@link List} of {@link FilterWrapper}
      * @since 2.1-alpha-2
      */
     List<FilterWrapper> getFilterWrappers();
-    
+
     /**
-     * Specify if the given <tt>fileName</tt> belongs to the list of extensions
-     * that must not be filtered
+     * Specify if the given <tt>fileName</tt> belongs to the list of extensions that must not be filtered
      *
      * @param fileName the name of file
      * @return <tt>true</tt> if it should not be filtered, <tt>false</tt> otherwise
      * @since 2.1-alpha-2
      */
     boolean isNonFilteredExtension( String fileName );
-    
+
     boolean isFilteringDeploymentDescriptors();
-    
+
     ArtifactFactory getArtifactFactory();
 
     /**
@@ -212,7 +206,6 @@ public interface WarPackagingContext
     String getResourceEncoding();
 
     /**
-     *
      * @return to use jvmChmod rather than forking chmod cli
      * @since 2.4
      */

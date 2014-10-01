@@ -47,7 +47,6 @@ public class WarExplodedMojoFilteringTest
     {
         return new File( getBasedir(), "target/test-classes/unit/warexplodedmojo/test-dir" );
     }
-    
 
     /**
      * @throws Exception
@@ -65,7 +64,7 @@ public class WarExplodedMojoFilteringTest
         File sampleResource = new File( webAppResource, "custom-setting.cfg" );
         File sampleResourceWDir = new File( webAppResource, "custom-config/custom-setting.cfg" );
         List<String> filterList = new LinkedList<String>();
-        ResourceStub[] resources = new ResourceStub[]{new ResourceStub()};
+        ResourceStub[] resources = new ResourceStub[] { new ResourceStub() };
 
         createFile( sampleResource );
         createFile( sampleResourceWDir );
@@ -119,7 +118,7 @@ public class WarExplodedMojoFilteringTest
         assertEquals( "error in filtering using System properties", "system_key_1=" + System.getProperty( "user.dir" ),
                       line );
         line = reader.readLine();
-        System.out.println(" line " + line );
+        System.out.println( " line " + line );
         assertEquals( "error in filtering using System properties", "system_key_2=" + System.getProperty( "user.dir" ),
                       line );
 
@@ -132,7 +131,7 @@ public class WarExplodedMojoFilteringTest
         assertEquals( "error in filtering using System properties", "system_property_1=system-property-value",
                       reader.readLine() );
         assertEquals( "error in filtering using System properties", "system_property_2=system-property-value",
-                reader.readLine() );
+                      reader.readLine() );
 
         // update property, and generate again
         System.setProperty( "system.property", "new-system-property-value" );
@@ -148,7 +147,7 @@ public class WarExplodedMojoFilteringTest
         assertEquals( "error in filtering using System properties", "system_key_1=" + System.getProperty( "user.dir" ),
                       reader.readLine() );
         assertEquals( "error in filtering using System properties", "system_key_2=" + System.getProperty( "user.dir" ),
-                reader.readLine() );
+                      reader.readLine() );
 
         assertEquals( "error in filtering using project properties", "project_key_1=i_think_so", reader.readLine() );
         assertEquals( "error in filtering using project properties", "project_key_2=i_think_so", reader.readLine() );
@@ -159,7 +158,7 @@ public class WarExplodedMojoFilteringTest
         assertEquals( "error in filtering using System properties", "system_property_1=new-system-property-value",
                       reader.readLine() );
         assertEquals( "error in filtering using System properties", "system_property_2=new-system-property-value",
-                reader.readLine() );
+                      reader.readLine() );
 
         // update property, and generate again
         File filterFile = new File( getTestDirectory(), testId + "-test-data/filters/filter.properties" );
@@ -184,7 +183,7 @@ public class WarExplodedMojoFilteringTest
         assertEquals( "error in filtering using System properties", "system_key_1=" + System.getProperty( "user.dir" ),
                       reader.readLine() );
         assertEquals( "error in filtering using System properties", "system_key_2=" + System.getProperty( "user.dir" ),
-                reader.readLine() );
+                      reader.readLine() );
 
         assertEquals( "error in filtering using project properties", "project_key_1=i_think_so", reader.readLine() );
         assertEquals( "error in filtering using project properties", "project_key_2=i_think_so", reader.readLine() );
@@ -195,7 +194,7 @@ public class WarExplodedMojoFilteringTest
         assertEquals( "error in filtering using System properties", "system_property_1=new-system-property-value",
                       reader.readLine() );
         assertEquals( "error in filtering using System properties", "system_property_2=new-system-property-value",
-                reader.readLine() );
+                      reader.readLine() );
 
         assertEquals( "error in filtering using filter files", "resource_key_1=this_is_filtered", reader.readLine() );
         assertEquals( "error in filtering using filter files", "resource_key_2=this_is_filtered", reader.readLine() );
@@ -205,6 +204,6 @@ public class WarExplodedMojoFilteringTest
         expectedWebSource2File.delete();
         expectedResourceFile.delete();
         expectedResourceWDirFile.delete();
-    }    
+    }
 
 }

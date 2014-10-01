@@ -48,8 +48,11 @@ import java.util.Arrays;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
-@Mojo( name = "war", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true,
-       requiresDependencyResolution = ResolutionScope.RUNTIME )
+@Mojo( 
+    name = "war", 
+    defaultPhase = LifecyclePhase.PACKAGE, 
+    threadSafe = true, 
+    requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class WarMojo
     extends AbstractWarMojo
 {
@@ -66,18 +69,16 @@ public class WarMojo
     private String warName;
 
     /**
-     * Classifier to add to the generated WAR. If given, the artifact will be an attachment instead.
-     * The classifier will not be applied to the JAR file of the project - only to the WAR file.
+     * Classifier to add to the generated WAR. If given, the artifact will be an attachment instead. The classifier will
+     * not be applied to the JAR file of the project - only to the WAR file.
      */
     @Parameter
     private String classifier;
 
     /**
-     * The comma separated list of tokens to exclude from the WAR before
-     * packaging. This option may be used to implement the skinny WAR use
-     * case. Note that you can use the Java Regular Expressions engine to
-     * include and exclude specific pattern using the expression %regex[].
-     * Hint: read the about (?!Pattern).
+     * The comma separated list of tokens to exclude from the WAR before packaging. This option may be used to implement
+     * the skinny WAR use case. Note that you can use the Java Regular Expressions engine to include and exclude
+     * specific pattern using the expression %regex[]. Hint: read the about (?!Pattern).
      *
      * @since 2.1-alpha-2
      */
@@ -85,11 +86,9 @@ public class WarMojo
     private String packagingExcludes;
 
     /**
-     * The comma separated list of tokens to include in the WAR before
-     * packaging. By default everything is included. This option may be used
-     * to implement the skinny WAR use case. Note that you can use the
-     * Java Regular Expressions engine to include and exclude specific pattern
-     * using the expression %regex[].
+     * The comma separated list of tokens to include in the WAR before packaging. By default everything is included.
+     * This option may be used to implement the skinny WAR use case. Note that you can use the Java Regular Expressions
+     * engine to include and exclude specific pattern using the expression %regex[].
      *
      * @since 2.1-beta-1
      */
@@ -108,16 +107,16 @@ public class WarMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or
-     * deploy it to the local repository instead of the default one in an execution.
+     * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or deploy
+     * it to the local repository instead of the default one in an execution.
      */
     @Parameter( property = "primaryArtifact", defaultValue = "true" )
     private boolean primaryArtifact = true;
 
     /**
-     * Whether or not to fail the build if the <code>web.xml</code> file is missing. Set to <code>false</code>
-     * if you want you WAR built without a <code>web.xml</code> file.
-     * This may be useful if you are building an overlay that has no web.xml file.
+     * Whether or not to fail the build if the <code>web.xml</code> file is missing. Set to <code>false</code> if you
+     * want you WAR built without a <code>web.xml</code> file. This may be useful if you are building an overlay that
+     * has no web.xml file.
      *
      * @since 2.1-alpha-2
      */
@@ -125,22 +124,25 @@ public class WarMojo
     private boolean failOnMissingWebXml = true;
 
     /**
-     * Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the
-     * project as an additional artifact.
-     * <p>By default the
-     * classifier for the additional artifact is 'classes'.
-     * You can change it with the
-     * <code><![CDATA[<classesClassifier>someclassifier</classesClassifier>]]></code>
-     * parameter.
-     * </p><p>
-     * If this parameter true, another project can depend on the classes
-     * by writing something like:
-     * <pre><![CDATA[<dependency>
+     * Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the project as an
+     * additional artifact.
+     * <p>
+     * By default the classifier for the additional artifact is 'classes'. You can change it with the
+     * <code><![CDATA[<classesClassifier>someclassifier</classesClassifier>]]></code> parameter.
+     * </p>
+     * <p>
+     * If this parameter true, another project can depend on the classes by writing something like:
+     * 
+     * <pre>
+     * <![CDATA[<dependency>
      *   <groupId>myGroup</groupId>
      *   <artifactId>myArtifact</artifactId>
      *   <version>myVersion</myVersion>
      *   <classifier>classes</classifier>
-     * </dependency>]]></pre></p>
+     * </dependency>]]>
+     * </pre>
+     * 
+     * </p>
      *
      * @since 2.1-alpha-2
      */
@@ -158,7 +160,6 @@ public class WarMojo
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
-
 
     /**
      * Executes the WarMojo on the current project.
@@ -196,16 +197,15 @@ public class WarMojo
      * Generates the webapp according to the <tt>mode</tt> attribute.
      *
      * @param warFile the target WAR file
-     * @throws IOException            if an error occurred while copying files
-     * @throws ArchiverException      if the archive could not be created
-     * @throws ManifestException      if the manifest could not be created
-     * @throws DependencyResolutionRequiredException
-     *                                if an error occurred while resolving the dependencies
+     * @throws IOException if an error occurred while copying files
+     * @throws ArchiverException if the archive could not be created
+     * @throws ManifestException if the manifest could not be created
+     * @throws DependencyResolutionRequiredException if an error occurred while resolving the dependencies
      * @throws MojoExecutionException if the execution failed
-     * @throws MojoFailureException   if a fatal exception occurred
+     * @throws MojoFailureException if a fatal exception occurred
      */
     private void performPackaging( File warFile )
-        throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
+        throws IOException, ManifestException, DependencyResolutionRequiredException,
         MojoExecutionException, MojoFailureException
     {
         getLog().info( "Packaging webapp" );
@@ -218,10 +218,8 @@ public class WarMojo
 
         archiver.setOutputFile( warFile );
 
-        getLog().debug(
-            "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated webapp archive." );
-        getLog().debug(
-            "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
+        getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated webapp archive." );
+        getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
 
         warArchiver.addDirectory( getWebappDirectory(), getPackagingIncludes(), getPackagingExcludes() );
 
@@ -231,8 +229,8 @@ public class WarMojo
             warArchiver.setWebxml( webXmlFile );
         }
 
-        warArchiver.setRecompressAddedZips( isRecompressZippedFiles()  );
-        
+        warArchiver.setRecompressAddedZips( isRecompressZippedFiles() );
+
         warArchiver.setIncludeEmptyDirs( isIncludeEmptyDirectories() );
 
         if ( !failOnMissingWebXml )
@@ -252,7 +250,7 @@ public class WarMojo
             {
                 // special handling in case of archived classes: MWAR-240
                 File targetClassesFile = getTargetClassesFile();
-                FileUtils.copyFile(getJarArchiver().getDestFile(), targetClassesFile);
+                FileUtils.copyFile( getJarArchiver().getDestFile(), targetClassesFile );
                 projectHelper.attachArtifact( getProject(), "jar", getClassesClassifier(), targetClassesFile );
             }
             else
@@ -269,10 +267,9 @@ public class WarMojo
             }
         }
 
-        String classifier = this.classifier;
-        if ( classifier != null )
+        if ( this.classifier != null )
         {
-            projectHelper.attachArtifact( getProject(), "war", classifier, warFile );
+            projectHelper.attachArtifact( getProject(), "war", this.classifier, warFile );
         }
         else
         {
@@ -288,7 +285,6 @@ public class WarMojo
         }
     }
 
-
     protected static File getTargetFile( File basedir, String finalName, String classifier, String type )
     {
         if ( classifier == null )
@@ -302,7 +298,6 @@ public class WarMojo
 
         return new File( basedir, finalName + classifier + "." + type );
     }
-
 
     protected File getTargetWarFile()
     {
@@ -348,7 +343,7 @@ public class WarMojo
     {
         if ( StringUtils.isEmpty( packagingIncludes ) )
         {
-            return new String[]{"**"};
+            return new String[] { "**" };
         }
         else
         {

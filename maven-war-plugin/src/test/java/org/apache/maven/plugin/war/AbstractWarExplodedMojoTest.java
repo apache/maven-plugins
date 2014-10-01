@@ -48,7 +48,6 @@ public abstract class AbstractWarExplodedMojoTest
         mojo = (WarExplodedMojo) lookupMojo( "exploded", getPomFile() );
     }
 
-
     /**
      * Returns the pom configuration to use.
      *
@@ -66,12 +65,11 @@ public abstract class AbstractWarExplodedMojoTest
     /**
      * Configures the exploded mojo for the specified test.
      * <p/>
-     * If the <tt>sourceFiles</tt> parameter is <tt>null</tt>, sample
-     * JSPs are created by default.
+     * If the <tt>sourceFiles</tt> parameter is <tt>null</tt>, sample JSPs are created by default.
      *
-     * @param testId        the id of the test
+     * @param testId the id of the test
      * @param artifactStubs the dependencies (may be null)
-     * @param sourceFiles   the source files to create (may be null)
+     * @param sourceFiles the source files to create (may be null)
      * @return the webapp directory
      * @throws Exception if an error occurs while configuring the mojo
      */
@@ -90,9 +88,10 @@ public abstract class AbstractWarExplodedMojoTest
         else
         {
             webAppSource = createWebAppSource( testId, false );
-            for (String sourceFile : sourceFiles) {
-                File sample = new File(webAppSource, sourceFile);
-                createFile(sample);
+            for ( String sourceFile : sourceFiles )
+            {
+                File sample = new File( webAppSource, sourceFile );
+                createFile( sample );
 
             }
 
@@ -104,8 +103,9 @@ public abstract class AbstractWarExplodedMojoTest
 
         if ( artifactStubs != null )
         {
-            for (ArtifactStub artifactStub : artifactStubs) {
-                project.addArtifact(artifactStub);
+            for ( ArtifactStub artifactStub : artifactStubs )
+            {
+                project.addArtifact( artifactStub );
             }
         }
 
@@ -115,11 +115,10 @@ public abstract class AbstractWarExplodedMojoTest
         return webAppDirectory;
     }
 
-
     /**
      * Configures the exploded mojo for the specified test.
      *
-     * @param testId        the id of the test
+     * @param testId the id of the test
      * @param artifactStubs the dependencies (may be null)
      * @return the webapp directory
      * @throws Exception if an error occurs while configuring the mojo
@@ -146,8 +145,7 @@ public abstract class AbstractWarExplodedMojoTest
     }
 
     /**
-     * Asserts the default content of the war based on the specified
-     * webapp directory.
+     * Asserts the default content of the war based on the specified webapp directory.
      *
      * @param webAppDirectory the webapp directory
      * @return a list of File objects that have been asserted
@@ -168,10 +166,8 @@ public abstract class AbstractWarExplodedMojoTest
         return content;
     }
 
-
     /**
-     * Asserts the web.xml file of the war based on the specified
-     * webapp directory.
+     * Asserts the web.xml file of the war based on the specified webapp directory.
      *
      * @param webAppDirectory the webapp directory
      * @return a list with the web.xml File object
@@ -188,25 +184,28 @@ public abstract class AbstractWarExplodedMojoTest
     }
 
     /**
-     * Asserts custom content of the war based on the specified webapp
-     * directory.
+     * Asserts custom content of the war based on the specified webapp directory.
      *
      * @param webAppDirectory the webapp directory
-     * @param filePaths       an array of file paths relative to the webapp directory
-     * @param customMessage   a custom message if an assertion fails
+     * @param filePaths an array of file paths relative to the webapp directory
+     * @param customMessage a custom message if an assertion fails
      * @return a list of File objects that have been inspected
      */
     protected List<File> assertCustomContent( File webAppDirectory, String[] filePaths, String customMessage )
     {
         final List<File> content = new ArrayList<File>();
-        for (String filePath : filePaths) {
-            final File expectedFile = new File(webAppDirectory, filePath);
-            if (customMessage != null) {
-                assertTrue(customMessage + " - " + expectedFile.toString(), expectedFile.exists());
-            } else {
-                assertTrue("source file not found: " + expectedFile.toString(), expectedFile.exists());
+        for ( String filePath : filePaths )
+        {
+            final File expectedFile = new File( webAppDirectory, filePath );
+            if ( customMessage != null )
+            {
+                assertTrue( customMessage + " - " + expectedFile.toString(), expectedFile.exists() );
             }
-            content.add(expectedFile);
+            else
+            {
+                assertTrue( "source file not found: " + expectedFile.toString(), expectedFile.exists() );
+            }
+            content.add( expectedFile );
         }
         return content;
     }
@@ -215,8 +214,8 @@ public abstract class AbstractWarExplodedMojoTest
      * Asserts that the webapp contains only the specified files.
      *
      * @param webAppDirectory the webapp directory
-     * @param expectedFiles   the expected files
-     * @param filter          an optional filter to ignore some resources
+     * @param expectedFiles the expected files
+     * @param filter an optional filter to ignore some resources
      */
     protected void assertWebAppContent( File webAppDirectory, List<File> expectedFiles, FileFilter filter )
     {
@@ -233,34 +232,36 @@ public abstract class AbstractWarExplodedMojoTest
         // Now we have the files, sort them.
         Collections.sort( expectedFiles );
         Collections.sort( webAppContent );
-        assertEquals( "Invalid webapp content, expected " + expectedFiles.size() + "file(s) " + expectedFiles +
-            " but got " + webAppContent.size() + " file(s) " + webAppContent, expectedFiles, webAppContent );
+        assertEquals( "Invalid webapp content, expected " + expectedFiles.size() + "file(s) " + expectedFiles
+            + " but got " + webAppContent.size() + " file(s) " + webAppContent, expectedFiles, webAppContent );
     }
 
     /**
      * Builds the list of files and directories from the specified dir.
      * <p/>
-     * Note that the filter is not used the usual way. If the filter does
-     * not accept the current file, it's not added but yet the subdirectories
-     * are added if any.
+     * Note that the filter is not used the usual way. If the filter does not accept the current file, it's not added
+     * but yet the subdirectories are added if any.
      *
-     * @param dir     the base directory
-     * @param filter  the filter
+     * @param dir the base directory
+     * @param filter the filter
      * @param content the current content, updated recursivly
      */
     private void buildFilesList( final File dir, FileFilter filter, final List<File> content )
     {
         final File[] files = dir.listFiles();
 
-        for (File file : files) {
+        for ( File file : files )
+        {
             // Add the file if the filter is ok with it
-            if (filter.accept(file)) {
-                content.add(file);
+            if ( filter.accept( file ) )
+            {
+                content.add( file );
             }
 
             // Even if the file is not accepted and is a directory, add it
-            if (file.isDirectory()) {
-                buildFilesList(file, filter, content);
+            if ( file.isDirectory() )
+            {
+                buildFilesList( file, filter, content );
             }
 
         }
@@ -273,7 +274,6 @@ public abstract class AbstractWarExplodedMojoTest
         private final List<String> rejectedFilePaths;
 
         private final int webAppDirIndex;
-
 
         public FileFilterImpl( File webAppDirectory, String[] rejectedFilePaths )
         {

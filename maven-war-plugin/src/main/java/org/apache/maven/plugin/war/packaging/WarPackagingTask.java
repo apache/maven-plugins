@@ -34,15 +34,13 @@ public interface WarPackagingTask
     /**
      * Performs the packaging for the specified task.
      * <p/>
-     * The task is responsible to update the packaging context, namely
-     * with the files that have been copied.
+     * The task is responsible to update the packaging context, namely with the files that have been copied.
      *
      * @param context the packaging context
      * @throws MojoExecutionException if an error occurred
-     * @throws MojoFailureException   if the project configuration is invalid
+     * @throws MojoFailureException if the project configuration is invalid
      */
     void performPackaging( WarPackagingContext context )
         throws MojoExecutionException, MojoFailureException;
-
 
 }

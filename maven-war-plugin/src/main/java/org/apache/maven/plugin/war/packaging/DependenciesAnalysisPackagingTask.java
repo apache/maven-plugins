@@ -28,11 +28,9 @@ import org.apache.maven.plugin.war.util.WebappStructure;
 import java.io.File;
 
 /**
- * Analyzes the dependencies of the project with its previous state and update
- * the target directory accordingly.
+ * Analyzes the dependencies of the project with its previous state and update the target directory accordingly.
  *
  * @author Stephane Nicoll
- * 
  * @version $Id$
  */
 public class DependenciesAnalysisPackagingTask
@@ -55,7 +53,8 @@ public class DependenciesAnalysisPackagingTask
         {
             context.getLog().debug( notBundledMessage );
         }
-        else {
+        else
+        {
             handleDependencyScope( context, dependency, warOrZipMessage, standardMessage, removeFile );
         }
     }
@@ -139,7 +138,6 @@ public class DependenciesAnalysisPackagingTask
         }
     }
 
-
     class DependenciesAnalysisCallbackImpl
         implements WebappStructure.DependenciesAnalysisCallback
     {
@@ -172,23 +170,20 @@ public class DependenciesAnalysisPackagingTask
         public void updatedVersion( Dependency dependency, String previousVersion )
         {
             handleDependency( context, dependency, "Version of dependency [" + dependency + "] has changed ("
-                + previousVersion + " -> " + dependency.getVersion() + ") but it was not bundled anyway.",
-                                                   "Version of dependency [" + dependency + "] has changed ("
-                                                       + previousVersion + " -> " + dependency.getVersion()
-                                                       + "). If it was included in the build as an overlay, "
-                                                       + "consider "
-                                                       + "cleaning the target directory of the project (mvn clean)",
-                                                   "Version of dependency [" + dependency + "] has changed ("
-                                                       + previousVersion + " -> " + dependency.getVersion() + ").",
-                                                   true );
+                                  + previousVersion + " -> " + dependency.getVersion()
+                                  + ") but it was not bundled anyway.",
+                              "Version of dependency [" + dependency + "] has changed (" + previousVersion + " -> "
+                                  + dependency.getVersion() + "). If it was included in the build as an overlay, "
+                                  + "consider " + "cleaning the target directory of the project (mvn clean)",
+                              "Version of dependency [" + dependency + "] has changed (" + previousVersion + " -> "
+                                  + dependency.getVersion() + ").", true );
         }
 
         public void updatedScope( Dependency dependency, String previousScope )
         {
-            if ( Artifact.SCOPE_PROVIDED.equals( dependency.getScope() ) || Artifact.SCOPE_TEST.equals(
-                dependency.getScope() )
-                && ( !Artifact.SCOPE_PROVIDED.equals( previousScope )
-                && !Artifact.SCOPE_TEST.equals( previousScope ) ) )
+            if ( Artifact.SCOPE_PROVIDED.equals( dependency.getScope() )
+                || Artifact.SCOPE_TEST.equals( dependency.getScope() )
+                && ( !Artifact.SCOPE_PROVIDED.equals( previousScope ) && !Artifact.SCOPE_TEST.equals( previousScope ) ) )
             {
                 // It's now provided or test so it should be removed
                 handleDependencyScope( context, dependency, "Scope of dependency [" + dependency + "] has changed ("
@@ -200,19 +195,16 @@ public class DependenciesAnalysisPackagingTask
 
         }
 
-
         public void updatedOptionalFlag( Dependency dependency, boolean previousOptional )
         {
             if ( !previousOptional && dependency.isOptional() )
             {
                 // It wasn't optional but now it is anymore
-                handleDependency( context, dependency,
-                                  "Dependency [" + dependency + "] is now optional but it was not bundled anyway.",
-                                  "Dependency [" + dependency
-                                      + "] is now optional. If it was included in the build as an overlay, "
-                                      + "consider cleaning the target directory of the project (mvn clean)",
-                                  "Dependency [" + dependency + "] is now optional", true );
-
+                handleDependency( context, dependency, "Dependency [" + dependency
+                    + "] is now optional but it was not bundled anyway.", "Dependency [" + dependency
+                    + "] is now optional. If it was included in the build as an overlay, "
+                    + "consider cleaning the target directory of the project (mvn clean)", "Dependency [" + dependency
+                    + "] is now optional", true );
 
             }
         }

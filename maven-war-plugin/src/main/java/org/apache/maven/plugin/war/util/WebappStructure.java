@@ -33,12 +33,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Represents the structure of a web application composed of multiple
- * overlays. Each overlay is registered within this structure with the
- * set of files it holds.
+ * Represents the structure of a web application composed of multiple overlays. Each overlay is registered within this
+ * structure with the set of files it holds.
  * <p/>
- * Note that this structure is persisted to disk at each invocation to
- * store which owner holds which path (file).
+ * Note that this structure is persisted to disk at each invocation to store which owner holds which path (file).
  *
  * @author Stephane Nicoll
  * @version $Id$
@@ -70,7 +68,7 @@ public class WebappStructure
      * Creates a new instance with the specified cache.
      *
      * @param dependencies the dependencies of the project
-     * @param cache        the cache
+     * @param cache the cache
      */
     public WebappStructure( List<Dependency> dependencies, WebappStructure cache )
     {
@@ -115,7 +113,6 @@ public class WebappStructure
         return result;
     }
 
-
     /**
      * Specify if the specified <tt>path</tt> is registered or not.
      *
@@ -129,10 +126,10 @@ public class WebappStructure
     }
 
     /**
-     * Registers the specified path for the specified owner. Returns <tt>true</tt>
-     * if the path is not already registered, <tt>false</tt> otherwise.
+     * Registers the specified path for the specified owner. Returns <tt>true</tt> if the path is not already
+     * registered, <tt>false</tt> otherwise.
      *
-     * @param id   the owner of the path
+     * @param id the owner of the path
      * @param path the relative path from the webapp root directory
      * @return true if the file was registered successfully
      */
@@ -150,16 +147,14 @@ public class WebappStructure
     }
 
     /**
-     * Forces the registration of the specified path for the specified owner. If
-     * the file is not registered yet, a simple registration is performed. If the
-     * file already exists, the owner changes to the specified one.
+     * Forces the registration of the specified path for the specified owner. If the file is not registered yet, a
+     * simple registration is performed. If the file already exists, the owner changes to the specified one.
      * <p/>
-     * Beware that the semantic of the return boolean is different than the one
-     * from {@link #registerFile(String, String)}; returns <tt>true</tt> if an
-     * owner replacement was made and <tt>false</tt> if the file was simply registered
-     * for the first time.
+     * Beware that the semantic of the return boolean is different than the one from
+     * {@link #registerFile(String, String)}; returns <tt>true</tt> if an owner replacement was made and <tt>false</tt>
+     * if the file was simply registered for the first time.
      *
-     * @param id   the owner of the path
+     * @param id the owner of the path
      * @param path the relative path from the webapp root directory
      * @return false if the file did not exist, true if the owner was replaced
      */
@@ -181,11 +176,11 @@ public class WebappStructure
     }
 
     /**
-     * Registers the specified path for the specified owner. Invokes
-     * the <tt>callback</tt> with the result of the registration.
+     * Registers the specified path for the specified owner. Invokes the <tt>callback</tt> with the result of the
+     * registration.
      *
-     * @param id       the owner of the path
-     * @param path     the relative path from the webapp root directory
+     * @param id the owner of the path
+     * @param path the relative path from the webapp root directory
      * @param callback the callback to invoke with the result of the registration
      * @throws IOException if the callback invocation throws an IOException
      */
@@ -223,8 +218,7 @@ public class WebappStructure
     }
 
     /**
-     * Returns the owner of the specified <tt>path</tt>. If the file is not
-     * registered, returns <tt>null</tt>
+     * Returns the owner of the specified <tt>path</tt>. If the file is not registered, returns <tt>null</tt>
      *
      * @param path the relative path from the webapp root directory
      * @return the owner or <tt>null</tt>.
@@ -246,20 +240,18 @@ public class WebappStructure
                 }
 
             }
-            throw new IllegalStateException(
-                "Should not happen, path [" + path + "] is flagged as being registered but was not found." );
+            throw new IllegalStateException( "Should not happen, path [" + path
+                + "] is flagged as being registered but was not found." );
         }
 
     }
 
     /**
-     * Returns the owners. Note that this the returned {@link Set} may be
-     * inconsistent since it represents a persistent cache across multiple
-     * invocations.
+     * Returns the owners. Note that this the returned {@link Set} may be inconsistent since it represents a persistent
+     * cache across multiple invocations.
      * <p/>
-     * For instance, if an overlay was removed in this execution, it will be
-     * still be there till the cache is cleaned. This happens when the clean
-     * mojo is invoked.
+     * For instance, if an overlay was removed in this execution, it will be still be there till the cache is cleaned.
+     * This happens when the clean mojo is invoked.
      *
      * @return the list of owners
      */
@@ -294,7 +286,6 @@ public class WebappStructure
         }
         return pathSet;
     }
-
 
     /**
      * Analyze the dependencies of the project using the specified callback.
@@ -373,14 +364,14 @@ public class WebappStructure
     /**
      * Registers the target file name for the specified artifact.
      *
-     * @param artifact       the artifact
+     * @param artifact the artifact
      * @param targetFileName the target file name
      */
     public void registerTargetFileName( Artifact artifact, String targetFileName )
     {
         if ( dependenciesInfo != null )
         {
-            for ( DependencyInfo dependencyInfo  : dependenciesInfo )
+            for ( DependencyInfo dependencyInfo : dependenciesInfo )
             {
                 if ( WarUtils.isRelated( artifact, dependencyInfo.getDependency() ) )
                 {
@@ -391,11 +382,10 @@ public class WebappStructure
     }
 
     /**
-     * Returns the cached target file name that matches the specified
-     * dependency, that is the target file name of the previous run.
+     * Returns the cached target file name that matches the specified dependency, that is the target file name of the
+     * previous run.
      * <p/>
-     * The dependency object may have changed so the comparison is
-     * based on basic attributes of the dependency.
+     * The dependency object may have changed so the comparison is based on basic attributes of the dependency.
      *
      * @param dependency a dependency
      * @return the target file name of the last run for this dependency
@@ -406,7 +396,7 @@ public class WebappStructure
         {
             return null;
         }
-        for ( DependencyInfo dependencyInfo  : cache.getDependenciesInfo() )
+        for ( DependencyInfo dependencyInfo : cache.getDependenciesInfo() )
         {
             final Dependency dependency2 = dependencyInfo.getDependency();
             if ( StringUtils.equals( dependency.getGroupId(), dependency2.getGroupId() )
@@ -433,7 +423,7 @@ public class WebappStructure
     /**
      * Find a dependency that is similar from the specified dependency.
      *
-     * @param dependency   the dependency to find
+     * @param dependency the dependency to find
      * @param dependencies a list of dependencies
      * @return a similar dependency or <tt>null</tt> if no similar dependency is found
      */
@@ -444,7 +434,9 @@ public class WebappStructure
             if ( dependency.getGroupId().equals( dep.getGroupId() )
                 && dependency.getArtifactId().equals( dep.getArtifactId() )
                 && dependency.getType().equals( dep.getType() )
-                && ( ( dependency.getClassifier() == null && dep.getClassifier() == null ) || ( dependency.getClassifier() != null && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
+                && ( 
+                        ( dependency.getClassifier() == null && dep.getClassifier() == null ) 
+                     || ( dependency.getClassifier() != null && dependency.getClassifier().equals( dep.getClassifier() ) ) ) )
             {
                 return dep;
             }
@@ -454,7 +446,7 @@ public class WebappStructure
 
     private Dependency matchDependency( List<Dependency> dependencies, Dependency dependency )
     {
-        for ( Dependency dep : dependencies)
+        for ( Dependency dep : dependencies )
         {
             if ( WarUtils.dependencyEquals( dep, dependency ) )
             {
@@ -465,7 +457,6 @@ public class WebappStructure
         return null;
     }
 
-
     private List<DependencyInfo> createDependenciesInfoList( List<Dependency> dependencies )
     {
         if ( dependencies == null )
@@ -473,13 +464,12 @@ public class WebappStructure
             return Collections.emptyList();
         }
         final List<DependencyInfo> result = new ArrayList<DependencyInfo>();
-        for ( Dependency dependency  : dependencies )
+        for ( Dependency dependency : dependencies )
         {
             result.add( new DependencyInfo( dependency ) );
         }
         return result;
     }
-
 
     private Object readResolve()
     {
@@ -493,21 +483,17 @@ public class WebappStructure
     }
 
     /**
-     * Callback interface to handle events related to filepath registration in
-     * the webapp.
+     * Callback interface to handle events related to filepath registration in the webapp.
      */
     public interface RegistrationCallback
     {
 
-
         /**
-         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt>
-         * has been registered successfully.
+         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been registered successfully.
          * <p/>
-         * This means that the <tt>targetFilename</tt> was unknown and has been
-         * registered successfully.
+         * This means that the <tt>targetFilename</tt> was unknown and has been registered successfully.
          *
-         * @param ownerId        the ownerId
+         * @param ownerId the ownerId
          * @param targetFilename the relative path according to the root of the webapp
          * @throws IOException if an error occurred while handling this event
          */
@@ -515,13 +501,11 @@ public class WebappStructure
             throws IOException;
 
         /**
-         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt>
-         * has already been registered.
+         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has already been registered.
          * <p/>
-         * This means that the <tt>targetFilename</tt> was known and belongs to the
-         * specified owner.
+         * This means that the <tt>targetFilename</tt> was known and belongs to the specified owner.
          *
-         * @param ownerId        the ownerId
+         * @param ownerId the ownerId
          * @param targetFilename the relative path according to the root of the webapp
          * @throws IOException if an error occurred while handling this event
          */
@@ -529,32 +513,28 @@ public class WebappStructure
             throws IOException;
 
         /**
-         * Called if the registration of the <tt>targetFilename</tt> for the
-         * specified <tt>ownerId</tt> has been refused since the path already
-         * belongs to the <tt>actualOwnerId</tt>.
+         * Called if the registration of the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been refused
+         * since the path already belongs to the <tt>actualOwnerId</tt>.
          * <p/>
-         * This means that the <tt>targetFilename</tt> was known and does not
-         * belong to the specified owner.
+         * This means that the <tt>targetFilename</tt> was known and does not belong to the specified owner.
          *
-         * @param ownerId        the ownerId
+         * @param ownerId the ownerId
          * @param targetFilename the relative path according to the root of the webapp
-         * @param actualOwnerId  the actual owner
+         * @param actualOwnerId the actual owner
          * @throws IOException if an error occurred while handling this event
          */
         void refused( String ownerId, String targetFilename, String actualOwnerId )
             throws IOException;
 
         /**
-         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt>
-         * has been registered successfully by superseding a <tt>deprecatedOwnerId</tt>,
-         * that is the previous owner of the file.
+         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been registered successfully by
+         * superseding a <tt>deprecatedOwnerId</tt>, that is the previous owner of the file.
          * <p/>
-         * This means that the <tt>targetFilename</tt> was known but for another
-         * owner. This usually happens after a project's configuration change. As a
-         * result, the file has been registered successfully to the new owner.
+         * This means that the <tt>targetFilename</tt> was known but for another owner. This usually happens after a
+         * project's configuration change. As a result, the file has been registered successfully to the new owner.
          *
-         * @param ownerId           the ownerId
-         * @param targetFilename    the relative path according to the root of the webapp
+         * @param ownerId the ownerId
+         * @param targetFilename the relative path according to the root of the webapp
          * @param deprecatedOwnerId the previous owner that does not exist anymore
          * @throws IOException if an error occurred while handling this event
          */
@@ -562,15 +542,13 @@ public class WebappStructure
             throws IOException;
 
         /**
-         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt>
-         * has been registered successfully by superseding a <tt>unknownOwnerId</tt>,
-         * that is an owner that does not exist anymore in the current project.
+         * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been registered successfully by
+         * superseding a <tt>unknownOwnerId</tt>, that is an owner that does not exist anymore in the current project.
          * <p/>
-         * This means that the <tt>targetFilename</tt> was known but for an owner that
-         * does not exist anymore. Hence the file has been registered successfully to
-         * the new owner.
+         * This means that the <tt>targetFilename</tt> was known but for an owner that does not exist anymore. Hence the
+         * file has been registered successfully to the new owner.
          *
-         * @param ownerId        the ownerId
+         * @param ownerId the ownerId
          * @param targetFilename the relative path according to the root of the webapp
          * @param unknownOwnerId the previous owner that does not exist anymore
          * @throws IOException if an error occurred while handling this event
@@ -609,7 +587,7 @@ public class WebappStructure
         /**
          * Called if the version of the dependency has changed since the last build.
          *
-         * @param dependency      the dependency
+         * @param dependency the dependency
          * @param previousVersion the previous version of the dependency
          */
         void updatedVersion( Dependency dependency, String previousVersion );
@@ -617,16 +595,15 @@ public class WebappStructure
         /**
          * Called if the scope of the dependency has changed since the last build.
          *
-         * @param dependency    the dependency
+         * @param dependency the dependency
          * @param previousScope the previous scope
          */
         void updatedScope( Dependency dependency, String previousScope );
 
         /**
-         * Called if the optional flag of the dependency has changed since the
-         * last build.
+         * Called if the optional flag of the dependency has changed since the last build.
          *
-         * @param dependency       the dependency
+         * @param dependency the dependency
          * @param previousOptional the previous optional flag
          */
         void updatedOptionalFlag( Dependency dependency, boolean previousOptional );
@@ -634,7 +611,7 @@ public class WebappStructure
         /**
          * Called if the dependency has been updated for unknown reason.
          *
-         * @param dependency  the dependency
+         * @param dependency the dependency
          * @param previousDep the previous dependency
          */
         void updatedUnknown( Dependency dependency, Dependency previousDep );

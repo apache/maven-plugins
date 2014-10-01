@@ -34,7 +34,6 @@ import org.codehaus.plexus.interpolation.InterpolationException;
  * Handles the artifacts that needs to be packaged in the web application.
  *
  * @author Stephane Nicoll
- * 
  * @version $Id$
  */
 public class ArtifactsPackagingTask
@@ -53,89 +52,89 @@ public class ArtifactsPackagingTask
 
     private final String id;
 
-
     public ArtifactsPackagingTask( Set<Artifact> artifacts, Overlay currentProjectOverlay )
     {
         this.artifacts = artifacts;
         this.id = currentProjectOverlay.getId();
     }
 
-
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
         try
         {
-        final ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-        final List<String> duplicates = findDuplicates( context, artifacts );
+            final ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+            final List<String> duplicates = findDuplicates( context, artifacts );
 
-        for ( Artifact artifact : artifacts )
-        {
-            String targetFileName = getArtifactFinalName( context, artifact );
-
-            context.getLog().debug( "Processing: " + targetFileName );
-
-            if ( duplicates.contains( targetFileName ) )
+            for ( Artifact artifact : artifacts )
             {
-                context.getLog().debug( "Duplicate found: " + targetFileName );
-                targetFileName = artifact.getGroupId() + "-" + targetFileName;
-                context.getLog().debug( "Renamed to: " + targetFileName );
-            }
-            context.getWebappStructure().registerTargetFileName( artifact, targetFileName );
+                String targetFileName = getArtifactFinalName( context, artifact );
 
-            if ( !artifact.isOptional() && filter.include( artifact ) )
-            {
-                try
+                context.getLog().debug( "Processing: " + targetFileName );
+
+                if ( duplicates.contains( targetFileName ) )
                 {
-                    String type = artifact.getType();
-                    if ( "tld".equals( type ) )
+                    context.getLog().debug( "Duplicate found: " + targetFileName );
+                    targetFileName = artifact.getGroupId() + "-" + targetFileName;
+                    context.getLog().debug( "Renamed to: " + targetFileName );
+                }
+                context.getWebappStructure().registerTargetFileName( artifact, targetFileName );
+
+                if ( !artifact.isOptional() && filter.include( artifact ) )
+                {
+                    try
                     {
-                        copyFile( id, context, artifact.getFile(), TLD_PATH + targetFileName );
+                        String type = artifact.getType();
+                        if ( "tld".equals( type ) )
+                        {
+                            copyFile( id, context, artifact.getFile(), TLD_PATH + targetFileName );
+                        }
+                        else if ( "aar".equals( type ) )
+                        {
+                            copyFile( id, context, artifact.getFile(), SERVICES_PATH + targetFileName );
+                        }
+                        else if ( "mar".equals( type ) )
+                        {
+                            copyFile( id, context, artifact.getFile(), MODULES_PATH + targetFileName );
+                        }
+                        else if ( "xar".equals( type ) )
+                        {
+                            copyFile( id, context, artifact.getFile(), EXTENSIONS_PATH + targetFileName );
+                        }
+                        else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
+                            || "test-jar".equals( type ) || "bundle".equals( type ) )
+                        {
+                            copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
+                        }
+                        else if ( "par".equals( type ) )
+                        {
+                            targetFileName = targetFileName.substring( 0, targetFileName.lastIndexOf( '.' ) ) + ".jar";
+                            copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
+                        }
+                        else if ( "war".equals( type ) )
+                        {
+                            // Nothing to do here, it is an overlay and it's already handled
+                            context.getLog().debug( "war artifacts are handled as overlays, ignoring [" + artifact
+                                                        + "]" );
+                        }
+                        else if ( "zip".equals( type ) )
+                        {
+                            // Nothing to do here, it is an overlay and it's already handled
+                            context.getLog().debug( "zip artifacts are handled as overlays, ignoring [" + artifact
+                                                        + "]" );
+                        }
+                        else
+                        {
+                            context.getLog().debug( "Artifact of type [" + type + "] is not supported, ignoring ["
+                                                        + artifact + "]" );
+                        }
                     }
-                    else if ( "aar".equals( type ) )
+                    catch ( IOException e )
                     {
-                        copyFile( id, context, artifact.getFile(), SERVICES_PATH + targetFileName );
-                    }
-                    else if ( "mar".equals( type ) )
-                    {
-                        copyFile( id, context, artifact.getFile(), MODULES_PATH + targetFileName );
-                    }
-                    else if ( "xar".equals( type ) )
-                    {
-                        copyFile( id, context, artifact.getFile(), EXTENSIONS_PATH + targetFileName );
-                    }
-                    else if ( "jar".equals( type ) || "ejb".equals( type ) || "ejb-client".equals( type )
-                        || "test-jar".equals( type ) || "bundle".equals( type ) )
-                    {
-                        copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
-                    }
-                    else if ( "par".equals( type ) )
-                    {
-                        targetFileName = targetFileName.substring( 0, targetFileName.lastIndexOf( '.' ) ) + ".jar";
-                        copyFile( id, context, artifact.getFile(), LIB_PATH + targetFileName );
-                    }
-                    else if ( "war".equals( type ) )
-                    {
-                        // Nothing to do here, it is an overlay and it's already handled
-                        context.getLog().debug( "war artifacts are handled as overlays, ignoring [" + artifact + "]" );
-                    }
-                    else if ( "zip".equals( type ) )
-                    {
-                        // Nothing to do here, it is an overlay and it's already handled
-                        context.getLog().debug( "zip artifacts are handled as overlays, ignoring [" + artifact + "]" );
-                    }
-                    else
-                    {
-                        context.getLog().debug(
-                            "Artifact of type [" + type + "] is not supported, ignoring [" + artifact + "]" );
+                        throw new MojoExecutionException( "Failed to copy file for artifact [" + artifact + "]", e );
                     }
                 }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Failed to copy file for artifact [" + artifact + "]", e );
-                }
             }
-        }
         }
         catch ( InterpolationException e )
         {
@@ -144,10 +143,9 @@ public class ArtifactsPackagingTask
     }
 
     /**
-     * Searches a set of artifacts for duplicate filenames and returns a list
-     * of duplicates.
+     * Searches a set of artifacts for duplicate filenames and returns a list of duplicates.
      *
-     * @param context   the packaging context
+     * @param context the packaging context
      * @param artifacts set of artifacts
      * @return List of duplicated artifacts as bundling file names
      */

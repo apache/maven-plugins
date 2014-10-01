@@ -42,7 +42,6 @@ public class WarZipTest
 
     private static File pomFile = new File( getBasedir(), "src/test/resources/unit/warziptest/war-with-zip.xml" );
 
-
     protected File getTestDirectory()
     {
         return new File( getBasedir(), "target/test-classes/unit/warziptest" );
@@ -79,7 +78,7 @@ public class WarZipTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
         project.setArtifact( warArtifact );
 
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
@@ -99,7 +98,7 @@ public class WarZipTest
         File webAppDirectory = configureMojo( "one-zip" );
 
         Overlay overlay = new DefaultOverlay( buildZipArtifact() );
-        //overlay.setSkip( false );
+        // overlay.setSkip( false );
         overlay.setType( "zip" );
         mojo.addOverlay( overlay );
         mojo.execute();

@@ -43,8 +43,8 @@ public class WarMojoTest
 {
     WarMojo mojo;
 
-    private static File pomFile =
-        new File( getBasedir(), "target/test-classes/unit/warmojotest/plugin-config-primary-artifact.xml" );
+    private static File pomFile = new File( getBasedir(),
+                                            "target/test-classes/unit/warmojotest/plugin-config-primary-artifact.xml" );
 
     protected File getTestDirectory()
     {
@@ -75,7 +75,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         project.setArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
@@ -85,12 +85,12 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
             "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
-                                           new String[]{null, mojo.getWebXml().toString(), null, null, null, null} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null,
+            mojo.getWebXml().toString(), null, null, null, null } );
     }
 
     public void testSimpleWarPackagingExcludeWithIncludesRegEx()
@@ -104,25 +104,23 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         project.setArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
         setVariableValueToObject( mojo, "outputDirectory", outputDir );
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
-        setVariableValueToObject( mojo,"packagingIncludes","%regex[(.(?!exile))+]" );
-       
-       
+        setVariableValueToObject( mojo, "packagingIncludes", "%regex[(.(?!exile))+]" );
+
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
-                                           new String[]{null, mojo.getWebXml().toString(), null, null, null, },
-                                           new String[]{"org/web/app/last-exile.jsp"} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null,
+            mojo.getWebXml().toString(), null, null, null, }, new String[] { "org/web/app/last-exile.jsp" } );
     }
 
     public void testClassifier()
@@ -137,7 +135,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         project.setArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
@@ -149,12 +147,12 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple-test-classifier.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
             "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
-                                           new String[]{null, mojo.getWebXml().toString(), null, null, null, null} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null,
+            mojo.getWebXml().toString(), null, null, null, null } );
     }
 
     public void testPrimaryArtifact()
@@ -169,7 +167,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         warArtifact.setFile( new File( "error.war" ) );
         project.setArtifact( warArtifact );
@@ -181,12 +179,12 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
             "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
-                                           new String[]{null, mojo.getWebXml().toString(), null, null, null, null} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null,
+            mojo.getWebXml().toString(), null, null, null, null } );
     }
 
     public void testNotPrimaryArtifact()
@@ -205,7 +203,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         warArtifact.setFile( new File( "error.war" ) );
         project.setArtifact( warArtifact );
@@ -217,12 +215,12 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "WEB-INF/web.xml", "pansit.jsp",
             "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
-                                           new String[]{null, mojo.getWebXml().toString(), null, null, null, null} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null,
+            mojo.getWebXml().toString(), null, null, null, null } );
     }
 
     public void testMetaInfContent()
@@ -236,7 +234,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         // Create the sample config.xml
         final File configFile = new File( webAppSource, "META-INF/config.xml" );
@@ -250,13 +248,13 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "META-INF/config.xml",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "META-INF/config.xml",
             "WEB-INF/web.xml", "pansit.jsp", "org/web/app/last-exile.jsp",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"}, new String[]{null, null,
-            mojo.getWebXml().toString(), null, null, null, null} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null, null,
+            mojo.getWebXml().toString(), null, null, null, null } );
     }
 
     public void testMetaInfContentWithContainerConfig()
@@ -270,7 +268,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, true );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         // Create the sample config.xml
         final File configFile = new File( webAppSource, "META-INF/config.xml" );
@@ -285,15 +283,14 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "META-INF/config.xml",
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "META-INF/config.xml",
             "WEB-INF/web.xml", "pansit.jsp", "org/web/app/last-exile.jsp",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"}, new String[]{null, null,
-            mojo.getWebXml().toString(), null, null, null, null} );
+            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null, null,
+            mojo.getWebXml().toString(), null, null, null, null } );
     }
-
 
     public void testFailOnMissingWebXmlFalse()
         throws Exception
@@ -315,12 +312,13 @@ public class WarMojoTest
         mojo.setFailOnMissingWebXml( false );
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple.war" );
-        final Map<String, JarEntry> jarContent = assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "pansit.jsp",
-            "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties"},
-                                                                  new String[]{null, null, null, null, null} );
+        final Map<String, JarEntry> jarContent =
+            assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "pansit.jsp",
+                "org/web/app/last-exile.jsp", "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties" }, new String[] { null, null,
+                null, null, null } );
 
         assertFalse( "web.xml should be missing", jarContent.containsKey( "WEB-INF/web.xml" ) );
     }
@@ -351,7 +349,7 @@ public class WarMojoTest
         }
         catch ( MojoExecutionException e )
         {
-            //expected behaviour
+            // expected behaviour
         }
     }
 
@@ -366,7 +364,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, false );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         project.setArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
@@ -377,10 +375,10 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple-classes.jar" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "sample-servlet.class"},
-                          new String[]{null, null} );
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "sample-servlet.class" },
+                          new String[] { null, null } );
     }
 
     public void testAttachClassesWithCustomClassifier()
@@ -394,7 +392,7 @@ public class WarMojoTest
         String warName = "simple";
         File webAppSource = createWebAppSource( testId );
         File classesDir = createClassesDir( testId, false );
-        File xmlSource = createXMLConfigDir( testId, new String[]{"web.xml"} );
+        File xmlSource = createXMLConfigDir( testId, new String[] { "web.xml" } );
 
         project.setArtifact( warArtifact );
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
@@ -406,25 +404,25 @@ public class WarMojoTest
 
         mojo.execute();
 
-        //validate jar file
+        // validate jar file
         File expectedJarFile = new File( outputDir, "simple-mystuff.jar" );
-        assertJarContent( expectedJarFile, new String[]{"META-INF/MANIFEST.MF", "sample-servlet.class"},
-                          new String[]{null, null} );
+        assertJarContent( expectedJarFile, new String[] { "META-INF/MANIFEST.MF", "sample-servlet.class" },
+                          new String[] { null, null } );
     }
 
-
-    protected Map<String, JarEntry> assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent )
+    protected Map<String, JarEntry> assertJarContent( final File expectedJarFile, final String[] files,
+                                                      final String[] filesContent )
         throws IOException
     {
         return assertJarContent( expectedJarFile, files, filesContent, null );
     }
 
-    protected Map<String, JarEntry> assertJarContent( final File expectedJarFile, final String[] files, final String[] filesContent, final String[] mustNotBeInJar )
+    protected Map<String, JarEntry> assertJarContent( final File expectedJarFile, final String[] files,
+                                                      final String[] filesContent, final String[] mustNotBeInJar )
         throws IOException
     {
         // Sanity check
-        assertEquals( "Could not test, files and filesContent lenght does not match", files.length,
-                      filesContent.length );
+        assertEquals( "Could not test, files and filesContent lenght does not match", files.length, filesContent.length );
 
         assertTrue( "war file not created: " + expectedJarFile.toString(), expectedJarFile.exists() );
         final Map<String, JarEntry> jarContent = new HashMap<String, JarEntry>();
@@ -450,10 +448,11 @@ public class WarMojoTest
                               IOUtil.toString( jarFile.getInputStream( (ZipEntry) jarContent.get( file ) ) ) );
             }
         }
-        if( mustNotBeInJar!=null )
+        if ( mustNotBeInJar != null )
         {
-            for (String file : mustNotBeInJar) {
-                assertFalse("File[" + file + "]  found in archive", jarContent.containsKey(file));
+            for ( String file : mustNotBeInJar )
+            {
+                assertFalse( "File[" + file + "]  found in archive", jarContent.containsKey( file ) );
 
             }
         }
@@ -461,4 +460,3 @@ public class WarMojoTest
     }
 
 }
-

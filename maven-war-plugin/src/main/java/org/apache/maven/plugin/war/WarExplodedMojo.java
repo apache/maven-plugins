@@ -30,8 +30,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  *
  * @version $Id$
  */
-@Mojo( name = "exploded", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true,
-       requiresDependencyResolution = ResolutionScope.RUNTIME )
+@Mojo( name = "exploded", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class WarExplodedMojo
     extends AbstractWarMojo
 {

@@ -84,9 +84,9 @@ public abstract class AbstractWarMojo
     private File classesDirectory;
 
     /**
-     * Whether a JAR file will be created for the classes in the webapp. Using this optional configuration
-     * parameter will make the compiled classes to be archived into a JAR file
-     * and the classes directory will then be excluded from the webapp.
+     * Whether a JAR file will be created for the classes in the webapp. Using this optional configuration parameter
+     * will make the compiled classes to be archived into a JAR file and the classes directory will then be excluded
+     * from the webapp.
      *
      * @since 2.0.1
      */
@@ -114,8 +114,7 @@ public abstract class AbstractWarMojo
     private File webappDirectory;
 
     /**
-     * Single directory for extra files to include in the WAR. This is where
-     * you place your JSP files.
+     * Single directory for extra files to include in the WAR. This is where you place your JSP files.
      */
     @Parameter( defaultValue = "${basedir}/src/main/webapp", required = true )
     private File warSourceDirectory;
@@ -139,10 +138,9 @@ public abstract class AbstractWarMojo
     private File webXml;
 
     /**
-     * The path to a configuration file for the servlet container. Note that
-     * the file name may be different for different servlet containers.
-     * Apache Tomcat uses a configuration file named context.xml. The file will
-     * be copied to the META-INF directory.
+     * The path to a configuration file for the servlet container. Note that the file name may be different for
+     * different servlet containers. Apache Tomcat uses a configuration file named context.xml. The file will be copied
+     * to the META-INF directory.
      */
     @Parameter( property = "maven.war.containerConfigXML" )
     private File containerConfigXML;
@@ -154,8 +152,8 @@ public abstract class AbstractWarMojo
     private File workDirectory;
 
     /**
-     * The file name mapping to use when copying libraries and TLDs. If no file mapping is
-     * set (default) the files are copied with their standard names.
+     * The file name mapping to use when copying libraries and TLDs. If no file mapping is set (default) the files are
+     * copied with their standard names.
      *
      * @since 2.1-alpha-1
      */
@@ -171,8 +169,8 @@ public abstract class AbstractWarMojo
     private File cacheFile;
 
     /**
-     * Whether the cache should be used to save the status of the webapp
-     * across multiple runs. Experimental feature so disabled by default.
+     * Whether the cache should be used to save the status of the webapp across multiple runs. Experimental feature so
+     * disabled by default.
      *
      * @since 2.1-alpha-1
      */
@@ -201,23 +199,19 @@ public abstract class AbstractWarMojo
     private MavenResourcesFiltering mavenResourcesFiltering;
 
     /**
-     * The comma separated list of tokens to include when copying the content
-     * of the warSourceDirectory.
+     * The comma separated list of tokens to include when copying the content of the warSourceDirectory.
      */
     @Parameter( alias = "includes", defaultValue = "**" )
     private String warSourceIncludes;
 
     /**
-     * The comma separated list of tokens to exclude when copying the content
-     * of the warSourceDirectory.
+     * The comma separated list of tokens to exclude when copying the content of the warSourceDirectory.
      */
     @Parameter( alias = "excludes" )
     private String warSourceExcludes;
 
     /**
-     * The comma separated list of tokens to include when doing
-     * a WAR overlay.
-     * Default is '**'
+     * The comma separated list of tokens to include when doing a WAR overlay. Default is '**'
      *
      * @deprecated Use &lt;overlay&gt;/&lt;includes&gt; instead
      */
@@ -225,8 +219,7 @@ public abstract class AbstractWarMojo
     private String dependentWarIncludes = "**/**";
 
     /**
-     * The comma separated list of tokens to exclude when doing
-     * a WAR overlay.
+     * The comma separated list of tokens to exclude when doing a WAR overlay.
      *
      * @deprecated Use &lt;overlay&gt;/&lt;excludes&gt; instead
      */
@@ -234,24 +227,19 @@ public abstract class AbstractWarMojo
     private String dependentWarExcludes = "META-INF/**";
 
     /**
-     * The overlays to apply.
-     *
-     * Each &lt;overlay&gt; element may contain:
+     * The overlays to apply. Each &lt;overlay&gt; element may contain:
      * <ul>
-     *     <li>id (defaults to <tt>currentBuild</tt>)</li>
-     *     <li>groupId (if this and artifactId are null, then the current project is treated as its own overlay)</li>
-     *     <li>artifactId (see above)</li>
-     *     <li>classifier</li>
-     *     <li>type</li>
-     *     <li>includes (a list of string patterns)</li>
-     *     <li>excludes (a list of string patterns)</li>
-     *     <li>filtered (defaults to false)</li>
-     *     <li>skip (defaults to false)</li>
-     *     <li>targetPath (defaults to root of webapp structure)</li>
-     *
+     * <li>id (defaults to <tt>currentBuild</tt>)</li>
+     * <li>groupId (if this and artifactId are null, then the current project is treated as its own overlay)</li>
+     * <li>artifactId (see above)</li>
+     * <li>classifier</li>
+     * <li>type</li>
+     * <li>includes (a list of string patterns)</li>
+     * <li>excludes (a list of string patterns)</li>
+     * <li>filtered (defaults to false)</li>
+     * <li>skip (defaults to false)</li>
+     * <li>targetPath (defaults to root of webapp structure)</li>
      * </ul>
-     *
-     *
      *
      * @since 2.1-alpha-1
      */
@@ -259,8 +247,8 @@ public abstract class AbstractWarMojo
     private List<Overlay> overlays = new ArrayList<Overlay>();
 
     /**
-     * A list of file extensions that should not be filtered.
-     * <b>Will be used when filtering webResources and overlays.</b>
+     * A list of file extensions that should not be filtered. <b>Will be used when filtering webResources and
+     * overlays.</b>
      *
      * @since 2.1-alpha-2
      */
@@ -282,8 +270,8 @@ public abstract class AbstractWarMojo
     private boolean filteringDeploymentDescriptors = false;
 
     /**
-     * To escape interpolated values with Windows path
-     * <code>c:\foo\bar</code> will be replaced with <code>c:\\foo\\bar</code>.
+     * To escape interpolated values with Windows path <code>c:\foo\bar</code> will be replaced with
+     * <code>c:\\foo\\bar</code>.
      *
      * @since 2.1-alpha-2
      */
@@ -291,8 +279,8 @@ public abstract class AbstractWarMojo
     private boolean escapedBackslashesInFilePath = false;
 
     /**
-     * Expression preceded with this String won't be interpolated.
-     * <code>\${foo}</code> will be replaced with <code>${foo}</code>.
+     * Expression preceded with this String won't be interpolated. <code>\${foo}</code> will be replaced with
+     * <code>${foo}</code>.
      *
      * @since 2.1-beta-1
      */
@@ -300,15 +288,14 @@ public abstract class AbstractWarMojo
     protected String escapeString;
 
     /**
-     * Indicates if zip archives (jar,zip etc) being added to the war should be
-     * compressed again. Compressing again can result in smaller archive size, but
-     * gives noticeably longer execution time.
+     * Indicates if zip archives (jar,zip etc) being added to the war should be compressed again. Compressing again can
+     * result in smaller archive size, but gives noticeably longer execution time.
      *
      * @since 2.3
      */
     @Parameter( defaultValue = "true" )
     private boolean recompressZippedFiles;
-    
+
     /**
      * @since 2.4
      */
@@ -317,22 +304,23 @@ public abstract class AbstractWarMojo
 
     /**
      * Stop searching endToken at the end of line
+     * 
      * @since 2.4
      */
-    @Parameter(property = "maven.war.supportMultiLineFiltering", defaultValue = "false" )
+    @Parameter( property = "maven.war.supportMultiLineFiltering", defaultValue = "false" )
     private boolean supportMultiLineFiltering = false;
 
     /**
      * use jvmChmod rather that cli chmod and forking process
+     * 
      * @since 2.4
      */
-    @Parameter(property = "maven.war.useJvmChmod", defaultValue = "true" )
+    @Parameter( property = "maven.war.useJvmChmod", defaultValue = "true" )
     private boolean useJvmChmod;
 
-
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
      */
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -341,15 +329,13 @@ public abstract class AbstractWarMojo
 
     private final Overlay currentProjectOverlay = Overlay.createInstance();
 
-
     public Overlay getCurrentProjectOverlay()
     {
         return currentProjectOverlay;
     }
 
     /**
-     * Returns a string array of the excludes to be used
-     * when copying the content of the WAR source directory.
+     * Returns a string array of the excludes to be used when copying the content of the WAR source directory.
      *
      * @return an array of tokens to exclude
      */
@@ -373,12 +359,11 @@ public abstract class AbstractWarMojo
             excludeList.add( "**/" + META_INF + "/" + containerConfigXML.getName() );
         }
 
-        return excludeList.toArray(new String[excludeList.size()]);
+        return excludeList.toArray( new String[excludeList.size()] );
     }
 
     /**
-     * Returns a string array of the includes to be used
-     * when assembling/copying the WAR.
+     * Returns a string array of the includes to be used when assembling/copying the WAR.
      *
      * @return an array of tokens to include
      */
@@ -388,8 +373,7 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Returns a string array of the excludes to be used
-     * when adding dependent WAR as an overlay onto this WAR.
+     * Returns a string array of the excludes to be used when adding dependent WAR as an overlay onto this WAR.
      *
      * @return an array of tokens to exclude
      */
@@ -408,8 +392,7 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Returns a string array of the includes to be used
-     * when adding dependent WARs as an overlay onto this WAR.
+     * Returns a string array of the includes to be used when adding dependent WARs as an overlay onto this WAR.
      *
      * @return an array of tokens to include
      */
@@ -418,14 +401,14 @@ public abstract class AbstractWarMojo
         return StringUtils.split( StringUtils.defaultString( dependentWarIncludes ), "," );
     }
 
-    public void buildExplodedWebapp( File webappDirectory )
+    public void buildExplodedWebapp( File webapplicationDirectory )
         throws MojoExecutionException, MojoFailureException
     {
-        webappDirectory.mkdirs();
+        webapplicationDirectory.mkdirs();
 
         try
         {
-            buildWebapp( project, webappDirectory );
+            buildWebapp( project, webapplicationDirectory );
         }
         catch ( IOException e )
         {
@@ -433,40 +416,37 @@ public abstract class AbstractWarMojo
         }
     }
 
-
     /**
-     * Builds the webapp for the specified project with the new packaging task
-     * thingy
+     * Builds the webapp for the specified project with the new packaging task thingy
      * <p/>
-     * Classes, libraries and tld files are copied to
-     * the <tt>webappDirectory</tt> during this phase.
+     * Classes, libraries and tld files are copied to the <tt>webappDirectory</tt> during this phase.
      *
-     * @param project         the maven project
-     * @param webappDirectory the target directory
+     * @param mavenProject the maven project
+     * @param webapplicationDirectory the target directory
      * @throws MojoExecutionException if an error occurred while packaging the webapp
-     * @throws MojoFailureException   if an unexpected error occurred while packaging the webapp
-     * @throws IOException            if an error occurred while copying the files
+     * @throws MojoFailureException if an unexpected error occurred while packaging the webapp
+     * @throws IOException if an error occurred while copying the files
      */
     @SuppressWarnings( "unchecked" )
-    public void buildWebapp( MavenProject project, File webappDirectory )
+    public void buildWebapp( MavenProject mavenProject, File webapplicationDirectory )
         throws MojoExecutionException, MojoFailureException, IOException
     {
 
         WebappStructure cache;
         if ( useCache && cacheFile.exists() )
         {
-            cache = new WebappStructure( project.getDependencies(), webappStructureSerialier.fromXml( cacheFile ) );
+            cache = new WebappStructure( mavenProject.getDependencies(), webappStructureSerialier.fromXml( cacheFile ) );
         }
         else
         {
-            cache = new WebappStructure( project.getDependencies(), null );
+            cache = new WebappStructure( mavenProject.getDependencies(), null );
         }
 
         final long startTime = System.currentTimeMillis();
-        getLog().info( "Assembling webapp [" + project.getArtifactId() + "] in [" + webappDirectory + "]" );
+        getLog().info( "Assembling webapp [" + mavenProject.getArtifactId() + "] in [" + webapplicationDirectory + "]" );
 
         final OverlayManager overlayManager =
-            new OverlayManager( overlays, project, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
+            new OverlayManager( overlays, mavenProject, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
         final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
         List<FileUtils.FilterWrapper> defaultFilterWrappers;
         try
@@ -474,8 +454,9 @@ public abstract class AbstractWarMojo
             MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
-            mavenResourcesExecution.setMavenProject( project );
-            if (filters == null) {
+            mavenResourcesExecution.setMavenProject( mavenProject );
+            if ( filters == null )
+            {
                 filters = getProject().getBuild().getFilters();
             }
             mavenResourcesExecution.setFilters( filters );
@@ -493,12 +474,10 @@ public abstract class AbstractWarMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
-        final WarPackagingContext context = new DefaultWarPackagingContext( webappDirectory, cache, overlayManager,
-                                                                            defaultFilterWrappers,
-                                                                            getNonFilteredFileExtensions(),
-                                                                            filteringDeploymentDescriptors,
-                                                                            this.artifactFactory, resourceEncoding,
-                                                                            useJvmChmod);
+        final WarPackagingContext context =
+            new DefaultWarPackagingContext( webapplicationDirectory, cache, overlayManager, defaultFilterWrappers,
+                                            getNonFilteredFileExtensions(), filteringDeploymentDescriptors,
+                                            this.artifactFactory, resourceEncoding, useJvmChmod );
         for ( WarPackagingTask warPackagingTask : packagingTasks )
         {
             warPackagingTask.performPackaging( context );
@@ -515,8 +494,8 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPackagingTask}
-     * instances to invoke to perform the packaging.
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPackagingTask} instances to invoke
+     * to perform the packaging.
      *
      * @param overlayManager the overlay manager
      * @return the list of packaging tasks
@@ -547,10 +526,9 @@ public abstract class AbstractWarMojo
         return packagingTasks;
     }
 
-
     /**
-     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPostPackagingTask}
-     * instances to invoke to perform the post-packaging.
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugin.war.packaging.WarPostPackagingTask} instances to
+     * invoke to perform the post-packaging.
      *
      * @return the list of post packaging tasks
      */
@@ -591,9 +569,11 @@ public abstract class AbstractWarMojo
         private boolean useJvmChmod = true;
 
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
-                                           final OverlayManager overlayManager, List<FileUtils.FilterWrapper> filterWrappers,
-                                           List<String> nonFilteredFileExtensions, boolean filteringDeploymentDescriptors,
-                                           ArtifactFactory artifactFactory, String resourceEncoding, boolean useJvmChmod )
+                                           final OverlayManager overlayManager,
+                                           List<FileUtils.FilterWrapper> filterWrappers,
+                                           List<String> nonFilteredFileExtensions,
+                                           boolean filteringDeploymentDescriptors, ArtifactFactory artifactFactory,
+                                           String resourceEncoding, boolean useJvmChmod )
         {
             this.webappDirectory = webappDirectory;
             this.webappStructure = webappStructure;
@@ -601,8 +581,8 @@ public abstract class AbstractWarMojo
             this.filterWrappers = filterWrappers;
             this.artifactFactory = artifactFactory;
             this.filteringDeploymentDescriptors = filteringDeploymentDescriptors;
-            this.nonFilteredFileExtensions = nonFilteredFileExtensions == null ? Collections.<String>emptyList()
-                                                                              : nonFilteredFileExtensions;
+            this.nonFilteredFileExtensions =
+                nonFilteredFileExtensions == null ? Collections.<String> emptyList() : nonFilteredFileExtensions;
             this.resourceEncoding = resourceEncoding;
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
             // it will register it. This will avoid wrong warning messages in a later phase
@@ -652,7 +632,7 @@ public abstract class AbstractWarMojo
         {
             return getExcludes();
         }
-        
+
         public boolean isWebappSourceIncludeEmptyDirectories()
         {
             return includeEmptyDirectories;
@@ -904,7 +884,6 @@ public abstract class AbstractWarMojo
         this.warSourceExcludes = warSourceExcludes;
     }
 
-
     public boolean isUseCache()
     {
         return useCache;
@@ -939,7 +918,7 @@ public abstract class AbstractWarMojo
     {
         this.artifactFactory = artifactFactory;
     }
-    
+
     protected MavenSession getSession()
     {
         return this.session;
@@ -949,7 +928,7 @@ public abstract class AbstractWarMojo
     {
         return recompressZippedFiles;
     }
-    
+
     protected boolean isIncludeEmptyDirectories()
     {
         return includeEmptyDirectories;

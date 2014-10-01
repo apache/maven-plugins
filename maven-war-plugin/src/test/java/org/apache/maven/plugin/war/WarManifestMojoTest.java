@@ -140,11 +140,11 @@ public class WarManifestMojoTest
 
         idx = content.indexOf( "Implementation-Vendor" );
 
-        assertTrue( idx >= 0 );  
+        assertTrue( idx >= 0 );
     }
 
     public void testManifestWithCustomAttributes()
-      throws Exception
+        throws Exception
     {
         loadMojo( "target/test-classes/unit/manifest/manifest-with-custom-attrs/plugin-config.xml" );
 
@@ -167,11 +167,10 @@ public class WarManifestMojoTest
         int idx = content.indexOf( "Specification-Title" );
 
         assertTrue( idx >= 0 );
-        
+
         idx = content.indexOf( "Custom-Version" );
 
-        assertTrue( idx >= 0);
-
+        assertTrue( idx >= 0 );
 
     }
 
