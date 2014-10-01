@@ -2,8 +2,9 @@
  Creating Skinny WARs
  ------
  Mike Perham
+ Karl-Heinz Marbaise
  ------
- 2008-08-03
+ 2014-10-01
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -34,69 +35,11 @@ Creating Skinny WARs
  the J2EE specification allows WARs to reference external JARs packaged within the EAR
  via the <<<Class-Path>>> setting in their <<<MANIFEST.MF>>>.
 
- The Maven WAR and EAR Plugins do not directly support this mode of operation but
- we can fake it through some POM and configuration magic.  First you need to tell
- Maven to exclude the dependent JARs and add references to them in the <<<MANIFEST.MF>>>
- instead.  This goes into your WAR project's <<<pom.xml>>>:
+ The Maven EAR Plugin has direct support for creating skinny wars which simply
+ means to {{{http://maven.apache.org/plugins/maven-ear-plugin/examples/skinny-wars.html}configure the maven-ear-plugin}}
+ accordingly.
 
-+-----------------+
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <!-- In version 2.1-alpha-1, this was incorrectly named warSourceExcludes -->
-          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>
-+-----------------+
-
- Here's another variant of the above example, but this time we use
- <<<\<packagingIncludes\>>>> to select a few JARs to be included in the WAR.
- This is useful when there is a need to package a small, but non-empty, subset
- of JARs into the WAR. When making an EAR of skinny WARs, one wants to package
- all of the JARs into the EAR. Sometimes a list of JARs must be packaged into
- the WAR though in order for it to work properly, like with tag libraries.
-
-+-----------------+
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <!-- Use this to include a selection of jars that will be included in the WAR -->
-          <packagingIncludes>WEB-INF/lib/my-tag-library.jar,**/*.xml,**/*.properties,**/*.class,**/*.png,**/*.css,**/*.js,**/*.jsp</packagingIncludes>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-</project>
-+-----------------+
-
- Next we need to change the EAR project's <<<pom.xml>>> to package those dependent JARs in the EAR.
+ You need to change the EAR project's <<<pom.xml>>> to package those dependent JARs in the EAR.
  Notice that we package everything into a <<<lib/>>> directory within the EAR.  This is
  just my own personal preference to distinguish between J2EE modules (which will
  be packaged in the root of the EAR) and Java libraries (which are packaged in <<<lib/>>>).
@@ -107,9 +50,10 @@ Creating Skinny WARs
     <plugins>
       <plugin>
         <artifactId>maven-ear-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.9.1</version>
         <configuration>
           <defaultLibBundleDir>lib/</defaultLibBundleDir>
+          <skinnyWars>true</skinnyWars>
         </configuration>
       </plugin>
     </plugins>
