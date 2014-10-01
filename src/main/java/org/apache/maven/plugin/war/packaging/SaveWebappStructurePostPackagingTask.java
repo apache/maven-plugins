@@ -30,7 +30,6 @@ import java.io.IOException;
  * Saves the webapp structure cache.
  *
  * @author Stephane Nicoll
- * 
  * @version $Id$
  */
 public class SaveWebappStructurePostPackagingTask
@@ -40,7 +39,6 @@ public class SaveWebappStructurePostPackagingTask
     private final File targetFile;
 
     private final WebappStructureSerializer serialier;
-
 
     public SaveWebappStructurePostPackagingTask( File targetFile )
     {

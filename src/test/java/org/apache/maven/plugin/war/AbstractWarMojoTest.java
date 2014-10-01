@@ -66,7 +66,8 @@ public abstract class AbstractWarMojoTest
         setVariableValueToObject( mojo, "useCache", Boolean.FALSE );
         setVariableValueToObject( mojo, "mavenFileFilter", lookup( MavenFileFilter.class.getName() ) );
         setVariableValueToObject( mojo, "useJvmChmod", Boolean.TRUE );
-        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+        MavenSession mavenSession =
+            new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.setClassesDirectory( classesDir );
         mojo.setWarSourceDirectory( webAppSource );
@@ -92,9 +93,10 @@ public abstract class AbstractWarMojoTest
 
         if ( xmlFiles != null )
         {
-            for (String o : xmlFiles) {
-                XMLFile = new File(xmlConfigDir, o);
-                createFile(XMLFile);
+            for ( String o : xmlFiles )
+            {
+                XMLFile = new File( xmlConfigDir, o );
+                createFile( XMLFile );
             }
         }
 
@@ -141,7 +143,6 @@ public abstract class AbstractWarMojoTest
     {
         return createWebAppSource( id, true );
     }
-
 
     /**
      * create a class directory with or without a sample class
@@ -247,12 +248,14 @@ public abstract class AbstractWarMojoTest
         // Archive was not yet created for that id so let's create it
         final File rootDir = new File( OVERLAYS_ROOT_DIR, id );
         rootDir.mkdirs();
-        String[] filePaths = new String[]{"jsp/d/a.jsp", "jsp/d/b.jsp", "jsp/d/c.jsp", "jsp/a.jsp", "jsp/b.jsp",
-            "jsp/c.jsp", "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class",
-            "WEB-INF/lib/a.jar", "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml"};
+        String[] filePaths =
+            new String[] { "jsp/d/a.jsp", "jsp/d/b.jsp", "jsp/d/c.jsp", "jsp/a.jsp", "jsp/b.jsp", "jsp/c.jsp",
+                "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class", "WEB-INF/lib/a.jar",
+                "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml" };
 
-        for (String filePath : filePaths) {
-            createFile(new File(rootDir, filePath), id + "-" + filePath);
+        for ( String filePath : filePaths )
+        {
+            createFile( new File( rootDir, filePath ), id + "-" + filePath );
         }
 
         createArchive( rootDir, destFile );
@@ -260,7 +263,6 @@ public abstract class AbstractWarMojoTest
     }
 
     // Overlay utilities
-
 
     /**
      * Builds a test overlay.
@@ -296,7 +298,7 @@ public abstract class AbstractWarMojoTest
     {
         try
         {
-            //WarArchiver archiver = new WarArchiver();
+            // WarArchiver archiver = new WarArchiver();
 
             Archiver archiver = new JarArchiver();
 
@@ -305,7 +307,7 @@ public abstract class AbstractWarMojoTest
             archiver.setDestFile( destinationFile );
             archiver.addDirectory( directory );
 
-            //archiver.setWebxml( new File(directory, "WEB-INF/web.xml"));
+            // archiver.setWebxml( new File(directory, "WEB-INF/web.xml"));
 
             // create archive
             archiver.createArchive();
@@ -322,6 +324,5 @@ public abstract class AbstractWarMojoTest
             fail( "Unexpected exception " + e.getMessage() );
         }
     }
-
 
 }

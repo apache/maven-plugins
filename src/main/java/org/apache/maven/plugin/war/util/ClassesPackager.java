@@ -53,11 +53,11 @@ public class ClassesPackager
     /**
      * Package the classes
      *
-     * @param classesDirectory     the classes directory
-     * @param targetFile           the target file
-     * @param jarArchiver          the jar archiver to use
-     * @param session              the current session
-     * @param project              the related project
+     * @param classesDirectory the classes directory
+     * @param targetFile the target file
+     * @param jarArchiver the jar archiver to use
+     * @param session the current session
+     * @param project the related project
      * @param archiveConfiguration the archive configuration to use
      * @throws MojoExecutionException if an error occurred while creating the archive
      */

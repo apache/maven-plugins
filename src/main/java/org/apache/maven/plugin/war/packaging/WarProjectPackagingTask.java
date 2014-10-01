@@ -32,14 +32,9 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Handles the project own resources, that is:
- * <ul
- * <li>The list of web resources, if any</li>
- * <li>The content of the webapp directory if it exists</li>
- * <li>The custom deployment descriptor(s), if any</li>
- * <li>The content of the classes directory if it exists</li>
- * <li>The dependencies of the project</li>
- * </ul>
+ * Handles the project own resources, that is: <ul <li>The list of web resources, if any</li> <li>The content of the
+ * webapp directory if it exists</li> <li>The custom deployment descriptor(s), if any</li> <li>The content of the
+ * classes directory if it exists</li> <li>The dependencies of the project</li> </ul>
  *
  * @author Stephane Nicoll
  * @version $Id$
@@ -56,7 +51,6 @@ public class WarProjectPackagingTask
     private final String id;
 
     private Overlay currentProjectOverlay;
-
 
     public WarProjectPackagingTask( Resource[] webResources, File webXml, File containerConfigXml,
                                     Overlay currentProjectOverlay )
@@ -105,7 +99,6 @@ public class WarProjectPackagingTask
 
         handleArtifacts( context );
     }
-
 
     /**
      * Handles the web resources.
@@ -159,8 +152,7 @@ public class WarProjectPackagingTask
         {
             context.getLog().debug( "webapp sources directory does not exist - skipping." );
         }
-        else if ( !context.getWebappSourceDirectory().getAbsolutePath().equals(
-            context.getWebappDirectory().getPath() ) )
+        else if ( !context.getWebappSourceDirectory().getAbsolutePath().equals( context.getWebappDirectory().getPath() ) )
         {
             context.getLog().info( "Copying webapp resources [" + context.getWebappSourceDirectory() + "]" );
             final PathSet sources =
@@ -173,8 +165,8 @@ public class WarProjectPackagingTask
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                    "Could not copy webapp sources [" + context.getWebappDirectory().getAbsolutePath() + "]", e );
+                throw new MojoExecutionException( "Could not copy webapp sources ["
+                    + context.getWebappDirectory().getAbsolutePath() + "]", e );
             }
         }
     }
@@ -189,8 +181,8 @@ public class WarProjectPackagingTask
         throws MojoExecutionException
     {
         @SuppressWarnings( "unchecked" )
-        ArtifactsPackagingTask task = new ArtifactsPackagingTask( context.getProject().getArtifacts(),
-                                                                  currentProjectOverlay );
+        ArtifactsPackagingTask task =
+            new ArtifactsPackagingTask( context.getProject().getArtifacts(), currentProjectOverlay );
         task.performPackaging( context );
     }
 
@@ -208,14 +200,13 @@ public class WarProjectPackagingTask
     }
 
     /**
-     * Handles the deployment descriptors, if specified. Note that the behavior
-     * here is slightly different since the customized entry always win, even if
-     * an overlay has already packaged a web.xml previously.
+     * Handles the deployment descriptors, if specified. Note that the behavior here is slightly different since the
+     * customized entry always win, even if an overlay has already packaged a web.xml previously.
      *
-     * @param context    the packaging context
-     * @param webinfDir  the web-inf directory
+     * @param context the packaging context
+     * @param webinfDir the web-inf directory
      * @param metainfDir the meta-inf directory
-     * @throws MojoFailureException   if the web.xml is specified but does not exist
+     * @throws MojoFailureException if the web.xml is specified but does not exist
      * @throws MojoExecutionException if an error occurred while copying the descriptors
      */
     protected void handleDeploymentDescriptors( WarPackagingContext context, File webinfDir, File metainfDir )
@@ -270,8 +261,8 @@ public class WarProjectPackagingTask
                 }
                 else
                 {
-                    copyFile( context, containerConfigXML, new File( metainfDir, xmlFileName ),
-                              "META-INF/" + xmlFileName, true );
+                    copyFile( context, containerConfigXML, new File( metainfDir, xmlFileName ), "META-INF/"
+                        + xmlFileName, true );
                 }
             }
         }
@@ -288,9 +279,9 @@ public class WarProjectPackagingTask
     /**
      * Copies webapp webResources from the specified directory.
      *
-     * @param context  the WAR packaging context to use
+     * @param context the WAR packaging context to use
      * @param resource the resource to copy
-     * @throws IOException            if an error occurred while copying the resources
+     * @throws IOException if an error occurred while copying the resources
      * @throws MojoExecutionException if an error occurred while retrieving the filter properties
      */
     public void copyResources( WarPackagingContext context, Resource resource )
@@ -298,38 +289,42 @@ public class WarProjectPackagingTask
     {
         if ( !context.getWebappDirectory().exists() )
         {
-            context.getLog().warn(
-                "Not copying webapp webResources [" + resource.getDirectory() + "]: webapp directory ["
-                    + context.getWebappDirectory().getAbsolutePath() + "] does not exist!" );
+            context.getLog().warn( "Not copying webapp webResources [" + resource.getDirectory()
+                                       + "]: webapp directory [" + context.getWebappDirectory().getAbsolutePath()
+                                       + "] does not exist!" );
         }
 
         context.getLog().info( "Copying webapp webResources [" + resource.getDirectory() + "] to ["
-            + context.getWebappDirectory().getAbsolutePath() + "]" );
+                                   + context.getWebappDirectory().getAbsolutePath() + "]" );
         String[] fileNames = getFilesToCopy( resource );
-        for (String fileName : fileNames) {
+        for ( String fileName : fileNames )
+        {
             String targetFileName = fileName;
-            if (resource.getTargetPath() != null) {
-                //TODO make sure this thing is 100% safe
+            if ( resource.getTargetPath() != null )
+            {
+                // TODO make sure this thing is 100% safe
                 // MWAR-129 if targetPath is only a dot <targetPath>.</targetPath> or ./
                 // and the Resource is in a part of the warSourceDirectory the file from sources will override this
                 // that's we don't have to add the targetPath yep not nice but works
-                if (!StringUtils.equals(".", resource.getTargetPath())
-                        && !StringUtils.equals("./", resource.getTargetPath())) {
+                if ( !StringUtils.equals( ".", resource.getTargetPath() )
+                    && !StringUtils.equals( "./", resource.getTargetPath() ) )
+                {
                     targetFileName = resource.getTargetPath() + File.separator + targetFileName;
                 }
             }
-            if (resource.isFiltering() && !context.isNonFilteredExtension(fileName)) {
-                copyFilteredFile(id, context, new File(resource.getDirectory(), fileName), targetFileName);
-            } else {
-                copyFile(id, context, new File(resource.getDirectory(), fileName), targetFileName);
+            if ( resource.isFiltering() && !context.isNonFilteredExtension( fileName ) )
+            {
+                copyFilteredFile( id, context, new File( resource.getDirectory(), fileName ), targetFileName );
+            }
+            else
+            {
+                copyFile( id, context, new File( resource.getDirectory(), fileName ), targetFileName );
             }
         }
     }
 
-
     /**
-     * Returns a list of filenames that should be copied
-     * over to the destination directory.
+     * Returns a list of filenames that should be copied over to the destination directory.
      *
      * @param resource the resource to be scanned
      * @return the array of filenames, relative to the sourceDir
@@ -340,8 +335,7 @@ public class WarProjectPackagingTask
         scanner.setBasedir( resource.getDirectory() );
         if ( resource.getIncludes() != null && !resource.getIncludes().isEmpty() )
         {
-            scanner.setIncludes(
-                (String[]) resource.getIncludes().toArray( new String[resource.getIncludes().size()] ) );
+            scanner.setIncludes( (String[]) resource.getIncludes().toArray( new String[resource.getIncludes().size()] ) );
         }
         else
         {
@@ -349,8 +343,7 @@ public class WarProjectPackagingTask
         }
         if ( resource.getExcludes() != null && !resource.getExcludes().isEmpty() )
         {
-            scanner.setExcludes(
-                (String[]) resource.getExcludes().toArray( new String[resource.getExcludes().size()] ) );
+            scanner.setExcludes( (String[]) resource.getExcludes().toArray( new String[resource.getExcludes().size()] ) );
         }
 
         scanner.addDefaultExcludes();

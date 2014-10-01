@@ -35,7 +35,6 @@ import org.codehaus.plexus.util.StringUtils;
  * Manages the overlays.
  *
  * @author Stephane Nicoll
- * 
  * @version $Id$
  */
 public class OverlayManager
@@ -49,19 +48,17 @@ public class OverlayManager
     /**
      * Creates a manager with the specified overlays.
      * <p/>
-     * Note that the list is potentially updated by the
-     * manager so a new list is created based on the overlays.
+     * Note that the list is potentially updated by the manager so a new list is created based on the overlays.
      *
-     * @param overlays        the overlays
-     * @param project         the maven project
+     * @param overlays the overlays
+     * @param project the maven project
      * @param defaultIncludes the default includes to use
      * @param defaultExcludes the default excludes to use
      * @param currentProjectOverlay the overlay for the current project
-     * @throws InvalidOverlayConfigurationException
-     *          if the config is invalid
+     * @throws InvalidOverlayConfigurationException if the config is invalid
      */
-    public OverlayManager( List<Overlay> overlays, MavenProject project, String defaultIncludes, String defaultExcludes,
-                           Overlay currentProjectOverlay )
+    public OverlayManager( List<Overlay> overlays, MavenProject project, String defaultIncludes,
+                           String defaultExcludes, Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
     {
         this.overlays = new ArrayList<Overlay>();
@@ -77,7 +74,6 @@ public class OverlayManager
         initialize( defaultIncludes, defaultExcludes, currentProjectOverlay );
 
     }
-
 
     /**
      * Returns the resolved overlays.
@@ -110,9 +106,8 @@ public class OverlayManager
      *
      * @param defaultIncludes the default includes to use
      * @param defaultExcludes the default excludes to use
-     * @param currentProjectOverlay  the overlay for the current project
-     * @throws InvalidOverlayConfigurationException
-     *          if the configuration is invalid
+     * @param currentProjectOverlay the overlay for the current project
+     * @throws InvalidOverlayConfigurationException if the configuration is invalid
      */
     void initialize( String defaultIncludes, String defaultExcludes, Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
@@ -176,14 +171,13 @@ public class OverlayManager
     /**
      * Returns the Artifact associated to the specified overlay.
      * <p/>
-     * If the overlay defines the current project, <tt>null</tt> is
-     * returned. If no artifact could not be found for the overlay
-     * a InvalidOverlayConfigurationException is thrown.
+     * If the overlay defines the current project, <tt>null</tt> is returned. If no artifact could not be found for the
+     * overlay a InvalidOverlayConfigurationException is thrown.
      *
      * @param overlay an overlay
      * @return the artifact associated to the overlay
-     * @throws org.apache.maven.plugin.war.overlay.InvalidOverlayConfigurationException
-     *          if the overlay does not have an associated artifact
+     * @throws org.apache.maven.plugin.war.overlay.InvalidOverlayConfigurationException if the overlay does not have an
+     *             associated artifact
      */
     Artifact getAssociatedArtifact( final Overlay overlay )
         throws InvalidOverlayConfigurationException
@@ -215,8 +209,7 @@ public class OverlayManager
                 }
             }
         }
-        throw new InvalidOverlayConfigurationException(
-            "overlay [" + overlay + "] is not a dependency of the project." );
+        throw new InvalidOverlayConfigurationException( "overlay [" + overlay + "] is not a dependency of the project." );
 
     }
 
@@ -232,13 +225,13 @@ public class OverlayManager
         return ( StringUtils.equals( overlay.getGroupId(), artifact.getGroupId() )
             && StringUtils.equals( overlay.getArtifactId(), artifact.getArtifactId() )
             && StringUtils.equals( overlay.getType(), artifact.getType() )
-            // MWAR-241 Make sure to treat null and "" as equal when comparing the classifier
-            && StringUtils.equals( StringUtils.defaultString( overlay.getClassifier() ), StringUtils.defaultString( artifact.getClassifier() ) ) );
+        // MWAR-241 Make sure to treat null and "" as equal when comparing the classifier
+        && StringUtils.equals( StringUtils.defaultString( overlay.getClassifier() ),
+                               StringUtils.defaultString( artifact.getClassifier() ) ) );
     }
 
     /**
-     * Returns a list of WAR {@link org.apache.maven.artifact.Artifact} describing
-     * the overlays of the current project.
+     * Returns a list of WAR {@link org.apache.maven.artifact.Artifact} describing the overlays of the current project.
      *
      * @return the overlays as artifacts objects
      */

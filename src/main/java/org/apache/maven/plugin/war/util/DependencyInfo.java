@@ -30,7 +30,6 @@ import org.apache.maven.model.Dependency;
 public class DependencyInfo
 {
 
-
     private final Dependency dependency;
 
     private String targetFileName;
@@ -56,8 +55,7 @@ public class DependencyInfo
     }
 
     /**
-     * Returns the target filen ame of the dependency. If no target file name
-     * is associated, returns <tt>null</tt>.
+     * Returns the target filen ame of the dependency. If no target file name is associated, returns <tt>null</tt>.
      *
      * @return the target file name or <tt>null</tt>
      */

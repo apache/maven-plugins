@@ -26,16 +26,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * An overlay is a skeleton WAR added to another WAR project in order to inject a
- * functionality, resources or any other shared component.
+ * An overlay is a skeleton WAR added to another WAR project in order to inject a functionality, resources or any other
+ * shared component.
  * <p/>
- * Note that a particular WAR dependency can be added multiple times as an overlay
- * with different includes/excludes filter; this allows building a fine grained
- * overwriting policy.
+ * Note that a particular WAR dependency can be added multiple times as an overlay with different includes/excludes
+ * filter; this allows building a fine grained overwriting policy.
  * <p/>
- * The current project can also be described as an overlay and can not be specified
- * twice. An overlay with no groupId and no artifactId represents the
- * current project.
+ * The current project can also be described as an overlay and can not be specified twice. An overlay with no groupId
+ * and no artifactId represents the current project.
  *
  * @author Stephane Nicoll
  * @version $Id$
@@ -43,9 +41,9 @@ import java.util.List;
 public class Overlay
 {
 
-    public static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
+    public static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
-    public static final String[] DEFAULT_EXCLUDES = new String[]{"META-INF/MANIFEST.MF"};
+    public static final String[] DEFAULT_EXCLUDES = new String[] { "META-INF/MANIFEST.MF" };
 
     private String id;
 
@@ -64,17 +62,16 @@ public class Overlay
     private boolean skip = false;
 
     private Artifact artifact;
-    
+
     private String targetPath;
-    
-    /** default overlay type is war */ 
+
+    /** default overlay type is war */
     private String type = "war";
 
     public Overlay()
     {
         super();
     }
-
 
     public Overlay( String groupId, String artifactId )
     {
@@ -217,7 +214,6 @@ public class Overlay
         return targetPath;
     }
 
-
     public void setTargetPath( String targetPath )
     {
         this.targetPath = targetPath;
@@ -228,17 +224,15 @@ public class Overlay
         return type;
     }
 
-
     public void setType( String type )
     {
         this.type = type;
     }
-    
+
     public String toString()
     {
         return " id " + getId();
     }
-
 
     public boolean equals( Object o )
     {

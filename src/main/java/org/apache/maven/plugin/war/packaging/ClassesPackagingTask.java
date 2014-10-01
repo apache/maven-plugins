@@ -34,12 +34,10 @@ import java.io.IOException;
 /**
  * Handles the classes directory that needs to be packaged in the web application.
  * <p/>
- * Based on the {@link WarPackagingContext#archiveClasses()} flag the resources
- * either copied into to <tt>WEB-INF/classes</tt> directory or archived in a jar
- * within the <tt>WEB-INF/lib</tt> directory.
+ * Based on the {@link WarPackagingContext#archiveClasses()} flag the resources either copied into to
+ * <tt>WEB-INF/classes</tt> directory or archived in a jar within the <tt>WEB-INF/lib</tt> directory.
  *
  * @author Stephane Nicoll
- *
  * @version $Id$
  */
 public class ClassesPackagingTask
@@ -72,13 +70,13 @@ public class ClassesPackagingTask
                 final PathSet sources = getFilesToIncludes( context.getClassesDirectory(), null, null );
                 try
                 {
-                    copyFiles( currentProjectOverlay.getId(), context, context.getClassesDirectory(),
-                               sources, CLASSES_PATH, false );
+                    copyFiles( currentProjectOverlay.getId(), context, context.getClassesDirectory(), sources,
+                               CLASSES_PATH, false );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException(
-                        "Could not copy webapp classes [" + context.getClassesDirectory().getAbsolutePath() + "]", e );
+                    throw new MojoExecutionException( "Could not copy webapp classes ["
+                        + context.getClassesDirectory().getAbsolutePath() + "]", e );
                 }
             }
         }
@@ -89,8 +87,8 @@ public class ClassesPackagingTask
     {
         MavenProject project = context.getProject();
         ArtifactFactory factory = context.getArtifactFactory();
-        Artifact artifact = factory.createBuildArtifact( project.getGroupId(), project.getArtifactId(),
-                                                         project.getVersion(), "jar" );
+        Artifact artifact =
+            factory.createBuildArtifact( project.getGroupId(), project.getArtifactId(), project.getVersion(), "jar" );
         String archiveName;
         try
         {
@@ -98,9 +96,8 @@ public class ClassesPackagingTask
         }
         catch ( InterpolationException e )
         {
-            throw new MojoExecutionException(
-                "Could not get the final name of the artifact [" + artifact.getGroupId() + ":" + artifact.getArtifactId()
-                    + ":" + artifact.getVersion() + "]", e );
+            throw new MojoExecutionException( "Could not get the final name of the artifact [" + artifact.getGroupId()
+                + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + "]", e );
         }
         final String targetFilename = LIB_PATH + archiveName;
 
@@ -114,8 +111,8 @@ public class ClassesPackagingTask
         }
         else
         {
-            context.getLog().warn(
-                "Could not generate archive classes file [" + targetFilename + "] has already been copied." );
+            context.getLog().warn( "Could not generate archive classes file [" + targetFilename
+                                       + "] has already been copied." );
         }
     }
 }

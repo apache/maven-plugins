@@ -31,14 +31,12 @@ import java.io.IOException;
  * Handles an overlay.
  *
  * @author Stephane Nicoll
- * 
  * @version $Id$
  */
 public class OverlayPackagingTask
     extends AbstractWarPackagingTask
 {
     private final Overlay overlay;
-
 
     public OverlayPackagingTask( Overlay overlay, Overlay currentProjectOverlay )
     {
@@ -53,12 +51,11 @@ public class OverlayPackagingTask
         this.overlay = overlay;
     }
 
-
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
-        context.getLog().debug(
-            "OverlayPackagingTask performPackaging overlay.getTargetPath() " + overlay.getTargetPath() );
+        context.getLog().debug( "OverlayPackagingTask performPackaging overlay.getTargetPath() "
+                                    + overlay.getTargetPath() );
         if ( overlay.shouldSkip() )
         {
             context.getLog().info( "Skipping overlay [" + overlay + "]" );
@@ -102,8 +99,7 @@ public class OverlayPackagingTask
     /**
      * Unpacks the specified overlay.
      * <p/>
-     * Makes sure to skip the unpack process if the overlay has
-     * already been unpacked.
+     * Makes sure to skip the unpack process if the overlay has already been unpacked.
      *
      * @param context the packaging context
      * @param overlay the overlay
