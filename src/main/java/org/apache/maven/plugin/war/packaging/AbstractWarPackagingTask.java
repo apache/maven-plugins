@@ -21,7 +21,6 @@ package org.apache.maven.plugin.war.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
