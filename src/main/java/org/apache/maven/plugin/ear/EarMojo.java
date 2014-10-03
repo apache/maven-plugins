@@ -110,7 +110,7 @@ public class EarMojo
      * @since 2.3.2
      */
     @Parameter
-    private List nonFilteredFileExtensions;
+    private List<String> nonFilteredFileExtensions;
 
     /**
      * To escape interpolated value with Windows path c:\foo\bar will be replaced with c:\\foo\\bar.
