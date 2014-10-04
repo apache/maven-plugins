@@ -19,18 +19,15 @@ package org.apache.maven.plugin.ear.it;
  * under the License.
  */
 
-import org.apache.maven.it.util.IOUtil;
-import org.codehaus.plexus.archiver.ear.EarArchiver;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
-import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.ReaderFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import org.apache.maven.it.util.IOUtil;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
