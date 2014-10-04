@@ -709,7 +709,7 @@ public class EarMojo
                     {
                         //MEAR-189:
                         //We use the original name, cause in case of fileNameMapping to no-version/full 
-                        //we coulnd not not delete it and it will end up in the resulting EAR and the WAR 
+                        //we could not not delete it and it will end up in the resulting EAR and the WAR 
                         //will not be cleaned up.
                         File artifact =
                             new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
