@@ -20,11 +20,17 @@ package org.apache.maven.plugin.ear.it;
  */
 
 import org.apache.maven.it.util.IOUtil;
+import org.codehaus.plexus.archiver.ear.EarArchiver;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
@@ -182,12 +188,20 @@ public class EarMojoIT
     public void testProject016()
         throws Exception
     {
-        System.out.println( "Skipped project-016: need a way to extract the EAR archive" );
-        /*
-         * final File baseDir = doTestProject( "project-016", new String[]{"ejb-sample-one-1.0.jar"} ); final File
-         * expectedManifest = new File(baseDir, "src/main/ear/META-INF/MANIFEST.MF"); // TODO: needs a way to extract
-         * the EAR archive
-         */
+        final File baseDir = doTestProject( "project-016", new String[] { "ejb-sample-one-1.0.jar" } );
+
+        final File targetFolder = new File( baseDir, "target" );
+        final File createdEarFile = new File( targetFolder, "maven-ear-plugin-test-project-016-99.0.ear" );
+
+        final File sourceManifestFile = new File( baseDir, "src/main/ear/MANIFEST.MF" );
+
+        JarFile jarFile = new JarFile( createdEarFile );
+        Manifest manifestFromCreatedEARFile = jarFile.getManifest();
+        jarFile.close();
+
+        Manifest sourceManifest = new Manifest( new FileInputStream( sourceManifestFile ) );
+
+        assertTrue( "There are differences in the manifest.", sourceManifest.equals( manifestFromCreatedEARFile ) );
     }
 
     /**
