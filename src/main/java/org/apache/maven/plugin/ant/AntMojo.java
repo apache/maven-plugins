@@ -88,7 +88,7 @@ public class AntMojo
     /**
      * The current user system settings for use in Maven.
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
