@@ -262,11 +262,15 @@ under the License.
                 <configuration>
                   <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
                   <extraArtifacts>
+                    <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:2.5:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-source-plugin:2.3:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.6:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.5:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:3.1:maven-plugin</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-site-plugin:3.1:maven-plugin</extraArtifact>
+                    <extraArtifact>junit:junit:4.11:jar</extraArtifact>
+                    <extraArtifact>org.codehaus.plexus:plexus-utils:1.1</extraArtifact>
                   </extraArtifacts>
                 </configuration>
               </execution>
@@ -287,7 +291,7 @@ under the License.
                   <dedupe>false</dedupe>
                   <localRepositoryDirectory>${project.build.directory}/it-repo</localRepositoryDirectory>
                   <includeDependencyManagement>false</includeDependencyManagement>
-                  <includePlugins>false</includePlugins>
+                  <includePlugins>true</includePlugins>
                   <includePluginManagement>false</includePluginManagement>
                   <includeReportPlugins>false</includeReportPlugins>
                   <includeExtensions>false</includeExtensions>
