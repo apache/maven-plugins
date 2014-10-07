@@ -179,6 +179,18 @@ under the License.
             </excludes>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>src/it/bootstrap/**</exclude>
+              <exclude>src/it/bundle-pack/placeholder.txt</exclude>
+              <exclude>src/test/resources/repo/testgroup/testartifact/1.0/testartifact-1.0.pom</exclude>
+              <exclude>src/test/resources/repo/testgroup/testparent/1.0/testparent-1.0.pom</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
