@@ -69,7 +69,7 @@ public abstract class AbstractArtifactStub
     /*
      * TODO: Coppied from org/apache/maven/artifact/DefaultArtifact.java; Consider merging...
      */
-    public int compareTo( Object o )
+    public int compareTo( Artifact o )
     {
         Artifact a = (Artifact) o;
 
