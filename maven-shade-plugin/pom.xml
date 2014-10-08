@@ -170,6 +170,26 @@ under the License.
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!-- Can't add license header otherwise the tests will fail. -->
+              <exclude>rel-path-test-files/**</exclude>
+              <exclude>src/it/dep-reduced-pom-use-base-version/repo/org/apache/maven/its/shade/drp/a/0.1-SNAPSHOT/_maven.repositories</exclude>
+              <exclude>src/it/mshade-123/sample.txt</exclude>
+              <exclude>src/it/MSHADE-133/src/main/resources/myConfig.yml</exclude>
+              <exclude>src/it/rerun-with-reloc/src/main/resources/some-ordinary-resource.txt</exclude>
+              <exclude>src/it/rerun-without-reloc/src/main/resources/some-ordinary-resource.txt</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
