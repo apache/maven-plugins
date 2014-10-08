@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.incremental.IncrementalBuildHelper;
 import org.apache.maven.shared.incremental.IncrementalBuildHelperRequest;
 import org.apache.maven.shared.utils.ReaderFactory;
@@ -72,6 +73,7 @@ import java.util.Set;
 public abstract class AbstractCompilerMojo
     extends AbstractMojo
 {
+
     // ----------------------------------------------------------------------
     // Configurables
     // ----------------------------------------------------------------------
@@ -81,49 +83,49 @@ public abstract class AbstractCompilerMojo
      *
      * @since 2.0.2
      */
-    @Parameter(property = "maven.compiler.failOnError", defaultValue = "true")
+    @Parameter( property = "maven.compiler.failOnError", defaultValue = "true" )
     private boolean failOnError = true;
 
     /**
      * Set to <code>true</code> to include debugging information in the compiled class files.
      */
-    @Parameter(property = "maven.compiler.debug", defaultValue = "true")
+    @Parameter( property = "maven.compiler.debug", defaultValue = "true" )
     private boolean debug = true;
 
     /**
      * Set to <code>true</code> to show messages about what the compiler is doing.
      */
-    @Parameter(property = "maven.compiler.verbose", defaultValue = "false")
+    @Parameter( property = "maven.compiler.verbose", defaultValue = "false" )
     private boolean verbose;
 
     /**
      * Sets whether to show source locations where deprecated APIs are used.
      */
-    @Parameter(property = "maven.compiler.showDeprecation", defaultValue = "false")
+    @Parameter( property = "maven.compiler.showDeprecation", defaultValue = "false" )
     private boolean showDeprecation;
 
     /**
      * Set to <code>true</code> to optimize the compiled code using the compiler's optimization methods.
      */
-    @Parameter(property = "maven.compiler.optimize", defaultValue = "false")
+    @Parameter( property = "maven.compiler.optimize", defaultValue = "false" )
     private boolean optimize;
 
     /**
      * Set to <code>true</code> to show compilation warnings.
      */
-    @Parameter(property = "maven.compiler.showWarnings", defaultValue = "false")
+    @Parameter( property = "maven.compiler.showWarnings", defaultValue = "false" )
     private boolean showWarnings;
 
     /**
      * The -source argument for the Java compiler.
      */
-    @Parameter(property = "maven.compiler.source", defaultValue = "1.5")
+    @Parameter( property = "maven.compiler.source", defaultValue = "1.5" )
     protected String source;
 
     /**
      * The -target argument for the Java compiler.
      */
-    @Parameter(property = "maven.compiler.target", defaultValue = "1.5")
+    @Parameter( property = "maven.compiler.target", defaultValue = "1.5" )
     protected String target;
 
     /**
@@ -131,34 +133,34 @@ public abstract class AbstractCompilerMojo
      *
      * @since 2.1
      */
-    @Parameter(property = "encoding", defaultValue = "${project.build.sourceEncoding}")
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
     private String encoding;
 
     /**
      * Sets the granularity in milliseconds of the last modification
      * date for testing whether a source needs recompilation.
      */
-    @Parameter(property = "lastModGranularityMs", defaultValue = "0")
+    @Parameter( property = "lastModGranularityMs", defaultValue = "0" )
     private int staleMillis;
 
     /**
      * The compiler id of the compiler to use. See this
      * <a href="non-javac-compilers.html">guide</a> for more information.
      */
-    @Parameter(property = "maven.compiler.compilerId", defaultValue = "javac")
+    @Parameter( property = "maven.compiler.compilerId", defaultValue = "javac" )
     private String compilerId;
 
     /**
      * Version of the compiler to use, ex. "1.3", "1.5", if {@link #fork} is set to <code>true</code>.
      */
-    @Parameter(property = "maven.compiler.compilerVersion")
+    @Parameter( property = "maven.compiler.compilerVersion" )
     private String compilerVersion;
 
     /**
      * Allows running the compiler in a separate process.
      * If <code>false</code> it uses the built in compiler, while if <code>true</code> it will use an executable.
      */
-    @Parameter(property = "maven.compiler.fork", defaultValue = "false")
+    @Parameter( property = "maven.compiler.fork", defaultValue = "false" )
     private boolean fork;
 
     /**
@@ -167,7 +169,7 @@ public abstract class AbstractCompilerMojo
      *
      * @since 2.0.1
      */
-    @Parameter(property = "maven.compiler.meminitial")
+    @Parameter( property = "maven.compiler.meminitial" )
     private String meminitial;
 
     /**
@@ -176,13 +178,13 @@ public abstract class AbstractCompilerMojo
      *
      * @since 2.0.1
      */
-    @Parameter(property = "maven.compiler.maxmem")
+    @Parameter( property = "maven.compiler.maxmem" )
     private String maxmem;
 
     /**
      * Sets the executable of the compiler to use when {@link #fork} is <code>true</code>.
      */
-    @Parameter(property = "maven.compiler.executable")
+    @Parameter( property = "maven.compiler.executable" )
     private String executable;
 
     /**
@@ -247,6 +249,7 @@ public abstract class AbstractCompilerMojo
      * &lt;compilerArgs&gt;
      *   &lt;arg&gt;-Xmaxerrs=1000&lt;/arg&gt;
      *   &lt;arg&gt;-Xlint&lt;/arg&gt;
+     *   &lt;arg&gt;-J-Duser.language=en_us&lt;/arg&gt;
      * &lt;/compilerArgs&gt;
      * </pre>
      *
@@ -257,12 +260,12 @@ public abstract class AbstractCompilerMojo
     
     /**
      * <p>
-     * Sets the unformatted single argument string to be passed to the compiler if {@link #fork} is set to <code>true</code>.
-     * To pass multiple arguments such as <code>-Xmaxerrs 1000</code> (which are actually two arguments) you have to use {@link #compilerArguments}.
+     * Sets the unformatted single argument string to be passed to the compiler if {@link #fork} is set to
+     * <code>true</code>. To pass multiple arguments such as <code>-Xmaxerrs 1000</code> (which are actually two
+     * arguments) you have to use {@link #compilerArguments}.
      * </p>
      * <p>
-     * This is because the list of valid arguments passed to a Java compiler
-     * varies based on the compiler version.
+     * This is because the list of valid arguments passed to a Java compiler varies based on the compiler version.
      * </p>
      */
     @Parameter
@@ -285,7 +288,7 @@ public abstract class AbstractCompilerMojo
      *
      * @since 2.1
      */
-    @Parameter(property = "maven.compiler.debuglevel")
+    @Parameter( property = "maven.compiler.debuglevel" )
     private String debuglevel;
 
     /**
@@ -301,13 +304,13 @@ public abstract class AbstractCompilerMojo
     /**
      * The directory to run the compiler from if fork is true.
      */
-    @Parameter(defaultValue = "${basedir}", required = true, readonly = true)
+    @Parameter( defaultValue = "${basedir}", required = true, readonly = true )
     private File basedir;
 
     /**
      * The target directory of the compiler if fork is true.
      */
-    @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
+    @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File buildDirectory;
 
     /**
@@ -319,28 +322,36 @@ public abstract class AbstractCompilerMojo
     /**
      * The current build session instance. This is used for toolchain manager API calls.
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
+
+    /**
+     * The current project instance. This is used for propagating generated-sources paths as compile/testCompile source
+     * roots.
+     */
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    private MavenProject project;
 
     /**
      * Strategy to re use javacc class created:
      * <ul>
-     * <li><code>reuseCreated</code> (default): will reuse already created but in case of multi-threaded builds,
-     * each thread will have its own instance</li>
-     * <li><code>reuseSame</code>: the same Javacc class will be used for each compilation even for multi-threaded build</li>
+     * <li><code>reuseCreated</code> (default): will reuse already created but in case of multi-threaded builds, each
+     * thread will have its own instance</li>
+     * <li><code>reuseSame</code>: the same Javacc class will be used for each compilation even for multi-threaded build
+     * </li>
      * <li><code>alwaysNew</code>: a new Javacc class will be created for each compilation</li>
      * </ul>
      * Note this parameter value depends on the os/jdk you are using, but the default value should work on most of env.
      *
      * @since 2.5
      */
-    @Parameter(defaultValue = "${reuseCreated}", property = "maven.compiler.compilerReuseStrategy")
+    @Parameter( defaultValue = "${reuseCreated}", property = "maven.compiler.compilerReuseStrategy" )
     private String compilerReuseStrategy = "reuseCreated";
 
     /**
      * @since 2.5
      */
-    @Parameter(defaultValue = "false", property = "maven.compiler.skipMultiThreadWarning")
+    @Parameter( defaultValue = "false", property = "maven.compiler.skipMultiThreadWarning" )
     private boolean skipMultiThreadWarning;
 
     /**
@@ -349,22 +360,14 @@ public abstract class AbstractCompilerMojo
      *
      * @since 3.0
      */
-    @Parameter(defaultValue = "false", property = "maven.compiler.forceJavacCompilerUse")
+    @Parameter( defaultValue = "false", property = "maven.compiler.forceJavacCompilerUse" )
     private boolean forceJavacCompilerUse;
 
     /**
      * @since 3.0 needed for storing the status for the incremental build support.
      */
-    @Parameter(property = "mojoExecution")
+    @Parameter( property = "mojoExecution", readonly = true, required = true )
     private MojoExecution mojoExecution;
-
-    /**
-     * We need this to determine the start timestamp of the build.
-     *
-     * @since 3.0
-     */
-    @Component
-    protected MavenSession mavenSession;
 
     /**
      * file extensions to check timestamp for incremental build
@@ -379,7 +382,7 @@ public abstract class AbstractCompilerMojo
      * to enable/disable incrementation compilation feature
      * @since 3.1
      */
-    @Parameter(defaultValue = "true", property = "maven.compiler.useIncrementalCompilation")
+    @Parameter( defaultValue = "true", property = "maven.compiler.useIncrementalCompilation" )
     private boolean useIncrementalCompilation = true;
 
     protected abstract SourceInclusionScanner getSourceInclusionScanner( int staleMillis );
@@ -471,8 +474,6 @@ public abstract class AbstractCompilerMojo
 
         compilerConfiguration.setClasspathEntries( getClasspathElements() );
 
-        compilerConfiguration.setSourceLocations( compileSourceRoots );
-
         compilerConfiguration.setOptimize( optimize );
 
         compilerConfiguration.setDebug( debug );
@@ -480,13 +481,13 @@ public abstract class AbstractCompilerMojo
         if ( debug && StringUtils.isNotEmpty( debuglevel ) )
         {
             String[] split = StringUtils.split( debuglevel, "," );
-            for ( int i = 0; i < split.length; i++ )
+            for ( String aSplit : split )
             {
-                if ( !( split[i].equalsIgnoreCase( "none" ) || split[i].equalsIgnoreCase( "lines" )
-                    || split[i].equalsIgnoreCase( "vars" ) || split[i].equalsIgnoreCase( "source" ) ) )
+                if ( !( aSplit.equalsIgnoreCase( "none" ) || aSplit.equalsIgnoreCase( "lines" )
+                    || aSplit.equalsIgnoreCase( "vars" ) || aSplit.equalsIgnoreCase( "source" ) ) )
                 {
-                    throw new IllegalArgumentException( "The specified debug level: '" + split[i] + "' is unsupported. "
-                                                            + "Legal values are 'none', 'lines', 'vars', and 'source'." );
+                    throw new IllegalArgumentException( "The specified debug level: '" + aSplit + "' is unsupported. "
+                        + "Legal values are 'none', 'lines', 'vars', and 'source'." );
                 }
             }
             compilerConfiguration.setDebugLevel( debuglevel );
@@ -504,7 +505,41 @@ public abstract class AbstractCompilerMojo
 
         compilerConfiguration.setProc( proc );
 
-        compilerConfiguration.setGeneratedSourcesDirectory( getGeneratedSourcesDirectory() );
+        File generatedSourcesDirectory = getGeneratedSourcesDirectory();
+        compilerConfiguration.setGeneratedSourcesDirectory( generatedSourcesDirectory );
+
+        if ( generatedSourcesDirectory != null )
+        {
+            String generatedSourcesPath = generatedSourcesDirectory.getAbsolutePath();
+
+            compileSourceRoots.add( generatedSourcesPath );
+
+            if ( isTestCompile() )
+            {
+                getLog().debug( "Adding " + generatedSourcesPath + " to test-compile source roots:\n  "
+                                    + StringUtils.join( project.getTestCompileSourceRoots()
+                                                               .iterator(), "\n  " ) );
+
+                project.addTestCompileSourceRoot( generatedSourcesPath );
+
+                getLog().debug( "New test-compile source roots:\n  "
+                                    + StringUtils.join( project.getTestCompileSourceRoots()
+                                                               .iterator(), "\n  " ) );
+            }
+            else
+            {
+                getLog().debug( "Adding " + generatedSourcesPath + " to compile source roots:\n  "
+                                    + StringUtils.join( project.getCompileSourceRoots()
+                                                               .iterator(), "\n  " ) );
+
+                project.addCompileSourceRoot( generatedSourcesPath );
+
+                getLog().debug( "New compile source roots:\n  " + StringUtils.join( project.getCompileSourceRoots()
+                                                                                           .iterator(), "\n  " ) );
+            }
+        }
+
+        compilerConfiguration.setSourceLocations( compileSourceRoots );
 
         compilerConfiguration.setAnnotationProcessors( annotationProcessors );
 
@@ -514,7 +549,8 @@ public abstract class AbstractCompilerMojo
 
         String effectiveCompilerArgument = getCompilerArgument();
 
-        if ( ( effectiveCompilerArguments != null ) || ( effectiveCompilerArgument != null ) || ( compilerArgs != null ) )
+        if ( ( effectiveCompilerArguments != null ) || ( effectiveCompilerArgument != null )
+                        || ( compilerArgs != null ) )
         {
             LinkedHashMap<String, String> cplrArgsCopy = new LinkedHashMap<String, String>();
             if ( effectiveCompilerArguments != null )
@@ -606,12 +642,13 @@ public abstract class AbstractCompilerMojo
             {
                 if ( !skipMultiThreadWarning )
                 {
-                    StringBuilder sb = new StringBuilder(
-                        "You are in a multi-thread build and compilerReuseStrategy is set to reuseSame. This can cause issues in some environments (os/jdk)! Consider using reuseCreated strategy." );
-                    sb.append( System.getProperty( "line.separator" ) );
-                    sb.append(
-                        "If your env is fine with reuseSame, you can skip this warning with the configuration field skipMultiThreadWarning or -Dmaven.compiler.skipMultiThreadWarning=true" );
-                    getLog().warn( sb.toString() );
+                    getLog().warn( "You are in a multi-thread build and compilerReuseStrategy is set to reuseSame."
+                                       + " This can cause issues in some environments (os/jdk)!"
+                                       + " Consider using reuseCreated strategy."
+                                       + System.getProperty( "line.separator" )
+                                       + "If your env is fine with reuseSame, you can skip this warning with the "
+                                       + "configuration field skipMultiThreadWarning "
+                                       + "or -Dmaven.compiler.skipMultiThreadWarning=true" );
                 }
             }
             compilerConfiguration.setCompilerReuseStrategy( CompilerConfiguration.CompilerReuseStrategy.ReuseSame );
@@ -628,9 +665,9 @@ public abstract class AbstractCompilerMojo
 
         boolean canUpdateTarget;
 
-        IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper( mojoExecution, mavenSession );
+        IncrementalBuildHelper incrementalBuildHelper = new IncrementalBuildHelper( mojoExecution, session );
 
-        Set<File> sources = null;
+        Set<File> sources;
 
         IncrementalBuildHelperRequest incrementalBuildHelperRequest = null;
 
@@ -645,8 +682,9 @@ public abstract class AbstractCompilerMojo
 
                 incrementalBuildHelperRequest = new IncrementalBuildHelperRequest().inputFiles( sources );
 
-                if ( ( compiler.getCompilerOutputStyle().equals( CompilerOutputStyle.ONE_OUTPUT_FILE_FOR_ALL_INPUT_FILES )
-                    && !canUpdateTarget ) || isDependencyChanged() || isSourceChanged( compilerConfiguration, compiler )
+                if ( ( compiler.getCompilerOutputStyle().equals( CompilerOutputStyle.ONE_OUTPUT_FILE_FOR_ALL_INPUT_FILES ) && !canUpdateTarget )
+                    || isDependencyChanged()
+                    || isSourceChanged( compilerConfiguration, compiler )
                     || incrementalBuildHelper.inputFileTreeChanged( incrementalBuildHelperRequest ) )
                 {
                     getLog().info( "Changes detected - recompiling the module!" );
@@ -813,20 +851,33 @@ public abstract class AbstractCompilerMojo
 
         List<CompilerMessage> warnings = new ArrayList<CompilerMessage>();
         List<CompilerMessage> errors = new ArrayList<CompilerMessage>();
+        List<CompilerMessage> others = new ArrayList<CompilerMessage>();
         for ( CompilerMessage message : compilerResult.getCompilerMessages() )
         {
-            if ( message.isError() )
+            if ( message.getKind() == CompilerMessage.Kind.ERROR )
             {
                 errors.add( message );
             }
-            else
+            else if ( message.getKind() == CompilerMessage.Kind.WARNING
+                || message.getKind() == CompilerMessage.Kind.MANDATORY_WARNING )
             {
                 warnings.add( message );
+            }
+            else
+            {
+                others.add( message );
             }
         }
 
         if ( failOnError && !compilerResult.isSuccess() )
         {
+            for ( CompilerMessage message : others )
+            {
+                assert message.getKind() != CompilerMessage.Kind.ERROR
+                    && message.getKind() != CompilerMessage.Kind.WARNING
+                    && message.getKind() != CompilerMessage.Kind.MANDATORY_WARNING;
+                getLog().info( message.toString() );
+            }
             if ( !warnings.isEmpty() )
             {
                 getLog().info( "-------------------------------------------------------------" );
@@ -866,9 +917,30 @@ public abstract class AbstractCompilerMojo
         {
             for ( CompilerMessage message : compilerResult.getCompilerMessages() )
             {
-                getLog().warn( message.toString() );
+                switch ( message.getKind() )
+                {
+                    case NOTE:
+                    case OTHER:
+                        getLog().info( message.toString() );
+                        break;
+
+                    case ERROR:
+                        getLog().error( message.toString() );
+                        break;
+
+                    case MANDATORY_WARNING:
+                    case WARNING:
+                    default:
+                        getLog().warn( message.toString() );
+                        break;
+                }
             }
         }
+    }
+
+    protected boolean isTestCompile()
+    {
+        return false;
     }
 
     protected CompilerResult convertToCompilerResult( List<CompilerError> compilerErrors )
@@ -961,7 +1033,7 @@ public abstract class AbstractCompilerMojo
 
 
     /**
-     * try to get thread count if a Maven 3 build, using reflection as the plugin must not be maven3 api dependant
+     * try to get thread count if a Maven 3 build, using reflection as the plugin must not be maven3 api dependent
      *
      * @return number of thread for this build or 1 if not multi-thread build
      */
@@ -1010,8 +1082,8 @@ public abstract class AbstractCompilerMojo
         {
             value = setting + "m";
         }
-        else if ( ( isDigits( setting.substring( 0, setting.length() - 1 ) ) ) && ( setting.toLowerCase().endsWith(
-            "m" ) ) )
+        else if ( ( isDigits( setting.substring( 0, setting.length() - 1 ) ) )
+            && ( setting.toLowerCase().endsWith( "m" ) ) )
         {
             value = setting;
         }
@@ -1141,7 +1213,7 @@ public abstract class AbstractCompilerMojo
      */
     protected boolean isDependencyChanged()
     {
-        if ( mavenSession == null )
+        if ( session == null )
         {
             // we just cannot determine it, so don't do anything beside logging
             getLog().info( "Cannot determine build start date, skipping incremental build detection." );
@@ -1178,7 +1250,7 @@ public abstract class AbstractCompilerMojo
     /**
      * @param classPathEntry entry to check
      * @param buildStartTime time build start
-     * @return if any changes occured
+     * @return if any changes occurred
      */
     private boolean hasNewFile( File classPathEntry, Date buildStartTime )
     {
@@ -1189,8 +1261,8 @@ public abstract class AbstractCompilerMojo
 
         if ( classPathEntry.isFile() )
         {
-            return classPathEntry.lastModified() >= buildStartTime.getTime() && fileExtensions.contains(
-                FileUtils.getExtension( classPathEntry.getName() ) );
+            return classPathEntry.lastModified() >= buildStartTime.getTime()
+                && fileExtensions.contains( FileUtils.getExtension( classPathEntry.getName() ) );
         }
 
         File[] children = classPathEntry.listFiles();
@@ -1205,4 +1277,5 @@ public abstract class AbstractCompilerMojo
 
         return false;
     }
+
 }

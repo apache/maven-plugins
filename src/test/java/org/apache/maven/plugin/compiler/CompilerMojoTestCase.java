@@ -19,6 +19,18 @@ package org.apache.maven.plugin.compiler;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
@@ -29,14 +41,6 @@ import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class CompilerMojoTestCase
     extends AbstractMojoTestCase
@@ -157,6 +161,9 @@ public class CompilerMojoTestCase
     {
         CompilerMojo compileMojo = getCompilerMojo( "target/test-classes/unit/compiler-fork-test/plugin-config.xml" );
 
+        // JAVA_HOME doesn't have to be on the PATH.
+        setVariableValueToObject( compileMojo, "executable",  new File( System.getenv( "JAVA_HOME" ), "bin/javac" ).getPath() );
+
         compileMojo.execute();
 
         File testClass = new File( compileMojo.getOutputDirectory(), "TestCompile1.class" );
@@ -164,6 +171,9 @@ public class CompilerMojoTestCase
 
         TestCompilerMojo testCompileMojo =
             getTestCompilerMojo( compileMojo, "target/test-classes/unit/compiler-fork-test/plugin-config.xml" );
+
+        // JAVA_HOME doesn't have to be on the PATH.
+        setVariableValueToObject( testCompileMojo, "executable",  new File( System.getenv( "JAVA_HOME" ), "bin/javac" ).getPath() );
 
         testCompileMojo.execute();
 
@@ -292,7 +302,8 @@ public class CompilerMojoTestCase
         setVariableValueToObject( mojo, "log", new DebugEnabledLog() );
         setVariableValueToObject( mojo, "projectArtifact", new ArtifactStub() );
         setVariableValueToObject( mojo, "classpathElements", Collections.EMPTY_LIST );
-        setVariableValueToObject( mojo, "mavenSession", getMockMavenSession() );
+        setVariableValueToObject( mojo, "session", getMockMavenSession() );
+        setVariableValueToObject( mojo, "project", getMockMavenProject() );
         setVariableValueToObject( mojo, "mojoExecution", getMockMojoExecution() );
 
         assertNotNull( mojo );
@@ -314,14 +325,27 @@ public class CompilerMojoTestCase
         setVariableValueToObject( mojo, "outputDirectory", testClassesDir );
 
         List<String> testClasspathList = new ArrayList<String>();
-        testClasspathList.add( System.getProperty( "localRepository" ) + "/junit/junit/3.8.1/junit-3.8.1.jar" );
+
+        String localRepository = System.getProperty( "localRepository" );
+        if ( localRepository != null )
+        {
+            testClasspathList.add( localRepository + "/junit/junit/3.8.1/junit-3.8.1.jar" );
+        }
+        else
+        {
+            // for IDE
+            String junitURI = org.junit.Test.class.getResource( "Test.class" ).toURI().toString();
+            junitURI = junitURI.substring( "jar:".length(), junitURI.indexOf( '!' ) );
+            testClasspathList.add( new File( URI.create( junitURI ) ).getAbsolutePath() );
+        }
+        
         testClasspathList.add( compilerMojo.getOutputDirectory().getPath() );
         setVariableValueToObject( mojo, "classpathElements", testClasspathList );
 
         String testSourceRoot = testPom.getParent() + "/src/test/java";
         setVariableValueToObject( mojo, "compileSourceRoots", Collections.singletonList( testSourceRoot ) );
 
-        setVariableValueToObject( mojo, "mavenSession", getMockMavenSession() );
+        setVariableValueToObject( mojo, "session", getMockMavenSession() );
         setVariableValueToObject( mojo, "mojoExecution", getMockMojoExecution() );
 
         return mojo;
@@ -337,11 +361,11 @@ public class CompilerMojoTestCase
 
     private MavenSession getMockMavenSession()
     {
-        //X MavenExecutionRequest er = new DefaultMavenExecutionRequest();
-        MavenSession ms = new MavenSession( null, null, null, null, null, null, null, null, null );
-        ms.setCurrentProject( getMockMavenProject() );
-
-        return ms;
+        MavenSession session = mock( MavenSession.class );
+        // when( session.getPluginContext( isA(PluginDescriptor.class), isA(MavenProject.class) ) ).thenReturn(
+        // Collections.emptyMap() );
+        when( session.getCurrentProject() ).thenReturn( getMockMavenProject() );
+        return session;
     }
 
     private MojoExecution getMockMojoExecution()

@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>24</version>
+    <version>25</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -33,7 +33,7 @@ under the License.
   <version>3.2</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Maven Compiler Plugin</name>
+  <name>Apache Maven Compiler Plugin</name>
   <description>The Compiler Plugin is used to compile the sources of your project.</description>
   <inceptionYear>2001</inceptionYear>
 
@@ -50,11 +50,17 @@ under the License.
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MCOMPILER</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <plexusCompilerVersion>2.2</plexusCompilerVersion>
+    <plexusCompilerVersion>2.4</plexusCompilerVersion>
     <groovyVersion>1.8.0</groovyVersion>
     <groovyEclipseCompilerVersion>2.7.0-01</groovyEclipseCompilerVersion>
     <groovy-eclipse-batch>2.0.4-04</groovy-eclipse-batch>
@@ -71,7 +77,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <!-- Maven -->
@@ -193,6 +198,12 @@ under the License.
     </dependency>
 
     <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
@@ -204,6 +215,15 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>src/it/jdk16-annotation/src/main/resources/META-INF/services/javax.annotation.processing.Processor</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
@@ -219,27 +239,30 @@ under the License.
                 <goal>descriptor</goal>
               </goals>
             </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
             <execution>
-              <id>help-goal</id>
-              <goals>
-                <goal>helpmojo</goal>
-              </goals>
+              <id>enforce-bytecode-version</id>
+              <configuration>
+              <rules>
+                <enforceBytecodeVersion>
+                  <maxJdkVersion>1.5</maxJdkVersion>
+                  <excludes>
+                    <exclude>org.apache.openjpa:openjpa</exclude>
+                    <exclude>org.codehaus.groovy:groovy-eclipse-batch</exclude>
+                  </excludes>
+                </enforceBytecodeVersion>
+              </rules>
+              </configuration>
             </execution>
           </executions>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginPluginVersion}</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
     <profile>
@@ -250,6 +273,9 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>integration-test</id>
               <configuration>
                 <debug>true</debug>
                 <projectsDirectory>src/it</projectsDirectory>
@@ -266,6 +292,8 @@ under the License.
                   <goal>test-compile</goal>
                 </goals>
               </configuration>
+                </execution>
+              </executions>
             </plugin>
           </plugins>
         </pluginManagement>
@@ -297,9 +325,20 @@ under the License.
           <groupId>org.apache.openjpa</groupId>
           <artifactId>openjpa</artifactId>
           <version>${openJpaVersion}</version>
+          <!-- TODO: scope test? -->
         </dependency>
       </dependencies>
     </profile>
   </profiles>
 
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <id>plexus-snapshots</id>
+      <name>Plexus Snapshot Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/plexus-snapshots</url>
+    </repository>
+  </repositories>
 </project>
