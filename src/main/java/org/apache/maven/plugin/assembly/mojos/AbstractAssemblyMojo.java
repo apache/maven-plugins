@@ -136,8 +136,8 @@ public abstract class AbstractAssemblyMojo
      * <li><em>dir</em> - Creates a directory</li>
      * <li><em>zip</em> - Creates a ZIP file format</li>
      * <li><em>tar</em> - Creates a TAR format</li>
-     * <li><em>tar.gz</em> - Creates a gzip'd TAR format</li>
-     * <li><em>tar.bz2</em> - Creates a bzip'd TAR format</li>
+     * <li><em>tar.gz</em> or <em>tgz</em> - Creates a gzip'd TAR format</li>
+     * <li><em>tar.bz2</em> or <em>tbz2</em> - Creates a bzip'd TAR format</li>
      * </ul>
      */
     @Parameter

@@ -106,8 +106,8 @@
             <ul>
               <li><b>"zip"</b> - Creates a ZIP file format</li>
               <li><b>"tar"</b> - Creates a TAR format</li>
-              <li><b>"tar.gz"</b> - Creates a gzip'd TAR format</li>
-              <li><b>"tar.bz2"</b> - Creates a bzip'd TAR format</li>
+              <li><b>"tar.gz"</b> or <b>"tgz"</b> - Creates a gzip'd TAR format</li>
+              <li><b>"tar.bz2"</b> or <b>"tbz2"</b> - Creates a bzip'd TAR format</li>
               <li><b>"jar"</b> - Creates a JAR format</li>
               <li><b>"dir"</b> - Creates an exploded directory format</li>
               <li><b>"war"</b> - Creates a WAR format</li>

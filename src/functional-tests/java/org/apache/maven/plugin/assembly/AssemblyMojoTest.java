@@ -1248,10 +1248,38 @@ public class AssemblyMojoTest
         assertTrue( "Test tar long file mode default", longFileMode.isWarnMode() );
     }
 
+    public void testTgzArchive()
+        throws Exception
+    {
+        executeMojo( "tgz-plugin-config.xml" );
+
+        TarArchiver.TarCompressionMethod method = (TarArchiver.TarCompressionMethod) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "tarCompressionMethod" );
+
+        assertEquals( "Test Tar compression method", "gzip", method.getValue() );
+
+        TarLongFileMode longFileMode = (TarLongFileMode) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "longFileMode" );
+
+        assertTrue( "Test tar long file mode default", longFileMode.isWarnMode() );
+    }
+
     public void testTarBzip2Archive()
         throws Exception
     {
         executeMojo( "tar-bz2-plugin-config.xml" );
+
+        TarArchiver.TarCompressionMethod method = (TarArchiver.TarCompressionMethod) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "tarCompressionMethod" );
+
+        assertEquals( "Test Tar compression method", "bzip2", method.getValue() );
+
+        TarLongFileMode longFileMode = (TarLongFileMode) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "longFileMode" );
+
+        assertTrue( "Test tar long file mode default", longFileMode.isFailMode() );
+    }
+
+    public void testTbz2Archive()
+        throws Exception
+    {
+        executeMojo( "tbz2-plugin-config.xml" );
 
         TarArchiver.TarCompressionMethod method = (TarArchiver.TarCompressionMethod) getVariableValueFromObject( ArchiverManagerStub.archiverStub, "tarCompressionMethod" );
 
