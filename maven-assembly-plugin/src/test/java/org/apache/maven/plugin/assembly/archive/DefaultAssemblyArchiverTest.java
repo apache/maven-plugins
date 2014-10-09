@@ -117,7 +117,7 @@ public class DefaultAssemblyArchiverTest
         mm.replayAll();
 
         final DefaultAssemblyArchiver archiver = createSubject( macMgr, null, null );
-        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false);
+        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false );
 
         mm.verifyAll();
     }
@@ -213,7 +213,7 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = createSubject( macMgr, Collections.singletonList( phase ), null );
 
-        subject.createArchive( assembly, "full-name", "zip", configSource, false);
+        subject.createArchive( assembly, "full-name", "zip", configSource, false );
 
         mm.verifyAll();
     }
@@ -276,7 +276,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "dummy", false, "finalName", configSource, null, false);
+        subject.createArchiver( "dummy", false, "finalName", configSource, null, false );
 
         assertEquals( simpleConfig, archiver.getSimpleConfig() );
 
@@ -329,7 +329,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "tar", false, "finalName", configSource, null, false);
+        subject.createArchiver( "tar", false, "finalName", configSource, null, false );
 
         assertNull( ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
@@ -383,7 +383,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "war", false, null, configSource, null, false);
+        subject.createArchiver( "war", false, null, configSource, null, false );
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -425,7 +425,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "zip", false, null, configSource, null, false);
+        subject.createArchiver( "zip", false, null, configSource, null, false );
     }
 
     // TODO: Re-implement these tests on the createArchiver(..) method. For now, they're no big loss.
@@ -580,7 +580,7 @@ public class DefaultAssemblyArchiverTest
     }
 
     @Test
-    public void testCreateTarArchiver_ShouldInitializeGZipCompression()
+    public void testCreateTarArchiver_TarGzFormat_ShouldInitializeGZipCompression()
         throws NoSuchArchiverException, ArchiverException
     {
         final MockManager mm = new MockManager();
@@ -605,7 +605,32 @@ public class DefaultAssemblyArchiverTest
     }
 
     @Test
-    public void testCreateTarArchiver_ShouldInitializeBZipCompression()
+    public void testCreateTarArchiver_TgzFormat_ShouldInitializeGZipCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final MockManager mm = new MockManager();
+
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
+
+        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
+
+        mm.replayAll();
+
+        final DefaultAssemblyArchiver subject =
+            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+
+        subject.createTarArchiver( "tgz", TarLongFileMode.fail );
+
+        assertEquals( TarArchiver.TarCompressionMethod.gzip, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
+
+        mm.verifyAll();
+    }
+
+    @Test
+    public void testCreateTarArchiver_TarBz2Format_ShouldInitializeBZipCompression()
         throws NoSuchArchiverException, ArchiverException
     {
         final MockManager mm = new MockManager();
@@ -630,7 +655,32 @@ public class DefaultAssemblyArchiverTest
     }
 
     @Test
-    public void testCreateTarArchiver_ShouldFailWithInvalidCompression()
+    public void testCreateTarArchiver_Tbz2Format_ShouldInitializeBZipCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final MockManager mm = new MockManager();
+
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
+
+        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
+
+        mm.replayAll();
+
+        final DefaultAssemblyArchiver subject =
+            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+
+        subject.createTarArchiver( "tbz2", TarLongFileMode.fail );
+
+        assertEquals( TarArchiver.TarCompressionMethod.bzip2, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
+
+        mm.verifyAll();
+    }
+
+    @Test
+    public void testCreateTarArchiver_InvalidFormat_ShouldFailWithInvalidCompression()
         throws NoSuchArchiverException, ArchiverException
     {
         final MockManager mm = new MockManager();

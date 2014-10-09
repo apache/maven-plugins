@@ -268,7 +268,7 @@ public class DefaultAssemblyArchiver
 
     /**
      * Creates the necessary archiver to build the distribution file.
-     * 
+     *
      * @param format Archive format
      * @param includeBaseDir
      * @param finalName
@@ -286,7 +286,7 @@ public class DefaultAssemblyArchiver
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
-        if ( format.startsWith( "tar" ) )
+        if ( "tgz".equals( format ) || "tbz2".equals( format ) || format.startsWith( "tar" ) )
         {
             archiver = createTarArchiver( format, TarLongFileMode.valueOf( configSource.getTarLongFileMode()) );
         }
@@ -508,6 +508,14 @@ public class DefaultAssemblyArchiver
                 throw new IllegalArgumentException( "Unknown compression format: " + compression );
             }
             tarArchiver.setCompression( tarCompressionMethod );
+        }
+        else if ( "tgz".equals( format ) )
+        {
+            tarArchiver.setCompression( TarArchiver.TarCompressionMethod.gzip );
+        }
+        else if ( "tbz2".equals( format ) )
+        {
+            tarArchiver.setCompression( TarArchiver.TarCompressionMethod.bzip2 );
         }
 
         tarArchiver.setLongfile( tarLongFileMode );
