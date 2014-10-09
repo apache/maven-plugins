@@ -666,11 +666,10 @@ public class AssemblyFormatUtilsTest
             project.getModel().setBuild( build );
         }
 
-        final MavenProject mainProject = project;
         final MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
         final MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
 
-        verifyOutputDir( outDir, finalName, mainProject, moduleProject, artifactProject, checkValue );
+        verifyOutputDir( outDir, finalName, project, moduleProject, artifactProject, checkValue );
     }
 
     private void verifyOutputDirUsingModuleProject( final String outDir, final String finalName, final String groupId,
@@ -689,11 +688,10 @@ public class AssemblyFormatUtilsTest
             project.getModel().setBuild( build );
         }
 
-        final MavenProject moduleProject = project;
         final MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
         final MavenProject artifactProject = createProject( "unknown", "unknown", "unknown", null );
 
-        verifyOutputDir( outDir, finalName, mainProject, moduleProject, artifactProject, checkValue );
+        verifyOutputDir( outDir, finalName, mainProject, project, artifactProject, checkValue );
     }
 
     private void verifyOutputDirUsingArtifactProject( final String outDir, final String finalName,
@@ -712,11 +710,10 @@ public class AssemblyFormatUtilsTest
             project.getModel().setBuild( build );
         }
 
-        final MavenProject artifactProject = project;
         final MavenProject moduleProject = createProject( "unknown", "unknown", "unknown", null );
         final MavenProject mainProject = createProject( "unknown", "unknown", "unknown", null );
 
-        verifyOutputDir( outDir, finalName, mainProject, moduleProject, artifactProject, checkValue );
+        verifyOutputDir( outDir, finalName, mainProject, moduleProject, project, checkValue );
     }
 
     private void verifyOutputDir( final String outDir, final String finalName, final MavenProject mainProject,

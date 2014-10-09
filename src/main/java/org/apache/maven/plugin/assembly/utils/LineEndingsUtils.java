@@ -99,7 +99,7 @@ public final class LineEndingsUtils
                 }
             }
         }
-        else if ( atEndOfFile == true )
+        else if ( atEndOfFile )
         {
             eofChars = lineEndings.getLineEndingCharacters();
         }

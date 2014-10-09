@@ -254,9 +254,8 @@ public class AddFileSetsTaskTest
     public void testExecute_ShouldThrowExceptionIfArchiveBasedirProvidedIsNotADirectory()
         throws AssemblyFormattingException, IOException
     {
-        final File archiveBaseDir = fileManager.createTempFile();
 
-        macTask.archiveBaseDir = archiveBaseDir;
+        macTask.archiveBaseDir = fileManager.createTempFile();
         macTask.expectGetArchiveBaseDirectory();
 
         mockManager.replayAll();

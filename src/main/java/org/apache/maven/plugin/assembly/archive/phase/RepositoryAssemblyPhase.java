@@ -20,7 +20,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;

@@ -19,7 +19,6 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;

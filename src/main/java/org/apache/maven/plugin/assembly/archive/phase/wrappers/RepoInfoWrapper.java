@@ -24,7 +24,6 @@ import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.shared.repository.model.RepositoryInfo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
