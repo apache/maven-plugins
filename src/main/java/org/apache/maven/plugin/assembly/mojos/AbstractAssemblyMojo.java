@@ -202,7 +202,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
-     * (default), "fail", "truncate", "gnu", or "omit".
+     * (default), "fail", "truncate", "gnu", "posix", "posix_warn" or "omit".
      */
     @Parameter( property = "assembly.tarLongFileMode", defaultValue = "warn" )
     private String tarLongFileMode;
