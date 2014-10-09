@@ -1972,7 +1972,19 @@ public abstract class AbstractJavadocMojo
         // Write packages file and include it in the command line
         // ----------------------------------------------------------------------
 
-        if ( !packageNames.isEmpty() )
+        // MJAVADOC-365 if includes/excludes are specified, these take precedence over the default
+        // package-based mode and force javadoc into file-based mode unless subpackages are 
+        // specified. Subpackages take precedence over file-based include/excludes. Why? Because
+        // getFiles(...) returns an empty list when subpackages are specified.
+        boolean includesExcludesActive =
+            ( sourceFileIncludes != null && !sourceFileIncludes.isEmpty() )
+                || ( sourceFileExcludes != null && !sourceFileExcludes.isEmpty() );
+        if ( includesExcludesActive && !StringUtils.isEmpty( subpackages ) )
+        {
+            getLog().warn( "sourceFileIncludes and sourceFileExcludes have no effect when subpackages are specified!" );
+            includesExcludesActive = false;
+        }
+        if ( !packageNames.isEmpty() && !includesExcludesActive )
         {
             addCommandLinePackages( cmd, javadocOutputDirectory, packageNames );
 
