@@ -1026,9 +1026,7 @@ public class ModuleSetAssemblyPhaseTest
             projectBuilder = macTask.projectBuilder;
         }
 
-        final ModuleSetAssemblyPhase phase = new ModuleSetAssemblyPhase( projectBuilder, logger );
-
-        return phase;
+        return new ModuleSetAssemblyPhase( projectBuilder, logger );
     }
 
 }
