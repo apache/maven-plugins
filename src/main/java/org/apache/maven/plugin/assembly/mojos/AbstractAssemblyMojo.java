@@ -350,6 +350,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * <p>
      * will use the jvm chmod, this is available for user and all level group level will be ignored
+     * As of assembly-plugin 2.5, this flag is ignored for users of java7+
      * </p>
      *
      * @since 2.2
