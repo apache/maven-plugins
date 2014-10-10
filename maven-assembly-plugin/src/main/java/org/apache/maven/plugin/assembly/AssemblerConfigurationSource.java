@@ -99,4 +99,9 @@ public interface AssemblerConfigurationSource
     String getEncoding();
 
     String getEscapeString();
+    
+    List<String> getDelimiters();
+
+    boolean isUseDefaultDelimiters();
+
 }

@@ -374,6 +374,35 @@ public abstract class AbstractAssemblyMojo
     private boolean ignorePermissions;
 
     /**
+     * <p>
+     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the
+     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p><p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt;/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt;/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     *
+     * @since 2.4
+     */
+    @Parameter
+    private List<String> delimiters;
+
+    /**
+     * @since 2.4
+     */
+    @Parameter( defaultValue = "true" )
+    private boolean useDefaultDelimiters;
+    
+    
+    /**
      * Create the binary distribution.
      * 
      * @throws org.apache.maven.plugin.MojoExecutionException
@@ -842,5 +871,25 @@ public abstract class AbstractAssemblyMojo
     public String getEscapeString()
     {
         return escapeString;
+    }
+    
+    public List<String> getDelimiters()
+    {
+        return delimiters;
+    }
+
+    public void setDelimiters( List<String> delimiters )
+    {
+        this.delimiters = delimiters;
+    }
+
+    public boolean isUseDefaultDelimiters()
+    {
+        return useDefaultDelimiters;
+    }
+
+    public void setUseDefaultDelimiters( boolean useDefaultDelimiters )
+    {
+        this.useDefaultDelimiters = useDefaultDelimiters;
     }
 }

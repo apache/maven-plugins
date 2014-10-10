@@ -22,6 +22,7 @@ package org.apache.maven.plugin.assembly.format;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -178,7 +179,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir );
+        enableBasicFilteringConfiguration( project, sourceDir, true, null);
 
         final File file = fileManager.createFile( sourceDir, "one.properties", "out=${project.build.outputDirectory}" );
 
@@ -201,7 +202,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir );
+        enableBasicFilteringConfiguration( project, sourceDir, true, null);
 
         final File file =
             fileManager.createFile( sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}" );
@@ -364,6 +365,51 @@ public class FileFormatterTest
 
         mockManager.verifyAll();
     }
+    
+    public void testShouldFilterExpressionFromFiltersFileInFileAddCustomDelimiters() throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+
+        final List<String> delimiters = Collections.unmodifiableList(Arrays.asList("#", "(*)"));
+        
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ), true, delimiters );
+
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@ #property# (property)." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "This is a test for project: Test Test Test Test.", fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+    
+    public void testShouldFilterExpressionFromFiltersFileInFileCustomDelimiters() throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+
+        final List<String> delimiters = Collections.unmodifiableList(Arrays.asList("#", "(*)"));
+        
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ), false, delimiters );
+
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "This is a test for project: ${property} @property@ #property# (property)." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "This is a test for project: ${property} @property@ Test Test.", fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
 
     private MavenProject createBasicMavenProject()
     {
@@ -375,11 +421,11 @@ public class FileFormatterTest
         return new MavenProject( model );
     }
 
-    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir ) throws Exception
+    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir, final boolean useDefault, final List<String> delimiters) throws Exception
     {
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
-
+        
         configSource.getEscapeString();
         configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
 
@@ -394,6 +440,12 @@ public class FileFormatterTest
 
         configSource.getFilters();
         configSourceControl.setReturnValue( Collections.EMPTY_LIST );
+        
+        configSource.getDelimiters();
+        configSourceControl.setReturnValue( delimiters );
+        
+        configSource.isUseDefaultDelimiters();
+        configSourceControl.setReturnValue( useDefault );
     }
 
     private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames )
@@ -406,7 +458,19 @@ public class FileFormatterTest
                    .setFilters( filterFilenames );
         }
 
-        enableBasicFilteringConfiguration( project, basedir );
+        enableBasicFilteringConfiguration( project, basedir, true, null );
     }
 
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames, final boolean useDefault, final List<String> delimiters) throws Exception
+    {
+
+    	final MavenProject project = createBasicMavenProject();
+        if ( filterFilenames != null )
+        {
+            project.getBuild()
+                   .setFilters( filterFilenames );
+        }
+    	
+        enableBasicFilteringConfiguration( project, basedir, useDefault, delimiters);
+    }
 }
