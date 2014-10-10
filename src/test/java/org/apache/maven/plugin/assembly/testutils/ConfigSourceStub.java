@@ -209,4 +209,12 @@ public class ConfigSourceStub
     public String getEscapeString() {
         return null;
     }
+
+	public List<String> getDelimiters() {
+		return null;
+	}
+
+	public boolean isUseDefaultDelimiters() {
+		return true;
+	}
 }

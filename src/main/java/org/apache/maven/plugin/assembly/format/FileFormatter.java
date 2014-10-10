@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -78,7 +80,7 @@ public class FileFormatter
 
         if ( filter )
         {
-            result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString() );
+            result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString(), configSource.getDelimiters(), configSource.isUseDefaultDelimiters());
         }
 
         LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingCharacters );
@@ -90,7 +92,7 @@ public class FileFormatter
         return result;
     }
 
-    private File doFileFilter( @Nonnull File source, @Nullable File tempRoot, String encoding, String escapeString )
+    private File doFileFilter( @Nonnull File source, @Nullable File tempRoot, String encoding, String escapeString, List<String> delimiters, boolean useDefaultDelimiters)
         throws AssemblyFormattingException
     {
         try
@@ -104,6 +106,32 @@ public class FileFormatter
                 new MavenFileFilterRequest( source, target, true, configSource.getProject(), configSource.getFilters(),
                                             isPropertiesFile, encoding, configSource.getMavenSession(), null );
             filterRequest.setEscapeString( escapeString );
+            
+            // if these are NOT set, just use the defaults, which are '${*}' and '@'.
+            if ( delimiters != null && !delimiters.isEmpty() )
+            {
+                LinkedHashSet<String> delims = new LinkedHashSet<String>();
+                if ( useDefaultDelimiters )
+                {
+                    delims.addAll( filterRequest.getDelimiters() );
+                }
+
+                for ( String delim : delimiters )
+                {
+                    if ( delim == null )
+                    {
+                        // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
+                        delims.add( "${*}" );
+                    }
+                    else
+                    {
+                        delims.add( delim );
+                    }
+                }
+
+                filterRequest.setDelimiters( delims );
+            }
+            
             filterRequest.setInjectProjectBuildFilters( true );
             configSource.getMavenFileFilter().copyFile( filterRequest );
 
