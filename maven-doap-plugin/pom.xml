@@ -121,7 +121,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.15</version>
+      <version>3.0.18</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
