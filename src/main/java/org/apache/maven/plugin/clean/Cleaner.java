@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.Os;
+import org.apache.maven.shared.utils.Os;
 
 /**
  * Cleans directories.
