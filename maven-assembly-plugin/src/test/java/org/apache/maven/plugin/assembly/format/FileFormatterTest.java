@@ -366,6 +366,60 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
     
+    public void testShouldCombineProjectValueWithFilterValueAndFilterFile() throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File buildFilterProps = fileManager.createFile( basedir, "build-filter.properties", "common=build\r\nbuild.test=build\r\n" );
+        final File configFilterProps = fileManager.createFile( basedir, "config-filter.properties", "common=config\r\nconfig.test=config\r\n" );
+
+        final List<String> buildFilters = new ArrayList<String>();
+        buildFilters.add( buildFilterProps.getCanonicalPath() );
+
+        final List<String> configFilters = new ArrayList<String>();
+        configFilters.add( configFilterProps.getCanonicalPath() );
+
+        enableFilteringConfiguration( basedir, buildFilters, configFilters, true);
+
+        final File file =
+            fileManager.createFile( basedir, "one.txt", "filtered common=${common} build.test=${build.test} config.test=${config.test}." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "filtered common=build build.test=build config.test=config.", fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
+    public void testShouldIgnoreProjectValueWithFilterValueAndFilterFile() throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File buildFilterProps = fileManager.createFile( basedir, "build-filter.properties", "common=build\r\nbuild.test=build\r\n" );
+        final File configFilterProps = fileManager.createFile( basedir, "config-filter.properties", "common=config\r\nconfig.test=config\r\n" );
+
+        final List<String> buildFilters = new ArrayList<String>();
+        buildFilters.add( buildFilterProps.getCanonicalPath() );
+
+        final List<String> configFilters = new ArrayList<String>();
+        configFilters.add( configFilterProps.getCanonicalPath() );
+
+        enableFilteringConfiguration( basedir, buildFilters, configFilters, false);
+        
+        final File file =
+            fileManager.createFile( basedir, "config.txt", "filtered common=${common} build.test=${build.test} config.test=${config.test}." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "filtered common=config build.test=${build.test} config.test=config.", fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
     public void testShouldFilterExpressionFromFiltersFileInFileAddCustomDelimiters() throws Exception
     {
         final File basedir = fileManager.createTempDir();
@@ -421,7 +475,14 @@ public class FileFormatterTest
         return new MavenProject( model );
     }
 
-    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir, final boolean useDefault, final List<String> delimiters) throws Exception
+    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir, final boolean useDefault, final List<String> delimiters) throws Exception {
+    	
+    	enableFilteringConfiguration(project, basedir, useDefault, delimiters, Collections.<String>emptyList(), true);
+
+	}
+
+    private void enableFilteringConfiguration( final MavenProject project, final File basedir, final boolean useDefault, final List<String> delimiters,
+    		final List<String> filters, final boolean includeProjectBuildFilters) throws Exception
     {
         configSource.getTemporaryRootDirectory();
         configSourceControl.setReturnValue( basedir );
@@ -439,8 +500,11 @@ public class FileFormatterTest
         configSourceControl.setReturnValue( null );
 
         configSource.getFilters();
-        configSourceControl.setReturnValue( Collections.EMPTY_LIST );
+        configSourceControl.setReturnValue( filters );
         
+        configSource.isIncludeProjectBuildFilters();
+        configSourceControl.setReturnValue( includeProjectBuildFilters );
+
         configSource.getDelimiters();
         configSourceControl.setReturnValue( delimiters );
         
@@ -448,27 +512,40 @@ public class FileFormatterTest
         configSourceControl.setReturnValue( useDefault );
     }
 
-    private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames )
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames )
         throws Exception
     {
         final MavenProject project = createBasicMavenProject();
-        if ( filterFilenames != null )
+        if ( buildFilterFilenames != null )
         {
             project.getBuild()
-                   .setFilters( filterFilenames );
+                   .setFilters( buildFilterFilenames );
         }
 
         enableBasicFilteringConfiguration( project, basedir, true, null );
     }
 
-    private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames, final boolean useDefault, final List<String> delimiters) throws Exception
+    private void enableFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames, final List<String> configFilterFilenames, boolean includeProjectBuildFilters )
+            throws Exception
+        {
+            final MavenProject project = createBasicMavenProject();
+            if ( buildFilterFilenames != null )
+            {
+                project.getBuild()
+                       .setFilters( buildFilterFilenames );
+            }
+
+            enableFilteringConfiguration( project, basedir, true, null, configFilterFilenames, includeProjectBuildFilters );
+        }
+
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames, final boolean useDefault, final List<String> delimiters) throws Exception
     {
 
     	final MavenProject project = createBasicMavenProject();
-        if ( filterFilenames != null )
+        if ( buildFilterFilenames != null )
         {
             project.getBuild()
-                   .setFilters( filterFilenames );
+                   .setFilters( buildFilterFilenames );
         }
     	
         enableBasicFilteringConfiguration( project, basedir, useDefault, delimiters);

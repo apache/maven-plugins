@@ -132,7 +132,7 @@ public class FileFormatter
                 filterRequest.setDelimiters( delims );
             }
             
-            filterRequest.setInjectProjectBuildFilters( true );
+            filterRequest.setInjectProjectBuildFilters( configSource.isIncludeProjectBuildFilters() );
             configSource.getMavenFileFilter().copyFile( filterRequest );
 
             return target;

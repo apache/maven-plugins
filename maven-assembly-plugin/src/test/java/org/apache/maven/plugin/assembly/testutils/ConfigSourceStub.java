@@ -82,6 +82,10 @@ public class ConfigSourceStub
         return null;
     }
 
+    public boolean isIncludeProjectBuildFilters() {
+    	return false;
+    }
+
     public String getFinalName()
     {
         return null;
