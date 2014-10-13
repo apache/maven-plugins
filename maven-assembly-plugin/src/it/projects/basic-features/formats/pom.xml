@@ -24,6 +24,7 @@
           </descriptors>
           <appendAssemblyId>false</appendAssemblyId>
           <outputDirectory>${project.build.directory}/assemblies</outputDirectory>
+          <tarLongFileMode>posix</tarLongFileMode>
         </configuration>
       </plugin>
     </plugins>
