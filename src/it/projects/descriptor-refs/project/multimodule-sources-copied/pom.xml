@@ -60,6 +60,7 @@ under the License.
               <descriptorRefs>
                 <descriptorRef>project</descriptorRef>
               </descriptorRefs>
+              <tarLongFileMode>posix</tarLongFileMode>
             </configuration>
           </execution>
         </executions>

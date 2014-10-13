@@ -48,6 +48,7 @@ under the License.
                 <descriptor>src/main/assembly/src.xml</descriptor>
               </descriptors>
               <appendAssemblyId>false</appendAssemblyId>
+              <tarLongFileMode>posix</tarLongFileMode>
             </configuration>
           </execution>
         </executions>

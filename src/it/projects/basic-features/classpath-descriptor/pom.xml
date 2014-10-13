@@ -41,6 +41,7 @@ under the License.
           <descriptorRefs>
             <descriptorRef>src</descriptorRef>
           </descriptorRefs>
+          <tarLongFileMode>posix</tarLongFileMode>
         </configuration>
       </plugin>
     </plugins>
