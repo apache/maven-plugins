@@ -359,6 +359,9 @@ public class FileSetFormatterTest
         configSource.getFilters();
         configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ONE_OR_MORE );
 
+        configSource.isIncludeProjectBuildFilters();
+        configSourceControl.setReturnValue( true, MockControl.ONE_OR_MORE );
+
         configSource.getEncoding();
         configSourceControl.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
 

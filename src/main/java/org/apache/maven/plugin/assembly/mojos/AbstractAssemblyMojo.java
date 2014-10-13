@@ -284,6 +284,14 @@ public abstract class AbstractAssemblyMojo
     protected List<String> filters;
 
     /**
+     * If True (default) then the ${project.build.filters} are also used in addition to any 
+     * further filters defined for the Assembly.
+     * @since 2.4.2
+     */
+    @Parameter( property = "assembly.includeProjectBuildFilters", defaultValue = "true")
+    protected boolean includeProjectBuildFilters;
+
+    /**
      * Controls whether the assembly plugin tries to attach the resulting assembly to the project.
      *
      * @since 2.2-beta-1
@@ -658,6 +666,10 @@ public abstract class AbstractAssemblyMojo
             }
         }
         return filters;
+    }
+
+    public boolean isIncludeProjectBuildFilters() {
+    	return includeProjectBuildFilters;
     }
 
     public List<MavenProject> getReactorProjects()

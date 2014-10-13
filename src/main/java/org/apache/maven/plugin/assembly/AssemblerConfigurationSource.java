@@ -74,6 +74,8 @@ public interface AssemblerConfigurationSource
 
     List<String> getFilters();
 
+    boolean isIncludeProjectBuildFilters();
+
     List<MavenProject> getReactorProjects();
 
     List<ArtifactRepository> getRemoteRepositories();
