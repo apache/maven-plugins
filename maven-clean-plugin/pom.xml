@@ -71,9 +71,9 @@ under the License.
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.15</version>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-shared-utils</artifactId>
+      <version>0.7-SNAPSHOT</version>
     </dependency>
 
     <!-- dependencies to annotations -->
