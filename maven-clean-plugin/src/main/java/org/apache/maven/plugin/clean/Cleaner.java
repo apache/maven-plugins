@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.utils.Os;
+import org.apache.maven.shared.utils.io.FileUtils;
 
 /**
  * Cleans directories.
@@ -144,8 +145,9 @@ class Cleaner
         {
             if ( selector == null || selector.couldHoldSelected( pathname ) )
             {
+                final boolean isSymlink = FileUtils.isSymbolicLink( file );
                 File canonical = followSymlinks ? file : file.getCanonicalFile();
-                if ( followSymlinks || file.equals( canonical ) )
+                if ( followSymlinks || !isSymlink )
                 {
                     String[] filenames = canonical.list();
                     if ( filenames != null )
