@@ -80,7 +80,8 @@ public class FileFormatter
 
         if ( filter )
         {
-            result = doFileFilter( source, tempRoot, encoding, configSource.getEscapeString(), configSource.getDelimiters(), configSource.isUseDefaultDelimiters());
+            result =
+                doFileFilter( source, tempRoot, encoding, configSource.getEscapeString(), configSource.getDelimiters() );
         }
 
         LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingCharacters );
@@ -92,7 +93,8 @@ public class FileFormatter
         return result;
     }
 
-    private File doFileFilter( @Nonnull File source, @Nullable File tempRoot, String encoding, String escapeString, List<String> delimiters, boolean useDefaultDelimiters)
+    private File doFileFilter( @Nonnull File source, @Nullable File tempRoot, String encoding, String escapeString,
+                               List<String> delimiters )
         throws AssemblyFormattingException
     {
         try
@@ -106,16 +108,11 @@ public class FileFormatter
                 new MavenFileFilterRequest( source, target, true, configSource.getProject(), configSource.getFilters(),
                                             isPropertiesFile, encoding, configSource.getMavenSession(), null );
             filterRequest.setEscapeString( escapeString );
-            
+
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
             if ( delimiters != null && !delimiters.isEmpty() )
             {
                 LinkedHashSet<String> delims = new LinkedHashSet<String>();
-                if ( useDefaultDelimiters )
-                {
-                    delims.addAll( filterRequest.getDelimiters() );
-                }
-
                 for ( String delim : delimiters )
                 {
                     if ( delim == null )
@@ -131,7 +128,11 @@ public class FileFormatter
 
                 filterRequest.setDelimiters( delims );
             }
-            
+            else
+            {
+                filterRequest.setDelimiters( filterRequest.getDelimiters());
+            }
+
             filterRequest.setInjectProjectBuildFilters( configSource.isIncludeProjectBuildFilters() );
             configSource.getMavenFileFilter().copyFile( filterRequest );
 

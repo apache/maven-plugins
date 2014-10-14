@@ -218,7 +218,4 @@ public class ConfigSourceStub
 		return null;
 	}
 
-	public boolean isUseDefaultDelimiters() {
-		return true;
-	}
 }
