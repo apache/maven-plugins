@@ -329,8 +329,6 @@ public class FileSetFormatterTest
             FileUtils.deleteDirectory( result );
         }
     }
-    
-    
 
     private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames )
         throws Exception
@@ -367,13 +365,10 @@ public class FileSetFormatterTest
 
         configSource.getEscapeString();
         configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
-        
-        
+
         configSource.getDelimiters();
         configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ONE_OR_MORE );
-        
-        configSource.isUseDefaultDelimiters();
-        configSourceControl.setReturnValue( true, MockControl.ONE_OR_MORE );
+
     }
 
 }

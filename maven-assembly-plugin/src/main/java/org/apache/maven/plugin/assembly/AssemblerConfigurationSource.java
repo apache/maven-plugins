@@ -97,13 +97,11 @@ public interface AssemblerConfigurationSource
     boolean isUseJvmChmod();
 
     boolean isIgnorePermissions();
-    
+
     String getEncoding();
 
     String getEscapeString();
-    
-    List<String> getDelimiters();
 
-    boolean isUseDefaultDelimiters();
+    List<String> getDelimiters();
 
 }
