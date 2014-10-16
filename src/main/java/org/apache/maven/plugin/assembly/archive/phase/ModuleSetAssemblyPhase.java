@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -419,7 +421,7 @@ public class ModuleSetAssemblyPhase
     /**
      * Determine whether the deprecated file-set configuration directly within the ModuleSources object is present.
      */
-    protected boolean isDeprecatedModuleSourcesConfigPresent( final ModuleSources sources )
+    protected boolean isDeprecatedModuleSourcesConfigPresent( @Nonnull final ModuleSources sources )
     {
         boolean result = false;
 
@@ -439,8 +441,8 @@ public class ModuleSetAssemblyPhase
         return result;
     }
 
-    protected FileSet createFileSet( final FileSet fileSet, final ModuleSources sources,
-                                     final MavenProject moduleProject, final AssemblerConfigurationSource configSource )
+    protected @Nonnull FileSet createFileSet( @Nonnull final FileSet fileSet, @Nonnull final ModuleSources sources,
+                                     @Nonnull final MavenProject moduleProject, @Nonnull final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         final FileSet fs = new FileSet();
@@ -527,7 +529,7 @@ public class ModuleSetAssemblyPhase
         return fs;
     }
 
-    public static Set<MavenProject> getModuleProjects( final ModuleSet moduleSet,
+    public static @Nonnull Set<MavenProject> getModuleProjects( final ModuleSet moduleSet,
                                                        final AssemblerConfigurationSource configSource,
                                                        final Logger logger )
         throws ArchiveCreationException

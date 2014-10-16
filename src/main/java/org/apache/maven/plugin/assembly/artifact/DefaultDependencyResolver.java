@@ -101,9 +101,9 @@ public class DefaultDependencyResolver
         final MavenProject currentProject = configSource.getProject();
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
-        getRepositoryResolutionRequirements( assembly, info, currentProject );
-        getDependencySetResolutionRequirements( assembly, assembly.getDependencySets(), info, currentProject );
-        getModuleSetResolutionRequirements( assembly, info, configSource );
+        updateRepositoryResolutionRequirements(assembly, info, currentProject);
+        updateDependencySetResolutionRequirements(assembly, assembly.getDependencySets(), info, currentProject);
+        updateModuleSetResolutionRequirements(assembly, info, configSource);
 
         if ( !info.isResolutionRequired() )
         {
@@ -207,9 +207,9 @@ public class DefaultDependencyResolver
         return result.getArtifacts();
     }
 
-    protected void getRepositoryResolutionRequirements( final Assembly assembly,
-                                                        final ResolutionManagementInfo requirements,
-                                                        final MavenProject... project )
+    protected void updateRepositoryResolutionRequirements(final Assembly assembly,
+            final ResolutionManagementInfo requirements,
+            final MavenProject... project)
     {
         final List<Repository> repositories = assembly.getRepositories();
 
@@ -223,9 +223,9 @@ public class DefaultDependencyResolver
         }
     }
 
-    protected void getModuleSetResolutionRequirements( final Assembly assembly,
-                                                       final ResolutionManagementInfo requirements,
-                                                       final AssemblerConfigurationSource configSource )
+    protected void updateModuleSetResolutionRequirements(final Assembly assembly,
+            final ResolutionManagementInfo requirements,
+            final AssemblerConfigurationSource configSource)
         throws DependencyResolutionException
     {
         final List<ModuleSet> moduleSets = assembly.getModuleSets();
@@ -249,7 +249,7 @@ public class DefaultDependencyResolver
                                                                  e );
                     }
 
-                    if ( projects != null && !projects.isEmpty() )
+                    if (!projects.isEmpty())
                     {
                         for ( final MavenProject p : projects )
                         {
@@ -269,9 +269,9 @@ public class DefaultDependencyResolver
 
                     if ( binaries.isIncludeDependencies() )
                     {
-                        getDependencySetResolutionRequirements( assembly,
-                                                                ModuleSetAssemblyPhase.getDependencySets( binaries ),
-                                                                requirements, projects.toArray(new MavenProject[projects.size()]));
+                        updateDependencySetResolutionRequirements(assembly,
+                                ModuleSetAssemblyPhase.getDependencySets(binaries),
+                                requirements, projects.toArray(new MavenProject[projects.size()]));
                     }
                 }
             }
@@ -279,9 +279,9 @@ public class DefaultDependencyResolver
     }
 
     @SuppressWarnings( "unchecked" )
-    protected void getDependencySetResolutionRequirements( final Assembly assembly, final List<DependencySet> depSets,
-                                                           final ResolutionManagementInfo requirements,
-                                                           final MavenProject... projects )
+    protected void updateDependencySetResolutionRequirements(final Assembly assembly, final List<DependencySet> depSets,
+            final ResolutionManagementInfo requirements,
+            final MavenProject... projects)
         throws DependencyResolutionException
     {
         if ( depSets != null && !depSets.isEmpty() )
@@ -290,6 +290,7 @@ public class DefaultDependencyResolver
 
             for ( final DependencySet set : depSets )
             {
+                // Surely this must be a bug, if there's multiple depSets with different isUseTransitiveDependencies
                 requirements.setResolvedTransitively( set.isUseTransitiveDependencies() );
 
                 enableScope( set.getScope(), requirements );
