@@ -23,12 +23,11 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.format.FileFormatter;
-import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.Archiver;
@@ -50,8 +49,8 @@ public class FileItemAssemblyPhase
     /**
      * {@inheritDoc}
      */
-    public void execute( final Assembly assembly, final Archiver archiver,
-                         final AssemblerConfigurationSource configSource, final AssemblyContext context )
+    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+                         final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         final List<FileItem> fileList = assembly.getFiles();

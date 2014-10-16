@@ -40,6 +40,7 @@ import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
+import org.apache.maven.plugin.assembly.resolved.AssemblyId;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
@@ -101,9 +102,10 @@ public class DefaultDependencyResolverTest
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).updateDependencySetResolutionRequirements(new Assembly(),
-                depSets,
-                info,
+        final Assembly assembly = new Assembly();
+        new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateDependencySetResolutionRequirements(
+            depSets,
+                info, AssemblyId.createAssemblyId( assembly),
                 project);
 
         assertTrue( info.isResolutionRequired() );
@@ -202,7 +204,7 @@ public class DefaultDependencyResolverTest
         mm.replayAll();
 
         final DefaultDependencyResolver resolver =
-            new DefaultDependencyResolver( this.resolver, metadataSource, factory, collector, logger );
+            new DefaultDependencyResolver( this.resolver, metadataSource, factory, logger );
         resolver.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         final Assembly assembly = new Assembly();
@@ -257,9 +259,9 @@ public class DefaultDependencyResolverTest
         assembly.setRepositories( repositories );
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).updateRepositoryResolutionRequirements(assembly,
-                info,
-                project);
+        new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateRepositoryResolutionRequirements(assembly,
+                info
+        );
 
         assertTrue( info.isResolutionRequired() );
 
@@ -298,7 +300,7 @@ public class DefaultDependencyResolverTest
         project.setRemoteArtifactRepositories( projectRepos );
 
         final List<ArtifactRepository> aggregated =
-            new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).aggregateRemoteArtifactRepositories( externalRepos,
+            new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).aggregateRemoteArtifactRepositories( externalRepos,
                                                                                                                                        Collections.singleton( project ) );
 
         assertRepositoryWithId( er1.getId(), aggregated, true );

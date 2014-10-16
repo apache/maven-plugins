@@ -38,7 +38,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.phase.ModuleSetAssemblyPhase;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -46,6 +45,8 @@ import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
+import org.apache.maven.plugin.assembly.resolved.AssemblyId;
+import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
@@ -74,41 +75,32 @@ public class DefaultDependencyResolver
     @Requirement
     private ArtifactFactory factory;
 
-    @Requirement
-    private ArtifactCollector collector;
-
     public DefaultDependencyResolver()
     {
         // for plexus init
     }
 
     protected DefaultDependencyResolver( final ArtifactResolver resolver, final ArtifactMetadataSource metadataSource,
-                                         final ArtifactFactory factory, final ArtifactCollector collector,
-                                         final Logger logger )
+                                         final ArtifactFactory factory, final Logger logger )
     {
         this.resolver = resolver;
         this.metadataSource = metadataSource;
         this.factory = factory;
-        this.collector = collector;
-
         enableLogging( logger );
     }
 
-    public void resolve( final Assembly assembly, final AssemblerConfigurationSource configSource,
-                         final AssemblyContext context )
+    public Set<Artifact> resolve( final Assembly assembly, final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
         final MavenProject currentProject = configSource.getProject();
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
-        updateRepositoryResolutionRequirements(assembly, info, currentProject);
-        updateDependencySetResolutionRequirements(assembly, assembly.getDependencySets(), info, currentProject);
-        updateModuleSetResolutionRequirements(assembly, info, configSource);
+        updateRepositoryResolutionRequirements( assembly, info );
+        updateDependencySetResolutionRequirements( assembly.getDependencySets(), info,  AssemblyId.createAssemblyId( assembly), currentProject );
 
         if ( !info.isResolutionRequired() )
         {
-            context.setResolvedArtifacts( new HashSet<Artifact>() );
-            return;
+            return new HashSet<Artifact>() ;
         }
 
         final List<ArtifactRepository> repos =
@@ -122,11 +114,48 @@ public class DefaultDependencyResolver
         }
         else
         {
-            getLogger().debug( "Resolving project dependencies ONLY. Transitive dependencies WILL NOT be included in the results." );
+            getLogger().debug(
+                "Resolving project dependencies ONLY. Transitive dependencies WILL NOT be included in the results." );
             artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
         }
 
-        context.setResolvedArtifacts( artifacts );
+        return artifacts;
+    }
+
+    public ResolvedModuleSet resolve( final Assembly assembly, ModuleSet moduleSet, final AssemblerConfigurationSource configSource )
+        throws DependencyResolutionException
+    {
+        final MavenProject currentProject = configSource.getProject();
+
+        final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
+        updateRepositoryResolutionRequirements( assembly, info );
+        final AssemblyId assemblyId = AssemblyId.createAssemblyId( assembly );
+        updateDependencySetResolutionRequirements( assembly.getDependencySets(), info, assemblyId, currentProject );
+        updateModuleSetResolutionRequirements( assemblyId, moduleSet, info, configSource );
+
+        ResolvedModuleSet base = ResolvedModuleSet.createResolvedModuleSet( moduleSet );
+        if ( !info.isResolutionRequired() )
+        {
+            return base.withArtifacts( new HashSet<Artifact>());
+        }
+
+        final List<ArtifactRepository> repos =
+            aggregateRemoteArtifactRepositories( configSource.getRemoteRepositories(), info.getEnabledProjects() );
+
+        Set<Artifact> artifacts = info.getArtifacts();
+        if ( info.isResolvedTransitively() )
+        {
+            getLogger().debug( "Resolving project dependencies transitively." );
+            artifacts = resolveTransitively( artifacts, repos, info, configSource );
+        }
+        else
+        {
+            getLogger().debug(
+                "Resolving project dependencies ONLY. Transitive dependencies WILL NOT be included in the results." );
+            artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
+        }
+
+        return base.withArtifacts( artifacts);
     }
 
     protected Set<Artifact> resolveNonTransitively( final Assembly assembly, final Set<Artifact> dependencyArtifacts,
@@ -137,22 +166,30 @@ public class DefaultDependencyResolver
 
         final List<Artifact> missing = new ArrayList<Artifact>();
         final Set<Artifact> resolved = new LinkedHashSet<Artifact>();
-        for (final Artifact depArtifact : dependencyArtifacts) {
-            try {
-                resolver.resolve(depArtifact, repos, configSource.getLocalRepository());
-                resolved.add(depArtifact);
-            } catch (final ArtifactResolutionException e) {
-                if (getLogger().isDebugEnabled()) {
-                    getLogger().debug("Failed to resolve: " + depArtifact.getId() + " for assembly: "
-                            + assembly.getId());
+        for ( final Artifact depArtifact : dependencyArtifacts )
+        {
+            try
+            {
+                resolver.resolve( depArtifact, repos, configSource.getLocalRepository() );
+                resolved.add( depArtifact );
+            }
+            catch ( final ArtifactResolutionException e )
+            {
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug(
+                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
                 }
-                missing.add(depArtifact);
-            } catch (final ArtifactNotFoundException e) {
-                if (getLogger().isDebugEnabled()) {
-                    getLogger().debug("Failed to resolve: " + depArtifact.getId() + " for assembly: "
-                            + assembly.getId());
+                missing.add( depArtifact );
+            }
+            catch ( final ArtifactNotFoundException e )
+            {
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug(
+                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
                 }
-                missing.add(depArtifact);
+                missing.add( depArtifact );
             }
         }
 
@@ -186,10 +223,9 @@ public class DefaultDependencyResolver
         ArtifactResolutionResult result;
         try
         {
-            result =
-                resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(),
-                                              project.getManagedVersionMap(), localRepository, repos, metadataSource,
-                                              filter );
+            result = resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(),
+                                                   project.getManagedVersionMap(), localRepository, repos,
+                                                   metadataSource, filter );
         }
         catch ( final ArtifactResolutionException e )
         {
@@ -207,9 +243,8 @@ public class DefaultDependencyResolver
         return result.getArtifacts();
     }
 
-    protected void updateRepositoryResolutionRequirements(final Assembly assembly,
-            final ResolutionManagementInfo requirements,
-            final MavenProject... project)
+    protected void updateRepositoryResolutionRequirements( final Assembly assembly,
+                                                           final ResolutionManagementInfo requirements )
     {
         final List<Repository> repositories = assembly.getRepositories();
 
@@ -223,9 +258,9 @@ public class DefaultDependencyResolver
         }
     }
 
-    protected void updateModuleSetResolutionRequirements(final Assembly assembly,
-            final ResolutionManagementInfo requirements,
-            final AssemblerConfigurationSource configSource)
+    protected void updateModuleSetResolutionRequirements( final Assembly assembly,
+                                                          final ResolutionManagementInfo requirements,
+                                                          final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
         final List<ModuleSet> moduleSets = assembly.getModuleSets();
@@ -234,54 +269,61 @@ public class DefaultDependencyResolver
         {
             for ( final ModuleSet set : moduleSets )
             {
-                final ModuleBinaries binaries = set.getBinaries();
-                if ( binaries != null )
+                updateModuleSetResolutionRequirements( AssemblyId.createAssemblyId( assembly.getId() ), set,
+                                                       requirements, configSource );
+            }
+        }
+    }
+
+    protected void updateModuleSetResolutionRequirements( AssemblyId assemblyId, ModuleSet set, final ResolutionManagementInfo requirements,
+                                                          final AssemblerConfigurationSource configSource )
+        throws DependencyResolutionException
+    {
+        final ModuleBinaries binaries = set.getBinaries();
+        if ( binaries != null )
+        {
+            Set<MavenProject> projects;
+            try
+            {
+                projects = ModuleSetAssemblyPhase.getModuleProjects( set, configSource, getLogger() );
+            }
+            catch ( final ArchiveCreationException e )
+            {
+                throw new DependencyResolutionException( "Error determining project-set for moduleSet with binaries.",
+                                                         e );
+            }
+
+            if ( !projects.isEmpty() )
+            {
+                for ( final MavenProject p : projects )
                 {
-                    Set<MavenProject> projects;
-                    try
-                    {
-                        projects = ModuleSetAssemblyPhase.getModuleProjects( set, configSource, getLogger() );
-                    }
-                    catch ( final ArchiveCreationException e )
-                    {
-                        throw new DependencyResolutionException(
-                                                                 "Error determining project-set for moduleSet with binaries.",
-                                                                 e );
-                    }
+                    requirements.enableProjectResolution( p );
 
-                    if (!projects.isEmpty())
+                    if ( p.getArtifact() == null )
                     {
-                        for ( final MavenProject p : projects )
-                        {
-                            requirements.enableProjectResolution( p );
-
-                            if ( p.getArtifact() == null )
-                            {
-                                // TODO: such a call in MavenMetadataSource too - packaging not really the intention of
-                                // type
-                                final Artifact artifact =
-                                    factory.createBuildArtifact( p.getGroupId(), p.getArtifactId(), p.getVersion(),
-                                                                 p.getPackaging() );
-                                p.setArtifact( artifact );
-                            }
-                        }
-                    }
-
-                    if ( binaries.isIncludeDependencies() )
-                    {
-                        updateDependencySetResolutionRequirements(assembly,
-                                ModuleSetAssemblyPhase.getDependencySets(binaries),
-                                requirements, projects.toArray(new MavenProject[projects.size()]));
+                        // TODO: such a call in MavenMetadataSource too - packaging not really the intention of
+                        // type
+                        final Artifact artifact =
+                            factory.createBuildArtifact( p.getGroupId(), p.getArtifactId(), p.getVersion(),
+                                                         p.getPackaging() );
+                        p.setArtifact( artifact );
                     }
                 }
+            }
+
+            if ( binaries.isIncludeDependencies() )
+            {
+                updateDependencySetResolutionRequirements( ModuleSetAssemblyPhase.getDependencySets( binaries ),
+                                                           requirements, assemblyId,
+                                                           projects.toArray( new MavenProject[projects.size()] ) );
             }
         }
     }
 
     @SuppressWarnings( "unchecked" )
-    protected void updateDependencySetResolutionRequirements(final Assembly assembly, final List<DependencySet> depSets,
-            final ResolutionManagementInfo requirements,
-            final MavenProject... projects)
+    protected void updateDependencySetResolutionRequirements( final List<DependencySet> depSets,
+                                                              final ResolutionManagementInfo requirements,
+                                                              AssemblyId assemblyId, final MavenProject... projects )
         throws DependencyResolutionException
     {
         if ( depSets != null && !depSets.isEmpty() )
@@ -314,14 +356,13 @@ public class DefaultDependencyResolver
                     catch ( final InvalidDependencyVersionException e )
                     {
                         throw new DependencyResolutionException(
-                                                                 "Failed to create dependency artifacts for resolution. Assembly: "
-                                                                     + assembly.getId(), e );
+                            "Failed to create dependency artifacts for resolution. Assembly: " + assemblyId, e );
                     }
                 }
 
                 requirements.addArtifacts( dependencyArtifacts );
-                getLogger().debug( "Dependencies for project: " + project.getId() + " are:\n"
-                                       + StringUtils.join( dependencyArtifacts.iterator(), "\n" ) );
+                getLogger().debug( "Dependencies for project: " + project.getId() + " are:\n" + StringUtils.join(
+                    dependencyArtifacts.iterator(), "\n" ) );
             }
         }
     }
@@ -351,8 +392,8 @@ public class DefaultDependencyResolver
     }
 
     @SuppressWarnings( "unchecked" )
-    protected List<ArtifactRepository> aggregateRemoteArtifactRepositories( final List<ArtifactRepository> remoteRepositories,
-                                                                            final Set<MavenProject> projects )
+    protected List<ArtifactRepository> aggregateRemoteArtifactRepositories(
+        final List<ArtifactRepository> remoteRepositories, final Set<MavenProject> projects )
     {
         final List<List<ArtifactRepository>> repoLists = new ArrayList<List<ArtifactRepository>>();
 
@@ -365,66 +406,22 @@ public class DefaultDependencyResolver
         final List<ArtifactRepository> remoteRepos = new ArrayList<ArtifactRepository>();
         final Set<String> encounteredUrls = new HashSet<String>();
 
-        for (final List<ArtifactRepository> repositoryList : repoLists) {
-            if ((repositoryList != null) && !repositoryList.isEmpty()) {
-                for (final ArtifactRepository repo : repositoryList) {
-                    if (!encounteredUrls.contains(repo.getUrl())) {
-                        remoteRepos.add(repo);
-                        encounteredUrls.add(repo.getUrl());
+        for ( final List<ArtifactRepository> repositoryList : repoLists )
+        {
+            if ( ( repositoryList != null ) && !repositoryList.isEmpty() )
+            {
+                for ( final ArtifactRepository repo : repositoryList )
+                {
+                    if ( !encounteredUrls.contains( repo.getUrl() ) )
+                    {
+                        remoteRepos.add( repo );
+                        encounteredUrls.add( repo.getUrl() );
                     }
                 }
             }
         }
 
         return remoteRepos;
-    }
-
-    protected ArtifactResolver getArtifactResolver()
-    {
-        return resolver;
-    }
-
-    protected DefaultDependencyResolver setArtifactResolver( final ArtifactResolver resolver )
-    {
-        this.resolver = resolver;
-
-        return this;
-    }
-
-    protected ArtifactMetadataSource getArtifactMetadataSource()
-    {
-        return metadataSource;
-    }
-
-    protected DefaultDependencyResolver setArtifactMetadataSource( final ArtifactMetadataSource metadataSource )
-    {
-        this.metadataSource = metadataSource;
-
-        return this;
-    }
-
-    protected ArtifactFactory getArtifactFactory()
-    {
-        return factory;
-    }
-
-    protected DefaultDependencyResolver setArtifactFactory( final ArtifactFactory factory )
-    {
-        this.factory = factory;
-
-        return this;
-    }
-
-    protected ArtifactCollector getArtifactCollector()
-    {
-        return collector;
-    }
-
-    protected DefaultDependencyResolver setArtifactCollector( final ArtifactCollector collector )
-    {
-        this.collector = collector;
-
-        return this;
     }
 
     protected DefaultDependencyResolver setLogger( final Logger logger )

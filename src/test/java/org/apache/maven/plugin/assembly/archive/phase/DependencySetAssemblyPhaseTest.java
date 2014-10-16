@@ -21,7 +21,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
@@ -29,6 +28,7 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlFor
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -101,10 +101,9 @@ public class DependencySetAssemblyPhaseTest
 
         mockManager.replayAll();
 
-        final DefaultAssemblyContext context = new DefaultAssemblyContext();
-        context.setResolvedArtifacts( Collections.singleton( artifactMock.getArtifact() ) );
-
-        createPhase( macTask, logger ).execute( assembly, macTask.archiver, macTask.configSource, context );
+        final ResolvedAssembly assembly1 = ResolvedAssembly.create( assembly ).withDependencySetArtifacts(
+            Collections.singleton( artifactMock.getArtifact() ) );
+        createPhase( macTask, logger ).execute( assembly1, macTask.archiver, macTask.configSource );
 
         mockManager.verifyAll();
     }
@@ -135,7 +134,7 @@ public class DependencySetAssemblyPhaseTest
 
         mockManager.replayAll();
 
-        createPhase( macTask, logger ).execute( assembly, null, macTask.configSource, new DefaultAssemblyContext() );
+        createPhase( macTask, logger ).execute( ResolvedAssembly.create( assembly), null, macTask.configSource );
 
         mockManager.verifyAll();
     }

@@ -19,14 +19,18 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
+import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
+
+import java.util.Set;
 
 /**
  * Convenience component that aids in the resolution of dependency artifacts, according to various configurations such
  * as transitivity flag and scope.
- * 
+ *
  * @version $Id$
  */
 public interface DependencyResolver
@@ -35,7 +39,10 @@ public interface DependencyResolver
     /**
      * Resolve the project dependencies, according to the supplied configuration.
      */
-    void resolve( Assembly assembly, AssemblerConfigurationSource configSource, AssemblyContext context )
+    Set<Artifact> resolve( Assembly assembly, AssemblerConfigurationSource configSource )
         throws DependencyResolutionException;
 
+    ResolvedModuleSet resolve( final Assembly assembly, ModuleSet moduleSet,
+                           final AssemblerConfigurationSource configSource )
+        throws DependencyResolutionException;
 }

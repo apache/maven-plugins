@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
@@ -36,6 +35,7 @@ import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Repository;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
@@ -84,10 +84,10 @@ public class RepositoryAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly,
+        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( ResolvedAssembly.create(
+                                                                                                                 assembly ),
                                                                                                              macArchiver.archiver,
-                                                                                                             macCS.configSource,
-                                                                                                             new DefaultAssemblyContext() );
+                                                                                                             macCS.configSource );
 
         mm.verifyAll();
     }
@@ -130,10 +130,9 @@ public class RepositoryAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly,
+        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( ResolvedAssembly.create( assembly),
                                                                                                              macArchiver.archiver,
-                                                                                                             macCS.configSource,
-                                                                                                             new DefaultAssemblyContext() );
+                                                                                                             macCS.configSource );
 
         mm.verifyAll();
     }

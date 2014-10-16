@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.resolved;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,34 +19,30 @@ package org.apache.maven.plugin.assembly;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.assembly.model.Assembly;
 
-import java.util.Set;
-
-public class DefaultAssemblyContext
-    implements AssemblyContext
+public class AssemblyId
 {
+    private final String id;
 
-    private Set<Artifact> artifacts;
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see org.apache.maven.plugin.assembly.AssemblyContext#setResolvedArtifacts(java.util.Set)
-     */
-    public void setResolvedArtifacts( final Set<Artifact> artifacts )
+    private AssemblyId( String id )
     {
-        this.artifacts = artifacts;
+        this.id = id;
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see org.apache.maven.plugin.assembly.AssemblyContext#getResolvedArtifacts()
-     */
-    public Set<Artifact> getResolvedArtifacts()
+    public static AssemblyId createAssemblyId( String id )
     {
-        return artifacts;
+        return new AssemblyId( id );
     }
 
+    public static AssemblyId createAssemblyId( Assembly id )
+    {
+        return new AssemblyId( id.getId() );
+    }
+
+    @Override
+    public String toString()
+    {
+        return id;
+    }
 }

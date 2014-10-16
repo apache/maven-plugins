@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.resolved;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,12 +20,37 @@ package org.apache.maven.plugin.assembly;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
 
 import java.util.Set;
 
-public interface AssemblyContext
-{
-    void setResolvedArtifacts( Set<Artifact> artifacts );
+public class ResolvedModuleSet {
+	private final ModuleSet moduleSet;
+	private final Set<Artifact> artifacts;
 
-    Set<Artifact> getResolvedArtifacts();
+	private ResolvedModuleSet( ModuleSet moduleSet, Set<Artifact> artifacts ) {
+		this.moduleSet = moduleSet;
+		this.artifacts = artifacts;
+	}
+
+	public static ResolvedModuleSet createResolvedModuleSet(ModuleSet moduleSet) {
+		return new ResolvedModuleSet(moduleSet, null );
+	}
+
+	public static ResolvedModuleSet empty() {
+		return new ResolvedModuleSet(null, null );
+	}
+
+	public ModuleSet getModuleSet() {
+		return moduleSet;
+	}
+
+	public ResolvedModuleSet withArtifacts(Set<Artifact> artifacts ){
+		return new ResolvedModuleSet( moduleSet, artifacts );
+	}
+
+	public Set<Artifact> getArtifacts()
+	{
+		return artifacts;
+	}
 }

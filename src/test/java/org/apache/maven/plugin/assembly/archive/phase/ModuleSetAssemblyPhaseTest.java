@@ -19,8 +19,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
@@ -34,6 +34,8 @@ import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
@@ -53,6 +55,10 @@ import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import static java.util.Collections.singleton;
+import static org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet.createResolvedModuleSet;
+
 
 public class ModuleSetAssemblyPhaseTest
     extends TestCase
@@ -251,7 +257,7 @@ public class ModuleSetAssemblyPhaseTest
         final Assembly assembly = new Assembly();
         assembly.setIncludeBaseDirectory( false );
 
-        createPhase( null, null ).execute( assembly, null, null, new DefaultAssemblyContext() );
+        createPhase( null, null ).execute( ResolvedAssembly.create( assembly), null, null );
     }
 
     public void testExecute_ShouldAddOneModuleSetWithOneModuleInIt()
@@ -303,8 +309,11 @@ public class ModuleSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( logger, null ).execute( assembly, macTask.archiver, macTask.configSource,
-                                             new DefaultAssemblyContext() );
+        final ResolvedAssembly ra = ResolvedAssembly.create( assembly ).withDependencySetArtifacts(
+            new HashSet<Artifact>(  ) ).withResolvedModuleSets( Collections.singleton( createResolvedModuleSet( ms ) ) );
+
+        final ModuleSetAssemblyPhase phase = createPhase( logger, null );
+        phase.execute( ra, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -312,7 +321,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleBinaries_ShouldReturnImmediatelyWhenBinariesIsNull()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        createPhase( null, null ).addModuleBinaries( null, null, null, null, new DefaultAssemblyContext() );
+        createPhase( null, null ).addModuleBinaries( null, null, null, null, null );
     }
 
     public void testAddModuleBinaries_ShouldFilterPomModule()
@@ -336,15 +345,14 @@ public class ModuleSetAssemblyPhaseTest
         final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "pom", false );
         project.setArtifact( artifactMock.getArtifact() );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         mm.replayAll();
 
-        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( binaries,
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( null, binaries,
                                                                                                 projects,
                                                                                                 macTask.archiver,
-                                                                                                macTask.configSource,
-                                                                                                new DefaultAssemblyContext() );
+                                                                                                macTask.configSource );
 
         mm.verifyAll();
     }
@@ -377,14 +385,15 @@ public class ModuleSetAssemblyPhaseTest
         final MavenProject project = createProject( "group", "artifact", "version", null );
         project.addAttachedArtifact( artifactMock.getArtifact() );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         mm.replayAll();
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
-                                                       new DefaultAssemblyContext() );
+        ResolvedModuleSet rms = ResolvedModuleSet.empty().withArtifacts( Collections.<Artifact>emptySet() );
+
+        createPhase( logger, null ).addModuleBinaries( rms, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -410,7 +419,7 @@ public class ModuleSetAssemblyPhaseTest
         final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( artifactMock.getArtifact() );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         mm.replayAll();
 
@@ -418,8 +427,7 @@ public class ModuleSetAssemblyPhaseTest
 
         try
         {
-            createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
-                                                           new DefaultAssemblyContext() );
+            createPhase( logger, null ).addModuleBinaries( null, binaries, projects, macTask.archiver, macTask.configSource );
 
             fail( "Should throw an invalid configuration exception because of module with missing attachment." );
         }
@@ -458,14 +466,15 @@ public class ModuleSetAssemblyPhaseTest
         final MavenProject project = createProject( "group", "artifact", "version", null );
         project.setArtifact( artifactMock.getArtifact() );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         mm.replayAll();
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource,
-                                                       new DefaultAssemblyContext() );
+        ResolvedModuleSet ms = ResolvedModuleSet.empty().withArtifacts( Collections.<Artifact>emptySet() );
+
+        createPhase( logger, null ).addModuleBinaries( ms, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -518,7 +527,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectCSGetRepositories( null, null );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         mm.replayAll();
 
@@ -526,10 +535,11 @@ public class ModuleSetAssemblyPhaseTest
 
         final ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        final DefaultAssemblyContext context = new DefaultAssemblyContext();
-        context.setResolvedArtifacts( Collections.singleton( depArtifactMock.getArtifact() ) );
+        final ResolvedModuleSet rms = ResolvedModuleSet.empty( ).withArtifacts(
+            Collections.singleton( depArtifactMock.getArtifact() ) );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource, context );
+
+        phase.addModuleBinaries( rms, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -576,7 +586,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectCSGetRepositories( null, null );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         mm.replayAll();
 
@@ -584,10 +594,9 @@ public class ModuleSetAssemblyPhaseTest
 
         final ModuleSetAssemblyPhase phase = createPhase( overrideLogger, macTask );
 
-        final DefaultAssemblyContext context = new DefaultAssemblyContext();
-        context.setResolvedArtifacts( Collections.singleton( depArtifactMock.getArtifact() ) );
+        ResolvedModuleSet ms = ResolvedModuleSet.empty().withArtifacts( singleton( depArtifactMock.getArtifact() ) );
 
-        phase.addModuleBinaries( binaries, projects, macTask.archiver, macTask.configSource, context );
+        phase.addModuleBinaries( ms, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -723,7 +732,7 @@ public class ModuleSetAssemblyPhaseTest
 
         project.setArtifact( artifactMock.getArtifact() );
 
-        final Set<MavenProject> projects = Collections.singleton( project );
+        final Set<MavenProject> projects = singleton( project );
 
         final ModuleSources sources = new ModuleSources();
 

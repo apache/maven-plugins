@@ -35,19 +35,20 @@ import javax.annotation.Nonnull;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
+import org.apache.maven.plugin.assembly.resolved.functions.ResolvedModuleSetConsumer;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
@@ -95,23 +96,26 @@ public class ModuleSetAssemblyPhase
     /**
      * {@inheritDoc}
      */
-    public void execute( final Assembly assembly, final Archiver archiver,
-                         final AssemblerConfigurationSource configSource, final AssemblyContext context )
+    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+                         final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        final List<ModuleSet> moduleSets = assembly.getModuleSets();
+        assembly.forEachResolvedModule( new ResolvedModuleSetConsumer()
+        {
+            public void accept( ResolvedModuleSet resolvedModule )
+                throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+            {
+                validate(resolvedModule.getModuleSet(), configSource);
 
-        for (final ModuleSet moduleSet : moduleSets) {
-            validate(moduleSet, configSource);
+                final Set<MavenProject> moduleProjects = getModuleProjects(resolvedModule.getModuleSet(), configSource, getLogger());
 
-            final Set<MavenProject> moduleProjects = getModuleProjects(moduleSet, configSource, getLogger());
+                final ModuleSources sources = resolvedModule.getModuleSet().getSources();
+                addModuleSourceFileSets(sources, moduleProjects, archiver, configSource);
 
-            final ModuleSources sources = moduleSet.getSources();
-            addModuleSourceFileSets(sources, moduleProjects, archiver, configSource);
-
-            final ModuleBinaries binaries = moduleSet.getBinaries();
-            addModuleBinaries(binaries, moduleProjects, archiver, configSource, context);
-        }
+                final ModuleBinaries binaries = resolvedModule.getModuleSet().getBinaries();
+                addModuleBinaries(resolvedModule, binaries, moduleProjects, archiver, configSource );
+            }
+        } );
     }
 
     private void validate( final ModuleSet moduleSet, final AssemblerConfigurationSource configSource )
@@ -155,9 +159,8 @@ public class ModuleSetAssemblyPhase
         }
     }
 
-    protected void addModuleBinaries( final ModuleBinaries binaries, final Set<MavenProject> projects,
-                                      final Archiver archiver, final AssemblerConfigurationSource configSource,
-                                      final AssemblyContext context )
+    protected void addModuleBinaries( ResolvedModuleSet resolvedModule, final ModuleBinaries binaries, final Set<MavenProject> projects,
+                                      final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         if ( binaries == null )
@@ -247,7 +250,7 @@ public class ModuleSetAssemblyPhase
                 getLogger().debug("Processing binary dependencies for module project: " + moduleProject.getId());
 
                 final AddDependencySetsTask task =
-                        new AddDependencySetsTask(depSets, context.getResolvedArtifacts(), moduleProject, projectBuilder,
+                        new AddDependencySetsTask(depSets, resolvedModule.getArtifacts(), moduleProject, projectBuilder,
                                 archiverManager, getLogger());
 
                 task.setModuleProject(moduleProject);
