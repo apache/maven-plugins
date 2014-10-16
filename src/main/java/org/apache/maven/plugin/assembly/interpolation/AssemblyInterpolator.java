@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
@@ -189,20 +190,8 @@ public class AssemblyInterpolator
 
         interpolator.addValueSource( new PropertiesBasedValueSource( settingsProperties ) );
 
-        Properties commandLineProperties = System.getProperties();
-        if ( session != null )
-        {
-            commandLineProperties = new Properties();
-            if ( session.getExecutionProperties() != null )
-            {
-                commandLineProperties.putAll( session.getExecutionProperties() );
-            }
-            
-            if ( session.getUserProperties() != null )
-            {
-                commandLineProperties.putAll( session.getUserProperties() );
-            }
-        }
+
+        Properties commandLineProperties = DefaultAssemblyReader.mergeExecutionPropertiesWithSystemPropertiew(session);
 
         // 7
         interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );

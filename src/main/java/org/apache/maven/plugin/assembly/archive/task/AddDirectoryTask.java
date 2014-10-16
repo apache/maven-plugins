@@ -111,16 +111,7 @@ public class AddDirectoryTask
                         int i = 0;
                         for ( String include : includes )
                         {
-                            String value = AssemblyFormatUtils.fixRelativeRefs( include );
-
-                            if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
-                            {
-                                value = value.substring( 1 );
-                            }
-
-                            includesArray[i] = value;
-
-                            i++;
+                            includesArray[i++] = normalize(include);
                         }
                     }
 
@@ -130,16 +121,7 @@ public class AddDirectoryTask
                     int i = 0;
                     for ( String directoryExclude : directoryExcludes )
                     {
-                        String value = AssemblyFormatUtils.fixRelativeRefs( directoryExclude );
-
-                        if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
-                        {
-                            value = value.substring( 1 );
-                        }
-
-                        excludesArray[i] = value;
-
-                        i++;
+                        excludesArray[i++] = normalize(directoryExclude);
                     }
 
                     final DefaultFileSet fs = new DefaultFileSet();
@@ -169,6 +151,16 @@ public class AddDirectoryTask
                 archiver.setFileMode( oldFileMode );
             }
         }
+    }
+
+    private String normalize(String include) {
+        String value = AssemblyFormatUtils.fixRelativeRefs(include);
+
+        if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
+		{
+			value = value.substring( 1 );
+		}
+        return value;
     }
 
     public void setExcludes( final List<String> excludes )

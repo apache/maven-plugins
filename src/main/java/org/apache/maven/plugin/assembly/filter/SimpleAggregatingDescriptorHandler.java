@@ -150,10 +150,7 @@ public class SimpleAggregatingDescriptorHandler
             return true;
         }
 
-        String name = fileInfo.getName();
-        name = AssemblyFileUtils.normalizePath( name );
-
-        name = name.replace( File.separatorChar, '/' );
+        String name = AssemblyFileUtils.normalizeFileInfo(fileInfo);
 
         if ( fileInfo.isFile() && name.matches( filePattern ) )
         {
