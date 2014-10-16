@@ -562,14 +562,7 @@ public class DefaultAssemblyArchiverTest
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
-
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         subject.createTarArchiver( "tar", TarLongFileMode.fail );
 
@@ -577,6 +570,17 @@ public class DefaultAssemblyArchiverTest
         assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
+    }
+
+    private DefaultAssemblyArchiver createSubject(MockManager mm,
+            TestTarArchiver ttArchiver) throws NoSuchArchiverException {
+        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
+
+        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
+
+        mm.replayAll();
+
+        return createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
     }
 
     @Test
@@ -587,14 +591,7 @@ public class DefaultAssemblyArchiverTest
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
-
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         subject.createTarArchiver( "tar.gz", TarLongFileMode.fail );
 
@@ -612,14 +609,7 @@ public class DefaultAssemblyArchiverTest
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
-
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         subject.createTarArchiver( "tgz", TarLongFileMode.fail );
 
@@ -637,14 +627,7 @@ public class DefaultAssemblyArchiverTest
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
-
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         subject.createTarArchiver( "tar.bz2", TarLongFileMode.fail );
 
@@ -662,14 +645,7 @@ public class DefaultAssemblyArchiverTest
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
-
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         subject.createTarArchiver( "tbz2", TarLongFileMode.fail );
 
@@ -687,14 +663,7 @@ public class DefaultAssemblyArchiverTest
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
-
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         try
         {

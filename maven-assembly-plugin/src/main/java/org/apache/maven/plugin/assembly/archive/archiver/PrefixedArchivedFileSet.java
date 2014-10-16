@@ -19,6 +19,8 @@ package org.apache.maven.plugin.assembly.archive.archiver;
  * under the License.
  */
 
+import static org.apache.maven.plugin.assembly.archive.archiver.PrefixedFileSet.combineSelectors;
+
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 
@@ -62,22 +64,7 @@ public class PrefixedArchivedFileSet
 
     public FileSelector[] getFileSelectors()
     {
-        FileSelector[] sel = fileSet.getFileSelectors();
-        if ( ( sel != null ) && ( selectors != null ) )
-        {
-            FileSelector[] temp = new FileSelector[ sel.length + selectors.length ];
-
-            System.arraycopy( sel, 0, temp, 0, sel.length );
-            System.arraycopy( selectors, 0, temp, sel.length, selectors.length );
-
-            sel = temp;
-        }
-        else if ( ( sel == null ) && ( selectors != null ) )
-        {
-            sel = selectors;
-        }
-
-        return sel;
+        return combineSelectors(fileSet.getFileSelectors(), selectors);
     }
 
     public String[] getIncludes()

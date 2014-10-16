@@ -31,6 +31,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 
 /**
  * @version $Id$
@@ -138,6 +139,14 @@ public final class AssemblyFileUtils
     public static String normalizePath( @Nonnull String path )
     {
         return path.replace( '\\', '/' );
+    }
+
+    @Nonnull
+    public static String normalizeFileInfo( @Nonnull FileInfo fileInfo )
+    {
+        String name = fileInfo.getName();
+        name = normalizePath(name);
+        return name.replace( File.separatorChar, '/' ); // How can this be anything but a no-op
     }
 
 }

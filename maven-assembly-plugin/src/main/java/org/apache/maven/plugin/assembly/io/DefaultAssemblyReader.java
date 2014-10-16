@@ -347,20 +347,7 @@ public class DefaultAssemblyReader
             final Map<String, String> context = new HashMap<String, String>();
             final MavenSession session = configSource.getMavenSession();
 
-            Properties commandLineProperties = System.getProperties();
-            if ( session != null )
-            {
-                commandLineProperties = new Properties();
-                if ( session.getExecutionProperties() != null )
-                {
-                    commandLineProperties.putAll( session.getExecutionProperties() );
-                }
-
-                if ( session.getUserProperties() != null )
-                {
-                    commandLineProperties.putAll( session.getUserProperties() );
-                }
-            }
+            Properties commandLineProperties = mergeExecutionPropertiesWithSystemPropertiew(session);
 
             for ( final Enumeration<Object> e = commandLineProperties.keys(); e.hasMoreElements(); )
             {
@@ -415,6 +402,24 @@ public class DefaultAssemblyReader
         }
 
         return assembly;
+    }
+
+    public static Properties mergeExecutionPropertiesWithSystemPropertiew(MavenSession session) {
+        Properties commandLineProperties = System.getProperties();
+        if ( session != null )
+		{
+			commandLineProperties = new Properties();
+			if ( session.getExecutionProperties() != null )
+			{
+				commandLineProperties.putAll( session.getExecutionProperties() );
+			}
+
+			if ( session.getUserProperties() != null )
+			{
+				commandLineProperties.putAll( session.getUserProperties() );
+			}
+		}
+        return commandLineProperties;
     }
 
     private void debugPrintAssembly( final String message, final Assembly assembly )

@@ -60,21 +60,26 @@ public class PrefixedFileSet
     public FileSelector[] getFileSelectors()
     {
         FileSelector[] sel = fileSet.getFileSelectors();
-        if ( ( sel != null ) && ( selectors != null ) )
+        final FileSelector[] selectors1 = selectors;
+        return combineSelectors(sel, selectors1);
+    }
+
+    static FileSelector[] combineSelectors(FileSelector[] first, FileSelector[] second) {
+        if ( ( first != null ) && ( second != null ) )
         {
-            final FileSelector[] temp = new FileSelector[sel.length + selectors.length];
+            final FileSelector[] temp = new FileSelector[first.length + second.length];
 
-            System.arraycopy( sel, 0, temp, 0, sel.length );
-            System.arraycopy( selectors, 0, temp, sel.length, selectors.length );
+            System.arraycopy( first, 0, temp, 0, first.length );
+            System.arraycopy(second, 0, temp, first.length, second.length );
 
-            sel = temp;
+            first = temp;
         }
-        else if ( ( sel == null ) && ( selectors != null ) )
+        else if ( ( first == null ) && ( second != null ) )
         {
-            sel = selectors;
+            first = second;
         }
 
-        return sel;
+        return first;
     }
 
     public String[] getIncludes()
