@@ -101,10 +101,10 @@ public class DefaultDependencyResolverTest
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).getDependencySetResolutionRequirements( new Assembly(),
-                                                                                                                                      depSets,
-                                                                                                                                      info,
-                                                                                                                                      project );
+        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).updateDependencySetResolutionRequirements(new Assembly(),
+                depSets,
+                info,
+                project);
 
         assertTrue( info.isResolutionRequired() );
         assertFalse( info.isResolvedTransitively() );
@@ -208,7 +208,7 @@ public class DefaultDependencyResolverTest
         final Assembly assembly = new Assembly();
         assembly.setModuleSets( moduleSets );
 
-        resolver.getModuleSetResolutionRequirements( assembly, info, cs );
+        resolver.updateModuleSetResolutionRequirements(assembly, info, cs);
 
         assertTrue( info.isResolutionRequired() );
 
@@ -257,9 +257,9 @@ public class DefaultDependencyResolverTest
         assembly.setRepositories( repositories );
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).getRepositoryResolutionRequirements( assembly,
-                                                                                                                                   info,
-                                                                                                                                   project );
+        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).updateRepositoryResolutionRequirements(assembly,
+                info,
+                project);
 
         assertTrue( info.isResolutionRequired() );
 
