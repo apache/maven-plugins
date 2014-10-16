@@ -25,12 +25,12 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileSet;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
@@ -65,8 +65,7 @@ public class FileSetAssemblyPhaseTest
 
         mockManager.replayAll();
 
-        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource,
-                                          new DefaultAssemblyContext() );
+        createPhase( macLogger ).execute( ResolvedAssembly.create( assembly ), macTask.archiver, macTask.configSource );
 
         mockManager.verifyAll();
     }
@@ -108,8 +107,7 @@ public class FileSetAssemblyPhaseTest
 
         mockManager.replayAll();
 
-        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource,
-                                          new DefaultAssemblyContext() );
+        createPhase( macLogger ).execute( ResolvedAssembly.create( assembly), macTask.archiver, macTask.configSource );
 
         mockManager.verifyAll();
     }

@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -28,22 +29,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
@@ -70,6 +72,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class DefaultAssemblyArchiverTest
@@ -139,7 +142,7 @@ public class DefaultAssemblyArchiverTest
 
         final AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseControl.getMock();
 
-        phase.execute( null, null, null, null );
+        phase.execute( null, null, null );
         phaseControl.setMatcher( MockControl.ALWAYS_MATCHER );
 
         final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
@@ -197,11 +200,9 @@ public class DefaultAssemblyArchiverTest
         final Assembly assembly = new Assembly();
         assembly.setId( "id" );
 
-        final AssemblyContext context = new DefaultAssemblyContext();
-
         try
         {
-            macMgr.dependencyResolver.resolve( assembly, configSource, context );
+            expect( macMgr.dependencyResolver.resolve( assembly, configSource )).andReturn( new HashSet<Artifact>(  ) );
             macMgr.dependencyResolverControl.setMatcher( MockControl.ALWAYS_MATCHER );
         }
         catch ( final DependencyResolutionException e )

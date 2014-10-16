@@ -27,11 +27,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.DebugConfigurationListener;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
@@ -43,6 +43,9 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.PlexusConstants;
@@ -172,13 +175,27 @@ public class DefaultAssemblyArchiver
 
             archiver.setDestFile( destFile );
 
-            final AssemblyContext context = new DefaultAssemblyContext();
+            List<ResolvedModuleSet> resolvedModuleSets = new ArrayList<ResolvedModuleSet>(  );
+            for ( ModuleSet moduleSet : assembly.getModuleSets() )
+            {
+                resolvedModuleSets.add( dependencyResolver.resolve( assembly, moduleSet, configSource ));
+            }
 
-            dependencyResolver.resolve( assembly, configSource, context );
+            // OK, this piece of code contains all the stuff left after I extracted resolvedModuleSets.
+            // this can probably be simplified quite a lot, since the module sets now have their
+            // own artifact resolution.
+            final Set<Artifact> dependencySetArtifacts =
+                dependencyResolver.resolve( assembly, configSource );
+
+            final ResolvedAssembly resolvedAssembly = ResolvedAssembly
+                .create( assembly )
+                .withResolvedModuleSets( resolvedModuleSets )
+                .withDependencySetArtifacts(dependencySetArtifacts);
+
 
             for ( AssemblyArchiverPhase phase : assemblyPhases )
             {
-                phase.execute( assembly, archiver, configSource, context );
+                phase.execute( resolvedAssembly, archiver, configSource );
             }
 
             archiver.createArchive();
