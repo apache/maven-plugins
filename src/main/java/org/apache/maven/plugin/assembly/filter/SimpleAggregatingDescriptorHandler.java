@@ -35,6 +35,7 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -44,6 +45,8 @@ import org.codehaus.plexus.util.IOUtil;
 /**
  * @version $Id$
  */
+@Component( role = ContainerDescriptorHandler.class, hint = "file-aggregator", instantiationStrategy = "per-lookup" )
+
 public class SimpleAggregatingDescriptorHandler
     implements ContainerDescriptorHandler, LogEnabled
 {

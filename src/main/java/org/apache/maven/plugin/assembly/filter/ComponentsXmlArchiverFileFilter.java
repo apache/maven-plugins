@@ -37,6 +37,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -50,6 +51,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
+@Component( role = ContainerDescriptorHandler.class, hint = "plexus", instantiationStrategy = "per-lookup" )
 public class ComponentsXmlArchiverFileFilter
     implements ContainerDescriptorHandler
 {
