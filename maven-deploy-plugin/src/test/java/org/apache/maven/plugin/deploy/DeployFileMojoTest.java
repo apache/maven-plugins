@@ -162,26 +162,6 @@ public class DeployFileMojoTest
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );
     }
 
-    public void testDeployIfPomFileParamIsSet()
-        throws Exception
-    {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-pom-file/plugin-config.xml" );
-
-        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
-
-        assertNotNull( mojo );
-
-        setVariableValueToObject( mojo, "project", projectStub );
-
-        File pomFile = ( File ) getVariableValueFromObject( mojo, "pomFile" );
-
-        assertNotNull( pomFile );
-
-        mojo.execute();
-
-        assertTrue( pomFile.exists() );
-    }
-
     public void testDeployIfClassifierIsSet()
         throws Exception
     {
@@ -241,15 +221,11 @@ public class DeployFileMojoTest
 
         String version = (String) getVariableValueFromObject( mojo, "version" );
 
-        String packaging = (String) getVariableValueFromObject( mojo, "packaging" );
-
         assertEquals( "org.apache.maven.test", groupId );
 
         assertEquals( "maven-deploy-file-test", artifactId );
 
         assertEquals( "1.0", version );
-
-        assertEquals( "zip", packaging );
 
         mojo.execute();
 

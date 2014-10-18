@@ -19,6 +19,14 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
@@ -27,20 +35,11 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Deploys an artifact to remote repository.
@@ -83,24 +82,6 @@ public class DeployMojo
     private boolean deployAtEnd;
 
     /**
-     * @deprecated either use project.getArtifact() or reactorProjects.get(i).getArtifact()
-     */
-    @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
-    private Artifact artifact;
-
-    /**
-     * @deprecated either use project.getPackaging() or reactorProjects.get(i).getPackaging()
-     */
-    @Parameter( defaultValue = "${project.packaging}", required = true, readonly = true )
-    private String packaging;
-
-    /**
-     * @deprecated either use project.getFile() or reactorProjects.get(i).getFile()
-     */
-    @Parameter( defaultValue = "${project.file}", required = true, readonly = true )
-    private File pomFile;
-
-    /**
      * Specifies an alternative repository to which the project artifacts should be deployed ( other than those
      * specified in &lt;distributionManagement&gt; ). <br/>
      * Format: id::layout::url
@@ -134,12 +115,6 @@ public class DeployMojo
      */
     @Parameter( property = "altReleaseDeploymentRepository" )
     private String altReleaseDeploymentRepository;
-
-    /**
-     * @deprecated either use project.getAttachedArtifacts() or reactorProjects.get(i).getAttachedArtifacts()
-     */
-    @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
-    private List attachedArtifacts;
 
     /**
      * Set this to 'true' to bypass artifact deploy

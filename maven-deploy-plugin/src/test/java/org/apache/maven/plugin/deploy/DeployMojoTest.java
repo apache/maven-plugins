@@ -31,7 +31,6 @@ import java.util.Properties;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub;
@@ -274,17 +273,13 @@ public class DeployMojoTest
         
         assertNotNull( mojo );
         
-        String packaging = ( String ) getVariableValueFromObject( mojo, "packaging" );
-        
-        assertEquals( "pom", packaging );
-        
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
 
         artifact = (DeployArtifactStub) project.getArtifact();
         
-        artifact.setArtifactHandlerExtension( packaging );
+        artifact.setArtifactHandlerExtension( project.getPackaging() );
         
         ArtifactRepositoryStub repo = getRepoStub( mojo );
         
