@@ -64,7 +64,8 @@ public class ComponentsXmlArchiverFileFilter
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
 
-    protected void addComponentsXml( final Reader componentsReader ) throws XmlPullParserException, IOException
+    protected void addComponentsXml( final Reader componentsReader )
+        throws XmlPullParserException, IOException
     {
         Xpp3Dom newDom = Xpp3DomBuilder.build( componentsReader );
 
@@ -77,22 +78,26 @@ public class ComponentsXmlArchiverFileFilter
         {
             final Xpp3Dom[] children = newDom.getChildren();
 
-            for (final Xpp3Dom component : children) {
-                if (components == null) {
+            for ( final Xpp3Dom component : children )
+            {
+                if ( components == null )
+                {
                     components = new LinkedHashMap<String, Xpp3Dom>();
                 }
 
-                final String role = component.getChild("role")
-                        .getValue();
-                final Xpp3Dom child = component.getChild("role-hint");
+                final String role = component.getChild( "role" ).getValue();
+                final Xpp3Dom child = component.getChild( "role-hint" );
                 final String roleHint = child != null ? child.getValue() : "";
 
                 final String key = role + roleHint;
-                if (!components.containsKey(key)) {
-                    System.out.println("Adding " + key);
-                    components.put(key, component);
-                } else {
-                    System.out.println("Component: " + key + " is already defined. Skipping.");
+                if ( !components.containsKey( key ) )
+                {
+                    System.out.println( "Adding " + key );
+                    components.put( key, component );
+                }
+                else
+                {
+                    System.out.println( "Component: " + key + " is already defined. Skipping." );
                 }
             }
         }
@@ -114,7 +119,8 @@ public class ComponentsXmlArchiverFileFilter
     // }
     // }
 
-    private void addToArchive( final Archiver archiver ) throws IOException, ArchiverException
+    private void addToArchive( final Archiver archiver )
+        throws IOException, ArchiverException
     {
         if ( components != null )
         {
@@ -129,8 +135,9 @@ public class ComponentsXmlArchiverFileFilter
                 final Xpp3Dom componentDom = new Xpp3Dom( "components" );
                 dom.addChild( componentDom );
 
-                for (final Xpp3Dom component : components.values()) {
-                    componentDom.addChild(component);
+                for ( final Xpp3Dom component : components.values() )
+                {
+                    componentDom.addChild( component );
                 }
 
                 Xpp3DomWriter.write( fileWriter, dom );
@@ -148,7 +155,8 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
-    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
+    public void finalizeArchiveCreation( final Archiver archiver )
+        throws ArchiverException
     {
         // this will prompt the isSelected() call, below, for all resources added to the archive.
         // FIXME: This needs to be corrected in the AbstractArchiver, where
@@ -180,7 +188,8 @@ public class ComponentsXmlArchiverFileFilter
         return null;
     }
 
-    public boolean isSelected( final FileInfo fileInfo ) throws IOException
+    public boolean isSelected( final FileInfo fileInfo )
+        throws IOException
     {
         if ( fileInfo.isFile() )
         {
@@ -189,8 +198,7 @@ public class ComponentsXmlArchiverFileFilter
                 return true;
             }
 
-            String entry = fileInfo.getName()
-                                   .replace( '\\', '/' );
+            String entry = fileInfo.getName().replace( '\\', '/' );
 
             if ( entry.startsWith( "/" ) )
             {
@@ -207,7 +215,7 @@ public class ComponentsXmlArchiverFileFilter
                     stream = fileInfo.getContents();
                     // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
                     reader = new InputStreamReader( stream, "UTF-8" );
-                    addComponentsXml( new BufferedReader( reader, 8192 ));
+                    addComponentsXml( new BufferedReader( reader, 8192 ) );
                 }
                 catch ( final XmlPullParserException e )
                 {
@@ -236,7 +244,8 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
-    public void finalizeArchiveExtraction( final UnArchiver unarchiver ) throws ArchiverException
+    public void finalizeArchiveExtraction( final UnArchiver unarchiver )
+        throws ArchiverException
     {
     }
 

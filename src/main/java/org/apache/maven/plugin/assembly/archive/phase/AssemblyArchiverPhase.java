@@ -38,13 +38,14 @@ public interface AssemblyArchiverPhase
 
     /**
      * Handle the associated section of the assembly descriptor.
-     * @param assembly
-     *            The assembly descriptor to use
-     * @param archiver
-     *            The archiver used to create the assembly archive, to which files/directories/artifacts are added
-     * @param configSource
-*            The configuration for this assembly build, normally derived from the plugin that launched the assembly
-*            process.
+     * 
+     * @param assembly The assembly descriptor to use
+     * @param archiver The archiver used to create the assembly archive, to which files/directories/artifacts are added
+     * @param configSource The configuration for this assembly build, normally derived from the plugin that launched the
+     *            assembly process.
+     * @throws ArchiveCreationException
+     * @throws AssemblyFormattingException
+     * @throws InvalidAssemblerConfigurationException
      */
     void execute( ResolvedAssembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;

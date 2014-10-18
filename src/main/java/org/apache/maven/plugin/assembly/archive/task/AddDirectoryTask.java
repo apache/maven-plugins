@@ -66,7 +66,7 @@ public class AddDirectoryTask
         else if ( "..".equals( outputDirectory ) )
         {
             throw new ArchiveCreationException( "Cannot add source directory: " + directory + " to archive-path: "
-                            + outputDirectory + ". All paths must be within the archive root directory." );
+                + outputDirectory + ". All paths must be within the archive root directory." );
         }
 
         final int oldDirMode = archiver.getOverrideDirectoryMode();
@@ -111,7 +111,7 @@ public class AddDirectoryTask
                         int i = 0;
                         for ( String include : includes )
                         {
-                            includesArray[i++] = normalize(include);
+                            includesArray[i++] = normalize( include );
                         }
                     }
 
@@ -121,7 +121,7 @@ public class AddDirectoryTask
                     int i = 0;
                     for ( String directoryExclude : directoryExcludes )
                     {
-                        excludesArray[i++] = normalize(directoryExclude);
+                        excludesArray[i++] = normalize( directoryExclude );
                     }
 
                     final DefaultFileSet fs = new DefaultFileSet();
@@ -153,13 +153,14 @@ public class AddDirectoryTask
         }
     }
 
-    private String normalize(String include) {
-        String value = AssemblyFormatUtils.fixRelativeRefs(include);
+    private String normalize( String include )
+    {
+        String value = AssemblyFormatUtils.fixRelativeRefs( include );
 
         if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
-		{
-			value = value.substring( 1 );
-		}
+        {
+            value = value.substring( 1 );
+        }
         return value;
     }
 

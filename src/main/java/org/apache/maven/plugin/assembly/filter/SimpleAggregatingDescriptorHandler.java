@@ -46,7 +46,6 @@ import org.codehaus.plexus.util.IOUtil;
  * @version $Id$
  */
 @Component( role = ContainerDescriptorHandler.class, hint = "file-aggregator", instantiationStrategy = "per-lookup" )
-
 public class SimpleAggregatingDescriptorHandler
     implements ContainerDescriptorHandler, LogEnabled
 {
@@ -71,7 +70,8 @@ public class SimpleAggregatingDescriptorHandler
 
     private Logger logger;
 
-    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
+    public void finalizeArchiveCreation( final Archiver archiver )
+        throws ArchiverException
     {
         checkConfig();
 
@@ -79,7 +79,7 @@ public class SimpleAggregatingDescriptorHandler
         {
             throw new ArchiverException(
                                          "Cannot write aggregated properties to a directory. You must specify a file name in the outputPath configuration for this handler. (handler: "
-                                                         + getClass().getName() );
+                                             + getClass().getName() );
         }
 
         if ( outputPath.startsWith( "/" ) )
@@ -96,7 +96,8 @@ public class SimpleAggregatingDescriptorHandler
         overrideFilterAction = false;
     }
 
-    private File writePropertiesFile() throws ArchiverException
+    private File writePropertiesFile()
+        throws ArchiverException
     {
         File f;
 
@@ -111,8 +112,9 @@ public class SimpleAggregatingDescriptorHandler
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
-            for (final String filename : filenames) {
-                writer.write("\n" + commentChars + " " + filename);
+            for ( final String filename : filenames )
+            {
+                writer.write( "\n" + commentChars + " " + filename );
             }
 
             writer.write( "\n\n" );
@@ -122,7 +124,7 @@ public class SimpleAggregatingDescriptorHandler
         catch ( final IOException e )
         {
             throw new ArchiverException( "Error adding aggregated properties to finalize archive creation. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
         finally
         {
@@ -132,7 +134,8 @@ public class SimpleAggregatingDescriptorHandler
         return f;
     }
 
-    public void finalizeArchiveExtraction( final UnArchiver unarchiver ) throws ArchiverException
+    public void finalizeArchiveExtraction( final UnArchiver unarchiver )
+        throws ArchiverException
     {
     }
 
@@ -143,7 +146,8 @@ public class SimpleAggregatingDescriptorHandler
         return Collections.singletonList( outputPath );
     }
 
-    public boolean isSelected( final FileInfo fileInfo ) throws IOException
+    public boolean isSelected( final FileInfo fileInfo )
+        throws IOException
     {
         checkConfig();
 
@@ -153,7 +157,7 @@ public class SimpleAggregatingDescriptorHandler
             return true;
         }
 
-        String name = AssemblyFileUtils.normalizeFileInfo(fileInfo);
+        String name = AssemblyFileUtils.normalizeFileInfo( fileInfo );
 
         if ( fileInfo.isFile() && name.matches( filePattern ) )
         {
@@ -175,7 +179,8 @@ public class SimpleAggregatingDescriptorHandler
         }
     }
 
-    private void readProperties( final FileInfo fileInfo ) throws IOException
+    private void readProperties( final FileInfo fileInfo )
+        throws IOException
     {
         final StringWriter writer = new StringWriter();
         Reader reader = null;

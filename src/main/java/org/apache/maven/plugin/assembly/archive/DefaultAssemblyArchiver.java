@@ -87,7 +87,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * 
  * @version $Id$
  */
-@Component( role = AssemblyArchiver.class)
+@Component( role = AssemblyArchiver.class )
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
     implements AssemblyArchiver, Contextualizable
@@ -175,23 +175,19 @@ public class DefaultAssemblyArchiver
 
             archiver.setDestFile( destFile );
 
-            List<ResolvedModuleSet> resolvedModuleSets = new ArrayList<ResolvedModuleSet>(  );
+            List<ResolvedModuleSet> resolvedModuleSets = new ArrayList<ResolvedModuleSet>();
             for ( ModuleSet moduleSet : assembly.getModuleSets() )
             {
-                resolvedModuleSets.add( dependencyResolver.resolve( assembly, moduleSet, configSource ));
+                resolvedModuleSets.add( dependencyResolver.resolve( assembly, moduleSet, configSource ) );
             }
 
             // OK, this piece of code contains all the stuff left after I extracted resolvedModuleSets.
             // this can probably be simplified quite a lot, since the module sets now have their
             // own artifact resolution.
-            final Set<Artifact> dependencySetArtifacts =
-                dependencyResolver.resolve( assembly, configSource );
+            final Set<Artifact> dependencySetArtifacts = dependencyResolver.resolve( assembly, configSource );
 
-            final ResolvedAssembly resolvedAssembly = ResolvedAssembly
-                .create( assembly )
-                .withResolvedModuleSets( resolvedModuleSets )
-                .withDependencySetArtifacts(dependencySetArtifacts);
-
+            final ResolvedAssembly resolvedAssembly =
+                ResolvedAssembly.create( assembly ).withResolvedModuleSets( resolvedModuleSets ).withDependencySetArtifacts( dependencySetArtifacts );
 
             for ( AssemblyArchiverPhase phase : assemblyPhases )
             {
@@ -249,29 +245,32 @@ public class DefaultAssemblyArchiver
         final List<ContainerDescriptorHandler> handlers = new ArrayList<ContainerDescriptorHandler>();
         final List<String> hints = new ArrayList<String>();
 
-        if (!requestedContainerDescriptorHandlers.isEmpty())
+        if ( !requestedContainerDescriptorHandlers.isEmpty() )
         {
-            for (final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers) {
+            for ( final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers )
+            {
                 final String hint = config.getHandlerName();
-                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get(hint);
+                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get( hint );
 
-                if (handler == null) {
+                if ( handler == null )
+                {
                     throw new InvalidAssemblerConfigurationException(
-                            "Cannot find ContainerDescriptorHandler with hint: "
-                                    + hint);
+                                                                      "Cannot find ContainerDescriptorHandler with hint: "
+                                                                          + hint );
                 }
 
-                getLogger().debug("Found container descriptor handler with hint: " + hint + " (component: " + handler
-                        + ")");
+                getLogger().debug( "Found container descriptor handler with hint: " + hint + " (component: " + handler
+                                       + ")" );
 
-                if (config.getConfiguration() != null) {
-                    getLogger().debug("Configuring handler with:\n\n" + config.getConfiguration() + "\n\n");
+                if ( config.getConfiguration() != null )
+                {
+                    getLogger().debug( "Configuring handler with:\n\n" + config.getConfiguration() + "\n\n" );
 
-                    configureContainerDescriptorHandler(handler, (Xpp3Dom) config.getConfiguration(), configSource);
+                    configureContainerDescriptorHandler( handler, (Xpp3Dom) config.getConfiguration(), configSource );
                 }
 
-                handlers.add(handler);
-                hints.add(hint);
+                handlers.add( handler );
+                hints.add( hint );
             }
         }
 
@@ -305,7 +304,7 @@ public class DefaultAssemblyArchiver
         Archiver archiver;
         if ( "tgz".equals( format ) || "tbz2".equals( format ) || format.startsWith( "tar" ) )
         {
-            archiver = createTarArchiver( format, TarLongFileMode.valueOf( configSource.getTarLongFileMode()) );
+            archiver = createTarArchiver( format, TarLongFileMode.valueOf( configSource.getTarLongFileMode() ) );
         }
         else if ( "war".equals( format ) )
         {
@@ -445,8 +444,8 @@ public class DefaultAssemblyArchiver
                     PlexusConfiguration.class, ExpressionEvaluator.class, (Class<?>) containerRealm[1],
                     ConfigurationListener.class } );
 
-            configureComponent.invoke( configurator, component, configuration, expressionEvaluator,
-                    containerRealm[0], listener);
+            configureComponent.invoke( configurator, component, configuration, expressionEvaluator, containerRealm[0],
+                                       listener );
         }
         catch ( final NoSuchMethodException e )
         {
@@ -507,7 +506,7 @@ public class DefaultAssemblyArchiver
         final int index = format.indexOf( '.' );
         if ( index >= 0 )
         {
-             TarArchiver.TarCompressionMethod tarCompressionMethod;
+            TarArchiver.TarCompressionMethod tarCompressionMethod;
             // TODO: this should accept gz and bz2 as well so we can skip
             // over the switch
             final String compression = format.substring( index + 1 );

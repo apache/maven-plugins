@@ -77,17 +77,18 @@ public class AddFileSetsTask
             if ( !archiveBaseDir.exists() )
             {
                 throw new ArchiveCreationException( "The archive base directory '" + archiveBaseDir.getAbsolutePath()
-                                + "' does not exist" );
+                    + "' does not exist" );
             }
             else if ( !archiveBaseDir.isDirectory() )
             {
                 throw new ArchiveCreationException( "The archive base directory '" + archiveBaseDir.getAbsolutePath()
-                                + "' exists, but it is not a directory" );
+                    + "' exists, but it is not a directory" );
             }
         }
 
-        for (final FileSet fileSet : fileSets) {
-            addFileSet(fileSet, archiver, configSource, archiveBaseDir);
+        for ( final FileSet fileSet : fileSets )
+        {
+            addFileSet( fileSet, archiver, configSource, archiveBaseDir );
         }
     }
 
@@ -121,9 +122,9 @@ public class AddFileSetsTask
         if ( logger.isDebugEnabled() )
         {
             logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: "
-                            + Integer.toString( archiver.getOverrideDirectoryMode(), 8 ) + " file perms: "
-                            + Integer.toString( archiver.getOverrideFileMode(), 8 )
-                            + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
+                + Integer.toString( archiver.getOverrideDirectoryMode(), 8 ) + " file perms: "
+                + Integer.toString( archiver.getOverrideFileMode(), 8 )
+                + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
@@ -139,16 +140,17 @@ public class AddFileSetsTask
             catch ( final IOException e )
             {
                 throw new ArchiveCreationException( "Error fixing file-set line endings for assembly: "
-                                + e.getMessage(), e );
+                    + e.getMessage(), e );
             }
 
             logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath()
-                            + "'\nassembly output directory is: \'" + destDirectory + "\'" );
+                + "'\nassembly output directory is: \'" + destDirectory + "\'" );
 
-            if (fileSetDir.getPath().equals( File.separator ))
+            if ( fileSetDir.getPath().equals( File.separator ) )
             {
-                throw new AssemblyFormattingException( "Your assembly descriptor specifies a directory of " + File.separator +
-                   ", which is your *entire* file system.\nThese are not the files you are looking for");
+                throw new AssemblyFormattingException( "Your assembly descriptor specifies a directory of "
+                    + File.separator
+                    + ", which is your *entire* file system.\nThese are not the files you are looking for" );
             }
             final AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
 
@@ -183,8 +185,7 @@ public class AddFileSetsTask
     {
         String sourceDirectory = fileSet.getDirectory();
 
-        if ( sourceDirectory == null || sourceDirectory.trim()
-                                                       .length() < 1 )
+        if ( sourceDirectory == null || sourceDirectory.trim().length() < 1 )
         {
             sourceDirectory = basedir.getAbsolutePath();
         }

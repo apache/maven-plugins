@@ -34,75 +34,81 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ResolvedAssembly {
+public class ResolvedAssembly
+{
 
+    private final Assembly assembly;
 
-	private final Assembly assembly;
-	private final List<ResolvedModuleSet> resolvedModuleSets;
-	private final Set<Artifact>  dependencySetArtifacts;
+    private final List<ResolvedModuleSet> resolvedModuleSets;
 
-	public ResolvedAssembly( Assembly assembly, List<ResolvedModuleSet> resolvedModuleSets,
-							 Set<Artifact> dependencySetArtifacts ) {
-		this.assembly = assembly;
-		this.resolvedModuleSets = resolvedModuleSets;
-		this.dependencySetArtifacts = dependencySetArtifacts;
-	}
+    private final Set<Artifact> dependencySetArtifacts;
 
-	public static ResolvedAssembly create(Assembly assembly){
-		return new ResolvedAssembly(assembly, null, null );
-	}
-	
-	public ResolvedAssembly withResolvedModuleSets(Iterable<ResolvedModuleSet> resolvedModuleSets){
-		List<ResolvedModuleSet> resolvedModuleSets1 = new ArrayList<ResolvedModuleSet>(  );
-		for ( ResolvedModuleSet resolvedModuleSet : resolvedModuleSets )
-		{
-			resolvedModuleSets1.add(resolvedModuleSet);
-		}
-		return new ResolvedAssembly( assembly, resolvedModuleSets1, dependencySetArtifacts );
-	}
+    public ResolvedAssembly( Assembly assembly, List<ResolvedModuleSet> resolvedModuleSets,
+                             Set<Artifact> dependencySetArtifacts )
+    {
+        this.assembly = assembly;
+        this.resolvedModuleSets = resolvedModuleSets;
+        this.dependencySetArtifacts = dependencySetArtifacts;
+    }
 
+    public static ResolvedAssembly create( Assembly assembly )
+    {
+        return new ResolvedAssembly( assembly, null, null );
+    }
 
+    public ResolvedAssembly withResolvedModuleSets( Iterable<ResolvedModuleSet> resolvedModuleSets )
+    {
+        List<ResolvedModuleSet> resolvedModuleSets1 = new ArrayList<ResolvedModuleSet>();
+        for ( ResolvedModuleSet resolvedModuleSet : resolvedModuleSets )
+        {
+            resolvedModuleSets1.add( resolvedModuleSet );
+        }
+        return new ResolvedAssembly( assembly, resolvedModuleSets1, dependencySetArtifacts );
+    }
 
-	public void forEachResolvedModule(ResolvedModuleSetConsumer resolvedModuleSetConsumer) throws
-		ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
-	{
-		if (resolvedModuleSets == null) return;
-		for ( ResolvedModuleSet resolvedModuleSet : resolvedModuleSets )
-		{
-			resolvedModuleSetConsumer.accept( resolvedModuleSet);
-		}
-	}
+    public void forEachResolvedModule( ResolvedModuleSetConsumer resolvedModuleSetConsumer )
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+    {
+        if ( resolvedModuleSets == null )
+            return;
+        for ( ResolvedModuleSet resolvedModuleSet : resolvedModuleSets )
+        {
+            resolvedModuleSetConsumer.accept( resolvedModuleSet );
+        }
+    }
 
-	public Set<Artifact> getResolvedDependencySetArtifacts(){
-		return dependencySetArtifacts;
-	}
+    public Set<Artifact> getResolvedDependencySetArtifacts()
+    {
+        return dependencySetArtifacts;
+    }
 
-	public Assembly getAssembly() {
-		return assembly;
-	}
+    public Assembly getAssembly()
+    {
+        return assembly;
+    }
 
-	public List<DependencySet> getDependencySets()
-	{
-		return assembly.getDependencySets();
-	}
+    public List<DependencySet> getDependencySets()
+    {
+        return assembly.getDependencySets();
+    }
 
-	public List<FileItem> getFiles()
-	{
-		return assembly.getFiles();
-	}
+    public List<FileItem> getFiles()
+    {
+        return assembly.getFiles();
+    }
 
-	public List<FileSet> getFileSets()
-	{
-		return assembly.getFileSets();
-	}
+    public List<FileSet> getFileSets()
+    {
+        return assembly.getFileSets();
+    }
 
-	public List<Repository> getRepositories()
-	{
-		return assembly.getRepositories();
-	}
+    public List<Repository> getRepositories()
+    {
+        return assembly.getRepositories();
+    }
 
-	public ResolvedAssembly withDependencySetArtifacts( final Set<Artifact> dependencySetArtifacts )
-	{
-		return new ResolvedAssembly( assembly, resolvedModuleSets, dependencySetArtifacts );
-	}
+    public ResolvedAssembly withDependencySetArtifacts( final Set<Artifact> dependencySetArtifacts )
+    {
+        return new ResolvedAssembly( assembly, resolvedModuleSets, dependencySetArtifacts );
+    }
 }
