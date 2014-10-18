@@ -20,20 +20,13 @@ package org.apache.maven.plugin.assembly.utils;
  */
 
 /**
- * Enumeration to keep the different line
- * ending types we support.
+ * Enumeration to keep the different line ending types we support.
  * 
  * @author Karl-Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public enum LineEndings
 {
-    keep( null ), 
-    dos( "\r\n" ), 
-    windows( "\r\n" ), 
-    unix( "\n" ), 
-    crlf( "\r\n" ), 
-    lf( "\n" );
+    keep( null ), dos( "\r\n" ), windows( "\r\n" ), unix( "\n" ), crlf( "\r\n" ), lf( "\n" );
 
     private String lineEndingCharacters;
 

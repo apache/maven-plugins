@@ -50,11 +50,18 @@ public class DependencySetAssemblyPhase
     @Requirement
     private ArchiverManager archiverManager;
 
+    /**
+     * Default constructor.
+     */
     public DependencySetAssemblyPhase()
     {
         // used for plexus init
     }
 
+    /**
+     * @param projectBuilder The Maven Project Builder.
+     * @param logger The Logger.
+     */
     public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, final Logger logger )
     {
         this.projectBuilder = projectBuilder;

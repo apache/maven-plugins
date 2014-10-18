@@ -73,8 +73,8 @@ public class ModuleSetAssemblyPhase
     implements AssemblyArchiverPhase
 {
 
-    //TODO: Remove if using something like commons-lang instead.
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    // TODO: Remove if using something like commons-lang instead.
+    public static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     @Requirement
     private MavenProjectBuilder projectBuilder;
@@ -105,15 +105,16 @@ public class ModuleSetAssemblyPhase
             public void accept( ResolvedModuleSet resolvedModule )
                 throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
             {
-                validate(resolvedModule.getModuleSet(), configSource);
+                validate( resolvedModule.getModuleSet(), configSource );
 
-                final Set<MavenProject> moduleProjects = getModuleProjects(resolvedModule.getModuleSet(), configSource, getLogger());
+                final Set<MavenProject> moduleProjects =
+                    getModuleProjects( resolvedModule.getModuleSet(), configSource, getLogger() );
 
                 final ModuleSources sources = resolvedModule.getModuleSet().getSources();
-                addModuleSourceFileSets(sources, moduleProjects, archiver, configSource);
+                addModuleSourceFileSets( sources, moduleProjects, archiver, configSource );
 
                 final ModuleBinaries binaries = resolvedModule.getModuleSet().getBinaries();
-                addModuleBinaries(resolvedModule, binaries, moduleProjects, archiver, configSource );
+                addModuleBinaries( resolvedModule, binaries, moduleProjects, archiver, configSource );
             }
         } );
     }
@@ -159,8 +160,9 @@ public class ModuleSetAssemblyPhase
         }
     }
 
-    protected void addModuleBinaries( ResolvedModuleSet resolvedModule, final ModuleBinaries binaries, final Set<MavenProject> projects,
-                                      final Archiver archiver, final AssemblerConfigurationSource configSource )
+    protected void addModuleBinaries( ResolvedModuleSet resolvedModule, final ModuleBinaries binaries,
+                                      final Set<MavenProject> projects, final Archiver archiver,
+                                      final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         if ( binaries == null )
@@ -188,55 +190,66 @@ public class ModuleSetAssemblyPhase
 
         final Map<MavenProject, Artifact> chosenModuleArtifacts = new HashMap<MavenProject, Artifact>();
 
-        for (final MavenProject project : moduleProjects) {
+        for ( final MavenProject project : moduleProjects )
+        {
             Artifact artifact = null;
 
-            if (classifier == null) {
-                getLogger().debug("Processing binary artifact for module project: " + project.getId());
+            if ( classifier == null )
+            {
+                getLogger().debug( "Processing binary artifact for module project: " + project.getId() );
 
                 artifact = project.getArtifact();
-            } else {
-                getLogger().debug("Processing binary attachment: " + classifier + " for module project: "
-                        + project.getId());
+            }
+            else
+            {
+                getLogger().debug( "Processing binary attachment: " + classifier + " for module project: "
+                                       + project.getId() );
 
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings( "unchecked" )
                 final List<Artifact> attachments = project.getAttachedArtifacts();
-                if ((attachments != null) && !attachments.isEmpty()) {
-                    for (final Artifact attachment : attachments) {
-                        if (classifier.equals(attachment.getClassifier())) {
+                if ( ( attachments != null ) && !attachments.isEmpty() )
+                {
+                    for ( final Artifact attachment : attachments )
+                    {
+                        if ( classifier.equals( attachment.getClassifier() ) )
+                        {
                             artifact = attachment;
                             break;
                         }
                     }
                 }
 
-                if (artifact == null) {
-                    throw new InvalidAssemblerConfigurationException("Cannot find attachment with classifier: "
-                            + classifier + " in module project: " + project.getId()
-                            + ". Please exclude this module from the module-set.");
+                if ( artifact == null )
+                {
+                    throw new InvalidAssemblerConfigurationException( "Cannot find attachment with classifier: "
+                        + classifier + " in module project: " + project.getId()
+                        + ". Please exclude this module from the module-set." );
                 }
             }
 
-            chosenModuleArtifacts.put(project, artifact);
-            addModuleArtifact(artifact, project, archiver, configSource, binaries);
+            chosenModuleArtifacts.put( project, artifact );
+            addModuleArtifact( artifact, project, archiver, configSource, binaries );
         }
 
         final List<DependencySet> depSets = getDependencySets( binaries );
 
         if ( depSets != null )
         {
-            for (final DependencySet ds : depSets) {
+            for ( final DependencySet ds : depSets )
+            {
                 // NOTE: Disabling useProjectArtifact flag, since module artifact has already been handled!
-                ds.setUseProjectArtifact(false);
+                ds.setUseProjectArtifact( false );
             }
 
-            //TODO: The following should be moved into a shared component, cause this
-            //test is the same as in maven-enforce rules ReactorModuleConvergence.
+            // TODO: The following should be moved into a shared component, cause this
+            // test is the same as in maven-enforce rules ReactorModuleConvergence.
             List<MavenProject> validateModuleVersions = validateModuleVersions( moduleProjects );
-            if (!validateModuleVersions.isEmpty()) {
-                
-                StringBuilder sb = new StringBuilder().append( "The current modules seemed to be having different versions.");
-                sb.append (LINE_SEPARATOR);
+            if ( !validateModuleVersions.isEmpty() )
+            {
+
+                StringBuilder sb =
+                    new StringBuilder().append( "The current modules seemed to be having different versions." );
+                sb.append( LINE_SEPARATOR );
                 for ( MavenProject mavenProject : validateModuleVersions )
                 {
                     sb.append( " --> " );
@@ -246,27 +259,30 @@ public class ModuleSetAssemblyPhase
                 getLogger().warn( sb.toString() );
             }
 
-            for (final MavenProject moduleProject : moduleProjects) {
-                getLogger().debug("Processing binary dependencies for module project: " + moduleProject.getId());
+            for ( final MavenProject moduleProject : moduleProjects )
+            {
+                getLogger().debug( "Processing binary dependencies for module project: " + moduleProject.getId() );
 
                 final AddDependencySetsTask task =
-                        new AddDependencySetsTask(depSets, resolvedModule.getArtifacts(), moduleProject, projectBuilder,
-                                archiverManager, getLogger());
+                    new AddDependencySetsTask( depSets, resolvedModule.getArtifacts(), moduleProject, projectBuilder,
+                                               archiverManager, getLogger() );
 
-                task.setModuleProject(moduleProject);
-                task.setModuleArtifact(chosenModuleArtifacts.get(moduleProject));
-                task.setDefaultOutputDirectory(binaries.getOutputDirectory());
-                task.setDefaultOutputFileNameMapping(binaries.getOutputFileNameMapping());
+                task.setModuleProject( moduleProject );
+                task.setModuleArtifact( chosenModuleArtifacts.get( moduleProject ) );
+                task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
+                task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
 
-                task.execute(archiver, configSource);
+                task.execute( archiver, configSource );
             }
         }
     }
 
-    private List<MavenProject> validateModuleVersions (Set<MavenProject> moduleProjects) {
+    private List<MavenProject> validateModuleVersions( Set<MavenProject> moduleProjects )
+    {
         List<MavenProject> result = new ArrayList<MavenProject>();
 
-        if (moduleProjects != null && !moduleProjects.isEmpty()) {
+        if ( moduleProjects != null && !moduleProjects.isEmpty() )
+        {
             String version = moduleProjects.iterator().next().getVersion();
             getLogger().debug( "First version:" + version );
             for ( MavenProject mavenProject : moduleProjects )
@@ -280,7 +296,7 @@ public class ModuleSetAssemblyPhase
         }
         return result;
     }
-    
+
     public static List<DependencySet> getDependencySets( final ModuleBinaries binaries )
     {
         List<DependencySet> depSets = binaries.getDependencySets();
@@ -402,29 +418,32 @@ public class ModuleSetAssemblyPhase
 
         fileSets.addAll( subFileSets );
 
-        for (final MavenProject moduleProject : moduleProjects) {
-            getLogger().info("Processing sources for module project: " + moduleProject.getId());
+        for ( final MavenProject moduleProject : moduleProjects )
+        {
+            getLogger().info( "Processing sources for module project: " + moduleProject.getId() );
 
             final List<FileSet> moduleFileSets = new ArrayList<FileSet>();
 
-            for (final FileSet fileSet : fileSets) {
-                moduleFileSets.add(createFileSet(fileSet, sources, moduleProject, configSource));
+            for ( final FileSet fileSet : fileSets )
+            {
+                moduleFileSets.add( createFileSet( fileSet, sources, moduleProject, configSource ) );
             }
 
-            final AddFileSetsTask task = new AddFileSetsTask(moduleFileSets);
+            final AddFileSetsTask task = new AddFileSetsTask( moduleFileSets );
 
-            task.setProject(moduleProject);
-            task.setModuleProject(moduleProject);
-            task.setLogger(getLogger());
+            task.setProject( moduleProject );
+            task.setModuleProject( moduleProject );
+            task.setLogger( getLogger() );
 
-            task.execute(archiver, configSource);
+            task.execute( archiver, configSource );
         }
     }
 
     /**
      * Determine whether the deprecated file-set configuration directly within the ModuleSources object is present.
      */
-    protected boolean isDeprecatedModuleSourcesConfigPresent( @Nonnull final ModuleSources sources )
+    protected boolean isDeprecatedModuleSourcesConfigPresent( @Nonnull
+    final ModuleSources sources )
     {
         boolean result = false;
 
@@ -444,8 +463,11 @@ public class ModuleSetAssemblyPhase
         return result;
     }
 
-    protected @Nonnull FileSet createFileSet( @Nonnull final FileSet fileSet, @Nonnull final ModuleSources sources,
-                                     @Nonnull final MavenProject moduleProject, @Nonnull final AssemblerConfigurationSource configSource )
+    protected @Nonnull FileSet createFileSet( @Nonnull
+    final FileSet fileSet, @Nonnull
+    final ModuleSources sources, @Nonnull
+    final MavenProject moduleProject, @Nonnull
+    final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         final FileSet fs = new FileSet();
@@ -483,8 +505,9 @@ public class ModuleSetAssemblyPhase
         {
             @SuppressWarnings( "unchecked" )
             final List<String> modules = moduleProject.getModules();
-            for (final String moduleSubPath : modules) {
-                excludes.add(moduleSubPath + "/**");
+            for ( final String moduleSubPath : modules )
+            {
+                excludes.add( moduleSubPath + "/**" );
             }
         }
 
@@ -533,8 +556,8 @@ public class ModuleSetAssemblyPhase
     }
 
     public static @Nonnull Set<MavenProject> getModuleProjects( final ModuleSet moduleSet,
-                                                       final AssemblerConfigurationSource configSource,
-                                                       final Logger logger )
+                                                                final AssemblerConfigurationSource configSource,
+                                                                final Logger logger )
         throws ArchiveCreationException
     {
         MavenProject project = configSource.getProject();

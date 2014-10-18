@@ -34,15 +34,22 @@ public class PrefixedArchivedFileSet
 {
 
     private final String rootPrefix;
+
     private final ArchivedFileSet fileSet;
+
     private final FileSelector[] selectors;
 
+    /**
+     * @param fileSet The archived file set.
+     * @param rootPrefix The root prefix.
+     * @param selectors The file selectors.
+     */
     public PrefixedArchivedFileSet( ArchivedFileSet fileSet, String rootPrefix, FileSelector[] selectors )
     {
         this.fileSet = fileSet;
         this.selectors = selectors;
 
-        if ( rootPrefix.length() > 0 && ! rootPrefix.endsWith( "/" ) )
+        if ( rootPrefix.length() > 0 && !rootPrefix.endsWith( "/" ) )
         {
             this.rootPrefix = rootPrefix + "/";
         }
@@ -52,26 +59,31 @@ public class PrefixedArchivedFileSet
         }
     }
 
+    /** {@inheritDoc} */
     public File getArchive()
     {
         return fileSet.getArchive();
     }
 
+    /** {@inheritDoc} */
     public String[] getExcludes()
     {
         return fileSet.getExcludes();
     }
 
+    /** {@inheritDoc} */
     public FileSelector[] getFileSelectors()
     {
-        return combineSelectors(fileSet.getFileSelectors(), selectors);
+        return combineSelectors( fileSet.getFileSelectors(), selectors );
     }
 
+    /** {@inheritDoc} */
     public String[] getIncludes()
     {
         return fileSet.getIncludes();
     }
 
+    /** {@inheritDoc} */
     public String getPrefix()
     {
         String prefix = fileSet.getPrefix();
@@ -90,16 +102,19 @@ public class PrefixedArchivedFileSet
         return rootPrefix + prefix;
     }
 
+    /** {@inheritDoc} */
     public boolean isCaseSensitive()
     {
         return fileSet.isCaseSensitive();
     }
 
+    /** {@inheritDoc} */
     public boolean isIncludingEmptyDirectories()
     {
         return fileSet.isIncludingEmptyDirectories();
     }
 
+    /** {@inheritDoc} */
     public boolean isUsingDefaultExcludes()
     {
         return fileSet.isUsingDefaultExcludes();

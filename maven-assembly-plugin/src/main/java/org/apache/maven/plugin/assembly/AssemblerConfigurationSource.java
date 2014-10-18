@@ -34,74 +34,179 @@ import java.util.List;
 public interface AssemblerConfigurationSource
 {
 
+    /**
+     * @return The descriptor.
+     */
     String getDescriptor();
 
+    /**
+     * @return The descriptor id.
+     */
     String getDescriptorId();
 
+    /**
+     * @return The descriptors.
+     */
     String[] getDescriptors();
 
+    /**
+     * @return The descriptor references.
+     */
     String[] getDescriptorReferences();
 
+    /**
+     * @return The descriptor source direcotoy.
+     */
     File getDescriptorSourceDirectory();
 
+    /**
+     * @return The base directory.
+     */
     File getBasedir();
 
+    /**
+     * @return The Maven Project.
+     */
     MavenProject getProject();
 
+    /**
+     * @return Site included.
+     */
     boolean isSiteIncluded();
 
+    /**
+     * @return The site directory.
+     */
     File getSiteDirectory();
 
+    /**
+     * @return The final name.
+     */
     String getFinalName();
 
+    /**
+     * @return append the assembly id.
+     */
     boolean isAssemblyIdAppended();
 
+    /**
+     * @return The classifier.
+     */
     String getClassifier();
 
+    /**
+     * @return Tar long file mode.
+     */
     String getTarLongFileMode();
 
+    /**
+     * @return The output directory.
+     */
     File getOutputDirectory();
 
+    /**
+     * @return The working direcotory.
+     */
     File getWorkingDirectory();
 
+    /**
+     * @return the jar archive configuration.
+     */
     MavenArchiveConfiguration getJarArchiveConfiguration();
 
+    /**
+     * @return The local repository.
+     */
     ArtifactRepository getLocalRepository();
 
+    /**
+     * @return The temporary root directory.
+     */
     File getTemporaryRootDirectory();
 
+    /**
+     * @return The archive base directory.
+     */
     File getArchiveBaseDirectory();
 
+    /**
+     * @return The filters.
+     */
     List<String> getFilters();
 
+    /**
+     * @return include the project build filters or not.
+     */
     boolean isIncludeProjectBuildFilters();
 
+    /**
+     * @return The list of reactor projects.
+     */
     List<MavenProject> getReactorProjects();
 
+    /**
+     * @return The remote repositories.
+     */
     List<ArtifactRepository> getRemoteRepositories();
 
+    /**
+     * @return Is this a test run.
+     */
     boolean isDryRun();
 
+    /**
+     * @return Ignore directory format extensions.
+     */
     boolean isIgnoreDirFormatExtensions();
 
+    /**
+     * @return Ignore missing descriptor.
+     */
     boolean isIgnoreMissingDescriptor();
 
+    /**
+     * @return The maven session.
+     */
     MavenSession getMavenSession();
 
+    /**
+     * @return The archiver configu.
+     */
     String getArchiverConfig();
 
+    /**
+     * @return The maven file filter.
+     */
     MavenFileFilter getMavenFileFilter();
 
+    /**
+     * @return Update only yes/no.
+     */
     boolean isUpdateOnly();
 
+    /**
+     * @return Use JVM chmod yes/no.
+     */
     boolean isUseJvmChmod();
 
+    /**
+     * @return Ignore permissions yes/no.
+     */
     boolean isIgnorePermissions();
 
+    /**
+     * @return The current encoding.
+     */
     String getEncoding();
 
+    /**
+     * @return The escape string.
+     */
     String getEscapeString();
 
+    /**
+     * @return The list of delimiters.
+     */
     List<String> getDelimiters();
 
 }

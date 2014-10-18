@@ -84,11 +84,12 @@ public final class AssemblyFileUtils
         return path;
     }
 
-    public static void verifyTempDirectoryAvailability( @Nonnull final File tempDir )
+    public static void verifyTempDirectoryAvailability( @Nonnull
+    final File tempDir )
     {
         if ( !tempDir.exists() )
         {
-            //noinspection ResultOfMethodCallIgnored
+            // noinspection ResultOfMethodCallIgnored
             tempDir.mkdirs();
         }
     }
@@ -96,7 +97,7 @@ public final class AssemblyFileUtils
     /**
      * Unpacks the archive file.
      *
-     * @param source  File to be unpacked.
+     * @param source File to be unpacked.
      * @param destDir Location where to put the unpacked files.
      */
     public static void unpack( File source, File destDir, ArchiverManager archiverManager )
@@ -125,7 +126,7 @@ public final class AssemblyFileUtils
         FileChannel c2 = new RandomAccessFile( dst, "rw" ).getChannel();
 
         long tCount = 0, size = c1.size();
-        //noinspection StatementWithEmptyBody
+        // noinspection StatementWithEmptyBody
         while ( ( tCount += c2.transferFrom( c1, 0, size - tCount ) ) < size )
         {
         }
@@ -145,7 +146,7 @@ public final class AssemblyFileUtils
     public static String normalizeFileInfo( @Nonnull FileInfo fileInfo )
     {
         String name = fileInfo.getName();
-        name = normalizePath(name);
+        name = normalizePath( name );
         return name.replace( File.separatorChar, '/' ); // How can this be anything but a no-op
     }
 

@@ -130,7 +130,7 @@ public class FileFormatter
             }
             else
             {
-                filterRequest.setDelimiters( filterRequest.getDelimiters());
+                filterRequest.setDelimiters( filterRequest.getDelimiters() );
             }
 
             filterRequest.setInjectProjectBuildFilters( configSource.isIncludeProjectBuildFilters() );

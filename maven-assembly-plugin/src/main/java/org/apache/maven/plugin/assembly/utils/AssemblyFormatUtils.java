@@ -240,7 +240,7 @@ public final class AssemblyFormatUtils
         catch ( final IOException e )
         {
             throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
 
         try
@@ -467,7 +467,7 @@ public final class AssemblyFormatUtils
         catch ( final IOException e )
         {
             throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
 
         try
@@ -477,7 +477,7 @@ public final class AssemblyFormatUtils
         catch ( final InterpolationException e )
         {
             throw new AssemblyFormattingException( "Failed to interpolate output filename mapping. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
 
         value = StringUtils.replace( value, "//", "/" );
@@ -490,11 +490,9 @@ public final class AssemblyFormatUtils
     public static String fixRelativeRefs( String src )
     {
         String value = src;
-        
-        String[] separators = {
-            "/", "\\"
-        };
-        
+
+        String[] separators = { "/", "\\" };
+
         String finalSep = null;
         for ( String sep : separators )
         {
@@ -502,12 +500,12 @@ public final class AssemblyFormatUtils
             {
                 finalSep = sep;
             }
-            
-            if (value.contains("." + sep))
+
+            if ( value.contains( "." + sep ) )
             {
                 List<String> parts = new ArrayList<String>();
                 parts.addAll( Arrays.asList( value.split( sep.replace( "\\", "\\\\" ) ) ) );
-                
+
                 for ( ListIterator<String> it = parts.listIterator(); it.hasNext(); )
                 {
                     String part = it.next();
@@ -525,16 +523,16 @@ public final class AssemblyFormatUtils
                         }
                     }
                 }
-                
+
                 value = StringUtils.join( parts.iterator(), sep );
             }
         }
-        
+
         if ( finalSep != null && value.length() > 0 && !value.endsWith( finalSep ) )
         {
             value += finalSep;
         }
-        
+
         return value;
     }
 }

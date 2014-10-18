@@ -18,12 +18,14 @@ package org.apache.maven.plugin.assembly.resolved.functions;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 
-public interface ResolvedModuleSetConsumer {
-	void accept(ResolvedModuleSet resolvedModule)
-		throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
+public interface ResolvedModuleSetConsumer
+{
+    void accept( ResolvedModuleSet resolvedModule )
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 }
