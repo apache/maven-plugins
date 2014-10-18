@@ -534,6 +534,13 @@ public class PdfMojo
             context.put( "generateTOC", generateTOC );
             context.put( "validate", validate);
 
+            // MPDF-66  Put any of the properties in directly into the Velocity context
+            // (code copied from /maven-site-plugin-3.3/src/main/java/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.java)
+            for ( Map.Entry<Object, Object> entry : project.getProperties().entrySet() )
+            {
+                context.put( (String) entry.getKey(), entry.getValue() );
+            }
+
             final DocumentModel model = aggregate ? getDocumentModel( locale ) : null;
 
             try
