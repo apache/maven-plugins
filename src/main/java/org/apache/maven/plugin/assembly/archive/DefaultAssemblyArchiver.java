@@ -87,7 +87,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * 
  * @version $Id$
  */
-@Component( role = AssemblyArchiver.class, instantiationStrategy = "per-lookup")
+@Component( role = AssemblyArchiver.class)
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
     implements AssemblyArchiver, Contextualizable
