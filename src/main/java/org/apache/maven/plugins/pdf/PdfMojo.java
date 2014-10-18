@@ -534,6 +534,12 @@ public class PdfMojo
             context.put( "generateTOC", generateTOC );
             context.put( "validate", validate);
 
+            // Put any of the properties in directly into the Velocity context
+            for ( Map.Entry<Object, Object> entry : project.getProperties().entrySet() )
+            {
+                context.put( (String) entry.getKey(), entry.getValue() );
+            }
+            
             final DocumentModel model = aggregate ? getDocumentModel( locale ) : null;
 
             try
