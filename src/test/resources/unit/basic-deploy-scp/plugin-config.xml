@@ -23,12 +23,6 @@ under the License.
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
-          <!-- deprecated fields -->
-          <pomFile>${basedir}/src/test/resources/unit/basic-deploy-scp/plugin-config.xml</pomFile>
-          <packaging>jar</packaging>
-          <artifact implementation="org.apache.maven.plugin.deploy.stubs.DeployArtifactStub" />
-          <attachedArtifacts />
-          
           <localRepository>${localRepository}</localRepository>
           <project implementation="org.apache.maven.plugin.deploy.stubs.MavenProjectStub">
             <file>${basedir}/src/test/resources/unit/basic-deploy-scp/plugin-config.xml</file>

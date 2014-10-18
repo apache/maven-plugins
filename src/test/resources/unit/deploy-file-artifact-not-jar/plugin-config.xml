@@ -26,7 +26,6 @@ under the License.
           <groupId>org.apache.maven.test</groupId>
           <artifactId>maven-deploy-file-test</artifactId>
           <version>1.0</version>
-          <packaging>zip</packaging>
           <file>${basedir}/src/test/resources/unit/deploy-file-artifact-not-jar/target/deploy-test-file.zip</file>
           <repositoryId>deploy-test</repositoryId>
           <url>file://${basedir}/target/remote-repo/deploy-file-artifact-not-jar</url>
