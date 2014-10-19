@@ -74,6 +74,9 @@ public class ModuleSetAssemblyPhase
 {
 
     // TODO: Remove if using something like commons-lang instead.
+    /**
+     * The line separator.
+     */
     public static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     @Requirement
@@ -82,11 +85,18 @@ public class ModuleSetAssemblyPhase
     @Requirement
     private ArchiverManager archiverManager;
 
+    /**
+     * Create an instance.
+     */
     public ModuleSetAssemblyPhase()
     {
         // needed for plexus
     }
 
+    /**
+     * @param projectBuilder The project builder.
+     * @param logger The logger.
+     */
     public ModuleSetAssemblyPhase( final MavenProjectBuilder projectBuilder, final Logger logger )
     {
         this.projectBuilder = projectBuilder;
@@ -463,7 +473,8 @@ public class ModuleSetAssemblyPhase
         return result;
     }
 
-    protected @Nonnull FileSet createFileSet( @Nonnull
+    @Nonnull
+    protected FileSet createFileSet( @Nonnull
     final FileSet fileSet, @Nonnull
     final ModuleSources sources, @Nonnull
     final MavenProject moduleProject, @Nonnull
@@ -555,9 +566,10 @@ public class ModuleSetAssemblyPhase
         return fs;
     }
 
-    public static @Nonnull Set<MavenProject> getModuleProjects( final ModuleSet moduleSet,
-                                                                final AssemblerConfigurationSource configSource,
-                                                                final Logger logger )
+    @Nonnull
+    public static Set<MavenProject> getModuleProjects( final ModuleSet moduleSet,
+                                                       final AssemblerConfigurationSource configSource,
+                                                       final Logger logger )
         throws ArchiveCreationException
     {
         MavenProject project = configSource.getProject();

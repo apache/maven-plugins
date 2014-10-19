@@ -28,11 +28,18 @@ public class ArchiveExpansionException
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param message The message to use for this instance.
+     * @param error The error which has been thrown.
+     */
     public ArchiveExpansionException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
+    /**
+     * @param message The message.
+     */
     public ArchiveExpansionException( final String message )
     {
         super( message );

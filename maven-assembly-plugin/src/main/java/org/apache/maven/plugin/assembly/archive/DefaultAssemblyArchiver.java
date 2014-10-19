@@ -107,12 +107,20 @@ public class DefaultAssemblyArchiver
 
     private PlexusContainer container;
 
+    /**
+     * create instance.
+     */
     public DefaultAssemblyArchiver()
     {
         // needed for plexus
     }
 
     // introduced for testing.
+    /**
+     * @param archiverManager The archive manager.
+     * @param resolver The {@link DependencyResolver}.
+     * @param assemblyPhases The list of {@link AssemblyArchiverPhase}
+     */
     protected DefaultAssemblyArchiver( final ArchiverManager archiverManager, final DependencyResolver resolver,
                                        final List<AssemblyArchiverPhase> assemblyPhases )
     {
@@ -121,19 +129,7 @@ public class DefaultAssemblyArchiver
         this.assemblyPhases = assemblyPhases;
     }
 
-    /**
-     * Create the assembly archive. Generally:
-     * <ol>
-     * <li>Setup any directory structures for temporary files</li>
-     * <li>Calculate the output directory/file for the assembly</li>
-     * <li>Setup any handler components for special descriptor files we may encounter</li>
-     * <li>Lookup and configure the {@link Archiver} to be used</li>
-     * <li>Determine what, if any, dependency resolution will be required, and resolve any dependency-version conflicts
-     * up front to produce a managed-version map for the whole assembly process.</li>
-     * <li>Iterate through the available {@link AssemblyArchiverPhase} instances, executing each to handle a different
-     * top-level section of the assembly descriptor, if that section is present.</li>
-     * </ol>
-     */
+    /** {@inheritDoc} */
     public File createArchive( final Assembly assembly, final String fullName, final String format,
                                final AssemblerConfigurationSource configSource, boolean recompressZippedFiles )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
@@ -186,8 +182,10 @@ public class DefaultAssemblyArchiver
             // own artifact resolution.
             final Set<Artifact> dependencySetArtifacts = dependencyResolver.resolve( assembly, configSource );
 
+            // CHECKSTYLE_OFF: LineLength
             final ResolvedAssembly resolvedAssembly =
                 ResolvedAssembly.create( assembly ).withResolvedModuleSets( resolvedModuleSets ).withDependencySetArtifacts( dependencySetArtifacts );
+            // CHECKSTYLE_ON: LineLength
 
             for ( AssemblyArchiverPhase phase : assemblyPhases )
             {
@@ -229,9 +227,11 @@ public class DefaultAssemblyArchiver
         }
     }
 
+    // CHECKSTYLE_OFF: LineLength
     private List<ContainerDescriptorHandler> selectContainerDescriptorHandlers( List<ContainerDescriptorHandlerConfig> requestedContainerDescriptorHandlers,
                                                                                 final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
+    // CHECKSTYLE_ON: LineLength
     {
         getLogger().debug( "All known ContainerDescriptorHandler components: "
                                + ( containerDescriptorHandlers == null ? "none; map is null." : ""
@@ -286,11 +286,11 @@ public class DefaultAssemblyArchiver
      * Creates the necessary archiver to build the distribution file.
      *
      * @param format Archive format
-     * @param includeBaseDir
-     * @param finalName
-     * @param configSource
-     * @param containerHandlers
-     * @param recompressZippedFiles
+     * @param includeBaseDir the base directory for include.
+     * @param finalName The final name.
+     * @param configSource {@link AssemblerConfigurationSource}
+     * @param containerHandlers The list of {@link ContainerDescriptorHandler}
+     * @param recompressZippedFiles recompress zipped files.
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
