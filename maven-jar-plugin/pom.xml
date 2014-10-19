@@ -104,7 +104,7 @@ under the License.
     <dependency><!-- MJAR-173: dependency required to avoid bug in Maven 2.x -->
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.18</version>
+      <version>3.0.20</version>
       <scope>runtime</scope>
     </dependency>
     <!-- dependencies to annotations -->
