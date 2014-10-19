@@ -33,6 +33,28 @@ public interface AssemblyArchiver
 {
     String ROLE = AssemblyArchiver.class.getName();
 
+    /**
+     * Create the assembly archive. Generally:
+     * <ol>
+     * <li>Setup any directory structures for temporary files</li>
+     * <li>Calculate the output directory/file for the assembly</li>
+     * <li>Setup any handler components for special descriptor files we may encounter</li>
+     * <li>Lookup and configure the {@link Archiver} to be used</li>
+     * <li>Determine what, if any, dependency resolution will be required, and resolve any dependency-version conflicts
+     * up front to produce a managed-version map for the whole assembly process.</li>
+     * <li>Iterate through the available {@link AssemblyArchiverPhase} instances, executing each to handle a different
+     * top-level section of the assembly descriptor, if that section is present.</li>
+     * </ol>
+     * @param assembly The {@link Assembly}
+     * @param fullName The full name.
+     * @param format The format.
+     * @param configSource The {@link AssemblerConfigurationSource}
+     * @param recompressZippedFiles recompress zipped files.
+     * @return The resulting archive file.
+     * @throws ArchiveCreationException
+     * @throws AssemblyFormattingException
+     * @throws InvalidAssemblerConfigurationException
+     */
     File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource,
                         boolean recompressZippedFiles )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;

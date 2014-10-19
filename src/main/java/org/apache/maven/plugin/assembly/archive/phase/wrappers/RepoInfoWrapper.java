@@ -37,16 +37,21 @@ public class RepoInfoWrapper
 
     private List<GroupVersionAlignmentWrapper> convertedAlignments;
 
+    /**
+     * @param repo The {@link Repository}
+     */
     public RepoInfoWrapper( final Repository repo )
     {
         this.repo = repo;
     }
 
+    /** {@inheritDoc} */
     public List<String> getExcludes()
     {
         return repo.getExcludes();
     }
 
+    /** {@inheritDoc} */
     public List<GroupVersionAlignmentWrapper> getGroupVersionAlignments()
     {
         final List<GroupVersionAlignment> alignments = repo.getGroupVersionAlignments();
@@ -67,16 +72,19 @@ public class RepoInfoWrapper
         return convertedAlignments;
     }
 
+    /** {@inheritDoc} */
     public List<String> getIncludes()
     {
         return repo.getIncludes();
     }
 
+    /** {@inheritDoc} */
     public String getScope()
     {
         return repo.getScope();
     }
 
+    /** {@inheritDoc} */
     public boolean isIncludeMetadata()
     {
         return repo.isIncludeMetadata();

@@ -28,11 +28,19 @@ public class ArchiveCreationException
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Create in instance.
+     * @param message The message to use.
+     * @param error The error.
+     */
     public ArchiveCreationException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
+    /**
+     * @param message The message.
+     */
     public ArchiveCreationException( final String message )
     {
         super( message );
