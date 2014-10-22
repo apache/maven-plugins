@@ -31,6 +31,8 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
+import javax.annotation.Nonnull;
+
 /**
  * Handles the &lt;fileSets/&gt; top-level section of the assembly descriptor.
  * 
@@ -45,7 +47,7 @@ public class FileSetAssemblyPhase
     /**
      * {@inheritDoc}
      */
-    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+    public void execute( @Nonnull final ResolvedAssembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
