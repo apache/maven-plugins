@@ -128,7 +128,7 @@ public class ReaderFormatter
                         }
                         catch ( AssemblyFormattingException e )
                         {
-                            throw new IOException( "When creating filterwareppers", e );
+                            throw new IOException( e.getMessage());
                         }
 
                     }
