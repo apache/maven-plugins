@@ -19,18 +19,6 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -41,6 +29,20 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.IOUtil;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @version $Id$
@@ -56,7 +58,7 @@ public class SimpleAggregatingDescriptorHandler
 
     private String outputPath;
 
-    private final String commentChars = "#";
+    private static final String commentChars = "#";
 
     // calculated, temporary values.
 
@@ -107,8 +109,11 @@ public class SimpleAggregatingDescriptorHandler
             f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            // FIXME if it is a properties file, encoding should be ISO-8859-1
-            writer = new FileWriter( f ); // platform encoding
+
+            boolean isProperty = AssemblyFileUtils.isPropertyFile(f);
+            FileOutputStream fos = new FileOutputStream( f );
+            writer = isProperty ? new OutputStreamWriter( fos,  "ISO-8859-1")
+                : new OutputStreamWriter( fos); // Still platform encoding
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
@@ -186,8 +191,10 @@ public class SimpleAggregatingDescriptorHandler
         Reader reader = null;
         try
         {
-            // FIXME if it is a properties file, encoding should be ISO-8859-1
-            reader = new InputStreamReader( fileInfo.getContents() ); // platform encoding
+            boolean isProperty = AssemblyFileUtils.isPropertyFile(fileInfo.getName());
+
+            reader = isProperty ? new InputStreamReader( fileInfo.getContents(), "ISO-8859-1" ) :
+            new InputStreamReader( fileInfo.getContents() ); // platform encoding
 
             IOUtil.copy( reader, writer );
         }

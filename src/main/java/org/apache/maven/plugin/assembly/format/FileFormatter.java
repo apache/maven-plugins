@@ -22,7 +22,6 @@ package org.apache.maven.plugin.assembly.format;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -36,10 +35,8 @@ import org.apache.maven.plugin.assembly.utils.LineEndings;
 import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
-import org.apache.maven.shared.filtering.MavenReaderFilterRequest;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -59,16 +56,10 @@ public class FileFormatter
         this.logger = logger;
     }
 
-    public File format( File source, boolean filter, String lineEnding, String encoding )
+    public File format( @Nonnull File source, boolean filter, String lineEnding, String encoding )
         throws AssemblyFormattingException
     {
-        return format( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
-    }
-
-    private File format( @Nonnull File source, boolean filter, String lineEndingCharacters, @Nullable File tempRoot,
-                        String encoding )
-        throws AssemblyFormattingException
-    {
+        File tempRoot = configSource.getTemporaryRootDirectory();
         AssemblyFileUtils.verifyTempDirectoryAvailability( tempRoot );
 
         File result = source;
@@ -85,10 +76,10 @@ public class FileFormatter
                 doFileFilter( source, tempRoot, encoding, configSource.getEscapeString(), configSource.getDelimiters() );
         }
 
-        LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingCharacters );
-        if ( !LineEndings.keep.equals( lineEnding ) )
+        LineEndings lineEnding1 = LineEndingsUtils.getLineEnding( lineEnding );
+        if ( !LineEndings.keep.equals( lineEnding1 ) )
         {
-            result = formatLineEndings( lineEnding, result, tempRoot, encoding );
+            result = formatLineEndings( lineEnding1, result, tempRoot, encoding );
         }
 
         return result;
@@ -145,58 +136,10 @@ public class FileFormatter
         }
     }
 
-    public Reader doReaderFilter( @Nonnull Reader source, String sourceName, String encoding, String escapeString,
-                               List<String> delimiters )
-        throws AssemblyFormattingException
-    {
-        try
-        {
-            // @todo this test can be improved
-            boolean isPropertiesFile = sourceName.toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
-
-            MavenReaderFilterRequest filterRequest =
-                new MavenReaderFilterRequest( source, true, configSource.getProject(), configSource.getFilters(),
-                                            isPropertiesFile, encoding, configSource.getMavenSession(), null );
-            filterRequest.setEscapeString( escapeString );
-
-            // if these are NOT set, just use the defaults, which are '${*}' and '@'.
-            if ( delimiters != null && !delimiters.isEmpty() )
-            {
-                LinkedHashSet<String> delims = new LinkedHashSet<String>();
-                for ( String delim : delimiters )
-                {
-                    if ( delim == null )
-                    {
-                        // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
-                        delims.add( "${*}" );
-                    }
-                    else
-                    {
-                        delims.add( delim );
-                    }
-                }
-
-                filterRequest.setDelimiters( delims );
-            }
-            else
-            {
-                filterRequest.setDelimiters( filterRequest.getDelimiters() );
-            }
-
-            filterRequest.setInjectProjectBuildFilters( configSource.isIncludeProjectBuildFilters() );
-            return configSource.getMavenReaderFilter().filter( filterRequest );
-        }
-        catch ( MavenFilteringException e )
-        {
-            throw new AssemblyFormattingException( "Error filtering file '" + source + "': " + e.getMessage(), e );
-        }
-    }
-
 
     private File formatLineEndings( LineEndings lineEnding, File source, File tempRoot, String encoding )
         throws AssemblyFormattingException
     {
-        Reader contentReader = null;
         try
         {
             File target = FileUtils.createTempFile( source.getName() + ".", ".formatted", tempRoot );
@@ -212,10 +155,6 @@ public class FileFormatter
         catch ( IOException e )
         {
             throw new AssemblyFormattingException( "Error line formatting file '" + source + "': " + e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtil.close( contentReader );
         }
     }
 }
