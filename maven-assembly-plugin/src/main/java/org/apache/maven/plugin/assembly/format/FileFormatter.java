@@ -65,7 +65,7 @@ public class FileFormatter
         return format( source, filter, lineEnding, configSource.getTemporaryRootDirectory(), encoding );
     }
 
-    public File format( @Nonnull File source, boolean filter, String lineEndingCharacters, @Nullable File tempRoot,
+    private File format( @Nonnull File source, boolean filter, String lineEndingCharacters, @Nullable File tempRoot,
                         String encoding )
         throws AssemblyFormattingException
     {
