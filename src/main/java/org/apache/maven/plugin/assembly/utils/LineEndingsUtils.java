@@ -19,21 +19,21 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.codehaus.plexus.util.IOUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Line Ending class which contains convenience methods to change line endings.
@@ -49,15 +49,15 @@ public final class LineEndingsUtils
     /**
      * Converts the line endings of a file, writing a new file. The encoding of reading and writing can be specified.
      *
-     * @param source The source file, not null
-     * @param dest The destination file, not null
+     * @param source      The source file, not null
+     * @param dest        The destination file, not null
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
-     *            line-ending characters, not null.
+     *                    line-ending characters, not null.
      * @param atEndOfFile The end-of-file line ending, if true then the resulting file will have a new line at the end
-     *            even if the input didn't have one, if false then the resulting file will have no new line at the end
-     *            even if the input did have one, null to determine whether to have a new line at the end of the file
-     *            based on the input file
-     * @param encoding The encoding to use, null for platform encoding
+     *                    even if the input didn't have one, if false then the resulting file will have no new line at the end
+     *                    even if the input did have one, null to determine whether to have a new line at the end of the file
+     *                    based on the input file
+     * @param encoding    The encoding to use, null for platform encoding
      */
     public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, LineEndings lineEndings,
                                            Boolean atEndOfFile, String encoding )
@@ -147,6 +147,21 @@ public final class LineEndingsUtils
         }
     }
 
+    /**
+     * Converts the line endings of a file, writing a new file. The encoding of reading and writing can be specified.
+     *
+     * @param in          The source reader
+     * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
+     *                    line-ending characters, not null.
+     * @param in          with proper line endings.
+     */
+    public static InputStream lineEndingConverter( @Nonnull InputStream in, LineEndings lineEndings )
+        throws IOException
+    {
+        return lineEndings.isNewLine() ? new LinuxLineFeedInputStream( in, false )
+            : lineEndings.isCrLF() ? new WindowsLineFeedInputStream( in, false ) : in;
+    }
+
     public static LineEndings getLineEnding( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
@@ -165,8 +180,7 @@ public final class LineEndingsUtils
         return result;
     }
 
-    @Nullable
-    public static String getLineEndingCharacters( @Nullable String lineEnding )
+    @Nullable public static String getLineEndingCharacters( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
 

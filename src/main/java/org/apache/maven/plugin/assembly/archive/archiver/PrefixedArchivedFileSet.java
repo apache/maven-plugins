@@ -23,6 +23,7 @@ import static org.apache.maven.plugin.assembly.archive.archiver.PrefixedFileSet.
 
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 
 import java.io.File;
 
@@ -118,6 +119,11 @@ public class PrefixedArchivedFileSet
     public boolean isUsingDefaultExcludes()
     {
         return fileSet.isUsingDefaultExcludes();
+    }
+
+    public InputStreamTransformer getStreamTransformer()
+    {
+        return fileSet.getStreamTransformer();
     }
 
 }

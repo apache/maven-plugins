@@ -21,19 +21,27 @@ package org.apache.maven.plugin.assembly.archive.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.format.FileSetFormatter;
+import org.apache.maven.plugin.assembly.format.FileFormatter;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.apache.maven.plugin.assembly.utils.LineEndings;
+import org.apache.maven.plugin.assembly.utils.LineEndingsUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 
@@ -99,8 +107,6 @@ public class AddFileSetsTask
         // throw this check in just in case someone extends this class...
         checkLogger();
 
-        final FileSetFormatter fileSetFormatter = new FileSetFormatter( configSource, logger );
-
         if ( project == null )
         {
             project = configSource.getProject();
@@ -133,18 +139,7 @@ public class AddFileSetsTask
 
         if ( fileSetDir.exists() )
         {
-            try
-            {
-                fileSetDir = fileSetFormatter.formatFileSetForAssembly( fileSetDir, fileSet );
-            }
-            catch ( final IOException e )
-            {
-                throw new ArchiveCreationException( "Error fixing file-set line endings for assembly: "
-                    + e.getMessage(), e );
-            }
-
-            logger.debug( "Adding file-set from directory: '" + fileSetDir.getAbsolutePath()
-                + "'\nassembly output directory is: \'" + destDirectory + "\'" );
+            InputStreamTransformer fileSetTransformers = getFileSetTransformers( configSource, fileSetDir, fileSet );
 
             if ( fileSetDir.getPath().equals( File.separator ) )
             {
@@ -152,7 +147,7 @@ public class AddFileSetsTask
                     + File.separator
                     + ", which is your *entire* file system.\nThese are not the files you are looking for" );
             }
-            final AddDirectoryTask task = new AddDirectoryTask( fileSetDir );
+            final AddDirectoryTask task = new AddDirectoryTask( fileSetDir, fileSetTransformers );
 
             final int dirMode = TypeConversionUtils.modeToInt( fileSet.getDirectoryMode(), logger );
             if ( dirMode != -1 )
@@ -179,6 +174,69 @@ public class AddFileSetsTask
             task.execute( archiver, configSource );
         }
     }
+
+    private InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource, File fileSetDir,
+                                                            final org.apache.maven.plugin.assembly.model.FileSet set )
+        throws AssemblyFormattingException
+    {
+        final String lineEndingHint = set.getLineEnding();
+
+        String lineEnding = LineEndingsUtils.getLineEndingCharacters( lineEndingHint );
+
+        if ( ( lineEnding != null ) || set.isFiltered() )
+        {
+            InputStreamTransformer isf = new InputStreamTransformer()
+            {
+                public InputStream transform( PlexusIoResource plexusIoResource, InputStream inputStream )
+                    throws IOException
+                {
+                    FileFormatter fileFormatter = new FileFormatter( configSource, logger );
+
+                    if ( set.isFiltered() )
+                    {
+                        final String encoding = configSource.getEncoding();
+
+                        Reader source = encoding != null ? new InputStreamReader( inputStream, encoding )
+                            : new InputStreamReader( inputStream ); // wtf platform encoding ?
+                        try
+                        {
+                            Reader filtered = fileFormatter.doReaderFilter( source, plexusIoResource.getName(),
+                                                                            configSource.getEncoding(),
+                                                                            configSource.getEscapeString(),
+                                                                            configSource.getDelimiters() );
+                            final ReaderInputStream readerInputStream = encoding != null ? new ReaderInputStream( filtered, encoding)
+                                : new ReaderInputStream( filtered );
+
+                            LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingHint );
+                            if ( !LineEndings.keep.equals( lineEnding ) )
+                            {
+                                return LineEndingsUtils.lineEndingConverter( readerInputStream, lineEnding );
+
+                            }
+                            return readerInputStream;
+
+                        }
+                        catch ( AssemblyFormattingException e )
+                        {
+                            throw new IOException( e );
+                        }
+
+                    }
+                    else
+                    {
+                        return inputStream;
+                    }
+                }
+            };
+            return isf;
+        }
+        else
+        {
+            logger.debug( "NOT reformatting any files in " + fileSetDir );
+            return null;
+        }
+    }
+
 
     protected File getFileSetDirectory( final FileSet fileSet, final File basedir, final File archiveBaseDir )
         throws ArchiveCreationException, AssemblyFormattingException

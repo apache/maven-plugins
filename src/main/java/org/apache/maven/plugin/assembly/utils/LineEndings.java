@@ -35,6 +35,13 @@ public enum LineEndings
         this.lineEndingCharacters = lineEndingCharacters;
     }
 
+    public boolean isNewLine(){
+        return this== unix || this == lf;
+    }
+    public boolean isCrLF(){
+        return this== windows || this == crlf || this == dos;
+    }
+
     public String getLineEndingCharacters()
     {
         return this.lineEndingCharacters;

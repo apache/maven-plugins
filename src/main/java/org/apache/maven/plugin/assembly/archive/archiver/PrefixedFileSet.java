@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.archive.archiver;
 
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 
 import java.io.File;
 
@@ -145,4 +146,8 @@ public class PrefixedFileSet
         return fileSet.getDirectory();
     }
 
+    public InputStreamTransformer getStreamTransformer()
+    {
+        return fileSet.getStreamTransformer();
+    }
 }
