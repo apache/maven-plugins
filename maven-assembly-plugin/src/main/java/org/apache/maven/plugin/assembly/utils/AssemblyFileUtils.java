@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
@@ -150,4 +151,13 @@ public final class AssemblyFileUtils
         return name.replace( File.separatorChar, '/' ); // How can this be anything but a no-op
     }
 
+    public static boolean isPropertyFile( String sourceName )
+    {
+        return sourceName.toLowerCase( Locale.ENGLISH ).endsWith( ".properties" );
+    }
+
+    public static boolean isPropertyFile( File file )
+    {
+        return isPropertyFile( file.getName());
+    }
 }
