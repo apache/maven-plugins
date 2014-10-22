@@ -4,6 +4,11 @@ Testing maven-eclipse-plugin
   that have hard coded paths and other junk in them.
   
   Most of the work is done in the integration tests.
+
+  You have to set M2_HOME to the appropriate maven version
+  you want to test with like this:
+ 
+  export M2_HOME=/usr/share/java/apache-maven-3.1.1
   
   Use 
     mvn -Prun-its verify

@@ -250,6 +250,21 @@ under the License.
             </reportsDirectories>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>README-testing.txt</exclude>
+              <!--
+                These files contain several files for eclipse
+                which will let fail the tests if a license header
+                is being added.
+              -->
+              <exclude>src/test/resources/**</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
