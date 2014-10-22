@@ -139,7 +139,11 @@ public class AddFileSetsTask
 
         if ( fileSetDir.exists() )
         {
-            InputStreamTransformer fileSetTransformers = getFileSetTransformers( configSource, fileSetDir, fileSet );
+            InputStreamTransformer fileSetTransformers = getFileSetTransformers( configSource, fileSet );
+            if (fileSetTransformers == null)
+            {
+                logger.debug( "NOT reformatting any files in " + fileSetDir );
+            }
 
             if ( fileSetDir.getPath().equals( File.separator ) )
             {
@@ -175,8 +179,8 @@ public class AddFileSetsTask
         }
     }
 
-    private InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource, File fileSetDir,
-                                                            final org.apache.maven.plugin.assembly.model.FileSet set )
+    private InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource,
+                                                           final org.apache.maven.plugin.assembly.model.FileSet set )
         throws AssemblyFormattingException
     {
         final String lineEndingHint = set.getLineEnding();
@@ -230,11 +234,7 @@ public class AddFileSetsTask
             };
             return isf;
         }
-        else
-        {
-            logger.debug( "NOT reformatting any files in " + fileSetDir );
-            return null;
-        }
+        return null;
     }
 
 
