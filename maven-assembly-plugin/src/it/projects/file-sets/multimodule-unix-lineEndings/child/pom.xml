@@ -25,6 +25,7 @@ under the License.
     <groupId>org.apache.maven.plugin.assembly.test</groupId>
     <artifactId>it-project-parent</artifactId>
     <version>1</version>
+    <relativePath>../../../../it-project-parent/pom.xml</relativePath>
   </parent>
   
   <artifactId>child</artifactId>

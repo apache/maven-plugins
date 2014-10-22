@@ -28,6 +28,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenReaderFilter;
 
 public class ConfigSourceStub
     implements AssemblerConfigurationSource
@@ -185,6 +186,12 @@ public class ConfigSourceStub
     {
         return null;
     }
+
+    public MavenReaderFilter getMavenReaderFilter()
+    {
+        return null;
+    }
+
 
     public void setProject( final MavenProject mavenProject )
     {

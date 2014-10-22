@@ -25,6 +25,7 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class AddDirectoryTask
 
     private final File directory;
 
+    private final InputStreamTransformer transformer;
+
     private List<String> includes;
 
     private List<String> excludes;
@@ -51,9 +54,15 @@ public class AddDirectoryTask
 
     private int fileMode = -1;
 
-    public AddDirectoryTask( final File directory )
+    public AddDirectoryTask( final File directory, InputStreamTransformer transformers )
     {
         this.directory = directory;
+
+        this.transformer = transformers;
+    }
+    public AddDirectoryTask( final File directory )
+    {
+        this( directory, null);
     }
 
     public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
@@ -130,6 +139,9 @@ public class AddDirectoryTask
                     fs.setDirectory( directory );
                     fs.setIncludes( includesArray );
                     fs.setExcludes( excludesArray );
+                    if (transformer != null){
+                            fs.setStreamTransformer( transformer );
+                    }
 
                     archiver.addFileSet( fs );
                 }

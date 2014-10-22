@@ -44,6 +44,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenReaderFilter;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
@@ -224,6 +225,12 @@ public abstract class AbstractAssemblyMojo
      */
     @Component
     private MavenFileFilter mavenFileFilter;
+
+    /**
+     * Maven shared filtering utility.
+     */
+    @Component
+    private MavenReaderFilter mavenReaderFilter;
 
     /**
      * The Maven Session Object
@@ -866,6 +873,11 @@ public abstract class AbstractAssemblyMojo
     public MavenFileFilter getMavenFileFilter()
     {
         return mavenFileFilter;
+    }
+
+    public MavenReaderFilter getMavenReaderFilter()
+    {
+        return mavenReaderFilter;
     }
 
     public boolean isUpdateOnly()
