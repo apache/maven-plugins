@@ -87,7 +87,7 @@ public class FileItemAssemblyPhase
             final String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getProject(), null,
                                                         configSource.getFinalName(), configSource );
-                                            ¥
+
             String target;
 
             // omit the last char if ends with / or \\
