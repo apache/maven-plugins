@@ -30,7 +30,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
@@ -158,9 +157,9 @@ public class DefaultDependencyResolver
         return base.withArtifacts( artifacts );
     }
 
-    protected Set<Artifact> resolveNonTransitively( final Assembly assembly, final Set<Artifact> dependencyArtifacts,
-                                                    final AssemblerConfigurationSource configSource,
-                                                    final List<ArtifactRepository> repos )
+    Set<Artifact> resolveNonTransitively( final Assembly assembly, final Set<Artifact> dependencyArtifacts,
+                                          final AssemblerConfigurationSource configSource,
+                                          final List<ArtifactRepository> repos )
         throws DependencyResolutionException
     {
 
@@ -244,8 +243,7 @@ public class DefaultDependencyResolver
         return result.getArtifacts();
     }
 
-    protected void updateRepositoryResolutionRequirements( final Assembly assembly,
-                                                           final ResolutionManagementInfo requirements )
+    void updateRepositoryResolutionRequirements( final Assembly assembly, final ResolutionManagementInfo requirements )
     {
         final List<Repository> repositories = assembly.getRepositories();
 
@@ -259,9 +257,8 @@ public class DefaultDependencyResolver
         }
     }
 
-    protected void updateModuleSetResolutionRequirements( final Assembly assembly,
-                                                          final ResolutionManagementInfo requirements,
-                                                          final AssemblerConfigurationSource configSource )
+    void updateModuleSetResolutionRequirements( final Assembly assembly, final ResolutionManagementInfo requirements,
+                                                final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
         final List<ModuleSet> moduleSets = assembly.getModuleSets();
@@ -276,9 +273,9 @@ public class DefaultDependencyResolver
         }
     }
 
-    protected void updateModuleSetResolutionRequirements( AssemblyId assemblyId, ModuleSet set,
-                                                          final ResolutionManagementInfo requirements,
-                                                          final AssemblerConfigurationSource configSource )
+    void updateModuleSetResolutionRequirements( AssemblyId assemblyId, ModuleSet set,
+                                                final ResolutionManagementInfo requirements,
+                                                final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
         final ModuleBinaries binaries = set.getBinaries();
@@ -323,9 +320,9 @@ public class DefaultDependencyResolver
     }
 
     @SuppressWarnings( "unchecked" )
-    protected void updateDependencySetResolutionRequirements( final List<DependencySet> depSets,
-                                                              final ResolutionManagementInfo requirements,
-                                                              AssemblyId assemblyId, final MavenProject... projects )
+    void updateDependencySetResolutionRequirements( final List<DependencySet> depSets,
+                                                    final ResolutionManagementInfo requirements, AssemblyId assemblyId,
+                                                    final MavenProject... projects )
         throws DependencyResolutionException
     {
         if ( depSets != null && !depSets.isEmpty() )
@@ -395,8 +392,8 @@ public class DefaultDependencyResolver
     }
 
     @SuppressWarnings( "unchecked" )
-    protected List<ArtifactRepository> aggregateRemoteArtifactRepositories( final List<ArtifactRepository> remoteRepositories,
-                                                                            final Set<MavenProject> projects )
+    List<ArtifactRepository> aggregateRemoteArtifactRepositories( final List<ArtifactRepository> remoteRepositories,
+                                                                  final Set<MavenProject> projects )
     {
         final List<List<ArtifactRepository>> repoLists = new ArrayList<List<ArtifactRepository>>();
 
@@ -425,13 +422,6 @@ public class DefaultDependencyResolver
         }
 
         return remoteRepos;
-    }
-
-    protected DefaultDependencyResolver setLogger( final Logger logger )
-    {
-        enableLogging( logger );
-
-        return this;
     }
 
 }

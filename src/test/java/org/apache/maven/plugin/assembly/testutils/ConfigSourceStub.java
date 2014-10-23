@@ -172,11 +172,6 @@ public class ConfigSourceStub
         return false;
     }
 
-    public void setArchiverConfig( final String archiverConfig )
-    {
-        this.archiverConfig = archiverConfig;
-    }
-
     public String getArchiverConfig()
     {
         return archiverConfig;

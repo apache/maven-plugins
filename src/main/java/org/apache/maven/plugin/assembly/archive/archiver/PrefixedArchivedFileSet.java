@@ -30,7 +30,7 @@ import java.io.File;
 /**
  * @version $Id$
  */
-public class PrefixedArchivedFileSet
+class PrefixedArchivedFileSet
     implements ArchivedFileSet
 {
 

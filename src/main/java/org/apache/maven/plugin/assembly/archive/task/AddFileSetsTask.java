@@ -41,7 +41,6 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
  * @version $Id$
  */
 public class AddFileSetsTask
-    implements ArchiverTask
 {
 
     private final List<FileSet> fileSets;
@@ -92,8 +91,8 @@ public class AddFileSetsTask
         }
     }
 
-    protected void addFileSet( final FileSet fileSet, final Archiver archiver,
-                               final AssemblerConfigurationSource configSource, final File archiveBaseDir )
+    void addFileSet( final FileSet fileSet, final Archiver archiver, final AssemblerConfigurationSource configSource,
+                     final File archiveBaseDir )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         // throw this check in just in case someone extends this class...
@@ -168,11 +167,11 @@ public class AddFileSetsTask
             task.setIncludes( fileSet.getIncludes() );
             task.setOutputDirectory( destDirectory );
 
-            task.execute( archiver, configSource );
+            task.execute( archiver );
         }
     }
 
-    protected File getFileSetDirectory( final FileSet fileSet, final File basedir, final File archiveBaseDir )
+    File getFileSetDirectory( final FileSet fileSet, final File basedir, final File archiveBaseDir )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         String sourceDirectory = fileSet.getDirectory();
@@ -217,11 +216,6 @@ public class AddFileSetsTask
     public void setProject( final MavenProject project )
     {
         this.project = project;
-    }
-
-    public MavenProject getModuleProject()
-    {
-        return moduleProject;
     }
 
     public void setModuleProject( final MavenProject moduleProject )

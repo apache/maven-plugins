@@ -774,9 +774,9 @@ public class AssemblyFormatUtilsTest
 
     private final class MockAndControlForGetDistroName
     {
-        MockControl control;
+        final MockControl control;
 
-        AssemblerConfigurationSource configSource;
+        final AssemblerConfigurationSource configSource;
 
         private final String classifier;
 

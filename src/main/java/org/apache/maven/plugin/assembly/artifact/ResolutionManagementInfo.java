@@ -129,8 +129,4 @@ class ResolutionManagementInfo
         artifacts.addAll( a );
     }
 
-    void addArtifact( final Artifact a )
-    {
-        artifacts.add( a );
-    }
 }

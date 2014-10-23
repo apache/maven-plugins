@@ -43,8 +43,8 @@ public class ResolvedAssembly
 
     private final Set<Artifact> dependencySetArtifacts;
 
-    public ResolvedAssembly( Assembly assembly, List<ResolvedModuleSet> resolvedModuleSets,
-                             Set<Artifact> dependencySetArtifacts )
+    private ResolvedAssembly( Assembly assembly, List<ResolvedModuleSet> resolvedModuleSets,
+                              Set<Artifact> dependencySetArtifacts )
     {
         this.assembly = assembly;
         this.resolvedModuleSets = resolvedModuleSets;
@@ -80,11 +80,6 @@ public class ResolvedAssembly
     public Set<Artifact> getResolvedDependencySetArtifacts()
     {
         return dependencySetArtifacts;
-    }
-
-    public Assembly getAssembly()
-    {
-        return assembly;
     }
 
     public List<DependencySet> getDependencySets()

@@ -123,9 +123,9 @@ public class FileSetAssemblyPhaseTest
 
     private final class MockAndControlForLogger
     {
-        Logger logger;
+        final Logger logger;
 
-        MockControl control;
+        final MockControl control;
 
         MockAndControlForLogger()
         {

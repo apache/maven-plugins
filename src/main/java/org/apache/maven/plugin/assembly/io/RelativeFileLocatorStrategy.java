@@ -29,7 +29,7 @@ import java.io.File;
 /**
  * @version $Id$
  */
-public class RelativeFileLocatorStrategy
+class RelativeFileLocatorStrategy
     implements LocatorStrategy
 {
 

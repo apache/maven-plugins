@@ -39,9 +39,9 @@ import java.util.List;
 
 public class ReaderFormatter
 {
-    public static Reader createReaderFilter( @Nonnull Reader source, String sourceName, String encoding,
-                                             String escapeString, List<String> delimiters,
-                                             AssemblerConfigurationSource configSource )
+    private static Reader createReaderFilter( @Nonnull Reader source, String sourceName, String encoding,
+                                              String escapeString, List<String> delimiters,
+                                              AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         try
