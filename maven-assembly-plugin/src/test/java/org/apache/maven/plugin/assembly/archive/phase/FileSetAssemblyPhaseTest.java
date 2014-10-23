@@ -106,7 +106,7 @@ public class FileSetAssemblyPhaseTest
 
         final int[] modes = { -1, -1, dirMode, fileMode };
 
-        macTask.expectAdditionOfSingleFileSet( project, basedir, "final-name", false, modes, 1, true );
+        macTask.expectAdditionOfSingleFileSet( project, "final-name", false, modes, 1, true );
 
         mm.replayAll();
 

@@ -29,8 +29,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfigSourceWrapper;
-import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Repository;
@@ -126,7 +124,7 @@ public class RepositoryAssemblyPhaseTest
         macArchiver.expectModeChange( -1, -1, mode, mode, true );
         macArchiver.expectAddDirectory( outDir, "out/", null, null );
 
-        macRepo.expectAssemble( outDir, repo, macCS.configSource );
+        macRepo.expectAssemble();
 
         assembly.addRepository( repo );
 
@@ -174,108 +172,6 @@ public class RepositoryAssemblyPhaseTest
             {
                 Assert.fail( "Should never happen." );
             }
-
-            // TODO: WTF
-            /*
-            control.setMatcher( new AbstractMatcher()
-            {
-
-                @Override
-                protected boolean argumentMatches( final Object expected, final Object actual )
-                {
-                    final FileSet e = (FileSet) expected;
-                    final FileSet a = (FileSet) actual;
-
-                    if ( !eq( e.getDirectory(), a.getDirectory() ) )
-                    {
-                        System.out.println( "FileSet directory expected: " + e.getDirectory() + "\nActual: "
-                                        + a.getDirectory() );
-
-                        return false;
-                    }
-
-                    if ( !eq( e.getPrefix(), a.getPrefix() ) )
-                    {
-                        System.out.println( "FileSet prefix expected: " + e.getPrefix() + "\nActual: " + a.getPrefix() );
-
-                        return false;
-                    }
-
-                    if ( !areq( e.getIncludes(), a.getIncludes() ) )
-                    {
-                        System.out.println( "FileSet includes expected: " + arToStr( e.getIncludes() ) + "\nActual: "
-                                        + arToStr( a.getIncludes() ) );
-
-                        return false;
-                    }
-
-                    if ( !areq( e.getExcludes(), a.getExcludes() ) )
-                    {
-                        System.out.println( "FileSet excludes expected: " + arToStr( e.getExcludes() ) + "\nActual: "
-                                        + arToStr( a.getExcludes() ) );
-
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                @Override
-                protected String argumentToString( final Object argument )
-                {
-                    final FileSet a = (FileSet) argument;
-
-                    return argument == null ? "Null FileSet" : "FileSet:[dir=" + a.getDirectory() + ", prefix: "
-                                    + a.getPrefix() + "\nincludes:\n" + arToStr( a.getIncludes() ) + "\nexcludes:\n"
-                                    + arToStr( a.getExcludes() ) + "]";
-                }
-
-                private String arToStr( final String[] array )
-                {
-                    return array == null ? "-EMPTY-" : StringUtils.join( array, "\n\t" );
-                }
-
-                private boolean areq( final String[] first, final String[] second )
-                {
-                    if ( ( first == null || first.length == 0 ) && ( second == null || second.length == 0 ) )
-                    {
-                        return true;
-                    }
-                    else if ( first == null && second != null )
-                    {
-                        return false;
-                    }
-                    else if ( first != null && second == null )
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return Arrays.equals( first, second );
-                    }
-                }
-
-                private boolean eq( final Object first, final Object second )
-                {
-                    if ( first == null && second == null )
-                    {
-                        return true;
-                    }
-                    else if ( first == null && second != null )
-                    {
-                        return false;
-                    }
-                    else if ( first != null && second == null )
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return first.equals( second );
-                    }
-                }
-
-            } );*/
 
             EasyMock.expectLastCall().atLeastOnce();
         }
@@ -353,8 +249,7 @@ public class RepositoryAssemblyPhaseTest
             repositoryAssembler = mockManager.createMock(RepositoryAssembler.class);
         }
 
-        public void expectAssemble( final File dir, final Repository repo,
-                                    final AssemblerConfigurationSource configSource )
+        public void expectAssemble()
         {
             try
             {
@@ -362,7 +257,6 @@ public class RepositoryAssemblyPhaseTest
                                                            (RepositoryInfo) anyObject(),
                                                            ( RepositoryBuilderConfigSource)anyObject() );
                 EasyMock.expectLastCall().atLeastOnce();
-//                control.setMatcher( MockControl.ALWAYS_MATCHER );
             }
             catch ( final RepositoryAssemblyException e )
             {

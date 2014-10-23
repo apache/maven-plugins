@@ -209,7 +209,7 @@ public class AddArtifactTaskTest
         File artifactFile = artifactMock.setNewFile();
 
         mac.expectGetDestFile( new File( "junk" ) );
-        mac.expectAddArchivedFileSet( artifactFile, outputLocation, includes, excludes );
+        mac.expectAddArchivedFileSet();
 
         mockManager.replayAll();
 

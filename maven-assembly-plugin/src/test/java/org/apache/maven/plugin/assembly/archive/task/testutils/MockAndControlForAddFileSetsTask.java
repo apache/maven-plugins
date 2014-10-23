@@ -19,11 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
-import java.io.File;
-
 import junit.framework.Assert;
-
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
@@ -32,6 +28,8 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
@@ -58,11 +56,6 @@ public class MockAndControlForAddFileSetsTask
     public void expectGetArchiveBaseDirectory()
     {
         expect(configSource.getArchiveBaseDirectory()).andReturn( archiveBaseDir ).anyTimes();
-    }
-
-    public void expectGetBasedir( File basedir )
-    {
-        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
     }
 
     void expectModeChanges( int[] modes, int modeChangeCount )
@@ -98,8 +91,7 @@ public class MockAndControlForAddFileSetsTask
         }
     }
 
-    public void expectAdditionOfSingleFileSet( MavenProject project, File basedir, String finalName,
-                                               boolean shouldAddDir, int[] modes, int modeChangeCount,
+    public void expectAdditionOfSingleFileSet( MavenProject project, String finalName, boolean shouldAddDir, int[] modes, int modeChangeCount,
                                                boolean isDebugEnabled )
     {
         expectAdditionOfSingleFileSet( project, finalName, shouldAddDir, modes, modeChangeCount,
@@ -144,11 +136,6 @@ public class MockAndControlForAddFileSetsTask
     public void expectGetProject( MavenProject project )
     {
         expect(configSource.getProject()).andReturn( project ).atLeastOnce();
-    }
-
-    public void expectGetSession( MavenSession session )
-    {
-        expect(configSource.getMavenSession()).andReturn( session ).atLeastOnce();
     }
 
     public void expectGetFinalName( String finalName )
