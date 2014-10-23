@@ -26,27 +26,33 @@ import java.util.List;
 /**
  * @version $Id$
  */
-public class GroupVersionAlignmentWrapper
+class GroupVersionAlignmentWrapper
     implements org.apache.maven.shared.repository.model.GroupVersionAlignment
 {
 
     private final GroupVersionAlignment alignment;
 
+    /**
+     * @param alignment @{link {@link GroupVersionAlignment}
+     */
     public GroupVersionAlignmentWrapper( final GroupVersionAlignment alignment )
     {
         this.alignment = alignment;
     }
 
+    /** {@inheritDoc} */
     public List<String> getExcludes()
     {
         return alignment.getExcludes();
     }
 
+    /** {@inheritDoc} */
     public String getId()
     {
         return alignment.getId();
     }
 
+    /** {@inheritDoc} */
     public String getVersion()
     {
         return alignment.getVersion();

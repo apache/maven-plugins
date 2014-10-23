@@ -44,6 +44,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenReaderFilter;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
@@ -60,7 +61,7 @@ public abstract class AbstractAssemblyMojo
      * The character encoding scheme to be applied when filtering resources.
      */
     @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
-    protected String encoding;
+    private String encoding;
 
     /**
      * Expressions preceded with this String won't be interpolated.
@@ -69,7 +70,7 @@ public abstract class AbstractAssemblyMojo
      * @since 2.4
      */
     @Parameter( property = "assembly.escapeString" )
-    protected String escapeString;
+    private String escapeString;
 
     /**
      * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
@@ -130,14 +131,15 @@ public abstract class AbstractAssemblyMojo
     /**
      * Specifies the formats of the assembly.
      * Multiple formats can be supplied and the Assembly Plugin will generate an archive for each desired formats.
-     * When deploying your project, all file formats specified will also be deployed. A format is specified by supplying one of the following
+     * When deploying your project, all file formats specified will also be deployed. A format is specified by supplying
+     * one of the following
      * values in a &lt;format&gt; subelement:
      * <ul>
      * <li><em>dir</em> - Creates a directory</li>
      * <li><em>zip</em> - Creates a ZIP file format</li>
      * <li><em>tar</em> - Creates a TAR format</li>
-     * <li><em>tar.gz</em> - Creates a gzip'd TAR format</li>
-     * <li><em>tar.bz2</em> - Creates a bzip'd TAR format</li>
+     * <li><em>tar.gz</em> or <em>tgz</em> - Creates a gzip'd TAR format</li>
+     * <li><em>tar.bz2</em> or <em>tbz2</em> - Creates a bzip'd TAR format</li>
      * </ul>
      */
     @Parameter
@@ -161,8 +163,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * A list of references to assembly descriptors available on the plugin's classpath. The default classpath
-     * includes these built-in descriptors: <code>bin</code>,
-     * <code>jar-with-dependencies</code>, <code>src</code>, and
+     * includes these built-in descriptors: <code>bin</code>, <code>jar-with-dependencies</code>, <code>src</code>, and
      * <code>project</code>. You can add others by adding dependencies
      * to the plugin.
      */
@@ -189,7 +190,7 @@ public abstract class AbstractAssemblyMojo
      */
     @Deprecated
     @Parameter( property = "descriptorId" )
-    protected String descriptorId;
+    private String descriptorId;
 
     /**
      * Assembly XML Descriptor file. This must be the path to your customized descriptor file.
@@ -198,11 +199,11 @@ public abstract class AbstractAssemblyMojo
      */
     @Deprecated
     @Parameter( property = "descriptor" )
-    protected String descriptor;
+    private String descriptor;
 
     /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
-     * (default), "fail", "truncate", "gnu", or "omit".
+     * (default), "fail", "truncate", "gnu", "posix", "posix_warn" or "omit".
      */
     @Parameter( property = "assembly.tarLongFileMode", defaultValue = "warn" )
     private String tarLongFileMode;
@@ -224,6 +225,12 @@ public abstract class AbstractAssemblyMojo
      */
     @Component
     private MavenFileFilter mavenFileFilter;
+
+    /**
+     * Maven shared filtering utility.
+     */
+    @Component
+    private MavenReaderFilter mavenReaderFilter;
 
     /**
      * The Maven Session Object
@@ -256,13 +263,13 @@ public abstract class AbstractAssemblyMojo
      * Set to false to exclude the assembly id from the assembly final name.
      */
     @Parameter( property = "assembly.appendAssemblyId", defaultValue = "true" )
-    protected boolean appendAssemblyId;
+    boolean appendAssemblyId;
 
     /**
      * Set to true in order to not fail when a descriptor is missing.
      */
     @Parameter( property = "assembly.ignoreMissingDescriptor", defaultValue = "false" )
-    protected boolean ignoreMissingDescriptor;
+    private boolean ignoreMissingDescriptor;
 
     /**
      * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
@@ -275,13 +282,21 @@ public abstract class AbstractAssemblyMojo
     /**
      * The list of extra filter properties files to be used along with System properties, project
      * properties, and filter properties files specified in the POM build/filters section, which
-     * should be used for the filtering during the current mojo execution.
-     * <br/>
+     * should be used for the filtering during the current mojo execution. <br/>
      * Normally, these will be configured from a plugin's execution section, to provide a different
      * set of filters for a particular execution.
      */
     @Parameter
-    protected List<String> filters;
+    private List<String> filters;
+
+    /**
+     * If True (default) then the ${project.build.filters} are also used in addition to any
+     * further filters defined for the Assembly.
+     * 
+     * @since 2.4.2
+     */
+    @Parameter( property = "assembly.includeProjectBuildFilters", defaultValue = "true" )
+    private boolean includeProjectBuildFilters;
 
     /**
      * Controls whether the assembly plugin tries to attach the resulting assembly to the project.
@@ -317,6 +332,7 @@ public abstract class AbstractAssemblyMojo
      * For instance, to direct an assembly with the "ear" format to use a particular deployment descriptor, you should
      * specify the following for the archiverConfig value in your plugin configuration: <br/>
      * <p/>
+     * 
      * <pre>
      * &lt;appxml&gt;${project.basedir}/somepath/app.xml&lt;/appxml&gt;
      * </pre>
@@ -338,8 +354,8 @@ public abstract class AbstractAssemblyMojo
     /**
      * This will cause the assembly to only update an existing archive, if it exists.
      * <p>
-     * <strong>Note:</strong> The property that can be used on the command line
-     * was misspelled as "assembly.updatOnly" in versions prior to version 2.4.
+     * <strong>Note:</strong> The property that can be used on the command line was misspelled as "assembly.updatOnly"
+     * in versions prior to version 2.4.
      * </p>
      *
      * @since 2.2
@@ -349,7 +365,8 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * <p>
-     * will use the jvm chmod, this is available for user and all level group level will be ignored
+     * will use the jvm chmod, this is available for user and all level group level will be ignored As of
+     * assembly-plugin 2.5, this flag is ignored for users of java7+
      * </p>
      *
      * @since 2.2
@@ -373,10 +390,33 @@ public abstract class AbstractAssemblyMojo
     private boolean ignorePermissions;
 
     /**
+     * <p>
+     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the form
+     * 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p>
+     * <p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * 
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt;/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt;/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     *
+     * @since 2.4
+     */
+    @Parameter
+    private List<String> delimiters;
+
+    /**
      * Create the binary distribution.
      * 
      * @throws org.apache.maven.plugin.MojoExecutionException
-     * 
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -406,79 +446,98 @@ public abstract class AbstractAssemblyMojo
         catch ( final InvalidAssemblerConfigurationException e )
         {
             throw new MojoFailureException( assemblyReader, e.getMessage(), "Mojo configuration is invalid: "
-                            + e.getMessage() );
+                + e.getMessage() );
         }
 
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
 
         boolean warnedAboutMainProjectArtifact = false;
-        for (final Assembly assembly : assemblies) {
-            try {
-                final String fullName = AssemblyFormatUtils.getDistributionName(assembly, this);
+        for ( final Assembly assembly : assemblies )
+        {
+            try
+            {
+                final String fullName = AssemblyFormatUtils.getDistributionName( assembly, this );
 
                 List<String> effectiveFormats = formats;
-                if (effectiveFormats == null || effectiveFormats.size() == 0) {
+                if ( effectiveFormats == null || effectiveFormats.size() == 0 )
+                {
                     effectiveFormats = assembly.getFormats();
                 }
-                if (effectiveFormats == null || effectiveFormats.size() == 0) {
-                    throw new MojoFailureException("No formats specified in the execution parameters or the assembly descriptor.");
+                if ( effectiveFormats == null || effectiveFormats.size() == 0 )
+                {
+                    throw new MojoFailureException(
+                                                    "No formats specified in the execution parameters or the assembly descriptor." );
                 }
 
-                for (final String format : effectiveFormats) {
+                for ( final String format : effectiveFormats )
+                {
                     final File destFile =
-                            assemblyArchiver.createArchive(assembly, fullName, format, this, isRecompressZippedFiles());
+                        assemblyArchiver.createArchive( assembly, fullName, format, this, isRecompressZippedFiles() );
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
-                    final String type = project.getArtifact()
-                            .getType();
+                    final String type = project.getArtifact().getType();
 
-                    if (attach && destFile.isFile()) {
-                        if (isAssemblyIdAppended()) {
-                            projectHelper.attachArtifact(project, format, assembly.getId(), destFile);
-                        } else if (classifier != null) {
-                            projectHelper.attachArtifact(project, format, classifier, destFile);
-                        } else if (!"pom".equals(type) && format.equals(type)) {
-                            if (!warnedAboutMainProjectArtifact) {
+                    if ( attach && destFile.isFile() )
+                    {
+                        if ( isAssemblyIdAppended() )
+                        {
+                            projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
+                        }
+                        else if ( classifier != null )
+                        {
+                            projectHelper.attachArtifact( project, format, classifier, destFile );
+                        }
+                        else if ( !"pom".equals( type ) && format.equals( type ) )
+                        {
+                            if ( !warnedAboutMainProjectArtifact )
+                            {
                                 final StringBuilder message = new StringBuilder();
 
-                                message.append("Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing.");
-                                message.append("\nInstead of attaching the assembly file: ")
-                                        .append(destFile)
-                                        .append(", it will become the file for main project artifact.");
-                                message.append("\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!");
+                                message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
+                                message.append( "\nInstead of attaching the assembly file: " ).append( destFile ).append( ", it will become the file for main project artifact." );
+                                message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
 
-                                getLog().warn(message);
+                                getLog().warn( message );
                                 warnedAboutMainProjectArtifact = true;
                             }
 
-                            final File existingFile = project.getArtifact()
-                                    .getFile();
-                            if ((existingFile != null) && existingFile.exists()) {
-                                getLog().warn("Replacing pre-existing project main-artifact file: " + existingFile
-                                        + "\nwith assembly file: " + destFile);
+                            final File existingFile = project.getArtifact().getFile();
+                            if ( ( existingFile != null ) && existingFile.exists() )
+                            {
+                                getLog().warn( "Replacing pre-existing project main-artifact file: " + existingFile
+                                                   + "\nwith assembly file: " + destFile );
                             }
 
-                            project.getArtifact()
-                                    .setFile(destFile);
-                        } else {
-                            projectHelper.attachArtifact(project, format, null, destFile);
+                            project.getArtifact().setFile( destFile );
                         }
-                    } else if (attach) {
-                        getLog().warn("Assembly file: "
-                                + destFile
-                                + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment.");
+                        else
+                        {
+                            projectHelper.attachArtifact( project, format, null, destFile );
+                        }
+                    }
+                    else if ( attach )
+                    {
+                        getLog().warn( "Assembly file: "
+                                           + destFile
+                                           + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
                     }
                 }
-            } catch (final ArchiveCreationException e) {
-                throw new MojoExecutionException("Failed to create assembly: " + e.getMessage(), e);
-            } catch (final AssemblyFormattingException e) {
-                throw new MojoExecutionException("Failed to create assembly: " + e.getMessage(), e);
-            } catch (final InvalidAssemblerConfigurationException e) {
-                throw new MojoFailureException(assembly, "Assembly is incorrectly configured: " + assembly.getId(),
-                        "Assembly: " + assembly.getId() + " is not configured correctly: "
-                                + e.getMessage());
+            }
+            catch ( final ArchiveCreationException e )
+            {
+                throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
+            }
+            catch ( final AssemblyFormattingException e )
+            {
+                throw new MojoExecutionException( "Failed to create assembly: " + e.getMessage(), e );
+            }
+            catch ( final InvalidAssemblerConfigurationException e )
+            {
+                throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(),
+                                                "Assembly: " + assembly.getId() + " is not configured correctly: "
+                                                    + e.getMessage() );
             }
         }
     }
@@ -486,15 +545,14 @@ public abstract class AbstractAssemblyMojo
     /**
      * Returns true if the current project is located at the Execution Root Directory (where mvn was launched)
      * 
-     * @return
+     * @return if this is the execution root
      */
-    protected boolean isThisTheExecutionRoot()
+    boolean isThisTheExecutionRoot()
     {
         final Log log = getLog();
         log.debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
         log.debug( "Current Folder:" + basedir );
-        final boolean result = mavenSession.getExecutionRootDirectory()
-                                           .equalsIgnoreCase( basedir.toString() );
+        final boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir.toString() );
         if ( result )
         {
             log.debug( "This is the execution root." );
@@ -507,12 +565,12 @@ public abstract class AbstractAssemblyMojo
         return result;
     }
 
-    protected AssemblyArchiver getAssemblyArchiver()
+    AssemblyArchiver getAssemblyArchiver()
     {
         return assemblyArchiver;
     }
 
-    protected AssemblyReader getAssemblyReader()
+    AssemblyReader getAssemblyReader()
     {
         return assemblyReader;
     }
@@ -620,14 +678,18 @@ public abstract class AbstractAssemblyMojo
     {
         if ( filters == null )
         {
-            filters = getProject().getBuild()
-                                  .getFilters();
+            filters = getProject().getBuild().getFilters();
             if ( filters == null )
             {
                 filters = Collections.emptyList();
             }
         }
         return filters;
+    }
+
+    public boolean isIncludeProjectBuildFilters()
+    {
+        return includeProjectBuildFilters;
     }
 
     public List<MavenProject> getReactorProjects()
@@ -656,20 +718,6 @@ public abstract class AbstractAssemblyMojo
         this.archive = archive;
     }
 
-    public void setArchiveBaseDirectory( final File archiveBaseDirectory )
-    {
-        this.archiveBaseDirectory = archiveBaseDirectory;
-    }
-
-    public void setAssemblyArchiver( final AssemblyArchiver assemblyArchiver )
-    {
-        this.assemblyArchiver = assemblyArchiver;
-    }
-
-    public void setAssemblyReader( final AssemblyReader assemblyReader )
-    {
-        this.assemblyReader = assemblyReader;
-    }
 
     public void setBasedir( final File basedir )
     {
@@ -813,6 +861,11 @@ public abstract class AbstractAssemblyMojo
         return mavenFileFilter;
     }
 
+    public MavenReaderFilter getMavenReaderFilter()
+    {
+        return mavenReaderFilter;
+    }
+
     public boolean isUpdateOnly()
     {
         return updateOnly;
@@ -827,13 +880,13 @@ public abstract class AbstractAssemblyMojo
     {
         return ignorePermissions;
     }
-    
+
     public String getEncoding()
     {
         return encoding;
     }
 
-    protected boolean isRecompressZippedFiles()
+    boolean isRecompressZippedFiles()
     {
         return recompressZippedFiles;
     }
@@ -842,4 +895,15 @@ public abstract class AbstractAssemblyMojo
     {
         return escapeString;
     }
+
+    public List<String> getDelimiters()
+    {
+        return delimiters;
+    }
+
+    public void setDelimiters( List<String> delimiters )
+    {
+        this.delimiters = delimiters;
+    }
+
 }

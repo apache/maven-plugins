@@ -20,6 +20,7 @@ package org.apache.maven.plugin.assembly.archive.archiver;
  */
 
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
+import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
@@ -35,6 +36,7 @@ import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
 import org.codehaus.plexus.logging.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -53,7 +55,7 @@ import java.util.Set;
  * <li>prefixing (where all paths have a set global prefix prepended before addition)</li>
  * <li>duplication checks on archive additions (for archive-file path + prefix)</li>
  * </ul>
- * 
+ *
  * @author jdcasey
  * @version $Id$
  */
@@ -86,15 +88,13 @@ public class AssemblyProxyArchiver
 
     public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
                                   final List<ContainerDescriptorHandler> containerDescriptorHandlers,
-                                  final List<FileSelector> extraSelectors,
-                                  final List<ArchiveFinalizer> extraFinalizers, final File assemblyWorkDir,
-                                  final Logger logger, final boolean dryRun )
+                                  final List<FileSelector> extraSelectors, final List<ArchiveFinalizer> extraFinalizers,
+                                  final File assemblyWorkDir, final Logger logger, final boolean dryRun )
     {
         this.rootPrefix = rootPrefix;
         this.delegate = delegate;
 
-        assemblyWorkPath = assemblyWorkDir.getAbsolutePath()
-                                          .replace( '\\', '/' );
+        assemblyWorkPath = assemblyWorkDir.getAbsolutePath().replace( '\\', '/' );
 
         this.logger = logger;
         this.dryRun = dryRun;
@@ -106,7 +106,7 @@ public class AssemblyProxyArchiver
 
         final List<FileSelector> selectors = new ArrayList<FileSelector>();
 
-        final boolean isFinalizerEnabled = ( delegate instanceof FinalizerEnabled );
+        FinalizerEnabled finalizer = ( delegate instanceof FinalizerEnabled ) ? (FinalizerEnabled) delegate : null;
 
         if ( containerDescriptorHandlers != null )
         {
@@ -114,9 +114,9 @@ public class AssemblyProxyArchiver
             {
                 selectors.add( handler );
 
-                if ( isFinalizerEnabled )
+                if ( finalizer != null )
                 {
-                    ( (FinalizerEnabled) delegate ).addArchiveFinalizer( handler );
+                    finalizer.addArchiveFinalizer( handler );
                 }
             }
         }
@@ -129,11 +129,11 @@ public class AssemblyProxyArchiver
             }
         }
 
-        if ( ( extraFinalizers != null ) && isFinalizerEnabled )
+        if ( ( extraFinalizers != null ) && finalizer != null )
         {
             for ( ArchiveFinalizer extraFinalizer : extraFinalizers )
             {
-                ( (FinalizerEnabled) delegate ).addArchiveFinalizer( extraFinalizer );
+                finalizer.addArchiveFinalizer( extraFinalizer );
             }
         }
 
@@ -143,9 +143,11 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
+    /**
+     * {@inheritDoc}
+     */
+    public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix, final String[] includes,
                                     final String[] excludes )
-        throws ArchiverException
     {
         final String archiveKey = getArchiveKey( archiveFile, prefix );
         if ( seenPaths.contains( archiveKey ) )
@@ -204,7 +206,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( final File archiveFile, final String prefix )
+    /**
+     * {@inheritDoc}
+     */
+    public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix )
         throws ArchiverException
     {
         final String archiveKey = getArchiveKey( archiveFile, prefix );
@@ -241,6 +246,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
         throws ArchiverException
     {
@@ -280,7 +288,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addArchivedFileSet( final File archiveFile )
+    /**
+     * {@inheritDoc}
+     */
+    public void addArchivedFileSet( final @Nonnull File archiveFile )
         throws ArchiverException
     {
         final String archiveKey = getArchiveKey( archiveFile, "" );
@@ -317,7 +328,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( final File directory, final String prefix, final String[] includes,
+    /**
+     * {@inheritDoc}
+     */
+    public void addDirectory( final @Nonnull File directory, final String prefix, final String[] includes,
                               final String[] excludes )
         throws ArchiverException
     {
@@ -349,7 +363,61 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( final File directory, final String prefix )
+    /**
+     * {@inheritDoc}
+     */
+    public void addSymlink( String symlinkName, String symlinkDestination )
+        throws ArchiverException
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addSymlink( symlinkName, symlinkDestination );
+            }
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addSymlink( String symlinkName, int permissions, String symlinkDestination )
+        throws ArchiverException
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            if ( dryRun )
+            {
+                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
+            }
+            else
+            {
+                delegate.addSymlink( symlinkName, permissions, symlinkDestination );
+            }
+
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addDirectory( final @Nonnull File directory, final String prefix )
         throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
@@ -378,7 +446,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( final File directory, final String[] includes, final String[] excludes )
+    /**
+     * {@inheritDoc}
+     */
+    public void addDirectory( final @Nonnull File directory, final String[] includes, final String[] excludes )
         throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
@@ -409,7 +480,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addDirectory( final File directory )
+    /**
+     * {@inheritDoc}
+     */
+    public void addDirectory( final @Nonnull File directory )
         throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
@@ -438,7 +512,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFile( final File inputFile, final String destFileName, final int permissions )
+    /**
+     * {@inheritDoc}
+     */
+    public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName, final int permissions )
         throws ArchiverException
     {
         if ( acceptFile( inputFile ) )
@@ -464,7 +541,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFile( final File inputFile, final String destFileName )
+    /**
+     * {@inheritDoc}
+     */
+    public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName )
         throws ArchiverException
     {
         if ( acceptFile( inputFile ) )
@@ -490,6 +570,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void createArchive()
         throws ArchiverException, IOException
     {
@@ -512,6 +595,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getDefaultDirectoryMode()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -525,6 +611,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getDefaultFileMode()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -538,6 +627,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public File getDestFile()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -552,7 +644,7 @@ public class AssemblyProxyArchiver
     }
 
     @SuppressWarnings( { "rawtypes", "deprecation" } )
-    public Map getFiles()
+    /** {@inheritDoc} */ public Map<String, ArchiveEntry> getFiles()
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -565,6 +657,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean getIncludeEmptyDirs()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -578,6 +673,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isForced()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -591,6 +689,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isSupportingForced()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -604,6 +705,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDefaultDirectoryMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -617,6 +721,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDefaultFileMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -630,6 +737,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDestFile( final File destFile )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -643,6 +753,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setForced( final boolean forced )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -657,6 +770,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setIncludeEmptyDirs( final boolean includeEmptyDirs )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -670,11 +786,18 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDotFileDirectory( final File dotFileDirectory )
     {
-        throw new UnsupportedOperationException( "Undocumented feature of plexus-archiver; this is not yet supported." );
+        throw new UnsupportedOperationException(
+            "Undocumented feature of plexus-archiver; this is not yet supported." );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addArchivedFileSet( final ArchivedFileSet fileSet )
         throws ArchiverException
     {
@@ -708,7 +831,10 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public void addFileSet( final FileSet fileSet )
+    /**
+     * {@inheritDoc}
+     */
+    public void addFileSet( final @Nonnull FileSet fileSet )
         throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
@@ -736,9 +862,7 @@ public class AssemblyProxyArchiver
     private void doAddFileSet( final FileSet fs )
         throws ArchiverException
     {
-        final String fsPath = fs.getDirectory()
-                                .getAbsolutePath()
-                                .replace( '\\', '/' );
+        final String fsPath = fs.getDirectory().getAbsolutePath().replace( '\\', '/' );
 
         if ( fsPath.equals( assemblyWorkPath ) )
         {
@@ -754,8 +878,9 @@ public class AssemblyProxyArchiver
 
             final String workDirExclude = assemblyWorkPath.substring( fsPath.length() + 1 );
 
-            logger.debug( "Adding exclude for assembly working-directory: " + workDirExclude
-                            + "\nFile-Set source directory: " + fsPath );
+            logger.debug(
+                "Adding exclude for assembly working-directory: " + workDirExclude + "\nFile-Set source directory: "
+                    + fsPath );
 
             newEx.add( workDirExclude );
 
@@ -803,7 +928,7 @@ public class AssemblyProxyArchiver
     private boolean acceptFile( final File inputFile )
         throws ArchiverException
     {
-        if ( Boolean.TRUE != inPublicApi.get() )
+        if ( !Boolean.TRUE.equals( inPublicApi.get()) )
         {
             if ( selectors != null )
             {
@@ -862,8 +987,15 @@ public class AssemblyProxyArchiver
             return inputFile.isFile();
         }
 
+        public boolean isSymbolicLink()
+        {
+            return false;
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
         throws ArchiverException
     {
@@ -878,6 +1010,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addResources( final PlexusIoResourceCollection resources )
         throws ArchiverException
     {
@@ -892,17 +1027,28 @@ public class AssemblyProxyArchiver
         }
     }
 
-    public ResourceIterator getResources()
+    /**
+     * {@inheritDoc}
+     */
+    public
+    @Nonnull
+    ResourceIterator getResources()
         throws ArchiverException
     {
         return delegate.getResources();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getDuplicateBehavior()
     {
         return delegate.getDuplicateBehavior();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDuplicateBehavior( final String duplicate )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -916,26 +1062,41 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getDirectoryMode()
     {
         return delegate.getDirectoryMode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getFileMode()
     {
         return delegate.getFileMode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getOverrideDirectoryMode()
     {
         return delegate.getOverrideDirectoryMode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getOverrideFileMode()
     {
         return delegate.getOverrideFileMode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setDirectoryMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -949,6 +1110,9 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setFileMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -962,21 +1126,33 @@ public class AssemblyProxyArchiver
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isUseJvmChmod()
     {
         return useJvmChmod;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setUseJvmChmod( final boolean useJvmChmod )
     {
         this.useJvmChmod = useJvmChmod;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isIgnorePermissions()
     {
         return delegate.isIgnorePermissions();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setIgnorePermissions( final boolean ignorePermissions )
     {
         delegate.setIgnorePermissions( ignorePermissions );

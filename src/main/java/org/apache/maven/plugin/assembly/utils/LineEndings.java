@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly;
+package org.apache.maven.plugin.assembly.utils;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,34 +19,31 @@ package org.apache.maven.plugin.assembly;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-
-import java.util.Set;
-
-public class DefaultAssemblyContext
-    implements AssemblyContext
+/**
+ * Enumeration to keep the different line ending types we support.
+ * 
+ * @author Karl-Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
+ */
+public enum LineEndings
 {
+    keep( null ), dos( "\r\n" ), windows( "\r\n" ), unix( "\n" ), crlf( "\r\n" ), lf( "\n" );
 
-    private Set<Artifact> artifacts;
+    private final String lineEndingCharacters;
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see org.apache.maven.plugin.assembly.AssemblyContext#setResolvedArtifacts(java.util.Set)
-     */
-    public void setResolvedArtifacts( final Set<Artifact> artifacts )
+    private LineEndings( String lineEndingCharacters )
     {
-        this.artifacts = artifacts;
+        this.lineEndingCharacters = lineEndingCharacters;
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see org.apache.maven.plugin.assembly.AssemblyContext#getResolvedArtifacts()
-     */
-    public Set<Artifact> getResolvedArtifacts()
-    {
-        return artifacts;
+    public boolean isNewLine(){
+        return this== unix || this == lf;
+    }
+    public boolean isCrLF(){
+        return this== windows || this == crlf || this == dos;
     }
 
+    public String getLineEndingCharacters()
+    {
+        return this.lineEndingCharacters;
+    }
 }

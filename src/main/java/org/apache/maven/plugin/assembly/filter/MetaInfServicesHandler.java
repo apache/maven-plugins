@@ -22,7 +22,7 @@ package org.apache.maven.plugin.assembly.filter;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 
-@Component( role = ContainerDescriptorHandler.class, hint = "metaInf-services" )
+@Component( role = ContainerDescriptorHandler.class, hint = "metaInf-services", instantiationStrategy = "per-lookup" )
 public class MetaInfServicesHandler
     extends AbstractLineAggregatingHandler
 {

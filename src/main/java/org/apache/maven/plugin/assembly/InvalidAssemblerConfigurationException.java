@@ -28,11 +28,18 @@ public class InvalidAssemblerConfigurationException
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * @param message The message.
+     * @param error The error
+     */
     public InvalidAssemblerConfigurationException( final String message, final Throwable error )
     {
         super( message, error );
     }
 
+    /**
+     * @param message The message.
+     */
     public InvalidAssemblerConfigurationException( final String message )
     {
         super( message );

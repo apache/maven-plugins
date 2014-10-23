@@ -19,12 +19,12 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,10 +34,11 @@ import java.util.List;
  * @version $Id$
  */
 public class AddDirectoryTask
-    implements ArchiverTask
 {
 
     private final File directory;
+
+    private final InputStreamTransformer transformer;
 
     private List<String> includes;
 
@@ -51,12 +52,18 @@ public class AddDirectoryTask
 
     private int fileMode = -1;
 
-    public AddDirectoryTask( final File directory )
+    public AddDirectoryTask( final File directory, InputStreamTransformer transformers )
     {
         this.directory = directory;
+
+        this.transformer = transformers;
+    }
+    public AddDirectoryTask( final File directory )
+    {
+        this( directory, null);
     }
 
-    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver )
         throws ArchiveCreationException
     {
         if ( ".".equals( outputDirectory ) )
@@ -66,7 +73,7 @@ public class AddDirectoryTask
         else if ( "..".equals( outputDirectory ) )
         {
             throw new ArchiveCreationException( "Cannot add source directory: " + directory + " to archive-path: "
-                            + outputDirectory + ". All paths must be within the archive root directory." );
+                + outputDirectory + ". All paths must be within the archive root directory." );
         }
 
         final int oldDirMode = archiver.getOverrideDirectoryMode();
@@ -111,16 +118,7 @@ public class AddDirectoryTask
                         int i = 0;
                         for ( String include : includes )
                         {
-                            String value = AssemblyFormatUtils.fixRelativeRefs( include );
-
-                            if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
-                            {
-                                value = value.substring( 1 );
-                            }
-
-                            includesArray[i] = value;
-
-                            i++;
+                            includesArray[i++] = normalize( include );
                         }
                     }
 
@@ -130,16 +128,7 @@ public class AddDirectoryTask
                     int i = 0;
                     for ( String directoryExclude : directoryExcludes )
                     {
-                        String value = AssemblyFormatUtils.fixRelativeRefs( directoryExclude );
-
-                        if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
-                        {
-                            value = value.substring( 1 );
-                        }
-
-                        excludesArray[i] = value;
-
-                        i++;
+                        excludesArray[i++] = normalize( directoryExclude );
                     }
 
                     final DefaultFileSet fs = new DefaultFileSet();
@@ -148,6 +137,9 @@ public class AddDirectoryTask
                     fs.setDirectory( directory );
                     fs.setIncludes( includesArray );
                     fs.setExcludes( excludesArray );
+                    if (transformer != null){
+                            fs.setStreamTransformer( transformer );
+                    }
 
                     archiver.addFileSet( fs );
                 }
@@ -169,6 +161,17 @@ public class AddDirectoryTask
                 archiver.setFileMode( oldFileMode );
             }
         }
+    }
+
+    private String normalize( String include )
+    {
+        String value = AssemblyFormatUtils.fixRelativeRefs( include );
+
+        if ( value.startsWith( "/" ) || value.startsWith( "\\" ) )
+        {
+            value = value.substring( 1 );
+        }
+        return value;
     }
 
     public void setExcludes( final List<String> excludes )

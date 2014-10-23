@@ -40,7 +40,6 @@ import java.util.List;
  * @version $Id$
  */
 public class AddArtifactTask
-    implements ArchiverTask
 {
 
     public static final String[] DEFAULT_INCLUDES_ARRAY = { "**/*" };
@@ -270,19 +269,9 @@ public class AddArtifactTask
         setFileNameMapping( outputFileNameMapping == null ? defaultOutputFileNameMapping : outputFileNameMapping );
     }
 
-    public MavenProject getModuleProject()
-    {
-        return moduleProject;
-    }
-
     public void setModuleProject( final MavenProject moduleProject )
     {
         this.moduleProject = moduleProject;
-    }
-
-    public Artifact getModuleArtifact()
-    {
-        return moduleArtifact;
     }
 
     public void setModuleArtifact( final Artifact moduleArtifact )

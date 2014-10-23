@@ -21,7 +21,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
@@ -29,7 +28,7 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlFor
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
@@ -40,12 +39,13 @@ import java.io.IOException;
 import java.util.Collections;
 
 import junit.framework.TestCase;
+import org.easymock.classextension.EasyMockSupport;
 
 public class DependencySetAssemblyPhaseTest
     extends TestCase
 {
 
-    private final MockManager mockManager = new MockManager();
+    final EasyMockSupport mm = new EasyMockSupport();
 
     public void testExecute_ShouldAddOneDependencyFromProject()
         throws AssemblyFormattingException, ArchiveCreationException, IOException,
@@ -55,7 +55,7 @@ public class DependencySetAssemblyPhaseTest
 
         final MavenProject project = newMavenProject( "group", "project", "0" );
 
-        final ArtifactMock projectArtifactMock = new ArtifactMock( mockManager, "group", "project", "0", "jar", false );
+        final ArtifactMock projectArtifactMock = new ArtifactMock( mm, "group", "project", "0", "jar", false );
 
         project.setArtifact( projectArtifactMock.getArtifact() );
 
@@ -74,9 +74,9 @@ public class DependencySetAssemblyPhaseTest
         assembly.addDependencySet( ds );
 
         final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mockManager, project );
+            new MockAndControlForAddDependencySetsTask( mm, project );
 
-        final ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "dep", "1", "jar", false );
+        final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
         final File artifactFile = artifactMock.setNewFile();
 
         System.out.println( "On test setup, hashcode for dependency artifact: " + artifactMock.getArtifact()
@@ -99,14 +99,13 @@ public class DependencySetAssemblyPhaseTest
 
         macTask.expectBuildFromRepository( depProject );
 
-        mockManager.replayAll();
+        mm.replayAll();
 
-        final DefaultAssemblyContext context = new DefaultAssemblyContext();
-        context.setResolvedArtifacts( Collections.singleton( artifactMock.getArtifact() ) );
+        final ResolvedAssembly assembly1 = ResolvedAssembly.create( assembly ).withDependencySetArtifacts(
+            Collections.singleton( artifactMock.getArtifact() ) );
+        createPhase( macTask, logger ).execute( assembly1, macTask.archiver, macTask.configSource );
 
-        createPhase( macTask, logger ).execute( assembly, macTask.archiver, macTask.configSource, context );
-
-        mockManager.verifyAll();
+        mm.verifyAll();
     }
 
     private MavenProject newMavenProject( final String groupId, final String artifactId, final String version )
@@ -131,13 +130,13 @@ public class DependencySetAssemblyPhaseTest
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         final MockAndControlForAddDependencySetsTask macTask =
-            new MockAndControlForAddDependencySetsTask( mockManager, null );
+            new MockAndControlForAddDependencySetsTask( mm, null );
 
-        mockManager.replayAll();
+        mm.replayAll();
 
-        createPhase( macTask, logger ).execute( assembly, null, macTask.configSource, new DefaultAssemblyContext() );
+        createPhase( macTask, logger ).execute( ResolvedAssembly.create( assembly), null, macTask.configSource );
 
-        mockManager.verifyAll();
+        mm.verifyAll();
     }
 
     private DependencySetAssemblyPhase createPhase( final MockAndControlForAddDependencySetsTask macTask,

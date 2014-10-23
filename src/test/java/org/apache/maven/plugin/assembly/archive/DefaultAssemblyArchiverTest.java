@@ -19,32 +19,18 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import junit.framework.Assert;
-
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -54,7 +40,6 @@ import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
-import org.codehaus.plexus.archiver.FinalizerEnabled;
 import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -68,12 +53,23 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+
 public class DefaultAssemblyArchiverTest
-// extends PlexusTestCase
 {
 
     private static final TestFileManager fileManager = new TestFileManager( "def-assy-archiver.test.", "" );
@@ -89,12 +85,6 @@ public class DefaultAssemblyArchiverTest
         container.start();
     }
 
-    public void shutdown()
-    {
-        container.dispose();
-    }
-
-    // @Override
     @AfterClass
     public static void tearDown()
         throws Exception
@@ -106,18 +96,17 @@ public class DefaultAssemblyArchiverTest
     public void failWhenAssemblyIdIsNull()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
+
         final MockAndControlForAssemblyArchiver macMgr = new MockAndControlForAssemblyArchiver( mm );
 
-        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mm.add( csControl );
-
-        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) csControl.getMock();
+        final AssemblerConfigurationSource configSource = mm.createControl().createMock(
+            AssemblerConfigurationSource.class );
 
         mm.replayAll();
 
         final DefaultAssemblyArchiver archiver = createSubject( macMgr, null, null );
-        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false);
+        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false );
 
         mm.verifyAll();
     }
@@ -127,37 +116,26 @@ public class DefaultAssemblyArchiverTest
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
         IOException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAssemblyArchiver macMgr = new MockAndControlForAssemblyArchiver( mm );
 
         macMgr.expectGetArchiver( "zip", Archiver.class );
         macMgr.expectGetDestFile( new File( "test" ) );
 
-        final MockControl phaseControl = MockControl.createControl( AssemblyArchiverPhase.class );
-        mm.add( phaseControl );
+        final AssemblyArchiverPhase phase = mm.createControl().createMock(AssemblyArchiverPhase.class  );
 
-        final AssemblyArchiverPhase phase = (AssemblyArchiverPhase) phaseControl.getMock();
+        phase.execute( (ResolvedAssembly)anyObject(), (Archiver)anyObject(), (AssemblerConfigurationSource)anyObject() );
 
-        phase.execute( null, null, null, null );
-        phaseControl.setMatcher( MockControl.ALWAYS_MATCHER );
-
-        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mm.add( csControl );
-
-        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) csControl.getMock();
+        final AssemblerConfigurationSource configSource =
+            mm.createControl().createMock( AssemblerConfigurationSource.class );
 
         final File tempDir = fileManager.createTempDir();
         FileUtils.deleteDirectory( tempDir );
 
-        configSource.getTemporaryRootDirectory();
-        csControl.setReturnValue( tempDir, MockControl.ZERO_OR_MORE );
-
-        configSource.isDryRun();
-        csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.isIgnoreDirFormatExtensions();
-        csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect(configSource.getTemporaryRootDirectory()).andReturn( tempDir ).anyTimes();
+        expect( configSource.isDryRun()).andReturn( false ).anyTimes();
+        expect( configSource.isIgnoreDirFormatExtensions()).andReturn( false ).anyTimes();
 
         final File outDir = fileManager.createTempDir();
 
@@ -176,33 +154,20 @@ public class DefaultAssemblyArchiverTest
             fail( "Should never happen" );
         }
 
-        configSource.getOutputDirectory();
-        csControl.setReturnValue( outDir );
-
-        configSource.getFinalName();
-        csControl.setReturnValue( "finalName" );
-
-        configSource.getArchiverConfig();
-        csControl.setReturnValue( null, MockControl.ZERO_OR_MORE );
-
-        configSource.getWorkingDirectory();
-        csControl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
-
-        configSource.isUpdateOnly();
-        csControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.isIgnorePermissions();
-        csControl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+        expect(configSource.getOutputDirectory()).andReturn( outDir );
+        expect( configSource.getFinalName() ).andReturn( "finalName" );
+        expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
+        expect(    configSource.getWorkingDirectory()).andReturn( new File( "." )).anyTimes();
+        expect( configSource.isUpdateOnly()).andReturn( false ).anyTimes();
+        expect( configSource.isIgnorePermissions()).andReturn( false ).anyTimes();
 
         final Assembly assembly = new Assembly();
         assembly.setId( "id" );
 
-        final AssemblyContext context = new DefaultAssemblyContext();
-
         try
         {
-            macMgr.dependencyResolver.resolve( assembly, configSource, context );
-            macMgr.dependencyResolverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            expect( macMgr.dependencyResolver.resolve( assembly, configSource )).andReturn( new HashSet<Artifact>(  ) );
+//            macMgr.dependencyResolverControl.setMatcher( MockControl.ALWAYS_MATCHER );
         }
         catch ( final DependencyResolutionException e )
         {
@@ -213,7 +178,7 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = createSubject( macMgr, Collections.singletonList( phase ), null );
 
-        subject.createArchive( assembly, "full-name", "zip", configSource, false);
+        subject.createArchive( assembly, "full-name", "zip", configSource, false );
 
         mm.verifyAll();
     }
@@ -222,7 +187,7 @@ public class DefaultAssemblyArchiverTest
     public void testCreateArchiver_ShouldConfigureArchiver()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
 
@@ -230,53 +195,38 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "dummy", archiver );
 
-        final MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+        final AssemblerConfigurationSource configSource = mm.createMock(  AssemblerConfigurationSource.class);
 
         final String simpleConfig = "value";
 
-        configSource.getArchiverConfig();
-        configCtl.setReturnValue( "<configuration><simpleConfig>" + simpleConfig + "</simpleConfig></configuration>",
-                                  MockControl.ZERO_OR_MORE );
+        expect( configSource.getArchiverConfig()).andReturn(
+        "<configuration><simpleConfig>" + simpleConfig + "</simpleConfig></configuration>").anyTimes();
 
         final MavenProject project = new MavenProject( new Model() );
 
-        configSource.getProject();
-        configCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect(configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.getMavenSession();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect(configSource.getMavenSession()).andReturn( null ).anyTimes();
 
-        configSource.isDryRun();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect(configSource.isDryRun()).andReturn( false ).anyTimes();
 
-        configSource.getWorkingDirectory();
-        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+        expect(configSource.getWorkingDirectory()).andReturn(  new File( "." )).anyTimes();
 
-        configSource.isUpdateOnly();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect(configSource.isUpdateOnly()).andReturn( false ).anyTimes();
 
-        final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
-        final ArtifactRepository lr = (ArtifactRepository) lrCtl.getMock();
-        mm.add( lrCtl );
+        final ArtifactRepository lr = mm.createMock( ArtifactRepository.class );
 
-        lr.getBasedir();
-        lrCtl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
+        expect(lr.getBasedir()).andReturn(  "/path/to/local/repo" ).anyTimes();
 
-        configSource.getLocalRepository();
-        configCtl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
-
-        configSource.isIgnorePermissions();
-        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
-
-        mm.add( configCtl );
+        expect(configSource.getLocalRepository()).andReturn( lr ).anyTimes();
+        expect(configSource.isIgnorePermissions()).andReturn( true );
 
         mm.replayAll();
 
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "dummy", false, "finalName", configSource, null, false);
+        subject.createArchiver( "dummy", false, "finalName", configSource, null, false );
 
         assertEquals( simpleConfig, archiver.getSimpleConfig() );
 
@@ -287,7 +237,7 @@ public class DefaultAssemblyArchiverTest
     public void testCreateArchiver_ShouldCreateTarArchiverWithNoCompression()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
@@ -295,44 +245,32 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "tar", ttArchiver );
 
-        final MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+        final AssemblerConfigurationSource configSource = mm.createMock( AssemblerConfigurationSource.class );
 
-        configSource.getTarLongFileMode();
-        configCtl.setReturnValue( TarLongFileMode.FAIL, MockControl.ZERO_OR_MORE );
+        expect( configSource.getTarLongFileMode()).andReturn( TarLongFileMode.fail.toString()).anyTimes();
+        expect( configSource.isDryRun()).andReturn( false ).anyTimes();
 
-        configSource.isDryRun();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
 
-        configSource.getArchiverConfig();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( new MavenProject( new Model() ) ).anyTimes();
 
-        configSource.getProject();
-        configCtl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        expect( configSource.getJarArchiveConfiguration()).andReturn( null ).anyTimes();
 
-        configSource.getJarArchiveConfiguration();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect( configSource.getWorkingDirectory()).andReturn(  new File( "." ) ).anyTimes();
 
-        configSource.getWorkingDirectory();
-        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+        expect( configSource.isUpdateOnly()).andReturn( false ).anyTimes();
 
-        configSource.isUpdateOnly();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.isIgnorePermissions();
-        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
-
-        mm.add( configCtl );
+        expect( configSource.isIgnorePermissions()).andReturn( true ).anyTimes();
 
         mm.replayAll();
 
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "tar", false, "finalName", configSource, null, false);
+        subject.createArchiver( "tar", false, "finalName", configSource, null, false );
 
         assertNull( ttArchiver.compressionMethod );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
@@ -341,7 +279,7 @@ public class DefaultAssemblyArchiverTest
     public void testCreateArchiver_ShouldCreateWarArchiverWithIgnoreWebxmlSetToFalse()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final TestWarArchiver twArchiver = new TestWarArchiver();
 
@@ -349,41 +287,23 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "war", twArchiver );
 
-        final MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+        final AssemblerConfigurationSource configSource = mm.createMock( AssemblerConfigurationSource.class );
 
-        configSource.isDryRun();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.getArchiverConfig();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
-
-        configSource.getMavenSession();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
-
-        configSource.getProject();
-        configCtl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
-
-        configSource.getJarArchiveConfiguration();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
-
-        configSource.getWorkingDirectory();
-        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
-
-        configSource.isUpdateOnly();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.isIgnorePermissions();
-        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
-
-        mm.add( configCtl );
+        expect( configSource.isDryRun()).andReturn( false ).anyTimes();
+        expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
+        expect( configSource.getMavenSession()).andReturn( null ).anyTimes();
+        expect( configSource.getProject()).andReturn( new MavenProject( new Model() ) ).anyTimes();
+        expect( configSource.getJarArchiveConfiguration()).andReturn( null ).anyTimes();
+        expect( configSource.getWorkingDirectory()).andReturn( new File( "." ) ).anyTimes();
+        expect( configSource.isUpdateOnly()).andReturn( false ).anyTimes();
+        expect( configSource.isIgnorePermissions()).andReturn( true ).anyTimes();
 
         mm.replayAll();
 
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "war", false, null, configSource, null, false);
+        subject.createArchiver( "war", false, null, configSource, null, false );
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -392,7 +312,7 @@ public class DefaultAssemblyArchiverTest
     public void testCreateArchiver_ShouldCreateZipArchiver()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final ZipArchiver archiver = new ZipArchiver();
 
@@ -400,143 +320,28 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "zip", archiver );
 
-        final MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
+        final AssemblerConfigurationSource configSource = mm.createMock( AssemblerConfigurationSource.class );
 
-        configSource.isDryRun();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.getArchiverConfig();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
-
-        configSource.getWorkingDirectory();
-        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
-
-        configSource.isUpdateOnly();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
-
-        configSource.isIgnorePermissions();
-        configCtl.setReturnValue( true, MockControl.ZERO_OR_MORE );
-
-        mm.add( configCtl );
+        expect( configSource.isDryRun()).andReturn( false ).anyTimes();
+        expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
+        expect( configSource.getWorkingDirectory()).andReturn( new File( "." ) ).anyTimes();
+        expect( configSource.isUpdateOnly()).andReturn( false ).anyTimes();
+        expect( configSource.getJarArchiveConfiguration()).andReturn( null ).anyTimes();
+        expect( configSource.isIgnorePermissions()).andReturn( true ).anyTimes();
 
         mm.replayAll();
 
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "zip", false, null, configSource, null, false);
+        subject.createArchiver( "zip", false, null, configSource, null, false );
     }
-
-    // TODO: Re-implement these tests on the createArchiver(..) method. For now, they're no big loss.
-    // public void testConfigureArchiverFinalizers_ShouldDoNothingWhenNotSupportedByArchiver()
-    // {
-    // MockManager mm = new MockManager();
-    //
-    // MockAndControlForArchiverManager macArchiverManager = new MockAndControlForArchiverManager( mm );
-    //
-    // macArchiverManager.createArchiver( Archiver.class );
-    //
-    // ComponentsXmlArchiverFileFilter filter = new ComponentsXmlArchiverFileFilter();
-    //
-    // mm.replayAll();
-    //
-    // DefaultAssemblyArchiver subject =
-    // createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
-    //
-    // subject.configureArchiverFinalizers( macArchiverManager.archiver, "format", null, filter );
-    //
-    // mm.verifyAll();
-    // }
-    //
-    // public void testConfigureArchiverFinalizers_ShouldAddManifestFinalizerWhenSupportedByArchiver()
-    // {
-    // MockManager mm = new MockManager();
-    //
-    // MockAndControlForArchiverManager macArchiverManager = new MockAndControlForArchiverManager( mm );
-    //
-    // macArchiverManager.createArchiver( TestFinalizerFilteredArchiver.class );
-    //
-    // Set finalizerClasses = new HashSet();
-    // finalizerClasses.add( ComponentsXmlArchiverFileFilter.class );
-    // finalizerClasses.add( ManifestCreationFinalizer.class );
-    //
-    // macArchiverManager.expectSetArchiverFinalizers( finalizerClasses );
-    //
-    // ComponentsXmlArchiverFileFilter filter = new ComponentsXmlArchiverFileFilter();
-    //
-    // MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-    // AssemblerConfigurationSource configSource = (AssemblerConfigurationSource) configCtl.getMock();
-    //
-    // Model model = new Model();
-    // model.setGroupId( "group" );
-    // model.setArtifactId( "artifact" );
-    // model.setVersion( "1" );
-    //
-    // configSource.getProject();
-    // configCtl.setReturnValue( new MavenProject( model ), MockControl.ZERO_OR_MORE );
-    //
-    // configSource.getJarArchiveConfiguration();
-    // configCtl.setReturnValue( new MavenArchiveConfiguration() );
-    //
-    // mm.add( configCtl );
-    //
-    // mm.replayAll();
-    //
-    // DefaultAssemblyArchiver subject =
-    // createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
-    //
-    // subject.configureArchiverFinalizers( macArchiverManager.archiver, "jar", configSource, filter );
-    //
-    // mm.verifyAll();
-    // }
-    //
-    // public void testConfigureArchiverFilters_ShouldDoNothingWhenNotSupportedByArchiver()
-    // {
-    // MockManager mm = new MockManager();
-    //
-    // MockAndControlForArchiverManager macArchiverManager = new MockAndControlForArchiverManager( mm );
-    //
-    // macArchiverManager.createArchiver( Archiver.class );
-    //
-    // ComponentsXmlArchiverFileFilter filter = new ComponentsXmlArchiverFileFilter();
-    //
-    // mm.replayAll();
-    //
-    // DefaultAssemblyArchiver subject =
-    // createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
-    //
-    // subject.configureArchiverFilters( macArchiverManager.archiver, filter );
-    //
-    // mm.verifyAll();
-    // }
-    //
-    // public void testConfigureArchiverFilters_ShouldAddComponentsFilterWhenSupportedByArchiver()
-    // {
-    // MockManager mm = new MockManager();
-    //
-    // MockAndControlForArchiverManager macArchiverManager = new MockAndControlForArchiverManager( mm );
-    //
-    // macArchiverManager.createArchiver( TestFinalizerFilteredArchiver.class );
-    // macArchiverManager.expectSetArchiverFilters();
-    //
-    // ComponentsXmlArchiverFileFilter filter = new ComponentsXmlArchiverFileFilter();
-    //
-    // mm.replayAll();
-    //
-    // DefaultAssemblyArchiver subject =
-    // createSubject( macArchiverManager.archiverManager, Collections.EMPTY_LIST, null );
-    //
-    // subject.configureArchiverFilters( macArchiverManager.archiver, filter );
-    //
-    // mm.verifyAll();
-    // }
 
     @Test
     public void testCreateWarArchiver_ShouldDisableIgnoreWebxmlOption()
         throws NoSuchArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final TestWarArchiver twArchiver = new TestWarArchiver();
 
@@ -558,93 +363,112 @@ public class DefaultAssemblyArchiverTest
     public void testCreateTarArchiver_ShouldNotInitializeCompression()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
-
-        subject.createTarArchiver( "tar", TarLongFileMode.FAIL );
+        subject.createTarArchiver( "tar", TarLongFileMode.fail );
 
         assertNull( ttArchiver.compressionMethod );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
 
-    @Test
-    public void testCreateTarArchiver_ShouldInitializeGZipCompression()
-        throws NoSuchArchiverException, ArchiverException
-    {
-        final MockManager mm = new MockManager();
-
-        final TestTarArchiver ttArchiver = new TestTarArchiver();
-
+    private DefaultAssemblyArchiver createSubject(EasyMockSupport mm,
+            TestTarArchiver ttArchiver) throws NoSuchArchiverException {
         final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
 
         macArchiverManager.expectGetArchiver( "tar", ttArchiver );
 
         mm.replayAll();
 
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        return createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+    }
 
-        subject.createTarArchiver( "tar.gz", TarLongFileMode.FAIL );
+    @Test
+    public void testCreateTarArchiver_TarGzFormat_ShouldInitializeGZipCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final EasyMockSupport mm = new EasyMockSupport();
 
-        assertEquals( "gzip", ttArchiver.compressionMethod.getValue() );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
+
+        subject.createTarArchiver( "tar.gz", TarLongFileMode.fail );
+
+        assertEquals( TarArchiver.TarCompressionMethod.gzip, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
 
     @Test
-    public void testCreateTarArchiver_ShouldInitializeBZipCompression()
+    public void testCreateTarArchiver_TgzFormat_ShouldInitializeGZipCompression()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
+        subject.createTarArchiver( "tgz", TarLongFileMode.fail );
 
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
-
-        subject.createTarArchiver( "tar.bz2", TarLongFileMode.FAIL );
-
-        assertEquals( "bzip2", ttArchiver.compressionMethod.getValue() );
-        assertEquals( TarLongFileMode.FAIL, ttArchiver.longFileMode.getValue() );
+        assertEquals( TarArchiver.TarCompressionMethod.gzip, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
     }
 
     @Test
-    public void testCreateTarArchiver_ShouldFailWithInvalidCompression()
+    public void testCreateTarArchiver_TarBz2Format_ShouldInitializeBZipCompression()
         throws NoSuchArchiverException, ArchiverException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final TestTarArchiver ttArchiver = new TestTarArchiver();
 
-        final MockAndControlForAssemblyArchiver macArchiverManager = new MockAndControlForAssemblyArchiver( mm );
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
-        macArchiverManager.expectGetArchiver( "tar", ttArchiver );
+        subject.createTarArchiver( "tar.bz2", TarLongFileMode.fail );
 
-        mm.replayAll();
+        assertEquals( TarArchiver.TarCompressionMethod.bzip2, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        mm.verifyAll();
+    }
+
+    @Test
+    public void testCreateTarArchiver_Tbz2Format_ShouldInitializeBZipCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final EasyMockSupport mm = new EasyMockSupport();
+
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
+
+        subject.createTarArchiver( "tbz2", TarLongFileMode.fail );
+
+        assertEquals( TarArchiver.TarCompressionMethod.bzip2, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
+
+        mm.verifyAll();
+    }
+
+    @Test
+    public void testCreateTarArchiver_InvalidFormat_ShouldFailWithInvalidCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final EasyMockSupport mm = new EasyMockSupport();
+
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final DefaultAssemblyArchiver subject = createSubject(mm, ttArchiver);
 
         try
         {
@@ -680,83 +504,59 @@ public class DefaultAssemblyArchiverTest
 
     private final class MockAndControlForAssemblyArchiver
     {
-        ArchiverManager archiverManager;
+        final ArchiverManager archiverManager;
 
-        MockControl control;
-
-        MockControl archiverControl;
 
         Archiver archiver;
 
-        MockControl dependencyResolverControl;
+        final DependencyResolver dependencyResolver;
 
-        DependencyResolver dependencyResolver;
+        private final EasyMockSupport mm;
 
-        private final MockManager mm;
-
-        public MockAndControlForAssemblyArchiver( final MockManager mm )
+        public MockAndControlForAssemblyArchiver( final EasyMockSupport mm )
         {
             this.mm = mm;
-            control = MockControl.createControl( ArchiverManager.class );
-            mm.add( control );
+            archiverManager = mm.createControl().createMock(  ArchiverManager.class );
 
-            archiverManager = (ArchiverManager) control.getMock();
+            dependencyResolver = mm.createControl().createMock( DependencyResolver.class );
 
-            dependencyResolverControl = MockControl.createControl( DependencyResolver.class );
-            mm.add( dependencyResolverControl );
-
-            dependencyResolver = (DependencyResolver) dependencyResolverControl.getMock();
         }
 
         void expectGetDestFile( final File file )
         {
-            archiver.getDestFile();
-            archiverControl.setReturnValue( file, MockControl.ZERO_OR_MORE );
+            expect(archiver.getDestFile()).andReturn( file ).anyTimes();
         }
 
-        void createArchiver( final Class<?> archiverClass )
+        void createArchiver( final Class<? extends Archiver> archiverClass )
         {
-            archiverControl = MockControl.createControl( archiverClass );
-            mm.add( archiverControl );
+            archiver = mm.createControl().createMock(archiverClass);
 
-            archiver = (Archiver) archiverControl.getMock();
-
-            archiver.setForced( false );
-            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
-            archiverControl.setVoidCallable( MockControl.ZERO_OR_MORE );
+            archiver.setForced( anyBoolean() );
+            expectLastCall().anyTimes();
 
             archiver.setIgnorePermissions( false );
-            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
-            archiverControl.setVoidCallable( MockControl.ZERO_OR_MORE );
+            expectLastCall().anyTimes();
         }
 
-        // void expectSetArchiverFilters()
-        // {
-        // ( ( FilterEnabled ) archiver ).setArchiveFilters( null );
-        // archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
-        // }
-
-        void expectGetArchiver( final String format, final Class<?> archiverClass )
+        void expectGetArchiver( final String format, final Class<? extends Archiver> archiverClass )
         {
             createArchiver( archiverClass );
 
             try
             {
-                archiverManager.getArchiver( format );
+                expect(archiverManager.getArchiver( format )).andReturn( archiver );
             }
             catch ( final NoSuchArchiverException e )
             {
                 Assert.fail( "should never happen" );
             }
 
-            control.setReturnValue( archiver );
         }
 
         void expectGetArchiver( final String format, final Archiver archiver )
             throws NoSuchArchiverException
         {
-            archiverManager.getArchiver( format );
-            control.setReturnValue( archiver );
+            expect(archiverManager.getArchiver( format )).andReturn( archiver );
         }
     }
 
@@ -776,12 +576,6 @@ public class DefaultAssemblyArchiverTest
         }
 
         @Override
-        public TarOptions getOptions()
-        {
-            return super.getOptions();
-        }
-
-        @Override
         public void setCompression( final TarCompressionMethod mode )
         {
             compressionMethod = mode;
@@ -793,12 +587,6 @@ public class DefaultAssemblyArchiverTest
         {
             longFileMode = mode;
             super.setLongfile( mode );
-        }
-
-        @Override
-        public void setOptions( final TarOptions options )
-        {
-            super.setOptions( options );
         }
 
     }
@@ -818,12 +606,6 @@ public class DefaultAssemblyArchiverTest
 
     }
 
-    interface TestFinalizerFilteredArchiver
-        extends Archiver, FinalizerEnabled
-    {
-
-    }
-
     public static final class TestArchiverWithConfig
         implements Archiver
     {
@@ -833,11 +615,6 @@ public class DefaultAssemblyArchiverTest
         private boolean useJvmChmod;
 
         private boolean ignorePermissions;
-
-        public void setSimpleConfig( final String simpleConfig )
-        {
-            this.simpleConfig = simpleConfig;
-        }
 
         public String getSimpleConfig()
         {
@@ -858,7 +635,6 @@ public class DefaultAssemblyArchiverTest
             throws ArchiverException
         {
         }
-
         public void addArchivedFileSet( final File arg0, final String[] arg1, final String[] arg2 )
             throws ArchiverException
         {
@@ -907,6 +683,18 @@ public class DefaultAssemblyArchiverTest
         public void addResource( final PlexusIoResource arg0, final String arg1, final int arg2 )
             throws ArchiverException
         {
+        }
+
+        public void addSymlink( String s, String s2 )
+            throws ArchiverException
+        {
+
+        }
+
+        public void addSymlink( String s, int i, String s2 )
+            throws ArchiverException
+        {
+
         }
 
         public void addResources( final PlexusIoResourceCollection arg0 )

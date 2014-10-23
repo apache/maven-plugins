@@ -19,20 +19,7 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
@@ -47,11 +34,24 @@ import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Writer;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.easymock.EasyMock.expect;
 
 public class DefaultAssemblyReaderTest
     extends TestCase
@@ -59,42 +59,28 @@ public class DefaultAssemblyReaderTest
 
     private TestFileManager fileManager;
 
-    private MockManager mockManager;
+    private EasyMockSupport mockManager;
 
-    private MockControl configSourceControl;
 
     private AssemblerConfigurationSource configSource;
 
     private ArtifactRepository localRepo;
 
-    private MockControl localRepoControl;
 
     @Override
     public void setUp()
     {
         fileManager = new TestFileManager( "assembly-reader.test.", ".xml" );
-        mockManager = new MockManager();
+        mockManager = new EasyMockSupport();
 
-        configSourceControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceControl );
+        configSource = mockManager.createMock(AssemblerConfigurationSource.class);
 
-        configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
+        localRepo = mockManager.createMock( ArtifactRepository.class );
 
-        localRepoControl = MockControl.createControl( ArtifactRepository.class );
-        localRepo = (ArtifactRepository) localRepoControl.getMock();
-        mockManager.add( localRepoControl );
-
-        localRepo.getBasedir();
-        localRepoControl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
-
-        configSource.getLocalRepository();
-        configSourceControl.setReturnValue( localRepo, MockControl.ZERO_OR_MORE );
-
-        configSource.getRemoteRepositories();
-        configSourceControl.setReturnValue( Collections.EMPTY_LIST, MockControl.ZERO_OR_MORE );
-
-        configSource.getMavenSession();
-        configSourceControl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect(localRepo.getBasedir()).andReturn("/path/to/local/repo").anyTimes();
+        expect(configSource.getLocalRepository()).andReturn( localRepo ).anyTimes();
+        expect( configSource.getRemoteRepositories()).andReturn( Collections.<ArtifactRepository>emptyList()).anyTimes();
+        expect(configSource.getMavenSession()).andReturn( null).anyTimes();
     }
 
     @Override
@@ -110,8 +96,7 @@ public class DefaultAssemblyReaderTest
         final File siteDir = File.createTempFile( "assembly-reader.", ".test" );
         siteDir.delete();
 
-        configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getSiteDirectory()).andReturn( siteDir ).anyTimes();
 
         final Assembly assembly = new Assembly();
 
@@ -136,8 +121,7 @@ public class DefaultAssemblyReaderTest
     {
         final File siteDir = fileManager.createTempDir();
 
-        configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getSiteDirectory()).andReturn( siteDir ).anyTimes();
 
         final Assembly assembly = new Assembly();
 
@@ -502,13 +486,11 @@ public class DefaultAssemblyReaderTest
 
         final File basedir = componentFile.getParentFile();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final MavenProject project = new MavenProject();
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).anyTimes();
 
         mockManager.replayAll();
 
@@ -541,8 +523,7 @@ public class DefaultAssemblyReaderTest
 
         final File basedir = fileManager.createTempDir();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final Model model = new Model();
         model.setGroupId( "group" );
@@ -551,11 +532,9 @@ public class DefaultAssemblyReaderTest
 
         final MavenProject project = new MavenProject( model );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         mockManager.replayAll();
 
@@ -583,13 +562,11 @@ public class DefaultAssemblyReaderTest
 
         final File siteDir = fileManager.createTempDir();
 
-        configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getSiteDirectory()).andReturn( siteDir ).anyTimes();
 
         final File basedir = fileManager.createTempDir();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final Model model = new Model();
         model.setGroupId( "group" );
@@ -598,11 +575,9 @@ public class DefaultAssemblyReaderTest
 
         final MavenProject project = new MavenProject( model );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect(configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         mockManager.replayAll();
 
@@ -635,13 +610,11 @@ public class DefaultAssemblyReaderTest
 
         final File siteDir = fileManager.createTempDir();
 
-        configSource.getSiteDirectory();
-        configSourceControl.setReturnValue( siteDir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getSiteDirectory()).andReturn( siteDir ).anyTimes();
 
         final File basedir = fileManager.createTempDir();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final Model model = new Model();
         model.setGroupId( "group" );
@@ -650,11 +623,9 @@ public class DefaultAssemblyReaderTest
 
         final MavenProject project = new MavenProject( model );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( true, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( true ).anyTimes();
 
         mockManager.replayAll();
 
@@ -711,8 +682,7 @@ public class DefaultAssemblyReaderTest
 
         final StringReader sr = new StringReader( sw.toString() );
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final Model model = new Model();
         model.setGroupId( "group" );
@@ -720,11 +690,9 @@ public class DefaultAssemblyReaderTest
         model.setVersion( "version" );
 
         final MavenProject project = new MavenProject( model );
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         mockManager.replayAll();
 
@@ -781,8 +749,7 @@ public class DefaultAssemblyReaderTest
 
         final StringReader sr = new StringReader( sw.toString() );
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).atLeastOnce();
 
         final Model model = new Model();
         model.setGroupId( "group" );
@@ -791,11 +758,9 @@ public class DefaultAssemblyReaderTest
 
         final MavenProject project = new MavenProject( model );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).atLeastOnce();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false );
+        expect( configSource.isSiteIncluded()).andReturn( false );
 
         mockManager.replayAll();
 
@@ -828,8 +793,7 @@ public class DefaultAssemblyReaderTest
 
         final File basedir = fileManager.createTempDir();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final Model model = new Model();
         model.setGroupId( "group" );
@@ -838,11 +802,9 @@ public class DefaultAssemblyReaderTest
 
         final MavenProject project = new MavenProject( model );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         mockManager.replayAll();
 
@@ -868,14 +830,11 @@ public class DefaultAssemblyReaderTest
 
         final File basedir = assemblyFile.getParentFile();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir).anyTimes();
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( new MavenProject( new Model() )).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         Writer writer = null;
         try
@@ -902,17 +861,13 @@ public class DefaultAssemblyReaderTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir).anyTimes();
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( new MavenProject( new Model() )).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
-        configSource.isIgnoreMissingDescriptor();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isIgnoreMissingDescriptor()).andReturn( false ).anyTimes();
 
         mockManager.replayAll();
 
@@ -1157,32 +1112,23 @@ public class DefaultAssemblyReaderTest
                                                   final boolean ignoreMissing )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        configSource.getDescriptor();
-        configSourceControl.setReturnValue( descriptor );
+        expect( configSource.getDescriptor()).andReturn( descriptor );
 
-        configSource.getDescriptorId();
-        configSourceControl.setReturnValue( descriptorRef );
+        expect( configSource.getDescriptorId()).andReturn( descriptorRef );
 
-        configSource.getDescriptorReferences();
-        configSourceControl.setReturnValue( descriptorRefs );
+        expect( configSource.getDescriptorReferences()).andReturn( descriptorRefs );
 
-        configSource.getDescriptors();
-        configSourceControl.setReturnValue( descriptors );
+        expect( configSource.getDescriptors()).andReturn( descriptors );
 
-        configSource.getDescriptorSourceDirectory();
-        configSourceControl.setReturnValue( descriptorDir );
+        expect( configSource.getDescriptorSourceDirectory()).andReturn( descriptorDir );
 
-        configSource.getBasedir();
-        configSourceControl.setReturnValue( basedir, MockControl.ZERO_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( new MavenProject( new Model() ), MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( new MavenProject( new Model() )).anyTimes();
 
-        configSource.isSiteIncluded();
-        configSourceControl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
-        configSource.isIgnoreMissingDescriptor();
-        configSourceControl.setReturnValue( ignoreMissing, MockControl.ZERO_OR_MORE );
+        expect( configSource.isIgnoreMissingDescriptor()).andReturn(  ignoreMissing).anyTimes();
 
         mockManager.replayAll();
 

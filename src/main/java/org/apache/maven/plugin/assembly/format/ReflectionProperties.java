@@ -29,7 +29,7 @@ import java.util.Properties;
  * @author Andreas Hoheneder (ahoh_at_inode.at)
  * @version $Id$
  * 
- * @depcrecated
+ * @deprecated
  */
 @Deprecated
 public class ReflectionProperties
@@ -40,7 +40,7 @@ public class ReflectionProperties
 
     private final MavenProject project;
 
-    boolean escapedBackslashesInFilePath;
+    final boolean escapedBackslashesInFilePath;
 
     public ReflectionProperties( final MavenProject aProject, final boolean escapedBackslashesInFilePath )
     {

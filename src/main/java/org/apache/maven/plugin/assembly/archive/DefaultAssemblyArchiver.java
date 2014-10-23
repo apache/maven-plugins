@@ -27,11 +27,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.DebugConfigurationListener;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
@@ -43,6 +43,9 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.PlexusConstants;
@@ -104,12 +107,17 @@ public class DefaultAssemblyArchiver
 
     private PlexusContainer container;
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public DefaultAssemblyArchiver()
     {
-        // needed for plexus
     }
 
     // introduced for testing.
+    /**
+     * @param archiverManager The archive manager.
+     * @param resolver The {@link DependencyResolver}.
+     * @param assemblyPhases The list of {@link AssemblyArchiverPhase}
+     */
     protected DefaultAssemblyArchiver( final ArchiverManager archiverManager, final DependencyResolver resolver,
                                        final List<AssemblyArchiverPhase> assemblyPhases )
     {
@@ -118,19 +126,7 @@ public class DefaultAssemblyArchiver
         this.assemblyPhases = assemblyPhases;
     }
 
-    /**
-     * Create the assembly archive. Generally:
-     * <ol>
-     * <li>Setup any directory structures for temporary files</li>
-     * <li>Calculate the output directory/file for the assembly</li>
-     * <li>Setup any handler components for special descriptor files we may encounter</li>
-     * <li>Lookup and configure the {@link Archiver} to be used</li>
-     * <li>Determine what, if any, dependency resolution will be required, and resolve any dependency-version conflicts
-     * up front to produce a managed-version map for the whole assembly process.</li>
-     * <li>Iterate through the available {@link AssemblyArchiverPhase} instances, executing each to handle a different
-     * top-level section of the assembly descriptor, if that section is present.</li>
-     * </ol>
-     */
+    /** {@inheritDoc} */
     public File createArchive( final Assembly assembly, final String fullName, final String format,
                                final AssemblerConfigurationSource configSource, boolean recompressZippedFiles )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
@@ -172,13 +168,25 @@ public class DefaultAssemblyArchiver
 
             archiver.setDestFile( destFile );
 
-            final AssemblyContext context = new DefaultAssemblyContext();
+            List<ResolvedModuleSet> resolvedModuleSets = new ArrayList<ResolvedModuleSet>();
+            for ( ModuleSet moduleSet : assembly.getModuleSets() )
+            {
+                resolvedModuleSets.add( dependencyResolver.resolve( assembly, moduleSet, configSource ) );
+            }
 
-            dependencyResolver.resolve( assembly, configSource, context );
+            // OK, this piece of code contains all the stuff left after I extracted resolvedModuleSets.
+            // this can probably be simplified quite a lot, since the module sets now have their
+            // own artifact resolution.
+            final Set<Artifact> dependencySetArtifacts = dependencyResolver.resolve( assembly, configSource );
+
+            // CHECKSTYLE_OFF: LineLength
+            final ResolvedAssembly resolvedAssembly =
+                ResolvedAssembly.create( assembly ).withResolvedModuleSets( resolvedModuleSets ).withDependencySetArtifacts( dependencySetArtifacts );
+            // CHECKSTYLE_ON: LineLength
 
             for ( AssemblyArchiverPhase phase : assemblyPhases )
             {
-                phase.execute( assembly, archiver, configSource, context );
+                phase.execute( resolvedAssembly, archiver, configSource );
             }
 
             archiver.createArchive();
@@ -216,9 +224,11 @@ public class DefaultAssemblyArchiver
         }
     }
 
+    // CHECKSTYLE_OFF: LineLength
     private List<ContainerDescriptorHandler> selectContainerDescriptorHandlers( List<ContainerDescriptorHandlerConfig> requestedContainerDescriptorHandlers,
                                                                                 final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
+    // CHECKSTYLE_ON: LineLength
     {
         getLogger().debug( "All known ContainerDescriptorHandler components: "
                                + ( containerDescriptorHandlers == null ? "none; map is null." : ""
@@ -232,29 +242,32 @@ public class DefaultAssemblyArchiver
         final List<ContainerDescriptorHandler> handlers = new ArrayList<ContainerDescriptorHandler>();
         final List<String> hints = new ArrayList<String>();
 
-        if (!requestedContainerDescriptorHandlers.isEmpty())
+        if ( !requestedContainerDescriptorHandlers.isEmpty() )
         {
-            for (final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers) {
+            for ( final ContainerDescriptorHandlerConfig config : requestedContainerDescriptorHandlers )
+            {
                 final String hint = config.getHandlerName();
-                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get(hint);
+                final ContainerDescriptorHandler handler = containerDescriptorHandlers.get( hint );
 
-                if (handler == null) {
+                if ( handler == null )
+                {
                     throw new InvalidAssemblerConfigurationException(
-                            "Cannot find ContainerDescriptorHandler with hint: "
-                                    + hint);
+                                                                      "Cannot find ContainerDescriptorHandler with hint: "
+                                                                          + hint );
                 }
 
-                getLogger().debug("Found container descriptor handler with hint: " + hint + " (component: " + handler
-                        + ")");
+                getLogger().debug( "Found container descriptor handler with hint: " + hint + " (component: " + handler
+                                       + ")" );
 
-                if (config.getConfiguration() != null) {
-                    getLogger().debug("Configuring handler with:\n\n" + config.getConfiguration() + "\n\n");
+                if ( config.getConfiguration() != null )
+                {
+                    getLogger().debug( "Configuring handler with:\n\n" + config.getConfiguration() + "\n\n" );
 
-                    configureContainerDescriptorHandler(handler, (Xpp3Dom) config.getConfiguration(), configSource);
+                    configureContainerDescriptorHandler( handler, (Xpp3Dom) config.getConfiguration(), configSource );
                 }
 
-                handlers.add(handler);
-                hints.add(hint);
+                handlers.add( handler );
+                hints.add( hint );
             }
         }
 
@@ -268,13 +281,13 @@ public class DefaultAssemblyArchiver
 
     /**
      * Creates the necessary archiver to build the distribution file.
-     * 
+     *
      * @param format Archive format
-     * @param includeBaseDir
-     * @param finalName
-     * @param configSource
-     * @param containerHandlers
-     * @param recompressZippedFiles
+     * @param includeBaseDir the base directory for include.
+     * @param finalName The final name.
+     * @param configSource {@link AssemblerConfigurationSource}
+     * @param containerHandlers The list of {@link ContainerDescriptorHandler}
+     * @param recompressZippedFiles recompress zipped files.
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
@@ -286,9 +299,9 @@ public class DefaultAssemblyArchiver
         throws ArchiverException, NoSuchArchiverException
     {
         Archiver archiver;
-        if ( format.startsWith( "tar" ) )
+        if ( "tgz".equals( format ) || "tbz2".equals( format ) || format.startsWith( "tar" ) )
         {
-            archiver = createTarArchiver( format, configSource.getTarLongFileMode() );
+            archiver = createTarArchiver( format, TarLongFileMode.valueOf( configSource.getTarLongFileMode() ) );
         }
         else if ( "war".equals( format ) )
         {
@@ -424,12 +437,12 @@ public class DefaultAssemblyArchiver
         try
         {
             final Method configureComponent =
-                ComponentConfigurator.class.getMethod( "configureComponent", new Class[] { Object.class,
-                    PlexusConfiguration.class, ExpressionEvaluator.class, (Class<?>) containerRealm[1],
-                    ConfigurationListener.class } );
+                ComponentConfigurator.class.getMethod( "configureComponent", Object.class, PlexusConfiguration.class,
+                                                       ExpressionEvaluator.class, (Class<?>) containerRealm[1],
+                                                       ConfigurationListener.class );
 
-            configureComponent.invoke( configurator, component, configuration, expressionEvaluator,
-                    containerRealm[0], listener);
+            configureComponent.invoke( configurator, component, configuration, expressionEvaluator, containerRealm[0],
+                                       listener );
         }
         catch ( final NoSuchMethodException e )
         {
@@ -483,26 +496,24 @@ public class DefaultAssemblyArchiver
         return warArchiver;
     }
 
-    protected Archiver createTarArchiver( final String format, final String tarLongFileMode )
+    protected Archiver createTarArchiver( final String format, final TarLongFileMode tarLongFileMode )
         throws NoSuchArchiverException, ArchiverException
     {
         final TarArchiver tarArchiver = (TarArchiver) archiverManager.getArchiver( "tar" );
         final int index = format.indexOf( '.' );
         if ( index >= 0 )
         {
-            // TODO: this needs a cleanup in plexus archiver - use a real
-            // typesafe enum
-            final TarArchiver.TarCompressionMethod tarCompressionMethod = new TarArchiver.TarCompressionMethod();
+            TarArchiver.TarCompressionMethod tarCompressionMethod;
             // TODO: this should accept gz and bz2 as well so we can skip
             // over the switch
             final String compression = format.substring( index + 1 );
             if ( "gz".equals( compression ) )
             {
-                tarCompressionMethod.setValue( "gzip" );
+                tarCompressionMethod = TarArchiver.TarCompressionMethod.gzip;
             }
             else if ( "bz2".equals( compression ) )
             {
-                tarCompressionMethod.setValue( "bzip2" );
+                tarCompressionMethod = TarArchiver.TarCompressionMethod.bzip2;
             }
             else
             {
@@ -511,12 +522,16 @@ public class DefaultAssemblyArchiver
             }
             tarArchiver.setCompression( tarCompressionMethod );
         }
+        else if ( "tgz".equals( format ) )
+        {
+            tarArchiver.setCompression( TarArchiver.TarCompressionMethod.gzip );
+        }
+        else if ( "tbz2".equals( format ) )
+        {
+            tarArchiver.setCompression( TarArchiver.TarCompressionMethod.bzip2 );
+        }
 
-        final TarLongFileMode tarFileMode = new TarLongFileMode();
-
-        tarFileMode.setValue( tarLongFileMode );
-
-        tarArchiver.setLongfile( tarFileMode );
+        tarArchiver.setLongfile( tarLongFileMode );
 
         return tarArchiver;
     }

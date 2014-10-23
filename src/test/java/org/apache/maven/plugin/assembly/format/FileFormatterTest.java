@@ -19,22 +19,25 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.easymock.EasyMock.expect;
 
 public class FileFormatterTest
     extends PlexusTestCase
@@ -44,35 +47,33 @@ public class FileFormatterTest
 
     private final TestFileManager fileManager = new TestFileManager( "fileFormatterTest.", "" );
 
-    private final MockManager mockManager = new MockManager();
+    private final EasyMockSupport mockManager = new EasyMockSupport();
 
     private AssemblerConfigurationSource configSource;
 
-    private MockControl configSourceControl;
 
     @Override
-    public void setUp() throws Exception
+    public void setUp()
+        throws Exception
     {
         super.setUp();
 
-        configSourceControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceControl );
-
-        configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
+        configSource = mockManager.createMock(AssemblerConfigurationSource.class);
     }
 
     @Override
-    public void tearDown() throws IOException
+    public void tearDown()
+        throws IOException
     {
         fileManager.cleanUp();
     }
 
-    public void testTemporaryRootDirectoryNotExist() throws IOException, AssemblyFormattingException
+    public void testTemporaryRootDirectoryNotExist()
+        throws IOException, AssemblyFormattingException
     {
         final File basedir = fileManager.createTempDir();
         final File tempRoot = new File( basedir, "tempdir" );
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( tempRoot );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( tempRoot );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
@@ -85,12 +86,12 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldNotTransformOneFile() throws IOException, AssemblyFormattingException
+    public void testShouldNotTransformOneFile()
+        throws IOException, AssemblyFormattingException
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         // Model model = new Model();
         // model.setArtifactId( "artifact" );
@@ -113,12 +114,12 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldConvertCRLFLineEndingsInFile() throws IOException, AssemblyFormattingException
+    public void testShouldConvertCRLFLineEndingsInFile()
+        throws IOException, AssemblyFormattingException
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
@@ -131,12 +132,12 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldConvertLFLineEndingsInFile() throws IOException, AssemblyFormattingException
+    public void testShouldConvertLFLineEndingsInFile()
+        throws IOException, AssemblyFormattingException
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\r\ntest." );
 
@@ -149,7 +150,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterProjectExpressionInFile() throws Exception
+    public void testShouldFilterProjectExpressionInFile()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -167,7 +169,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionInPropertiesFileWithWindowsEscapes() throws Exception
+    public void testShouldFilterExpressionInPropertiesFileWithWindowsEscapes()
+        throws Exception
     {
 
         final File sourceDir = fileManager.createTempDir();
@@ -178,7 +181,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir );
+        enableBasicFilteringConfiguration( project, sourceDir, null );
 
         final File file = fileManager.createFile( sourceDir, "one.properties", "out=${project.build.outputDirectory}" );
 
@@ -192,7 +195,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionInPropertiesFileWithoutWindowsEscapes() throws Exception
+    public void testShouldFilterExpressionInPropertiesFileWithoutWindowsEscapes()
+        throws Exception
     {
 
         final File sourceDir = fileManager.createTempDir();
@@ -201,7 +205,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir );
+        enableBasicFilteringConfiguration( project, sourceDir, null );
 
         final File file =
             fileManager.createFile( sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}" );
@@ -215,7 +219,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionFromFiltersFileInFile() throws Exception
+    public void testShouldFilterExpressionFromFiltersFileInFile()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -235,7 +240,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionFromFiltersFileInPropertiesFileWithoutWindowsEscapes() throws Exception
+    public void testShouldFilterExpressionFromFiltersFileInPropertiesFileWithoutWindowsEscapes()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -254,7 +260,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionFromFiltersFileInNonPropertiesFileWithoutWindowsEscapes() throws Exception
+    public void testShouldFilterExpressionFromFiltersFileInNonPropertiesFileWithoutWindowsEscapes()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -274,7 +281,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldNotIgnoreFirstWordInDotNotationExpressions() throws Exception
+    public void testShouldNotIgnoreFirstWordInDotNotationExpressions()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -292,7 +300,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldFilterExpressionsFromTwoFiltersFilesInFile() throws Exception
+    public void testShouldFilterExpressionsFromTwoFiltersFilesInFile()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -318,7 +327,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldOverrideOneFilterValueWithAnotherAndFilterFile() throws Exception
+    public void testShouldOverrideOneFilterValueWithAnotherAndFilterFile()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -342,7 +352,8 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
-    public void testShouldOverrideProjectValueWithFilterValueAndFilterFile() throws Exception
+    public void testShouldOverrideProjectValueWithFilterValueAndFilterFile()
+        throws Exception
     {
         final File basedir = fileManager.createTempDir();
 
@@ -365,6 +376,121 @@ public class FileFormatterTest
         mockManager.verifyAll();
     }
 
+    public void testShouldCombineProjectValueWithFilterValueAndFilterFile()
+        throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File buildFilterProps =
+            fileManager.createFile( basedir, "build-filter.properties", "common=build\r\nbuild.test=build\r\n" );
+        final File configFilterProps =
+            fileManager.createFile( basedir, "config-filter.properties", "common=config\r\nconfig.test=config\r\n" );
+
+        final List<String> buildFilters = new ArrayList<String>();
+        buildFilters.add( buildFilterProps.getCanonicalPath() );
+
+        final List<String> configFilters = new ArrayList<String>();
+        configFilters.add( configFilterProps.getCanonicalPath() );
+
+        enableFilteringConfiguration( basedir, buildFilters, configFilters, true );
+
+        final File file =
+            fileManager.createFile( basedir, "one.txt",
+                                    "filtered common=${common} build.test=${build.test} config.test=${config.test}." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "filtered common=build build.test=build config.test=config.",
+                      fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
+    public void testShouldIgnoreProjectValueWithFilterValueAndFilterFile()
+        throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File buildFilterProps =
+            fileManager.createFile( basedir, "build-filter.properties", "common=build\r\nbuild.test=build\r\n" );
+        final File configFilterProps =
+            fileManager.createFile( basedir, "config-filter.properties", "common=config\r\nconfig.test=config\r\n" );
+
+        final List<String> buildFilters = new ArrayList<String>();
+        buildFilters.add( buildFilterProps.getCanonicalPath() );
+
+        final List<String> configFilters = new ArrayList<String>();
+        configFilters.add( configFilterProps.getCanonicalPath() );
+
+        enableFilteringConfiguration( basedir, buildFilters, configFilters, false );
+
+        final File file =
+            fileManager.createFile( basedir, "config.txt",
+                                    "filtered common=${common} build.test=${build.test} config.test=${config.test}." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "filtered common=config build.test=${build.test} config.test=config.",
+                      fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
+    public void testShouldFilterExpressionFromFiltersFileInFileAddCustomDelimiters()
+        throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+
+        final List<String> delimiters = Collections.unmodifiableList( Arrays.asList( "${*}", "@", "#", "(*)" ) );
+
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ),
+                                           delimiters );
+
+        final File file =
+            fileManager.createFile( basedir, "one.txt",
+                                    "This is a test for project: ${property} @property@ #property# (property)." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "This is a test for project: Test Test Test Test.", fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
+    public void testShouldFilterExpressionFromFiltersFileInFileCustomDelimiters()
+        throws Exception
+    {
+        final File basedir = fileManager.createTempDir();
+
+        final File filterProps = fileManager.createFile( basedir, "filter.properties", "property=Test" );
+
+        final List<String> delimiters = Collections.unmodifiableList( Arrays.asList( "#", "(*)" ) );
+
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ),
+                                           delimiters );
+
+        final File file =
+            fileManager.createFile( basedir, "one.txt",
+                                    "This is a test for project: ${property} @property@ #property# (property)." );
+
+        mockManager.replayAll();
+
+        final File result = new FileFormatter( configSource, logger ).format( file, true, null, "UTF-8" );
+
+        assertEquals( "This is a test for project: ${property} @property@ Test Test.",
+                      fileManager.getFileContents( result ) );
+
+        mockManager.verifyAll();
+    }
+
     private MavenProject createBasicMavenProject()
     {
         final Model model = new Model();
@@ -375,38 +501,72 @@ public class FileFormatterTest
         return new MavenProject( model );
     }
 
-    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir ) throws Exception
+    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir, final List<String> delimiters )
+        throws Exception
     {
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
 
-        configSource.getEscapeString();
-        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
+        enableFilteringConfiguration( project, basedir, delimiters, Collections.<String> emptyList(), true );
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
-
-        configSource.getMavenFileFilter();
-        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
-
-        configSource.getMavenSession();
-        configSourceControl.setReturnValue( null );
-
-        configSource.getFilters();
-        configSourceControl.setReturnValue( Collections.EMPTY_LIST );
     }
 
-    private void enableBasicFilteringConfiguration( final File basedir, final List<String> filterFilenames )
+    private void enableFilteringConfiguration( final MavenProject project, final File basedir, final List<String> delimiters,
+                                               final List<String> filters, final boolean includeProjectBuildFilters )
+        throws Exception
+    {
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir ).atLeastOnce();
+        expect( configSource.getEscapeString()).andReturn( null ).atLeastOnce();
+
+        expect( configSource.getProject()).andReturn( project).atLeastOnce();
+
+        expect( configSource.getMavenFileFilter()).andReturn(
+            (MavenFileFilter) lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
+
+        expect( configSource.getMavenSession()).andReturn( null );
+
+        expect( configSource.getFilters()).andReturn( filters );
+
+        expect( configSource.isIncludeProjectBuildFilters()).andReturn( includeProjectBuildFilters );
+
+        expect( configSource.getDelimiters()).andReturn( delimiters );
+
+    }
+
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames )
         throws Exception
     {
         final MavenProject project = createBasicMavenProject();
-        if ( filterFilenames != null )
+        if ( buildFilterFilenames != null )
         {
-            project.getBuild()
-                   .setFilters( filterFilenames );
+            project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableBasicFilteringConfiguration( project, basedir );
+        enableBasicFilteringConfiguration( project, basedir, null );
     }
 
+    private void enableFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames,
+                                               final List<String> configFilterFilenames,
+                                               boolean includeProjectBuildFilters )
+        throws Exception
+    {
+        final MavenProject project = createBasicMavenProject();
+        if ( buildFilterFilenames != null )
+        {
+            project.getBuild().setFilters( buildFilterFilenames );
+        }
+
+        enableFilteringConfiguration( project, basedir, null, configFilterFilenames, includeProjectBuildFilters );
+    }
+
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames, final List<String> delimiters )
+        throws Exception
+    {
+
+        final MavenProject project = createBasicMavenProject();
+        if ( buildFilterFilenames != null )
+        {
+            project.getBuild().setFilters( buildFilterFilenames );
+        }
+
+        enableBasicFilteringConfiguration( project, basedir, delimiters );
+    }
 }

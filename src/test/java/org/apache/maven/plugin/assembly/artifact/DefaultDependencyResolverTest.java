@@ -19,19 +19,12 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -40,12 +33,20 @@ import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
+import org.apache.maven.plugin.assembly.resolved.AssemblyId;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.easymock.EasyMock.expect;
 
 public class DefaultDependencyResolverTest
     extends PlexusTestCase
@@ -61,8 +62,6 @@ public class DefaultDependencyResolverTest
 
     private ArtifactMetadataSource metadataSource;
 
-    private ArtifactCollector collector;
-
     private ConsoleLogger logger;
 
     @Override
@@ -76,7 +75,6 @@ public class DefaultDependencyResolverTest
         factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
         layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
-        collector = (ArtifactCollector) lookup( ArtifactCollector.class.getName() );
         logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
     }
 
@@ -101,10 +99,11 @@ public class DefaultDependencyResolverTest
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).getDependencySetResolutionRequirements( new Assembly(),
-                                                                                                                                      depSets,
-                                                                                                                                      info,
-                                                                                                                                      project );
+        final Assembly assembly = new Assembly();
+        new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateDependencySetResolutionRequirements(
+            depSets,
+                info, AssemblyId.createAssemblyId( assembly),
+                project);
 
         assertTrue( info.isResolutionRequired() );
         assertFalse( info.isResolvedTransitively() );
@@ -121,12 +120,9 @@ public class DefaultDependencyResolverTest
     public void test_getModuleSetResolutionRequirements()
         throws DependencyResolutionException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
-        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mm.add( csControl );
-
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
+        final AssemblerConfigurationSource cs = mm.createMock( AssemblerConfigurationSource.class );
 
         final File rootDir = new File( "root" );
         final MavenProject project = createMavenProject( "main-group", "main-artifact", "1", rootDir );
@@ -159,11 +155,9 @@ public class DefaultDependencyResolverTest
         allProjects.add( module2 );
         allProjects.add( module2a );
 
-        cs.getReactorProjects();
-        csControl.setReturnValue( allProjects, MockControl.ZERO_OR_MORE );
+        expect( cs.getReactorProjects()).andReturn( allProjects ).anyTimes();
 
-        cs.getProject();
-        csControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( cs.getProject()).andReturn( project ).anyTimes();
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
@@ -202,13 +196,13 @@ public class DefaultDependencyResolverTest
         mm.replayAll();
 
         final DefaultDependencyResolver resolver =
-            new DefaultDependencyResolver( this.resolver, metadataSource, factory, collector, logger );
+            new DefaultDependencyResolver( this.resolver, metadataSource, factory, logger );
         resolver.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         final Assembly assembly = new Assembly();
         assembly.setModuleSets( moduleSets );
 
-        resolver.getModuleSetResolutionRequirements( assembly, info, cs );
+        resolver.updateModuleSetResolutionRequirements(assembly, info, cs);
 
         assertTrue( info.isResolutionRequired() );
 
@@ -257,9 +251,9 @@ public class DefaultDependencyResolverTest
         assembly.setRepositories( repositories );
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
-        new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).getRepositoryResolutionRequirements( assembly,
-                                                                                                                                   info,
-                                                                                                                                   project );
+        new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateRepositoryResolutionRequirements(assembly,
+                info
+        );
 
         assertTrue( info.isResolutionRequired() );
 
@@ -298,7 +292,7 @@ public class DefaultDependencyResolverTest
         project.setRemoteArtifactRepositories( projectRepos );
 
         final List<ArtifactRepository> aggregated =
-            new DefaultDependencyResolver( resolver, metadataSource, factory, collector, logger ).aggregateRemoteArtifactRepositories( externalRepos,
+            new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).aggregateRemoteArtifactRepositories( externalRepos,
                                                                                                                                        Collections.singleton( project ) );
 
         assertRepositoryWithId( er1.getId(), aggregated, true );

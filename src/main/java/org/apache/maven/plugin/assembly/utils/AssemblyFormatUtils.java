@@ -79,19 +79,6 @@ public final class AssemblyFormatUtils
         return distributionName;
     }
 
-    /**
-     * @deprecated Use
-     *             {@link AssemblyFormatUtils#getOutputDirectory(String, MavenProject, MavenProject, String, AssemblerConfigurationSource)}
-     *             instead.
-     */
-    @Deprecated
-    public static String getOutputDirectory( final String output, final MavenProject mainProject,
-                                             final MavenProject artifactProject, final String finalName )
-        throws AssemblyFormattingException
-    {
-        return getOutputDirectory( output, mainProject, null, artifactProject, finalName, null );
-    }
-
     public static String getOutputDirectory( final String output, final MavenProject mainProject,
                                              final MavenProject artifactProject, final String finalName,
                                              final AssemblerConfigurationSource configSource )
@@ -240,7 +227,7 @@ public final class AssemblyFormatUtils
         catch ( final IOException e )
         {
             throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
 
         try
@@ -268,19 +255,6 @@ public final class AssemblyFormatUtils
         value = fixRelativeRefs( value );
 
         return value;
-    }
-
-    /**
-     * @deprecated Use
-     *             {@link AssemblyFormatUtils#evaluateFileNameMapping(String, Artifact, MavenProject, MavenProject, AssemblerConfigurationSource)}
-     *             instead.
-     */
-    @Deprecated
-    public static String evaluateFileNameMapping( final String expression, final Artifact artifact,
-                                                  final MavenProject mainProject, final MavenProject artifactProject )
-        throws AssemblyFormattingException
-    {
-        return evaluateFileNameMapping( expression, artifact, mainProject, null, null, artifactProject, null );
     }
 
     public static String evaluateFileNameMapping( final String expression, final Artifact artifact,
@@ -467,7 +441,7 @@ public final class AssemblyFormatUtils
         catch ( final IOException e )
         {
             throw new AssemblyFormattingException( "Failed to retrieve OS environment variables. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
 
         try
@@ -477,7 +451,7 @@ public final class AssemblyFormatUtils
         catch ( final InterpolationException e )
         {
             throw new AssemblyFormattingException( "Failed to interpolate output filename mapping. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
 
         value = StringUtils.replace( value, "//", "/" );
@@ -490,11 +464,9 @@ public final class AssemblyFormatUtils
     public static String fixRelativeRefs( String src )
     {
         String value = src;
-        
-        String[] separators = {
-            "/", "\\"
-        };
-        
+
+        String[] separators = { "/", "\\" };
+
         String finalSep = null;
         for ( String sep : separators )
         {
@@ -502,12 +474,12 @@ public final class AssemblyFormatUtils
             {
                 finalSep = sep;
             }
-            
-            if (value.contains("." + sep))
+
+            if ( value.contains( "." + sep ) )
             {
                 List<String> parts = new ArrayList<String>();
                 parts.addAll( Arrays.asList( value.split( sep.replace( "\\", "\\\\" ) ) ) );
-                
+
                 for ( ListIterator<String> it = parts.listIterator(); it.hasNext(); )
                 {
                     String part = it.next();
@@ -525,16 +497,16 @@ public final class AssemblyFormatUtils
                         }
                     }
                 }
-                
+
                 value = StringUtils.join( parts.iterator(), sep );
             }
         }
-        
+
         if ( finalSep != null && value.length() > 0 && !value.endsWith( finalSep ) )
         {
             value += finalSep;
         }
-        
+
         return value;
     }
 }

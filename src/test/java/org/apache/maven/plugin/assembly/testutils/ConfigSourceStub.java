@@ -28,6 +28,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.apache.maven.shared.filtering.MavenReaderFilter;
 
 public class ConfigSourceStub
     implements AssemblerConfigurationSource
@@ -80,6 +81,10 @@ public class ConfigSourceStub
     public List<String> getFilters()
     {
         return null;
+    }
+
+    public boolean isIncludeProjectBuildFilters() {
+    	return false;
     }
 
     public String getFinalName()
@@ -167,11 +172,6 @@ public class ConfigSourceStub
         return false;
     }
 
-    public void setArchiverConfig( final String archiverConfig )
-    {
-        this.archiverConfig = archiverConfig;
-    }
-
     public String getArchiverConfig()
     {
         return archiverConfig;
@@ -181,6 +181,12 @@ public class ConfigSourceStub
     {
         return null;
     }
+
+    public MavenReaderFilter getMavenReaderFilter()
+    {
+        return null;
+    }
+
 
     public void setProject( final MavenProject mavenProject )
     {
@@ -209,4 +215,9 @@ public class ConfigSourceStub
     public String getEscapeString() {
         return null;
     }
+
+	public List<String> getDelimiters() {
+		return null;
+	}
+
 }

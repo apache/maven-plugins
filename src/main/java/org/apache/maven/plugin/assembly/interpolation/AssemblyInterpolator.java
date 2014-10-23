@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
@@ -115,7 +116,7 @@ public class AssemblyInterpolator
         catch ( final InterpolationException e )
         {
             throw new AssemblyInterpolationException( "Failed to interpolate assembly with ID: " + assembly.getId()
-                            + ". Reason: " + e.getMessage(), e );
+                + ". Reason: " + e.getMessage(), e );
         }
         finally
         {
@@ -126,12 +127,13 @@ public class AssemblyInterpolator
         {
             final StringBuilder sb = new StringBuilder();
 
-            sb.append("One or more minor errors occurred while interpolating the assembly with ID: ").append(assembly.getId()).append(":\n");
+            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: " ).append( assembly.getId() ).append( ":\n" );
 
             @SuppressWarnings( "unchecked" )
             final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
-            for (final ObjectInterpolationWarning warning : warnings) {
-                sb.append('\n').append(warning);
+            for ( final ObjectInterpolationWarning warning : warnings )
+            {
+                sb.append( '\n' ).append( warning );
             }
 
             sb.append( "\n\nThese values were SKIPPED, but the assembly process will continue.\n" );
@@ -189,20 +191,7 @@ public class AssemblyInterpolator
 
         interpolator.addValueSource( new PropertiesBasedValueSource( settingsProperties ) );
 
-        Properties commandLineProperties = System.getProperties();
-        if ( session != null )
-        {
-            commandLineProperties = new Properties();
-            if ( session.getExecutionProperties() != null )
-            {
-                commandLineProperties.putAll( session.getExecutionProperties() );
-            }
-            
-            if ( session.getUserProperties() != null )
-            {
-                commandLineProperties.putAll( session.getUserProperties() );
-            }
-        }
+        Properties commandLineProperties = DefaultAssemblyReader.mergeExecutionPropertiesWithSystemPropertiew( session );
 
         // 7
         interpolator.addValueSource( new PropertiesBasedValueSource( commandLineProperties ) );

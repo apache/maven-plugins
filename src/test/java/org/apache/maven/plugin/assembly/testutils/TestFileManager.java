@@ -19,6 +19,9 @@ package org.apache.maven.plugin.assembly.testutils;
  * under the License.
  */
 
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -26,11 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.Assert;
-
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 
 public class TestFileManager
 {
@@ -44,8 +42,6 @@ public class TestFileManager
     private final String fileSuffix;
 
     private StackTraceElement callerInfo;
-
-    private Thread cleanupWarning;
 
     private boolean warnAboutCleanup = false;
 
@@ -71,7 +67,7 @@ public class TestFileManager
 
         };
 
-        cleanupWarning = new Thread( warning );
+        Thread cleanupWarning = new Thread( warning );
 
         Runtime.getRuntime()
                .addShutdownHook( cleanupWarning );
@@ -97,12 +93,13 @@ public class TestFileManager
         {
             Thread.sleep( 20 );
         }
-        catch ( final InterruptedException e )
+        catch ( final InterruptedException ignore )
         {
         }
 
         final File dir = new File( TEMP_DIR_PATH, baseFilename + System.currentTimeMillis() );
 
+        //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
         markForDeletion( dir );
 
@@ -142,33 +139,10 @@ public class TestFileManager
         warnAboutCleanup = false;
     }
 
-    public void assertFileExistence( final File dir, final String filename, final boolean shouldExist )
-    {
-        final File file = new File( dir, filename );
-
-        if ( shouldExist )
-        {
-            Assert.assertTrue( file.exists() );
-        }
-        else
-        {
-            Assert.assertFalse( file.exists() );
-        }
-    }
-
-    public void assertFileContents( final File dir, final String filename, final String contentsTest )
-        throws IOException
-    {
-        assertFileExistence( dir, filename, true );
-
-        final File file = new File( dir, filename );
-
-        Assert.assertEquals( contentsTest, getFileContents( file ) );
-    }
-
     /**
      * NOTE: the file content is written using platform encoding.
      */
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public File createFile( final File dir, final String filename, final String contents ) throws IOException
     {
         final File file = new File( dir, filename );
@@ -222,12 +196,6 @@ public class TestFileManager
         maybeWarnAboutCleanUp();
 
         super.finalize();
-    }
-
-    public File createFile( final String filename, final String content ) throws IOException
-    {
-        final File dir = createTempDir();
-        return createFile( dir, filename, content );
     }
 
 }

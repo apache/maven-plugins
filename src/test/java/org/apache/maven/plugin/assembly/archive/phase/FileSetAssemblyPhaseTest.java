@@ -25,23 +25,26 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.DefaultAssemblyContext;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileSet;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 
 public class FileSetAssemblyPhaseTest
     extends TestCase
 {
 
-    private final MockManager mockManager = new MockManager();
+    final EasyMockSupport mm = new EasyMockSupport();
 
     private final TestFileManager fileManager = new TestFileManager( "file-set-assembly.test.", "" );
 
@@ -61,14 +64,13 @@ public class FileSetAssemblyPhaseTest
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger();
         final MockAndControlForAddFileSetsTask macTask =
-            new MockAndControlForAddFileSetsTask( mockManager, fileManager );
+            new MockAndControlForAddFileSetsTask( mm, fileManager );
 
-        mockManager.replayAll();
+        mm.replayAll();
 
-        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource,
-                                          new DefaultAssemblyContext() );
+        createPhase( macLogger ).execute( ResolvedAssembly.create( assembly ), macTask.archiver, macTask.configSource );
 
-        mockManager.verifyAll();
+        mm.verifyAll();
     }
 
     public void testShouldAddOneFileSet()
@@ -89,7 +91,7 @@ public class FileSetAssemblyPhaseTest
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger();
         final MockAndControlForAddFileSetsTask macTask =
-            new MockAndControlForAddFileSetsTask( mockManager, fileManager );
+            new MockAndControlForAddFileSetsTask( mm, fileManager );
 
         macTask.expectGetArchiveBaseDirectory();
 
@@ -104,14 +106,13 @@ public class FileSetAssemblyPhaseTest
 
         final int[] modes = { -1, -1, dirMode, fileMode };
 
-        macTask.expectAdditionOfSingleFileSet( project, basedir, "final-name", false, modes, 1, true );
+        macTask.expectAdditionOfSingleFileSet( project, "final-name", false, modes, 1, true );
 
-        mockManager.replayAll();
+        mm.replayAll();
 
-        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource,
-                                          new DefaultAssemblyContext() );
+        createPhase( macLogger ).execute( ResolvedAssembly.create( assembly), macTask.archiver, macTask.configSource );
 
-        mockManager.verifyAll();
+        mm.verifyAll();
     }
 
     private FileSetAssemblyPhase createPhase( final MockAndControlForLogger macLogger )
@@ -125,29 +126,22 @@ public class FileSetAssemblyPhaseTest
 
     private final class MockAndControlForLogger
     {
-        Logger logger;
-
-        MockControl control;
+        final Logger logger;
 
         MockAndControlForLogger()
         {
-            control = MockControl.createControl( Logger.class );
-            mockManager.add( control );
-
-            logger = (Logger) control.getMock();
+            logger = mm.createMock(Logger.class);
         }
 
         public void expectDebug( final boolean debugCheck, final boolean debugEnabled )
         {
             if ( debugCheck )
             {
-                logger.isDebugEnabled();
-                control.setReturnValue( debugEnabled, MockControl.ONE_OR_MORE );
+                expect( logger.isDebugEnabled()).andReturn( debugEnabled ).anyTimes();
             }
 
-            logger.debug( null );
-            control.setMatcher( MockControl.ALWAYS_MATCHER );
-            control.setVoidCallable( MockControl.ONE_OR_MORE );
+            logger.debug( (String) anyObject() );
+            EasyMock.expectLastCall().anyTimes();
         }
     }
 

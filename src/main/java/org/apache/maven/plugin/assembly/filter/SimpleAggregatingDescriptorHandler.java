@@ -19,10 +19,23 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
+import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.components.io.fileselectors.FileInfo;
+import org.codehaus.plexus.logging.LogEnabled;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.util.IOUtil;
+
+import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -31,19 +44,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.components.io.fileselectors.FileInfo;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.util.IOUtil;
-
 /**
  * @version $Id$
  */
+@Component( role = ContainerDescriptorHandler.class, hint = "file-aggregator", instantiationStrategy = "per-lookup" )
 public class SimpleAggregatingDescriptorHandler
     implements ContainerDescriptorHandler, LogEnabled
 {
@@ -54,6 +58,7 @@ public class SimpleAggregatingDescriptorHandler
 
     private String outputPath;
 
+    @SuppressWarnings( "FieldCanBeLocal" )
     private final String commentChars = "#";
 
     // calculated, temporary values.
@@ -68,7 +73,8 @@ public class SimpleAggregatingDescriptorHandler
 
     private Logger logger;
 
-    public void finalizeArchiveCreation( final Archiver archiver ) throws ArchiverException
+    public void finalizeArchiveCreation( final Archiver archiver )
+        throws ArchiverException
     {
         checkConfig();
 
@@ -76,7 +82,7 @@ public class SimpleAggregatingDescriptorHandler
         {
             throw new ArchiverException(
                                          "Cannot write aggregated properties to a directory. You must specify a file name in the outputPath configuration for this handler. (handler: "
-                                                         + getClass().getName() );
+                                             + getClass().getName() );
         }
 
         if ( outputPath.startsWith( "/" ) )
@@ -93,7 +99,8 @@ public class SimpleAggregatingDescriptorHandler
         overrideFilterAction = false;
     }
 
-    private File writePropertiesFile() throws ArchiverException
+    private File writePropertiesFile()
+        throws ArchiverException
     {
         File f;
 
@@ -103,13 +110,17 @@ public class SimpleAggregatingDescriptorHandler
             f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            // FIXME if it is a properties file, encoding should be ISO-8859-1
-            writer = new FileWriter( f ); // platform encoding
+
+            boolean isProperty = AssemblyFileUtils.isPropertyFile(f);
+            FileOutputStream fos = new FileOutputStream( f );
+            writer = isProperty ? new OutputStreamWriter( fos,  "ISO-8859-1")
+                : new OutputStreamWriter( fos); // Still platform encoding
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
-            for (final String filename : filenames) {
-                writer.write("\n" + commentChars + " " + filename);
+            for ( final String filename : filenames )
+            {
+                writer.write( "\n" + commentChars + " " + filename );
             }
 
             writer.write( "\n\n" );
@@ -119,7 +130,7 @@ public class SimpleAggregatingDescriptorHandler
         catch ( final IOException e )
         {
             throw new ArchiverException( "Error adding aggregated properties to finalize archive creation. Reason: "
-                            + e.getMessage(), e );
+                + e.getMessage(), e );
         }
         finally
         {
@@ -129,7 +140,8 @@ public class SimpleAggregatingDescriptorHandler
         return f;
     }
 
-    public void finalizeArchiveExtraction( final UnArchiver unarchiver ) throws ArchiverException
+    public void finalizeArchiveExtraction( final UnArchiver unarchiver )
+        throws ArchiverException
     {
     }
 
@@ -140,7 +152,8 @@ public class SimpleAggregatingDescriptorHandler
         return Collections.singletonList( outputPath );
     }
 
-    public boolean isSelected( final FileInfo fileInfo ) throws IOException
+    public boolean isSelected( final @Nonnull FileInfo fileInfo )
+        throws IOException
     {
         checkConfig();
 
@@ -150,10 +163,7 @@ public class SimpleAggregatingDescriptorHandler
             return true;
         }
 
-        String name = fileInfo.getName();
-        name = AssemblyFileUtils.normalizePath( name );
-
-        name = name.replace( File.separatorChar, '/' );
+        String name = AssemblyFileUtils.normalizeFileInfo( fileInfo );
 
         if ( fileInfo.isFile() && name.matches( filePattern ) )
         {
@@ -175,14 +185,17 @@ public class SimpleAggregatingDescriptorHandler
         }
     }
 
-    private void readProperties( final FileInfo fileInfo ) throws IOException
+    private void readProperties( final FileInfo fileInfo )
+        throws IOException
     {
         final StringWriter writer = new StringWriter();
         Reader reader = null;
         try
         {
-            // FIXME if it is a properties file, encoding should be ISO-8859-1
-            reader = new InputStreamReader( fileInfo.getContents() ); // platform encoding
+            boolean isProperty = AssemblyFileUtils.isPropertyFile(fileInfo.getName());
+
+            reader = isProperty ? new InputStreamReader( fileInfo.getContents(), "ISO-8859-1" ) :
+            new InputStreamReader( fileInfo.getContents() ); // platform encoding
 
             IOUtil.copy( reader, writer );
         }
@@ -212,21 +225,25 @@ public class SimpleAggregatingDescriptorHandler
         this.logger = logger;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public String getFilePattern()
     {
         return filePattern;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public void setFilePattern( final String filePattern )
     {
         this.filePattern = filePattern;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public String getOutputPath()
     {
         return outputPath;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public void setOutputPath( final String outputPath )
     {
         this.outputPath = outputPath;

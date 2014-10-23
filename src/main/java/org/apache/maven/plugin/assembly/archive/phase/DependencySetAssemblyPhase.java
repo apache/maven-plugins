@@ -20,12 +20,11 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -51,11 +50,18 @@ public class DependencySetAssemblyPhase
     @Requirement
     private ArchiverManager archiverManager;
 
+    /**
+     * Default constructor.
+     */
     public DependencySetAssemblyPhase()
     {
         // used for plexus init
     }
 
+    /**
+     * @param projectBuilder The Maven Project Builder.
+     * @param logger The Logger.
+     */
     public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, final Logger logger )
     {
         this.projectBuilder = projectBuilder;
@@ -65,12 +71,12 @@ public class DependencySetAssemblyPhase
     /**
      * {@inheritDoc}
      */
-    public void execute( final Assembly assembly, final Archiver archiver,
-                         final AssemblerConfigurationSource configSource, final AssemblyContext context )
+    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+                         final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         final AddDependencySetsTask task =
-            new AddDependencySetsTask( assembly.getDependencySets(), context.getResolvedArtifacts(),
+            new AddDependencySetsTask( assembly.getDependencySets(), assembly.getResolvedDependencySetArtifacts(),
                                        configSource.getProject(), projectBuilder, archiverManager, getLogger() );
 
         task.execute( archiver, configSource );

@@ -133,10 +133,10 @@ public class ManifestCreationFinalizer
                     return Collections.singletonList( "META-INF/MANIFEST.MF" );
                 }
             }
-            catch ( final ManifestException e )
+            catch ( final ManifestException ignore )
             {
             }
-            catch ( final DependencyResolutionRequiredException e )
+            catch ( final DependencyResolutionRequiredException ignore )
             {
             }
         }

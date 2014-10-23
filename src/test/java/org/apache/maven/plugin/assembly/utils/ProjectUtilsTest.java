@@ -45,9 +45,7 @@ public class ProjectUtilsTest
         model.setGroupId( groupId );
         model.setVersion( version );
 
-        final MavenProject project = new MavenProject( model );
-
-        return project;
+        return new MavenProject( model );
     }
 
     public void testGetProjectModules_ShouldIncludeDirectModuleOfMasterProject() throws IOException

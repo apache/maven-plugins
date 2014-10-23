@@ -20,11 +20,10 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.AssemblyContext;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.codehaus.plexus.archiver.Archiver;
 
 /**
@@ -40,16 +39,14 @@ public interface AssemblyArchiverPhase
     /**
      * Handle the associated section of the assembly descriptor.
      * 
-     * @param assembly
-     *            The assembly descriptor to use
-     * @param archiver
-     *            The archiver used to create the assembly archive, to which files/directories/artifacts are added
-     * @param configSource
-     *            The configuration for this assembly build, normally derived from the plugin that launched the assembly
-     *            process.
-     * @param context
+     * @param assembly The assembly descriptor to use
+     * @param archiver The archiver used to create the assembly archive, to which files/directories/artifacts are added
+     * @param configSource The configuration for this assembly build, normally derived from the plugin that launched the
+     *            assembly process.
+     * @throws ArchiveCreationException in case of an archive creation error.
+     * @throws AssemblyFormattingException in case of a assembly formatting exception.
+     * @throws InvalidAssemblerConfigurationException in case of an invalid assembler configuration.
      */
-    void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource,
-                  AssemblyContext context )
+    void execute( ResolvedAssembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 }

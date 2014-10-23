@@ -21,13 +21,14 @@ package org.apache.maven.plugin.assembly.archive.archiver;
 
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 
 import java.io.File;
 
 /**
  * @version $Id$
  */
-public class PrefixedFileSet
+class PrefixedFileSet
     implements FileSet
 {
 
@@ -37,6 +38,11 @@ public class PrefixedFileSet
 
     private final FileSelector[] selectors;
 
+    /**
+     * @param fileSet The file set.
+     * @param rootPrefix The root prefix
+     * @param selectors The file selectors.
+     */
     public PrefixedFileSet( final FileSet fileSet, final String rootPrefix, final FileSelector[] selectors )
     {
         this.fileSet = fileSet;
@@ -52,36 +58,47 @@ public class PrefixedFileSet
         }
     }
 
+    /** {@inheritDoc} */
     public String[] getExcludes()
     {
         return fileSet.getExcludes();
     }
 
+    /** {@inheritDoc} */
     public FileSelector[] getFileSelectors()
     {
         FileSelector[] sel = fileSet.getFileSelectors();
-        if ( ( sel != null ) && ( selectors != null ) )
-        {
-            final FileSelector[] temp = new FileSelector[sel.length + selectors.length];
-
-            System.arraycopy( sel, 0, temp, 0, sel.length );
-            System.arraycopy( selectors, 0, temp, sel.length, selectors.length );
-
-            sel = temp;
-        }
-        else if ( ( sel == null ) && ( selectors != null ) )
-        {
-            sel = selectors;
-        }
-
-        return sel;
+        final FileSelector[] selectors1 = selectors;
+        return combineSelectors( sel, selectors1 );
     }
 
+    /** {@inheritDoc} */
+    static FileSelector[] combineSelectors( FileSelector[] first, FileSelector[] second )
+    {
+        if ( ( first != null ) && ( second != null ) )
+        {
+            final FileSelector[] temp = new FileSelector[first.length + second.length];
+
+            System.arraycopy( first, 0, temp, 0, first.length );
+            System.arraycopy( second, 0, temp, first.length, second.length );
+
+            first = temp;
+        }
+        else if ( ( first == null ) && ( second != null ) )
+        {
+            first = second;
+        }
+
+        return first;
+    }
+
+    /** {@inheritDoc} */
     public String[] getIncludes()
     {
         return fileSet.getIncludes();
     }
 
+    /** {@inheritDoc} */
     public String getPrefix()
     {
         String prefix = fileSet.getPrefix();
@@ -105,24 +122,32 @@ public class PrefixedFileSet
         return rootPrefix + prefix;
     }
 
+    /** {@inheritDoc} */
     public boolean isCaseSensitive()
     {
         return fileSet.isCaseSensitive();
     }
 
+    /** {@inheritDoc} */
     public boolean isIncludingEmptyDirectories()
     {
         return fileSet.isIncludingEmptyDirectories();
     }
 
+    /** {@inheritDoc} */
     public boolean isUsingDefaultExcludes()
     {
         return fileSet.isUsingDefaultExcludes();
     }
 
+    /** {@inheritDoc} */
     public File getDirectory()
     {
         return fileSet.getDirectory();
     }
 
+    public InputStreamTransformer getStreamTransformer()
+    {
+        return fileSet.getStreamTransformer();
+    }
 }
