@@ -25,17 +25,16 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.expect;
 
 public class ArtifactMock
 {
 
-    private final MockControl artifactCtl;
 
     private final Artifact artifact;
 
-    private final MockControl handlerCtl;
 
     private final ArtifactHandler handler;
 
@@ -61,61 +60,51 @@ public class ArtifactMock
 
     private final String classifier;
 
-    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+    public ArtifactMock( final EasyMockSupport mockManager, final String groupId, final String artifactId,
                          final String version, final String type, final boolean isSnapshot )
     {
         this( mockManager, groupId, artifactId, version, type, null, isSnapshot, null, null );
     }
 
-    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+    public ArtifactMock( final EasyMockSupport mockManager, final String groupId, final String artifactId,
                          final String version, final String type, final boolean isSnapshot, final String baseVersion )
     {
         this( mockManager, groupId, artifactId, version, type, null, isSnapshot, baseVersion, null );
     }
 
-    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+    public ArtifactMock( final EasyMockSupport mockManager, final String groupId, final String artifactId,
                          final String version, final String type, final String classifier, final boolean isSnapshot )
     {
         this( mockManager, groupId, artifactId, version, type, classifier, isSnapshot, null, null );
     }
 
-    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+    public ArtifactMock( final EasyMockSupport mockManager, final String groupId, final String artifactId,
                          final String version, final String type, final String classifier, final boolean isSnapshot,
                          final String baseVersion )
     {
         this( mockManager, groupId, artifactId, version, type, classifier, isSnapshot, baseVersion, null );
     }
 
-    private ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+    private ArtifactMock( final EasyMockSupport mockManager, final String groupId, final String artifactId,
                           final String version, final String type, final String classifier, final boolean isSnapshot,
                           final String baseVersion, String scope )
     {
-        artifactCtl = MockControl.createControl( Artifact.class );
 
-        mockManager.add( artifactCtl );
-
-        artifact = (Artifact) artifactCtl.getMock();
+        artifact = mockManager.createMock( Artifact.class );
 
         if ( scope == null )
         {
             scope = Artifact.SCOPE_COMPILE;
         }
 
-        artifact.getScope();
-        artifactCtl.setReturnValue( scope, MockControl.ZERO_OR_MORE );
+        expect( artifact.getScope()).andReturn( scope ).anyTimes();
 
-        handlerCtl = MockControl.createControl( ArtifactHandler.class );
+        handler = mockManager.createMock( ArtifactHandler.class );
 
-        mockManager.add( handlerCtl );
-
-        handler = (ArtifactHandler) handlerCtl.getMock();
-
-        artifact.getArtifactHandler();
-        artifactCtl.setReturnValue( handler, MockControl.ZERO_OR_MORE );
+        expect(artifact.getArtifactHandler()).andReturn( handler ).anyTimes();
 
         this.classifier = classifier;
-        artifact.getClassifier();
-        artifactCtl.setReturnValue( classifier, MockControl.ZERO_OR_MORE );
+        expect(artifact.getClassifier()).andReturn( classifier ).anyTimes();
 
         setSnapshot( isSnapshot );
         setGroupId( groupId );
@@ -142,9 +131,7 @@ public class ArtifactMock
     {
         if ( ( artifactId != null ) && ( this.artifactId == null ) )
         {
-            artifact.getArtifactId();
-            artifactCtl.setReturnValue( artifactId, MockControl.ZERO_OR_MORE );
-
+            expect(artifact.getArtifactId()).andReturn( artifactId ).anyTimes();
             this.artifactId = artifactId;
         }
     }
@@ -153,8 +140,7 @@ public class ArtifactMock
     {
         if ( ( baseVersion != null ) && ( this.baseVersion == null ) )
         {
-            artifact.getBaseVersion();
-            artifactCtl.setReturnValue( baseVersion, MockControl.ZERO_OR_MORE );
+            expect(artifact.getBaseVersion()).andReturn( baseVersion ).anyTimes();
 
             this.baseVersion = baseVersion;
         }
@@ -164,9 +150,7 @@ public class ArtifactMock
     {
         if ( ( destination != null ) && ( file == null ) )
         {
-            artifact.getFile();
-            artifactCtl.setReturnValue( destination, MockControl.ZERO_OR_MORE );
-
+            expect(artifact.getFile()).andReturn( destination ).anyTimes();
             file = destination;
         }
     }
@@ -175,8 +159,7 @@ public class ArtifactMock
     {
         if ( ( groupId != null ) && ( this.groupId == null ) )
         {
-            artifact.getGroupId();
-            artifactCtl.setReturnValue( groupId, MockControl.ZERO_OR_MORE );
+            expect(artifact.getGroupId()).andReturn( groupId ).anyTimes();
 
             this.groupId = groupId;
         }
@@ -186,8 +169,7 @@ public class ArtifactMock
     {
         if ( ( version != null ) && ( this.version == null ) )
         {
-            artifact.getVersion();
-            artifactCtl.setReturnValue( version, MockControl.ZERO_OR_MORE );
+            expect(artifact.getVersion()).andReturn( version ).anyTimes();
 
             this.version = version;
 
@@ -203,9 +185,7 @@ public class ArtifactMock
     {
         if ( ( dependencyTrail != null ) && ( this.dependencyTrail == null ) )
         {
-            artifact.getDependencyTrail();
-            artifactCtl.setReturnValue( dependencyTrail, MockControl.ZERO_OR_MORE );
-
+            expect(artifact.getDependencyTrail()).andReturn( dependencyTrail ).anyTimes();
             this.dependencyTrail = dependencyTrail;
         }
     }
@@ -214,9 +194,7 @@ public class ArtifactMock
     {
         if ( ( id != null ) && ( this.id == null ) )
         {
-            artifact.getId();
-            artifactCtl.setReturnValue( id, MockControl.ZERO_OR_MORE );
-
+            expect(artifact.getId()).andReturn( id ).anyTimes();
             this.id = id;
         }
     }
@@ -225,8 +203,7 @@ public class ArtifactMock
     {
         if ( ( id != null ) && ( dependencyConflictId == null ) )
         {
-            artifact.getDependencyConflictId();
-            artifactCtl.setReturnValue( id, MockControl.ZERO_OR_MORE );
+           expect( artifact.getDependencyConflictId()).andReturn( id ).anyTimes();
 
             dependencyConflictId = id;
         }
@@ -236,9 +213,7 @@ public class ArtifactMock
     {
         if ( isSnapshot == null )
         {
-            artifact.isSnapshot();
-            artifactCtl.setReturnValue( snapshot, MockControl.ZERO_OR_MORE );
-
+           expect(artifact.isSnapshot()).andReturn( snapshot ).anyTimes();
             isSnapshot = snapshot;
         }
     }
@@ -250,10 +225,7 @@ public class ArtifactMock
         {
             final File newFile = File.createTempFile( "ArtifactMock.test.", "" );
             newFile.deleteOnExit();
-
-            artifact.getFile();
-            artifactCtl.setReturnValue( newFile, MockControl.ZERO_OR_MORE );
-
+            expect( artifact.getFile()).andReturn( newFile ).anyTimes();
             file = newFile;
         }
 
@@ -269,12 +241,8 @@ public class ArtifactMock
     {
         if ( ( type != null ) && ( typeAndExt == null ) )
         {
-            artifact.getType();
-            artifactCtl.setReturnValue( type, MockControl.ZERO_OR_MORE );
-
-            handler.getExtension();
-            handlerCtl.setReturnValue( type, MockControl.ZERO_OR_MORE );
-
+            expect(artifact.getType()).andReturn( type ).anyTimes();
+            expect(handler.getExtension()).andReturn( type ).anyTimes();
             typeAndExt = type;
         }
     }
@@ -302,8 +270,7 @@ public class ArtifactMock
 
     public void setNullFile()
     {
-        artifact.getFile();
-        artifactCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect(artifact.getFile()).andReturn( null ).anyTimes();
 
         file = new File( "set-to-null" );
     }

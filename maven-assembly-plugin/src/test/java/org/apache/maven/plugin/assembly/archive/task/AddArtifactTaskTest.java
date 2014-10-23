@@ -26,7 +26,6 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -38,28 +37,27 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
+import org.easymock.classextension.EasyMockSupport;
 
 public class AddArtifactTaskTest
     extends TestCase
 {
 
-    private MockManager mockManager;
+    private EasyMockSupport mockManager;
 
     private MockAndControlForAddArtifactTask mac;
-
-    private MavenProject mainProject;
 
     public void setUp()
         throws IOException
     {
-        mockManager = new MockManager();
+        mockManager = new EasyMockSupport();
 
         Model model = new Model();
         model.setGroupId( "group" );
         model.setArtifactId( "main" );
         model.setVersion( "1000" );
 
-        mainProject = new MavenProject( model );
+        MavenProject mainProject = new MavenProject( model );
 
         mac = new MockAndControlForAddArtifactTask( mockManager, mainProject );
         mac.expectGetFinalName( "final-name" );

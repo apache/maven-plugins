@@ -26,34 +26,35 @@ import java.util.Collections;
 import junit.framework.TestCase;
 
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
 import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 
 public class AddDirectoryTaskTest
     extends TestCase
 {
 
-    private MockManager mockManager;
+    private EasyMockSupport mockManager;
 
     private TestFileManager fileManager;
 
     private Archiver archiver;
 
-    private MockControl archiverControl;
 
     public void setUp()
     {
         fileManager = new TestFileManager( "ArchiveAssemblyUtils.test.", "" );
 
-        mockManager = new MockManager();
+        mockManager = new EasyMockSupport();
 
-        archiverControl = MockControl.createControl( Archiver.class );
-        mockManager.add( archiverControl );
 
-        archiver = (Archiver) archiverControl.getMock();
+        archiver = mockManager.createMock(Archiver.class);
     }
 
     public void tearDown()
@@ -85,8 +86,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addFileSet( null );
-            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            archiver.addFileSet( (FileSet)anyObject());
         }
         catch ( ArchiverException e )
         {
@@ -113,8 +113,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addFileSet( null );
-            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            archiver.addFileSet( (FileSet)anyObject() );
         }
         catch ( ArchiverException e )
         {
@@ -146,8 +145,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addFileSet( null );
-            archiverControl.setMatcher( MockControl.ALWAYS_MATCHER );
+            archiver.addFileSet( (FileSet)anyObject() );
         }
         catch ( ArchiverException e )
         {
@@ -172,11 +170,8 @@ public class AddDirectoryTaskTest
     private void configureModeExpectations( int defaultDirMode, int defaultFileMode, int dirMode, int fileMode,
                                             boolean expectTwoSets )
     {
-        archiver.getOverrideDirectoryMode();
-        archiverControl.setReturnValue( defaultDirMode );
-
-        archiver.getOverrideFileMode();
-        archiverControl.setReturnValue( defaultFileMode );
+        expect(archiver.getOverrideDirectoryMode()).andReturn( defaultDirMode );
+        expect(archiver.getOverrideFileMode()).andReturn( defaultFileMode );
 
         if ( expectTwoSets )
         {

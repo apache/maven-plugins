@@ -19,6 +19,16 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
+import junit.framework.TestCase;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMockSupport;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,23 +36,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
+import static org.easymock.EasyMock.expect;
 
 public class FilterUtilsTest
     extends TestCase
 {
 
-    private final MockManager mockManager = new MockManager();
+    private final EasyMockSupport mockManager = new EasyMockSupport();
 
     private Logger logger;
 
@@ -54,29 +54,20 @@ public class FilterUtilsTest
 
     private void clearAll()
     {
-        mockManager.clear();
-
         logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
     }
 
     public void testFilterArtifacts_ShouldThrowExceptionUsingStrictModeWithUnmatchedInclude()
     {
-        final MockControl artifactCtl = MockControl.createControl( Artifact.class );
-        final Artifact artifact = (Artifact) artifactCtl.getMock();
+        final Artifact artifact = mockManager.createMock( Artifact.class );
 
-        mockManager.add( artifactCtl );
+        expect(artifact.getGroupId()).andReturn( "group").atLeastOnce();
 
-        artifact.getGroupId();
-        artifactCtl.setReturnValue( "group", MockControl.ONE_OR_MORE );
+        expect( artifact.getArtifactId()).andReturn( "artifact").atLeastOnce();
 
-        artifact.getArtifactId();
-        artifactCtl.setReturnValue( "artifact", MockControl.ONE_OR_MORE );
+        expect( artifact.getId()).andReturn( "group:artifact:type:version").atLeastOnce();
 
-        artifact.getId();
-        artifactCtl.setReturnValue( "group:artifact:type:version", MockControl.ONE_OR_MORE );
-
-        artifact.getDependencyConflictId();
-        artifactCtl.setReturnValue( "group:artifact:type", MockControl.ONE_OR_MORE );
+        expect( artifact.getDependencyConflictId()).andReturn( "group:artifact:type").atLeastOnce();
 
         final List<String> includes = new ArrayList<String>();
 
@@ -274,7 +265,7 @@ public class FilterUtilsTest
         mockManager.verifyAll();
 
         // get ready for multiple calls per test.
-        mockManager.clear();
+        mockManager.resetAll();
     }
 
     private void verifyProjectInclusion( final String groupId, final String artifactId, final String inclusionPattern,
@@ -342,7 +333,7 @@ public class FilterUtilsTest
         mockManager.verifyAll();
 
         // get ready for multiple calls per test.
-        mockManager.clear();
+        mockManager.resetAll();
     }
 
     private static Model buildModel( final String groupId, final String artifactId )
@@ -372,8 +363,6 @@ public class FilterUtilsTest
 
     private final class ArtifactMockAndControl
     {
-        final MockControl control;
-
         final Artifact artifact;
 
         final String groupId;
@@ -388,10 +377,7 @@ public class FilterUtilsTest
             this.artifactId = artifactId;
             this.dependencyTrail = dependencyTrail;
 
-            control = MockControl.createControl( Artifact.class );
-            mockManager.add( control );
-
-            artifact = (Artifact) control.getMock();
+            artifact = mockManager.createMock (Artifact.class);
 
             // this is always enabled, for verification purposes.
             enableGetDependencyConflictId();
@@ -405,26 +391,21 @@ public class FilterUtilsTest
 
         void enableGetDependencyTrail()
         {
-            artifact.getDependencyTrail();
-            control.setReturnValue( dependencyTrail, MockControl.ZERO_OR_MORE );
+            expect( artifact.getDependencyTrail()).andReturn( dependencyTrail ).anyTimes();
         }
 
         void enableGetDependencyConflictId()
         {
-            artifact.getDependencyConflictId();
-            control.setReturnValue( groupId + ":" + artifactId + ":jar", MockControl.ZERO_OR_MORE );
+            expect(artifact.getDependencyConflictId()).andReturn( groupId + ":" + artifactId + ":jar").anyTimes();
         }
 
         void enableGetGroupIdArtifactIdAndId()
         {
-            artifact.getGroupId();
-            control.setReturnValue( groupId, MockControl.ZERO_OR_MORE );
+            expect( artifact.getGroupId()).andReturn( groupId).anyTimes();
 
-            artifact.getArtifactId();
-            control.setReturnValue( artifactId, MockControl.ZERO_OR_MORE );
+            expect( artifact.getArtifactId()).andReturn( artifactId ).anyTimes();
 
-            artifact.getId();
-            control.setReturnValue( groupId + ":" + artifactId + ":version:null:jar", MockControl.ZERO_OR_MORE );
+            expect( artifact.getId()).andReturn( groupId + ":" + artifactId + ":version:null:jar").anyTimes();
         }
     }
 

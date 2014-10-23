@@ -30,16 +30,16 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.expect;
 
 public class AssemblyFormatUtilsTest
     extends TestCase
 {
 
-    private final MockManager mockManager = new MockManager();
+    private final EasyMockSupport mockManager = new EasyMockSupport();
 
     public void testFixRelativePathRefs_ShouldRemoveRelativeRefToCurrentDir()
         throws AssemblyFormattingException
@@ -294,22 +294,14 @@ public class AssemblyFormatUtilsTest
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
 
-        final MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
-        mockManager.add( sessionCtl );
+        final MavenSession session = mockManager.createMock(MavenSession.class);
+        expect( session.getExecutionProperties()).andReturn( null ).anyTimes();
 
-        final MavenSession session = (MavenSession) sessionCtl.getMock();
-        session.getExecutionProperties();
-        sessionCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect( session.getUserProperties()).andReturn( new Properties(  ) ).anyTimes();
 
-        session.getUserProperties();
-        sessionCtl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
 
-        final MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( csCtl );
-
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
-        cs.getMavenSession();
-        csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        final AssemblerConfigurationSource cs = mockManager.createMock( AssemblerConfigurationSource.class );
+        expect( cs.getMavenSession()).andReturn( session ).anyTimes();
 
         mockManager.replayAll();
 
@@ -322,7 +314,7 @@ public class AssemblyFormatUtilsTest
         mockManager.verifyAll();
 
         // clear out for next call.
-        mockManager.clear();
+        mockManager.resetAll();
     }
 
     public void testEvalFileNameMapping_ShouldResolveGroupIdInOutDir_UseArtifactInfo()
@@ -611,22 +603,15 @@ public class AssemblyFormatUtilsTest
             new ArtifactMock( mockManager, moduleProject.getGroupId(), moduleProject.getArtifactId(),
                               moduleProject.getVersion(), "jar", false, null );
 
-        final MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
-        mockManager.add( sessionCtl );
 
-        final MavenSession session = (MavenSession) sessionCtl.getMock();
-        session.getExecutionProperties();
-        sessionCtl.setReturnValue( System.getProperties(), MockControl.ZERO_OR_MORE );
+        final MavenSession session = mockManager.createMock( MavenSession.class );
+        expect( session.getExecutionProperties()).andReturn( System.getProperties() ).anyTimes();
 
-        session.getUserProperties();
-        sessionCtl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+        expect(session.getUserProperties()).andReturn( new Properties(  ) ).anyTimes();
 
-        final MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( csCtl );
 
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
-        cs.getMavenSession();
-        csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        final AssemblerConfigurationSource cs = mockManager.createMock( AssemblerConfigurationSource.class );
+        expect( cs.getMavenSession()).andReturn( session ).anyTimes();
 
         mockManager.replayAll();
 
@@ -640,7 +625,7 @@ public class AssemblyFormatUtilsTest
         mockManager.verifyAll();
 
         // clear out for next call.
-        mockManager.clear();
+        mockManager.resetAll();
     }
 
     private void verifyOutputDir( final String outDir, final String finalName, final String projectFinalName,
@@ -721,22 +706,15 @@ public class AssemblyFormatUtilsTest
                                   final String checkValue )
         throws AssemblyFormattingException
     {
-        final MockControl sessionCtl = MockClassControl.createControl( MavenSession.class );
-        mockManager.add( sessionCtl );
 
-        final MavenSession session = (MavenSession) sessionCtl.getMock();
-        session.getExecutionProperties();
-        sessionCtl.setReturnValue( System.getProperties(), MockControl.ZERO_OR_MORE );
+        final MavenSession session = mockManager.createMock( MavenSession.class );
+        expect( session.getExecutionProperties()).andReturn(  System.getProperties()).anyTimes();
 
-        session.getUserProperties();
-        sessionCtl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+        expect( session.getUserProperties()).andReturn( new Properties(  ) ).anyTimes();
 
-        final MockControl csCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( csCtl );
 
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csCtl.getMock();
-        cs.getMavenSession();
-        csCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        final AssemblerConfigurationSource cs = mockManager.createMock( AssemblerConfigurationSource.class );
+        expect( cs.getMavenSession()).andReturn( session ).anyTimes();
 
         String result;
 
@@ -748,7 +726,7 @@ public class AssemblyFormatUtilsTest
 
         mockManager.verifyAll();
 
-        mockManager.clear();
+        mockManager.resetAll();
     }
 
     private void verifyDistroName( final String assemblyId, final String classifier, final String finalName,
@@ -769,13 +747,11 @@ public class AssemblyFormatUtilsTest
         mockManager.verifyAll();
 
         // clear it out for the next call.
-        mockManager.clear();
+        mockManager.resetAll();
     }
 
     private final class MockAndControlForGetDistroName
     {
-        final MockControl control;
-
         final AssemblerConfigurationSource configSource;
 
         private final String classifier;
@@ -791,24 +767,18 @@ public class AssemblyFormatUtilsTest
             this.isAssemblyIdAppended = isAssemblyIdAppended;
             this.classifier = classifier;
 
-            control = MockControl.createControl( AssemblerConfigurationSource.class );
-            mockManager.add( control );
-
-            configSource = (AssemblerConfigurationSource) control.getMock();
+            configSource = mockManager.createMock (AssemblerConfigurationSource.class);
 
             enableExpectations();
         }
 
         private void enableExpectations()
         {
-            configSource.getClassifier();
-            control.setReturnValue( classifier, MockControl.ONE_OR_MORE );
+            expect(configSource.getClassifier()).andReturn( classifier ).atLeastOnce();
 
-            configSource.isAssemblyIdAppended();
-            control.setReturnValue( isAssemblyIdAppended, MockControl.ONE_OR_MORE );
+            expect(configSource.isAssemblyIdAppended()).andReturn( isAssemblyIdAppended ).atLeastOnce();
 
-            configSource.getFinalName();
-            control.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+            expect( configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
         }
 
     }

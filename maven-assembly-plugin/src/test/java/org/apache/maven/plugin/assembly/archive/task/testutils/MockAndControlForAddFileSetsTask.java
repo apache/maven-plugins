@@ -25,67 +25,51 @@ import junit.framework.Assert;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.easymock.MockControl;
+import org.codehaus.plexus.archiver.FileSet;
+import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 
 public class MockAndControlForAddFileSetsTask
 {
 
     public final AssemblerConfigurationSource configSource;
 
-    private final MockControl configSourceCtl;
 
     public Archiver archiver;
 
-    public MockControl archiverCtl;
-
-    private final TestFileManager fileManager;
-
     public File archiveBaseDir;
 
-    public MockAndControlForAddFileSetsTask( MockManager mockManager, TestFileManager fileManager )
+    public MockAndControlForAddFileSetsTask( EasyMockSupport mockManager, TestFileManager fileManager )
     {
-        this.fileManager = fileManager;
-
-        configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceCtl );
-
-        configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
-
-        archiverCtl = MockControl.createControl( Archiver.class );
-        mockManager.add( archiverCtl );
-
-        archiver = (Archiver) archiverCtl.getMock();
-
+        configSource = mockManager.createMock (AssemblerConfigurationSource.class);
+        archiver = mockManager.createMock (Archiver.class);
         archiveBaseDir = fileManager.createTempDir();
 
-        configSource.getMavenSession();
-        configSourceCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect(configSource.getMavenSession()).andReturn( null).anyTimes();
     }
 
     public void expectGetArchiveBaseDirectory()
     {
-        configSource.getArchiveBaseDirectory();
-        configSourceCtl.setReturnValue( archiveBaseDir, MockControl.ONE_OR_MORE );
+        expect(configSource.getArchiveBaseDirectory()).andReturn( archiveBaseDir ).anyTimes();
     }
 
     public void expectGetBasedir( File basedir )
     {
-        configSource.getBasedir();
-        configSourceCtl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
     }
 
     void expectModeChanges( int[] modes, int modeChangeCount )
     {
-        archiver.getOverrideDirectoryMode();
-        archiverCtl.setReturnValue( modes[0] );
+        expect(archiver.getOverrideDirectoryMode()).andReturn( modes[0] );
+        expect(archiver.getOverrideFileMode()).andReturn( modes[1] );
 
-        archiver.getOverrideFileMode();
-        archiverCtl.setReturnValue( modes[1] );
 
         if ( modeChangeCount > 1 )
         {
@@ -129,21 +113,16 @@ public class MockAndControlForAddFileSetsTask
         // the logger sends a debug message with this info inside the addFileSet(..) method..
         if ( isDebugEnabled )
         {
-            archiver.getOverrideDirectoryMode();
-            archiverCtl.setReturnValue( modes[0] );
-
-            archiver.getOverrideFileMode();
-            archiverCtl.setReturnValue( modes[1] );
+            expect(archiver.getOverrideDirectoryMode()).andReturn( modes[0] );
+            expect(archiver.getOverrideFileMode()).andReturn( modes[1] );
         }
 
         if ( isProjectUsed )
         {
-            configSource.getProject();
-            configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
+            expect(configSource.getProject()).andReturn( project ).atLeastOnce();
         }
 
-        configSource.getFinalName();
-        configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+        expect( configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
 
         if ( shouldAddDir )
         {
@@ -151,9 +130,8 @@ public class MockAndControlForAddFileSetsTask
 
             try
             {
-                archiver.addFileSet( null );
-                archiverCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-                archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
+                archiver.addFileSet( (FileSet) anyObject() );
+                EasyMock.expectLastCall().atLeastOnce();
             }
             catch ( ArchiverException e )
             {
@@ -165,20 +143,17 @@ public class MockAndControlForAddFileSetsTask
 
     public void expectGetProject( MavenProject project )
     {
-        configSource.getProject();
-        configSourceCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        expect(configSource.getProject()).andReturn( project ).atLeastOnce();
     }
 
     public void expectGetSession( MavenSession session )
     {
-        configSource.getMavenSession();
-        configSourceCtl.setReturnValue( session, MockControl.ONE_OR_MORE );
+        expect(configSource.getMavenSession()).andReturn( session ).atLeastOnce();
     }
 
     public void expectGetFinalName( String finalName )
     {
-        configSource.getFinalName();
-        configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+        expect( configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
     }
 
 }

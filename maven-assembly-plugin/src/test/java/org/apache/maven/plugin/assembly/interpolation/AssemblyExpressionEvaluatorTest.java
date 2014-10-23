@@ -19,41 +19,27 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.Properties;
-
 import junit.framework.TestCase;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.ConfigSourceStub;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
+import org.easymock.classextension.EasyMockSupport;
+import org.easymock.classextension.IMocksControl;
+
+import java.util.Properties;
+
+import static org.easymock.EasyMock.expect;
 
 public class AssemblyExpressionEvaluatorTest
     extends TestCase
 {
 
-    private AssemblyInterpolator interpolator;
-
     private final ConfigSourceStub configSourceStub = new ConfigSourceStub();
-
-    @Override
-    public void setUp()
-        throws IOException
-    {
-        interpolator = new AssemblyInterpolator();
-
-        interpolator.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
-    }
 
     public void testShouldResolveModelGroupId()
         throws ExpressionEvaluationException
@@ -106,42 +92,26 @@ public class AssemblyExpressionEvaluatorTest
 
         model.setProperties( props );
 
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
-        final MockControl sessionControl = MockClassControl.createControl( MavenSession.class );
-        final MavenSession session = (MavenSession) sessionControl.getMock();
-
-        mm.add( sessionControl );
+        MavenSession session = mm.createControl().createMock( MavenSession.class );
 
         final Properties execProps = new Properties();
         execProps.setProperty( "groupId", "still.another.id" );
 
-        session.getExecutionProperties();
-        sessionControl.setReturnValue( execProps, MockControl.ZERO_OR_MORE );
+        expect( session.getExecutionProperties()).andReturn( execProps ).anyTimes();
+        expect( session.getUserProperties()).andReturn( new Properties() ).anyTimes();
 
-        session.getUserProperties();
-        sessionControl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+        AssemblerConfigurationSource cs = mm.createControl().createMock( AssemblerConfigurationSource.class );
 
-        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
+        expect( cs.getMavenSession()).andReturn( session );
+        expect( cs.getProject() ).andReturn( new MavenProject( model ) );
 
-        mm.add( csControl );
+        final IMocksControl lrCtl = mm.createControl();
+        final ArtifactRepository lr = lrCtl.createMock( ArtifactRepository.class );
 
-        cs.getMavenSession();
-        csControl.setReturnValue( session, MockControl.ZERO_OR_MORE );
-
-        cs.getProject();
-        csControl.setReturnValue( new MavenProject( model ), MockControl.ZERO_OR_MORE );
-
-        final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
-        final ArtifactRepository lr = (ArtifactRepository) lrCtl.getMock();
-        mm.add( lrCtl );
-
-        lr.getBasedir();
-        lrCtl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
-
-        cs.getLocalRepository();
-        csControl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
+        expect( lr.getBasedir()).andReturn( "/path/to/local/repo" ).anyTimes();
+        expect( cs.getLocalRepository()).andReturn( lr ).anyTimes();
 
         mm.replayAll();
 
@@ -150,7 +120,6 @@ public class AssemblyExpressionEvaluatorTest
         assertEquals( "assembly.still.another.id", result );
 
         mm.verifyAll();
-        mm.clear();
     }
 
     public void testShouldReturnUnchangedInputForUnresolvedExpression()

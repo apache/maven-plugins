@@ -19,19 +19,19 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-
 import junit.framework.TestCase;
-
 import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.easymock.EasyMock.expect;
 
 public class AssemblyFileUtilsTest
     extends TestCase
@@ -48,25 +48,18 @@ public class AssemblyFileUtilsTest
     public void testUnpack_ShouldSetSourceAndDestinationAndCallExtract()
         throws IOException, ArchiveExpansionException, NoSuchArchiverException
     {
-        MockManager mockManager = new MockManager();
+        EasyMockSupport mockManager = new EasyMockSupport();
 
         File source = fileManager.createTempFile();
         File destDir = fileManager.createTempDir();
 
-        MockControl unarchiverCtl = MockControl.createControl( UnArchiver.class );
-        mockManager.add( unarchiverCtl );
+        UnArchiver unarchiver = mockManager.createMock( UnArchiver.class );
 
-        UnArchiver unarchiver = (UnArchiver) unarchiverCtl.getMock();
-
-        MockControl archiverManagerCtl = MockControl.createControl( ArchiverManager.class );
-        mockManager.add( archiverManagerCtl );
-
-        ArchiverManager archiverManager = (ArchiverManager) archiverManagerCtl.getMock();
+        ArchiverManager archiverManager = mockManager.createMock( ArchiverManager.class );
 
         try
         {
-            archiverManager.getUnArchiver( source );
-            archiverManagerCtl.setReturnValue( unarchiver );
+            expect(archiverManager.getUnArchiver( source )).andReturn( unarchiver );
         }
         catch ( NoSuchArchiverException e )
         {

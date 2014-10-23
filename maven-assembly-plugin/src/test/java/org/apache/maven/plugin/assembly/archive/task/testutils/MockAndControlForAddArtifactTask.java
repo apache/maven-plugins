@@ -25,66 +25,53 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 
 public class MockAndControlForAddArtifactTask
 {
 
     public final Archiver archiver;
 
-    private final MockControl archiverCtl;
-
     public AssemblerConfigurationSource configSource;
-
-    private final MockControl configSourceCtl;
 
     private MavenProject project = null;
 
-    public MockAndControlForAddArtifactTask( final MockManager mockManager )
+    public MockAndControlForAddArtifactTask( final EasyMockSupport mockManager )
     {
         this( mockManager, null );
     }
 
-    public MockAndControlForAddArtifactTask( final MockManager mockManager, final MavenProject project )
+    public MockAndControlForAddArtifactTask( final EasyMockSupport mockManager, final MavenProject project )
     {
         this.project = project;
 
-        archiverCtl = MockControl.createControl( Archiver.class );
-        mockManager.add( archiverCtl );
-
-        archiver = (Archiver) archiverCtl.getMock();
-
-        configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceCtl );
-
-        configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
+        archiver = mockManager.createMock(Archiver.class);
+        configSource = mockManager.createMock(AssemblerConfigurationSource.class);
 
         enableDefaultExpectations();
     }
 
     private void enableDefaultExpectations()
     {
-        configSource.getProject();
-        configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
-
-        configSource.getMavenSession();
-        configSourceCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect( configSource.getProject()).andReturn( project ).anyTimes();
+        expect( configSource.getMavenSession()).andReturn( null ).anyTimes();
     }
 
     public void expectGetFinalName( final String finalName )
     {
-        configSource.getFinalName();
-        configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+        expect(configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
     }
 
     public void expectGetDestFile( final File destFile )
     {
-        archiver.getDestFile();
-        archiverCtl.setReturnValue( destFile, MockControl.ZERO_OR_MORE );
+        expect(archiver.getDestFile()).andReturn( destFile ).atLeastOnce();
     }
 
     public void expectAddArchivedFileSet( final File artifactFile, final String outputLocation,
@@ -92,14 +79,8 @@ public class MockAndControlForAddArtifactTask
     {
         try
         {
-            archiver.addArchivedFileSet( artifactFile, outputLocation, includes, excludes );
-
-            if ( ( includes != null ) || ( excludes != null ) )
-            {
-                archiverCtl.setMatcher( MockControl.ARRAY_MATCHER );
-            }
-
-            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
+            archiver.addArchivedFileSet( (File)anyObject(), (String)anyObject(), (String[])anyObject(), (String[])anyObject() );
+            EasyMock.expectLastCall().atLeastOnce();
         }
         catch ( final ArchiverException e )
         {
@@ -110,11 +91,8 @@ public class MockAndControlForAddArtifactTask
     public void expectModeChange( final int originalDirMode, final int originalFileMode, final int dirMode,
                                   final int fileMode, final int numberOfChanges )
     {
-        archiver.getOverrideDirectoryMode();
-        archiverCtl.setReturnValue( originalDirMode );
-
-        archiver.getOverrideFileMode();
-        archiverCtl.setReturnValue( originalFileMode );
+        expect( archiver.getOverrideDirectoryMode()).andReturn( originalDirMode );
+        expect(archiver.getOverrideFileMode()).andReturn( originalFileMode );
 
         // one of the changes will occur below, when we restore the original mode.
         if ( numberOfChanges > 1 )
@@ -149,7 +127,7 @@ public class MockAndControlForAddArtifactTask
         try
         {
             archiver.addFile( file, outputLocation, fileMode );
-            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
+            EasyMock.expectLastCall().atLeastOnce();
         }
         catch ( final ArchiverException e )
         {
@@ -162,7 +140,7 @@ public class MockAndControlForAddArtifactTask
         try
         {
             archiver.addFile( file, outputLocation );
-            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
+            EasyMock.expectLastCall().atLeastOnce();
         }
         catch ( final ArchiverException e )
         {
@@ -172,8 +150,7 @@ public class MockAndControlForAddArtifactTask
 
     public void expectGetReactorProjects( final List<MavenProject> projects )
     {
-        configSource.getReactorProjects();
-        configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
+       expect(configSource.getReactorProjects()).andReturn( projects ).atLeastOnce();
     }
 
 }

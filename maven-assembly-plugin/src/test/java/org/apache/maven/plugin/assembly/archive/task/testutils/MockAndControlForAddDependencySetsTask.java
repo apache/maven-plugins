@@ -24,77 +24,58 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 
 public class MockAndControlForAddDependencySetsTask
 {
 
     public final Archiver archiver;
 
-    private final MockControl archiverCtl;
-
     public AssemblerConfigurationSource configSource;
-
-    private final MockControl configSourceCtl;
-
-    public MockControl dependencyResolverCtl;
 
     public MavenProjectBuilder projectBuilder;
 
-    private final MockControl archiverManagerCtl;
-
     public ArchiverManager archiverManager;
-
-    private final MockControl projectBuilderCtl;
 
     private final MavenProject project;
 
-    public MockAndControlForAddDependencySetsTask( final MockManager mockManager )
+    public MockAndControlForAddDependencySetsTask( final EasyMockSupport mockManager )
     {
         this( mockManager, null );
     }
 
-    public MockAndControlForAddDependencySetsTask( final MockManager mockManager, final MavenProject project )
+    public MockAndControlForAddDependencySetsTask( final EasyMockSupport mockManager, final MavenProject project )
     {
         this.project = project;
 
-        archiverCtl = MockControl.createControl( Archiver.class );
-        mockManager.add( archiverCtl );
+        archiver = mockManager.createMock(Archiver.class);
+        configSource = mockManager.createMock (AssemblerConfigurationSource.class);
 
-        archiver = (Archiver) archiverCtl.getMock();
 
-        configSourceCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceCtl );
+        projectBuilder = mockManager.createMock(MavenProjectBuilder.class);
 
-        configSource = (AssemblerConfigurationSource) configSourceCtl.getMock();
-
-        projectBuilderCtl = MockControl.createControl( MavenProjectBuilder.class );
-        mockManager.add( projectBuilderCtl );
-
-        projectBuilder = (MavenProjectBuilder) projectBuilderCtl.getMock();
-
-        archiverManagerCtl = MockControl.createControl( ArchiverManager.class );
-        mockManager.add( archiverManagerCtl );
-
-        archiverManager = (ArchiverManager) archiverManagerCtl.getMock();
+        archiverManager = mockManager.createMock(ArchiverManager.class);
 
         enableDefaultExpectations();
     }
 
     private void enableDefaultExpectations()
     {
-        configSource.getProject();
-        configSourceCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect(configSource.getProject()).andReturn( project ).anyTimes();
     }
 
     public void expectAddArchivedFileSet( final File file, final String outputLocation, final String[] includes,
@@ -102,14 +83,12 @@ public class MockAndControlForAddDependencySetsTask
     {
         try
         {
-            archiver.addArchivedFileSet( file, outputLocation, includes, excludes );
+            archiver.addArchivedFileSet( (File)anyObject(), (String)anyObject(), (String[])anyObject(), (String[])anyObject() );
 
-            if ( ( includes != null ) || ( excludes != null ) )
-            {
-                archiverCtl.setMatcher( MockControl.ARRAY_MATCHER );
-            }
+                archiver.addArchivedFileSet( (File) anyObject(), (String) anyObject(), (String[]) anyObject(),
+                                             (String[]) anyObject() );
+            EasyMock.expectLastCall().anyTimes();
 
-            archiverCtl.setVoidCallable( MockControl.ONE_OR_MORE );
         }
         catch ( final ArchiverException e )
         {
@@ -120,11 +99,8 @@ public class MockAndControlForAddDependencySetsTask
     public void expectModeChange( final int originalDirMode, final int originalFileMode, final int dirMode,
                                   final int fileMode, final int numberOfChanges )
     {
-        archiver.getOverrideDirectoryMode();
-        archiverCtl.setReturnValue( originalDirMode );
-
-        archiver.getOverrideFileMode();
-        archiverCtl.setReturnValue( originalFileMode );
+        expect( archiver.getOverrideDirectoryMode()).andReturn( originalDirMode );
+        expect(archiver.getOverrideFileMode()).andReturn( originalFileMode );
 
         // one of the changes will occur below, when we restore the original mode.
         if ( numberOfChanges > 1 )
@@ -166,38 +142,32 @@ public class MockAndControlForAddDependencySetsTask
 
     public void expectGetReactorProjects( final List<MavenProject> projects )
     {
-        configSource.getReactorProjects();
-        configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
+        expect(configSource.getReactorProjects()).andReturn( projects ).anyTimes();
     }
 
     public void expectCSGetFinalName( final String finalName )
     {
-        configSource.getFinalName();
-        configSourceCtl.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+        expect(configSource.getFinalName()).andReturn( finalName ).anyTimes();
     }
 
     public void expectGetDestFile( final File destFile )
     {
-        archiver.getDestFile();
-        archiverCtl.setReturnValue( destFile, MockControl.ZERO_OR_MORE );
+        expect(archiver.getDestFile()).andReturn( destFile ).anyTimes();
     }
 
     public void expectCSGetRepositories( final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos )
     {
-        configSource.getLocalRepository();
-        configSourceCtl.setReturnValue( localRepo, MockControl.ONE_OR_MORE );
-
-        configSource.getRemoteRepositories();
-        configSourceCtl.setReturnValue( remoteRepos, MockControl.ONE_OR_MORE );
+        expect(configSource.getLocalRepository()).andReturn( localRepo ).anyTimes();
+        expect(configSource.getRemoteRepositories()).andReturn( remoteRepos ).anyTimes();
     }
 
     public void expectBuildFromRepository( final ProjectBuildingException error )
     {
         try
         {
-            projectBuilder.buildFromRepository( null, null, null );
-            projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-            projectBuilderCtl.setThrowable( error, MockControl.ONE_OR_MORE );
+            expect(projectBuilder.buildFromRepository( (Artifact) anyObject(), (List) anyObject(),
+                                                (ArtifactRepository) anyObject() )).andThrow( error );
+//            projectBuilderCtl.setThrowable( error, MockControl.ONE_OR_MORE );
         }
         catch ( final ProjectBuildingException e )
         {
@@ -209,9 +179,7 @@ public class MockAndControlForAddDependencySetsTask
     {
         try
         {
-            projectBuilder.buildFromRepository( null, null, null );
-            projectBuilderCtl.setMatcher( MockControl.ALWAYS_MATCHER );
-            projectBuilderCtl.setReturnValue( project, MockControl.ONE_OR_MORE );
+            expect(projectBuilder.buildFromRepository( ( Artifact) anyObject(), (List)anyObject(), (ArtifactRepository)anyObject() )).andReturn( project ).anyTimes();
         }
         catch ( final ProjectBuildingException e )
         {
@@ -221,8 +189,7 @@ public class MockAndControlForAddDependencySetsTask
 
     public void expectGetSession( final MavenSession session )
     {
-        configSource.getMavenSession();
-        configSourceCtl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        expect(configSource.getMavenSession()).andReturn( session ).anyTimes();
     }
 
 }
