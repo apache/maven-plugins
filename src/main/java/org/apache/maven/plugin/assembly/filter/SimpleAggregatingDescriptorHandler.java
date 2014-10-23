@@ -58,7 +58,8 @@ public class SimpleAggregatingDescriptorHandler
 
     private String outputPath;
 
-    private static final String commentChars = "#";
+    @SuppressWarnings( "FieldCanBeLocal" )
+    private final String commentChars = "#";
 
     // calculated, temporary values.
 
