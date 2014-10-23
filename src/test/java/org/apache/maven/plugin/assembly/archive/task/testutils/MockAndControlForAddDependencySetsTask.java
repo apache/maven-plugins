@@ -45,11 +45,11 @@ public class MockAndControlForAddDependencySetsTask
 
     public final Archiver archiver;
 
-    public AssemblerConfigurationSource configSource;
+    public final AssemblerConfigurationSource configSource;
 
-    public MavenProjectBuilder projectBuilder;
+    public final MavenProjectBuilder projectBuilder;
 
-    public ArchiverManager archiverManager;
+    public final ArchiverManager archiverManager;
 
     private final MavenProject project;
 
@@ -78,8 +78,7 @@ public class MockAndControlForAddDependencySetsTask
         expect(configSource.getProject()).andReturn( project ).anyTimes();
     }
 
-    public void expectAddArchivedFileSet( final File file, final String outputLocation, final String[] includes,
-                                          final String[] excludes )
+    public void expectAddArchivedFileSet()
     {
         try
         {

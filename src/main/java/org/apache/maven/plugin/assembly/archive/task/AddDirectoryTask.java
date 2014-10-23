@@ -19,7 +19,6 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.archiver.Archiver;

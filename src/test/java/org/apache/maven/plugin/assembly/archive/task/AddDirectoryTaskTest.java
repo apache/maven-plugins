@@ -30,7 +30,6 @@ import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
-import org.easymock.MockControl;
 import org.easymock.classextension.EasyMockSupport;
 
 import static org.easymock.EasyMock.anyObject;
@@ -86,7 +85,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addFileSet( (FileSet)anyObject());
+            archiver.addFileSet( (FileSet) anyObject() );
         }
         catch ( ArchiverException e )
         {
@@ -113,7 +112,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addFileSet( (FileSet)anyObject() );
+            archiver.addFileSet( (FileSet) anyObject() );
         }
         catch ( ArchiverException e )
         {
@@ -145,7 +144,7 @@ public class AddDirectoryTaskTest
 
         try
         {
-            archiver.addFileSet( (FileSet)anyObject() );
+            archiver.addFileSet( (FileSet) anyObject() );
         }
         catch ( ArchiverException e )
         {

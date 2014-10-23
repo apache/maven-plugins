@@ -226,8 +226,7 @@ public class AddDependencySetsTaskTest
 
         if ( unpack )
         {
-            macTask.expectAddArchivedFileSet( artifactFile, outputLocation + "/",
-                                              AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
+            macTask.expectAddArchivedFileSet();
             macTask.expectModeChange( -1, -1, 10, 10, 2 );
         }
         else

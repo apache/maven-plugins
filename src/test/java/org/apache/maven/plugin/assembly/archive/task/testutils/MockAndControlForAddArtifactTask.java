@@ -74,8 +74,7 @@ public class MockAndControlForAddArtifactTask
         expect(archiver.getDestFile()).andReturn( destFile ).atLeastOnce();
     }
 
-    public void expectAddArchivedFileSet( final File artifactFile, final String outputLocation,
-                                          final String[] includes, final String[] excludes )
+    public void expectAddArchivedFileSet()
     {
         try
         {

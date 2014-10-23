@@ -195,8 +195,7 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "dummy", archiver );
 
-        final MockControl configCtl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource configSource = mm.createControl().createMock(  AssemblerConfigurationSource.class);
+        final AssemblerConfigurationSource configSource = mm.createMock(  AssemblerConfigurationSource.class);
 
         final String simpleConfig = "value";
 
@@ -205,20 +204,15 @@ public class DefaultAssemblyArchiverTest
 
         final MavenProject project = new MavenProject( new Model() );
 
-        configSource.getProject();
-        configCtl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect(configSource.getProject()).andReturn( project ).anyTimes();
 
-        configSource.getMavenSession();
-        configCtl.setReturnValue( null, MockControl.ZERO_OR_MORE );
+        expect(configSource.getMavenSession()).andReturn( null ).anyTimes();
 
-        configSource.isDryRun();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect(configSource.isDryRun()).andReturn( false ).anyTimes();
 
-        configSource.getWorkingDirectory();
-        configCtl.setReturnValue( new File( "." ), MockControl.ZERO_OR_MORE );
+        expect(configSource.getWorkingDirectory()).andReturn(  new File( "." )).anyTimes();
 
-        configSource.isUpdateOnly();
-        configCtl.setReturnValue( false, MockControl.ZERO_OR_MORE );
+        expect(configSource.isUpdateOnly()).andReturn( false ).anyTimes();
 
         final ArtifactRepository lr = mm.createMock( ArtifactRepository.class );
 
@@ -510,12 +504,12 @@ public class DefaultAssemblyArchiverTest
 
     private final class MockAndControlForAssemblyArchiver
     {
-        ArchiverManager archiverManager;
+        final ArchiverManager archiverManager;
 
 
         Archiver archiver;
 
-        DependencyResolver dependencyResolver;
+        final DependencyResolver dependencyResolver;
 
         private final EasyMockSupport mm;
 

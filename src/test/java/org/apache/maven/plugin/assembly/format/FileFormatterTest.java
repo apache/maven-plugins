@@ -28,7 +28,6 @@ import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
 import org.easymock.classextension.EasyMockSupport;
 
 import java.io.File;
@@ -450,7 +449,7 @@ public class FileFormatterTest
 
         final List<String> delimiters = Collections.unmodifiableList( Arrays.asList( "${*}", "@", "#", "(*)" ) );
 
-        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ), true,
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ),
                                            delimiters );
 
         final File file =
@@ -475,7 +474,7 @@ public class FileFormatterTest
 
         final List<String> delimiters = Collections.unmodifiableList( Arrays.asList( "#", "(*)" ) );
 
-        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ), false,
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ),
                                            delimiters );
 
         final File file =
@@ -558,8 +557,7 @@ public class FileFormatterTest
         enableFilteringConfiguration( project, basedir, null, configFilterFilenames, includeProjectBuildFilters );
     }
 
-    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames,
-                                                    final boolean useDefault, final List<String> delimiters )
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames, final List<String> delimiters )
         throws Exception
     {
 
