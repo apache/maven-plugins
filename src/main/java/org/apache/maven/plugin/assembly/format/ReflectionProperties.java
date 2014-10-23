@@ -29,7 +29,7 @@ import java.util.Properties;
  * @author Andreas Hoheneder (ahoh_at_inode.at)
  * @version $Id$
  * 
- * @depcrecated
+ * @deprecated
  */
 @Deprecated
 public class ReflectionProperties

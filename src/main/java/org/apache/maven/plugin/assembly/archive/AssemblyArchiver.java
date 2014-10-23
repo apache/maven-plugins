@@ -39,10 +39,10 @@ public interface AssemblyArchiver
      * <li>Setup any directory structures for temporary files</li>
      * <li>Calculate the output directory/file for the assembly</li>
      * <li>Setup any handler components for special descriptor files we may encounter</li>
-     * <li>Lookup and configure the {@link Archiver} to be used</li>
+     * <li>Lookup and configure the {@link org.codehaus.plexus.archiver.Archiver} to be used</li>
      * <li>Determine what, if any, dependency resolution will be required, and resolve any dependency-version conflicts
      * up front to produce a managed-version map for the whole assembly process.</li>
-     * <li>Iterate through the available {@link AssemblyArchiverPhase} instances, executing each to handle a different
+     * <li>Iterate through the available {@link org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase} instances, executing each to handle a different
      * top-level section of the assembly descriptor, if that section is present.</li>
      * </ol>
      * @param assembly The {@link Assembly}

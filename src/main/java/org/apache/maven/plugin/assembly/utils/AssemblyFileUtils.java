@@ -81,12 +81,12 @@ public final class AssemblyFileUtils
         return path;
     }
 
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public static void verifyTempDirectoryAvailability( @Nonnull
     final File tempDir )
     {
         if ( !tempDir.exists() )
         {
-            // noinspection ResultOfMethodCallIgnored
             tempDir.mkdirs();
         }
     }
