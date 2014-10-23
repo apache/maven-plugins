@@ -68,6 +68,7 @@ public class RepositoryAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public void execute( final ResolvedAssembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException

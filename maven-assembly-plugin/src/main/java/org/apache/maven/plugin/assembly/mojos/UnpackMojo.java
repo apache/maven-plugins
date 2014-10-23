@@ -70,6 +70,7 @@ public class UnpackMojo
      *
      * @throws MojoExecutionException
      */
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

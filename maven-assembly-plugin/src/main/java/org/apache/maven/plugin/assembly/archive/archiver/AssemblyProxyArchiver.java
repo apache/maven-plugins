@@ -928,7 +928,7 @@ public class AssemblyProxyArchiver
     private boolean acceptFile( final File inputFile )
         throws ArchiverException
     {
-        if ( Boolean.TRUE != inPublicApi.get() )
+        if ( !Boolean.TRUE.equals( inPublicApi.get()) )
         {
             if ( selectors != null )
             {

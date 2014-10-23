@@ -27,17 +27,9 @@ public class AssemblyInterpolationException
 {
     private static final long serialVersionUID = 1L;
 
-    private String expression;
-
-    private String originalMessage;
-
     public AssemblyInterpolationException( final String message, final Throwable cause )
     {
         super( message, cause );
     }
 
-    public String getExpression()
-    {
-        return expression;
-    }
 }
