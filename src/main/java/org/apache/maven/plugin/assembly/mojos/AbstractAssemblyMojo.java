@@ -61,7 +61,7 @@ public abstract class AbstractAssemblyMojo
      * The character encoding scheme to be applied when filtering resources.
      */
     @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
-    protected String encoding;
+    private String encoding;
 
     /**
      * Expressions preceded with this String won't be interpolated.
@@ -70,7 +70,7 @@ public abstract class AbstractAssemblyMojo
      * @since 2.4
      */
     @Parameter( property = "assembly.escapeString" )
-    protected String escapeString;
+    private String escapeString;
 
     /**
      * Flag allowing one or more executions of the assembly plugin to be configured as skipped for a particular build.
@@ -190,7 +190,7 @@ public abstract class AbstractAssemblyMojo
      */
     @Deprecated
     @Parameter( property = "descriptorId" )
-    protected String descriptorId;
+    private String descriptorId;
 
     /**
      * Assembly XML Descriptor file. This must be the path to your customized descriptor file.
@@ -199,7 +199,7 @@ public abstract class AbstractAssemblyMojo
      */
     @Deprecated
     @Parameter( property = "descriptor" )
-    protected String descriptor;
+    private String descriptor;
 
     /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
@@ -263,13 +263,13 @@ public abstract class AbstractAssemblyMojo
      * Set to false to exclude the assembly id from the assembly final name.
      */
     @Parameter( property = "assembly.appendAssemblyId", defaultValue = "true" )
-    protected boolean appendAssemblyId;
+    boolean appendAssemblyId;
 
     /**
      * Set to true in order to not fail when a descriptor is missing.
      */
     @Parameter( property = "assembly.ignoreMissingDescriptor", defaultValue = "false" )
-    protected boolean ignoreMissingDescriptor;
+    private boolean ignoreMissingDescriptor;
 
     /**
      * This is a set of instructions to the archive builder, especially for building .jar files. It enables you to
@@ -287,7 +287,7 @@ public abstract class AbstractAssemblyMojo
      * set of filters for a particular execution.
      */
     @Parameter
-    protected List<String> filters;
+    private List<String> filters;
 
     /**
      * If True (default) then the ${project.build.filters} are also used in addition to any
@@ -296,7 +296,7 @@ public abstract class AbstractAssemblyMojo
      * @since 2.4.2
      */
     @Parameter( property = "assembly.includeProjectBuildFilters", defaultValue = "true" )
-    protected boolean includeProjectBuildFilters;
+    private boolean includeProjectBuildFilters;
 
     /**
      * Controls whether the assembly plugin tries to attach the resulting assembly to the project.
@@ -545,9 +545,9 @@ public abstract class AbstractAssemblyMojo
     /**
      * Returns true if the current project is located at the Execution Root Directory (where mvn was launched)
      * 
-     * @return
+     * @return if this is the execution root
      */
-    protected boolean isThisTheExecutionRoot()
+    boolean isThisTheExecutionRoot()
     {
         final Log log = getLog();
         log.debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
@@ -565,12 +565,12 @@ public abstract class AbstractAssemblyMojo
         return result;
     }
 
-    protected AssemblyArchiver getAssemblyArchiver()
+    AssemblyArchiver getAssemblyArchiver()
     {
         return assemblyArchiver;
     }
 
-    protected AssemblyReader getAssemblyReader()
+    AssemblyReader getAssemblyReader()
     {
         return assemblyReader;
     }
@@ -718,20 +718,6 @@ public abstract class AbstractAssemblyMojo
         this.archive = archive;
     }
 
-    public void setArchiveBaseDirectory( final File archiveBaseDirectory )
-    {
-        this.archiveBaseDirectory = archiveBaseDirectory;
-    }
-
-    public void setAssemblyArchiver( final AssemblyArchiver assemblyArchiver )
-    {
-        this.assemblyArchiver = assemblyArchiver;
-    }
-
-    public void setAssemblyReader( final AssemblyReader assemblyReader )
-    {
-        this.assemblyReader = assemblyReader;
-    }
 
     public void setBasedir( final File basedir )
     {
@@ -900,7 +886,7 @@ public abstract class AbstractAssemblyMojo
         return encoding;
     }
 
-    protected boolean isRecompressZippedFiles()
+    boolean isRecompressZippedFiles()
     {
         return recompressZippedFiles;
     }

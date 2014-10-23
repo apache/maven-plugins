@@ -33,12 +33,13 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.testutils.ConfigSourceStub;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.expect;
 
 public class AssemblyInterpolatorTest
     extends TestCase
@@ -176,39 +177,27 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
-        final MockControl sessionControl = MockClassControl.createControl( MavenSession.class );
-        final MavenSession session = (MavenSession) sessionControl.getMock();
-
-        mm.add( sessionControl );
+        final MavenSession session = mm.createMock( MavenSession.class );
 
         final Properties execProps = new Properties();
         execProps.setProperty( "groupId", "still.another.id" );
 
-        session.getExecutionProperties();
-        sessionControl.setReturnValue( execProps, MockControl.ZERO_OR_MORE );
+        expect( session.getExecutionProperties()).andReturn( execProps ).anyTimes();
 
-        session.getUserProperties();
-        sessionControl.setReturnValue( new Properties(), MockControl.ZERO_OR_MORE );
+        expect( session.getUserProperties()).andReturn(  new Properties()).anyTimes();
 
-        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
-
-        mm.add( csControl );
+        final AssemblerConfigurationSource cs = mm.createMock( AssemblerConfigurationSource.class );
 
         final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
-        final ArtifactRepository lr = (ArtifactRepository) lrCtl.getMock();
-        mm.add( lrCtl );
+        final ArtifactRepository lr =  mm.createMock( ArtifactRepository.class );
 
-        lr.getBasedir();
-        lrCtl.setReturnValue( "/path/to/local/repo", MockControl.ZERO_OR_MORE );
+        expect( lr.getBasedir()).andReturn(  "/path/to/local/repo").anyTimes();
 
-        cs.getLocalRepository();
-        csControl.setReturnValue( lr, MockControl.ZERO_OR_MORE );
+        expect(cs.getLocalRepository()).andReturn( lr ).anyTimes();
 
-        cs.getMavenSession();
-        csControl.setReturnValue( session, MockControl.ZERO_OR_MORE );
+        expect( cs.getMavenSession()).andReturn( session ).anyTimes();
 
         mm.replayAll();
 
@@ -217,7 +206,7 @@ public class AssemblyInterpolatorTest
         assertEquals( "assembly.still.another.id", result.getId() );
 
         mm.verifyAll();
-        mm.clear();
+        mm.resetAll();
     }
 
     public void testShouldNotTouchUnresolvedExpression()

@@ -57,6 +57,8 @@ import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
+import javax.annotation.Nonnull;
+
 public class ComponentsXmlArchiverFileFilterTest
     extends TestCase
 {
@@ -80,8 +82,8 @@ public class ComponentsXmlArchiverFileFilterTest
     public void testAddComponentsXml_ShouldAddComponentWithoutRoleHint()
         throws IOException, XmlPullParserException
     {
-        final Reader reader =
-            writeComponentsXml( Collections.singletonList( new ComponentDef( "role", null, "org.apache.maven.Impl" ) ) );
+        final Reader reader = writeComponentsXml(
+            Collections.singletonList( new ComponentDef( "role", null, "org.apache.maven.Impl" ) ) );
 
         filter.addComponentsXml( reader );
 
@@ -89,18 +91,16 @@ public class ComponentsXmlArchiverFileFilterTest
 
         final Xpp3Dom componentDom = filter.components.get( "role" );
 
-        assertEquals( "role", componentDom.getChild( "role" )
-                                          .getValue() );
+        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
         assertNull( componentDom.getChild( "role-hint" ) );
-        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" )
-                                                           .getValue() );
+        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" ).getValue() );
     }
 
     public void testAddComponentsXml_ShouldAddComponentWithRoleHint()
         throws IOException, XmlPullParserException
     {
-        final Reader reader =
-            writeComponentsXml( Collections.singletonList( new ComponentDef( "role", "hint", "org.apache.maven.Impl" ) ) );
+        final Reader reader = writeComponentsXml(
+            Collections.singletonList( new ComponentDef( "role", "hint", "org.apache.maven.Impl" ) ) );
 
         filter.addComponentsXml( reader );
 
@@ -108,12 +108,9 @@ public class ComponentsXmlArchiverFileFilterTest
 
         final Xpp3Dom componentDom = filter.components.get( "rolehint" );
 
-        assertEquals( "role", componentDom.getChild( "role" )
-                                          .getValue() );
-        assertEquals( "hint", componentDom.getChild( "role-hint" )
-                                          .getValue() );
-        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" )
-                                                           .getValue() );
+        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
+        assertEquals( "hint", componentDom.getChild( "role-hint" ).getValue() );
+        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" ).getValue() );
     }
 
     public void testAddComponentsXml_ShouldAddTwoComponentsWithRoleHints()
@@ -132,21 +129,15 @@ public class ComponentsXmlArchiverFileFilterTest
 
         Xpp3Dom componentDom = filter.components.get( "rolehint" );
 
-        assertEquals( "role", componentDom.getChild( "role" )
-                                          .getValue() );
-        assertEquals( "hint", componentDom.getChild( "role-hint" )
-                                          .getValue() );
-        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" )
-                                                           .getValue() );
+        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
+        assertEquals( "hint", componentDom.getChild( "role-hint" ).getValue() );
+        assertEquals( "org.apache.maven.Impl", componentDom.getChild( "implementation" ).getValue() );
 
         componentDom = filter.components.get( "rolehint2" );
 
-        assertEquals( "role", componentDom.getChild( "role" )
-                                          .getValue() );
-        assertEquals( "hint2", componentDom.getChild( "role-hint" )
-                                           .getValue() );
-        assertEquals( "org.apache.maven.Impl2", componentDom.getChild( "implementation" )
-                                                            .getValue() );
+        assertEquals( "role", componentDom.getChild( "role" ).getValue() );
+        assertEquals( "hint2", componentDom.getChild( "role-hint" ).getValue() );
+        assertEquals( "org.apache.maven.Impl2", componentDom.getChild( "implementation" ).getValue() );
     }
 
     public void testAddToArchive_ShouldWriteComponentWithoutHintToFile()
@@ -366,11 +357,11 @@ public class ComponentsXmlArchiverFileFilterTest
 
     private static final class ComponentDef
     {
-        String role;
+        final String role;
 
-        String roleHint;
+        final String roleHint;
 
-        String implementation;
+        final String implementation;
 
         ComponentDef( final String role, final String roleHint, final String implementation )
         {
@@ -393,32 +384,32 @@ public class ComponentsXmlArchiverFileFilterTest
 
         private boolean ignorePermissions;
 
-        public void addDirectory( final File directory )
+        public void addDirectory( final @Nonnull File directory )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addDirectory( final File directory, final String prefix )
+        public void addDirectory( final @Nonnull File directory, final String prefix )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addDirectory( final File directory, final String[] includes, final String[] excludes )
+        public void addDirectory( final @Nonnull File directory, final String[] includes, final String[] excludes )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addDirectory( final File directory, final String prefix, final String[] includes,
+        public void addDirectory( final @Nonnull File directory, final String prefix, final String[] includes,
                                   final String[] excludes )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addFile( final File inputFile, final String destFileName )
+        public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName )
             throws ArchiverException
         {
             this.inputFile = inputFile;
@@ -435,7 +426,7 @@ public class ComponentsXmlArchiverFileFilterTest
             return destFileName;
         }
 
-        public void addFile( final File inputFile, final String destFileName, final int permissions )
+        public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName, final int permissions )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
@@ -475,7 +466,7 @@ public class ComponentsXmlArchiverFileFilterTest
         }
 
         @SuppressWarnings( "rawtypes" )
-        public Map getFiles()
+        public Map<String, ArchiveEntry> getFiles()
         {
             throw new UnsupportedOperationException( "not supported" );
         }
@@ -505,13 +496,13 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( final File archiveFile )
+        public void addArchivedFileSet( final @Nonnull File archiveFile )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( final File archiveFile, final String prefix )
+        public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
@@ -523,7 +514,7 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
+        public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix, final String[] includes,
                                         final String[] excludes )
             throws ArchiverException
         {
@@ -555,7 +546,7 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public void addFileSet( final FileSet fileSet )
+        public void addFileSet( final @Nonnull FileSet fileSet )
             throws ArchiverException
         {
             throw new UnsupportedOperationException( "not supported" );
@@ -573,7 +564,9 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        public ResourceIterator getResources()
+        public
+        @Nonnull
+        ResourceIterator getResources()
             throws ArchiverException
         {
             return new ResourceIterator()

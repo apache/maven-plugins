@@ -116,7 +116,7 @@ public class RepositoryAssemblyPhase
 
             task.setOutputDirectory( outputDirectory );
 
-            task.execute( archiver, configSource );
+            task.execute( archiver );
         }
     }
 

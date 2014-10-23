@@ -40,7 +40,7 @@ public class ReflectionProperties
 
     private final MavenProject project;
 
-    boolean escapedBackslashesInFilePath;
+    final boolean escapedBackslashesInFilePath;
 
     public ReflectionProperties( final MavenProject aProject, final boolean escapedBackslashesInFilePath )
     {

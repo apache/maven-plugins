@@ -28,7 +28,7 @@ import java.io.File;
 /**
  * @version $Id$
  */
-public class PrefixedFileSet
+class PrefixedFileSet
     implements FileSet
 {
 

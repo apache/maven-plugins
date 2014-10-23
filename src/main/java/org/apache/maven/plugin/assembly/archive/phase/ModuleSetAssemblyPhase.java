@@ -77,7 +77,7 @@ public class ModuleSetAssemblyPhase
     /**
      * The line separator.
      */
-    public static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     @Requirement
     private MavenProjectBuilder projectBuilder;
@@ -170,9 +170,9 @@ public class ModuleSetAssemblyPhase
         }
     }
 
-    protected void addModuleBinaries( ResolvedModuleSet resolvedModule, final ModuleBinaries binaries,
-                                      final Set<MavenProject> projects, final Archiver archiver,
-                                      final AssemblerConfigurationSource configSource )
+    void addModuleBinaries( ResolvedModuleSet resolvedModule, final ModuleBinaries binaries,
+                            final Set<MavenProject> projects, final Archiver archiver,
+                            final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         if ( binaries == null )
@@ -352,8 +352,8 @@ public class ModuleSetAssemblyPhase
     // return excludes;
     // }
 
-    protected void addModuleArtifact( final Artifact artifact, final MavenProject project, final Archiver archiver,
-                                      final AssemblerConfigurationSource configSource, final ModuleBinaries binaries )
+    void addModuleArtifact( final Artifact artifact, final MavenProject project, final Archiver archiver,
+                            final AssemblerConfigurationSource configSource, final ModuleBinaries binaries )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         if ( artifact.getFile() == null )
@@ -394,8 +394,8 @@ public class ModuleSetAssemblyPhase
         task.execute( archiver, configSource );
     }
 
-    protected void addModuleSourceFileSets( final ModuleSources sources, final Set<MavenProject> moduleProjects,
-                                            final Archiver archiver, final AssemblerConfigurationSource configSource )
+    void addModuleSourceFileSets( final ModuleSources sources, final Set<MavenProject> moduleProjects,
+                                  final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
         if ( sources == null )
@@ -452,8 +452,7 @@ public class ModuleSetAssemblyPhase
     /**
      * Determine whether the deprecated file-set configuration directly within the ModuleSources object is present.
      */
-    protected boolean isDeprecatedModuleSourcesConfigPresent( @Nonnull
-    final ModuleSources sources )
+    boolean isDeprecatedModuleSourcesConfigPresent( @Nonnull final ModuleSources sources )
     {
         boolean result = false;
 
@@ -474,11 +473,9 @@ public class ModuleSetAssemblyPhase
     }
 
     @Nonnull
-    protected FileSet createFileSet( @Nonnull
-    final FileSet fileSet, @Nonnull
-    final ModuleSources sources, @Nonnull
-    final MavenProject moduleProject, @Nonnull
-    final AssemblerConfigurationSource configSource )
+    FileSet createFileSet( @Nonnull final FileSet fileSet, @Nonnull final ModuleSources sources,
+                           @Nonnull final MavenProject moduleProject,
+                           @Nonnull final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         final FileSet fs = new FileSet();

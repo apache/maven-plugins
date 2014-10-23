@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractLineAggregatingHandler
+abstract class AbstractLineAggregatingHandler
     implements ContainerDescriptorHandler
 {
 
@@ -51,7 +51,7 @@ public abstract class AbstractLineAggregatingHandler
 
     protected abstract boolean fileMatches( final FileInfo fileInfo );
 
-    protected String getEncoding()
+    String getEncoding()
     {
         return "UTF-8";
     }
@@ -72,7 +72,7 @@ public abstract class AbstractLineAggregatingHandler
         addToArchive( archiver );
     }
 
-    protected void addToArchive( final Archiver archiver )
+    void addToArchive( final Archiver archiver )
         throws ArchiverException
     {
         for ( final Map.Entry<String, List<String>> entry : catalog.entrySet() )
@@ -148,7 +148,7 @@ public abstract class AbstractLineAggregatingHandler
         return true;
     }
 
-    protected void readLines( final FileInfo fileInfo, final List<String> lines )
+    void readLines( final FileInfo fileInfo, final List<String> lines )
         throws IOException
     {
         BufferedReader reader = null;

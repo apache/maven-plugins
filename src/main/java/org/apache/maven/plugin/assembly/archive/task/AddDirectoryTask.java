@@ -19,7 +19,6 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.archiver.Archiver;
@@ -35,7 +34,6 @@ import java.util.List;
  * @version $Id$
  */
 public class AddDirectoryTask
-    implements ArchiverTask
 {
 
     private final File directory;
@@ -65,7 +63,7 @@ public class AddDirectoryTask
         this( directory, null);
     }
 
-    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver )
         throws ArchiveCreationException
     {
         if ( ".".equals( outputDirectory ) )

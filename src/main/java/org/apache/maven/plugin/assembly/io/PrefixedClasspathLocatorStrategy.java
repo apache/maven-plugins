@@ -26,7 +26,7 @@ import org.apache.maven.shared.io.logging.MessageHolder;
 /**
  * @version $Id$
  */
-public class PrefixedClasspathLocatorStrategy
+class PrefixedClasspathLocatorStrategy
     extends ClasspathResourceLocatorStrategy
 {
 

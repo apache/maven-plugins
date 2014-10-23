@@ -19,6 +19,17 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMockSupport;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,16 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
+import static org.easymock.EasyMock.expect;
 
 public class FileFormatterTest
     extends PlexusTestCase
@@ -45,11 +47,10 @@ public class FileFormatterTest
 
     private final TestFileManager fileManager = new TestFileManager( "fileFormatterTest.", "" );
 
-    private final MockManager mockManager = new MockManager();
+    private final EasyMockSupport mockManager = new EasyMockSupport();
 
     private AssemblerConfigurationSource configSource;
 
-    private MockControl configSourceControl;
 
     @Override
     public void setUp()
@@ -57,10 +58,7 @@ public class FileFormatterTest
     {
         super.setUp();
 
-        configSourceControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceControl );
-
-        configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
+        configSource = mockManager.createMock(AssemblerConfigurationSource.class);
     }
 
     @Override
@@ -75,8 +73,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
         final File tempRoot = new File( basedir, "tempdir" );
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( tempRoot );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( tempRoot );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
@@ -94,8 +91,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         // Model model = new Model();
         // model.setArtifactId( "artifact" );
@@ -123,8 +119,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
@@ -142,8 +137,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\r\ntest." );
 
@@ -187,7 +181,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir, true, null );
+        enableBasicFilteringConfiguration( project, sourceDir, null );
 
         final File file = fileManager.createFile( sourceDir, "one.properties", "out=${project.build.outputDirectory}" );
 
@@ -211,7 +205,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir, true, null );
+        enableBasicFilteringConfiguration( project, sourceDir, null );
 
         final File file =
             fileManager.createFile( sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}" );
@@ -455,7 +449,7 @@ public class FileFormatterTest
 
         final List<String> delimiters = Collections.unmodifiableList( Arrays.asList( "${*}", "@", "#", "(*)" ) );
 
-        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ), true,
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ),
                                            delimiters );
 
         final File file =
@@ -480,7 +474,7 @@ public class FileFormatterTest
 
         final List<String> delimiters = Collections.unmodifiableList( Arrays.asList( "#", "(*)" ) );
 
-        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ), false,
+        enableBasicFilteringConfiguration( basedir, Collections.singletonList( filterProps.getCanonicalPath() ),
                                            delimiters );
 
         final File file =
@@ -507,43 +501,33 @@ public class FileFormatterTest
         return new MavenProject( model );
     }
 
-    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir,
-                                                    final boolean useDefault, final List<String> delimiters )
+    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir, final List<String> delimiters )
         throws Exception
     {
 
-        enableFilteringConfiguration( project, basedir, useDefault, delimiters, Collections.<String> emptyList(), true );
+        enableFilteringConfiguration( project, basedir, delimiters, Collections.<String> emptyList(), true );
 
     }
 
-    private void enableFilteringConfiguration( final MavenProject project, final File basedir,
-                                               final boolean useDefault, final List<String> delimiters,
+    private void enableFilteringConfiguration( final MavenProject project, final File basedir, final List<String> delimiters,
                                                final List<String> filters, final boolean includeProjectBuildFilters )
         throws Exception
     {
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir ).atLeastOnce();
+        expect( configSource.getEscapeString()).andReturn( null ).atLeastOnce();
 
-        configSource.getEscapeString();
-        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
+        expect( configSource.getProject()).andReturn( project).atLeastOnce();
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        expect( configSource.getMavenFileFilter()).andReturn(
+            (MavenFileFilter) lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
 
-        configSource.getMavenFileFilter();
-        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
+        expect( configSource.getMavenSession()).andReturn( null );
 
-        configSource.getMavenSession();
-        configSourceControl.setReturnValue( null );
+        expect( configSource.getFilters()).andReturn( filters );
 
-        configSource.getFilters();
-        configSourceControl.setReturnValue( filters );
+        expect( configSource.isIncludeProjectBuildFilters()).andReturn( includeProjectBuildFilters );
 
-        configSource.isIncludeProjectBuildFilters();
-        configSourceControl.setReturnValue( includeProjectBuildFilters );
-
-        configSource.getDelimiters();
-        configSourceControl.setReturnValue( delimiters );
+        expect( configSource.getDelimiters()).andReturn( delimiters );
 
     }
 
@@ -556,7 +540,7 @@ public class FileFormatterTest
             project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableBasicFilteringConfiguration( project, basedir, true, null );
+        enableBasicFilteringConfiguration( project, basedir, null );
     }
 
     private void enableFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames,
@@ -570,11 +554,10 @@ public class FileFormatterTest
             project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableFilteringConfiguration( project, basedir, true, null, configFilterFilenames, includeProjectBuildFilters );
+        enableFilteringConfiguration( project, basedir, null, configFilterFilenames, includeProjectBuildFilters );
     }
 
-    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames,
-                                                    final boolean useDefault, final List<String> delimiters )
+    private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames, final List<String> delimiters )
         throws Exception
     {
 
@@ -584,6 +567,6 @@ public class FileFormatterTest
             project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableBasicFilteringConfiguration( project, basedir, useDefault, delimiters );
+        enableBasicFilteringConfiguration( project, basedir, delimiters );
     }
 }

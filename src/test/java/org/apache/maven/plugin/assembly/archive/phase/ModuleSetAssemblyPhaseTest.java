@@ -36,7 +36,6 @@ import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
 import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
@@ -55,6 +54,7 @@ import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import org.easymock.classextension.EasyMockSupport;
 
 import static java.util.Collections.singleton;
 import static org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet.createResolvedModuleSet;
@@ -128,7 +128,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testCreateFileSet_ShouldUseModuleDirOnlyWhenOutDirIsNull()
         throws AssemblyFormattingException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final Model model = new Model();
         model.setArtifactId( "artifact" );
@@ -169,7 +169,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testCreateFileSet_ShouldPrependModuleDirWhenOutDirIsProvided()
         throws AssemblyFormattingException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final Model model = new Model();
         model.setArtifactId( "artifact" );
@@ -211,7 +211,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testCreateFileSet_ShouldAddExcludesForSubModulesWhenExcludeSubModDirsIsTrue()
         throws AssemblyFormattingException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
 
@@ -264,7 +264,7 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
@@ -328,7 +328,7 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
@@ -361,7 +361,7 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm, null );
 
@@ -401,7 +401,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleBinaries_ShouldFailWhenOneModuleDoesntHaveAttachmentWithMatchingClassifier()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
@@ -443,7 +443,7 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
@@ -483,7 +483,7 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
 
@@ -548,7 +548,7 @@ public class ModuleSetAssemblyPhaseTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
         InvalidAssemblerConfigurationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm );
 
@@ -645,7 +645,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleArtifact_ShouldThrowExceptionWhenArtifactFileIsNull()
         throws AssemblyFormattingException, IOException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "type", false );
         artifactMock.setNullFile();
@@ -671,7 +671,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleArtifact_ShouldAddOneArtifact()
         throws AssemblyFormattingException, IOException, ArchiveCreationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddArtifactTask macTask = new MockAndControlForAddArtifactTask( mm );
 
@@ -707,7 +707,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleSourceFileSets_ShouldReturnImmediatelyIfSourcesIsNull()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         mm.replayAll();
 
@@ -720,7 +720,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testAddModuleSourceFileSets_ShouldAddOneSourceDirectory()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForAddFileSetsTask macTask = new MockAndControlForAddFileSetsTask( mm, fileManager );
 
@@ -748,7 +748,7 @@ public class ModuleSetAssemblyPhaseTest
         final int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
         final int[] modes = { -1, -1, mode, mode };
 
-        macTask.expectAdditionOfSingleFileSet( project, project.getBasedir(), "final-name", false, modes, 1, true,
+        macTask.expectAdditionOfSingleFileSet( project, "final-name", false, modes, 1, true,
                                                false );
 
         mm.replayAll();
@@ -763,7 +763,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnNothingWhenReactorContainsOnlyCurrentProject()
         throws ArchiveCreationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
@@ -789,7 +789,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnNothingWhenReactorContainsTwoSiblingProjects()
         throws ArchiveCreationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
@@ -819,7 +819,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnModuleOfCurrentProject()
         throws ArchiveCreationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
@@ -854,7 +854,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldReturnDescendentModulesOfCurrentProject()
         throws ArchiveCreationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
@@ -892,7 +892,7 @@ public class ModuleSetAssemblyPhaseTest
     public void testGetModuleProjects_ShouldExcludeModuleAndDescendentsTransitively()
         throws ArchiveCreationException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MavenProject project = createProject( "group", "artifact", "version", null );
 
@@ -900,12 +900,12 @@ public class ModuleSetAssemblyPhaseTest
 
         final List<ArtifactMock> macArtifacts = new ArrayList<ArtifactMock>();
 
-        macArtifacts.add( addArtifact( project, mm, false, false ) );
+        macArtifacts.add( addArtifact( project, mm, false ) );
 
         final MavenProject project2 = createProject( "group", "artifact2", "version", project );
-        macArtifacts.add( addArtifact( project2, mm, true, false ) );
+        macArtifacts.add( addArtifact( project2, mm, false ) );
         final MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
-        macArtifacts.add( addArtifact( project3, mm, true, true ) );
+        macArtifacts.add( addArtifact( project3, mm, true ) );
 
         final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );
@@ -929,8 +929,7 @@ public class ModuleSetAssemblyPhaseTest
         mm.verifyAll();
     }
 
-    private ArtifactMock addArtifact( final MavenProject project, final MockManager mm,
-                                      final boolean expectIdentityChecks, final boolean expectDepTrailCheck )
+    private ArtifactMock addArtifact( final MavenProject project, final EasyMockSupport mm, final boolean expectDepTrailCheck )
     {
         final ArtifactMock macArtifact =
             new ArtifactMock( mm, project.getGroupId(), project.getArtifactId(), project.getVersion(),

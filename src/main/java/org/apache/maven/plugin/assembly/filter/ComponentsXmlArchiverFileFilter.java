@@ -58,13 +58,13 @@ public class ComponentsXmlArchiverFileFilter
     // [jdcasey] Switched visibility to protected to allow testing. Also, because this class isn't final, it should
     // allow
     // some minimal access to the components accumulated for extending classes.
-    protected Map<String, Xpp3Dom> components;
+    Map<String, Xpp3Dom> components;
 
     private boolean excludeOverride = false;
 
     public static final String COMPONENTS_XML_PATH = "META-INF/plexus/components.xml";
 
-    protected void addComponentsXml( final Reader componentsReader )
+    void addComponentsXml( final Reader componentsReader )
         throws XmlPullParserException, IOException
     {
         Xpp3Dom newDom = Xpp3DomBuilder.build( componentsReader );

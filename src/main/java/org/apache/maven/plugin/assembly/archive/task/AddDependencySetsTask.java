@@ -54,7 +54,6 @@ import org.codehaus.plexus.logging.Logger;
  * @version $Id$
  */
 public class AddDependencySetsTask
-    implements ArchiverTask
 {
 
     private static final List<String> NON_ARCHIVE_DEPENDENCY_TYPES;
@@ -122,8 +121,8 @@ public class AddDependencySetsTask
         }
     }
 
-    protected void addDependencySet( final DependencySet dependencySet, final Archiver archiver,
-                                     final AssemblerConfigurationSource configSource )
+    void addDependencySet( final DependencySet dependencySet, final Archiver archiver,
+                           final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException
     {
         logger.debug( "Processing DependencySet (output=" + dependencySet.getOutputDirectory() + ")" );
@@ -207,6 +206,7 @@ public class AddDependencySetsTask
         }
     }
 
+    @SuppressWarnings( "ResultOfMethodCallIgnored" )
     private void addFilteredUnpackedArtifact( final DependencySet dependencySet, final Artifact depArtifact,
                                               final MavenProject depProject, final Archiver archiver,
                                               final AssemblerConfigurationSource configSource )
@@ -358,7 +358,7 @@ public class AddDependencySetsTask
         return project;
     }
 
-    protected Set<Artifact> resolveDependencyArtifacts( final DependencySet dependencySet )
+    Set<Artifact> resolveDependencyArtifacts( final DependencySet dependencySet )
         throws InvalidAssemblerConfigurationException
     {
         final Set<Artifact> dependencyArtifacts = new LinkedHashSet<Artifact>();
@@ -420,9 +420,9 @@ public class AddDependencySetsTask
         return dependencyArtifacts;
     }
 
-    protected void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
-                                            final DependencySet dependencySet, final Archiver archiver,
-                                            final AssemblerConfigurationSource configSource )
+    void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
+                                  final DependencySet dependencySet, final Archiver archiver,
+                                  final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         final File source = depArtifact.getFile();
@@ -478,29 +478,14 @@ public class AddDependencySetsTask
         return logger;
     }
 
-    public String getDefaultOutputDirectory()
-    {
-        return defaultOutputDirectory;
-    }
-
     public void setDefaultOutputDirectory( final String defaultOutputDirectory )
     {
         this.defaultOutputDirectory = defaultOutputDirectory;
     }
 
-    public String getDefaultOutputFileNameMapping()
-    {
-        return defaultOutputFileNameMapping;
-    }
-
     public void setDefaultOutputFileNameMapping( final String defaultOutputFileNameMapping )
     {
         this.defaultOutputFileNameMapping = defaultOutputFileNameMapping;
-    }
-
-    public MavenProject getModuleProject()
-    {
-        return moduleProject;
     }
 
     public void setModuleProject( final MavenProject moduleProject )
@@ -511,10 +496,5 @@ public class AddDependencySetsTask
     public void setModuleArtifact( final Artifact moduleArtifact )
     {
         this.moduleArtifact = moduleArtifact;
-    }
-
-    public Artifact getModuleArtifact()
-    {
-        return moduleArtifact;
     }
 }

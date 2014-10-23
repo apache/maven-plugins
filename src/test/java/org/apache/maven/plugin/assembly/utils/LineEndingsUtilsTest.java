@@ -36,9 +36,9 @@ import org.junit.Test;
 public class LineEndingsUtilsTest
 {
 
-    public static final String CRLF = "\r\n";
+    private static final String CRLF = "\r\n";
 
-    public static final String LF = "\n";
+    private static final String LF = "\n";
 
     @Test
     public void shouldWorkCauseWeTestJdkEnumConversion()

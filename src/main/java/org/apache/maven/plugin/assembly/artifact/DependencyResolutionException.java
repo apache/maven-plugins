@@ -33,9 +33,4 @@ public class DependencyResolutionException
         super( message, error );
     }
 
-    public DependencyResolutionException( final String message )
-    {
-        super( message );
-    }
-
 }

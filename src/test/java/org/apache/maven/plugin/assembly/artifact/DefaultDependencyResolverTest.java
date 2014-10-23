@@ -19,19 +19,12 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -41,12 +34,19 @@ import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.resolved.AssemblyId;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.easymock.EasyMock.expect;
 
 public class DefaultDependencyResolverTest
     extends PlexusTestCase
@@ -62,8 +62,6 @@ public class DefaultDependencyResolverTest
 
     private ArtifactMetadataSource metadataSource;
 
-    private ArtifactCollector collector;
-
     private ConsoleLogger logger;
 
     @Override
@@ -77,7 +75,6 @@ public class DefaultDependencyResolverTest
         factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
         layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
-        collector = (ArtifactCollector) lookup( ArtifactCollector.class.getName() );
         logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
     }
 
@@ -123,12 +120,9 @@ public class DefaultDependencyResolverTest
     public void test_getModuleSetResolutionRequirements()
         throws DependencyResolutionException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
-        final MockControl csControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mm.add( csControl );
-
-        final AssemblerConfigurationSource cs = (AssemblerConfigurationSource) csControl.getMock();
+        final AssemblerConfigurationSource cs = mm.createMock( AssemblerConfigurationSource.class );
 
         final File rootDir = new File( "root" );
         final MavenProject project = createMavenProject( "main-group", "main-artifact", "1", rootDir );
@@ -161,11 +155,9 @@ public class DefaultDependencyResolverTest
         allProjects.add( module2 );
         allProjects.add( module2a );
 
-        cs.getReactorProjects();
-        csControl.setReturnValue( allProjects, MockControl.ZERO_OR_MORE );
+        expect( cs.getReactorProjects()).andReturn( allProjects ).anyTimes();
 
-        cs.getProject();
-        csControl.setReturnValue( project, MockControl.ZERO_OR_MORE );
+        expect( cs.getProject()).andReturn( project ).anyTimes();
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 

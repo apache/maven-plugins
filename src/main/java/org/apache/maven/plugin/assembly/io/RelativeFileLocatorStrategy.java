@@ -29,11 +29,11 @@ import java.io.File;
 /**
  * @version $Id$
  */
-public class RelativeFileLocatorStrategy
+class RelativeFileLocatorStrategy
     implements LocatorStrategy
 {
 
-    private File basedir;
+    private final File basedir;
 
     public RelativeFileLocatorStrategy( File basedir )
     {

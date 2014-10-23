@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
+import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -38,6 +39,9 @@ import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.StringUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import javax.annotation.Nonnull;
 
 public class TrackingArchiverStub
     implements Archiver
@@ -45,13 +49,9 @@ public class TrackingArchiverStub
 
     private static final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-    public boolean forced;
-
-    public File destFile;
+    private File destFile;
 
     public final List<Addition> added = new ArrayList<Addition>();
-
-    public boolean created;
 
     private boolean useJvmChmod;
 
@@ -60,59 +60,58 @@ public class TrackingArchiverStub
     public void createArchive()
         throws ArchiverException, IOException
     {
-        created = true;
     }
 
-    public void addDirectory( final File directory )
+    public void addDirectory( final @Nonnull File directory )
         throws ArchiverException
     {
         added.add( new Addition( directory, null, null, null, -1 ) );
     }
 
-    public void addDirectory( final File directory, final String prefix )
+    public void addDirectory( final @Nonnull File directory, final String prefix )
         throws ArchiverException
     {
         added.add( new Addition( directory, prefix, null, null, -1 ) );
     }
 
-    public void addDirectory( final File directory, final String[] includes, final String[] excludes )
+    public void addDirectory( final @Nonnull File directory, final String[] includes, final String[] excludes )
         throws ArchiverException
     {
         added.add( new Addition( directory, null, includes, excludes, -1 ) );
     }
 
-    public void addDirectory( final File directory, final String prefix, final String[] includes,
+    public void addDirectory( final @Nonnull File directory, final String prefix, final String[] includes,
                               final String[] excludes )
         throws ArchiverException
     {
         added.add( new Addition( directory, prefix, includes, excludes, -1 ) );
     }
 
-    public void addFileSet( final FileSet fileSet )
+    public void addFileSet( final @Nonnull FileSet fileSet )
         throws ArchiverException
     {
         added.add( new Addition( fileSet, null, null, null, -1 ) );
     }
 
-    public void addFile( final File inputFile, final String destFileName )
+    public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName )
         throws ArchiverException
     {
         added.add( new Addition( inputFile, destFileName, null, null, -1 ) );
     }
 
-    public void addFile( final File inputFile, final String destFileName, final int permissions )
+    public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName, final int permissions )
         throws ArchiverException
     {
         added.add( new Addition( inputFile, destFileName, null, null, permissions ) );
     }
 
-    public void addArchivedFileSet( final File archiveFile )
+    public void addArchivedFileSet( final @Nonnull File archiveFile )
         throws ArchiverException
     {
         added.add( new Addition( archiveFile, null, null, null, -1 ) );
     }
 
-    public void addArchivedFileSet( final File archiveFile, final String prefix )
+    public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix )
         throws ArchiverException
     {
         added.add( new Addition( archiveFile, prefix, null, null, -1 ) );
@@ -137,7 +136,7 @@ public class TrackingArchiverStub
         added.add( new Addition( archiveFile, null, includes, excludes, -1 ) );
     }
 
-    public void addArchivedFileSet( final File archiveFile, final String prefix, final String[] includes,
+    public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix, final String[] includes,
                                     final String[] excludes )
         throws ArchiverException
     {
@@ -273,16 +272,18 @@ public class TrackingArchiverStub
     {
     }
 
-    public ResourceIterator getResources()
+    public
+    @Nonnull
+    ResourceIterator getResources()
         throws ArchiverException
     {
-        return null;
+        throw new NotImplementedException();
     }
 
     @SuppressWarnings( "rawtypes" )
-    public Map getFiles()
+    public Map<String, ArchiveEntry> getFiles()
     {
-        return new HashMap();
+        return new HashMap<String, ArchiveEntry>();
     }
 
     public boolean isForced()
@@ -312,13 +313,18 @@ public class TrackingArchiverStub
     {
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         @Override
         public String toString()
         {
-            return "Addition (\n    resource= " + resource + "\n    directory= " + directory + "\n    destination= " + destination + "\n    permissions= " + permissions + "\n    includes= " + (includes == null ? "-none-" : StringUtils.join(includes, ", ")) + "\n    excludes= " + (excludes == null ? "-none-" : StringUtils.join(excludes, ", ")) + "\n)";
+            return "Addition (\n    resource= " + resource + "\n    directory= " + directory + "\n    destination= "
+                + destination + "\n    permissions= " + permissions + "\n    includes= " + ( includes == null
+                ? "-none-"
+                : StringUtils.join( includes, ", " ) ) + "\n    excludes= " + ( excludes == null
+                ? "-none-"
+                : StringUtils.join( excludes, ", " ) ) + "\n)";
         }
 
         public final Object resource;
