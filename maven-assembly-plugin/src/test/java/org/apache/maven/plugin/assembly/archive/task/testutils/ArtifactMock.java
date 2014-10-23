@@ -86,9 +86,9 @@ public class ArtifactMock
         this( mockManager, groupId, artifactId, version, type, classifier, isSnapshot, baseVersion, null );
     }
 
-    public ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
-                         final String version, final String type, final String classifier, final boolean isSnapshot,
-                         final String baseVersion, String scope )
+    private ArtifactMock( final MockManager mockManager, final String groupId, final String artifactId,
+                          final String version, final String type, final String classifier, final boolean isSnapshot,
+                          final String baseVersion, String scope )
     {
         artifactCtl = MockControl.createControl( Artifact.class );
 
@@ -133,17 +133,12 @@ public class ArtifactMock
         setTypeAndExt( extension );
     }
 
-    public MockControl getArtifactCtl()
-    {
-        return artifactCtl;
-    }
-
     public Artifact getArtifact()
     {
         return artifact;
     }
 
-    public void setArtifactId( final String artifactId )
+    void setArtifactId( final String artifactId )
     {
         if ( ( artifactId != null ) && ( this.artifactId == null ) )
         {
@@ -176,7 +171,7 @@ public class ArtifactMock
         }
     }
 
-    public void setGroupId( final String groupId )
+    void setGroupId( final String groupId )
     {
         if ( ( groupId != null ) && ( this.groupId == null ) )
         {
@@ -187,7 +182,7 @@ public class ArtifactMock
         }
     }
 
-    public void setVersion( final String version )
+    void setVersion( final String version )
     {
         if ( ( version != null ) && ( this.version == null ) )
         {
@@ -215,7 +210,7 @@ public class ArtifactMock
         }
     }
 
-    public void setId( final String id )
+    void setId( final String id )
     {
         if ( ( id != null ) && ( this.id == null ) )
         {
@@ -226,7 +221,7 @@ public class ArtifactMock
         }
     }
 
-    public void setDependencyConflictId( final String id )
+    void setDependencyConflictId( final String id )
     {
         if ( ( id != null ) && ( dependencyConflictId == null ) )
         {
@@ -237,7 +232,7 @@ public class ArtifactMock
         }
     }
 
-    public void setSnapshot( final boolean snapshot )
+    void setSnapshot( final boolean snapshot )
     {
         if ( isSnapshot == null )
         {
@@ -265,7 +260,7 @@ public class ArtifactMock
         return file;
     }
 
-    public void setType( final String type )
+    void setType( final String type )
     {
         setTypeAndExt( type );
     }

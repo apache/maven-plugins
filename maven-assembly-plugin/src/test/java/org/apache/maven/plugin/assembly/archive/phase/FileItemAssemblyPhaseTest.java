@@ -421,9 +421,9 @@ public class FileItemAssemblyPhaseTest
 
     private final class MockAndControlForArchiver
     {
-        Archiver archiver;
+        final Archiver archiver;
 
-        MockControl control;
+        final MockControl control;
 
         public MockAndControlForArchiver( final MockManager mockManager )
         {
@@ -448,9 +448,9 @@ public class FileItemAssemblyPhaseTest
 
     private final class MockAndControlForConfigSource
     {
-        AssemblerConfigurationSource configSource;
+        final AssemblerConfigurationSource configSource;
 
-        MockControl control;
+        final MockControl control;
 
         public MockAndControlForConfigSource( final MockManager mockManager )
         {
@@ -496,9 +496,9 @@ public class FileItemAssemblyPhaseTest
 
     private final class MockAndControlForLogger
     {
-        Logger logger;
+        final Logger logger;
 
-        MockControl control;
+        final MockControl control;
 
         public MockAndControlForLogger( final MockManager mockManager )
         {

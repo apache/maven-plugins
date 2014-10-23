@@ -19,20 +19,16 @@ package org.apache.maven.plugin.assembly.utils;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-
 import org.apache.maven.plugin.assembly.archive.ArchiveExpansionException;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.util.Locale;
 
 /**
  * @version $Id$
@@ -120,25 +116,8 @@ public final class AssemblyFileUtils
         }
     }
 
-    public static void copyFile( File src, File dst )
-        throws IOException
-    {
-        FileChannel c1 = new RandomAccessFile( src, "r" ).getChannel();
-        FileChannel c2 = new RandomAccessFile( dst, "rw" ).getChannel();
-
-        long tCount = 0, size = c1.size();
-        // noinspection StatementWithEmptyBody
-        while ( ( tCount += c2.transferFrom( c1, 0, size - tCount ) ) < size )
-        {
-        }
-
-        c1.close();
-        c2.force( true );
-        c2.close();
-    }
-
     @Nonnull
-    public static String normalizePath( @Nonnull String path )
+    private static String normalizePath( @Nonnull String path )
     {
         return path.replace( '\\', '/' );
     }

@@ -35,7 +35,6 @@ import java.util.List;
  * @version $Id$
  */
 public class AddDirectoryTask
-    implements ArchiverTask
 {
 
     private final File directory;
@@ -65,7 +64,7 @@ public class AddDirectoryTask
         this( directory, null);
     }
 
-    public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
+    public void execute( final Archiver archiver )
         throws ArchiveCreationException
     {
         if ( ".".equals( outputDirectory ) )

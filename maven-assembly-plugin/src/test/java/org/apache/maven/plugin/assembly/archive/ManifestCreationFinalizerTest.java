@@ -46,7 +46,7 @@ public class ManifestCreationFinalizerTest
     extends TestCase
 {
 
-    private TestFileManager fileManager = new TestFileManager( "manifest-finalizer.test.", ".jar" );
+    private final TestFileManager fileManager = new TestFileManager( "manifest-finalizer.test.", ".jar" );
 
     public void tearDown()
         throws IOException
@@ -158,9 +158,9 @@ public class ManifestCreationFinalizerTest
 
     private final class MockAndControlForArchiver
     {
-        Archiver archiver;
+        final Archiver archiver;
 
-        MockControl control;
+        final MockControl control;
 
         MockAndControlForArchiver( MockManager mm )
         {

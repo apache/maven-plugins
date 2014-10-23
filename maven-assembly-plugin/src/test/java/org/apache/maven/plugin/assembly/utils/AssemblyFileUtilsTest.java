@@ -37,7 +37,7 @@ public class AssemblyFileUtilsTest
     extends TestCase
 {
 
-    private TestFileManager fileManager = new TestFileManager( "file-utils.test.", "" );
+    private final TestFileManager fileManager = new TestFileManager( "file-utils.test.", "" );
 
     public void tearDown()
         throws IOException

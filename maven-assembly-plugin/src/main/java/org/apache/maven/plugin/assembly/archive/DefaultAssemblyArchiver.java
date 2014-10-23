@@ -107,12 +107,9 @@ public class DefaultAssemblyArchiver
 
     private PlexusContainer container;
 
-    /**
-     * create instance.
-     */
+    @SuppressWarnings( "UnusedDeclaration" )
     public DefaultAssemblyArchiver()
     {
-        // needed for plexus
     }
 
     // introduced for testing.
@@ -440,9 +437,9 @@ public class DefaultAssemblyArchiver
         try
         {
             final Method configureComponent =
-                ComponentConfigurator.class.getMethod( "configureComponent", new Class[] { Object.class,
-                    PlexusConfiguration.class, ExpressionEvaluator.class, (Class<?>) containerRealm[1],
-                    ConfigurationListener.class } );
+                ComponentConfigurator.class.getMethod( "configureComponent", Object.class, PlexusConfiguration.class,
+                                                       ExpressionEvaluator.class, (Class<?>) containerRealm[1],
+                                                       ConfigurationListener.class );
 
             configureComponent.invoke( configurator, component, configuration, expressionEvaluator, containerRealm[0],
                                        listener );

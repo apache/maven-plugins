@@ -31,39 +31,13 @@ public class AssemblyInterpolationException
 
     private String originalMessage;
 
-    public AssemblyInterpolationException( final String message )
-    {
-        super( message );
-    }
-
     public AssemblyInterpolationException( final String message, final Throwable cause )
     {
         super( message, cause );
     }
 
-    public AssemblyInterpolationException( final String expression, final String message, final Throwable cause )
-    {
-        super( "The Assembly expression: " + expression + " could not be evaluated. Reason: " + message, cause );
-
-        this.expression = expression;
-        originalMessage = message;
-    }
-
-    public AssemblyInterpolationException( final String expression, final String message )
-    {
-        super( "The Assembly expression: " + expression + " could not be evaluated. Reason: " + message );
-
-        this.expression = expression;
-        originalMessage = message;
-    }
-
     public String getExpression()
     {
         return expression;
-    }
-
-    public String getOriginalMessage()
-    {
-        return originalMessage;
     }
 }

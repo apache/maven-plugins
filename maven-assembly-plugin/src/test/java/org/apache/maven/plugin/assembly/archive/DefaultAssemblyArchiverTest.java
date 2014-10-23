@@ -70,7 +70,6 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
 
 public class DefaultAssemblyArchiverTest
-// extends PlexusTestCase
 {
 
     private static final TestFileManager fileManager = new TestFileManager( "def-assy-archiver.test.", "" );
@@ -86,12 +85,6 @@ public class DefaultAssemblyArchiverTest
         container.start();
     }
 
-    public void shutdown()
-    {
-        container.dispose();
-    }
-
-    // @Override
     @AfterClass
     public static void tearDown()
         throws Exception
@@ -790,12 +783,6 @@ public class DefaultAssemblyArchiverTest
         }
 
         @Override
-        public TarOptions getOptions()
-        {
-            return super.getOptions();
-        }
-
-        @Override
         public void setCompression( final TarCompressionMethod mode )
         {
             compressionMethod = mode;
@@ -807,12 +794,6 @@ public class DefaultAssemblyArchiverTest
         {
             longFileMode = mode;
             super.setLongfile( mode );
-        }
-
-        @Override
-        public void setOptions( final TarOptions options )
-        {
-            super.setOptions( options );
         }
 
     }

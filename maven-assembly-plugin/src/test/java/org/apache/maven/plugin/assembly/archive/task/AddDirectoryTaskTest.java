@@ -73,7 +73,7 @@ public class AddDirectoryTaskTest
 
         AddDirectoryTask task = new AddDirectoryTask( dir );
 
-        task.execute( archiver, null );
+        task.execute( archiver );
 
         mockManager.verifyAll();
     }
@@ -101,7 +101,7 @@ public class AddDirectoryTaskTest
 
         task.setOutputDirectory( "dir" );
 
-        task.execute( archiver, null );
+        task.execute( archiver );
 
         mockManager.verifyAll();
     }
@@ -134,7 +134,7 @@ public class AddDirectoryTaskTest
         task.setFileMode( fileMode );
         task.setOutputDirectory( "dir" );
 
-        task.execute( archiver, null );
+        task.execute( archiver );
 
         mockManager.verifyAll();
     }
@@ -164,7 +164,7 @@ public class AddDirectoryTaskTest
         task.setExcludes( Collections.singletonList( "**/README.txt" ) );
         task.setOutputDirectory( "dir" );
 
-        task.execute( archiver, null );
+        task.execute( archiver );
 
         mockManager.verifyAll();
     }

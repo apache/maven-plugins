@@ -39,23 +39,23 @@ import org.easymock.MockControl;
 public class MockAndControlForAddDependencySetsTask
 {
 
-    public Archiver archiver;
+    public final Archiver archiver;
 
-    public MockControl archiverCtl;
+    private final MockControl archiverCtl;
 
     public AssemblerConfigurationSource configSource;
 
-    public MockControl configSourceCtl;
+    private final MockControl configSourceCtl;
 
     public MockControl dependencyResolverCtl;
 
     public MavenProjectBuilder projectBuilder;
 
-    public MockControl archiverManagerCtl;
+    private final MockControl archiverManagerCtl;
 
     public ArchiverManager archiverManager;
 
-    public MockControl projectBuilderCtl;
+    private final MockControl projectBuilderCtl;
 
     private final MavenProject project;
 

@@ -79,19 +79,6 @@ public final class AssemblyFormatUtils
         return distributionName;
     }
 
-    /**
-     * @deprecated Use
-     *             {@link AssemblyFormatUtils#getOutputDirectory(String, MavenProject, MavenProject, String, AssemblerConfigurationSource)}
-     *             instead.
-     */
-    @Deprecated
-    public static String getOutputDirectory( final String output, final MavenProject mainProject,
-                                             final MavenProject artifactProject, final String finalName )
-        throws AssemblyFormattingException
-    {
-        return getOutputDirectory( output, mainProject, null, artifactProject, finalName, null );
-    }
-
     public static String getOutputDirectory( final String output, final MavenProject mainProject,
                                              final MavenProject artifactProject, final String finalName,
                                              final AssemblerConfigurationSource configSource )
@@ -268,19 +255,6 @@ public final class AssemblyFormatUtils
         value = fixRelativeRefs( value );
 
         return value;
-    }
-
-    /**
-     * @deprecated Use
-     *             {@link AssemblyFormatUtils#evaluateFileNameMapping(String, Artifact, MavenProject, MavenProject, AssemblerConfigurationSource)}
-     *             instead.
-     */
-    @Deprecated
-    public static String evaluateFileNameMapping( final String expression, final Artifact artifact,
-                                                  final MavenProject mainProject, final MavenProject artifactProject )
-        throws AssemblyFormattingException
-    {
-        return evaluateFileNameMapping( expression, artifact, mainProject, null, null, artifactProject, null );
     }
 
     public static String evaluateFileNameMapping( final String expression, final Artifact artifact,

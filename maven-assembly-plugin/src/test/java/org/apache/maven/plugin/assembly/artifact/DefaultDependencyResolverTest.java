@@ -31,7 +31,6 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -62,8 +61,6 @@ public class DefaultDependencyResolverTest
 
     private ArtifactMetadataSource metadataSource;
 
-    private ArtifactCollector collector;
-
     private ConsoleLogger logger;
 
     @Override
@@ -77,7 +74,6 @@ public class DefaultDependencyResolverTest
         factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
         layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
-        collector = (ArtifactCollector) lookup( ArtifactCollector.class.getName() );
         logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
     }
 

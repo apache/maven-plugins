@@ -151,7 +151,7 @@ public class SimpleAggregatingDescriptorHandler
         return Collections.singletonList( outputPath );
     }
 
-    public boolean isSelected( final FileInfo fileInfo )
+    public boolean isSelected( final @Nonnull FileInfo fileInfo )
         throws IOException
     {
         checkConfig();
@@ -224,21 +224,25 @@ public class SimpleAggregatingDescriptorHandler
         this.logger = logger;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public String getFilePattern()
     {
         return filePattern;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public void setFilePattern( final String filePattern )
     {
         this.filePattern = filePattern;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public String getOutputPath()
     {
         return outputPath;
     }
 
+    @SuppressWarnings( "UnusedDeclaration" )
     public void setOutputPath( final String outputPath )
     {
         this.outputPath = outputPath;

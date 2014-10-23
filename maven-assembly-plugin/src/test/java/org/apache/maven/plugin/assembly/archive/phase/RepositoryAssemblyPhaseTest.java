@@ -147,9 +147,9 @@ public class RepositoryAssemblyPhaseTest
 
     private final class MockAndControlForArchiver
     {
-        Archiver archiver;
+        final Archiver archiver;
 
-        MockControl control;
+        final MockControl control;
 
         public MockAndControlForArchiver( final MockManager mockManager )
         {
@@ -314,9 +314,9 @@ public class RepositoryAssemblyPhaseTest
 
     private final class MockAndControlForConfigSource
     {
-        AssemblerConfigurationSource configSource;
+        final AssemblerConfigurationSource configSource;
 
-        MockControl control;
+        final MockControl control;
 
         public MockAndControlForConfigSource( final MockManager mockManager )
         {
@@ -357,9 +357,9 @@ public class RepositoryAssemblyPhaseTest
 
     private final class MockAndControlForRepositoryAssembler
     {
-        RepositoryAssembler repositoryAssembler;
+        final RepositoryAssembler repositoryAssembler;
 
-        MockControl control;
+        final MockControl control;
 
         MockAndControlForRepositoryAssembler( final MockManager mockManager )
         {

@@ -748,7 +748,7 @@ public class ModuleSetAssemblyPhaseTest
         final int mode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
         final int[] modes = { -1, -1, mode, mode };
 
-        macTask.expectAdditionOfSingleFileSet( project, project.getBasedir(), "final-name", false, modes, 1, true,
+        macTask.expectAdditionOfSingleFileSet( project, "final-name", false, modes, 1, true,
                                                false );
 
         mm.replayAll();
@@ -900,12 +900,12 @@ public class ModuleSetAssemblyPhaseTest
 
         final List<ArtifactMock> macArtifacts = new ArrayList<ArtifactMock>();
 
-        macArtifacts.add( addArtifact( project, mm, false, false ) );
+        macArtifacts.add( addArtifact( project, mm, false ) );
 
         final MavenProject project2 = createProject( "group", "artifact2", "version", project );
-        macArtifacts.add( addArtifact( project2, mm, true, false ) );
+        macArtifacts.add( addArtifact( project2, mm, false ) );
         final MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
-        macArtifacts.add( addArtifact( project3, mm, true, true ) );
+        macArtifacts.add( addArtifact( project3, mm, true ) );
 
         final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );
@@ -929,8 +929,7 @@ public class ModuleSetAssemblyPhaseTest
         mm.verifyAll();
     }
 
-    private ArtifactMock addArtifact( final MavenProject project, final MockManager mm,
-                                      final boolean expectIdentityChecks, final boolean expectDepTrailCheck )
+    private ArtifactMock addArtifact( final MavenProject project, final MockManager mm, final boolean expectDepTrailCheck )
     {
         final ArtifactMock macArtifact =
             new ArtifactMock( mm, project.getGroupId(), project.getArtifactId(), project.getVersion(),

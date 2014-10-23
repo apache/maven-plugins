@@ -357,7 +357,7 @@ public class FilterUtilsTest
     private final class ProjectWithArtifactMockControl
         extends MavenProject
     {
-        ArtifactMockAndControl mac;
+        final ArtifactMockAndControl mac;
 
         ProjectWithArtifactMockControl( final String groupId, final String artifactId, final List<String> depTrail )
         {
@@ -372,15 +372,15 @@ public class FilterUtilsTest
 
     private final class ArtifactMockAndControl
     {
-        MockControl control;
+        final MockControl control;
 
-        Artifact artifact;
+        final Artifact artifact;
 
-        String groupId;
+        final String groupId;
 
-        String artifactId;
+        final String artifactId;
 
-        List<String> dependencyTrail;
+        final List<String> dependencyTrail;
 
         ArtifactMockAndControl( final String groupId, final String artifactId, final List<String> dependencyTrail )
         {

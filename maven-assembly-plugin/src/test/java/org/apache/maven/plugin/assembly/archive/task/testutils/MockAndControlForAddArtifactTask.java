@@ -24,7 +24,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
@@ -35,13 +34,13 @@ import org.easymock.MockControl;
 public class MockAndControlForAddArtifactTask
 {
 
-    public Archiver archiver;
+    public final Archiver archiver;
 
-    public MockControl archiverCtl;
+    private final MockControl archiverCtl;
 
     public AssemblerConfigurationSource configSource;
 
-    public MockControl configSourceCtl;
+    private final MockControl configSourceCtl;
 
     private MavenProject project = null;
 
@@ -177,9 +176,4 @@ public class MockAndControlForAddArtifactTask
         configSourceCtl.setReturnValue( projects, MockControl.ONE_OR_MORE );
     }
 
-    public void expectGetSession( final MavenSession session )
-    {
-        configSource.getMavenSession();
-        configSourceCtl.setReturnValue( session, MockControl.ONE_OR_MORE );
-    }
 }

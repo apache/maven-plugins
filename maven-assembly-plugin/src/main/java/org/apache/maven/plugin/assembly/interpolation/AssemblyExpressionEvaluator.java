@@ -34,8 +34,8 @@ public class AssemblyExpressionEvaluator
 {
     
     private final AssemblerConfigurationSource configSource;
-    private Interpolator interpolator;
-    private PrefixAwareRecursionInterceptor interceptor;
+    private final Interpolator interpolator;
+    private final PrefixAwareRecursionInterceptor interceptor;
 
     public AssemblyExpressionEvaluator( AssemblerConfigurationSource configSource )
     {

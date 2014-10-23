@@ -28,7 +28,7 @@ public enum LineEndings
 {
     keep( null ), dos( "\r\n" ), windows( "\r\n" ), unix( "\n" ), crlf( "\r\n" ), lf( "\n" );
 
-    private String lineEndingCharacters;
+    private final String lineEndingCharacters;
 
     private LineEndings( String lineEndingCharacters )
     {

@@ -19,13 +19,6 @@ package org.apache.maven.plugin.assembly.format;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -36,6 +29,13 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class FileFormatterTest
     extends PlexusTestCase
@@ -187,7 +187,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir, true, null );
+        enableBasicFilteringConfiguration( project, sourceDir, null );
 
         final File file = fileManager.createFile( sourceDir, "one.properties", "out=${project.build.outputDirectory}" );
 
@@ -211,7 +211,7 @@ public class FileFormatterTest
         build.setOutputDirectory( "C:\\out\\deeper" );
         project.setBuild( build );
 
-        enableBasicFilteringConfiguration( project, sourceDir, true, null );
+        enableBasicFilteringConfiguration( project, sourceDir, null );
 
         final File file =
             fileManager.createFile( sourceDir, "one.txt", "project.basedirA=${project.build.outputDirectory}" );
@@ -507,17 +507,15 @@ public class FileFormatterTest
         return new MavenProject( model );
     }
 
-    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir,
-                                                    final boolean useDefault, final List<String> delimiters )
+    private void enableBasicFilteringConfiguration( final MavenProject project, final File basedir, final List<String> delimiters )
         throws Exception
     {
 
-        enableFilteringConfiguration( project, basedir, useDefault, delimiters, Collections.<String> emptyList(), true );
+        enableFilteringConfiguration( project, basedir, delimiters, Collections.<String> emptyList(), true );
 
     }
 
-    private void enableFilteringConfiguration( final MavenProject project, final File basedir,
-                                               final boolean useDefault, final List<String> delimiters,
+    private void enableFilteringConfiguration( final MavenProject project, final File basedir, final List<String> delimiters,
                                                final List<String> filters, final boolean includeProjectBuildFilters )
         throws Exception
     {
@@ -556,7 +554,7 @@ public class FileFormatterTest
             project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableBasicFilteringConfiguration( project, basedir, true, null );
+        enableBasicFilteringConfiguration( project, basedir, null );
     }
 
     private void enableFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames,
@@ -570,7 +568,7 @@ public class FileFormatterTest
             project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableFilteringConfiguration( project, basedir, true, null, configFilterFilenames, includeProjectBuildFilters );
+        enableFilteringConfiguration( project, basedir, null, configFilterFilenames, includeProjectBuildFilters );
     }
 
     private void enableBasicFilteringConfiguration( final File basedir, final List<String> buildFilterFilenames,
@@ -584,6 +582,6 @@ public class FileFormatterTest
             project.getBuild().setFilters( buildFilterFilenames );
         }
 
-        enableBasicFilteringConfiguration( project, basedir, useDefault, delimiters );
+        enableBasicFilteringConfiguration( project, basedir, delimiters );
     }
 }

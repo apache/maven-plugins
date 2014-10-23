@@ -35,15 +35,15 @@ import org.easymock.MockControl;
 public class MockAndControlForAddFileSetsTask
 {
 
-    public AssemblerConfigurationSource configSource;
+    public final AssemblerConfigurationSource configSource;
 
-    public MockControl configSourceCtl;
+    private final MockControl configSourceCtl;
 
     public Archiver archiver;
 
     public MockControl archiverCtl;
 
-    public TestFileManager fileManager;
+    private final TestFileManager fileManager;
 
     public File archiveBaseDir;
 
@@ -79,7 +79,7 @@ public class MockAndControlForAddFileSetsTask
         configSourceCtl.setReturnValue( basedir, MockControl.ONE_OR_MORE );
     }
 
-    public void expectModeChanges( int[] modes, int modeChangeCount )
+    void expectModeChanges( int[] modes, int modeChangeCount )
     {
         archiver.getOverrideDirectoryMode();
         archiverCtl.setReturnValue( modes[0] );
@@ -118,13 +118,12 @@ public class MockAndControlForAddFileSetsTask
                                                boolean shouldAddDir, int[] modes, int modeChangeCount,
                                                boolean isDebugEnabled )
     {
-        expectAdditionOfSingleFileSet( project, basedir, finalName, shouldAddDir, modes, modeChangeCount,
+        expectAdditionOfSingleFileSet( project, finalName, shouldAddDir, modes, modeChangeCount,
                                        isDebugEnabled, true );
 
     }
 
-    public void expectAdditionOfSingleFileSet( MavenProject project, File basedir, String finalName,
-                                               boolean shouldAddDir, int[] modes, int modeChangeCount,
+    public void expectAdditionOfSingleFileSet( MavenProject project, String finalName, boolean shouldAddDir, int[] modes, int modeChangeCount,
                                                boolean isDebugEnabled, boolean isProjectUsed )
     {
         // the logger sends a debug message with this info inside the addFileSet(..) method..

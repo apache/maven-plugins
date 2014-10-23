@@ -20,12 +20,9 @@ package org.apache.maven.plugin.assembly.utils;
  */
 
 import junit.framework.TestCase;
-import org.codehaus.plexus.components.io.resources.LinefeedMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import static org.codehaus.plexus.components.io.resources.LinefeedMode.unix;
 
 public class LinuxLineFeedInputStreamTest
     extends TestCase
@@ -34,25 +31,25 @@ public class LinuxLineFeedInputStreamTest
     public void testSimpleString()
         throws Exception
     {
-        assertEquals( "abc\n", roundtrip( "abc", unix ) );
+        assertEquals( "abc\n", roundtrip( "abc" ) );
     }
 
     public void testInTheMiddleOfTheLine()
         throws Exception
     {
-        assertEquals( "a\nbc\n", roundtrip( "a\r\nbc", unix ) );
+        assertEquals( "a\nbc\n", roundtrip( "a\r\nbc" ) );
     }
 
     public void testMultipleBlankLines()
         throws Exception
     {
-        assertEquals( "a\n\nbc\n", roundtrip( "a\r\n\r\nbc", unix ) );
+        assertEquals( "a\n\nbc\n", roundtrip( "a\r\n\r\nbc" ) );
     }
 
     public void testTwoLinesAtEnd()
         throws Exception
     {
-        assertEquals( "a\n\n", roundtrip( "a\r\n\r\n", unix ) );
+        assertEquals( "a\n\n", roundtrip( "a\r\n\r\n" ) );
     }
 
     public void testMalformed()
@@ -68,7 +65,7 @@ public class LinuxLineFeedInputStreamTest
         assertEquals( "a", roundtrip( "a", false ) );
     }
 
-    private String roundtrip( String msg, LinefeedMode linefeedMode )
+    private String roundtrip( String msg )
         throws IOException
     {
         return roundtrip( msg, true );
