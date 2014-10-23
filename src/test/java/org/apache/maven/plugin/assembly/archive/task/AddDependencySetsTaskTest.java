@@ -27,7 +27,6 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.Logger;
@@ -40,12 +39,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
+import org.easymock.classextension.EasyMockSupport;
 
 public class AddDependencySetsTaskTest
     extends TestCase
 {
 
-    private final MockManager mockManager = new MockManager();
+    private final EasyMockSupport mockManager = new EasyMockSupport();
 
     public void testAddDependencySet_ShouldInterpolateDefaultOutputFileNameMapping()
         throws AssemblyFormattingException, ArchiveCreationException, InvalidAssemblerConfigurationException,

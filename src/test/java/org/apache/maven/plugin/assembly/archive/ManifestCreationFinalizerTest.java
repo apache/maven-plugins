@@ -19,6 +19,18 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
+import junit.framework.TestCase;
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.testutils.TestFileManager;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.ArchiveFinalizer;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.jar.JarArchiver;
+import org.codehaus.plexus.util.IOUtil;
+import org.easymock.classextension.EasyMockSupport;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,20 +39,6 @@ import java.io.StringWriter;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Collections;
-
-import junit.framework.TestCase;
-
-import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
-import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.ArchiveFinalizer;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.util.IOUtil;
-import org.easymock.MockControl;
 
 public class ManifestCreationFinalizerTest
     extends TestCase
@@ -63,7 +61,7 @@ public class ManifestCreationFinalizerTest
     public void testShouldDoNothingWhenArchiverIsNotJarArchiver()
         throws ArchiverException
     {
-        MockManager mm = new MockManager();
+        EasyMockSupport mm = new EasyMockSupport();
 
         MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
@@ -160,14 +158,11 @@ public class ManifestCreationFinalizerTest
     {
         final Archiver archiver;
 
-        final MockControl control;
 
-        MockAndControlForArchiver( MockManager mm )
+        MockAndControlForArchiver( EasyMockSupport mm )
         {
-            control = MockControl.createControl( Archiver.class );
-            mm.add( control );
 
-            archiver = (Archiver) control.getMock();
+            archiver = mm.createMock(Archiver.class);
         }
     }
 

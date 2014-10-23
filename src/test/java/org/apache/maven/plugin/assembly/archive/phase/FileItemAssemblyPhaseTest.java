@@ -19,12 +19,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -32,7 +28,6 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
@@ -40,7 +35,12 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.easymock.EasyMock.expect;
 
 public class FileItemAssemblyPhaseTest
     extends TestCase
@@ -58,7 +58,7 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_ShouldAddNothingWhenNoFileItemsArePresent()
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -81,7 +81,7 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_ShouldAddAbsoluteFileNoFilterNoLineEndingConversion()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -130,7 +130,7 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_ShouldAddRelativeFileNoFilterNoLineEndingConversion()
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -179,7 +179,7 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_WithOutputDirectory()
         throws Exception
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -256,7 +256,7 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_WithOutputDirectoryAndDestName()
         throws Exception
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -336,7 +336,7 @@ public class FileItemAssemblyPhaseTest
     public void testExecute_WithOutputDirectoryAndDestNameAndIncludeBaseDirectoryFalse()
         throws Exception
     {
-        final MockManager mm = new MockManager();
+        final EasyMockSupport mm = new EasyMockSupport();
 
         final MockAndControlForConfigSource macCS = new MockAndControlForConfigSource( mm );
 
@@ -423,14 +423,9 @@ public class FileItemAssemblyPhaseTest
     {
         final Archiver archiver;
 
-        final MockControl control;
-
-        public MockAndControlForArchiver( final MockManager mockManager )
+        public MockAndControlForArchiver( final EasyMockSupport mockManager )
         {
-            control = MockControl.createControl( Archiver.class );
-            mockManager.add( control );
-
-            archiver = (Archiver) control.getMock();
+            archiver = mockManager.createMock(Archiver.class);
         }
 
         public void expectAddFile( final File file, final String outputLocation, final int fileMode )
@@ -450,47 +445,37 @@ public class FileItemAssemblyPhaseTest
     {
         final AssemblerConfigurationSource configSource;
 
-        final MockControl control;
-
-        public MockAndControlForConfigSource( final MockManager mockManager )
+        public MockAndControlForConfigSource( final EasyMockSupport mockManager )
         {
-            control = MockControl.createControl( AssemblerConfigurationSource.class );
-            mockManager.add( control );
 
-            configSource = (AssemblerConfigurationSource) control.getMock();
+            configSource = mockManager.createMock(AssemblerConfigurationSource.class);
 
-            configSource.getMavenSession();
-            control.setReturnValue( null, MockControl.ZERO_OR_MORE );
+            expect(configSource.getMavenSession()).andReturn( null ).anyTimes();
         }
 
         public void expectGetProject( final MavenProject project )
         {
-            configSource.getProject();
-            control.setReturnValue( project, MockControl.ONE_OR_MORE );
+            expect(configSource.getProject()).andReturn( project ).atLeastOnce();
         }
 
         public void expectGetFinalName( final String finalName )
         {
-            configSource.getFinalName();
-            control.setReturnValue( finalName, MockControl.ONE_OR_MORE );
+            expect( configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
         }
 
         public void expectGetTemporaryRootDirectory( final File tempRoot )
         {
-            configSource.getTemporaryRootDirectory();
-            control.setReturnValue( tempRoot, MockControl.ONE_OR_MORE );
+            expect( configSource.getTemporaryRootDirectory()).andReturn( tempRoot ).atLeastOnce();
         }
 
         public void expectGetBasedir( final File basedir )
         {
-            configSource.getBasedir();
-            control.setReturnValue( basedir, MockControl.ONE_OR_MORE );
+            expect( configSource.getBasedir()).andReturn( basedir ).atLeastOnce();
         }
 
         public void expectGetEncoding( )
         {
-            configSource.getEncoding();
-            control.setReturnValue( "UTF-8", MockControl.ONE_OR_MORE );
+            expect( configSource.getEncoding()).andReturn( "UTF-8").atLeastOnce();
         }
 }
 
@@ -498,14 +483,10 @@ public class FileItemAssemblyPhaseTest
     {
         final Logger logger;
 
-        final MockControl control;
-
-        public MockAndControlForLogger( final MockManager mockManager )
+        public MockAndControlForLogger( final EasyMockSupport mockManager )
         {
-            control = MockControl.createControl( Logger.class );
-            mockManager.add( control );
 
-            logger = (Logger) control.getMock();
+            logger = mockManager.createMock (Logger.class);
         }
     }
 

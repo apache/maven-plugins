@@ -22,13 +22,14 @@ package org.apache.maven.plugin.assembly.format;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.MockControl;
+import org.easymock.classextension.EasyMockSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.easymock.EasyMock.expect;
 
 public class FileFormatterTest
     extends PlexusTestCase
@@ -45,11 +48,10 @@ public class FileFormatterTest
 
     private final TestFileManager fileManager = new TestFileManager( "fileFormatterTest.", "" );
 
-    private final MockManager mockManager = new MockManager();
+    private final EasyMockSupport mockManager = new EasyMockSupport();
 
     private AssemblerConfigurationSource configSource;
 
-    private MockControl configSourceControl;
 
     @Override
     public void setUp()
@@ -57,10 +59,7 @@ public class FileFormatterTest
     {
         super.setUp();
 
-        configSourceControl = MockControl.createControl( AssemblerConfigurationSource.class );
-        mockManager.add( configSourceControl );
-
-        configSource = (AssemblerConfigurationSource) configSourceControl.getMock();
+        configSource = mockManager.createMock(AssemblerConfigurationSource.class);
     }
 
     @Override
@@ -75,8 +74,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
         final File tempRoot = new File( basedir, "tempdir" );
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( tempRoot );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( tempRoot );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
@@ -94,8 +92,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         // Model model = new Model();
         // model.setArtifactId( "artifact" );
@@ -123,8 +120,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\ntest." );
 
@@ -142,8 +138,7 @@ public class FileFormatterTest
     {
         final File basedir = fileManager.createTempDir();
 
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir );
 
         final File file = fileManager.createFile( basedir, "one.txt", "This is a\r\ntest." );
 
@@ -519,29 +514,21 @@ public class FileFormatterTest
                                                final List<String> filters, final boolean includeProjectBuildFilters )
         throws Exception
     {
-        configSource.getTemporaryRootDirectory();
-        configSourceControl.setReturnValue( basedir );
+        expect( configSource.getTemporaryRootDirectory()).andReturn( basedir ).atLeastOnce();
+        expect( configSource.getEscapeString()).andReturn( null ).atLeastOnce();
 
-        configSource.getEscapeString();
-        configSourceControl.setReturnValue( null, MockControl.ONE_OR_MORE );
+        expect( configSource.getProject()).andReturn( project).atLeastOnce();
 
-        configSource.getProject();
-        configSourceControl.setReturnValue( project, MockControl.ONE_OR_MORE );
+        expect( configSource.getMavenFileFilter()).andReturn(
+            (MavenFileFilter) lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
 
-        configSource.getMavenFileFilter();
-        configSourceControl.setReturnValue( lookup( "org.apache.maven.shared.filtering.MavenFileFilter" ) );
+        expect( configSource.getMavenSession()).andReturn( null );
 
-        configSource.getMavenSession();
-        configSourceControl.setReturnValue( null );
+        expect( configSource.getFilters()).andReturn( filters );
 
-        configSource.getFilters();
-        configSourceControl.setReturnValue( filters );
+        expect( configSource.isIncludeProjectBuildFilters()).andReturn( includeProjectBuildFilters );
 
-        configSource.isIncludeProjectBuildFilters();
-        configSourceControl.setReturnValue( includeProjectBuildFilters );
-
-        configSource.getDelimiters();
-        configSourceControl.setReturnValue( delimiters );
+        expect( configSource.getDelimiters()).andReturn( delimiters );
 
     }
 

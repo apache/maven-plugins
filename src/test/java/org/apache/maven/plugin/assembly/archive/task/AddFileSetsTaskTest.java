@@ -30,17 +30,19 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.FileSet;
-import org.apache.maven.plugin.assembly.testutils.MockManager;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.expect;
 
 public class AddFileSetsTaskTest
     extends TestCase
 {
 
-    private MockManager mockManager;
+    private EasyMockSupport mockManager;
 
     private TestFileManager fileManager;
 
@@ -49,7 +51,7 @@ public class AddFileSetsTaskTest
     @Override
     public void setUp()
     {
-        mockManager = new MockManager();
+        mockManager = new EasyMockSupport();
 
         fileManager = new TestFileManager( "add-fileset.test.", "" );
 
@@ -207,10 +209,8 @@ public class AddFileSetsTaskTest
 
         macTask.expectGetProject( null );
 
-        macTask.archiver.getOverrideDirectoryMode();
-        macTask.archiverCtl.setReturnValue( -1 );
-        macTask.archiver.getOverrideFileMode();
-        macTask.archiverCtl.setReturnValue( -1 );
+        expect(macTask.archiver.getOverrideDirectoryMode()).andReturn( -1 );
+        expect(macTask.archiver.getOverrideFileMode()).andReturn( -1 );
 
         final MavenProject project = new MavenProject( new Model() );
 
