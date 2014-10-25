@@ -45,6 +45,8 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Components XML file filter.
  * 
@@ -188,7 +190,7 @@ public class ComponentsXmlArchiverFileFilter
         return null;
     }
 
-    public boolean isSelected( final FileInfo fileInfo )
+    public boolean isSelected( final @Nonnull FileInfo fileInfo )
         throws IOException
     {
         if ( fileInfo.isFile() )

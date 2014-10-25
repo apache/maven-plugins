@@ -52,7 +52,6 @@ import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
-import org.easymock.MockControl;
 import org.easymock.classextension.EasyMockSupport;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -36,7 +36,6 @@ import org.apache.maven.plugin.assembly.testutils.ConfigSourceStub;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.easymock.MockControl;
 import org.easymock.classextension.EasyMockSupport;
 
 import static org.easymock.EasyMock.expect;
@@ -190,7 +189,6 @@ public class AssemblyInterpolatorTest
 
         final AssemblerConfigurationSource cs = mm.createMock( AssemblerConfigurationSource.class );
 
-        final MockControl lrCtl = MockControl.createControl( ArtifactRepository.class );
         final ArtifactRepository lr =  mm.createMock( ArtifactRepository.class );
 
         expect( lr.getBasedir()).andReturn(  "/path/to/local/repo").anyTimes();

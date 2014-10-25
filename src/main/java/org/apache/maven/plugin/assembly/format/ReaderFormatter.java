@@ -46,7 +46,6 @@ public class ReaderFormatter
     {
         try
         {
-            // @todo this test can be improved
             boolean isPropertiesFile = AssemblyFileUtils.isPropertyFile( sourceName );
 
             MavenReaderFilterRequest filterRequest =

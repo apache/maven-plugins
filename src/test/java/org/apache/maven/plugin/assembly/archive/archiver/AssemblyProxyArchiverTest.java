@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive.archiver;
  * under the License.
  */
 
+import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -40,10 +41,14 @@ import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
-import org.easymock.MockControl;
+import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMockSupport;
 import org.junit.AfterClass;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
+
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class AssemblyProxyArchiverTest
 {
 
@@ -114,21 +119,20 @@ public class AssemblyProxyArchiverTest
     public void addFile_NoPerms_CallAcceptFilesOnlyOnce()
         throws IOException, ArchiverException
     {
-        final MockControl delegateControl = MockControl.createControl( Archiver.class );
-        final Archiver delegate = (Archiver) delegateControl.getMock();
+        EasyMockSupport mm = new EasyMockSupport();
+        final Archiver delegate = mm.createMock(Archiver.class);
 
-        delegate.addFile( null, null );
-        delegateControl.setMatcher( MockControl.ALWAYS_MATCHER );
-        delegateControl.setVoidCallable();
+        delegate.addFile( (File)anyObject(), (String)anyObject() );
+        EasyMock.expectLastCall().anyTimes();
 
         delegate.setForced( true );
-        delegateControl.setVoidCallable( MockControl.ZERO_OR_MORE );
+        EasyMock.expectLastCall().anyTimes();
 
         final CounterSelector counter = new CounterSelector( true );
         final List<FileSelector> selectors = new ArrayList<FileSelector>();
         selectors.add( counter );
 
-        delegateControl.replay();
+        mm.replayAll();
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
@@ -142,7 +146,7 @@ public class AssemblyProxyArchiverTest
 
         assertEquals( 1, counter.getCount() );
 
-        delegateControl.verify();
+        mm.verifyAll();
     }
 
     @Test
@@ -194,7 +198,7 @@ public class AssemblyProxyArchiverTest
             return count;
         }
 
-        public boolean isSelected( final FileInfo fileInfo )
+        public boolean isSelected( final @Nonnull FileInfo fileInfo )
             throws IOException
         {
             if ( fileInfo.isFile() )
