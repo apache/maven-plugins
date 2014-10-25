@@ -200,13 +200,11 @@ public class AddArtifactTaskTest
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
 
-        String outputLocation = "";
-
         String[] includes = { "**/*.txt" };
         String[] excludes = { "**/README.txt" };
 
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
-        File artifactFile = artifactMock.setNewFile();
+        artifactMock.setNewFile();
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddArchivedFileSet();

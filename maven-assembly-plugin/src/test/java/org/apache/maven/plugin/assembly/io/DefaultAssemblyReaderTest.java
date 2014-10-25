@@ -53,6 +53,7 @@ import java.util.List;
 
 import static org.easymock.EasyMock.expect;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class DefaultAssemblyReaderTest
     extends TestCase
 {

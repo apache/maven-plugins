@@ -27,6 +27,7 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
 import org.codehaus.plexus.util.IOUtil;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -119,7 +120,7 @@ abstract class AbstractLineAggregatingHandler
         return new ArrayList<String>( catalog.keySet() );
     }
 
-    public boolean isSelected( final FileInfo fileInfo )
+    public boolean isSelected( final @Nonnull FileInfo fileInfo )
         throws IOException
     {
         if ( excludeOverride )
