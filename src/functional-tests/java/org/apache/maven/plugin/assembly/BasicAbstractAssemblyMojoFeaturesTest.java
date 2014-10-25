@@ -35,6 +35,7 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.diags.NoOpArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -184,7 +185,7 @@ public class BasicAbstractAssemblyMojoFeaturesTest
     }
 
     public static final class FileLoggingArchiverStub
-        implements Archiver
+        extends NoOpArchiver
     {
 
         private Set files = new LinkedHashSet();
@@ -264,67 +265,6 @@ public class BasicAbstractAssemblyMojoFeaturesTest
                 throw new ArchiverException( "Error scanning for file names.", e );
             }
         }
-
-        public void createArchive() throws ArchiverException, IOException
-        {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public int getDefaultDirectoryMode()
-        {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public int getDefaultFileMode()
-        {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        public File getDestFile()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public Map getFiles()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public boolean getIncludeEmptyDirs()
-        {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        public void setDefaultDirectoryMode( int arg0 )
-        {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void setDefaultFileMode( int arg0 )
-        {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void setDestFile( File arg0 )
-        {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public void setIncludeEmptyDirs( boolean arg0 )
-        {
-            // TODO Auto-generated method stub
-            
-        }
-
     }
 
     public static final class TwoDependencyReactorProjectStub

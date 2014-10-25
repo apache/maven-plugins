@@ -44,6 +44,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.ResourceIterator;
+import org.codehaus.plexus.archiver.diags.NoOpArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
@@ -373,16 +374,12 @@ public class ComponentsXmlArchiverFileFilterTest
     }
 
     private static final class FileCatchingArchiver
-        implements Archiver
+        extends NoOpArchiver
     {
 
         private File inputFile;
 
         private String destFileName;
-
-        private boolean useJvmChmod;
-
-        private boolean ignorePermissions;
 
         public void addDirectory( final @Nonnull File directory )
             throws ArchiverException
@@ -628,26 +625,6 @@ public class ComponentsXmlArchiverFileFilterTest
         public void setFileMode( final int mode )
         {
             throw new UnsupportedOperationException( "not supported" );
-        }
-
-        public boolean isUseJvmChmod()
-        {
-            return useJvmChmod;
-        }
-
-        public void setUseJvmChmod( final boolean useJvmChmod )
-        {
-            this.useJvmChmod = useJvmChmod;
-        }
-
-        public boolean isIgnorePermissions()
-        {
-            return ignorePermissions;
-        }
-
-        public void setIgnorePermissions( final boolean ignorePermissions )
-        {
-            this.ignorePermissions = ignorePermissions;
         }
     }
 
