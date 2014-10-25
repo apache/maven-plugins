@@ -30,10 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
-import org.apache.maven.plugin.assembly.testutils.TrackingArchiverStub;
-import org.apache.maven.plugin.assembly.testutils.TrackingArchiverStub.Addition;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.diags.TrackingArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileInfo;
@@ -70,7 +69,7 @@ public class AssemblyProxyArchiverTest
 
         final File workdir = new File( sources, "workdir" );
 
-        final TrackingArchiverStub tracker = new TrackingArchiverStub();
+        final TrackingArchiver tracker = new TrackingArchiver();
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
 
@@ -96,7 +95,7 @@ public class AssemblyProxyArchiverTest
         fileManager.createFile( sources, "test-included.txt", "This is included" );
         fileManager.createFile( workdir, "test-excluded.txt", "This is excluded" );
 
-        final TrackingArchiverStub tracker = new TrackingArchiverStub();
+        final TrackingArchiver tracker = new TrackingArchiver();
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
 
@@ -109,7 +108,7 @@ public class AssemblyProxyArchiverTest
 
         assertEquals( 1, tracker.added.size() );
 
-        final Addition addition = tracker.added.get( 0 );
+        final TrackingArchiver.Addition addition = tracker.added.get( 0 );
         assertNotNull( addition.excludes );
         assertEquals( 1, addition.excludes.length );
         assertEquals( workdir.getName(), addition.excludes[0] );
@@ -125,7 +124,7 @@ public class AssemblyProxyArchiverTest
         delegate.addFile( (File)anyObject(), (String)anyObject() );
         EasyMock.expectLastCall().anyTimes();
 
-        delegate.setForced( true );
+        delegate.setForced(true);
         EasyMock.expectLastCall().anyTimes();
 
         final CounterSelector counter = new CounterSelector( true );

@@ -41,6 +41,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.ResourceIterator;
+import org.codehaus.plexus.archiver.diags.NoOpArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
@@ -606,229 +607,21 @@ public class DefaultAssemblyArchiverTest
     }
 
     public static final class TestArchiverWithConfig
-        implements Archiver
+        extends NoOpArchiver
     {
 
         private String simpleConfig;
-
-        private boolean useJvmChmod;
-
-        private boolean ignorePermissions;
 
         public String getSimpleConfig()
         {
             return simpleConfig;
         }
 
-        public void addArchivedFileSet( final File arg0 )
-            throws ArchiverException
-        {
-        }
-
-        public void addArchivedFileSet( final ArchivedFileSet arg0 )
-            throws ArchiverException
-        {
-        }
-
-        public void addArchivedFileSet( final File arg0, final String arg1 )
-            throws ArchiverException
-        {
-        }
-        public void addArchivedFileSet( final File arg0, final String[] arg1, final String[] arg2 )
-            throws ArchiverException
-        {
-        }
-
-        public void addArchivedFileSet( final File arg0, final String arg1, final String[] arg2, final String[] arg3 )
-            throws ArchiverException
-        {
-        }
-
-        public void addDirectory( final File arg0 )
-            throws ArchiverException
-        {
-        }
-
-        public void addDirectory( final File arg0, final String arg1 )
-            throws ArchiverException
-        {
-        }
-
-        public void addDirectory( final File arg0, final String[] arg1, final String[] arg2 )
-            throws ArchiverException
-        {
-        }
-
-        public void addDirectory( final File arg0, final String arg1, final String[] arg2, final String[] arg3 )
-            throws ArchiverException
-        {
-        }
-
-        public void addFile( final File arg0, final String arg1 )
-            throws ArchiverException
-        {
-        }
-
-        public void addFile( final File arg0, final String arg1, final int arg2 )
-            throws ArchiverException
-        {
-        }
-
-        public void addFileSet( final FileSet arg0 )
-            throws ArchiverException
-        {
-        }
-
-        public void addResource( final PlexusIoResource arg0, final String arg1, final int arg2 )
-            throws ArchiverException
-        {
-        }
-
-        public void addSymlink( String s, String s2 )
-            throws ArchiverException
-        {
-
-        }
-
-        public void addSymlink( String s, int i, String s2 )
-            throws ArchiverException
-        {
-
-        }
-
-        public void addResources( final PlexusIoResourceCollection arg0 )
-            throws ArchiverException
-        {
-        }
-
-        public void createArchive()
-            throws ArchiverException, IOException
-        {
-        }
-
-        public int getDefaultDirectoryMode()
-        {
-            return 0;
-        }
-
-        public int getDefaultFileMode()
-        {
-            return 0;
-        }
-
-        public File getDestFile()
-        {
-            return null;
-        }
-
-        @SuppressWarnings( "rawtypes" )
-        public Map getFiles()
-        {
-            return null;
-        }
-
-        public boolean getIncludeEmptyDirs()
-        {
-            return false;
-        }
-
-        public ResourceIterator getResources()
-            throws ArchiverException
-        {
-            return null;
-        }
-
-        public boolean isForced()
-        {
-            return false;
-        }
-
-        public boolean isSupportingForced()
-        {
-            return false;
-        }
-
-        public void setDefaultDirectoryMode( final int arg0 )
-        {
-        }
-
-        public void setDefaultFileMode( final int arg0 )
-        {
-        }
-
-        public void setDestFile( final File arg0 )
-        {
-        }
-
-        public void setDotFileDirectory( final File arg0 )
-        {
-        }
-
-        public void setForced( final boolean arg0 )
-        {
-        }
-
-        public void setIncludeEmptyDirs( final boolean arg0 )
-        {
-        }
 
         public String getDuplicateBehavior()
         {
             return Archiver.DUPLICATES_ADD;
         }
-
-        public void setDuplicateBehavior( final String duplicate )
-        {
-        }
-
-        public int getDirectoryMode()
-        {
-            return 0;
-        }
-
-        public int getFileMode()
-        {
-            return 0;
-        }
-
-        public int getOverrideDirectoryMode()
-        {
-            return 0;
-        }
-
-        public int getOverrideFileMode()
-        {
-            return 0;
-        }
-
-        public void setDirectoryMode( final int mode )
-        {
-        }
-
-        public void setFileMode( final int mode )
-        {
-        }
-
-        public boolean isUseJvmChmod()
-        {
-            return useJvmChmod;
-        }
-
-        public void setUseJvmChmod( final boolean useJvmChmod )
-        {
-            this.useJvmChmod = useJvmChmod;
-        }
-
-        public boolean isIgnorePermissions()
-        {
-            return ignorePermissions;
-        }
-
-        public void setIgnorePermissions( final boolean ignorePermissions )
-        {
-            this.ignorePermissions = ignorePermissions;
-        }
-
     }
 
 }
