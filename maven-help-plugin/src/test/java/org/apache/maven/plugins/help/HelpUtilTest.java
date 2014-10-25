@@ -51,7 +51,7 @@ public class HelpUtilTest
 
         MavenSession session =
             new MavenSession(
-                              container,
+                              getContainer(),
                               describe.settings, // Settings settings,
                               describe.localRepository, // ArtifactRepository localRepository,
                               null, // EventDispatcher eventDispatcher,
