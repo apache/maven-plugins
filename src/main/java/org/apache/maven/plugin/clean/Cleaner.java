@@ -225,7 +225,7 @@ class Cleaner
                     System.gc();
                 }
 
-                int[] delays = { 50, 250, 750 };
+                final int[] delays = { 50, 250, 750 };
                 for ( int i = 0; !deleted && i < delays.length; i++ )
                 {
                     try
@@ -267,9 +267,9 @@ class Cleaner
     private static class Result
     {
 
-        public int failures;
+        private int failures;
 
-        public boolean excluded;
+        private boolean excluded;
 
         public void update( Result result )
         {
@@ -279,10 +279,10 @@ class Cleaner
 
     }
 
-    private static interface Logger
+    private interface Logger
     {
 
-        public void log( CharSequence message );
+        void log( CharSequence message );
 
     }
 
