@@ -34,12 +34,12 @@ public class AttachArtifactTask
 {
 
     /**
-     * The refId of the maven project.
+     * The refId of the Maven project.
      */
     private String mavenProjectRefId = AntRunMojo.DEFAULT_MAVEN_PROJECT_REFID;
 
     /**
-     * The refId of the maven project helper component.
+     * The refId of the Maven project helper component.
      */
     private String mavenProjectHelperRefId = AntRunMojo.DEFAULT_MAVEN_PROJECT_HELPER_REFID;
 
