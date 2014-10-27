@@ -205,9 +205,9 @@ public class AntRunMojo
     private boolean exportAntProperties;
 
     /**
-     * Specifies whether a failure in the ant build leads to a failure of the Maven build. If this value is 'true', the
-     * Maven build will proceed even if the ant build fails. If it is 'false', then the Maven build fails if the ant
-     * build fails.
+     * Specifies whether a failure in the Ant build leads to a failure of the Maven build. If this
+     * value is {@code false}, the Maven build will proceed even if the Ant build fails. If it is
+     * {@code true}, then the Maven build fails if the Ant build fails.
      *
      * @since 1.7
      */
