@@ -28,6 +28,9 @@ import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.util.DefaultArchivedFileSet;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -67,11 +70,18 @@ public class AddArtifactTask
     private String outputFileNameMapping;
 
     private final Logger logger;
+    private final InputStreamTransformer transformer;
 
-    public AddArtifactTask( final Artifact artifact, final Logger logger )
+    public AddArtifactTask( final Artifact artifact, final Logger logger,  InputStreamTransformer transformer )
     {
         this.artifact = artifact;
         this.logger = logger;
+        this.transformer = transformer;
+    }
+
+    public AddArtifactTask( final Artifact artifact, final Logger logger )
+    {
+        this(artifact, logger, null);
     }
 
     public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
@@ -79,28 +89,10 @@ public class AddArtifactTask
     {
         // MASSEMBLY-282: We should support adding a project's standard output file as part of an assembly that replaces
         // it.
-        if ( ( ( artifact.getFile() != null ) && ( archiver.getDestFile() != null ) )
-                        && artifact.getFile()
-                                   .equals( archiver.getDestFile() ) )
+        if (artifactIsArchiverDestination(archiver))
         {
-            final File tempRoot = configSource.getTemporaryRootDirectory();
-            final File tempArtifactFile = new File( tempRoot, artifact.getFile()
-                                                                      .getName() );
 
-            logger.warn( "Artifact: "
-                            + artifact.getId()
-                            + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
-            try
-            {
-                FileUtils.copyFile( artifact.getFile(), tempArtifactFile );
-            }
-            catch ( final IOException e )
-            {
-                throw new ArchiveCreationException( "Error moving artifact file: '" + artifact.getFile()
-                                + "' to temporary location: " + tempArtifactFile + ". Reason: " + e.getMessage(), e );
-            }
-
-            artifact.setFile( tempArtifactFile );
+            artifact.setFile(moveArtifactSomewhereElse(configSource));
         }
 
         String destDirectory = outputDirectory;
@@ -156,7 +148,13 @@ public class AddArtifactTask
                 else if ( artifactFile.isDirectory() )
                 {
                     logger.debug( "Adding artifact directory contents for: " + artifact + " to: " + outputLocation );
-                    archiver.addDirectory( artifactFile, outputLocation, includesArray, excludesArray );
+
+                    DefaultFileSet fs = DefaultFileSet.fileSet( artifactFile);
+                    fs.setIncludes(includesArray);
+                    fs.setExcludes(excludesArray);
+                    fs.setPrefix( outputLocation);
+//                    fs.setStreamTransformer(transformer);
+                    archiver.addFileSet(fs);
                 }
                 else
                 {
@@ -165,7 +163,12 @@ public class AddArtifactTask
                     logger.debug( "excludes:\n"
                                     + ( excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) )
                                     + "\n" );
-                    archiver.addArchivedFileSet( artifactFile, outputLocation, includesArray, excludesArray );
+                    DefaultArchivedFileSet afs = DefaultArchivedFileSet.archivedFileSet(artifactFile);
+                    afs.setIncludes(includesArray);
+                    afs.setExcludes(excludesArray);
+                    afs.setPrefix(outputLocation);
+                    //afs.setStreamTransformer(transformer);
+                    archiver.addArchivedFileSet( afs );
                 }
             }
             catch ( final ArchiverException e )
@@ -217,6 +220,32 @@ public class AddArtifactTask
                                 + e.getMessage(), e );
             }
         }
+    }
+
+    private File moveArtifactSomewhereElse(AssemblerConfigurationSource configSource) throws ArchiveCreationException {
+        final File tempRoot = configSource.getTemporaryRootDirectory();
+        final File tempArtifactFile = new File( tempRoot, artifact.getFile()
+                                                                  .getName() );
+
+        logger.warn( "Artifact: "
+                        + artifact.getId()
+                        + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
+        try
+        {
+            FileUtils.copyFile(artifact.getFile(), tempArtifactFile);
+        }
+        catch ( final IOException e )
+        {
+            throw new ArchiveCreationException( "Error moving artifact file: '" + artifact.getFile()
+                            + "' to temporary location: " + tempArtifactFile + ". Reason: " + e.getMessage(), e );
+        }
+        return tempArtifactFile;
+    }
+
+    private boolean artifactIsArchiverDestination(Archiver archiver) {
+        return ( ( artifact.getFile() != null ) && ( archiver.getDestFile() != null ) )
+                        && artifact.getFile()
+                                   .equals( archiver.getDestFile() );
     }
 
     public void setDirectoryMode( final int directoryMode )

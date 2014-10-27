@@ -31,8 +31,10 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
@@ -82,10 +84,10 @@ public class MockAndControlForAddDependencySetsTask
     {
         try
         {
-            archiver.addArchivedFileSet( (File)anyObject(), (String)anyObject(), (String[])anyObject(), (String[])anyObject() );
-
-                archiver.addArchivedFileSet( (File) anyObject(), (String) anyObject(), (String[]) anyObject(),
+            archiver.addArchivedFileSet( (File) anyObject(), (String) anyObject(), (String[]) anyObject(),
                                              (String[]) anyObject() );
+            EasyMock.expectLastCall().anyTimes();
+            archiver.addArchivedFileSet( (ArchivedFileSet)anyObject() );
             EasyMock.expectLastCall().anyTimes();
 
         }

@@ -28,6 +28,7 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -38,6 +39,8 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 import org.easymock.classextension.EasyMockSupport;
+
+import static org.easymock.EasyMock.anyObject;
 
 public class AddArtifactTaskTest
     extends TestCase
@@ -139,7 +142,8 @@ public class AddArtifactTaskTest
         mac.expectGetDestFile( new File( "junk" ) );
         try
         {
-            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
+//            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
+            mac.archiver.addArchivedFileSet((ArchivedFileSet) anyObject());
         }
         catch ( ArchiverException e )
         {
@@ -174,7 +178,7 @@ public class AddArtifactTaskTest
         mac.expectGetDestFile( new File( "junk" ) );
         try
         {
-            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
+            mac.archiver.addArchivedFileSet((ArchivedFileSet) anyObject());
         }
         catch ( ArchiverException e )
         {

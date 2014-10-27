@@ -26,6 +26,7 @@ import junit.framework.Assert;
 
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.EasyMock;
@@ -79,7 +80,10 @@ public class MockAndControlForAddArtifactTask
         try
         {
             archiver.addArchivedFileSet( (File)anyObject(), (String)anyObject(), (String[])anyObject(), (String[])anyObject() );
-            EasyMock.expectLastCall().atLeastOnce();
+            EasyMock.expectLastCall().anyTimes();
+            archiver.addArchivedFileSet((ArchivedFileSet) anyObject());
+            EasyMock.expectLastCall().anyTimes();
+
         }
         catch ( final ArchiverException e )
         {

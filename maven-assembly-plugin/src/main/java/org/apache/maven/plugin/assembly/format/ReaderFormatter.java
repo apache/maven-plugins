@@ -30,6 +30,7 @@ import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -86,7 +87,8 @@ public class ReaderFormatter
         }
     }
 
-    public static InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource, final boolean isFiltered, String fileSetLineEnding )
+    public static @Nullable
+    InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource, final boolean isFiltered, String fileSetLineEnding )
         throws AssemblyFormattingException
     {
         final String lineEndingHint = fileSetLineEnding;

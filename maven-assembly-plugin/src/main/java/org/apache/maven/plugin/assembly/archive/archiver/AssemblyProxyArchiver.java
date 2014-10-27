@@ -801,7 +801,7 @@ public class AssemblyProxyArchiver
     public void addArchivedFileSet( final ArchivedFileSet fileSet )
         throws ArchiverException
     {
-        final String archiveKey = getArchiveKey( fileSet.getArchive(), "" );
+        final String archiveKey = getArchiveKey( fileSet.getArchive(), fileSet.getPrefix() );
         if ( seenPaths.contains( archiveKey ) )
         {
             warn( "Archive: " + fileSet.getArchive() + " has already been added. Skipping." );

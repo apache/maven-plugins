@@ -33,6 +33,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.format.ReaderFormatter;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.UnpackOptions;
@@ -48,6 +49,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
 
 /**
@@ -145,6 +147,8 @@ public class AddDependencySetsTask
         {
             checkMultiArtifactOutputConfig( dependencySet );
         }
+        InputStreamTransformer transformer = dependencySet.isUnpack() && opts != null ? ReaderFormatter.getFileSetTransformers(configSource, opts.isFiltered(),
+                opts.getLineEnding()) : null;
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
@@ -177,7 +181,7 @@ public class AddDependencySetsTask
                 }
                 else
                 {
-                    addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
+                    addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource, transformer );
                 }
             }
         }
@@ -278,6 +282,8 @@ public class AddDependencySetsTask
             outDir = defaultOutputDirectory;
         }
 
+        // TODO: MASSEMBLY-691 root cause is here!
+
         String filenameMapping = dependencySet.getOutputFileNameMapping();
         if ( filenameMapping == null )
         {
@@ -303,14 +309,14 @@ public class AddDependencySetsTask
         task.execute( archiver, configSource );
     }
 
-    private void addNormalArtifact( final DependencySet dependencySet, final Artifact depArtifact,
-                                    final MavenProject depProject, final Archiver archiver,
-                                    final AssemblerConfigurationSource configSource )
+    private void addNormalArtifact(final DependencySet dependencySet, final Artifact depArtifact,
+                                   final MavenProject depProject, final Archiver archiver,
+                                   final AssemblerConfigurationSource configSource, InputStreamTransformer transformer)
         throws AssemblyFormattingException, ArchiveCreationException
     {
         logger.debug( "Adding dependency artifact " + depArtifact.getId() + "." );
 
-        final AddArtifactTask task = new AddArtifactTask( depArtifact, logger );
+        final AddArtifactTask task = new AddArtifactTask( depArtifact, logger, transformer );
 
         task.setProject( depProject );
         task.setModuleProject( moduleProject );
