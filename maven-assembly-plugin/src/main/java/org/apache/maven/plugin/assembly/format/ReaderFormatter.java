@@ -105,7 +105,7 @@ public class ReaderFormatter
                         final String encoding = configSource.getEncoding();
 
                         Reader source = encoding != null ? new InputStreamReader( inputStream, encoding )
-                            : new InputStreamReader( inputStream ); // wtf platform encoding ?
+                            : new InputStreamReader( inputStream ); // wtf platform encoding ? TODO: Fix this
                         try
                         {
                             Reader filtered = createReaderFilter( source, plexusIoResource.getName(),

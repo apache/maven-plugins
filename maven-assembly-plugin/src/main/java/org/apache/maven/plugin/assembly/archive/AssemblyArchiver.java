@@ -42,7 +42,8 @@ public interface AssemblyArchiver
      * <li>Lookup and configure the {@link org.codehaus.plexus.archiver.Archiver} to be used</li>
      * <li>Determine what, if any, dependency resolution will be required, and resolve any dependency-version conflicts
      * up front to produce a managed-version map for the whole assembly process.</li>
-     * <li>Iterate through the available {@link org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase} instances, executing each to handle a different
+     * <li>Iterate through the available {@link org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase}
+     * instances, executing each to handle a different
      * top-level section of the assembly descriptor, if that section is present.</li>
      * </ol>
      * @param assembly The {@link Assembly}
@@ -51,9 +52,9 @@ public interface AssemblyArchiver
      * @param configSource The {@link AssemblerConfigurationSource}
      * @param recompressZippedFiles recompress zipped files.
      * @return The resulting archive file.
-     * @throws ArchiveCreationException
-     * @throws AssemblyFormattingException
-     * @throws InvalidAssemblerConfigurationException
+     * @throws ArchiveCreationException when creation fails
+     * @throws AssemblyFormattingException when formatting fails
+     * @throws InvalidAssemblerConfigurationException when the configurationis bad
      */
     File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource,
                         boolean recompressZippedFiles )
