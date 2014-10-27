@@ -129,9 +129,10 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-filtering</artifactId>
-      <version>1.2</version>
+      <version>1.3</version>
     </dependency>
     <!-- A dependency to maven-filtering, but it's overridden by 1.11 if not specified explicitly here -->
+    <!-- This can be removed if upgrading to maven-filtering 1.4 -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
