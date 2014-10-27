@@ -54,10 +54,11 @@ public final class LineEndingsUtils
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
      *                    line-ending characters, not null.
      * @param atEndOfFile The end-of-file line ending, if true then the resulting file will have a new line at the end
-     *                    even if the input didn't have one, if false then the resulting file will have no new line at the end
-     *                    even if the input did have one, null to determine whether to have a new line at the end of the file
-     *                    based on the input file
+     *                    even if the input didn't have one, if false then the resulting file will have no new line at
+     *                    the end even if the input did have one, null to determine whether to have a new line at the
+     *                    end of the file based on the input file
      * @param encoding    The encoding to use, null for platform encoding
+     * @throws IOException .
      */
     public static void convertLineEndings( @Nonnull File source, @Nonnull File dest, LineEndings lineEndings,
                                            Boolean atEndOfFile, String encoding )
@@ -153,12 +154,13 @@ public final class LineEndingsUtils
      * @param in          The source reader
      * @param lineEndings This is the result of the getLineEndingChars(..) method in this utility class; the actual
      *                    line-ending characters, not null.
-     * @param in          with proper line endings.
+     * @return an input stream that enforces a specifi line ending style
      */
     public static InputStream lineEndingConverter( @Nonnull InputStream in, LineEndings lineEndings )
         throws IOException
     {
-        return lineEndings.isNewLine() ? new LinuxLineFeedInputStream( in, false )
+        return lineEndings.isNewLine()
+            ? new LinuxLineFeedInputStream( in, false )
             : lineEndings.isCrLF() ? new WindowsLineFeedInputStream( in, false ) : in;
     }
 
@@ -180,7 +182,14 @@ public final class LineEndingsUtils
         return result;
     }
 
-    @Nullable public static String getLineEndingCharacters( @Nullable String lineEnding )
+    /**
+     * Returns the appopriate line ending characters for the specified style
+     * @param lineEnding The name of the line ending style, see org.apache.maven.plugin.assembly.utils.LineEndings#valueOf
+     * @return The proper line ending characters
+     * @throws AssemblyFormattingException
+     */
+    @Nullable
+    public static String getLineEndingCharacters( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
 

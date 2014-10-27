@@ -37,7 +37,7 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 /**
  * Handles the top-level &lt;files/&gt; section of the assembly descriptor.
- * 
+ *
  * @version $Id$
  */
 @Component( role = AssemblyArchiverPhase.class, hint = "file-items" )
@@ -73,9 +73,8 @@ public class FileItemAssemblyPhase
                 source = new File( basedir, sourcePath );
             }
 
-            source =
-                fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
-                                      configSource.getEncoding() );
+            source = fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
+                                           configSource.getEncoding() );
 
             String destName = fileItem.getDestName();
 
@@ -106,7 +105,8 @@ public class FileItemAssemblyPhase
 
             try
             {
-                archiver.addFile( source, target, TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
+                archiver.addFile( source, target,
+                                  TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
             }
             catch ( final ArchiverException e )
             {
