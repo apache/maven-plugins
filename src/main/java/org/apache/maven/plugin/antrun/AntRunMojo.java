@@ -56,7 +56,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Maven AntRun Mojo. <br/>
- * This plugin provides the capability of calling Ant tasks from a POM by running the nested ant tasks inside the
+ * This plugin provides the capability of calling Ant tasks from a POM by running the nested Ant tasks inside the
  * &lt;tasks/&gt; parameter. It is encouraged to move the actual tasks to a separate build.xml file and call that file
  * with an &lt;ant/&gt; task.
  *
@@ -89,7 +89,7 @@ public class AntRunMojo
     public final static String UTF_8 = "UTF-8";
 
     /**
-     * The name used for the ant target
+     * The name used for the Ant target
      */
     private String antTargetName;
 
@@ -171,7 +171,7 @@ public class AntRunMojo
     private PlexusConfiguration target;
 
     /**
-     * This folder is added to the list of those folders containing source to be compiled. Use this if your ant script
+     * This folder is added to the list of those folders containing source to be compiled. Use this if your Ant script
      * generates source code.
      *
      * @deprecated Use the build-helper-maven-plugin to bind source directories
@@ -181,7 +181,7 @@ public class AntRunMojo
 
     /**
      * This folder is added to the list of those folders containing source to be compiled for testing. Use this if your
-     * ant script generates test source code.
+     * Ant script generates test source code.
      *
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
@@ -236,7 +236,7 @@ public class AntRunMojo
 
         if ( target == null )
         {
-            getLog().info( "No ant target defined - SKIPPED" );
+            getLog().info( "No Ant target defined - SKIPPED" );
             return;
         }
 
@@ -303,7 +303,7 @@ public class AntRunMojo
             antProject.addReference( "maven.local.repository", localRepository );
             initMavenTasks( antProject );
 
-            // The ant project needs actual properties vs. using expression evaluator when calling an external build
+            // The Ant project needs actual properties vs. using expression evaluator when calling an external build
             // file.
             copyProperties( mavenProject, antProject );
 
@@ -346,7 +346,7 @@ public class AntRunMojo
         }
         catch ( Throwable e )
         {
-            throw new MojoExecutionException( "Error executing ant tasks: " + e.getMessage(), e );
+            throw new MojoExecutionException( "Error executing Ant tasks: " + e.getMessage(), e );
         }
 
         if ( sourceRoot != null )
@@ -395,7 +395,7 @@ public class AntRunMojo
     }
 
     /**
-     * Copy properties from the maven project to the ant project.
+     * Copy properties from the Maven project to the Ant project.
      *
      * @param mavenProject
      * @param antProject
@@ -411,7 +411,7 @@ public class AntRunMojo
         // Set the POM file as the ant.file for the tasks run directly in Maven.
         antProject.setProperty( "ant.file", mavenProject.getFile().getAbsolutePath() );
 
-        // Add some of the common maven properties
+        // Add some of the common Maven properties
         getLog().debug( "Setting properties with prefix: " + propertyPrefix );
         antProject.setProperty( ( propertyPrefix + "project.groupId" ), mavenProject.getGroupId() );
         antProject.setProperty( ( propertyPrefix + "project.artifactId" ), mavenProject.getArtifactId() );
@@ -463,7 +463,7 @@ public class AntRunMojo
     }
 
     /**
-     * Copy properties from the ant project to the maven project.
+     * Copy properties from the Ant project to the Maven project.
      *
      * @param antProject   not null
      * @param mavenProject not null
@@ -539,7 +539,7 @@ public class AntRunMojo
     }
 
     /**
-     * Write the ant target and surrounding tags to a temporary file
+     * Write the Ant target and surrounding tags to a temporary file
      *
      * @throws PlexusConfigurationException
      */

@@ -99,14 +99,14 @@ Usage
 
 * Additional source directories
 
-  If your ant tasks generate additional source code that needs to be added 
+  If your Ant tasks generate additional source code that needs to be added 
   to the build, you can use the 
   {{{http://mojo.codehaus.org/build-helper-maven-plugin/}build-helper-maven-plugin}}.  
   The sourceRoot and testSourceRoot options of the antrun plugin have been deprecated.
 
-* Using maven properties
+* Using Maven properties
 
-  All of the properties available to maven are also available in the target
+  All of the properties available to Maven are also available in the target
   configuration.  However, you may want to call an external Ant build script
   using the <ant> task.  To avoid name conflicts, only a subset of the properties
   are passed to the external Ant build.  These include all properties defined in
@@ -120,7 +120,7 @@ Usage
   etc.
 ------
   
-  If the maven property you want to use is not available in an external file, you
+  If the Maven property you want to use is not available in an external file, you
   will have to redefine the property before calling <ant>.
   
 ------
