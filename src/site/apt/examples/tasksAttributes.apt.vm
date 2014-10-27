@@ -28,8 +28,8 @@
 
 Using <<<\<target/\>>>> Attributes
 
- Since plugin version 1.2 you can specify attributes in the <<<\<target/\>>>> configuration to execute or not
- Ant tasks depending some conditions. For example, to skip Ant call, you could add the following:
+ You can specify attributes in the <<<\<target/\>>>> configuration to execute or not Ant tasks
+ depending some conditions. For example, to skip Ant call, you could add the following:
 
 ------
 <project>
