@@ -110,7 +110,7 @@ public class AddDependencySetsTaskTest
         final AddDependencySetsTask task =
             new AddDependencySetsTask( Collections.singletonList( ds ),
                                        Collections.singleton( depArtifactMock.getArtifact() ), depProject,
-                                       macTask.projectBuilder, macTask.archiverManager, logger );
+                                       macTask.projectBuilder, logger );
 
         task.addDependencySet( ds, macTask.archiver, macTask.configSource );
 
@@ -132,8 +132,7 @@ public class AddDependencySetsTaskTest
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         final AddDependencySetsTask task =
-            new AddDependencySetsTask( Collections.singletonList( ds ), null, project, macTask.projectBuilder,
-                                       macTask.archiverManager, logger );
+            new AddDependencySetsTask( Collections.singletonList( ds ), null, project, macTask.projectBuilder, logger );
 
         task.addDependencySet( ds, null, macTask.configSource );
 
@@ -182,7 +181,7 @@ public class AddDependencySetsTaskTest
 
         final AddDependencySetsTask task =
             new AddDependencySetsTask( Collections.singletonList( ds ), Collections.singleton( depMock.getArtifact() ),
-                                       project, macTask.projectBuilder, macTask.archiverManager, logger );
+                                       project, macTask.projectBuilder, logger );
 
         task.addDependencySet( ds, macTask.archiver, macTask.configSource );
 
@@ -249,7 +248,7 @@ public class AddDependencySetsTaskTest
         final AddDependencySetsTask task =
             new AddDependencySetsTask( Collections.singletonList( ds ),
                                        Collections.singleton( artifactMock.getArtifact() ), project,
-                                       macTask.projectBuilder, macTask.archiverManager, logger );
+                                       macTask.projectBuilder, logger );
 
         mockManager.replayAll();
 
@@ -278,7 +277,7 @@ public class AddDependencySetsTaskTest
         final AddDependencySetsTask task =
             new AddDependencySetsTask( Collections.singletonList( dependencySet ),
                                        Collections.singleton( artifactMock.getArtifact() ), project,
-                                       macTask.projectBuilder, macTask.archiverManager, logger );
+                                       macTask.projectBuilder, logger );
 
         final Set<Artifact> result = task.resolveDependencyArtifacts( dependencySet );
 
@@ -315,8 +314,7 @@ public class AddDependencySetsTaskTest
         mockManager.replayAll();
 
         final AddDependencySetsTask task =
-            new AddDependencySetsTask( Collections.singletonList( dependencySet ), artifacts, project, null, null,
-                                       logger );
+            new AddDependencySetsTask( Collections.singletonList( dependencySet ), artifacts, project, null, logger );
 
         final Set<Artifact> result = task.resolveDependencyArtifacts( dependencySet );
 
@@ -351,8 +349,7 @@ public class AddDependencySetsTaskTest
         mockManager.replayAll();
 
         final AddDependencySetsTask task =
-            new AddDependencySetsTask( Collections.singletonList( dependencySet ), artifacts, project, null, null,
-                                       logger );
+            new AddDependencySetsTask( Collections.singletonList( dependencySet ), artifacts, project, null, logger );
 
         final Set<Artifact> result = task.resolveDependencyArtifacts( dependencySet );
 

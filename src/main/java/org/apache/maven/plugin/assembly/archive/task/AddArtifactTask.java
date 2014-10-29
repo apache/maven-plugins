@@ -87,18 +87,13 @@ public class AddArtifactTask
     public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        // MASSEMBLY-282: We should support adding a project's standard output file as part of an assembly that replaces
-        // it.
         if (artifactIsArchiverDestination(archiver))
         {
-
             artifact.setFile(moveArtifactSomewhereElse(configSource));
         }
 
-        String destDirectory = outputDirectory;
-
-        destDirectory =
-            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), moduleProject, project,
+        String destDirectory =
+            AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), moduleProject, project,
                                                     configSource.getFinalName(), configSource );
 
         if ( unpack )
@@ -119,8 +114,6 @@ public class AddArtifactTask
 
             final int oldDirMode = archiver.getOverrideDirectoryMode();
             final int oldFileMode = archiver.getOverrideFileMode();
-
-            logger.debug( "Unpacking artifact: " + artifact.getId() + " to assembly location: " + outputLocation + "." );
 
             boolean fileModeSet = false;
             boolean dirModeSet = false;
@@ -153,7 +146,7 @@ public class AddArtifactTask
                     fs.setIncludes(includesArray);
                     fs.setExcludes(excludesArray);
                     fs.setPrefix( outputLocation);
-//                    fs.setStreamTransformer(transformer);
+                    fs.setStreamTransformer(transformer);
                     archiver.addFileSet(fs);
                 }
                 else
@@ -167,7 +160,7 @@ public class AddArtifactTask
                     afs.setIncludes(includesArray);
                     afs.setExcludes(excludesArray);
                     afs.setPrefix(outputLocation);
-                    //afs.setStreamTransformer(transformer);
+                    afs.setStreamTransformer(transformer);
                     archiver.addArchivedFileSet( afs );
                 }
             }
@@ -191,12 +184,13 @@ public class AddArtifactTask
         }
         else
         {
-            final String fileNameMapping =
+            final String tempMapping =
                 AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact,
                                                              configSource.getProject(), moduleProject, moduleArtifact,
                                                              project, configSource );
 
-            final String outputLocation = destDirectory + fileNameMapping;
+
+            final String outputLocation = destDirectory + tempMapping;
 
             try
             {

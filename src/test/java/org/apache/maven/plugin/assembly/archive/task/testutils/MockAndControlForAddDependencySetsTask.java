@@ -39,6 +39,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
 
+import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
@@ -134,6 +135,18 @@ public class MockAndControlForAddDependencySetsTask
         try
         {
             archiver.addFile( file, outputLocation, fileMode );
+        }
+        catch ( final ArchiverException e )
+        {
+            Assert.fail( "Should never happen." );
+        }
+    }
+
+    public void expectAddAnyFile(  )
+    {
+        try
+        {
+            archiver.addFile( (File) anyObject(), (String) anyObject(), anyInt());
         }
         catch ( final ArchiverException e )
         {

@@ -19,13 +19,6 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -35,7 +28,6 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.format.ReaderFormatter;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.UnpackOptions;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
@@ -46,11 +38,15 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Id$
@@ -87,17 +83,14 @@ public class AddDependencySetsTask
 
     private final Set<Artifact> resolvedArtifacts;
 
-    private final ArchiverManager archiverManager;
 
     public AddDependencySetsTask( final List<DependencySet> dependencySets, final Set<Artifact> resolvedArtifacts,
-                                  final MavenProject project, final MavenProjectBuilder projectBuilder,
-                                  final ArchiverManager archiverManager, final Logger logger )
+                                  final MavenProject project, final MavenProjectBuilder projectBuilder, final Logger logger )
     {
         this.dependencySets = dependencySets;
         this.resolvedArtifacts = resolvedArtifacts;
         this.project = project;
         this.projectBuilder = projectBuilder;
-        this.archiverManager = archiverManager;
         this.logger = logger;
     }
 
@@ -137,20 +130,24 @@ public class AddDependencySetsTask
 
         final Set<Artifact> dependencyArtifacts = resolveDependencyArtifacts( dependencySet );
 
-        boolean filterContents = false;
         final UnpackOptions opts = dependencySet.getUnpackOptions();
         if ( dependencySet.isUnpack() && opts != null && ( opts.isFiltered() || opts.getLineEnding() != null ) )
         {
-            filterContents = true;
+            // find out if we can just ditch this empty block
         }
         else if ( dependencyArtifacts.size() > 1 )
         {
             checkMultiArtifactOutputConfig( dependencySet );
         }
-        InputStreamTransformer transformer = dependencySet.isUnpack() && opts != null ? ReaderFormatter.getFileSetTransformers(configSource, opts.isFiltered(),
-                opts.getLineEnding()) : null;
 
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
+
+        InputStreamTransformer fileSetTransformers =
+            dependencySet.isUnpack() && dependencySet.getUnpackOptions() != null
+                ? ReaderFormatter.getFileSetTransformers( configSource, dependencySet.getUnpackOptions().isFiltered(),
+                                                          dependencySet.getUnpackOptions().getLineEnding() )
+                : null;
+
 
         for ( final Artifact depArtifact : dependencyArtifacts )
         {
@@ -175,14 +172,7 @@ public class AddDependencySetsTask
             }
             else
             {
-                if ( filterContents )
-                {
-                    addFilteredUnpackedArtifact( dependencySet, depArtifact, depProject, archiver, configSource );
-                }
-                else
-                {
-                    addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource, transformer );
-                }
+                addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource, fileSetTransformers );
             }
         }
     }
@@ -210,113 +200,15 @@ public class AddDependencySetsTask
         }
     }
 
-    @SuppressWarnings( "ResultOfMethodCallIgnored" )
-    private void addFilteredUnpackedArtifact( final DependencySet dependencySet, final Artifact depArtifact,
-                                              final MavenProject depProject, final Archiver archiver,
-                                              final AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException
-    {
-        logger.debug( "Adding dependency artifact " + depArtifact.getId() + " after filtering the unpacked contents." );
-
-        final StringBuilder sb =
-            new StringBuilder().append( depArtifact.getGroupId() ).append( "_" ).append( depArtifact.getArtifactId() ).append( "_" ).append( depArtifact.getVersion() );
-
-        final String classifier = depArtifact.getClassifier();
-        if ( classifier != null )
-        {
-            sb.append( "_" ).append( classifier );
-        }
-
-        sb.append( "." ).append( depArtifact.getType() );
-
-        final File dir = new File( configSource.getWorkingDirectory(), sb.toString() );
-        if ( dir.exists() )
-        {
-            logger.debug( "NOT unpacking: " + depArtifact.getId() + ". Directory already exists in workdir:\n\t"
-                + dir.getAbsolutePath() );
-        }
-        else
-        {
-            dir.mkdirs();
-
-            UnArchiver unarchiver;
-            try
-            {
-                unarchiver = archiverManager.getUnArchiver( depArtifact.getFile() );
-            }
-            catch ( final NoSuchArchiverException e )
-            {
-                throw new ArchiveCreationException( "Failed to retrieve un-archiver for: " + depArtifact.getId()
-                    + ". Dependency filtering cannot proceed.", e );
-            }
-
-            unarchiver.setDestDirectory( dir );
-            unarchiver.setOverwrite( true );
-            unarchiver.setSourceFile( depArtifact.getFile() );
-            unarchiver.setIgnorePermissions( configSource.isIgnorePermissions() );
-
-            try
-            {
-                unarchiver.extract();
-            }
-            catch ( final ArchiverException e )
-            {
-                throw new ArchiveCreationException( "Failed to unpack dependency archive: " + depArtifact.getId()
-                    + ". Dependency filtering cannot proceed.", e );
-            }
-        }
-
-        final UnpackOptions opts = dependencySet.getUnpackOptions();
-
-        final FileSet fs = new FileSet();
-        fs.setDirectory( dir.getAbsolutePath() );
-        fs.setDirectoryMode( dependencySet.getDirectoryMode() );
-        fs.setExcludes( opts.getExcludes() );
-        fs.setFileMode( dependencySet.getFileMode() );
-        fs.setFiltered( opts.isFiltered() );
-        fs.setIncludes( opts.getIncludes() );
-
-        String outDir = dependencySet.getOutputDirectory();
-        if ( outDir == null )
-        {
-            outDir = defaultOutputDirectory;
-        }
-
-        // TODO: MASSEMBLY-691 root cause is here!
-
-        String filenameMapping = dependencySet.getOutputFileNameMapping();
-        if ( filenameMapping == null )
-        {
-            filenameMapping = defaultOutputFileNameMapping;
-        }
-
-        filenameMapping =
-            AssemblyFormatUtils.evaluateFileNameMapping( filenameMapping, depArtifact, configSource.getProject(),
-                                                         moduleProject, moduleArtifact, depProject, configSource );
-
-        final String outputLocation = new File( outDir, filenameMapping ).getPath();
-
-        fs.setOutputDirectory( outputLocation );
-
-        fs.setLineEnding( opts.getLineEnding() );
-        fs.setUseDefaultExcludes( opts.isUseDefaultExcludes() );
-
-        final AddFileSetsTask task = new AddFileSetsTask( fs );
-        task.setProject( depProject );
-        task.setModuleProject( moduleProject );
-        task.setLogger( logger );
-
-        task.execute( archiver, configSource );
-    }
-
-    private void addNormalArtifact(final DependencySet dependencySet, final Artifact depArtifact,
-                                   final MavenProject depProject, final Archiver archiver,
-                                   final AssemblerConfigurationSource configSource, InputStreamTransformer transformer)
+    private void addNormalArtifact( final DependencySet dependencySet, final Artifact depArtifact,
+                                    final MavenProject depProject, final Archiver archiver,
+                                    final AssemblerConfigurationSource configSource,
+                                    InputStreamTransformer fileSetTransformers )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         logger.debug( "Adding dependency artifact " + depArtifact.getId() + "." );
 
-        final AddArtifactTask task = new AddArtifactTask( depArtifact, logger, transformer );
+        final AddArtifactTask task = new AddArtifactTask( depArtifact, logger, fileSetTransformers );
 
         task.setProject( depProject );
         task.setModuleProject( moduleProject );
@@ -346,6 +238,7 @@ public class AddDependencySetsTask
         }
 
         task.execute( archiver, configSource );
+
     }
 
     private MavenProject buildProjectStub( final Artifact depArtifact )

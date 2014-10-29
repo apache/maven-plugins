@@ -32,7 +32,7 @@ under the License.
         <include>test:child1</include>
       </includes>
       
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>/zz</outputDirectory>
       <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>
       
       <unpack>true</unpack>

@@ -51,7 +51,8 @@ public class ReaderFormatter
 
             MavenReaderFilterRequest filterRequest =
                 new MavenReaderFilterRequest( source, true, configSource.getProject(), configSource.getFilters(),
-                                            isPropertiesFile, encoding, configSource.getMavenSession(), null );
+                                              isPropertiesFile, encoding, configSource.getMavenSession(), null );
+            filterRequest.setInjectProjectBuildFilters(true);
             filterRequest.setEscapeString( escapeString );
 
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
@@ -87,8 +88,10 @@ public class ReaderFormatter
         }
     }
 
-    public static @Nullable
-    InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource, final boolean isFiltered, String fileSetLineEnding )
+    public static
+    @Nullable
+    InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource,
+                                                   final boolean isFiltered, String fileSetLineEnding )
         throws AssemblyFormattingException
     {
         final String lineEndingHint = fileSetLineEnding;
@@ -106,16 +109,17 @@ public class ReaderFormatter
                     {
                         final String encoding = configSource.getEncoding();
 
-                        Reader source = encoding != null ? new InputStreamReader( inputStream, encoding )
+                        Reader source = encoding != null
+                            ? new InputStreamReader( inputStream, encoding )
                             : new InputStreamReader( inputStream ); // wtf platform encoding ? TODO: Fix this
                         try
                         {
-                            Reader filtered = createReaderFilter( source, plexusIoResource.getName(),
-                                                                                  configSource.getEncoding(),
-                                                                                  configSource.getEscapeString(),
-                                                                                  configSource.getDelimiters(),
-                                                                                  configSource );
-                            final ReaderInputStream readerInputStream = encoding != null ? new ReaderInputStream( filtered, encoding)
+                            Reader filtered =
+                                createReaderFilter( source, plexusIoResource.getName(), configSource.getEncoding(),
+                                                    configSource.getEscapeString(), configSource.getDelimiters(),
+                                                    configSource );
+                            final ReaderInputStream readerInputStream = encoding != null
+                                ? new ReaderInputStream( filtered, encoding )
                                 : new ReaderInputStream( filtered );
 
                             LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingHint );
@@ -129,7 +133,7 @@ public class ReaderFormatter
                         }
                         catch ( AssemblyFormattingException e )
                         {
-                            throw new IOException( e.getMessage());
+                            throw new IOException( e.getMessage() );
                         }
 
                     }
