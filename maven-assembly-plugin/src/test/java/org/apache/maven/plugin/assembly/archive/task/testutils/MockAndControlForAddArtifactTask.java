@@ -32,6 +32,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
 
+import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
@@ -129,8 +130,8 @@ public class MockAndControlForAddArtifactTask
     {
         try
         {
-            archiver.addFile( file, outputLocation, fileMode );
-            EasyMock.expectLastCall().atLeastOnce();
+            archiver.addFile( (File)anyObject(), (String) anyObject(), anyInt() );
+            EasyMock.expectLastCall().anyTimes();
         }
         catch ( final ArchiverException e )
         {

@@ -77,7 +77,7 @@ public class DependencySetAssemblyPhase
     {
         final AddDependencySetsTask task =
             new AddDependencySetsTask( assembly.getDependencySets(), assembly.getResolvedDependencySetArtifacts(),
-                                       configSource.getProject(), projectBuilder, archiverManager, getLogger() );
+                                       configSource.getProject(), projectBuilder, getLogger() );
 
         task.execute( archiver, configSource );
     }
