@@ -20,88 +20,79 @@
   ------
   Milos Kleint
   ------
-  October 2007
+  2007-10-01
   ------
 
 Toolchain Identification
 
- The toolchain type id is "jdk".
+ The toolchain type id for JDK is "<<<jdk>>>".
  
  Predefined identification tokens are:
 
-    * "version" marks the version of the jdk. Plugin can match against a single version or any version ranges.
+    * "<<<version>>>" marks the version of the jdk. Maven Toolchains Plugin can match against a single version or any version ranges,
 
     * any other tokens will be accepted, but only exact matches are supported.
 
 Toolchain Configuration
 
- There is only one configuration element named "jdkHome". It designates the root directory 
+ There is only one configuration element named "<<<jdkHome>>>". It designates the root directory 
 of JDK installation.
 
 
-Sample toolchains.xml Setup
+Sample <<<toolchains.xml>>> setup:
 
 +---+
 <toolchains>
-    <toolchain>
-       <type>jdk</type>
-       <provides>
-           <version>1.5</version>
-           <vendor>sun</vendor>
-           <id>for_mevenide</id>
-       </provides>
-       <configuration>
-          <jdkHome>/home/mkleint/javatools/jdk</jdkHome>
-       </configuration>
-    </toolchain>
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>1.5</version>
+      <vendor>sun</vendor>
+      <id>for_mevenide</id>
+    </provides>
+    <configuration>
+      <jdkHome>/home/mkleint/javatools/jdk</jdkHome>
+    </configuration>
+  </toolchain>
   [...]
 </toolchains>
 +---+
 
 
-Plugin Configuration     
+Toolchains Plugin Configuration     
 
- For selection of toolchain for use by the project the following conditions are matched
-against the definitions in the toolchains.xml file.
+ For selection of toolchain for use by the project, the following conditions are matched
+against the definitions in the <<<toolchains.xml>>> file:
 
-    * "version" which accepts any {{{http://maven.apache.org/plugins/maven-enforcer-plugin/rules/versionRanges.html}version range definitions}}.
- Version declared by the toolchain needs to fit into the range.
+    * "<<<version>>>" which accepts any {{{/plugins/maven-enforcer-plugin/rules/versionRanges.html}version range definitions}}.
+ Version declared by the toolchain needs to fit into the range,
             
     * any other tokens needs exact match. Toolchain not providing such token will not be selected.
 
  All conditions need to be satisfied in a sucessfully matched toolchain.
 
   
-Sample Plugin Configuration:
+Sample Plugin Configuration
    
 +---+
 <project>
   [...]
   <plugins>
     <build>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-toolchains-plugin</artifactId>
-            <version>${project.version}</version>
-            <executions>
-                <execution>
-                    <phase>validate</phase>
-                    <goals>
-                        <goal>toolchain</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <toolchains>
-                    <jdk>
-                        <version>[1.5,)</version>
-                    </jdk>
-                </toolchains>
-            </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <toolchains>
+            <jdk>
+              <version>[1.5,)</version>
+            </jdk>
+          </toolchains>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   [...]
 </project>
 +---+
-  

@@ -20,12 +20,12 @@
   ------
   Milos Kleint
   ------
-  Oct 2007
+  2007-10-10
   ------
 
 Standard Toolchains
 
-  The following standard toolchains are included by default with Maven.
+  The following standard toolchains are included by default with Maven:
 
   * {{{./jdk.html}JDK}} - Defines the Java Development Kit location and identification
 
