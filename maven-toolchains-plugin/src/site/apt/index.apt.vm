@@ -25,20 +25,20 @@
 
 ${project.name}
 
-    The Toolchains Plugins allows to share configuration across plugins. For example to make sure the plugins like compiler, surefire, javadoc, webstart etc. all use the same JDK for execution.
+    The Toolchains Plugins allows to share configuration across plugins.
+    For example to make sure the plugins like compiler, surefire, javadoc, webstart etc. all use the same JDK for execution.
 Similarly to maven-enforcer-plugin, it allows to control environmental constraints in the build.
 
 * Goals Overview
 
   The Toolchains plugin has one goal:
 
-  *{{{./toolchain-mojo.html}toolchain:toolchain}} The goal is typically to be attached to the "validate" phase of default lifecycle.
+  * {{{./toolchain-mojo.html}toolchain:toolchain}} The goal is typically to be attached to the "validate" phase of default lifecycle.
 
 * Usage
 
   General instructions on how to use the Toolchains Plugin can be found on the {{{./usage.html}usage page}}.
-  Last but not least, users occasionally contribute
-  additional examples, tips or errata to the
+  Last but not least, users occasionally contribute additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Toolchains+Plugin}plugin's wiki page}}.
 
   In case you still have questions regarding the plugin's usage, please feel
