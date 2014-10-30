@@ -25,7 +25,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
-import org.apache.maven.plugin.assembly.testutils.ConfigSourceStub;
+import org.apache.maven.plugin.assembly.testutils.PojoConfigSource;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.easymock.classextension.EasyMockSupport;
@@ -39,7 +39,7 @@ public class AssemblyExpressionEvaluatorTest
     extends TestCase
 {
 
-    private final ConfigSourceStub configSourceStub = new ConfigSourceStub();
+    private final PojoConfigSource configSourceStub = new PojoConfigSource();
 
     public void testShouldResolveModelGroupId()
         throws ExpressionEvaluationException
@@ -50,7 +50,7 @@ public class AssemblyExpressionEvaluatorTest
         model.setVersion( "1" );
         model.setPackaging( "jar" );
 
-        configSourceStub.setProject( new MavenProject( model ) );
+        configSourceStub.setMavenProject( new MavenProject( model ) );
 
         final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
 
@@ -71,7 +71,7 @@ public class AssemblyExpressionEvaluatorTest
 
         model.setProperties( props );
 
-        configSourceStub.setProject( new MavenProject( model ) );
+        configSourceStub.setMavenProject( new MavenProject( model ) );
 
         final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
 
@@ -131,7 +131,7 @@ public class AssemblyExpressionEvaluatorTest
         model.setVersion( "1" );
         model.setPackaging( "jar" );
 
-        configSourceStub.setProject( new MavenProject( model ) );
+        configSourceStub.setMavenProject( new MavenProject( model ) );
 
         final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${unresolved}" );
 
@@ -147,7 +147,7 @@ public class AssemblyExpressionEvaluatorTest
         final Model model = new Model();
         model.setBuild( build );
 
-        configSourceStub.setProject( new MavenProject( model ) );
+        configSourceStub.setMavenProject( new MavenProject( model ) );
 
         final Object result =
             new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${project.build.finalName}" );

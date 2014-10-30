@@ -19,21 +19,35 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.format.FileFormatter;
+import org.apache.maven.plugin.assembly.format.ReaderFormatter;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.util.ArchiverAttributeUtils;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
+import org.codehaus.plexus.components.io.resources.PlexusIoFileResource;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+import org.codehaus.plexus.components.io.resources.PlexusIoSymlink;
+import org.codehaus.plexus.components.io.resources.proxy.PlexusIoProxyResource;
+import org.codehaus.plexus.components.io.resources.proxy.PlexusIoProxySymlinkResource;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+
+import javax.annotation.Nonnull;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Handles the top-level &lt;files/&gt; section of the assembly descriptor.
@@ -56,7 +70,6 @@ public class FileItemAssemblyPhase
         final List<FileItem> fileList = assembly.getFiles();
         final File basedir = configSource.getBasedir();
 
-        final FileFormatter fileFormatter = new FileFormatter( configSource, getLogger() );
         for ( final FileItem fileItem : fileList )
         {
             final String sourcePath = fileItem.getSource();
@@ -72,9 +85,6 @@ public class FileItemAssemblyPhase
             {
                 source = new File( basedir, sourcePath );
             }
-
-            source = fileFormatter.format( source, fileItem.isFiltered(), fileItem.getLineEnding(),
-                                           configSource.getEncoding() );
 
             String destName = fileItem.getDestName();
 
@@ -103,16 +113,161 @@ public class FileItemAssemblyPhase
                 target = outputDirectory + "/" + destName;
             }
 
+            final PlexusIoFileResource
+                res = new PlexusIoFileResource( source, ArchiverAttributeUtils.getFileAttributes( source ));
+            PlexusIoResource restoUse = res;
             try
             {
-                archiver.addFile( source, target,
-                                  TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() ) );
+                final InputStreamTransformer fileSetTransformers =
+                    ReaderFormatter.getFileSetTransformers( configSource, fileItem.isFiltered(), fileItem.getLineEnding() );
+
+                if (fileSetTransformers != null){
+                    restoUse = new Deferred( res ){
+                        @Override
+                        protected InputStream getInputStream()
+                            throws IOException
+                        {
+                            return fileSetTransformers.transform(res, res.getContents());
+                        }
+
+                        @Override
+                        public String getName()
+                        { return res.getName();
+                        }
+                    }.asResource();
+                }
+
+                    int mode = TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() );
+                    archiver.addResource( restoUse, target, mode );
             }
             catch ( final ArchiverException e )
             {
                 throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
             }
+            catch ( IOException e )
+            {
+                throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
+            }
         }
+    }
+
+    // Nicked from archiver until I can get a better solution. I am the author :)
+    abstract class Deferred
+    {
+        final DeferredFileOutputStream dfos;
+
+        final PlexusIoResource resource;
+
+        public Deferred( final PlexusIoResource resource )
+            throws IOException
+        {
+            this.resource = resource;
+            dfos = new DeferredFileOutputStream( 1000000, "m-assembly-archiver", null, null );
+            InputStream inputStream = getInputStream();
+            IOUtils.copy( inputStream, dfos );
+            IOUtils.closeQuietly( inputStream );
+        }
+
+        protected abstract  InputStream getInputStream() throws IOException;
+
+        @Nonnull
+        public InputStream getContents()
+            throws IOException
+        {
+            if ( dfos.isInMemory() )
+            {
+                return new ByteArrayInputStream( dfos.getData() );
+            }
+            else
+            {
+                return new FileInputStream( dfos.getFile() )
+                {
+                    @Override
+                    public void close()
+                        throws IOException
+                    {
+                        super.close();
+                        dfos.getFile().delete();
+                    }
+                };
+            }
+        }
+
+        public long getSize()
+        {
+            if ( dfos == null )
+            {
+                return resource.getSize();
+            }
+            if ( dfos.isInMemory() )
+            {
+                return dfos.getByteCount();
+            }
+            else
+            {
+                return dfos.getFile().length();
+            }
+        }
+
+        public abstract String getName();
+
+        private PlexusIoResource asSymlinkResource()
+        {
+            return new PlexusIoProxySymlinkResource( resource )
+            {
+                @Override
+                public String getName()
+                {
+                    return Deferred.this.getName();
+                }
+
+                @Nonnull
+                @Override
+                public InputStream getContents()
+                    throws IOException
+                {
+                    return Deferred.this.getContents();
+                }
+
+                @Override
+                public long getSize()
+                {
+                    return Deferred.this.getSize();
+                }
+            };
+        }
+
+        public PlexusIoResource asResource()
+        {
+            if ( resource instanceof PlexusIoSymlink )
+            {
+                return asSymlinkResource();
+            }
+
+            return new PlexusIoProxyResource( resource )
+            {
+                @Override
+                public String getName()
+                {
+                    return Deferred.this.getName();
+                }
+
+                @Nonnull
+                @Override
+                public InputStream getContents()
+                    throws IOException
+                {
+                    return Deferred.this.getContents();
+                }
+
+                @Override
+                public long getSize()
+                {
+                    return Deferred.this.getSize();
+                }
+            };
+        }
+
     }
 
 }

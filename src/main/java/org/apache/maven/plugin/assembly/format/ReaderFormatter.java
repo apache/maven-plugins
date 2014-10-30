@@ -40,19 +40,17 @@ import java.util.List;
 
 public class ReaderFormatter
 {
-    private static Reader createReaderFilter( @Nonnull Reader source, String sourceName, String encoding,
-                                              String escapeString, List<String> delimiters,
-                                              AssemblerConfigurationSource configSource )
+    private static Reader createReaderFilter( @Nonnull Reader source, String escapeString, List<String> delimiters,
+                                              AssemblerConfigurationSource configSource, boolean isPropertiesFile )
         throws AssemblyFormattingException
     {
         try
         {
-            boolean isPropertiesFile = AssemblyFileUtils.isPropertyFile( sourceName );
 
             MavenReaderFilterRequest filterRequest =
                 new MavenReaderFilterRequest( source, true, configSource.getProject(), configSource.getFilters(),
-                                              isPropertiesFile, encoding, configSource.getMavenSession(), null );
-            filterRequest.setInjectProjectBuildFilters(true);
+                                              isPropertiesFile, null, configSource.getMavenSession(), null );
+//            filterRequest.setInjectProjectBuildFilters(true);
             filterRequest.setEscapeString( escapeString );
 
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
@@ -114,10 +112,10 @@ public class ReaderFormatter
                             : new InputStreamReader( inputStream ); // wtf platform encoding ? TODO: Fix this
                         try
                         {
+                            boolean isPropertyFile = AssemblyFileUtils.isPropertyFile( plexusIoResource.getName() );
                             Reader filtered =
-                                createReaderFilter( source, plexusIoResource.getName(), configSource.getEncoding(),
-                                                    configSource.getEscapeString(), configSource.getDelimiters(),
-                                                    configSource );
+                                createReaderFilter( source, configSource.getEscapeString(), configSource.getDelimiters(),
+                                                    configSource, isPropertyFile );
                             final ReaderInputStream readerInputStream = encoding != null
                                 ? new ReaderInputStream( filtered, encoding )
                                 : new ReaderInputStream( filtered );

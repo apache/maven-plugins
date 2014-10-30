@@ -224,12 +224,6 @@ public abstract class AbstractAssemblyMojo
      * Maven shared filtering utility.
      */
     @Component
-    private MavenFileFilter mavenFileFilter;
-
-    /**
-     * Maven shared filtering utility.
-     */
-    @Component
     private MavenReaderFilter mavenReaderFilter;
 
     /**
@@ -854,11 +848,6 @@ public abstract class AbstractAssemblyMojo
     public String getArchiverConfig()
     {
         return archiverConfig == null ? null : archiverConfig.toString();
-    }
-
-    public MavenFileFilter getMavenFileFilter()
-    {
-        return mavenFileFilter;
     }
 
     public MavenReaderFilter getMavenReaderFilter()

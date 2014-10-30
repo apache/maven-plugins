@@ -999,14 +999,19 @@ public class AssemblyProxyArchiver
     public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
         throws ArchiverException
     {
-        inPublicApi.set( Boolean.TRUE );
-        try
+        File file = new File(resource.getName()); // zOMG.
+        if ( acceptFile( file ) )
         {
-            delegate.addResource( resource, destFileName, permissions );
-        }
-        finally
-        {
-            inPublicApi.set( null );
+
+            inPublicApi.set( Boolean.TRUE );
+            try
+            {
+                delegate.addResource( resource, destFileName, permissions );
+            }
+            finally
+            {
+                inPublicApi.set( null );
+            }
         }
     }
 
