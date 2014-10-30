@@ -23,7 +23,6 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
 
 import java.io.File;
@@ -174,11 +173,6 @@ public interface AssemblerConfigurationSource
      * @return The archiver configu.
      */
     String getArchiverConfig();
-
-    /**
-     * @return The maven file filter.
-     */
-    MavenFileFilter getMavenFileFilter();
 
     /**
      * Maven shared filtering utility.

@@ -33,6 +33,7 @@ import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
@@ -40,6 +41,8 @@ import org.easymock.classextension.EasyMockSupport;
 import java.io.File;
 import java.io.IOException;
 
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
 public class FileItemAssemblyPhaseTest
@@ -93,8 +96,6 @@ public class FileItemAssemblyPhaseTest
 
         final File tempRoot = fileManager.createTempDir();
 
-        macCS.expectGetTemporaryRootDirectory( tempRoot );
-
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
@@ -118,8 +119,6 @@ public class FileItemAssemblyPhaseTest
 
         assembly.addFile( fi );
         
-        macCS.expectGetEncoding();
-
         mm.replayAll();
 
         createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
@@ -141,8 +140,6 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetBasedir( basedir );
 
         final File tempRoot = fileManager.createTempDir();
-
-        macCS.expectGetTemporaryRootDirectory( tempRoot );
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -166,8 +163,6 @@ public class FileItemAssemblyPhaseTest
                                    TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ) );
 
         assembly.addFile( fi );
-
-        macCS.expectGetEncoding();
 
         mm.replayAll();
 
@@ -194,8 +189,6 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetBasedir( basedir );
 
         final File tempRoot = fileManager.createTempDir();
-
-        macCS.expectGetTemporaryRootDirectory( tempRoot );
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -244,8 +237,6 @@ public class FileItemAssemblyPhaseTest
         assembly.addFile( licenseFileItem );
         assembly.addFile( configFileItem );
 
-        macCS.expectGetEncoding();
-
         mm.replayAll();
 
         createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
@@ -271,8 +262,6 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetBasedir( basedir );
 
         final File tempRoot = fileManager.createTempDir();
-
-        macCS.expectGetTemporaryRootDirectory( tempRoot );
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -324,8 +313,6 @@ public class FileItemAssemblyPhaseTest
         assembly.addFile( licenseFileItem );
         assembly.addFile( configFileItem );
 
-        macCS.expectGetEncoding();
-
         mm.replayAll();
 
         createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
@@ -351,8 +338,6 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetBasedir( basedir );
 
         final File tempRoot = fileManager.createTempDir();
-
-        macCS.expectGetTemporaryRootDirectory( tempRoot );
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -402,8 +387,6 @@ public class FileItemAssemblyPhaseTest
         assembly.addFile( licenseFileItem );
         assembly.addFile( configFileItem );
 
-        macCS.expectGetEncoding();
-
         mm.replayAll();
 
         createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
@@ -432,7 +415,7 @@ public class FileItemAssemblyPhaseTest
         {
             try
             {
-                archiver.addFile( file, outputLocation, fileMode );
+                archiver.addResource( ( PlexusIoResource) anyObject(), (String) anyObject(), anyInt() );
             }
             catch ( final ArchiverException e )
             {
