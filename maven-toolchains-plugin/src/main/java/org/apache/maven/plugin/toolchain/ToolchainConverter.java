@@ -62,6 +62,7 @@ public class ToolchainConverter
         throws ComponentConfigurationException
     {
         Toolchains retValue = new Toolchains();
+
         processConfiguration( retValue, configuration, expressionEvaluator );
 
         return retValue;
@@ -72,20 +73,20 @@ public class ToolchainConverter
                                        ExpressionEvaluator expressionEvaluator )
         throws ComponentConfigurationException
     {
-        Map map = new HashMap();
+        Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+
         PlexusConfiguration[] tools = configuration.getChildren();
         for ( PlexusConfiguration tool : tools )
         {
             String type = tool.getName();
             PlexusConfiguration[] params = tool.getChildren();
-            Map parameters = new HashMap();
+
+            Map<String, String> parameters = new HashMap<String, String>();
             for ( PlexusConfiguration param : params )
             {
                 try
                 {
-                    String name = param.getName();
-                    String val = param.getValue();
-                    parameters.put( name, val );
+                    parameters.put( param.getName(), param.getValue() );
                 }
                 catch ( PlexusConfigurationException ex )
                 {
@@ -94,6 +95,7 @@ public class ToolchainConverter
             }
             map.put( type, parameters );
         }
+
         chain.toolchains = map;
     }
 }

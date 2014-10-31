@@ -34,7 +34,6 @@ import org.apache.maven.toolchain.ToolchainPrivate;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +48,7 @@ public class ToolchainMojo
     /**
      */
     @Component
-    private ToolchainManagerPrivate toolchainManager;
+    private ToolchainManagerPrivate toolchainManagerPrivate;
 
     /**
      * The current build session instance. This is used for
@@ -70,78 +69,87 @@ public class ToolchainMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( toolchains != null )
+        if ( toolchains == null )
         {
-            Iterator en = toolchains.getToolchainsTypes().iterator();
-            List nonMatchedTypes = new ArrayList();
-            while ( en.hasNext() )
+            // should not happen since parameter is required...
+            getLog().warn( "No toolchains requirements configured." );
+            return;
+        }
+
+        List<String> nonMatchedTypes = new ArrayList<String>();
+
+        for ( Map.Entry<String, Map<String, String>> entry : toolchains.getToolchains().entrySet() )
+        {
+            try
             {
-                try
+                String type = entry.getKey();
+                Map<String, String> params = entry.getValue();
+
+                getLog().info( "Type:" + type );
+                ToolchainPrivate[] tcs = getToolchains( type );
+
+                boolean matched = false;
+                for ( ToolchainPrivate tc : tcs )
                 {
-                    String type = (String) en.next();
-                    getLog().info( "Type:" + type );
-                    Map params = toolchains.getParams( type );
-                    ToolchainPrivate[] tcs = getToolchains( type );
-                    boolean matched = false;
-                    for ( ToolchainPrivate tc : tcs )
+                    if ( tc.matchesRequirements( params ) )
                     {
-                        if ( tc.matchesRequirements( params ) )
-                        {
-                            getLog().info( "Toolchain (" + type + ") matched:" + tc );
-                            toolchainManager.storeToolchainToBuildContext( tc, session );
-                            matched = true;
-                            break;
-                        }
-                    }
-                    if ( !matched )
-                    {
-                        nonMatchedTypes.add( type );
+                        getLog().info( "Toolchain (" + type + ") matched: " + tc );
+
+                        toolchainManagerPrivate.storeToolchainToBuildContext( tc, session );
+
+                        matched = true;
+                        break;
                     }
                 }
-                catch ( MisconfiguredToolchainException ex )
+
+                if ( !matched )
                 {
-                    throw new MojoExecutionException( "Misconfigured toolchains.", ex );
+                    nonMatchedTypes.add( type );
                 }
             }
-            if ( !nonMatchedTypes.isEmpty() )
+            catch ( MisconfiguredToolchainException ex )
             {
-                // TODO add the default toolchain instance if defined??
-                StringBuilder buff = new StringBuilder();
-                buff.append( "Cannot find matching toolchain definitions for the following toolchain types:" );
-                for ( Object nonMatchedType : nonMatchedTypes )
-                {
-                    String type = (String) nonMatchedType;
-                    buff.append( '\n' );
-                    buff.append( type );
-                    Map params = toolchains.getParams( type );
-                    if ( params.size() > 0 )
-                    {
-                        Iterator it2 = params.keySet().iterator();
-                        buff.append( " [" );
-                        while ( it2.hasNext() )
-                        {
-                            String string = (String) it2.next();
-                            buff.append( " " ).append( string ).append( "='" ).append( params.get( string ) );
-                            buff.append( "' " );
-                        }
-                        buff.append( ']' );
-                    }
-                }
-                getLog().error( buff.toString() );
-                throw new MojoFailureException( buff.toString()
-                    + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
+                throw new MojoExecutionException( "Misconfigured toolchains.", ex );
             }
         }
-        else
+
+        if ( !nonMatchedTypes.isEmpty() )
         {
-            //can that happen?
+            // TODO add the default toolchain instance if defined??
+            StringBuilder buff = new StringBuilder();
+            buff.append( "Cannot find matching toolchain definitions for the following toolchain types:" );
+
+            for ( String type : nonMatchedTypes )
+            {
+                buff.append( '\n' );
+                buff.append( type );
+
+                Map<String, String> params = toolchains.getParams( type );
+
+                if ( params.size() > 0 )
+                {
+                    buff.append( " [" );
+
+                    for ( Map.Entry<String, String> param : params.entrySet() )
+                    {
+                        buff.append( " " ).append( param.getKey() ).append( "='" ).append( param.getValue() );
+                        buff.append( "'" );
+                    }
+                    buff.append( " ]" );
+                }
+            }
+
+            getLog().error( buff.toString() );
+
+            throw new MojoFailureException( buff.toString()
+                + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
         }
     }
 
     private ToolchainPrivate[] getToolchains( String type )
         throws MojoExecutionException, MisconfiguredToolchainException
     {
-        Class managerClass = toolchainManager.getClass();
+        Class<?> managerClass = toolchainManagerPrivate.getClass();
 
         try
         {
@@ -151,14 +159,14 @@ public class ToolchainMojo
                 Method newMethod =
                     managerClass.getMethod( "getToolchainsForType", new Class[] { String.class, MavenSession.class } );
 
-                return (ToolchainPrivate[]) newMethod.invoke( toolchainManager, type, session );
+                return (ToolchainPrivate[]) newMethod.invoke( toolchainManagerPrivate, type, session );
             }
             catch ( NoSuchMethodException e )
             {
                 // try 2.x style API
                 Method oldMethod = managerClass.getMethod( "getToolchainsForType", new Class[] { String.class } );
 
-                return (ToolchainPrivate[]) oldMethod.invoke( toolchainManager, type );
+                return (ToolchainPrivate[]) oldMethod.invoke( toolchainManagerPrivate, type );
             }
         }
         catch ( NoSuchMethodException e )

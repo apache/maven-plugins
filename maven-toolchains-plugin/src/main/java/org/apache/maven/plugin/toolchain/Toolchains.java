@@ -24,22 +24,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Type for plugins's <code>toolchain</code> attribute.
  *
  * @author mkleint
  */
 public final class Toolchains
 {
+    Map<String, Map<String, String>> toolchains;
 
-    /** <String type, Map<String param, String value>> */
-    Map toolchains;
+    public Map<String, Map<String, String>> getToolchains()
+    {
+        return Collections.unmodifiableMap( toolchains );
+    }
 
-    public Set getToolchainsTypes()
+    public Set<String> getToolchainsTypes()
     {
         return Collections.unmodifiableSet( toolchains.keySet() );
     }
 
-    public Map getParams( String type )
+    public Map<String, String> getParams( String type )
     {
-        return Collections.unmodifiableMap( (Map) toolchains.get( type ) );
+        return Collections.unmodifiableMap( toolchains.get( type ) );
     }
 }
