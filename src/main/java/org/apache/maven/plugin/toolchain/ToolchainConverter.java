@@ -32,9 +32,10 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
 /**
- * Plexus ConfigurationConverter
+ * Custom Plexus ConfigurationConverter to instantiate <code>ToolchainRequirement</code> from configuration.
  *
  * @author mkleint
+ * @see ToolchainsRequirement
  */
 public class ToolchainConverter
     extends AbstractConfigurationConverter
@@ -47,7 +48,7 @@ public class ToolchainConverter
      */
     public boolean canConvert( Class type )
     {
-        return Toolchains.class.isAssignableFrom( type );
+        return ToolchainsRequirement.class.isAssignableFrom( type );
     }
 
     /**
@@ -61,14 +62,14 @@ public class ToolchainConverter
                                      ConfigurationListener listener )
         throws ComponentConfigurationException
     {
-        Toolchains retValue = new Toolchains();
+        ToolchainsRequirement retValue = new ToolchainsRequirement();
 
         processConfiguration( retValue, configuration, expressionEvaluator );
 
         return retValue;
     }
 
-    private void processConfiguration( Toolchains chain,
+    private void processConfiguration( ToolchainsRequirement requirement,
                                        PlexusConfiguration configuration,
                                        ExpressionEvaluator expressionEvaluator )
         throws ComponentConfigurationException
@@ -96,6 +97,6 @@ public class ToolchainConverter
             map.put( type, parameters );
         }
 
-        chain.toolchains = map;
+        requirement.toolchains = map;
     }
 }

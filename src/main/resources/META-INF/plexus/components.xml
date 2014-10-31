@@ -21,24 +21,24 @@ under the License.
   <components>
     <component>
       <role>org.codehaus.plexus.component.configurator.ComponentConfigurator</role>
-      <role-hint>override</role-hint>
+      <role-hint>toolchains-requirement-configurator</role-hint>
       <implementation>org.codehaus.plexus.component.configurator.BasicComponentConfigurator</implementation>
       <requirements>
         <requirement>
           <role>org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup</role>
-          <role-hint>override</role-hint>
+          <role-hint>toolchains-requirement-configurator</role-hint>
         </requirement>
       </requirements>
     </component>
 
     <component>
       <role>org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup</role>
-      <role-hint>override</role-hint>
+      <role-hint>toolchains-requirement-configurator</role-hint>
       <implementation>org.codehaus.plexus.component.configurator.converters.lookup.DefaultConverterLookup</implementation>
       <requirements>
         <requirement>
           <role>org.codehaus.plexus.component.configurator.converters.ConfigurationConverter</role>
-          <role-hint>Toolchains</role-hint>
+          <role-hint>ToolchainsRequirement</role-hint>
           <field-name>customConverters</field-name>
         </requirement>
       </requirements>
@@ -46,7 +46,7 @@ under the License.
 
     <component>
       <role>org.codehaus.plexus.component.configurator.converters.ConfigurationConverter</role>
-      <role-hint>Toolchains</role-hint>
+      <role-hint>ToolchainsRequirement</role-hint>
       <implementation>org.apache.maven.plugin.toolchain.ToolchainConverter</implementation>
     </component>
   </components>
