@@ -33,7 +33,7 @@ Similarly to maven-enforcer-plugin, it allows to control environmental constrain
 
   The Toolchains plugin has one goal:
 
-  * {{{./toolchain-mojo.html}toolchain:toolchain}} The goal is typically to be attached to the "validate" phase of default lifecycle.
+  * {{{./toolchain-mojo.html}toolchain:toolchain}} checks that toolchains requirements are met by currently configured toolchains.
 
 * Usage
 
