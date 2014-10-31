@@ -27,7 +27,7 @@ Toolchain Identification
 
  The toolchain type id for JDK is "<<<jdk>>>".
  
- Predefined identification tokens are:
+ Predefined identification tokens, for requirement matching, are:
 
     * "<<<version>>>" marks the version of the jdk. Maven Toolchains Plugin can match against a single version or any version ranges,
 
