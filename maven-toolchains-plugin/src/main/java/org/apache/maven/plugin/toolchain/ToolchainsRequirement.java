@@ -24,11 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Type for plugins's <code>toolchain</code> attribute.
+ * Type for plugin's <code>toolchain</code> attribute representing toolchains requirements.
  *
  * @author mkleint
+ * @see ToolchainConverter the custom Plexus converter to instantiate this class
  */
-public final class Toolchains
+public final class ToolchainsRequirement
 {
     Map<String, Map<String, String>> toolchains;
 

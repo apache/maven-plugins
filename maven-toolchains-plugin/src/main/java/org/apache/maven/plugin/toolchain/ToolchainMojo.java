@@ -38,9 +38,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Check that toolchains requirements are met by currently configured toolchains and
+ * store the selected toolchains in build context for later retrieval by other plugins.
+ *
  * @author mkleint
  */
-@Mojo( name = "toolchain", defaultPhase = LifecyclePhase.VALIDATE, configurator = "override" )
+@Mojo( name = "toolchain", defaultPhase = LifecyclePhase.VALIDATE,
+       configurator = "toolchains-requirement-configurator" )
 public class ToolchainMojo
     extends AbstractMojo
 {
@@ -51,20 +55,21 @@ public class ToolchainMojo
     private ToolchainManagerPrivate toolchainManagerPrivate;
 
     /**
-     * The current build session instance. This is used for
-     * toolchain manager API calls.
+     * The current build session instance. This is used for toolchain manager API calls.
      */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
+     * Toolchains requirements, specified by one
+     * <pre>  &lt;toolchain-type&gt;
+     *    &lt;param&gt;expected value&lt;/param&gt;
+     *    ...
+     *  &lt;/toolchain-type&gt;</pre>
+     * element for each required toolchain.
      */
     @Parameter( required = true )
-    private Toolchains toolchains;
-
-    public ToolchainMojo()
-    {
-    }
+    private ToolchainsRequirement toolchains;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -80,36 +85,11 @@ public class ToolchainMojo
 
         for ( Map.Entry<String, Map<String, String>> entry : toolchains.getToolchains().entrySet() )
         {
-            try
+            String type = entry.getKey();
+
+            if ( !selectToolchain( type, entry.getValue() ) )
             {
-                String type = entry.getKey();
-                Map<String, String> params = entry.getValue();
-
-                getLog().info( "Type:" + type );
-                ToolchainPrivate[] tcs = getToolchains( type );
-
-                boolean matched = false;
-                for ( ToolchainPrivate tc : tcs )
-                {
-                    if ( tc.matchesRequirements( params ) )
-                    {
-                        getLog().info( "Toolchain (" + type + ") matched: " + tc );
-
-                        toolchainManagerPrivate.storeToolchainToBuildContext( tc, session );
-
-                        matched = true;
-                        break;
-                    }
-                }
-
-                if ( !matched )
-                {
-                    nonMatchedTypes.add( type );
-                }
-            }
-            catch ( MisconfiguredToolchainException ex )
-            {
-                throw new MojoExecutionException( "Misconfigured toolchains.", ex );
+                nonMatchedTypes.add( type );
             }
         }
 
@@ -144,6 +124,36 @@ public class ToolchainMojo
             throw new MojoFailureException( buff.toString()
                 + "\nPlease make sure you define the required toolchains in your ~/.m2/toolchains.xml file." );
         }
+    }
+
+    protected boolean selectToolchain( String type, Map<String, String> params )
+        throws MojoExecutionException
+    {
+        getLog().info( "Required toolchain type:" + type );
+
+        try
+        {
+            ToolchainPrivate[] tcs = getToolchains( type );
+
+            for ( ToolchainPrivate tc : tcs )
+            {
+                if ( tc.matchesRequirements( params ) )
+                {
+                    getLog().info( "Toolchain (" + type + ") matched: " + tc );
+
+                    // store matching toolchain to build context
+                    toolchainManagerPrivate.storeToolchainToBuildContext( tc, session );
+
+                    return true;
+                }
+            }
+        }
+        catch ( MisconfiguredToolchainException ex )
+        {
+            throw new MojoExecutionException( "Misconfigured toolchains.", ex );
+        }
+
+        return false;
     }
 
     private ToolchainPrivate[] getToolchains( String type )
