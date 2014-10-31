@@ -30,7 +30,7 @@ under the License.
         </requirement>
       </requirements>
     </component>
-    
+
     <component>
       <role>org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup</role>
       <role-hint>override</role-hint>
@@ -39,7 +39,7 @@ under the License.
         <requirement>
           <role>org.codehaus.plexus.component.configurator.converters.ConfigurationConverter</role>
           <role-hint>Toolchains</role-hint>
-          <field-name>customConverters</field-name>					
+          <field-name>customConverters</field-name>
         </requirement>
       </requirements>
     </component>
