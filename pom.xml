@@ -75,40 +75,25 @@ under the License.
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <profiles>
     <profile>
       <id>run-its</id>
       <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <phase>integration-test</phase>
-                <configuration>
-                  <tasks>
-                    <echo /><echo /><echo /><echo /><echo />
-                    <echo level="warning">NO INTEGRATION TESTS DEFINED</echo>
-                    <echo /><echo /><echo /><echo /><echo />
-                  </tasks>
-                </configuration>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-invoker-plugin</artifactId>
+              <configuration>
                 <goals>
-                  <goal>run</goal>
+                  <goal>validate</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
