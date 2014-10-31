@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * @author mkleint
  */
-@Mojo( name = "toolchain", defaultPhase = LifecyclePhase.VALIDATE )
+@Mojo( name = "toolchain", defaultPhase = LifecyclePhase.VALIDATE, configurator = "override" )
 public class ToolchainMojo
     extends AbstractMojo
 {
