@@ -63,7 +63,9 @@ public class CimReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.cim.title" ), response.getTitle() );
+        String expectedTitle = prepareTitle( getString( "report.cim.name" ),
+            getString( "report.cim.title" ) );
+        assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

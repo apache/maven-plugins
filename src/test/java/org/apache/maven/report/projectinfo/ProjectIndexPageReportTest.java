@@ -63,7 +63,10 @@ public class ProjectIndexPageReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.index.title" ), response.getTitle() );
+        // Index does not have a 'name' but 'title' only
+        String expectedTitle = prepareTitle( getString( "report.index.title" ),
+            getString( "report.index.title" ) );
+        assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
