@@ -70,7 +70,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenArchiverVersion>2.5</mavenArchiverVersion>
+    <mavenArchiverVersion>2.6</mavenArchiverVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
