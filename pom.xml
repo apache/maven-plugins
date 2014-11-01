@@ -396,7 +396,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jarsigner-plugin</artifactId>
-          <version>1.2</version>
+          <version>1.3.2</version>
           <configuration>
             <keystore>${basedir}/target/jetty.jks</keystore>
             <keypass>apache</keypass>
@@ -561,7 +561,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-changes-plugin</artifactId>
-            <version>2.6</version>
+            <version>2.11</version>
             <configuration>
               <!-- For JIRA-report -->
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
