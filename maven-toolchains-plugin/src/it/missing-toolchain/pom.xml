@@ -48,9 +48,7 @@ under the License.
         </executions>
         <configuration>
           <toolchains>
-            <jdk>
-              <version>12</version>
-            </jdk>
+            <jdk/>
             <fake-type>
               <attribute>value</attribute>
               <other-attribute>other-value</other-attribute>
