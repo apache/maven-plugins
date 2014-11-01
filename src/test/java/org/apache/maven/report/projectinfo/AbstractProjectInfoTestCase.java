@@ -73,7 +73,6 @@ public abstract class AbstractProjectInfoTestCase
         Locale.setDefault( DEFAULT_LOCALE );
     }
 
-    @Override
     protected InputStream getCustomConfiguration()
         throws Exception
     {
