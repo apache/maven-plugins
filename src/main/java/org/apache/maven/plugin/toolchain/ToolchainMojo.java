@@ -129,7 +129,7 @@ public class ToolchainMojo
     protected boolean selectToolchain( String type, Map<String, String> params )
         throws MojoExecutionException
     {
-        getLog().info( "Required toolchain type:" + type );
+        getLog().info( "Required toolchain type: " + type );
 
         try
         {
