@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.assembly.model;
+package org.apache.maven.plugin.assembly.functions;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,18 +23,11 @@ import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.functions.ModuleSetConsumer;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
 
-public class Assemblies
+public interface ModuleSetConsumer
 {
-
-    public static void forEachModuleSet( Assembly assembly, ModuleSetConsumer moduleSetConsumer )
+    void accept( ModuleSet resolvedModule )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
-        DependencyResolutionException
-    {
-        for ( ModuleSet resolvedModuleSet : assembly.getModuleSets() )
-        {
-            moduleSetConsumer.accept( resolvedModuleSet );
-        }
-    }
+        DependencyResolutionException;
 }

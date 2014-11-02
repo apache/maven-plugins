@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -43,6 +41,7 @@ import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.functions.MavenProjects;
 import org.apache.maven.plugin.assembly.model.Assemblies;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
@@ -50,7 +49,7 @@ import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
-import org.apache.maven.plugin.assembly.resolved.functions.ModuleSetConsumer;
+import org.apache.maven.plugin.assembly.functions.ModuleSetConsumer;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
@@ -63,6 +62,9 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
+
+import static org.apache.maven.plugin.assembly.functions.MavenProjects.log;
+import static org.apache.maven.plugin.assembly.functions.MavenProjects.addTo;
 
 /**
  * Handles the &lt;moduleSets/&gt; top-level section of the assembly descriptor.
@@ -114,17 +116,18 @@ public class ModuleSetAssemblyPhase
      */
     public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
-        Assemblies.forEachResolvedModule(assembly, new ModuleSetConsumer()
+        Assemblies.forEachModuleSet( assembly, new ModuleSetConsumer()
         {
             public void accept( ModuleSet resolvedModule )
-                throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+                throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+                DependencyResolutionException
             {
                 validate( resolvedModule, configSource );
 
-                final Set<MavenProject> moduleProjects =
-                    getModuleProjects( resolvedModule, configSource, getLogger() );
+                final Set<MavenProject> moduleProjects = getModuleProjects( resolvedModule, configSource, getLogger() );
 
                 final ModuleSources sources = resolvedModule.getSources();
                 addModuleSourceFileSets( sources, moduleProjects, archiver, configSource );
@@ -179,29 +182,17 @@ public class ModuleSetAssemblyPhase
     void addModuleBinaries( final Assembly assembly, ModuleSet moduleSet, final ModuleBinaries binaries,
                             final Set<MavenProject> projects, final Archiver archiver,
                             final AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
         if ( binaries == null )
         {
             return;
         }
 
-        final Set<MavenProject> moduleProjects = new LinkedHashSet<MavenProject>( projects );
+        final Set<MavenProject> moduleProjects = new LinkedHashSet<MavenProject>(  );
 
-        for ( final Iterator<MavenProject> it = moduleProjects.iterator(); it.hasNext(); )
-        {
-            final MavenProject project = it.next();
-
-            if ( "pom".equals( project.getPackaging() ) )
-            {
-                final String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-
-                getLogger().debug( "Excluding POM-packaging module: " + projectId );
-
-                it.remove();
-            }
-        }
-
+        MavenProjects.select( projects, "pom", log( getLogger() ), addTo( moduleProjects ) );
 
         final String classifier = binaries.getAttachmentClassifier();
 
@@ -209,7 +200,7 @@ public class ModuleSetAssemblyPhase
 
         for ( final MavenProject project : moduleProjects )
         {
-            Artifact artifact = null;
+            Artifact artifact;
 
             if ( classifier == null )
             {
@@ -222,19 +213,7 @@ public class ModuleSetAssemblyPhase
                 getLogger().debug( "Processing binary attachment: " + classifier + " for module project: "
                                        + project.getId() );
 
-                @SuppressWarnings( "unchecked" )
-                final List<Artifact> attachments = project.getAttachedArtifacts();
-                if ( ( attachments != null ) && !attachments.isEmpty() )
-                {
-                    for ( final Artifact attachment : attachments )
-                    {
-                        if ( classifier.equals( attachment.getClassifier() ) )
-                        {
-                            artifact = attachment;
-                            break;
-                        }
-                    }
-                }
+                artifact = MavenProjects.findArtifactByClassifier( project, classifier );
 
                 if ( artifact == null )
                 {
@@ -252,16 +231,7 @@ public class ModuleSetAssemblyPhase
 
         if ( depSets != null )
         {
-            Set<Artifact> resolved = null;
-            try
-            {
-                resolved =
-                    dependencyResolver.resolve( assembly, moduleSet, configSource );
-            }
-            catch ( DependencyResolutionException e )
-            {
-                throw new ArchiveCreationException( "While resolving dependencies:", e );
-            }
+            Set<Artifact> resolved = dependencyResolver.resolve( assembly, moduleSet, configSource );
 
             for ( final DependencySet ds : depSets )
             {
@@ -347,28 +317,6 @@ public class ModuleSetAssemblyPhase
 
         return depSets;
     }
-
-    // protected List<String> collectExcludesFromQueuedArtifacts( final Set visitedArtifacts, final List binaryExcludes
-    // )
-    // {
-    // List excludes = binaryExcludes;
-    //
-    // if ( excludes == null )
-    // {
-    // excludes = new ArrayList();
-    // }
-    // else
-    // {
-    // excludes = new ArrayList( excludes );
-    // }
-    //
-    // for ( final Iterator it = visitedArtifacts.iterator(); it.hasNext(); )
-    // {
-    // excludes.add( it.next() );
-    // }
-    //
-    // return excludes;
-    // }
 
     void addModuleArtifact( final Artifact artifact, final MavenProject project, final Archiver archiver,
                             final AssemblerConfigurationSource configSource, final ModuleBinaries binaries )
@@ -615,8 +563,7 @@ public class ModuleSetAssemblyPhase
             }
         }
 
-        FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), true, logger );
-        return moduleProjects;
+        return FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), true, logger );
     }
 
 }

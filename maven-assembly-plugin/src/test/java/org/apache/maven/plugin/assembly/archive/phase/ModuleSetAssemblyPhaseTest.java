@@ -28,6 +28,7 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -248,7 +249,8 @@ public class ModuleSetAssemblyPhaseTest
     }
 
     public void testExecute_ShouldSkipIfNoModuleSetsFound()
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
         final Assembly assembly = new Assembly();
         assembly.setIncludeBaseDirectory( false );
@@ -258,7 +260,7 @@ public class ModuleSetAssemblyPhaseTest
 
     public void testExecute_ShouldAddOneModuleSetWithOneModuleInIt()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -312,14 +314,15 @@ public class ModuleSetAssemblyPhaseTest
     }
 
     public void testAddModuleBinaries_ShouldReturnImmediatelyWhenBinariesIsNull()
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
         createPhase( null, null ).addModuleBinaries( null, null, null, null, null, null );
     }
 
     public void testAddModuleBinaries_ShouldFilterPomModule()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -352,7 +355,7 @@ public class ModuleSetAssemblyPhaseTest
 
     public void testAddModuleBinaries_ShouldAddOneModuleAttachmentArtifactAndNoDeps()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -390,7 +393,7 @@ public class ModuleSetAssemblyPhaseTest
     }
 
     public void testAddModuleBinaries_ShouldFailWhenOneModuleDoesntHaveAttachmentWithMatchingClassifier()
-        throws ArchiveCreationException, AssemblyFormattingException, IOException
+        throws ArchiveCreationException, AssemblyFormattingException, IOException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -432,7 +435,7 @@ public class ModuleSetAssemblyPhaseTest
 
     public void testAddModuleBinaries_ShouldAddOneModuleArtifactAndNoDeps()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
