@@ -147,7 +147,8 @@ public class ToolchainMojo
 
             for ( ToolchainPrivate tc : tcs )
             {
-                if ( tc.matchesRequirements( params ) )
+                if ( type.equals( tc.getType() ) // useful because of MNG-5716
+                                && tc.matchesRequirements( params ) )
                 {
                     getLog().info( "Found matching toolchain for type " + type + ": " + tc );
 
