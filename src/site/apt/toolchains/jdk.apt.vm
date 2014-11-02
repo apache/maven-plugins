@@ -20,26 +20,30 @@
   ------
   Milos Kleint
   ------
-  2007-10-01
+  2014-11-02
   ------
 
-Toolchain Identification
+JDK Toolchain
 
- The toolchain type id for JDK is "<<<jdk>>>".
+
+* Toolchain Identification
+
+  The toolchain type id for JDK is "<<<jdk>>>".
  
- Predefined identification tokens, for requirement matching, are:
+  Predefined identification tokens, for requirement matching, are:
 
-    * "<<<version>>>" marks the version of the jdk. Maven Toolchains Plugin can match against a single version or any version ranges,
+  * "<<<version>>>" marks the version of the jdk. Maven Toolchains Plugin can match against a single version or any version ranges,
 
-    * any other tokens will be accepted, but only exact matches are supported.
+  * any other tokens will be accepted, but only exact matches are supported.
 
-Toolchain Configuration
+  []
 
- There is only one configuration element named "<<<jdkHome>>>". It designates the root directory 
-of JDK installation.
+* Toolchain Configuration
 
+  There is only one configuration element named "<<<jdkHome>>>". It designates the root directory
+  of JDK installation.
 
-Sample <<<toolchains.xml>>> setup:
+* Sample <<<toolchains.xml>>> setup
 
 +---+
 <toolchains>
@@ -58,22 +62,22 @@ Sample <<<toolchains.xml>>> setup:
 </toolchains>
 +---+
 
+* Toolchains Plugin Configuration
 
-Toolchains Plugin Configuration     
+  For selection of toolchain for use by the project, the following conditions are matched
+  against the definitions in the <<<toolchains.xml>>> file:
 
- For selection of toolchain for use by the project, the following conditions are matched
-against the definitions in the <<<toolchains.xml>>> file:
+  * "<<<version>>>" which accepts any {{{/plugins/maven-enforcer-plugin/rules/versionRanges.html}version range definitions}}.
+    Version declared by the toolchain needs to fit into the range,
 
-    * "<<<version>>>" which accepts any {{{/plugins/maven-enforcer-plugin/rules/versionRanges.html}version range definitions}}.
- Version declared by the toolchain needs to fit into the range,
-            
-    * any other tokens needs exact match. Toolchain not providing such token will not be selected.
+  * any other tokens needs exact match. Toolchain not providing such token will not be selected.
 
- All conditions need to be satisfied in a sucessfully matched toolchain.
+  []
 
-  
-Sample Plugin Configuration
-   
+  All conditions need to be satisfied in a sucessfully matched toolchain.
+
+* Sample Plugin Configuration
+
 +---+
 <project>
   [...]
