@@ -1,5 +1,4 @@
-package org.apache.maven.plugin.assembly.resolved.functions;
-
+package org.apache.maven.plugin.assembly.functions;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +17,9 @@ package org.apache.maven.plugin.assembly.resolved.functions;
  * specific language governing permissions and limitations
  * under the License.
  */
+import org.apache.maven.project.MavenProject;
 
-import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
-import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
-import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.model.ModuleSet;
-
-public interface ModuleSetConsumer
+public interface MavenProjectConsumer
 {
-    void accept( ModuleSet resolvedModule )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
+    public void accept(MavenProject project);
 }

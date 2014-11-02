@@ -32,6 +32,7 @@ import org.codehaus.plexus.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +46,7 @@ public final class FilterUtils
     {
     }
 
-    public static void filterProjects( final Set<MavenProject> projects, final List<String> includes,
+    public static  Set<MavenProject>  filterProjects( final Set<MavenProject> projects, final List<String> includes,
                                        final List<String> excludes, final boolean actTransitively, final Logger logger )
     {
         final List<PatternIncludesArtifactFilter> allFilters = new ArrayList<PatternIncludesArtifactFilter>();
@@ -69,14 +70,14 @@ public final class FilterUtils
             allFilters.add( excludeFilter );
         }
 
-        for ( final Iterator<MavenProject> it = projects.iterator(); it.hasNext(); )
+        Set<MavenProject> result = new LinkedHashSet<MavenProject>(  projects.size());
+        for ( MavenProject project : projects )
         {
-            final MavenProject project = it.next();
             final Artifact artifact = project.getArtifact();
 
-            if ( !filter.include( artifact ) )
+            if ( filter.include( artifact ) )
             {
-                it.remove();
+                result.add( project);
             }
         }
 
@@ -87,6 +88,7 @@ public final class FilterUtils
                 f.reportMissedCriteria( logger );
             }
         }
+        return result;
     }
 
     public static void filterArtifacts( final Set<Artifact> artifacts, final List<String> includes,
