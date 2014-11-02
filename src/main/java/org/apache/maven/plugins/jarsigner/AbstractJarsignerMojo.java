@@ -261,6 +261,7 @@ public abstract class AbstractJarsignerMojo
 
             if ( toolchain != null )
             {
+                getLog().info( "Toolchain in maven-jarsigner-plugin: " + toolchain );
                 jarSigner.setToolchain(toolchain);
             }
 
