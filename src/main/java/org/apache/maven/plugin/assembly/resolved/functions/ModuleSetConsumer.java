@@ -22,10 +22,10 @@ package org.apache.maven.plugin.assembly.resolved.functions;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
 
-public interface ResolvedModuleSetConsumer
+public interface ModuleSetConsumer
 {
-    void accept( ResolvedModuleSet resolvedModule )
+    void accept( ModuleSet resolvedModule )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 }

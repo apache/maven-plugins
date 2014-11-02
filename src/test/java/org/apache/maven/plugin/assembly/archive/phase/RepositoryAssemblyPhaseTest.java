@@ -32,7 +32,6 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Repository;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
@@ -84,8 +83,7 @@ public class RepositoryAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( ResolvedAssembly.create(
-                                                                                                                 assembly ),
+        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly,
                                                                                                              macArchiver.archiver,
                                                                                                              macCS.configSource );
 
@@ -130,7 +128,7 @@ public class RepositoryAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( ResolvedAssembly.create( assembly),
+        createPhase( macRepo.repositoryAssembler, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) ).execute( assembly,
                                                                                                              macArchiver.archiver,
                                                                                                              macCS.configSource );
 

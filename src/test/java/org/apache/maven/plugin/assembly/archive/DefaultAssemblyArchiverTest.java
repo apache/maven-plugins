@@ -30,17 +30,13 @@ import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.FileSet;
-import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.diags.NoOpArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -48,8 +44,6 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
-import org.codehaus.plexus.components.io.resources.PlexusIoResource;
-import org.codehaus.plexus.components.io.resources.PlexusIoResourceCollection;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
@@ -64,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -114,7 +107,7 @@ public class DefaultAssemblyArchiverTest
     @Test
     public void testCreateArchive()
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
-        IOException
+        IOException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -125,7 +118,7 @@ public class DefaultAssemblyArchiverTest
 
         final AssemblyArchiverPhase phase = mm.createControl().createMock(AssemblyArchiverPhase.class  );
 
-        phase.execute( (ResolvedAssembly)anyObject(), (Archiver)anyObject(), (AssemblerConfigurationSource)anyObject() );
+        phase.execute( (Assembly)anyObject(), (Archiver)anyObject(), (AssemblerConfigurationSource)anyObject() );
 
         final AssemblerConfigurationSource configSource =
             mm.createControl().createMock( AssemblerConfigurationSource.class );
@@ -164,15 +157,15 @@ public class DefaultAssemblyArchiverTest
         final Assembly assembly = new Assembly();
         assembly.setId( "id" );
 
-        try
-        {
-            expect( macMgr.dependencyResolver.resolve( assembly, configSource )).andReturn( new HashSet<Artifact>(  ) );
+       // try
+       // {
+   //         expect( macMgr.dependencyResolver.resolve( (Assembly) anyObject(), (AssemblerConfigurationSource) anyObject() )).andReturn( new HashSet<Artifact>(  ) );
 //            macMgr.dependencyResolverControl.setMatcher( MockControl.ALWAYS_MATCHER );
-        }
-        catch ( final DependencyResolutionException e )
-        {
-            fail( "Should never happen" );
-        }
+   //     }
+      //  catch ( final DependencyResolutionException e )
+       // {
+        //    fail( "Should never happen" );
+       // }
 
         mm.replayAll();
 
@@ -488,7 +481,7 @@ public class DefaultAssemblyArchiverTest
                                                    final List<AssemblyArchiverPhase> phases, Logger logger )
     {
         final DefaultAssemblyArchiver subject =
-            new DefaultAssemblyArchiver( macMgr.archiverManager, macMgr.dependencyResolver, phases );
+            new DefaultAssemblyArchiver( macMgr.archiverManager, phases );
 
         subject.setContainer( container );
 

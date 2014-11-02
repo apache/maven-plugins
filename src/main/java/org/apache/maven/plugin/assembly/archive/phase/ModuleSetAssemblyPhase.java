@@ -40,16 +40,17 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.format.ReaderFormatter;
+import org.apache.maven.plugin.assembly.model.Assemblies;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
-import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
-import org.apache.maven.plugin.assembly.resolved.functions.ResolvedModuleSetConsumer;
+import org.apache.maven.plugin.assembly.resolved.functions.ModuleSetConsumer;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
@@ -60,7 +61,6 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
@@ -87,6 +87,9 @@ public class ModuleSetAssemblyPhase
     @Requirement
     private ArchiverManager archiverManager;
 
+    @Requirement
+    private DependencyResolver dependencyResolver;
+
     /**
      * Create an instance.
      */
@@ -99,34 +102,35 @@ public class ModuleSetAssemblyPhase
      * @param projectBuilder The project builder.
      * @param logger The logger.
      */
-    public ModuleSetAssemblyPhase( final MavenProjectBuilder projectBuilder, final Logger logger )
+    public ModuleSetAssemblyPhase( final MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver, final Logger logger )
     {
         this.projectBuilder = projectBuilder;
+        this.dependencyResolver = dependencyResolver;
         enableLogging( logger );
     }
 
     /**
      * {@inheritDoc}
      */
-    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+    public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
-        assembly.forEachResolvedModule( new ResolvedModuleSetConsumer()
+        Assemblies.forEachResolvedModule(assembly, new ModuleSetConsumer()
         {
-            public void accept( ResolvedModuleSet resolvedModule )
+            public void accept( ModuleSet resolvedModule )
                 throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
             {
-                validate( resolvedModule.getModuleSet(), configSource );
+                validate( resolvedModule, configSource );
 
                 final Set<MavenProject> moduleProjects =
-                    getModuleProjects( resolvedModule.getModuleSet(), configSource, getLogger() );
+                    getModuleProjects( resolvedModule, configSource, getLogger() );
 
-                final ModuleSources sources = resolvedModule.getModuleSet().getSources();
+                final ModuleSources sources = resolvedModule.getSources();
                 addModuleSourceFileSets( sources, moduleProjects, archiver, configSource );
 
-                final ModuleBinaries binaries = resolvedModule.getModuleSet().getBinaries();
-                addModuleBinaries( resolvedModule, binaries, moduleProjects, archiver, configSource );
+                final ModuleBinaries binaries = resolvedModule.getBinaries();
+                addModuleBinaries( assembly, resolvedModule, binaries, moduleProjects, archiver, configSource );
             }
         } );
     }
@@ -172,7 +176,7 @@ public class ModuleSetAssemblyPhase
         }
     }
 
-    void addModuleBinaries( ResolvedModuleSet resolvedModule, final ModuleBinaries binaries,
+    void addModuleBinaries( final Assembly assembly, ModuleSet moduleSet, final ModuleBinaries binaries,
                             final Set<MavenProject> projects, final Archiver archiver,
                             final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
@@ -248,6 +252,17 @@ public class ModuleSetAssemblyPhase
 
         if ( depSets != null )
         {
+            Set<Artifact> resolved = null;
+            try
+            {
+                resolved =
+                    dependencyResolver.resolve( assembly, moduleSet, configSource );
+            }
+            catch ( DependencyResolutionException e )
+            {
+                throw new ArchiveCreationException( "While resolving dependencies:", e );
+            }
+
             for ( final DependencySet ds : depSets )
             {
                 // NOTE: Disabling useProjectArtifact flag, since module artifact has already been handled!
@@ -277,7 +292,7 @@ public class ModuleSetAssemblyPhase
                 getLogger().debug( "Processing binary dependencies for module project: " + moduleProject.getId() );
 
                 final AddDependencySetsTask task =
-                    new AddDependencySetsTask( depSets, resolvedModule.getArtifacts(), moduleProject, projectBuilder,
+                    new AddDependencySetsTask( depSets, resolved, moduleProject, projectBuilder,
                                                getLogger() );
 
                 task.setModuleProject( moduleProject );

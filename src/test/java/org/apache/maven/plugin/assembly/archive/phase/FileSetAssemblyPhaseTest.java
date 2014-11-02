@@ -30,7 +30,6 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlFor
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileSet;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
@@ -68,7 +67,7 @@ public class FileSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger ).execute( ResolvedAssembly.create( assembly ), macTask.archiver, macTask.configSource );
+        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -110,7 +109,7 @@ public class FileSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger ).execute( ResolvedAssembly.create( assembly), macTask.archiver, macTask.configSource );
+        createPhase( macLogger ).execute( assembly, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }

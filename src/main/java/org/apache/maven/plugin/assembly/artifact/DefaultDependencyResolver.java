@@ -45,7 +45,6 @@ import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.resolved.AssemblyId;
-import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
@@ -121,8 +120,8 @@ public class DefaultDependencyResolver
         return artifacts;
     }
 
-    public ResolvedModuleSet resolve( final Assembly assembly, ModuleSet moduleSet,
-                                      final AssemblerConfigurationSource configSource )
+    public Set<Artifact> resolve( final Assembly assembly, ModuleSet moduleSet,
+                                  final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
         final MavenProject currentProject = configSource.getProject();
@@ -133,10 +132,9 @@ public class DefaultDependencyResolver
         updateDependencySetResolutionRequirements( assembly.getDependencySets(), info, assemblyId, currentProject );
         updateModuleSetResolutionRequirements( assemblyId, moduleSet, info, configSource );
 
-        ResolvedModuleSet base = ResolvedModuleSet.createResolvedModuleSet( moduleSet );
         if ( !info.isResolutionRequired() )
         {
-            return base.withArtifacts( new HashSet<Artifact>() );
+            return new HashSet<Artifact>();
         }
 
         final List<ArtifactRepository> repos =
@@ -154,7 +152,7 @@ public class DefaultDependencyResolver
             artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
         }
 
-        return base.withArtifacts( artifacts );
+        return artifacts;
     }
 
     Set<Artifact> resolveNonTransitively( final Assembly assembly, final Set<Artifact> dependencyArtifacts,

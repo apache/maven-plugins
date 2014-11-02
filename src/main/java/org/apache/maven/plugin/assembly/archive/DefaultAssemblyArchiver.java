@@ -19,33 +19,18 @@ package org.apache.maven.plugin.assembly.archive;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.DebugConfigurationListener;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
-import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
-import org.apache.maven.plugin.assembly.model.ModuleSet;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
-import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.PlexusConstants;
@@ -79,6 +64,15 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Controller component designed to organize the many activities involved in creating an assembly archive. This includes
  * locating and configuring {@link Archiver} instances, executing multiple {@link AssemblyArchiverPhase} instances to
@@ -96,12 +90,10 @@ public class DefaultAssemblyArchiver
     @Requirement
     private ArchiverManager archiverManager;
 
-    @Requirement
-    private DependencyResolver dependencyResolver;
-
     @Requirement( role = AssemblyArchiverPhase.class )
     private List<AssemblyArchiverPhase> assemblyPhases;
 
+    @SuppressWarnings( "MismatchedQueryAndUpdateOfCollection" )
     @Requirement( role = ContainerDescriptorHandler.class )
     private Map<String, ContainerDescriptorHandler> containerDescriptorHandlers;
 
@@ -115,14 +107,11 @@ public class DefaultAssemblyArchiver
     // introduced for testing.
     /**
      * @param archiverManager The archive manager.
-     * @param resolver The {@link DependencyResolver}.
      * @param assemblyPhases The list of {@link AssemblyArchiverPhase}
      */
-    protected DefaultAssemblyArchiver( final ArchiverManager archiverManager, final DependencyResolver resolver,
-                                       final List<AssemblyArchiverPhase> assemblyPhases )
+    protected DefaultAssemblyArchiver( final ArchiverManager archiverManager, final List<AssemblyArchiverPhase> assemblyPhases )
     {
         this.archiverManager = archiverManager;
-        dependencyResolver = resolver;
         this.assemblyPhases = assemblyPhases;
     }
 
@@ -168,25 +157,9 @@ public class DefaultAssemblyArchiver
 
             archiver.setDestFile( destFile );
 
-            List<ResolvedModuleSet> resolvedModuleSets = new ArrayList<ResolvedModuleSet>();
-            for ( ModuleSet moduleSet : assembly.getModuleSets() )
-            {
-                resolvedModuleSets.add( dependencyResolver.resolve( assembly, moduleSet, configSource ) );
-            }
-
-            // OK, this piece of code contains all the stuff left after I extracted resolvedModuleSets.
-            // this can probably be simplified quite a lot, since the module sets now have their
-            // own artifact resolution.
-            final Set<Artifact> dependencySetArtifacts = dependencyResolver.resolve( assembly, configSource );
-
-            // CHECKSTYLE_OFF: LineLength
-            final ResolvedAssembly resolvedAssembly =
-                ResolvedAssembly.create( assembly ).withResolvedModuleSets( resolvedModuleSets ).withDependencySetArtifacts( dependencySetArtifacts );
-            // CHECKSTYLE_ON: LineLength
-
             for ( AssemblyArchiverPhase phase : assemblyPhases )
             {
-                phase.execute( resolvedAssembly, archiver, configSource );
+                phase.execute( assembly, archiver, configSource );
             }
 
             archiver.createArchive();
