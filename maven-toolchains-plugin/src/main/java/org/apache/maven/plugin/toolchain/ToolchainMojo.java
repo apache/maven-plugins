@@ -140,6 +140,7 @@ public class ToolchainMojo
         throws MojoExecutionException
     {
         getLog().info( "Required toolchain: " + getToochainRequirementAsString( type, params ) );
+        boolean typeFound = false;
 
         try
         {
@@ -147,8 +148,15 @@ public class ToolchainMojo
 
             for ( ToolchainPrivate tc : tcs )
             {
-                if ( type.equals( tc.getType() ) // useful because of MNG-5716
-                                && tc.matchesRequirements( params ) )
+                if ( !type.equals( tc.getType() ) )
+                {
+                    // useful because of MNG-5716
+                    continue;
+                }
+
+                typeFound = true;
+
+                if ( tc.matchesRequirements( params ) )
                 {
                     getLog().info( "Found matching toolchain for type " + type + ": " + tc );
 
@@ -164,7 +172,7 @@ public class ToolchainMojo
             throw new MojoExecutionException( "Misconfigured toolchains.", ex );
         }
 
-        getLog().error( "No toolchain matched for type " + type );
+        getLog().error( "No toolchain " + ( typeFound ? "matched" : "found" ) + " for type " + type );
 
         return false;
     }
