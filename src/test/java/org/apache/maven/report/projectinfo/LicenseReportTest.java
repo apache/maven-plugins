@@ -64,7 +64,9 @@ public class LicenseReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.license.title" ), response.getTitle() );
+        String expectedTitle = prepareTitle( getString( "report.license.name" ),
+            getString( "report.license.title" ) );
+        assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
@@ -78,7 +80,7 @@ public class LicenseReportTest
         assertEquals( 1, links.length );
         assertEquals( "http://maven.apache.org/", links[0].getURLString() );
     }
-    
+
     public void testReportLinksOnly()
         throws Exception
     {
@@ -97,7 +99,9 @@ public class LicenseReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.license.title" ), response.getTitle() );
+        String expectedTitle = prepareTitle( getString( "report.license.name" ),
+            getString( "report.license.title" ) );
+        assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();

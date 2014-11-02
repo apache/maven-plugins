@@ -67,7 +67,9 @@ public class TeamListReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        assertEquals( getString( "report.team-list.title" ), response.getTitle() );
+        String expectedTitle = prepareTitle( getString( "report.team-list.name" ),
+            getString( "report.team-list.title" ) );
+        assertEquals( expectedTitle, response.getTitle() );
 
         assertTrue( response.getText().contains( "gravatar" ));
 
