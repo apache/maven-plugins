@@ -102,21 +102,7 @@ public class ToolchainMojo
             for ( String type : nonMatchedTypes )
             {
                 buff.append( '\n' );
-                buff.append( type );
-
-                Map<String, String> params = toolchains.getParams( type );
-
-                if ( params.size() > 0 )
-                {
-                    buff.append( " [" );
-
-                    for ( Map.Entry<String, String> param : params.entrySet() )
-                    {
-                        buff.append( " " ).append( param.getKey() ).append( "='" ).append( param.getValue() );
-                        buff.append( "'" );
-                    }
-                    buff.append( " ]" );
-                }
+                buff.append( getToochainRequirementAsString( type, toolchains.getParams( type ) ) );
             }
 
             getLog().error( buff.toString() );
@@ -126,10 +112,34 @@ public class ToolchainMojo
         }
     }
 
+    protected String getToochainRequirementAsString( String type, Map<String, String> params )
+    {
+        StringBuilder buff = new StringBuilder();
+
+        buff.append( type ).append( " [" );
+
+        if ( params.size() == 0 )
+        {
+            buff.append( " any" );
+        }
+        else
+        {
+            for ( Map.Entry<String, String> param : params.entrySet() )
+            {
+                buff.append( " " ).append( param.getKey() ).append( "='" ).append( param.getValue() );
+                buff.append( "'" );
+            }
+        }
+
+        buff.append( " ]" );
+
+        return buff.toString();
+    }
+
     protected boolean selectToolchain( String type, Map<String, String> params )
         throws MojoExecutionException
     {
-        getLog().info( "Required toolchain type: " + type );
+        getLog().info( "Required toolchain: " + getToochainRequirementAsString( type, params ) );
 
         try
         {
@@ -139,7 +149,7 @@ public class ToolchainMojo
             {
                 if ( tc.matchesRequirements( params ) )
                 {
-                    getLog().info( "Toolchain (" + type + ") matched: " + tc );
+                    getLog().info( "Found matching toolchain for type " + type + ": " + tc );
 
                     // store matching toolchain to build context
                     toolchainManagerPrivate.storeToolchainToBuildContext( tc, session );
@@ -152,6 +162,8 @@ public class ToolchainMojo
         {
             throw new MojoExecutionException( "Misconfigured toolchains.", ex );
         }
+
+        getLog().error( "No toolchain matched for type " + type );
 
         return false;
     }
