@@ -27,8 +27,10 @@ Standard Toolchains
 
   The following standard toolchains are included by default with Maven:
 
-  * {{{./jdk.html}JDK}} - Defines the Java Development Kit location and identification
+  * {{{./jdk.html}JDK}} - Defines the location and identification of a Java
+    Development Kit
 
   []
 
-    You may also create and use your own custom toolchains by following the {{{http://maven.apache.org/}TBD}} instructions.
+  You can also create and use your own custom toolchains by following the
+  {{{http://maven.apache.org/}TBD}} instructions.
