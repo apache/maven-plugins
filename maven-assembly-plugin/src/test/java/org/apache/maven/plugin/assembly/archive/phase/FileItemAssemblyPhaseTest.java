@@ -27,7 +27,6 @@ import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
@@ -76,7 +75,7 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly ), null, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, null, macCS.configSource );
 
         mm.verifyAll();
     }
@@ -121,7 +120,7 @@ public class FileItemAssemblyPhaseTest
         
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
 
         mm.verifyAll();
     }
@@ -166,7 +165,7 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
 
         mm.verifyAll();
     }
@@ -239,7 +238,7 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
 
         mm.verifyAll();
     }
@@ -315,7 +314,7 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
 
         mm.verifyAll();
     }
@@ -389,7 +388,7 @@ public class FileItemAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( macLogger.logger ).execute( ResolvedAssembly.create( assembly), macArchiver.archiver, macCS.configSource );
+        createPhase( macLogger.logger ).execute( assembly, macArchiver.archiver, macCS.configSource );
 
         mm.verifyAll();
     }

@@ -19,12 +19,15 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddDependencySetsTask;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -33,9 +36,11 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
+import java.util.Set;
+
 /**
  * Handles the top-level &lt;dependencySets/&gt; section of the assembly descriptor.
- * 
+ *
  * @version $Id$
  */
 @Component( role = AssemblyArchiverPhase.class, hint = "dependency-sets" )
@@ -50,6 +55,10 @@ public class DependencySetAssemblyPhase
     @Requirement
     private ArchiverManager archiverManager;
 
+    @Requirement
+    private DependencyResolver dependencyResolver;
+
+
     /**
      * Default constructor.
      */
@@ -60,24 +69,28 @@ public class DependencySetAssemblyPhase
 
     /**
      * @param projectBuilder The Maven Project Builder.
-     * @param logger The Logger.
+     * @param logger         The Logger.
      */
-    public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, final Logger logger )
+    public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver, final Logger logger )
     {
         this.projectBuilder = projectBuilder;
+        this.dependencyResolver = dependencyResolver;
         enableLogging( logger );
     }
 
     /**
      * {@inheritDoc}
      */
-    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+    public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
+
+        Set<Artifact> resolved = dependencyResolver.resolve( assembly, configSource );
         final AddDependencySetsTask task =
-            new AddDependencySetsTask( assembly.getDependencySets(), assembly.getResolvedDependencySetArtifacts(),
-                                       configSource.getProject(), projectBuilder, getLogger() );
+            new AddDependencySetsTask( assembly.getDependencySets(), resolved, configSource.getProject(),
+                                       projectBuilder, getLogger() );
 
         task.execute( archiver, configSource );
     }
