@@ -140,7 +140,7 @@ public class ToolchainMojo
         throws MojoExecutionException
     {
         getLog().info( "Required toolchain: " + getToochainRequirementAsString( type, params ) );
-        boolean typeFound = false;
+        int typeFound = 0;
 
         try
         {
@@ -154,7 +154,7 @@ public class ToolchainMojo
                     continue;
                 }
 
-                typeFound = true;
+                typeFound++;
 
                 if ( tc.matchesRequirements( params ) )
                 {
@@ -172,7 +172,8 @@ public class ToolchainMojo
             throw new MojoExecutionException( "Misconfigured toolchains.", ex );
         }
 
-        getLog().error( "No toolchain " + ( typeFound ? "matched" : "found" ) + " for type " + type );
+        getLog().error( "No toolchain " + ( ( typeFound == 0 ) ? "found" : ( "matched from " + typeFound + " found" ) )
+                            + " for type " + type );
 
         return false;
     }
