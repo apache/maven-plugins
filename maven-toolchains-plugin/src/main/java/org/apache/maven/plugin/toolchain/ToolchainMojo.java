@@ -102,7 +102,7 @@ public class ToolchainMojo
             for ( String type : nonMatchedTypes )
             {
                 buff.append( '\n' );
-                buff.append( getToochainRequirementAsString( type, toolchains.getParams( type ) ) );
+                buff.append( getToolchainRequirementAsString( type, toolchains.getParams( type ) ) );
             }
 
             getLog().error( buff.toString() );
@@ -112,7 +112,7 @@ public class ToolchainMojo
         }
     }
 
-    protected String getToochainRequirementAsString( String type, Map<String, String> params )
+    protected String getToolchainRequirementAsString( String type, Map<String, String> params )
     {
         StringBuilder buff = new StringBuilder();
 
@@ -139,7 +139,7 @@ public class ToolchainMojo
     protected boolean selectToolchain( String type, Map<String, String> params )
         throws MojoExecutionException
     {
-        getLog().info( "Required toolchain: " + getToochainRequirementAsString( type, params ) );
+        getLog().info( "Required toolchain: " + getToolchainRequirementAsString( type, params ) );
         int typeFound = 0;
 
         try
