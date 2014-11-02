@@ -146,9 +146,10 @@ public class ModulesReport
                         setDistMgmntSiteUrl( moduleModel, module.toString() );
                     }
 
+                    final String moduleName = name( moduleModel );
                     final String moduleHref = getRelativeLink( baseUrl, getDistMgmntSiteUrl( moduleModel ), moduleModel.getArtifactId() );
 
-                    tableRow( new String[] {linkedName( moduleModel.getName(), moduleHref ), moduleModel.getDescription()} );
+                    tableRow( new String[] {linkedName( moduleName, moduleHref ), moduleModel.getDescription()} );
 
                 }
 
@@ -219,6 +220,19 @@ public class ModulesReport
             {
                 return url; // this will then throw somewhere else
             }
+        }
+
+        private static String name( final Model model )
+        {
+            String name = model.getName();
+
+            if ( name == null )
+            {
+                name = "Unnamed &#x2013; " + model.getGroupId() + ":" + model.getArtifactId() + ":"
+                        + model.getPackaging() + ":" + model.getVersion();
+            }
+
+            return name;
         }
 
         // adapted from DefaultSiteTool#appendMenuItem
