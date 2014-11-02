@@ -53,6 +53,7 @@ under the License.
               <attribute>value</attribute>
               <other-attribute>other-value</other-attribute>
             </fake-type>
+            <another-fake-type/>
           </toolchains>
         </configuration>
       </plugin>
