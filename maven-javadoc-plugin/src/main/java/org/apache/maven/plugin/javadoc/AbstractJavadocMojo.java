@@ -3494,7 +3494,7 @@ public abstract class AbstractJavadocMojo
 
         if ( tc != null )
         {
-            getLog().info( "Toolchain in javadoc-plugin: " + tc );
+            getLog().info( "Toolchain in maven-javadoc-plugin: " + tc );
             if ( javadocExecutable != null )
             {
                 getLog().warn( "Toolchains are ignored, 'javadocExecutable' parameter is set to " + javadocExecutable );
