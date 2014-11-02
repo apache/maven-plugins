@@ -77,8 +77,8 @@ Sample Plugin Configuration
 +---+
 <project>
   [...]
-  <plugins>
-    <build>
+  <build>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-toolchains-plugin</artifactId>
