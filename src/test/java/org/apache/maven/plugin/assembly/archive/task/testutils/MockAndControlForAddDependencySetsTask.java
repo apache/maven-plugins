@@ -20,7 +20,9 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  */
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -28,6 +30,11 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
+import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -56,6 +63,9 @@ public class MockAndControlForAddDependencySetsTask
 
     private final MavenProject project;
 
+    public final DependencyResolver dependencyResolver;
+
+
     public MockAndControlForAddDependencySetsTask( final EasyMockSupport mockManager )
     {
         this( mockManager, null );
@@ -72,6 +82,9 @@ public class MockAndControlForAddDependencySetsTask
         projectBuilder = mockManager.createMock(MavenProjectBuilder.class);
 
         archiverManager = mockManager.createMock(ArchiverManager.class);
+
+        dependencyResolver = mockManager.createMock( DependencyResolver.class);
+
 
         enableDefaultExpectations();
     }
@@ -205,5 +218,15 @@ public class MockAndControlForAddDependencySetsTask
     {
         expect(configSource.getMavenSession()).andReturn( session ).anyTimes();
     }
+
+    public void expectResolveDependencySets()
+        throws DependencyResolutionException
+    {
+        expect( dependencyResolver.resolveDependencySets( (Assembly) anyObject(),
+                                                          (AssemblerConfigurationSource) anyObject(), (List<DependencySet>) anyObject() ))
+            .andReturn( new LinkedHashMap<DependencySet, Set<Artifact>>(  ) ).anyTimes();
+
+    }
+
 
 }

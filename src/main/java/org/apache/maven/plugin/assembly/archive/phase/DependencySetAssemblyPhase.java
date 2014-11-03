@@ -28,6 +28,7 @@ import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -36,6 +37,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -87,11 +90,15 @@ public class DependencySetAssemblyPhase
         DependencyResolutionException
     {
 
-        Set<Artifact> resolved = dependencyResolver.resolve( assembly, configSource );
-        final AddDependencySetsTask task =
-            new AddDependencySetsTask( assembly.getDependencySets(), resolved, configSource.getProject(),
-                                       projectBuilder, getLogger() );
+        Map<DependencySet, Set<Artifact>>
+            resolved = dependencyResolver.resolveDependencySets( assembly, configSource, assembly.getDependencySets() );
+        for ( Map.Entry<DependencySet, Set<Artifact>> dependencySetSetEntry : resolved.entrySet() )
+        {
+            final AddDependencySetsTask task =
+                new AddDependencySetsTask( Collections.singletonList(dependencySetSetEntry.getKey()), dependencySetSetEntry.getValue(), configSource.getProject(),
+                                           projectBuilder, getLogger() );
 
-        task.execute( archiver, configSource );
+            task.execute( archiver, configSource );
+        }
     }
 }

@@ -305,9 +305,10 @@ public class ModuleSetAssemblyPhaseTest
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
+        macTask.expectResolveDependencySets();
         mm.replayAll();
 
-        final ModuleSetAssemblyPhase phase = createPhase( logger, null );
+        final ModuleSetAssemblyPhase phase = createPhase( logger, macTask.dependencyResolver, null);
         phase.execute( assembly, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
@@ -383,11 +384,13 @@ public class ModuleSetAssemblyPhaseTest
 
         final Set<MavenProject> projects = singleton( project );
 
+        macTask.expectResolveDependencySets();
+
         mm.replayAll();
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        createPhase( logger, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
+        createPhase( logger, macTask.dependencyResolver, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -462,13 +465,15 @@ public class ModuleSetAssemblyPhaseTest
 
         final Set<MavenProject> projects = singleton( project );
 
+        macTask.expectResolveDependencySets();
+
         mm.replayAll();
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         Assembly assembly = new Assembly();
 
-        createPhase( logger, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
+        createPhase( logger, macTask.dependencyResolver, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -870,4 +875,8 @@ public class ModuleSetAssemblyPhaseTest
         return new ModuleSetAssemblyPhase( projectBuilder, dr, logger );
     }
 
+    private ModuleSetAssemblyPhase createPhase( final Logger logger, DependencyResolver dr, MavenProjectBuilder projectBuilder1 )
+    {
+        return new ModuleSetAssemblyPhase( projectBuilder1, dr, logger );
+    }
 }
