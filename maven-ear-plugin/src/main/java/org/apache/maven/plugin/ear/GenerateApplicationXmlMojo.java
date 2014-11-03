@@ -42,7 +42,9 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo(
+    name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, 
+    threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {

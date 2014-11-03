@@ -30,84 +30,84 @@ public class JavaEEVersionTest
 
     public void testGtSameVersion()
     {
-        assertFalse( JavaEEVersion.Five.gt( JavaEEVersion.Five ) );
+        assertFalse( JavaEEVersion.FIVE.gt( JavaEEVersion.FIVE ) );
     }
 
     public void testGtNextVersion()
     {
-        assertFalse( JavaEEVersion.Five.gt( JavaEEVersion.Six ) );
+        assertFalse( JavaEEVersion.FIVE.gt( JavaEEVersion.SIX ) );
     }
 
     public void testGtPreviousVersion()
     {
-        assertTrue( JavaEEVersion.Five.gt( JavaEEVersion.OneDotFour ) );
+        assertTrue( JavaEEVersion.FIVE.gt( JavaEEVersion.ONE_DOT_FOUR ) );
     }
 
     public void testGeSameVersion()
     {
-        assertTrue( JavaEEVersion.Five.ge( JavaEEVersion.Five ) );
+        assertTrue( JavaEEVersion.FIVE.ge( JavaEEVersion.FIVE ) );
     }
 
     public void testGePreviousVersion()
     {
-        assertTrue( JavaEEVersion.Five.ge( JavaEEVersion.OneDotFour ) );
+        assertTrue( JavaEEVersion.FIVE.ge( JavaEEVersion.ONE_DOT_FOUR ) );
     }
 
     public void testGeNextVersion()
     {
-        assertFalse( JavaEEVersion.Five.ge( JavaEEVersion.Six ) );
+        assertFalse( JavaEEVersion.FIVE.ge( JavaEEVersion.SIX ) );
     }
 
     public void testLtSameVersion()
     {
-        assertFalse( JavaEEVersion.Five.lt( JavaEEVersion.Five ) );
+        assertFalse( JavaEEVersion.FIVE.lt( JavaEEVersion.FIVE ) );
     }
 
     public void testLtPreviousVersion()
     {
-        assertFalse( JavaEEVersion.Five.lt( JavaEEVersion.OneDotFour ) );
+        assertFalse( JavaEEVersion.FIVE.lt( JavaEEVersion.ONE_DOT_FOUR ) );
     }
 
     public void testLtNextVersion()
     {
-        assertTrue( JavaEEVersion.Five.lt( JavaEEVersion.Six ) );
+        assertTrue( JavaEEVersion.FIVE.lt( JavaEEVersion.SIX ) );
     }
 
     public void testLeSameVersion()
     {
-        assertTrue( JavaEEVersion.Five.le( JavaEEVersion.Five ) );
+        assertTrue( JavaEEVersion.FIVE.le( JavaEEVersion.FIVE ) );
     }
 
     public void testLePreviousVersion()
     {
-        assertFalse( JavaEEVersion.Five.le( JavaEEVersion.OneDotFour ) );
+        assertFalse( JavaEEVersion.FIVE.le( JavaEEVersion.ONE_DOT_FOUR ) );
     }
 
     public void testLeNextVersion()
     {
-        assertTrue( JavaEEVersion.Five.le( JavaEEVersion.Six ) );
+        assertTrue( JavaEEVersion.FIVE.le( JavaEEVersion.SIX ) );
     }
 
     public void testEqSameVersion()
     {
-        assertTrue( JavaEEVersion.Five.eq( JavaEEVersion.Five ) );
+        assertTrue( JavaEEVersion.FIVE.eq( JavaEEVersion.FIVE ) );
     }
 
     public void testEqAnotherVersion()
     {
-        assertFalse( JavaEEVersion.Five.eq( JavaEEVersion.OneDotThree ) );
+        assertFalse( JavaEEVersion.FIVE.eq( JavaEEVersion.ONE_DOT_THREE ) );
     }
 
     public void testGetVersion()
     {
-        assertEquals( "5", JavaEEVersion.Five.getVersion() );
+        assertEquals( "5", JavaEEVersion.FIVE.getVersion() );
     }
 
     public void testGetJavaEEVersionValid()
     {
         try
         {
-            assertEquals( JavaEEVersion.Six, JavaEEVersion.getJavaEEVersion( "6" ) );
+            assertEquals( JavaEEVersion.SIX, JavaEEVersion.getJavaEEVersion( "6" ) );
         }
         catch ( InvalidJavaEEVersion invalidJavaEEVersion )
         {

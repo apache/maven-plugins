@@ -41,32 +41,32 @@ public class JavaEEVersion
 
     private static final String VERSION_7 = "7";
 
-    private static final Map<String, JavaEEVersion> versionsMap = new HashMap<String, JavaEEVersion>();
+    private static final Map<String, JavaEEVersion> VERSION_MAP = new HashMap<String, JavaEEVersion>();
 
     /**
      * Represents the J2EE 1.3 version.
      */
-    public static final JavaEEVersion OneDotThree = new JavaEEVersion( Integer.valueOf( 0 ), VERSION_1_3 );
+    public static final JavaEEVersion ONE_DOT_THREE = new JavaEEVersion( Integer.valueOf( 0 ), VERSION_1_3 );
 
     /**
      * Represents the J2EE 1.4 version.
      */
-    public static final JavaEEVersion OneDotFour = new JavaEEVersion( Integer.valueOf( 1 ), VERSION_1_4 );
+    public static final JavaEEVersion ONE_DOT_FOUR = new JavaEEVersion( Integer.valueOf( 1 ), VERSION_1_4 );
 
     /**
      * Represents the JavaEE 5 version.
      */
-    public static final JavaEEVersion Five = new JavaEEVersion( Integer.valueOf( 2 ), VERSION_5 );
+    public static final JavaEEVersion FIVE = new JavaEEVersion( Integer.valueOf( 2 ), VERSION_5 );
 
     /**
      * Represents the JavaEE 6 version.
      */
-    public static final JavaEEVersion Six = new JavaEEVersion( Integer.valueOf( 3 ), VERSION_6 );
+    public static final JavaEEVersion SIX = new JavaEEVersion( Integer.valueOf( 3 ), VERSION_6 );
 
     /**
      * Represents the JavaEE 7 version.
      */
-    public static final JavaEEVersion Seven = new JavaEEVersion( Integer.valueOf( 4 ), VERSION_7 );
+    public static final JavaEEVersion SEVEN = new JavaEEVersion( Integer.valueOf( 4 ), VERSION_7 );
 
     private final Integer index;
 
@@ -76,7 +76,7 @@ public class JavaEEVersion
     {
         this.index = index;
         this.version = version;
-        versionsMap.put( version, this );
+        VERSION_MAP.put( version, this );
     }
 
     public static JavaEEVersion getJavaEEVersion( String version )
@@ -86,7 +86,7 @@ public class JavaEEVersion
         {
             throw new InvalidJavaEEVersion( "Invalid version [" + version + "]", version );
         }
-        return versionsMap.get( version );
+        return VERSION_MAP.get( version );
     }
 
     /**

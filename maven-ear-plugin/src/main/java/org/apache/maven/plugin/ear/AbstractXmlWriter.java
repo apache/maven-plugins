@@ -56,7 +56,9 @@ abstract class AbstractXmlWriter
         }
         catch ( IOException ex )
         {
+            // CHECKSTYLE_OFF: LineLength
             throw new EarPluginException( "Exception while opening file[" + destinationFile.getAbsolutePath() + "]", ex );
+            // CHECKSTYLE_ON: LineLength
         }
     }
 
