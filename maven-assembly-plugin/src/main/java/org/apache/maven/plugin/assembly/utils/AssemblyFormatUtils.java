@@ -33,6 +33,8 @@ import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -299,10 +301,10 @@ public final class AssemblyFormatUtils
      * <li>environment variables.</li>
      * </ol>
      */
-    public static String evaluateFileNameMapping( final String expression, final Artifact artifact,
-                                                  final MavenProject mainProject, final MavenProject moduleProject,
-                                                  final Artifact moduleArtifact, final MavenProject artifactProject,
-                                                  final AssemblerConfigurationSource configSource )
+    public static String evaluateFileNameMapping( final String expression, @Nonnull final Artifact artifact,
+                                                  @Nullable final MavenProject mainProject, @Nullable final MavenProject moduleProject,
+                                                  @Nullable final Artifact moduleArtifact, @Nullable final MavenProject artifactProject,
+                                                  @Nullable final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         String value = expression;
@@ -461,7 +463,7 @@ public final class AssemblyFormatUtils
         return value;
     }
 
-    public static String fixRelativeRefs( String src )
+    public static @Nonnull String fixRelativeRefs( @Nonnull String src )
     {
         String value = src;
 
