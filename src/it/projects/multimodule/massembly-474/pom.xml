@@ -38,8 +38,8 @@ under the License.
 	
   </build>
   <modules>
-  	<module>modul-client</module>
-  	<module>modul-server</module>
-  	<module>distribution</module>
+  	<module>child-client</module>
+  	<module>child-server</module>
+  	<module>descriptor</module>
   </modules>
 </project>
