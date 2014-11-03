@@ -101,7 +101,7 @@ public class DefaultDependencyResolverTest
 
         final Assembly assembly = new Assembly();
         new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateDependencySetResolutionRequirements(
-            depSets,
+            ds1,
                 info, AssemblyId.createAssemblyId( assembly),
                 project);
 
@@ -163,34 +163,34 @@ public class DefaultDependencyResolverTest
 
         final List<ModuleSet> moduleSets = new ArrayList<ModuleSet>();
 
+        final ModuleSet ms1 = new ModuleSet();
+        final DependencySet ds1 = new DependencySet();
         {
-            final ModuleSet ms = new ModuleSet();
-            ms.addInclude( "*module1*" );
-            ms.setIncludeSubModules( false );
+            ms1.addInclude( "*module1*" );
+            ms1.setIncludeSubModules( false );
 
             final ModuleBinaries mb = new ModuleBinaries();
 
-            final DependencySet ds = new DependencySet();
-            ds.setScope( Artifact.SCOPE_COMPILE );
+            ds1.setScope( Artifact.SCOPE_COMPILE );
 
-            mb.addDependencySet( ds );
-            ms.setBinaries( mb );
-            moduleSets.add( ms );
+            mb.addDependencySet( ds1 );
+            ms1.setBinaries( mb );
+            moduleSets.add( ms1 );
         }
 
+        final ModuleSet ms2 = new ModuleSet();
+        final DependencySet ds2 = new DependencySet();
         {
-            final ModuleSet ms = new ModuleSet();
-            ms.addInclude( "main-group:*" );
-            ms.setIncludeSubModules( true );
+            ms2.addInclude( "main-group:*" );
+            ms2.setIncludeSubModules( true );
 
             final ModuleBinaries mb = new ModuleBinaries();
 
-            final DependencySet ds = new DependencySet();
-            ds.setScope( Artifact.SCOPE_TEST );
+            ds2.setScope( Artifact.SCOPE_TEST );
 
-            mb.addDependencySet( ds );
-            ms.setBinaries( mb );
-            moduleSets.add( ms );
+            mb.addDependencySet( ds2 );
+            ms2.setBinaries( mb );
+            moduleSets.add( ms2 );
         }
 
         mm.replayAll();
@@ -202,7 +202,8 @@ public class DefaultDependencyResolverTest
         final Assembly assembly = new Assembly();
         assembly.setModuleSets( moduleSets );
 
-        resolver.updateModuleSetResolutionRequirements(assembly, info, cs);
+        resolver.updateModuleSetResolutionRequirements(AssemblyId.createAssemblyId( assembly), ms1, ds1, info, cs);
+        resolver.updateModuleSetResolutionRequirements(AssemblyId.createAssemblyId( assembly ), ms2, ds2, info, cs);
 
         assertTrue( info.isResolutionRequired() );
 
