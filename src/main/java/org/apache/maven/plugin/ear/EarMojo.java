@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.EarMavenArchiver;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
+import org.apache.maven.plugin.ear.util.ModuleIdentifierValidator;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -58,6 +59,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipException;
 
 /**
@@ -254,6 +258,45 @@ public class EarMojo
     @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "true" )
     private boolean useJvmChmod = true;
 
+    /**
+     * The list of artifacts is checked and if you set this to {@code true}
+     * the build will fail if duplicate artifacts have been found within
+     * the build configuration.
+     * 
+     * @since 2.10
+     */
+    //TODO: This can be removed if we change to full unique identifiers in EAR (next major version!)
+    @Parameter( defaultValue = "false", property = "maven.ear.duplicateArtifactsBreakTheBuild" )
+    private boolean duplicateArtifactsBreakTheBuild;
+    
+    private void checkModuleUniqueness()
+        throws MojoExecutionException
+    {
+        ModuleIdentifierValidator miv = new ModuleIdentifierValidator( getModules() );
+        miv.checkForDuplicateArtifacts();
+        if ( miv.existDuplicateArtifacts() )
+        {
+            Map<String, List<EarModule>> duplicateArtifacts = miv.getDuplicateArtifacts();
+            for ( Entry<String, List<EarModule>> entry : duplicateArtifacts.entrySet() )
+            {
+                getLog().warn( "The artifactId " + entry.getKey() + " exists more than once in the modules list." );
+                for ( EarModule earModule : entry.getValue() )
+                {
+                    getLog().warn( " --> " + earModule.getArtifact().getId() + " (" + earModule.getType() + ")" );
+                }
+            }
+            
+            getLog().warn("HINT: This can be simply solved by using the <fileNameMapping>full</fileNameMapping>");
+
+            if ( duplicateArtifactsBreakTheBuild )
+            {
+                throw new MojoExecutionException(
+                                                  "The build contains duplicate artifacts which result in unpredictable ear content." );
+            }
+        }
+
+    }
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -284,6 +327,12 @@ public class EarMojo
         // Copy modules
         try
         {
+            // TODO: With the next major release the modules
+            // should be identified by a unique id instead of the
+            // the artifactId's only which means this
+            // check can be removed.
+            checkModuleUniqueness();
+
             for ( EarModule module : getModules() )
             {
                 if ( module instanceof JavaModule )
@@ -707,10 +756,10 @@ public class EarMojo
 
                     if ( module.getLibDir() != null )
                     {
-                        //MEAR-189:
-                        //We use the original name, cause in case of fileNameMapping to no-version/full 
-                        //we could not not delete it and it will end up in the resulting EAR and the WAR 
-                        //will not be cleaned up.
+                        // MEAR-189:
+                        // We use the original name, cause in case of fileNameMapping to no-version/full
+                        // we could not not delete it and it will end up in the resulting EAR and the WAR
+                        // will not be cleaned up.
                         File artifact =
                             new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
 
