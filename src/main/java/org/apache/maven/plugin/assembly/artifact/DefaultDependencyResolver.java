@@ -105,8 +105,8 @@ public class DefaultDependencyResolver
             final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
             updateRepositoryResolutionRequirements( assembly, info );
             final AssemblyId assemblyId = AssemblyId.createAssemblyId( assembly );
-            updateDependencySetResolutionRequirements( assembly.getDependencySets(), info, assemblyId, currentProject );
-            updateModuleSetResolutionRequirements( assemblyId, moduleSet, info, configSource );
+            updateDependencySetResolutionRequirements( dependencySet, info, assemblyId, currentProject );
+            updateModuleSetResolutionRequirements( assemblyId, moduleSet, dependencySet, info, configSource );
 
             Set<Artifact> artifacts;
             if ( info.isResolutionRequired() )
@@ -284,23 +284,8 @@ public class DefaultDependencyResolver
         }
     }
 
-    void updateModuleSetResolutionRequirements( final Assembly assembly, final ResolutionManagementInfo requirements,
-                                                final AssemblerConfigurationSource configSource )
-        throws DependencyResolutionException
-    {
-        final List<ModuleSet> moduleSets = assembly.getModuleSets();
 
-        if ( moduleSets != null && !moduleSets.isEmpty() )
-        {
-            for ( final ModuleSet set : moduleSets )
-            {
-                updateModuleSetResolutionRequirements( AssemblyId.createAssemblyId( assembly.getId() ), set,
-                                                       requirements, configSource );
-            }
-        }
-    }
-
-    void updateModuleSetResolutionRequirements( AssemblyId assemblyId, ModuleSet set,
+    void updateModuleSetResolutionRequirements( AssemblyId assemblyId, ModuleSet set, DependencySet dependencySet,
                                                 final ResolutionManagementInfo requirements,
                                                 final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
@@ -339,59 +324,9 @@ public class DefaultDependencyResolver
 
             if ( binaries.isIncludeDependencies() )
             {
-                updateDependencySetResolutionRequirements( ModuleSetAssemblyPhase.getDependencySets( binaries ),
+                updateDependencySetResolutionRequirements( dependencySet,
                                                            requirements, assemblyId,
                                                            projects.toArray( new MavenProject[projects.size()] ) );
-            }
-        }
-    }
-
-    @SuppressWarnings( "unchecked" )
-    void updateDependencySetResolutionRequirements( final List<DependencySet> depSets,
-                                                    final ResolutionManagementInfo requirements, AssemblyId assemblyId,
-                                                    final MavenProject... projects )
-        throws DependencyResolutionException
-    {
-        if ( depSets != null && !depSets.isEmpty() )
-        {
-            requirements.setResolutionRequired( true );
-
-            for ( final DependencySet set : depSets )
-            {
-                // Surely this must be a bug, if there's multiple depSets with different isUseTransitiveDependencies
-                // Yes; this is MASSEMBLY-619, possibly others. Methods using this version should probably be axed
-                // MASSEMBLY-619 is now delegated to different overload.
-                // This probably means there is a parallel bleed between dependencies for module sets.
-                requirements.setResolvedTransitively( set.isUseTransitiveDependencies() );
-
-                enableScope( set.getScope(), requirements );
-            }
-
-            for ( final MavenProject project : projects )
-            {
-                if ( project == null )
-                {
-                    continue;
-                }
-
-                Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
-                if ( dependencyArtifacts == null )
-                {
-                    try
-                    {
-                        dependencyArtifacts = project.createArtifacts( factory, null, requirements.getScopeFilter() );
-                        project.setDependencyArtifacts( dependencyArtifacts );
-                    }
-                    catch ( final InvalidDependencyVersionException e )
-                    {
-                        throw new DependencyResolutionException(
-                            "Failed to create dependency artifacts for resolution. Assembly: " + assemblyId, e );
-                    }
-                }
-
-                requirements.addArtifacts( dependencyArtifacts );
-                getLogger().debug( "Dependencies for project: " + project.getId() + " are:\n" + StringUtils.join(
-                    dependencyArtifacts.iterator(), "\n" ) );
             }
         }
     }

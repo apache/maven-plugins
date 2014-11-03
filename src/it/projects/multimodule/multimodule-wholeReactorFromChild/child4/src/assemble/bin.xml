@@ -39,7 +39,7 @@ under the License.
       <binaries>
         <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
         <outputDirectory>lib</outputDirectory>
-        <includeDependencies>true</includeDependencies>
+        <includeDependencies>false</includeDependencies>
         <unpack>false</unpack>
       </binaries>
     </moduleSet>
