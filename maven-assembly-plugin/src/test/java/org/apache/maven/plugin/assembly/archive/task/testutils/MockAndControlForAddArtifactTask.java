@@ -20,11 +20,19 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  */
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
+import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
@@ -45,6 +53,8 @@ public class MockAndControlForAddArtifactTask
 
     private MavenProject project = null;
 
+    public final  DependencyResolver dependencyResolver;
+
     public MockAndControlForAddArtifactTask( final EasyMockSupport mockManager )
     {
         this( mockManager, null );
@@ -56,6 +66,7 @@ public class MockAndControlForAddArtifactTask
 
         archiver = mockManager.createMock(Archiver.class);
         configSource = mockManager.createMock(AssemblerConfigurationSource.class);
+        dependencyResolver = mockManager.createMock( DependencyResolver.class);
 
         enableDefaultExpectations();
     }
@@ -155,6 +166,16 @@ public class MockAndControlForAddArtifactTask
     public void expectGetReactorProjects( final List<MavenProject> projects )
     {
        expect(configSource.getReactorProjects()).andReturn( projects ).atLeastOnce();
+    }
+
+
+    public void expectResolveDependencySets()
+        throws DependencyResolutionException
+    {
+        expect( dependencyResolver.resolveDependencySets( (Assembly) anyObject(), (ModuleSet) anyObject(),
+                                                          (AssemblerConfigurationSource) anyObject(), (List<DependencySet>) anyObject() ))
+            .andReturn( new LinkedHashMap<DependencySet, Set<Artifact>>(  ) ).anyTimes();
+
     }
 
 }

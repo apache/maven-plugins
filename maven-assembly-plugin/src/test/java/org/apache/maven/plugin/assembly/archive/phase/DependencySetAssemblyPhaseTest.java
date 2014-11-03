@@ -101,11 +101,11 @@ public class DependencySetAssemblyPhaseTest
 
         macTask.expectBuildFromRepository( depProject );
 
-        DependencyResolver dr = EasyMock.createMock(DependencyResolver.class);
+        macTask.expectResolveDependencySets();
 
         mm.replayAll();
 
-        createPhase( macTask, logger, dr ).execute( assembly, macTask.archiver, macTask.configSource );
+        createPhase( macTask, logger, macTask.dependencyResolver ).execute( assembly, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -134,11 +134,11 @@ public class DependencySetAssemblyPhaseTest
         final MockAndControlForAddDependencySetsTask macTask =
             new MockAndControlForAddDependencySetsTask( mm, null );
 
-        DependencyResolver dr = EasyMock.createMock(DependencyResolver.class);
+        macTask.expectResolveDependencySets();
 
         mm.replayAll();
 
-        createPhase( macTask, logger, dr ).execute( assembly, null, macTask.configSource );
+        createPhase( macTask, logger, macTask.dependencyResolver ).execute( assembly, null, macTask.configSource );
 
         mm.verifyAll();
     }

@@ -231,7 +231,9 @@ public class ModuleSetAssemblyPhase
 
         if ( depSets != null )
         {
-            Set<Artifact> resolved = dependencyResolver.resolve( assembly, moduleSet, configSource );
+            Map<DependencySet, Set<Artifact>> dependencySetSetMap =
+                dependencyResolver.resolveDependencySets( assembly, moduleSet, configSource,
+                                                          depSets);
 
             for ( final DependencySet ds : depSets )
             {
@@ -261,16 +263,21 @@ public class ModuleSetAssemblyPhase
             {
                 getLogger().debug( "Processing binary dependencies for module project: " + moduleProject.getId() );
 
-                final AddDependencySetsTask task =
-                    new AddDependencySetsTask( depSets, resolved, moduleProject, projectBuilder,
-                                               getLogger() );
+                for ( Map.Entry<DependencySet, Set<Artifact>> dependencySetSetEntry : dependencySetSetMap.entrySet() )
+                {
+                    final AddDependencySetsTask task =
+                        new AddDependencySetsTask( Collections.singletonList( dependencySetSetEntry.getKey() ), dependencySetSetEntry.getValue(),
+                                                   moduleProject, projectBuilder,
+                                                   getLogger() );
 
-                task.setModuleProject( moduleProject );
-                task.setModuleArtifact( chosenModuleArtifacts.get( moduleProject ) );
-                task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
-                task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
+                    task.setModuleProject( moduleProject );
+                    task.setModuleArtifact( chosenModuleArtifacts.get( moduleProject ) );
+                    task.setDefaultOutputDirectory( binaries.getOutputDirectory() );
+                    task.setDefaultOutputFileNameMapping( binaries.getOutputFileNameMapping() );
 
-                task.execute( archiver, configSource );
+                    task.execute( archiver, configSource );
+
+                }
             }
         }
     }
