@@ -87,6 +87,9 @@ under the License.
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
+                <setupIncludes>
+                  <setupInclude>demo-toolchain/pom.xml</setupInclude>
+                </setupIncludes>
                 <goals>
                   <goal>validate</goal>
                 </goals>
