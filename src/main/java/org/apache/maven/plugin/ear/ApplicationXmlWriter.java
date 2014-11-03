@@ -56,23 +56,23 @@ final class ApplicationXmlWriter
         Writer w = initializeWriter( context.getDestinationFile() );
 
         XMLWriter writer = null;
-        if ( JavaEEVersion.OneDotThree.eq( version ) )
+        if ( JavaEEVersion.ONE_DOT_THREE.eq( version ) )
         {
             writer = initializeRootElementOneDotThree( w );
         }
-        else if ( JavaEEVersion.OneDotFour.eq( version ) )
+        else if ( JavaEEVersion.ONE_DOT_FOUR.eq( version ) )
         {
             writer = initializeRootElementOneDotFour( w );
         }
-        else if ( JavaEEVersion.Five.eq( version ) )
+        else if ( JavaEEVersion.FIVE.eq( version ) )
         {
             writer = initializeRootElementFive( w );
         }
-        else if ( JavaEEVersion.Six.eq( version ) )
+        else if ( JavaEEVersion.SIX.eq( version ) )
         {
             writer = initializeRootElementSix( w );
         }
-        else if ( JavaEEVersion.Seven.eq( version ) )
+        else if ( JavaEEVersion.SEVEN.eq( version ) )
         {
             writer = initializeRootElementSeven( w );
         }
@@ -84,14 +84,14 @@ final class ApplicationXmlWriter
         }
 
         // As from JavaEE6
-        if ( version.ge( JavaEEVersion.Six ) )
+        if ( version.ge( JavaEEVersion.SIX ) )
         {
             writeApplicationName( context.getApplicationName(), writer );
         }
 
         // IMPORTANT: the order of the description and display-name elements was
         // reversed between J2EE 1.3 and J2EE 1.4.
-        if ( version.eq( JavaEEVersion.OneDotThree ) )
+        if ( version.eq( JavaEEVersion.ONE_DOT_THREE ) )
         {
             writeDisplayName( context.getDisplayName(), writer );
             writeDescription( context.getDescription(), writer );
@@ -103,7 +103,7 @@ final class ApplicationXmlWriter
         }
 
         // As from JavaEE6
-        if ( version.ge( JavaEEVersion.Six ) )
+        if ( version.ge( JavaEEVersion.SIX ) )
         {
             writeInitializeInOrder( context.getInitializeInOrder(), writer );
         }
@@ -119,12 +119,12 @@ final class ApplicationXmlWriter
             securityRole.appendSecurityRole( writer );
         }
 
-        if ( version.ge( JavaEEVersion.Five ) )
+        if ( version.ge( JavaEEVersion.FIVE ) )
         {
             writeLibraryDirectory( context.getLibraryDirectory(), writer );
         }
 
-        if ( version.ge( JavaEEVersion.Six ) )
+        if ( version.ge( JavaEEVersion.SIX ) )
         {
             for ( EnvEntry envEntry : context.getEnvEntries() )
             {
@@ -236,8 +236,10 @@ final class ApplicationXmlWriter
         writer.startElement( APPLICATION_ELEMENT );
         writer.addAttribute( "xmlns", "http://xmlns.jcp.org/xml/ns/javaee" );
         writer.addAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+        // CHECKSTYLE_OFF: LineLength
         writer.addAttribute( "xsi:schemaLocation",
                              "http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd" );
+        // CHECKSTYLE_ON: LineLength
         writer.addAttribute( "version", "7" );
         return writer;
     }

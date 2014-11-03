@@ -19,6 +19,17 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.zip.ZipException;
+
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.execution.MavenSession;
@@ -52,25 +63,15 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.zip.ZipException;
-
 /**
  * Builds J2EE Enterprise Archive (EAR) files.
  * 
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo( name = "ear", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( 
+       name = "ear", defaultPhase = LifecyclePhase.PACKAGE, 
+       threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class EarMojo
     extends AbstractEarMojo
 {
@@ -259,16 +260,15 @@ public class EarMojo
     private boolean useJvmChmod = true;
 
     /**
-     * The list of artifacts is checked and if you set this to {@code true}
-     * the build will fail if duplicate artifacts have been found within
-     * the build configuration.
+     * The list of artifacts is checked and if you set this to {@code true} the build will fail if duplicate artifacts
+     * have been found within the build configuration.
      * 
      * @since 2.10
      */
-    //TODO: This can be removed if we change to full unique identifiers in EAR (next major version!)
+    // TODO: This can be removed if we change to full unique identifiers in EAR (next major version!)
     @Parameter( defaultValue = "false", property = "maven.ear.duplicateArtifactsBreakTheBuild" )
     private boolean duplicateArtifactsBreakTheBuild;
-    
+
     private void checkModuleUniqueness()
         throws MojoExecutionException
     {
@@ -285,13 +285,15 @@ public class EarMojo
                     getLog().warn( " --> " + earModule.getArtifact().getId() + " (" + earModule.getType() + ")" );
                 }
             }
-            
-            getLog().warn("HINT: This can be simply solved by using the <fileNameMapping>full</fileNameMapping>");
+
+            getLog().warn( "HINT: This can be simply solved by using the <fileNameMapping>full</fileNameMapping>" );
 
             if ( duplicateArtifactsBreakTheBuild )
             {
+                // CHECKSTYLE_OFF: LineLength
                 throw new MojoExecutionException(
                                                   "The build contains duplicate artifacts which result in unpredictable ear content." );
+                // CHECKSTYLE_ON: LineLength
             }
         }
 
@@ -315,10 +317,10 @@ public class EarMojo
             unpackTypesList = Arrays.asList( unpackTypes.split( "," ) );
             for ( String type : unpackTypesList )
             {
-                if ( !EarModuleFactory.standardArtifactTypes.contains( type ) )
+                if ( !EarModuleFactory.STANDARD_ARTIFACT_TYPE.contains( type ) )
                 {
                     throw new MojoExecutionException( "Invalid type [" + type + "] supported types are "
-                        + EarModuleFactory.standardArtifactTypes );
+                        + EarModuleFactory.STANDARD_ARTIFACT_TYPE );
                 }
             }
             getLog().debug( "Initialized unpack types " + unpackTypesList );
@@ -360,8 +362,10 @@ public class EarMojo
 
                 // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
+                // CHECKSTYLE_OFF: LineLength
                 if ( ( unpackTypesList.contains( module.getType() ) && ( module.shouldUnpack() == null || module.shouldUnpack() ) )
                     || ( module.shouldUnpack() != null && module.shouldUnpack() ) )
+                // CHECKSTYLE_ON: LineLength
                 {
                     getLog().info( "Copying artifact [" + module + "] to [" + module.getUri() + "] (unpacked)" );
                     // Make sure that the destination is a directory to avoid plexus nasty stuff :)
@@ -440,9 +444,11 @@ public class EarMojo
 
         // Check if deployment descriptor is there
         File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
-        if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.Five ) ) )
+        if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.FIVE ) ) )
         {
+            // CHECKSTYLE_OFF: LineLength
             throw new MojoExecutionException( "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
+            // CHECKSTYLE_ON: LineLength
         }
 
         try
@@ -724,13 +730,17 @@ public class EarMojo
             boolean newMetaInfCreated = metaInfDirectory.mkdirs();
             if ( newMetaInfCreated )
             {
+                // CHECKSTYLE_OFF: LineLength
                 getLog().debug( "This project did not have a META-INF directory before, so a new directory was created." );
+                // CHECKSTYLE_ON: LineLength
             }
             File manifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
             boolean newManifestCreated = manifestFile.createNewFile();
             if ( newManifestCreated )
             {
+                // CHECKSTYLE_OFF: LineLength
                 getLog().debug( "This project did not have a META-INF/MANIFEST.MF file before, so a new file was created." );
+                // CHECKSTYLE_ON: LineLength
             }
 
             // Read the manifest from disk

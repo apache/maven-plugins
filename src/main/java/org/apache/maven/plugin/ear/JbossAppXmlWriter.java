@@ -106,7 +106,9 @@ final class JbossAppXmlWriter
         }
 
         // classloader repository
+        // CHECKSTYLE_OFF: LineLength
         if ( jbossConfiguration.getLoaderRepository() != null || jbossConfiguration.getLoaderRepositoryConfig() != null )
+        // CHECKSTYLE_ON: LineLength
         {
             writer.startElement( JbossConfiguration.LOADER_REPOSITORY );
 

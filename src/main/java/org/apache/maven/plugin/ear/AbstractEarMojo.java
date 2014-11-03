@@ -105,7 +105,8 @@ public abstract class AbstractEarMojo
      * The {@code standard} means the filename is the artifactId incl. the version of the artifact.
      * The {@code no-version} means the files is only the artifactId without the version.
      * The {@code full} means the filename is the groupId+artifactId+version of the artifact.
-     * The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of {@code EJB} type.
+     * The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of 
+     * {@code EJB} type.
      */
     @Parameter
     private String fileNameMapping;

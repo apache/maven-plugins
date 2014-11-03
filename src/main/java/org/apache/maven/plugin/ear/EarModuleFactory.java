@@ -35,7 +35,7 @@ import java.util.List;
  */
 public final class EarModuleFactory
 {
-    public static final List<String> standardArtifactTypes;
+    public static final List<String> STANDARD_ARTIFACT_TYPE;
 
     static
     {
@@ -51,7 +51,7 @@ public final class EarModuleFactory
         temp.add( "sar" );
         temp.add( "wsr" );
         temp.add( "har" );
-        standardArtifactTypes = Collections.unmodifiableList( temp );
+        STANDARD_ARTIFACT_TYPE = Collections.unmodifiableList( temp );
     }
 
     /**
@@ -68,8 +68,10 @@ public final class EarModuleFactory
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
     @SuppressWarnings( "deprecation" )
+    // CHECKSTYLE_OFF: LineLength
     public static EarModule newEarModule( Artifact artifact, JavaEEVersion javaEEVersion, String defaultLibBundleDir,
                                           Boolean includeInApplicationXml, ArtifactTypeMappingService typeMappingService )
+    // CHECKSTYLE_ON: LineLength
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)
@@ -102,7 +104,7 @@ public final class EarModuleFactory
         else if ( "ejb-client".equals( artifactType ) )
         {
             // Somewhat weird way to tackle the problem described in MEAR-85
-            if ( javaEEVersion.le( JavaEEVersion.OneDotFour ) )
+            if ( javaEEVersion.le( JavaEEVersion.ONE_DOT_FOUR ) )
             {
                 return new EjbClientModule( artifact, null );
             }
@@ -148,7 +150,7 @@ public final class EarModuleFactory
      */
     public static List<String> getStandardArtifactTypes()
     {
-        return standardArtifactTypes;
+        return STANDARD_ARTIFACT_TYPE;
     }
 
     /**
@@ -159,7 +161,7 @@ public final class EarModuleFactory
      */
     public static boolean isStandardArtifactType( final String type )
     {
-        return standardArtifactTypes.contains( type );
+        return STANDARD_ARTIFACT_TYPE.contains( type );
     }
 
 }
