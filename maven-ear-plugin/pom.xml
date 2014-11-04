@@ -177,6 +177,11 @@ under the License.
               <exclude>src/test/resources/projects/project-015/src/main/application/META-INF/MANIFEST.MF</exclude>
               <exclude>src/test/resources/projects/project-016/src/main/ear/MANIFEST.MF</exclude>
               <!--
+                Added the following excludes cause they have been reported as wrong.
+              -->
+              <exclude>src/test/resources/m2repo/eartest/har-sample-one/1.0/har-sample-one-1.0.har</exclude>
+              <exclude>src/test/resources/m2repo/eartest/sar-sample-one/1.0/sar-sample-one-1.0.sar</exclude>
+              <!--
                 DTDs from other sources - do not add our own license header.
               -->
               <exclude>src/test/resources/dtd/application_1_3.dtd</exclude>
