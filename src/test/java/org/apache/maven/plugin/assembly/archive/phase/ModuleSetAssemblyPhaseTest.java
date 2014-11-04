@@ -19,7 +19,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -27,21 +28,22 @@ import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
-import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.ModuleBinaries;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.ModuleSources;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
-import org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMock;
+import org.easymock.classextension.EasyMockSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,15 +54,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import org.easymock.classextension.EasyMock;
-import org.easymock.classextension.EasyMockSupport;
-
 import static java.util.Collections.singleton;
-import static org.apache.maven.plugin.assembly.resolved.ResolvedModuleSet.createResolvedModuleSet;
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.anyObject;
 
 
 public class ModuleSetAssemblyPhaseTest
@@ -255,17 +249,18 @@ public class ModuleSetAssemblyPhaseTest
     }
 
     public void testExecute_ShouldSkipIfNoModuleSetsFound()
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
         final Assembly assembly = new Assembly();
         assembly.setIncludeBaseDirectory( false );
 
-        createPhase( null, null ).execute( ResolvedAssembly.create( assembly), null, null );
+        createPhase( null, null ).execute( assembly, null, null );
     }
 
     public void testExecute_ShouldAddOneModuleSetWithOneModuleInIt()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -310,26 +305,25 @@ public class ModuleSetAssemblyPhaseTest
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
+        macTask.expectResolveDependencySets();
         mm.replayAll();
 
-        final ResolvedAssembly ra = ResolvedAssembly.create( assembly ).withDependencySetArtifacts(
-            new HashSet<Artifact>(  ) ).withResolvedModuleSets( Collections.singleton( createResolvedModuleSet( ms ) ) );
-
-        final ModuleSetAssemblyPhase phase = createPhase( logger, null );
-        phase.execute( ra, macTask.archiver, macTask.configSource );
+        final ModuleSetAssemblyPhase phase = createPhase( logger, macTask.dependencyResolver, null);
+        phase.execute( assembly, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
 
     public void testAddModuleBinaries_ShouldReturnImmediatelyWhenBinariesIsNull()
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException
     {
-        createPhase( null, null ).addModuleBinaries( null, null, null, null, null );
+        createPhase( null, null ).addModuleBinaries( null, null, null, null, null, null );
     }
 
     public void testAddModuleBinaries_ShouldFilterPomModule()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -352,7 +346,7 @@ public class ModuleSetAssemblyPhaseTest
 
         mm.replayAll();
 
-        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( null, binaries,
+        createPhase( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null ).addModuleBinaries( null, null, binaries,
                                                                                                 projects,
                                                                                                 macTask.archiver,
                                                                                                 macTask.configSource );
@@ -362,7 +356,7 @@ public class ModuleSetAssemblyPhaseTest
 
     public void testAddModuleBinaries_ShouldAddOneModuleAttachmentArtifactAndNoDeps()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -390,19 +384,19 @@ public class ModuleSetAssemblyPhaseTest
 
         final Set<MavenProject> projects = singleton( project );
 
+        macTask.expectResolveDependencySets();
+
         mm.replayAll();
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        ResolvedModuleSet rms = ResolvedModuleSet.empty().withArtifacts( Collections.<Artifact>emptySet() );
-
-        createPhase( logger, null ).addModuleBinaries( rms, binaries, projects, macTask.archiver, macTask.configSource );
+        createPhase( logger, macTask.dependencyResolver, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
 
     public void testAddModuleBinaries_ShouldFailWhenOneModuleDoesntHaveAttachmentWithMatchingClassifier()
-        throws ArchiveCreationException, AssemblyFormattingException, IOException
+        throws ArchiveCreationException, AssemblyFormattingException, IOException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -430,7 +424,7 @@ public class ModuleSetAssemblyPhaseTest
 
         try
         {
-            createPhase( logger, null ).addModuleBinaries( null, binaries, projects, macTask.archiver, macTask.configSource );
+            createPhase( logger, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
 
             fail( "Should throw an invalid configuration exception because of module with missing attachment." );
         }
@@ -444,7 +438,7 @@ public class ModuleSetAssemblyPhaseTest
 
     public void testAddModuleBinaries_ShouldAddOneModuleArtifactAndNoDeps()
         throws ArchiveCreationException, AssemblyFormattingException, IOException,
-        InvalidAssemblerConfigurationException
+        InvalidAssemblerConfigurationException, DependencyResolutionException
     {
         final EasyMockSupport mm = new EasyMockSupport();
 
@@ -471,13 +465,15 @@ public class ModuleSetAssemblyPhaseTest
 
         final Set<MavenProject> projects = singleton( project );
 
+        macTask.expectResolveDependencySets();
+
         mm.replayAll();
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        ResolvedModuleSet ms = ResolvedModuleSet.empty().withArtifacts( Collections.<Artifact>emptySet() );
+        Assembly assembly = new Assembly();
 
-        createPhase( logger, null ).addModuleBinaries( ms, binaries, projects, macTask.archiver, macTask.configSource );
+        createPhase( logger, macTask.dependencyResolver, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
     }
@@ -875,7 +871,12 @@ public class ModuleSetAssemblyPhaseTest
             projectBuilder = macTask.projectBuilder;
         }
 
-        return new ModuleSetAssemblyPhase( projectBuilder, logger );
+        DependencyResolver dr = EasyMock.createMock( DependencyResolver.class );
+        return new ModuleSetAssemblyPhase( projectBuilder, dr, logger );
     }
 
+    private ModuleSetAssemblyPhase createPhase( final Logger logger, DependencyResolver dr, MavenProjectBuilder projectBuilder1 )
+    {
+        return new ModuleSetAssemblyPhase( projectBuilder1, dr, logger );
+    }
 }

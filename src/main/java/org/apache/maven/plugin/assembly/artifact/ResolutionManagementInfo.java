@@ -42,7 +42,7 @@ class ResolutionManagementInfo
 
     private final Set<MavenProject> enabledProjects = new LinkedHashSet<MavenProject>();
 
-    private final Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
+    private final LinkedHashSet<Artifact> artifacts = new LinkedHashSet<Artifact>();
 
     ResolutionManagementInfo( final MavenProject currentProject )
     {
@@ -126,7 +126,55 @@ class ResolutionManagementInfo
 
     void addArtifacts( final Set<Artifact> a )
     {
+        for ( Artifact artifact : a )
+        {
+            addOneArtifact( artifact );
+        }
         artifacts.addAll( a );
+    }
+
+    private void addOneArtifact( Artifact artifact )
+    {
+        for ( Artifact existing : artifacts )
+        {
+            if (existing.equals( artifact )){
+                if (isScopeUpgrade(artifact, existing)){
+                    artifacts.remove( existing );
+                    artifacts.add( artifact);
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean isScopeUpgrade( Artifact a,  Artifact existing )
+    {
+        return scopeValue( a.getScope() ) > scopeValue( existing.getScope() );
+    }
+
+    private int scopeValue( final String scope)
+    {
+        if ( Artifact.SCOPE_COMPILE.equals( scope ) )
+        {
+            return 5;
+        }
+        else if ( Artifact.SCOPE_PROVIDED.equals( scope ) )
+        {
+            return 4;
+        }
+        else if ( Artifact.SCOPE_RUNTIME.equals( scope ) )
+        {
+            return 3;
+        }
+        else if ( Artifact.SCOPE_SYSTEM.equals( scope ) )
+        {
+            return 2;
+        }
+        else if ( Artifact.SCOPE_TEST.equals( scope ) )
+        {
+            return 1;
+        }
+        return 0;
     }
 
 }

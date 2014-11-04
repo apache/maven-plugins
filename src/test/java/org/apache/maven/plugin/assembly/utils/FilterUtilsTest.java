@@ -316,18 +316,19 @@ public class FilterUtilsTest
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        FilterUtils.filterProjects( projects, inclusions, exclusions, depTrail != null, logger );
+        Set<MavenProject> result =
+            FilterUtils.filterProjects( projects, inclusions, exclusions, depTrail != null, logger );
 
         if ( verifyInclusion )
         {
-            assertEquals( 1, projects.size() );
-            assertEquals( pmac.getId(), projects.iterator()
+            assertEquals( 1, result.size() );
+            assertEquals( pmac.getId(), result.iterator()
                                                 .next()
                                                 .getId() );
         }
         else
         {
-            assertTrue( projects.isEmpty() );
+            assertTrue( result.isEmpty() );
         }
 
         mockManager.verifyAll();

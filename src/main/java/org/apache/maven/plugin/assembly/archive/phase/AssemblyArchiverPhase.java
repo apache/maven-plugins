@@ -22,8 +22,9 @@ package org.apache.maven.plugin.assembly.archive.phase;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.codehaus.plexus.archiver.Archiver;
 
 /**
@@ -47,6 +48,7 @@ public interface AssemblyArchiverPhase
      * @throws AssemblyFormattingException in case of a assembly formatting exception.
      * @throws InvalidAssemblerConfigurationException in case of an invalid assembler configuration.
      */
-    void execute( ResolvedAssembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
-        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
+    void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )
+        throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
+        DependencyResolutionException;
 }

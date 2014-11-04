@@ -29,8 +29,8 @@ import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoBuilderConfig
 import org.apache.maven.plugin.assembly.archive.phase.wrappers.RepoInfoWrapper;
 import org.apache.maven.plugin.assembly.archive.task.AddDirectoryTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
+import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Repository;
-import org.apache.maven.plugin.assembly.resolved.ResolvedAssembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.shared.repository.RepositoryAssembler;
@@ -69,7 +69,7 @@ public class RepositoryAssemblyPhase
      * {@inheritDoc}
      */
     @SuppressWarnings( "ResultOfMethodCallIgnored" )
-    public void execute( final ResolvedAssembly assembly, final Archiver archiver,
+    public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {

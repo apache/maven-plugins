@@ -34,6 +34,7 @@ import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import sun.util.calendar.CalendarUtils;
 
 import java.io.File;
 import java.io.IOException;

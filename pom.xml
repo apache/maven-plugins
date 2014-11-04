@@ -456,6 +456,7 @@ under the License.
                     <pomExclude>dependency-sets/depSet-enum-vs-wildcard/enum/pom.xml</pomExclude>
                     <pomExclude>dependency-sets/depSet-enum-vs-wildcard/wildcard/pom.xml</pomExclude>
 
+                    <pomExclude>**/my-app*/pom.xml</pomExclude>
                     <pomExclude>**/child*/pom.xml</pomExclude>
                     <pomExclude>**/module*/pom.xml</pomExclude>
                     <pomExclude>**/descriptor/pom.xml</pomExclude>
