@@ -1,0 +1,20 @@
+<assembly>
+	<id>bin</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<moduleSets>
+		<moduleSet>
+			<includes>
+				<include>com.mycompany.app:my-app-module1</include>
+			</includes>
+			<binaries>
+        <outputDirectory>modules</outputDirectory>
+        <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+
+				<unpack>false</unpack>
+				<includeDependencies>true</includeDependencies>
+			</binaries>
+		</moduleSet>
+	</moduleSets>
+</assembly>
