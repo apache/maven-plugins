@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>25</version>
+    <version>26</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -72,7 +72,7 @@ under the License.
   <properties>
     <mavenArchiverVersion>2.6</mavenArchiverVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -136,22 +136,6 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-          <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-          <executions>
-            <execution>
-              <id>mojo-descriptor</id>
-              <goals>
-                <goal>descriptor</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>

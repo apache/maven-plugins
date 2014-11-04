@@ -72,7 +72,7 @@ public class TestJarMojo
         return testClassesDirectory;
     }
 
-	public void execute()
+    public void execute()
         throws MojoExecutionException
     {
         if ( skip )
