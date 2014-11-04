@@ -242,7 +242,7 @@ public abstract class AbstractJarMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( skipIfEmpty && (!getClassesDirectory().exists() || getClassesDirectory().list().length < 1 ) )
+        if ( skipIfEmpty && ( !getClassesDirectory().exists() || getClassesDirectory().list().length < 1 ) )
         {
             getLog().info( "Skipping packaging of the " + getType() );
         }
