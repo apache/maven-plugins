@@ -34,6 +34,7 @@ import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import sun.util.calendar.CalendarUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -184,6 +185,15 @@ public class AddArtifactTask
         }
         else
         {
+            /*
+                        Artifact primary = moduleArtifact != null ? moduleArtifact : artifact;
+            Artifact secondary = moduleArtifact != null ? artifact : moduleArtifact;
+            final String tempMapping =
+                AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, primary,
+                                                             configSource.getProject(), moduleProject, secondary,
+                                                             project, configSource );
+
+             */
             final String tempMapping =
                 AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact,
                                                              configSource.getProject(), moduleProject, moduleArtifact,
