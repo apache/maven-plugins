@@ -26,7 +26,7 @@ import java.util.zip.*;
 File f = new File( basedir, "target/my-app-1.0-SNAPSHOT-bin.zip" );
 ZipFile zf = new ZipFile( f );
 
-ZipEntry child1InclEntry = zf.getEntry( "my-app-1.0-SNAPSHOT/modules/junit.jar" );
+ZipEntry child1InclEntry = zf.getEntry( "my-app-1.0-SNAPSHOT/modules/junit-3.8.1.jar" );
 
 if ( child1InclEntry == null )
 {
