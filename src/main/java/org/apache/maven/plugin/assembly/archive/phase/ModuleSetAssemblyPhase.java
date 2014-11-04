@@ -311,7 +311,7 @@ public class ModuleSetAssemblyPhase
             final DependencySet impliedDependencySet = new DependencySet();
 
             impliedDependencySet.setOutputDirectory( binaries.getOutputDirectory() );
-            impliedDependencySet.setOutputFileNameMapping( binaries.getOutputFileNameMapping() );
+            //impliedDependencySet.setOutputFileNameMapping( binaries.getOutputFileNameMapping() );
             impliedDependencySet.setFileMode( binaries.getFileMode() );
             impliedDependencySet.setDirectoryMode( binaries.getDirectoryMode() );
             impliedDependencySet.setExcludes( binaries.getExcludes() );
