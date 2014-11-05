@@ -170,6 +170,7 @@ under the License.
               <exclude>src/test/resources/projects/project-016/src/main/ear/MANIFEST.MF</exclude>
               <!--
                 Added the following excludes cause they have been reported as wrong.
+                https://issues.apache.org/jira/browse/RAT-187
               -->
               <exclude>src/test/resources/m2repo/eartest/har-sample-one/1.0/har-sample-one-1.0.har</exclude>
               <exclude>src/test/resources/m2repo/eartest/sar-sample-one/1.0/sar-sample-one-1.0.sar</exclude>
