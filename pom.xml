@@ -86,7 +86,7 @@ under the License.
     <javaVersion>1.6</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <pmdVersion>5.1.2</pmdVersion>
+    <pmdVersion>5.2.1</pmdVersion>
     <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
@@ -117,7 +117,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -175,15 +174,23 @@ under the License.
     <!-- pmd -->
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
-      <artifactId>pmd</artifactId>
+      <artifactId>pmd-core</artifactId>
       <version>${pmdVersion}</version>
-      <!-- Workaround to fix http://jira.codehaus.org/browse/MPLUGIN-221 -->
-      <exclusions>
-        <exclusion>
-          <groupId>com.ibm.icu</groupId>
-          <artifactId>icu4j</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-java</artifactId>
+      <version>${pmdVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-javascript</artifactId>
+      <version>${pmdVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-jsp</artifactId>
+      <version>${pmdVersion}</version>
     </dependency>
 
     <!-- test -->

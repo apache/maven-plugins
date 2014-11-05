@@ -191,7 +191,8 @@ public class PmdReportTest
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
         assertTrue(str.toLowerCase().contains("Avoid using if statements without curly braces".toLowerCase()));
 
-        assertTrue(
+        // Must be false as IfElseStmtsMustUseBraces is excluded!
+        assertFalse(
                 str.toLowerCase().contains("Avoid using if...else statements without curly braces".toLowerCase()));
 
         assertTrue( "unnecessary constructor should not be triggered because of low priority",

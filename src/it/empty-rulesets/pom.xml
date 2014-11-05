@@ -46,13 +46,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
-        <dependencies>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd</artifactId>
-            <version>5.0.5</version>
-          </dependency>
-        </dependencies>
         <configuration>
           <skipPmdError>false</skipPmdError>
           <skip>false</skip>

@@ -28,6 +28,7 @@ import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetReferenceId;
 import net.sourceforge.pmd.benchmark.Benchmarker;
 import net.sourceforge.pmd.benchmark.TextReport;
+import net.sourceforge.pmd.lang.LanguageRegistry;
 import net.sourceforge.pmd.lang.LanguageVersion;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
@@ -524,7 +525,7 @@ public class PmdReport
 
         if ( null != targetJdk )
         {
-            languageVersion = LanguageVersion.findByTerseName( "java " + targetJdk );
+            languageVersion = LanguageRegistry.findLanguageVersionByTerseName( "java " + targetJdk );
             if ( languageVersion == null )
             {
                 throw new MavenReportException( "Unsupported targetJdk value '" + targetJdk + "'." );
@@ -532,7 +533,7 @@ public class PmdReport
         }
         else if ( "javascript".equals( language ) || "ecmascript".equals( language ) )
         {
-            languageVersion = LanguageVersion.ECMASCRIPT;
+            languageVersion = LanguageRegistry.findLanguageVersionByTerseName( "ecmascript" );
         }
         if ( languageVersion != null )
         {
