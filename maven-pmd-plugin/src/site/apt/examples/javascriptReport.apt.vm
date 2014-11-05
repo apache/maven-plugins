@@ -80,6 +80,13 @@ Analyzing JavaScript Code
             <include>**/*.js</include>
           </includes>
         </configuration>
+        <depdendencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-javascript</artifactId>
+            <version>${pmdVersion}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </reporting>

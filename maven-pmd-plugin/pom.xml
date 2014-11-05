@@ -86,7 +86,7 @@ under the License.
     <javaVersion>1.6</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <pmdVersion>5.1.2</pmdVersion>
+    <pmdVersion>5.2.1</pmdVersion>
     <sitePluginVersion>3.3</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
@@ -149,8 +149,9 @@ under the License.
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaVersion}</version>
       <!--
-        pmd 4.3 requires version 1.6.1 of dom4j
-        doxia-site-renderer 1.3 brings in dom4j 1.1 if we don't exclude it here
+        pmd brings in jaxen 1.1.4
+        doxia-site-renderer 1.4 brings in dom4j 1.1 (via velocity-tools)
+        dom4j 1.1 contains the same org.jaxen classes as jaxen 1.1.4, which are incompatible
       -->
       <exclusions>
         <exclusion>
@@ -158,6 +159,18 @@ under the License.
           <artifactId>dom4j</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <!-- adding back dependency to dom4j for doxia-site-renderer -->
+    <dependency>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>1.6.1</version>
+        <exclusions>
+            <exclusion>
+                <artifactId>xml-apis</artifactId>
+                <groupId>xml-apis</groupId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
     <!-- plexus -->
@@ -175,15 +188,14 @@ under the License.
     <!-- pmd -->
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
-      <artifactId>pmd</artifactId>
+      <artifactId>pmd-java</artifactId>
       <version>${pmdVersion}</version>
-      <!-- Workaround to fix http://jira.codehaus.org/browse/MPLUGIN-221 -->
-      <exclusions>
-        <exclusion>
-          <groupId>com.ibm.icu</groupId>
-          <artifactId>icu4j</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-javascript</artifactId>
+      <version>${pmdVersion}</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- test -->
