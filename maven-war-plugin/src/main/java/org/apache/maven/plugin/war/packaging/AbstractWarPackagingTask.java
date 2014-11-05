@@ -131,8 +131,10 @@ public abstract class AbstractWarPackagingTask
      * @param targetFilename the relative path according to the root of the webapp
      * @throws IOException if an error occurred while copying
      */
+    // CHECKSTYLE_OFF: LineLength
     protected void copyFile( String sourceId, final WarPackagingContext context, final File file, String targetFilename )
         throws IOException
+    // CHECKSTYLE_ON: LineLength
     {
         final File targetFile = new File( context.getWebappDirectory(), targetFilename );
 
@@ -186,12 +188,14 @@ public abstract class AbstractWarPackagingTask
                                                    String unknownOwnerId )
                    throws IOException
                {
+                   // CHECKSTYLE_OFF: LineLength
                    context.getLog().warn( "File ["
                                               + targetFilename
                                               + "] belonged to overlay ["
                                               + unknownOwnerId
                                               + "] which does not exist anymore in the current project. It is recommended to invoke "
                                               + "clean if the dependencies of the project changed." );
+                   // CHECKSTYLE_ON: LineLength
                    copyFile( context, file, targetFile, targetFilename,
                              false );
                }
@@ -247,8 +251,10 @@ public abstract class AbstractWarPackagingTask
             {
                 throw new MojoExecutionException( e.getMessage(), e );
             }
+            // CHECKSTYLE_OFF: LineLength
             // Add the file to the protected list
             context.getLog().debug( " + " + targetFilename + " has been copied (filtered encoding='" + encoding + "')." );
+            // CHECKSTYLE_ON: LineLength
             return true;
         }
         else
@@ -393,7 +399,9 @@ public abstract class AbstractWarPackagingTask
      * @param excludes the excludes
      * @return the files to copy
      */
+    // CHECKSTYLE_OFF: LineLength
     protected PathSet getFilesToIncludes( File baseDir, String[] includes, String[] excludes, boolean includeDirectories )
+    // CHECKSTYLE_ON: LineLength
     {
         final DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( baseDir );

@@ -435,19 +435,23 @@ public abstract class AbstractWarMojo
         WebappStructure cache;
         if ( useCache && cacheFile.exists() )
         {
+            // CHECKSTYLE_OFF: LineLength
             cache = new WebappStructure( mavenProject.getDependencies(), webappStructureSerialier.fromXml( cacheFile ) );
+            // CHECKSTYLE_ON: LineLength
         }
         else
         {
             cache = new WebappStructure( mavenProject.getDependencies(), null );
         }
 
+        // CHECKSTYLE_OFF: LineLength
         final long startTime = System.currentTimeMillis();
         getLog().info( "Assembling webapp [" + mavenProject.getArtifactId() + "] in [" + webapplicationDirectory + "]" );
 
         final OverlayManager overlayManager =
             new OverlayManager( overlays, mavenProject, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
         final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
+        // CHECKSTYLE_ON: LineLength
         List<FileUtils.FilterWrapper> defaultFilterWrappers;
         try
         {
@@ -582,7 +586,7 @@ public abstract class AbstractWarMojo
             this.artifactFactory = artifactFactory;
             this.filteringDeploymentDescriptors = filteringDeploymentDescriptors;
             this.nonFilteredFileExtensions =
-                nonFilteredFileExtensions == null ? Collections.<String> emptyList() : nonFilteredFileExtensions;
+                nonFilteredFileExtensions == null ? Collections.<String>emptyList() : nonFilteredFileExtensions;
             this.resourceEncoding = resourceEncoding;
             // This is kinda stupid but if we loop over the current overlays and we request the path structure
             // it will register it. This will avoid wrong warning messages in a later phase

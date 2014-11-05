@@ -209,7 +209,9 @@ public class OverlayManager
                 }
             }
         }
+        // CHECKSTYLE_OFF: LineLength
         throw new InvalidOverlayConfigurationException( "overlay [" + overlay + "] is not a dependency of the project." );
+        // CHECKSTYLE_ON: LineLength
 
     }
 
