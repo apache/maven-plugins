@@ -192,7 +192,7 @@ public class PmdReportTest
         assertTrue(str.toLowerCase().contains("Avoid using if statements without curly braces".toLowerCase()));
 
         assertTrue(
-                str.toLowerCase().contains("Avoid using if...else statements without curly braces".toLowerCase()));
+                !str.toLowerCase().contains("Avoid using if...else statements without curly braces".toLowerCase()));
 
         assertTrue( "unnecessary constructor should not be triggered because of low priority",
                 !str.toLowerCase().contains("Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase()));
