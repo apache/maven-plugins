@@ -181,9 +181,11 @@ public class DependenciesAnalysisPackagingTask
 
         public void updatedScope( Dependency dependency, String previousScope )
         {
+            // CHECKSTYLE_OFF: LineLength
             if ( Artifact.SCOPE_PROVIDED.equals( dependency.getScope() )
                 || Artifact.SCOPE_TEST.equals( dependency.getScope() )
                 && ( !Artifact.SCOPE_PROVIDED.equals( previousScope ) && !Artifact.SCOPE_TEST.equals( previousScope ) ) )
+            // CHECKSTYLE_ON: LineLength
             {
                 // It's now provided or test so it should be removed
                 handleDependencyScope( context, dependency, "Scope of dependency [" + dependency + "] has changed ("

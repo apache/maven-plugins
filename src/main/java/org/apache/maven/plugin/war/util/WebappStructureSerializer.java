@@ -40,16 +40,16 @@ import java.io.Writer;
 public class WebappStructureSerializer
 {
 
-    private static final XStream xstream;
+    private static final XStream XSTREAM;
 
     static
     {
-        xstream = new XStream( new DomDriver() );
+        XSTREAM = new XStream( new DomDriver() );
 
         // Register aliases
-        xstream.alias( "webapp-structure", WebappStructure.class );
-        xstream.alias( "path-set", PathSet.class );
-        xstream.alias( "dependency", Dependency.class );
+        XSTREAM.alias( "webapp-structure", WebappStructure.class );
+        XSTREAM.alias( "path-set", PathSet.class );
+        XSTREAM.alias( "dependency", Dependency.class );
 
     }
 
@@ -75,7 +75,7 @@ public class WebappStructureSerializer
         try
         {
             reader = ReaderFactory.newXmlReader( file );
-            return (WebappStructure) xstream.fromXML( reader );
+            return (WebappStructure) XSTREAM.fromXML( reader );
         }
         finally
         {
@@ -93,6 +93,7 @@ public class WebappStructureSerializer
     public void toXml( WebappStructure webappStructure, File targetFile )
         throws IOException
     {
+        // CHECKSTYLE_OFF: LineLength
         Writer writer = null;
         try
         {
@@ -106,11 +107,12 @@ public class WebappStructureSerializer
                 throw new IOException( "Could not create file [" + targetFile.getAbsolutePath() + "]" );
             }
             writer = WriterFactory.newXmlWriter( targetFile );
-            xstream.toXML( webappStructure, writer );
+            XSTREAM.toXML( webappStructure, writer );
         }
         finally
         {
             IOUtil.close( writer );
         }
+        // CHECKSTYLE_ON: LineLength
     }
 }

@@ -218,8 +218,10 @@ public class WarMojo
 
         archiver.setOutputFile( warFile );
 
+        // CHECKSTYLE_OFF: LineLength
         getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated webapp archive." );
         getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
+        // CHECKSTYLE_ON: LineLength
 
         warArchiver.addDirectory( getWebappDirectory(), getPackagingIncludes(), getPackagingExcludes() );
 

@@ -43,7 +43,9 @@ import java.io.PrintWriter;
  * @author Mike Perham
  * @version $Id$
  */
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "manifest", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
+// CHECKSTYLE_ON: LineLength
 public class WarManifestMojo
     extends AbstractWarMojo
 {

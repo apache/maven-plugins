@@ -429,6 +429,7 @@ public class WebappStructure
      */
     private Dependency findDependency( Dependency dependency, List<Dependency> dependencies )
     {
+        // CHECKSTYLE_OFF: LineLength
         for ( Dependency dep : dependencies )
         {
             if ( dependency.getGroupId().equals( dep.getGroupId() )
@@ -442,6 +443,7 @@ public class WebappStructure
             }
         }
         return null;
+        // CHECKSTYLE_ON: LineLength
     }
 
     private Dependency matchDependency( List<Dependency> dependencies, Dependency dependency )

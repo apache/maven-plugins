@@ -148,6 +148,7 @@ public class WarProjectPackagingTask
     protected void handeWebAppSourceDirectory( WarPackagingContext context )
         throws MojoExecutionException
     {
+        // CHECKSTYLE_OFF: LineLength
         if ( !context.getWebappSourceDirectory().exists() )
         {
             context.getLog().debug( "webapp sources directory does not exist - skipping." );
@@ -169,6 +170,7 @@ public class WarProjectPackagingTask
                     + context.getWebappDirectory().getAbsolutePath() + "]", e );
             }
         }
+        // CHECKSTYLE_ON: LineLength
     }
 
     /**
@@ -331,6 +333,7 @@ public class WarProjectPackagingTask
      */
     private String[] getFilesToCopy( Resource resource )
     {
+        // CHECKSTYLE_OFF: LineLength
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( resource.getDirectory() );
         if ( resource.getIncludes() != null && !resource.getIncludes().isEmpty() )
@@ -351,5 +354,6 @@ public class WarProjectPackagingTask
         scanner.scan();
 
         return scanner.getIncludedFiles();
+        // CHECKSTYLE_ON: LineLength
     }
 }
