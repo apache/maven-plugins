@@ -29,8 +29,10 @@
 Using Rule Sets
 
  The PMD plugin uses three default rule sets: <basic.xml>, <unusedcode.xml> and <imports.xml>. These rule sets are
- bundled in the PMD code analysis tool (see the {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/rules/index.html}ruleset index}}). To use other
- rule sets, you can configure it in the plugin as shown below.
+ bundled in the PMD code analysis tool 
+ (see the {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/pmd-java/rules/index.html}ruleset index for java}} and
+ the {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/pmd-javascript/rules/index.html}ruleset index for javascript}}).
+ To use other rule sets, you can configure it in the plugin as shown below.
 
  The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the PMD tool,
  you do not need to specificy the absolute path of the file. It will be resolved by the plugin. But if the rule set is a
@@ -40,6 +42,11 @@ Using Rule Sets
  bundled rule sets for the Java language were changed from
  <<</rulesets/xyz.xml>>> to <<</rulesets/java/xyz.xml>>>. So when upgrading to
  Maven PMD Plugin 3.0 you may need to alter your plugin configuration.
+
+ <<Note:>> Starting with PMD 5.2.0 and Maven PMD Plugin 3.3 you need to include a dependency for javascript
+ in the report section, see {{{./javascriptReport.html}Analyzing JavaScript Code}}. Additionally when
+ {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/customizing/howtomakearuleset.html}excluding rules}},
+ the rule path does not end on <<<Rule>>> anymore.
 
 +-----+
 <project>
