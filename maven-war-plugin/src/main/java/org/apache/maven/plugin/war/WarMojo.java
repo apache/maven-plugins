@@ -48,6 +48,10 @@ import java.util.Arrays;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
+/**
+ * @author kama
+ *
+ */
 @Mojo( 
     name = "war", 
     defaultPhase = LifecyclePhase.PACKAGE, 
@@ -165,6 +169,7 @@ public class WarMojo
      * Executes the WarMojo on the current project.
      *
      * @throws MojoExecutionException if an error occurred while building the webapp
+     * @throws MojoFailureException if an error.
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -287,6 +292,13 @@ public class WarMojo
         }
     }
 
+    /**
+     * @param basedir The basedir
+     * @param finalName The finalName
+     * @param classifier The classifier. 
+     * @param type The type.
+     * @return {@link File}
+     */
     protected static File getTargetFile( File basedir, String finalName, String classifier, String type )
     {
         if ( classifier == null )
@@ -301,12 +313,18 @@ public class WarMojo
         return new File( basedir, finalName + classifier + "." + type );
     }
 
+    /**
+     * @return The war {@link File}
+     */
     protected File getTargetWarFile()
     {
         return getTargetFile( new File( getOutputDirectory() ), getWarName(), getClassifier(), "war" );
 
     }
 
+    /**
+     * @return The target class {@link File}
+     */
     protected File getTargetClassesFile()
     {
         return getTargetFile( new File( getOutputDirectory() ), getWarName(), getClassesClassifier(), "jar" );
@@ -314,16 +332,25 @@ public class WarMojo
 
     // Getters and Setters
 
+    /**
+     * @return {@link #classifier}
+     */
     public String getClassifier()
     {
         return classifier;
     }
 
+    /**
+     * @param classifier {@link #classifier}
+     */
     public void setClassifier( String classifier )
     {
         this.classifier = classifier;
     }
 
+    /**
+     * @return The package excludes.
+     */
     public String[] getPackagingExcludes()
     {
         if ( StringUtils.isEmpty( packagingExcludes ) )
@@ -336,11 +363,17 @@ public class WarMojo
         }
     }
 
+    /**
+     * @param packagingExcludes {@link #packagingExcludes}
+     */
     public void setPackagingExcludes( String packagingExcludes )
     {
         this.packagingExcludes = packagingExcludes;
     }
 
+    /**
+     * @return The packaging includes.
+     */
     public String[] getPackagingIncludes()
     {
         if ( StringUtils.isEmpty( packagingIncludes ) )
@@ -353,86 +386,137 @@ public class WarMojo
         }
     }
 
+    /**
+     * @param packagingIncludes {@link #packagingIncludes}
+     */
     public void setPackagingIncludes( String packagingIncludes )
     {
         this.packagingIncludes = packagingIncludes;
     }
 
+    /**
+     * @return {@link #outputDirectory}
+     */
     public String getOutputDirectory()
     {
         return outputDirectory;
     }
 
+    /**
+     * @param outputDirectory  {@link #outputDirectory}
+     */
     public void setOutputDirectory( String outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    /**
+     * @return {@link #warName}
+     */
     public String getWarName()
     {
         return warName;
     }
 
+    /**
+     * @param warName {@link #warName}
+     */
     public void setWarName( String warName )
     {
         this.warName = warName;
     }
 
+    /**
+     * @return {@link #warArchiver}
+     */
     public WarArchiver getWarArchiver()
     {
         return warArchiver;
     }
 
+    /**
+     * @param warArchiver {@link #warArchiver}
+     */
     public void setWarArchiver( WarArchiver warArchiver )
     {
         this.warArchiver = warArchiver;
     }
 
+    /**
+     * @return {@link #projectHelper}
+     */
     public MavenProjectHelper getProjectHelper()
     {
         return projectHelper;
     }
 
+    /**
+     * @param projectHelper {@link #projectHelper}
+     */
     public void setProjectHelper( MavenProjectHelper projectHelper )
     {
         this.projectHelper = projectHelper;
     }
 
+    /**
+     * @return {@link #primaryArtifact}
+     */
     public boolean isPrimaryArtifact()
     {
         return primaryArtifact;
     }
 
+    /**
+     * @param primaryArtifact {@link #primaryArtifact}
+     */
     public void setPrimaryArtifact( boolean primaryArtifact )
     {
         this.primaryArtifact = primaryArtifact;
     }
 
+    /**
+     * @return {@link #attachClasses}
+     */
     public boolean isAttachClasses()
     {
         return attachClasses;
     }
 
+    /**
+     * @param attachClasses {@link #attachClasses}
+     */
     public void setAttachClasses( boolean attachClasses )
     {
         this.attachClasses = attachClasses;
     }
 
+    /**
+     * @return {@link #classesClassifier}
+     */
     public String getClassesClassifier()
     {
         return classesClassifier;
     }
 
+    /**
+     * @param classesClassifier {@link #classesClassifier}
+     */
     public void setClassesClassifier( String classesClassifier )
     {
         this.classesClassifier = classesClassifier;
     }
 
+    /**
+     * @return {@link #failOnMissingWebXml}
+     */
     public boolean isFailOnMissingWebXml()
     {
         return failOnMissingWebXml;
     }
 
+    /**
+     * @param failOnMissingWebXml {@link #failOnMissingWebXml}
+     */
     public void setFailOnMissingWebXml( boolean failOnMissingWebXml )
     {
         this.failOnMissingWebXml = failOnMissingWebXml;

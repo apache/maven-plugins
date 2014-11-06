@@ -40,12 +40,18 @@ public class SaveWebappStructurePostPackagingTask
 
     private final WebappStructureSerializer serialier;
 
+    /**
+     * @param targetFile {@link #targetFile}
+     */
     public SaveWebappStructurePostPackagingTask( File targetFile )
     {
         this.targetFile = targetFile;
         this.serialier = new WebappStructureSerializer();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPostPackaging( WarPackagingContext context )
         throws MojoExecutionException, MojoFailureException
     {

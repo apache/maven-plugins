@@ -37,6 +37,9 @@ public class DependenciesAnalysisPackagingTask
     extends AbstractWarPackagingTask
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPackaging( final WarPackagingContext context )
         throws MojoExecutionException, MojoFailureException
     {
@@ -45,6 +48,9 @@ public class DependenciesAnalysisPackagingTask
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleDependency( WarPackagingContext context, Dependency dependency, String notBundledMessage,
                                      String warOrZipMessage, String standardMessage, boolean removeFile )
     {
@@ -59,6 +65,9 @@ public class DependenciesAnalysisPackagingTask
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void handleDependencyScope( WarPackagingContext context, Dependency dependency, String warOrZipMessage,
                                           String standardMessage, boolean removeFile )
     {

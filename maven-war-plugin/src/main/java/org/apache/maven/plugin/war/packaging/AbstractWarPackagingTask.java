@@ -45,14 +45,29 @@ import org.codehaus.plexus.util.IOUtil;
 public abstract class AbstractWarPackagingTask
     implements WarPackagingTask
 {
+    /**
+     * The default list of includes.
+     */
     public static final String[] DEFAULT_INCLUDES = { "**/**" };
 
+    /**
+     * The {@code WEB-INF} path.
+     */
     public static final String WEB_INF_PATH = "WEB-INF";
 
+    /**
+     * The {@code META-INF} path.
+     */
     public static final String META_INF_PATH = "META-INF";
 
+    /**
+     * The {@code classes} path.
+     */
     public static final String CLASSES_PATH = "WEB-INF/classes/";
 
+    /**
+     * The {@code lib} path.
+     */
     public static final String LIB_PATH = "WEB-INF/lib/";
 
     /**
@@ -70,7 +85,9 @@ public abstract class AbstractWarPackagingTask
      * @param sourceBaseDir the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
      * @param targetPrefix the prefix to add to the target file name
+     * @param filtered filter or not.
      * @throws IOException if an error occurred while copying the files
+     * @throws MojoExecutionException if an error occurs.
      */
     protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
                               String targetPrefix, boolean filtered )
@@ -111,7 +128,9 @@ public abstract class AbstractWarPackagingTask
      * @param context the context to use
      * @param sourceBaseDir the base directory from which the <tt>sourceFilesSet</tt> will be copied
      * @param sourceFilesSet the files to be copied
+     * @param filtered filter or not.
      * @throws IOException if an error occurred while copying the files
+     * @throws MojoExecutionException break the build.
      */
     protected void copyFiles( String sourceId, WarPackagingContext context, File sourceBaseDir, PathSet sourceFilesSet,
                               boolean filtered )
@@ -397,6 +416,7 @@ public abstract class AbstractWarPackagingTask
      * @param baseDir the base directory to start from
      * @param includes the includes
      * @param excludes the excludes
+     * @param includeDirectories include directories yes or not.
      * @return the files to copy
      */
     // CHECKSTYLE_OFF: LineLength
@@ -441,6 +461,7 @@ public abstract class AbstractWarPackagingTask
      * @param context the packaging context
      * @param artifact the artifact
      * @return the converted filename of the artifact
+     * @throws InterpolationException in case of interpolation problem.
      */
     protected String getArtifactFinalName( WarPackagingContext context, Artifact artifact )
         throws InterpolationException

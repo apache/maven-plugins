@@ -329,6 +329,9 @@ public abstract class AbstractWarMojo
 
     private final Overlay currentProjectOverlay = Overlay.createInstance();
 
+    /**
+     * @return The current overlay.
+     */
     public Overlay getCurrentProjectOverlay()
     {
         return currentProjectOverlay;
@@ -401,6 +404,11 @@ public abstract class AbstractWarMojo
         return StringUtils.split( StringUtils.defaultString( dependentWarIncludes ), "," );
     }
 
+    /**
+     * @param webapplicationDirectory The web application directory.
+     * @throws MojoExecutionException In case of failure.
+     * @throws MojoFailureException In case of failure.
+     */
     public void buildExplodedWebapp( File webapplicationDirectory )
         throws MojoExecutionException, MojoFailureException
     {
@@ -572,6 +580,17 @@ public abstract class AbstractWarMojo
 
         private boolean useJvmChmod = true;
 
+        /**
+         * @param webappDirectory The web application directory.
+         * @param webappStructure The web app structure.
+         * @param overlayManager The overlay manager.
+         * @param filterWrappers The filter wrappers
+         * @param nonFilteredFileExtensions The non filtered file extensions.
+         * @param filteringDeploymentDescriptors The filtering deployment descriptors.
+         * @param artifactFactory The artifact factory.
+         * @param resourceEncoding The resource encoding.
+         * @param useJvmChmod use Jvm chmod or not.
+         */
         public DefaultWarPackagingContext( File webappDirectory, final WebappStructure webappStructure,
                                            final OverlayManager overlayManager,
                                            List<FileUtils.FilterWrapper> filterWrappers,
@@ -597,342 +616,546 @@ public abstract class AbstractWarMojo
             this.useJvmChmod = useJvmChmod;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public MavenProject getProject()
         {
             return project;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public File getWebappDirectory()
         {
             return webappDirectory;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public File getClassesDirectory()
         {
             return classesDirectory;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public Log getLog()
         {
             return AbstractWarMojo.this.getLog();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public String getOutputFileNameMapping()
         {
             return outputFileNameMapping;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public File getWebappSourceDirectory()
         {
             return warSourceDirectory;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public String[] getWebappSourceIncludes()
         {
             return getIncludes();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public String[] getWebappSourceExcludes()
         {
             return getExcludes();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public boolean isWebappSourceIncludeEmptyDirectories()
         {
             return includeEmptyDirectories;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public boolean archiveClasses()
         {
             return archiveClasses;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public File getOverlaysWorkDirectory()
         {
             return workDirectory;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public ArchiverManager getArchiverManager()
         {
             return archiverManager;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public MavenArchiveConfiguration getArchive()
         {
             return archive;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public JarArchiver getJarArchiver()
         {
             return jarArchiver;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public List<String> getFilters()
         {
             return filters;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public WebappStructure getWebappStructure()
         {
             return webappStructure;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public List<String> getOwnerIds()
         {
             return overlayManager.getOverlayIds();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public MavenFileFilter getMavenFileFilter()
         {
             return mavenFileFilter;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public List<FileUtils.FilterWrapper> getFilterWrappers()
         {
             return filterWrappers;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public boolean isNonFilteredExtension( String fileName )
         {
             return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public boolean isFilteringDeploymentDescriptors()
         {
             return filteringDeploymentDescriptors;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public ArtifactFactory getArtifactFactory()
         {
             return this.artifactFactory;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public MavenSession getSession()
         {
             return session;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public String getResourceEncoding()
         {
             return resourceEncoding;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public boolean isUseJvmChmod()
         {
             return useJvmChmod;
         }
     }
 
+    /**
+     * @return The Maven Project.
+     */
     public MavenProject getProject()
     {
         return project;
     }
 
+    /**
+     * @param project The project to be set.
+     */
     public void setProject( MavenProject project )
     {
         this.project = project;
     }
 
+    /**
+     * @return the classes directory.
+     */
     public File getClassesDirectory()
     {
         return classesDirectory;
     }
 
+    /**
+     * @param classesDirectory The classes directory to be set.
+     */
     public void setClassesDirectory( File classesDirectory )
     {
         this.classesDirectory = classesDirectory;
     }
 
+    /**
+     * @return {@link #webappDirectory}
+     */
     public File getWebappDirectory()
     {
         return webappDirectory;
     }
 
+    /**
+     * @param webappDirectory The web application directory.
+     */
     public void setWebappDirectory( File webappDirectory )
     {
         this.webappDirectory = webappDirectory;
     }
 
+    /**
+     * @return {@link #warSourceDirectory}
+     */
     public File getWarSourceDirectory()
     {
         return warSourceDirectory;
     }
 
+    /**
+     * @param warSourceDirectory {@link #warSourceDirectory}
+     */
     public void setWarSourceDirectory( File warSourceDirectory )
     {
         this.warSourceDirectory = warSourceDirectory;
     }
 
+    /**
+     * @return The {@link #webXml}
+     */
     public File getWebXml()
     {
         return webXml;
     }
 
+    /**
+     * @param webXml The {@link #webXml}
+     */
     public void setWebXml( File webXml )
     {
         this.webXml = webXml;
     }
 
+    /**
+     * @return {@link #containerConfigXML}
+     */
     public File getContainerConfigXML()
     {
         return containerConfigXML;
     }
 
+    /**
+     * @param containerConfigXML {@link #containerConfigXML}
+     */
     public void setContainerConfigXML( File containerConfigXML )
     {
         this.containerConfigXML = containerConfigXML;
     }
 
+    /**
+     * @return {@link #outputFileNameMapping}
+     */
     public String getOutputFileNameMapping()
     {
         return outputFileNameMapping;
     }
 
+    /**
+     * @param outputFileNameMapping {@link #outputFileNameMapping}
+     */
     public void setOutputFileNameMapping( String outputFileNameMapping )
     {
         this.outputFileNameMapping = outputFileNameMapping;
     }
 
+    /**
+     * @return {@link #overlays}
+     */
     public List<Overlay> getOverlays()
     {
         return overlays;
     }
 
+    /**
+     * @param overlays {@link #overlays}
+     */
     public void setOverlays( List<Overlay> overlays )
     {
         this.overlays = overlays;
     }
 
+    /**
+     * @param overlay add {@link #overlays}.
+     */
     public void addOverlay( Overlay overlay )
     {
         overlays.add( overlay );
     }
 
+    /**
+     * @return {@link #archiveClasses}
+     */
     public boolean isArchiveClasses()
     {
         return archiveClasses;
     }
 
+    /**
+     * @param archiveClasses {@link #archiveClasses}
+     */
     public void setArchiveClasses( boolean archiveClasses )
     {
         this.archiveClasses = archiveClasses;
     }
 
+    /**
+     * @return {@link JarArchiver}
+     */
     public JarArchiver getJarArchiver()
     {
         return jarArchiver;
     }
 
+    /**
+     * @param jarArchiver {@link JarArchiver}
+     */
     public void setJarArchiver( JarArchiver jarArchiver )
     {
         this.jarArchiver = jarArchiver;
     }
 
+    /**
+     * @return {@link #webResources}.
+     */
     public Resource[] getWebResources()
     {
         return webResources;
     }
 
+    /**
+     * @param webResources {@link #webResources}.
+     */
     public void setWebResources( Resource[] webResources )
     {
         this.webResources = webResources;
     }
 
+    /**
+     * @return {@link #filters}
+     */
     public List<String> getFilters()
     {
         return filters;
     }
 
+    /**
+     * @param filters {@link #filters}
+     */
     public void setFilters( List<String> filters )
     {
         this.filters = filters;
     }
 
+    /**
+     * @return {@link #workDirectory}
+     */
     public File getWorkDirectory()
     {
         return workDirectory;
     }
 
+    /**
+     * @param workDirectory {@link #workDirectory}
+     */
     public void setWorkDirectory( File workDirectory )
     {
         this.workDirectory = workDirectory;
     }
 
+    /**
+     * @return {@link #cacheFile}
+     */
     public File getCacheFile()
     {
         return cacheFile;
     }
 
+    /**
+     * @param cacheFile {@link #cacheFile}
+     */
     public void setCacheFile( File cacheFile )
     {
         this.cacheFile = cacheFile;
     }
 
+    /**
+     * @return {@link #warSourceIncludes}
+     */
     public String getWarSourceIncludes()
     {
         return warSourceIncludes;
     }
 
+    /**
+     * @param warSourceIncludes {@link #warSourceIncludes}
+     */
     public void setWarSourceIncludes( String warSourceIncludes )
     {
         this.warSourceIncludes = warSourceIncludes;
     }
 
+    /**
+     * @return {@link #warSourceExcludes}
+     */
     public String getWarSourceExcludes()
     {
         return warSourceExcludes;
     }
 
+    /**
+     * @param warSourceExcludes {@link #warSourceExcludes}
+     */
     public void setWarSourceExcludes( String warSourceExcludes )
     {
         this.warSourceExcludes = warSourceExcludes;
     }
 
+    /**
+     * @return {@link #useCache}
+     */
     public boolean isUseCache()
     {
         return useCache;
     }
 
+    /**
+     * @param useCache {@link #useCache}
+     */
     public void setUseCache( boolean useCache )
     {
         this.useCache = useCache;
     }
 
+    /**
+     * @return {@link #archive}
+     */
     public MavenArchiveConfiguration getArchive()
     {
         return archive;
     }
 
+    /**
+     * @return {@link #nonFilteredFileExtensions}
+     */
     public List<String> getNonFilteredFileExtensions()
     {
         return nonFilteredFileExtensions;
     }
 
+    /**
+     * @param nonFilteredFileExtensions {@link #nonFilteredFileExtensions}
+     */
     public void setNonFilteredFileExtensions( List<String> nonFilteredFileExtensions )
     {
         this.nonFilteredFileExtensions = nonFilteredFileExtensions;
     }
 
+    /**
+     * @return {@link #artifactFactory}
+     */
     public ArtifactFactory getArtifactFactory()
     {
         return this.artifactFactory;
     }
 
+    /**
+     * @param artifactFactory {@link #artifactFactory}
+     */
     public void setArtifactFactory( ArtifactFactory artifactFactory )
     {
         this.artifactFactory = artifactFactory;
     }
 
+    /**
+     * @return {@link #session}
+     */
     protected MavenSession getSession()
     {
         return this.session;
     }
 
+    /**
+     * @return {@link #recompressZippedFiles}
+     */
     protected boolean isRecompressZippedFiles()
     {
         return recompressZippedFiles;
     }
 
+    /**
+     * @return {@link #includeEmptyDirectories}
+     */
     protected boolean isIncludeEmptyDirectories()
     {
         return includeEmptyDirectories;

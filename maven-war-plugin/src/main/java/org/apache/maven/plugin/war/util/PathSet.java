@@ -210,6 +210,9 @@ public class PathSet
         return pathsSet.iterator();
     }
 
+    /**
+     * @return {@link #pathsSet}
+     */
     public Collection<String> paths()
     {
         return pathsSet;

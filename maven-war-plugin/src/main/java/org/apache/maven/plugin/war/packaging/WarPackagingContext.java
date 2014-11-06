@@ -185,8 +185,14 @@ public interface WarPackagingContext
      */
     boolean isNonFilteredExtension( String fileName );
 
+    /**
+     * @return filtering deployment descriptor.
+     */
     boolean isFilteringDeploymentDescriptors();
 
+    /**
+     * @return {@link ArtifactFactory}
+     */
     ArtifactFactory getArtifactFactory();
 
     /**

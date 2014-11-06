@@ -31,11 +31,18 @@ public class InvalidOverlayConfigurationException
     extends MojoExecutionException
 {
 
+    /**
+     * @param string Set the message of the exception.
+     */
     public InvalidOverlayConfigurationException( String string )
     {
         super( string );
     }
 
+    /**
+     * @param string Set the message of the exception.
+     * @param throwable {@link Throwable}
+     */
     public InvalidOverlayConfigurationException( String string, Throwable throwable )
     {
         super( string, throwable );

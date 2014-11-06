@@ -45,11 +45,17 @@ public class ClassesPackagingTask
 {
     private final Overlay currentProjectOverlay;
 
+    /**
+     * @param currentProjectOverlay {@link #currentProjectOverlay}
+     */
     public ClassesPackagingTask( Overlay currentProjectOverlay )
     {
         this.currentProjectOverlay = currentProjectOverlay;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {
@@ -82,6 +88,10 @@ public class ClassesPackagingTask
         }
     }
 
+    /**
+     * @param context The warPackingContext.
+     * @throws MojoExecutionException In casae of an error.
+     */
     protected void generateJarArchive( WarPackagingContext context )
         throws MojoExecutionException
     {
