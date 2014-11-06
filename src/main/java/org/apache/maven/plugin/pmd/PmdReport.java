@@ -147,7 +147,8 @@ public class PmdReport
      *
      * @since 3.1
      */
-    @Parameter( property = "pmd.benchmarkOutputFilename", defaultValue = "${project.build.directory}/pmd-benchmark.txt" )
+    @Parameter( property = "pmd.benchmarkOutputFilename",
+        defaultValue = "${project.build.directory}/pmd-benchmark.txt" )
     private String benchmarkOutputFilename;
 
     /**
@@ -331,7 +332,8 @@ public class PmdReport
             if ( filesToProcess.isEmpty() && !"java".equals( language ) )
             {
                 getLog().warn(
-                        "No files found to process. Did you add your additional source folders like javascript? (see also build-helper-maven-plugin)" );
+                        "No files found to process. Did you add your additional source folders like javascript?"
+                        + " (see also build-helper-maven-plugin)" );
             }
         }
         catch ( IOException e )
@@ -359,7 +361,7 @@ public class PmdReport
             getLog().debug( "Executing PMD..." );
 
             PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
-                              Collections.<Renderer> emptyList() );
+                              Collections.<Renderer>emptyList() );
 
             if ( getLog().isDebugEnabled() )
             {
