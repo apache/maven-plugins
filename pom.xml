@@ -158,6 +158,18 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- adding back dependency to dom4j for doxia-site-renderer -->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>xml-apis</artifactId>
+          <groupId>xml-apis</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <!-- plexus -->
     <dependency>
