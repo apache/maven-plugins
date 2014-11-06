@@ -44,9 +44,7 @@ Using Rule Sets
  Maven PMD Plugin 3.0 you may need to alter your plugin configuration.
 
  <<Note:>> Starting with PMD 5.2.0 and Maven PMD Plugin 3.3 you need to include a dependency for javascript
- in the report section, see {{{./javascriptReport.html}Analyzing JavaScript Code}}. Additionally when
- {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/customizing/howtomakearuleset.html}excluding rules}},
- the rule path does not end on <<<Rule>>> anymore.
+ in the report section, see {{{./javascriptReport.html}Analyzing JavaScript Code}}.
 
 +-----+
 <project>
