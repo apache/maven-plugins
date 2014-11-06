@@ -74,6 +74,9 @@ public class DependencyInfo
         this.targetFileName = targetFileName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean equals( Object o )
     {
         if ( this == o )
@@ -95,6 +98,9 @@ public class DependencyInfo
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int hashCode()
     {
         int result;

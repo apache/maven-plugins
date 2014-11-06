@@ -40,24 +40,43 @@ public class ArtifactsPackagingTask
     extends AbstractWarPackagingTask
 {
 
+    /**
+     * The {@code tld} path.
+     */
     public static final String TLD_PATH = "WEB-INF/tld/";
 
+    /**
+     * The {@code services} path.
+     */
     public static final String SERVICES_PATH = "WEB-INF/services/";
 
+    /**
+     * The {@code modules} path.
+     */
     public static final String MODULES_PATH = "WEB-INF/modules/";
 
+    /**
+     * The {@code extensions} path.
+     */
     public static final String EXTENSIONS_PATH = "WEB-INF/extensions/";
 
     private final Set<Artifact> artifacts;
 
     private final String id;
 
+    /**
+     * @param artifacts {@link #artifacts}
+     * @param currentProjectOverlay {@link #id}
+     */
     public ArtifactsPackagingTask( Set<Artifact> artifacts, Overlay currentProjectOverlay )
     {
         this.artifacts = artifacts;
         this.id = currentProjectOverlay.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {

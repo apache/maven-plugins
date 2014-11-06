@@ -31,6 +31,11 @@ import org.codehaus.plexus.util.StringUtils;
 public class WarUtils
 {
 
+    /**
+     * @param project {@link MavenProject}
+     * @param dependency {@link Dependency}
+     * @return {@link Artifact}
+     */
     public static Artifact getArtifact( MavenProject project, Dependency dependency )
     {
         for ( Object o : project.getArtifacts() )
@@ -54,6 +59,11 @@ public class WarUtils
         return null;
     }
 
+    /**
+     * @param artifact {@link Artifact}
+     * @param dependency {@link Dependency}
+     * @return is related or not.
+     */
     public static boolean isRelated( Artifact artifact, Dependency dependency )
     {
         if ( artifact == null || dependency == null )
@@ -97,6 +107,11 @@ public class WarUtils
         return true;
     }
 
+    /**
+     * @param first {@link Dependency}
+     * @param second {@link Dependency}
+     * @return are the dependencies equal.
+     */
     public static boolean dependencyEquals( Dependency first, Dependency second )
     {
         if ( first == second )

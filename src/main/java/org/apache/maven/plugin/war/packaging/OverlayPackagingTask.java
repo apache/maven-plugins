@@ -38,6 +38,10 @@ public class OverlayPackagingTask
 {
     private final Overlay overlay;
 
+    /**
+     * @param overlay {@link #overlay}
+     * @param currentProjectOverlay current overlay.
+     */
     public OverlayPackagingTask( Overlay overlay, Overlay currentProjectOverlay )
     {
         if ( overlay == null )
@@ -51,6 +55,9 @@ public class OverlayPackagingTask
         this.overlay = overlay;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException
     {

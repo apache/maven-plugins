@@ -41,8 +41,14 @@ import java.util.List;
 public class Overlay
 {
 
+    /**
+     * The list of default includes.
+     */
     public static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
+    /**
+     * The list of default excludes.
+     */
     public static final String[] DEFAULT_EXCLUDES = new String[] { "META-INF/MANIFEST.MF" };
 
     private String id;
@@ -68,11 +74,18 @@ public class Overlay
     /** default overlay type is war */
     private String type = "war";
 
+    /**
+     * Create instance.
+     */
     public Overlay()
     {
         super();
     }
 
+    /**
+     * @param groupId {@link #groupId}
+     * @param artifactId {@link #artifactId}
+     */
     public Overlay( String groupId, String artifactId )
     {
         this();
@@ -90,6 +103,9 @@ public class Overlay
         return ( groupId == null && artifactId == null );
     }
 
+    /**
+     * @return {@link Overlay} instance.
+     */
     public static Overlay createInstance()
     {
         Overlay overlay = new Overlay();
@@ -99,6 +115,9 @@ public class Overlay
 
     // Getters and Setters
 
+    /**
+     * @return The id.
+     */
     public String getId()
     {
         if ( id == null )
@@ -114,126 +133,201 @@ public class Overlay
         return id;
     }
 
+    /**
+     * @param id The id.
+     */
     public void setId( String id )
     {
         this.id = id;
     }
 
+    /**
+     * @return {@link #groupId}
+     */
     public String getGroupId()
     {
         return groupId;
     }
 
+    /**
+     * @param groupId {@link #groupId}
+     */
     public void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
 
+    /**
+     * @return {@link #artifactId}
+     */
     public String getArtifactId()
     {
         return artifactId;
     }
 
+    /**
+     * @param artifactId {@link #artifactId}
+     */
     public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
 
+    /**
+     * @return {@link #classifier}
+     */
     public String getClassifier()
     {
         return classifier;
     }
 
+    /**
+     * @param classifier {@link #classifier}
+     */
     public void setClassifier( String classifier )
     {
         this.classifier = classifier;
     }
 
+    /**
+     * @return {@link #includes}
+     */
     public String[] getIncludes()
     {
         return includes;
     }
 
+    /**
+     * @param includes {@link #includes}
+     */
     public void setIncludes( String includes )
     {
         this.includes = parse( includes );
     }
 
+    /**
+     * @param includes {@link #includes}
+     */
     public void setIncludes( String[] includes )
     {
         this.includes = includes;
     }
 
+    /**
+     * @return {@link #excludes}
+     */
     public String[] getExcludes()
     {
         return excludes;
     }
 
+    /**
+     * @param excludes {@link #excludes}
+     */
     public void setExcludes( String excludes )
     {
         this.excludes = parse( excludes );
     }
 
+    /**
+     * @param excludes {@link #excludes}
+     */
     public void setExcludes( String[] excludes )
     {
         this.excludes = excludes;
     }
 
+    /**
+     * @return {@link #filtered}
+     */
     public boolean isFiltered()
     {
         return filtered;
     }
 
+    /**
+     * @param filtered {@link #filtered}
+     */
     public void setFiltered( boolean filtered )
     {
         this.filtered = filtered;
     }
 
+    /**
+     * @return {@link #skip}
+     */
     public boolean shouldSkip()
     {
         return skip;
     }
 
+    /**
+     * @param skip {@link #skip}
+     */
     public void setSkip( boolean skip )
     {
         this.skip = skip;
     }
 
+    /**
+     * @return {@link #artifact}
+     */
     public Artifact getArtifact()
     {
         return artifact;
     }
 
+    /**
+     * @param artifact {@link #artifact}
+     */
     public void setArtifact( Artifact artifact )
     {
         this.artifact = artifact;
     }
 
+    /**
+     * @return {@link #targetPath}
+     */
     public String getTargetPath()
     {
         return targetPath;
     }
 
+    /**
+     * @param targetPath {@link #targetPath}
+     */
     public void setTargetPath( String targetPath )
     {
         this.targetPath = targetPath;
     }
 
+    /**
+     * @return {@link #type}
+     */
     public String getType()
     {
         return type;
     }
 
+    /**
+     * @param type {@link #type}
+     */
     public void setType( String type )
     {
         this.type = type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toString()
     {
         return " id " + getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean equals( Object o )
     {
         if ( this == o )
@@ -263,6 +357,9 @@ public class Overlay
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int hashCode()
     {
         int result;

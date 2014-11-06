@@ -33,6 +33,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 public class WarInPlaceMojo
     extends AbstractWarMojo
 {
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

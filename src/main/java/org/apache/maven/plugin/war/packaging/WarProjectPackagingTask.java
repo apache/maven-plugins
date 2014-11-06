@@ -52,6 +52,12 @@ public class WarProjectPackagingTask
 
     private Overlay currentProjectOverlay;
 
+    /**
+     * @param webResources {@link #webResources}
+     * @param webXml {@link #webXml}
+     * @param containerConfigXml {@link #containerConfigXML}
+     * @param currentProjectOverlay {@link #currentProjectOverlay}
+     */
     public WarProjectPackagingTask( Resource[] webResources, File webXml, File containerConfigXml,
                                     Overlay currentProjectOverlay )
     {
@@ -69,6 +75,9 @@ public class WarProjectPackagingTask
         this.id = currentProjectOverlay.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void performPackaging( WarPackagingContext context )
         throws MojoExecutionException, MojoFailureException
     {
