@@ -28,7 +28,7 @@ under the License.
       <name>demo</name>
     </provides>
     <configuration>
-      <toolHome>/opt/custom/1.5</toolHome>
+      <toolHome>opt/custom/1.5</toolHome>
     </configuration>
   </toolchain>
   <toolchain>
@@ -38,7 +38,7 @@ under the License.
       <name>demo-2</name>
     </provides>
     <configuration>
-      <toolHome>/opt/custom/2.0</toolHome>
+      <toolHome>opt/custom/2.0</toolHome>
     </configuration>
   </toolchain>
 </toolchains>

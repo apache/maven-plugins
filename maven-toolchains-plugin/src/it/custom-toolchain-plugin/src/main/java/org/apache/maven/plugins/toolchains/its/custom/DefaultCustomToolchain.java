@@ -61,25 +61,30 @@ public class DefaultCustomToolchain
 
     public String findTool( String toolName )
     {
-        File toRet = findTool( toolName, new File( FileUtils.normalize( getToolHome() ) ) );
-        if ( toRet != null )
+        File tool = findTool( toolName, new File( getToolHome() ) );
+
+        if ( tool != null )
         {
-            return toRet.getAbsolutePath();
+            return tool.getAbsolutePath();
         }
+
         return null;
     }
 
     private static File findTool( String toolName, File installFolder )
     {
         File bin = new File( installFolder, "bin" ); //NOI18N
+
         if ( bin.exists() )
         {
             File tool = new File( bin, toolName + ( Os.isFamily( "windows" ) ? ".exe" : "" ) ); // NOI18N
+
             if ( tool.exists() )
             {
                 return tool;
             }
         }
+
         return null;
    }
 }
