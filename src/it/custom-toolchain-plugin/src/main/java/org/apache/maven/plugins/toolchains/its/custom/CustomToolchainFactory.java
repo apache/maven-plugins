@@ -97,17 +97,13 @@ public class CustomToolchainFactory
                 + DefaultCustomToolchain.KEY_TOOLHOME + " configuration element." );
         }
 
-        File normal = new File( FileUtils.normalize( toolHome ) );
-        if ( normal.exists() )
+        toolHome = FileUtils.normalize( toolHome );
+        customToolchain.setToolHome( toolHome );
+
+        if ( !new File( toolHome ).exists() )
         {
-            customToolchain.setToolHome( FileUtils.normalize( toolHome ) );
-        }
-        else
-        {
-            // for this IT, don't really check the toolHome directory exists...
-            // throw new MisconfiguredToolchainException( "Non-existing tool home configuration at "
-            //    + normal.getAbsolutePath() );
-            customToolchain.setToolHome( FileUtils.normalize( toolHome ) );
+            throw new MisconfiguredToolchainException( "Non-existing tool home configuration at "
+                                                        + new File( toolHome ).getAbsolutePath() );
         }
 
         return customToolchain;

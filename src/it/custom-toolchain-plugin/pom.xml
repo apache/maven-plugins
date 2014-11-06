@@ -24,20 +24,47 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.toolchains.its</groupId>
-  <artifactId>custom-toolchain</artifactId>
+  <artifactId>custom-toolchain-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>maven-plugin</packaging>
 
-  <name>maven-toolchains-plugin IT: demo toolchain</name>
+  <name>maven-toolchains-plugin IT: custom toolchain + plugin using it</name>
   <description>
-    Demo to show how to write a custom toolchain type
+    Demo to show how to write a custom toolchain type, a plugin using this custom toolchain,
+    to later write a project that uses the toolchain and plugin.
   </description>
 
   <dependencies>
+    <!-- toolchains API -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <version>3.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+      <version>1.5.5</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- plugin API and plugin-tools -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>3.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.3</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>3.0.15</version>
     </dependency>
   </dependencies>
 
@@ -58,6 +85,26 @@ under the License.
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.3</version>
+          <executions>
+            <execution>
+              <id>default-descriptor</id>
+              <phase>process-classes</phase>
+            </execution>
+            <execution>
+              <id>generated-helpmojo</id>
+              <goals>
+                <goal>helpmojo</goal>
+              </goals>
+              <configuration><!-- TODO: remove when upgrading plugin-tools to 3.4: see MPLUGIN-238 -->
+                <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+              </configuration>
+            </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
