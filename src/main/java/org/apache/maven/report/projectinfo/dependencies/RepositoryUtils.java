@@ -84,16 +84,16 @@ public class RepositoryUtils
     private final ArtifactRepository localRepository;
 
     /**
-     * @param log
-     * @param wagonManager
-     * @param settings
-     * @param mavenProjectBuilder
-     * @param factory
-     * @param resolver
-     * @param remoteRepositories
-     * @param pluginRepositories
-     * @param localRepository
-     * @param repositoryMetadataManager
+     * @param log {@link Log}
+     * @param wagonManager {@link WagonManager}
+     * @param settings {@link Settings}
+     * @param mavenProjectBuilder {@link MavenProjectBuilder}
+     * @param factory {@link ArtifactFactory}
+     * @param resolver {@link ArtifactResolver}
+     * @param remoteRepositories {@link ArtifactRepository}
+     * @param pluginRepositories {@link ArtifactRepository}
+     * @param localRepository {@link ArtifactRepository}
+     * @param repositoryMetadataManager {@link RepositoryMetadataManager}
      */
     public RepositoryUtils( Log log, WagonManager wagonManager, Settings settings,
                             MavenProjectBuilder mavenProjectBuilder, ArtifactFactory factory,

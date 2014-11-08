@@ -174,19 +174,19 @@ public class DependenciesRenderer
     /**
      * Default constructor.
      *
-     * @param sink
-     * @param locale
-     * @param i18n
-     * @param log
-     * @param settings
-     * @param dependencies
-     * @param dependencyTreeNode
-     * @param config
-     * @param repoUtils
-     * @param artifactFactory
-     * @param mavenProjectBuilder
-     * @param remoteRepositories
-     * @param localRepository
+     * @param sink {@link Sink}
+     * @param locale {@link Locale}
+     * @param i18n {@link I18N}
+     * @param log {@link Log}
+     * @param settings {@link Settings}
+     * @param dependencies {@link Dependencies}
+     * @param dependencyTreeNode {@link DependencyNode}
+     * @param config {@link DependenciesReportConfiguration}
+     * @param repoUtils {@link RepositoryUtils}
+     * @param artifactFactory {@link ArtifactFactory}
+     * @param mavenProjectBuilder {@link MavenProjectBuilder}
+     * @param remoteRepositories {@link ArtifactRepository}
+     * @param localRepository {@link ArtifactRepository}
      */
     public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Settings settings,
                                  Dependencies dependencies, DependencyNode dependencyTreeNode,

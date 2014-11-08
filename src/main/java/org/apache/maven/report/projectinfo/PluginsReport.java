@@ -19,6 +19,13 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -33,13 +40,6 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Generates the Project Plugins report.
@@ -127,16 +127,17 @@ public class PluginsReport
         private final ArtifactRepository localRepository;
 
         /**
-         * @param log
-         * @param sink
-         * @param locale
-         * @param i18n
-         * @param plugins
-         * @param reports
-         * @param project
-         * @param mavenProjectBuilder
-         * @param artifactFactory
-         * @param localRepository
+         * @param log {@link #log}
+         * @param sink {@link Sink}
+         * @param locale {@link Locale}
+         * @param i18n {@link I18N}
+         * @param plugins {@link Artifact}
+         * @param reports {@link Artifact}
+         * @param project {@link MavenProject}
+         * @param mavenProjectBuilder {@link MavenProjectBuilder}
+         * @param artifactFactory {@link ArtifactFactory}
+         * @param localRepository {@link ArtifactRepository}
+         * 
          */
         public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set<Artifact> plugins,
                                 Set<Artifact> reports, MavenProject project, MavenProjectBuilder mavenProjectBuilder,

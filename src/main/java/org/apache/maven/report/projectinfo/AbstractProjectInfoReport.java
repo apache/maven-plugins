@@ -262,6 +262,10 @@ public abstract class AbstractProjectInfoReport
     // Protected methods
     // ----------------------------------------------------------------------
 
+    /**
+     * @param coll The collection to be checked.
+     * @return true if coll is empty false otherwise. 
+     */
     protected boolean isEmpty( Collection<?> coll )
     {
         return coll == null || coll.isEmpty();
@@ -291,6 +295,10 @@ public abstract class AbstractProjectInfoReport
         return project;
     }
 
+    /**
+     * @param pluginId The id of the plugin
+     * @return The information about the plugin.
+     */
     protected Plugin getPlugin( String pluginId )
     {
         if ( ( getProject().getBuild() == null ) || ( getProject().getBuild().getPluginsAsMap() == null ) )
@@ -309,6 +317,11 @@ public abstract class AbstractProjectInfoReport
         return plugin;
     }
 
+    /**
+     * @param pluginId The pluginId
+     * @param param The child which should be checked.
+     * @return The value of the dom tree.
+     */
     protected String getPluginParameter( String pluginId, String param )
     {
         Plugin plugin = getPlugin( pluginId );
@@ -325,17 +338,29 @@ public abstract class AbstractProjectInfoReport
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
+    /**
+     * @param locale The locale
+     * @param key The key to search for
+     * @return The text appropriate for the locale.
+     */
     protected String getI18nString( Locale locale, String key )
     {
         return getI18N( locale ).getString( "project-info-report", locale, "report." + getI18Nsection() + '.' + key );
     }
 
+    /**
+     * @param locale The local.
+     * @return I18N for the locale
+     */
     protected I18N getI18N( Locale locale )
     {
         if ( customBundle != null )
@@ -358,6 +383,9 @@ public abstract class AbstractProjectInfoReport
         return i18n;
     }
 
+    /**
+     * @return The according string for the section.
+     */
     protected abstract String getI18Nsection();
 
     /** {@inheritDoc} */

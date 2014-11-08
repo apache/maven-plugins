@@ -374,6 +374,10 @@ public class ProjectInfoReportUtils
         return conn;
     }
 
+    /**
+     * @param str The string to be checked.
+     * @return true if is number false otherwise.
+     */
     public static boolean isNumber( String str )
     {
         if ( str.startsWith( "+" ) )
@@ -383,6 +387,11 @@ public class ProjectInfoReportUtils
         return NumberUtils.isNumber( str );
     }
 
+    /**
+     * @param str The string which should be converted.
+     * @param defaultValue The default value.
+     * @return Converted string.
+     */
     public static float toFloat( String str, float defaultValue )
     {
         if ( str.startsWith( "+" ) )

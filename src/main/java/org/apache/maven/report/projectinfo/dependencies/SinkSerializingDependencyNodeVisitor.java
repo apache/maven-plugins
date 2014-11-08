@@ -103,7 +103,6 @@ public class SinkSerializingDependencyNodeVisitor
      * tokens.
      *
      * @param sink the writer to serialize to
-     * @param tokens the tokens to use when serializing the dependency tree
      */
     public SinkSerializingDependencyNodeVisitor( Sink sink )
     {
