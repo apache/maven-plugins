@@ -44,22 +44,34 @@ public class DependencyVersionMap
     // Public methods
     // ----------------------------------------------------------------------
 
+    /**
+     * Create an instance.
+     */
     public DependencyVersionMap()
     {
         idsToNode = new HashMap<String, List<DependencyNode>>();
     }
 
+    /**
+     * @param uniqueVersions {@link #uniqueVersions}
+     */
     public void setUniqueVersions( boolean uniqueVersions )
     {
         this.uniqueVersions = uniqueVersions;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean visit( DependencyNode node )
     {
         addDependency( node );
         return !containsConflicts( node );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean endVisit( DependencyNode node )
     {
         return true;

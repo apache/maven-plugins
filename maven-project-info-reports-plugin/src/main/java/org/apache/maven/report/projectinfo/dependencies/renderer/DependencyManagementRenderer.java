@@ -75,16 +75,17 @@ public class DependencyManagementRenderer
     /**
      * Default constructor
      *
-     * @param sink
-     * @param locale
-     * @param i18n
-     * @param log
-     * @param artifactFactory
-     * @param dependencies
-     * @param mavenProjectBuilder
-     * @param remoteRepositories
-     * @param localRepository
-     * @param repoUtils
+     * @param sink {@link Sink}
+     * @param locale {@link Locale}
+     * @param i18n {@link I18N}
+     * @param log {@link Log}
+     * @param dependencies {@link ManagementDependencies}
+     * @param artifactMetadataSource {@link ArtifactMetadataSource}
+     * @param artifactFactory {@link ArtifactFactory}
+     * @param mavenProjectBuilder {@link MavenProjectBuilder}
+     * @param remoteRepositories {@link ArtifactRepository}
+     * @param localRepository {@link ArtifactRepository}
+     * @param repoUtils {@link RepositoryUtils}
      */
     public DependencyManagementRenderer( Sink sink, Locale locale, I18N i18n, Log log,
                                          ManagementDependencies dependencies,

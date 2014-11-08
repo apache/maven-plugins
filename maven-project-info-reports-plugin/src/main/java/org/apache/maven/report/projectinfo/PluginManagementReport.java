@@ -126,15 +126,15 @@ public class PluginManagementReport
         private final ArtifactRepository localRepository;
 
         /**
-         * @param log
-         * @param sink
-         * @param locale
-         * @param i18n
-         * @param plugins
-         * @param project
-         * @param mavenProjectBuilder
-         * @param artifactFactory
-         * @param localRepository
+         * @param log {@link #log}
+         * @param sink {@link Sink}
+         * @param locale {@link Locale}
+         * @param i18n {@link I18N}
+         * @param plugins {@link Plugin}
+         * @param project {@link MavenProject}
+         * @param mavenProjectBuilder {@link MavenProjectBuilder}
+         * @param artifactFactory {@link ArtifactFactory}
+         * @param localRepository {@link ArtifactRepository}
          */
         public PluginManagementRenderer( Log log, Sink sink, Locale locale, I18N i18n, List<Plugin> plugins,
                                          MavenProject project, MavenProjectBuilder mavenProjectBuilder,
