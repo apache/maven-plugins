@@ -33,4 +33,4 @@ Standard Toolchains
   []
 
   You can also create and use your own custom toolchains by following the
-  {{{http://maven.apache.org/}TBD}} instructions.
+  {{{./custom.html}Custom Toolchains}} instructions.

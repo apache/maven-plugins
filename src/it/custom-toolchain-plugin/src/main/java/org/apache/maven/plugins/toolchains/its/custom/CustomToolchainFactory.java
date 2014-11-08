@@ -63,7 +63,7 @@ public class CustomToolchainFactory
             return null;
         }
 
-        DefaultCustomToolchain customToolchain = new DefaultCustomToolchain( model, logger );
+        CustomToolchainImpl customToolchain = new CustomToolchainImpl( model, logger );
 
         // populate the provides section
         Properties provides = getProvidesProperties( model );
@@ -95,11 +95,11 @@ public class CustomToolchainFactory
         // populate the configuration section
         Properties configuration = toProperties( (Xpp3Dom) model.getConfiguration() );
 
-        String toolHome = configuration.getProperty( DefaultCustomToolchain.KEY_TOOLHOME );
+        String toolHome = configuration.getProperty( CustomToolchainImpl.KEY_TOOLHOME );
         if ( toolHome == null )
         {
             throw new MisconfiguredToolchainException( "Custom toolchain without the "
-                + DefaultCustomToolchain.KEY_TOOLHOME + " configuration element." );
+                + CustomToolchainImpl.KEY_TOOLHOME + " configuration element." );
         }
 
         toolHome = FileUtils.normalize( toolHome );
