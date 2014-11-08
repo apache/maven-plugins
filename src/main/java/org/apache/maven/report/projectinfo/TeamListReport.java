@@ -127,8 +127,6 @@ public class TeamListReport
 
         private final boolean showAvatarImages;
 
-        private static final String[] EMPTY_STRING_ARRAY = new String[0];
-
         TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log, boolean showAvatarImages )
         {
             super( sink, i18n, locale );
@@ -435,15 +433,6 @@ public class TeamListReport
             {
                 return null;
             }
-        }
-
-        private String img( String src )
-        {
-            if ( src == null )
-            {
-                return "";
-            }
-            return "<img src='" + src + "'/>";
         }
 
         /**
