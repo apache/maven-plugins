@@ -30,6 +30,7 @@ import java.util.Properties;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.toolchain.MisconfiguredToolchainException;
+import org.apache.maven.toolchain.RequirementMatcher;
 import org.apache.maven.toolchain.RequirementMatcherFactory;
 import org.apache.maven.toolchain.ToolchainFactory;
 import org.apache.maven.toolchain.ToolchainPrivate;
@@ -65,30 +66,34 @@ public class CustomToolchainFactory
         DefaultCustomToolchain customToolchain = new DefaultCustomToolchain( model, logger );
 
         // populate the provides section
-        Properties provides = getModelProperties( model, "provides" );
+        Properties provides = getProvidesProperties( model );
 
         for ( Map.Entry<Object, Object> provide : provides.entrySet() )
         {
             String key = (String) provide.getKey();
             String value = (String) provide.getValue();
+
             if ( value == null )
             {
                 throw new MisconfiguredToolchainException(
                     "Provides token '" + key + "' doesn't have any value configured." );
             }
 
+            RequirementMatcher matcher;
             if ( "version".equals( key ) )
             {
-                customToolchain.addProvideToken( key, RequirementMatcherFactory.createVersionMatcher( value ) );
+                matcher = RequirementMatcherFactory.createVersionMatcher( value );
             }
             else
             {
-                customToolchain.addProvideToken( key, RequirementMatcherFactory.createExactMatcher( value ) );
+                matcher = RequirementMatcherFactory.createExactMatcher( value );
             }
+
+            customToolchain.addProvideToken( key, matcher );
         }
 
         // populate the configuration section
-        Properties configuration = getModelProperties( model, "configuration" );
+        Properties configuration = toProperties( (Xpp3Dom) model.getConfiguration() );
 
         String toolHome = configuration.getProperty( DefaultCustomToolchain.KEY_TOOLHOME );
         if ( toolHome == null )
@@ -121,25 +126,25 @@ public class CustomToolchainFactory
     }
 
     /**
-     * Get model properties in in a way compatible with toolchains descriptor version 1.0
+     * Get <code>provides</code> properties in in a way compatible with toolchains descriptor version 1.0
      * (Maven 2.0.9 to 3.2.3, where it is represented as Object/DOM) and descriptor version 1.1
      * (Maven 3.2.4 and later, where it is represented as Properties).
      * 
      * @param model the toolchain model as read from XML
-     * @param property the model XML element to get
-     * @return the properties defined in the corresponding element
-     * @see <a href="http://jira.codehaus.org/browse/MNG-5718">MNG-5718</a>, <a href="http://jira.codehaus.org/browse/MNG-5720">MNG-5720</a> 
+     * @return the properties defined in the <code>provides</code> element
+     * @see <a href="http://jira.codehaus.org/browse/MNG-5718">MNG-5718</a> 
      */
-    protected Properties getModelProperties( ToolchainModel model, String property )
+    protected Properties getProvidesProperties( ToolchainModel model )
     {
-        Object value = getBeanProperty( model, property );
-        if ( value instanceof Properties )
-        {
-            return (Properties) value;
-        }
+        Object value = getBeanProperty( model, "provides" );
 
+        return ( value instanceof Properties ) ? (Properties) value : toProperties( (Xpp3Dom) value );
+    }
+
+    protected Properties toProperties( Xpp3Dom dom )
+    {
         Properties props = new Properties();
-        Xpp3Dom dom = (Xpp3Dom) value;
+
         Xpp3Dom[] children = dom.getChildren();
         for ( Xpp3Dom child : children )
         {
