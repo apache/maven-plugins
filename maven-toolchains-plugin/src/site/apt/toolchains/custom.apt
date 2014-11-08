@@ -1,0 +1,124 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Custom Toolchains
+  ------
+  Hervé Boutemy
+  ------
+  2014-11-08
+  ------
+
+Custom Toolchains
+
+  You can create your own custom toolchains with plugins using them.
+
+  A full working sample is included in <<<maven-toolchains-plugin>>> ITs:
+
+  * see <<<src/it/custom-toolchain-plugin>>> for the custom toolchain and plugin,
+
+  * see <<<src/it/use-custom-toolchain>>> for a sample project using the toolchain through its plugin.
+
+  []
+
+  Following instructions are explanations of key points of the sample.
+
+* Creating Custom Toolchain
+
+  A toolchain consists in:
+
+  * an interface extending {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/Toolchain.html}<<<org.apache.maven.toolchain.Toolchain>>>}},
+
+  * an implementation of this interface, extending
+  {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/DefaultToolchain.html}<<<org.apache.maven.toolchain.DefaultToolchain>>>}}
+  and implementing previous interface,
+
+  * a {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/ToolchainFactory.html}<<<org.apache.maven.toolchain.ToolchainFactory>>>}},
+  provided as Plexus component: Plexus {{{http://plexus.codehaus.org/plexus-containers/plexus-component-annotations/}<<<@Component>>>}}
+  annotation in the class is extracted by {{{http://plexus.codehaus.org/plexus-containers/plexus-component-metadata/}<<<plexus-component-metadata>>>}}
+  plugin.
+
+  []
+
+* Creating a Plugin Using a Toolchain
+
+  To get a configured toolchain, a plugin uses
+  {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/ToolchainManager.html}<<<ToolchainManager>>>}} API
+  to get epxected toolchain, then tool in the toolchain:
+
++--------+
+    @Component
+    private ToolchainManager toolchainManager;
+
+    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    private MavenSession session;
+
+    public void execute()
+        throws MojoExecutionException
+    {
+        // get the custom toolchain
+        CustomToolchain toolchain = (CustomToolchain) toolchainManager.getToolchainFromBuildContext( "custom", session );
+
+        if ( toolchain == null )
+        {
+            throw new MojoExecutionException( "Could not find 'custom' toolchain: please check maven-toolchains-plugin configuration." );
+        }
+
+        getLog().info( "Found 'custom' toolchain in build context." );
+
+        // get a tool from the toolchain
+        String path = toolchain.findTool( "tool" );
+
+        getLog().info( "Found expected tool named 'tool' at following location: " + path );
+    }
++--------+
+
+  This code uses {{{/plugin-tools/maven-plugin-plugin/examples/using-annotations.html}Maven Plugin Tool Java 5 Annotations}}.
+
+* Using the Custom Toolchain and its Plugin
+
+  The custom toolchain implementation needs to be shared between the toolchain-aware plugin and <<<maven-toolchains-plugin>>>:
+  this is done using Maven extension:
+
+  * if the toolchain is packaged with the plugin, this is done by declaring the plugin as extension:
+
++--------+
+      <plugin>
+        <groupId>...</groupId>
+        <artifactId>...</artifactId>
+        <version>...</version>
+        <extensions>true</extensions><!-- to share the custom toolchain with maven-toolchains-plugin -->
+      </plugin>
++--------+
+
+  * if the toolchain is packaged separately, to be shared by multiple plugins, it has to be declared as a build extension:
+
++--------+
+<project>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>...</groupId>
+        <artifactId>...</artifactId>
+        <version>...</version>
+      </extension>
+    </extensions>
+  </build>
+</project>
++--------+
+
+  []

@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.Os;
 /**
  * @author Hervé Boutemy
  */
-public class DefaultCustomToolchain
+public class CustomToolchainImpl
     extends DefaultToolchain
     implements CustomToolchain
 {
@@ -39,7 +39,7 @@ public class DefaultCustomToolchain
 
     public static final String KEY_TOOLHOME = "toolHome";
 
-    public DefaultCustomToolchain( ToolchainModel model, Logger logger )
+    public CustomToolchainImpl( ToolchainModel model, Logger logger )
     {
         super( model, "custom", logger );
     }
