@@ -511,6 +511,7 @@ public class ScmReport
 
         // CVS
 
+        // CHECKSTYLE_OFF: LineLength
         /**
          * Create the documentation to provide an anonymous access with a <code>CVS</code> SCM. For example, generate
          * the following command line:
@@ -525,6 +526,7 @@ public class ScmReport
          * @see <a
          *      href="https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115">https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115</a>
          */
+        // CHECKSTYLE_ON: LineLength
         private void anonymousAccessCVS( CvsScmProviderRepository cvsRepo )
         {
             paragraph( getI18nString( "anonymousaccess.cvs.intro" ) );
@@ -588,6 +590,7 @@ public class ScmReport
             verbatimText( "$ hg clone " + hgRepo.getURI() );
         }
 
+        // CHECKSTYLE_OFF: LineLength
         /**
          * Create the documentation to provide an developer access with a <code>CVS</code> SCM. For example, generate
          * the following command line:
@@ -602,6 +605,7 @@ public class ScmReport
          * @see <a
          *      href="https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115">https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115</a>
          */
+        // CHECKSTYLE_ON: LineLength
         private void developerAccessCVS( CvsScmProviderRepository cvsRepo )
         {
             paragraph( getI18nString( "devaccess.cvs.intro" ) );
@@ -655,6 +659,7 @@ public class ScmReport
 
         // Perforce
 
+        // CHECKSTYLE_OFF: LineLength
         /**
          * Create the documentation to provide an developer access with a <code>Perforce</code> SCM. For example,
          * generate the following command line:
@@ -667,9 +672,11 @@ public class ScmReport
          *
          * @param perforceRepo
          * @see <a
-         *      href="http://www.perforce.com/perforce/doc.051/manuals/cmdref/index.html">http://www.perforce.com/perforce
+         *      href="http://www.perforce.com/perforce/doc.051/manuals/cmdref/index.html">http://www.perforce.com/
+         *      perforce
          *      /doc.051/manuals/cmdref/index.html</>
          */
+        // CHECKSTYLE_ON: LineLength
         private void developerAccessPerforce( PerforceScmProviderRepository perforceRepo )
         {
             paragraph( getI18nString( "devaccess.perforce.intro" ) );
@@ -836,7 +843,9 @@ public class ScmReport
 
                     if ( !isIntroAdded )
                     {
-                        sb.append( "This SCM url '" ).append( scmUrl ).append( "' is invalid due to the following errors:" );
+                        sb.append( "This SCM url '" );
+                        sb.append( scmUrl );
+                        sb.append( "' is invalid due to the following errors:" );
                         sb.append( SystemUtils.LINE_SEPARATOR );
                         isIntroAdded = true;
                     }

@@ -46,7 +46,8 @@ public class IssueTrackingReport
     @Override
     public void executeReport( Locale locale )
     {
-        IssueTrackingRenderer r = new IssueTrackingRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
+        IssueTrackingRenderer r =
+            new IssueTrackingRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
 
         r.render();
     }

@@ -661,7 +661,9 @@ public class DependenciesRenderer
         {
             if ( titles != null && content.length != titles.length )
             {
+                // CHECKSTYLE_OFF: LineLength
                 throw new IllegalArgumentException( "Length of title array must equal the length of the content array" );
+                // CHECKSTYLE_ON: LineLength
             }
 
             for ( int i = 0; i < content.length; i++ )
@@ -1513,6 +1515,7 @@ public class DependenciesRenderer
         return false;
     }
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * Formats file length with the associated <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI</a> prefix
      * (GB, MB, kB) and using the pattern <code>###0.00</code> by default.
@@ -1522,6 +1525,7 @@ public class DependenciesRenderer
      * @see <a
      *      href="https://en.wikipedia.org/wiki/Octet_%28computing%29">https://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
+    // CHECKSTYLE_ON: LineLength
     static class FileDecimalFormat
         extends DecimalFormat
     {

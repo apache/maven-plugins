@@ -203,10 +203,11 @@ public class ProjectInfoReportUtils
      * @param localRepository not null
      * @return the artifact url or null if an error occurred.
      */
+    // CHECKSTYLE_OFF: LineLength
     public static String getArtifactUrl( ArtifactFactory factory, Artifact artifact,
                                          MavenProjectBuilder mavenProjectBuilder,
-                                         List<ArtifactRepository> remoteRepositories,
-                                         ArtifactRepository localRepository )
+                                         List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
+    // CHECKSTYLE_ON: LineLength
     {
         if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {
@@ -285,12 +286,19 @@ public class ProjectInfoReportUtils
         conn.setReadTimeout( TIMEOUT );
 
         // conn authorization
+        //@formatter:off
         if ( settings.getServers() != null
             && !settings.getServers().isEmpty()
             && project != null
             && project.getDistributionManagement() != null
-            && ( project.getDistributionManagement().getRepository() != null || project.getDistributionManagement().getSnapshotRepository() != null )
-            && ( StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() ) || StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() ) ) )
+            && ( 
+                    project.getDistributionManagement().getRepository() != null 
+                 || project.getDistributionManagement().getSnapshotRepository() != null 
+               )
+            && ( StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() ) 
+                 || StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() ) ) 
+               )
+        //@formatter:on
         {
             Server server = null;
             if ( url.toString().contains( project.getDistributionManagement().getRepository().getUrl() ) )
