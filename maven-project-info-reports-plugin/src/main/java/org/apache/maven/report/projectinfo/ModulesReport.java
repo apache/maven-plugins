@@ -107,12 +107,12 @@ public class ModulesReport
 
             String name = getI18nString( "header.name" );
             String description = getI18nString( "header.description" );
-            tableHeader( new String[] {name, description} );
+            tableHeader( new String[] { name, description } );
 
             final String baseURL = project.getUrl();
-            
+
             // before MPIR-229 this was model.getModules(), which could have uninherited/unresolved values
-            // @todo also include modules which are not part of reactor, e.g. caused by -pl 
+            // @todo also include modules which are not part of reactor, e.g. caused by -pl
             List<MavenProject> modules = project.getCollectedProjects();
             for ( MavenProject moduleProject : modules )
             {
@@ -120,9 +120,10 @@ public class ModulesReport
 
                 final String moduleName = moduleProject.getName();
 
-                final String moduleHref = getRelativeLink( baseURL, moduleProject.getUrl(), moduleProject.getArtifactId() );
+                final String moduleHref =
+                    getRelativeLink( baseURL, moduleProject.getUrl(), moduleProject.getArtifactId() );
 
-                tableRow( new String[] {linkedName( moduleName, moduleHref ), moduleModel.getDescription()} );
+                tableRow( new String[] { linkedName( moduleName, moduleHref ), moduleModel.getDescription() } );
             }
 
             endTable();

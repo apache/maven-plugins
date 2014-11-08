@@ -71,8 +71,10 @@ public class TeamListReport
     @Override
     public void executeReport( Locale locale )
     {
+        // CHECKSTYLE_OFF: LineLength
         TeamListRenderer r =
             new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog(), showAvatarImages );
+        // CHECKSTYLE_ON: LineLength
 
         r.render();
     }
@@ -147,6 +149,8 @@ public class TeamListReport
         {
             startSection( getI18nString( "intro.title" ) );
 
+            // CHECKSTYLE_OFF: LineLength
+
             // To handle JS
             StringBuilder javascript =
                 new StringBuilder( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
@@ -161,6 +165,8 @@ public class TeamListReport
             javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
+
+            // CHECKSTYLE_ON: LineLength
 
             // Introduction
             paragraph( getI18nString( "intro.description1" ) );
@@ -234,7 +240,11 @@ public class TeamListReport
             }
 
             // To handle JS
-            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR ).append( SystemUtils.LINE_SEPARATOR ).append( "window.onLoad = init();" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "}" );
+            javascript.append( SystemUtils.LINE_SEPARATOR ); 
+            javascript.append( SystemUtils.LINE_SEPARATOR ); 
+            javascript.append( "window.onLoad = init();" ); 
+            javascript.append( SystemUtils.LINE_SEPARATOR );
             javaScript( javascript.toString() );
 
             endSection();
@@ -332,9 +342,12 @@ public class TeamListReport
                         sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
                         text( tz );
                         final long oneHoursInMilliSeconds = 3600000;
-                        String offSet = String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / oneHoursInMilliSeconds );
+                        String offSet =
+                            String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / oneHoursInMilliSeconds );
+                        // CHECKSTYLE_OFF: LineLength
                         javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
                         javascript.append( offSet ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                        // CHECKSTYLE_ON: LineLength
                         sink.rawText( "</span>" );
                         sink.tableCell_();
                     }
@@ -374,9 +387,11 @@ public class TeamListReport
                         }
                         else
                         {
+                            // CHECKSTYLE_OFF: LineLength
                             text( member.getTimezone().trim() );
                             javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
                             javascript.append( member.getTimezone() ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
+                            // CHECKSTYLE_ON: LineLength
                         }
                     }
                     sink.rawText( "</span>" );

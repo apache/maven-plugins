@@ -206,8 +206,10 @@ public abstract class AbstractProjectInfoReport
             Artifact defaultSkin =
                 siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories() );
 
+            // CHECKSTYLE_OFF: LineLength
             SiteRenderingContext siteContext =
                 siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes, model, getName( locale ), locale );
+            // CHECKSTYLE_ON: LineLength
 
             RenderingContext context = new RenderingContext( outputDirectory, filename );
 
