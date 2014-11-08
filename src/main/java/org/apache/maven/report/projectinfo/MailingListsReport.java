@@ -169,11 +169,11 @@ public class MailingListsReport
 
             if ( otherArchives )
             {
-                tableHeader( new String[]{ name, subscribe, unsubscribe, post, archive, archivesOther } );
+                tableHeader( new String[] { name, subscribe, unsubscribe, post, archive, archivesOther } );
             }
             else
             {
-                tableHeader( new String[]{ name, subscribe, unsubscribe, post, archive } );
+                tableHeader( new String[] { name, subscribe, unsubscribe, post, archive } );
             }
 
             for ( MailingList mailingList : model.getMailingLists() )
@@ -214,7 +214,7 @@ public class MailingListsReport
 
                     textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                    tableRow(textRow.toArray(new String[textRow.size()]));
+                    tableRow( textRow.toArray( new String[textRow.size()] ) );
 
                     // Other lines...
                     while ( it.hasNext() )
@@ -241,7 +241,7 @@ public class MailingListsReport
 
                         textRow.add( createLinkPatternedText( getArchiveServer( otherArchive ), otherArchive ) );
 
-                        tableRow(textRow.toArray(new String[textRow.size()]));
+                        tableRow( textRow.toArray( new String[textRow.size()] ) );
                     }
                 }
                 else
@@ -251,7 +251,7 @@ public class MailingListsReport
                         textRow.add( null );
                     }
 
-                    tableRow(textRow.toArray(new String[textRow.size()]));
+                    tableRow( textRow.toArray( new String[textRow.size()] ) );
                 }
             }
 
@@ -261,10 +261,8 @@ public class MailingListsReport
         }
 
         /**
-         * Convenience method to return the name of a web-based mailing list archive
-         * server. <br>
-         * For instance, if the archive uri is
-         * <code>http://www.mail-archive.com/dev@maven.apache.org</code>, this
+         * Convenience method to return the name of a web-based mailing list archive server. <br>
+         * For instance, if the archive uri is <code>http://www.mail-archive.com/dev@maven.apache.org</code>, this
          * method return <code>www.mail-archive.com</code>
          *
          * @param uri

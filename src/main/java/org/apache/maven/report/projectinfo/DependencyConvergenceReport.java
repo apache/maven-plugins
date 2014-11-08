@@ -366,7 +366,8 @@ public class DependencyConvergenceReport
 
         List<DependencyNode> projectNodes = getProjectNodes( depList );
 
-        if (projectNodes == null || projectNodes.size() == 0){
+        if ( projectNodes == null || projectNodes.size() == 0 )
+        {
             getLog().warn( "Can't find project nodes for dependency list: " + depList.get( 0 ).getDependency() );
             return;
         }
@@ -374,13 +375,15 @@ public class DependencyConvergenceReport
 
         for ( DependencyNode projectNode : projectNodes )
         {
-            if (isReactorBuild()){
+            if ( isReactorBuild() )
+            {
                 sink.numberedListItem();
             }
 
             showVersionDetails( projectNode, depList, sink );
 
-            if (isReactorBuild()){
+            if ( isReactorBuild() )
+            {
                 sink.numberedListItem_();
             }
 
@@ -399,7 +402,7 @@ public class DependencyConvergenceReport
             MavenProject project = depLink.getProject();
             DependencyNode projectNode = this.projectMap.get( project );
 
-            if ( projectNode != null && !projectNodes.contains( projectNode ))
+            if ( projectNode != null && !projectNodes.contains( projectNode ) )
             {
                 projectNodes.add( projectNode );
             }
@@ -409,14 +412,17 @@ public class DependencyConvergenceReport
 
     private void showVersionDetails( DependencyNode projectNode, List<ReverseDependencyLink> depList, Sink sink )
     {
-        if (depList == null || depList.isEmpty() ){
+        if ( depList == null || depList.isEmpty() )
+        {
             return;
         }
 
         Dependency dependency = depList.get( 0 ).getDependency();
-        String key = dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getType() + ":" + dependency.getVersion();
+        String key =
+            dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getType() + ":"
+                + dependency.getVersion();
 
-        serializeDependencyTree(projectNode, key, sink);
+        serializeDependencyTree( projectNode, key, sink );
 
     }
 
@@ -432,7 +438,7 @@ public class DependencyConvergenceReport
 
         visitor = new BuildingDependencyNodeVisitor( visitor );
 
-        DependencyNodeFilter filter = createDependencyNodeFilter(key);
+        DependencyNodeFilter filter = createDependencyNodeFilter( key );
 
         if ( filter != null )
         {
@@ -453,7 +459,7 @@ public class DependencyConvergenceReport
      *
      * @return the dependency node filter, or <code>null</code> if none required
      */
-    private DependencyNodeFilter createDependencyNodeFilter(String includes)
+    private DependencyNodeFilter createDependencyNodeFilter( String includes )
     {
         List<DependencyNodeFilter> filters = new ArrayList<DependencyNodeFilter>();
 
@@ -721,9 +727,9 @@ public class DependencyConvergenceReport
     }
 
     /**
-     * Produce a DependencyAnalyzeResult, it contains conflicting dependencies map, snapshot dependencies map and all dependencies map.
-     * Map structure is the relationships between dependencies (its groupId:artifactId) and reactor projects. This is the
-     * structure of the Map:
+     * Produce a DependencyAnalyzeResult, it contains conflicting dependencies map, snapshot dependencies map and all
+     * dependencies map. Map structure is the relationships between dependencies (its groupId:artifactId) and reactor
+     * projects. This is the structure of the Map:
      *
      * <pre>
      * +--------------------+----------------------------------+---------------|
@@ -737,7 +743,8 @@ public class DependencyConvergenceReport
      * +--------------------+--------------------------------------------------|
      * </pre>
      *
-     * @return DependencyAnalyzeResult contains conflicting dependencies map, snapshot dependencies map and all dependencies map.
+     * @return DependencyAnalyzeResult contains conflicting dependencies map, snapshot dependencies map and all
+     *         dependencies map.
      * @throws MavenReportException
      */
     private DependencyAnalyzeResult analyzeDependencyTree()
@@ -766,7 +773,8 @@ public class DependencyConvergenceReport
      *
      * @param conflictingDependencyMap
      * @param allDependencies
-     * @return DependencyAnalyzeResult contains conflicting dependencies map, snapshot dependencies map and all dependencies map.
+     * @return DependencyAnalyzeResult contains conflicting dependencies map, snapshot dependencies map and all
+     *         dependencies map.
      */
     private DependencyAnalyzeResult populateDependencyAnalyzeResult( Map<String, List<ReverseDependencyLink>> conflictingDependencyMap,
                                                                      Map<String, List<ReverseDependencyLink>> allDependencies )
@@ -808,12 +816,11 @@ public class DependencyConvergenceReport
                 dependencyList = new ArrayList<ReverseDependencyLink>();
             }
 
-            dependencyList.add( new ReverseDependencyLink( toDependency( dependencyNode.getArtifact() ),
-                                                           reactorProject ) );
+            dependencyList.add( new ReverseDependencyLink( toDependency( dependencyNode.getArtifact() ), reactorProject ) );
 
             for ( DependencyNode workNode : nodes.subList( 1, nodes.size() ) )
             {
-                dependencyList.add( new ReverseDependencyLink( toDependency( workNode.getArtifact() ), reactorProject) );
+                dependencyList.add( new ReverseDependencyLink( toDependency( workNode.getArtifact() ), reactorProject ) );
             }
 
             conflictingDependencyMap.put( key, dependencyList );

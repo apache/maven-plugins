@@ -298,8 +298,8 @@ public abstract class AbstractProjectInfoReport
 
         Plugin plugin = (Plugin) getProject().getBuild().getPluginsAsMap().get( pluginId );
 
-        if ( ( plugin == null ) && ( getProject().getBuild().getPluginManagement() != null ) && (
-                getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
+        if ( ( plugin == null ) && ( getProject().getBuild().getPluginManagement() != null )
+            && ( getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
         {
             plugin = (Plugin) getProject().getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
         }
@@ -385,7 +385,7 @@ public abstract class AbstractProjectInfoReport
 
         private ResourceBundle bundle;
 
-        private final static Object[] NO_ARGS = new Object[0];
+        private static final Object[] NO_ARGS = new Object[0];
 
         public CustomI18N( MavenProject project, Settings settings, File customBundleFile, Locale locale,
                            I18N i18nOriginal )
@@ -405,6 +405,7 @@ public abstract class AbstractProjectInfoReport
             }
             catch ( MalformedURLException e )
             {
+                //could not happen.
             }
 
             this.bundle = ResourceBundle.getBundle( this.bundleName, locale, classLoader );
@@ -499,7 +500,7 @@ public abstract class AbstractProjectInfoReport
                 value = i18nOriginal.getString( bundleName, locale, key );
             }
 
-            if (!value.contains("${"))
+            if ( !value.contains( "${" ) )
             {
                 return value;
             }
@@ -511,6 +512,7 @@ public abstract class AbstractProjectInfoReport
             }
             catch ( final IOException e )
             {
+                //In which cases could this happen? And what should we do?
             }
 
             interpolator.addValueSource( new PropertiesBasedValueSource( System.getProperties() ) );
@@ -525,6 +527,7 @@ public abstract class AbstractProjectInfoReport
             }
             catch ( final InterpolationException e )
             {
+                //What does this exception mean?
             }
 
             return value;
