@@ -27,6 +27,10 @@ import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * @author Hervé Boutemy
+ *
+ */
 public abstract class AbstractProjectInfoRenderer
     extends AbstractMavenReportRenderer
 {

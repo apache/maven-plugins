@@ -322,7 +322,9 @@ public class ScmReport
 
         /**
          * Render the anonymous access section depending the repository.
-         * <p>Note: ClearCase, Starteam et Perforce seems to have no anonymous access.</p>
+         * <p>
+         * Note: ClearCase, Starteam et Perforce seems to have no anonymous access.
+         * </p>
          *
          * @param anonymousRepository the anonymous repository
          */
@@ -338,29 +340,28 @@ public class ScmReport
 
             if ( anonymousRepository != null && isScmSystem( anonymousRepository, "cvs" ) )
             {
-                CvsScmProviderRepository cvsRepo = (CvsScmProviderRepository) anonymousRepository
-                    .getProviderRepository();
+                CvsScmProviderRepository cvsRepo =
+                    (CvsScmProviderRepository) anonymousRepository.getProviderRepository();
 
                 anonymousAccessCVS( cvsRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "git" ) )
             {
-                GitScmProviderRepository gitRepo = (GitScmProviderRepository) anonymousRepository
-                    .getProviderRepository();
+                GitScmProviderRepository gitRepo =
+                    (GitScmProviderRepository) anonymousRepository.getProviderRepository();
 
                 anonymousAccessGit( gitRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "hg" ) )
             {
-                HgScmProviderRepository hgRepo = (HgScmProviderRepository) anonymousRepository
-                    .getProviderRepository();
+                HgScmProviderRepository hgRepo = (HgScmProviderRepository) anonymousRepository.getProviderRepository();
 
                 anonymousAccessMercurial( hgRepo );
             }
             else if ( anonymousRepository != null && isScmSystem( anonymousRepository, "svn" ) )
             {
-                SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) anonymousRepository
-                    .getProviderRepository();
+                SvnScmProviderRepository svnRepo =
+                    (SvnScmProviderRepository) anonymousRepository.getProviderRepository();
 
                 anonymousAccessSVN( svnRepo );
             }
@@ -412,15 +413,15 @@ public class ScmReport
             }
             else if ( devRepository != null && isScmSystem( devRepository, "perforce" ) )
             {
-                PerforceScmProviderRepository perforceRepo = (PerforceScmProviderRepository) devRepository
-                    .getProviderRepository();
+                PerforceScmProviderRepository perforceRepo =
+                    (PerforceScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessPerforce( perforceRepo );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "starteam" ) )
             {
-                StarteamScmProviderRepository starteamRepo = (StarteamScmProviderRepository) devRepository
-                    .getProviderRepository();
+                StarteamScmProviderRepository starteamRepo =
+                    (StarteamScmProviderRepository) devRepository.getProviderRepository();
 
                 developerAccessStarteam( starteamRepo );
             }
@@ -455,7 +456,7 @@ public class ScmReport
 
                 paragraph( getI18nString( "accessbehindfirewall.svn.intro" ) );
 
-                verbatimText("$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName);
+                verbatimText( "$ svn checkout " + svnRepo.getUrl() + " " + checkoutDirectoryName );
             }
             else if ( devRepository != null && isScmSystem( devRepository, "cvs" ) )
             {
@@ -495,9 +496,11 @@ public class ScmReport
         // Clearcase
 
         /**
-         * Create the documentation to provide an developer access with a <code>Clearcase</code> SCM.
-         * For example, generate the following command line:
-         * <p>cleartool checkout module</p>
+         * Create the documentation to provide an developer access with a <code>Clearcase</code> SCM. For example,
+         * generate the following command line:
+         * <p>
+         * cleartool checkout module
+         * </p>
          */
         private void developerAccessClearCase()
         {
@@ -509,13 +512,18 @@ public class ScmReport
         // CVS
 
         /**
-         * Create the documentation to provide an anonymous access with a <code>CVS</code> SCM.
-         * For example, generate the following command line:
-         * <p>cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic login</p>
-         * <p>cvs -z3 -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co maven-plugins/dist</p>
+         * Create the documentation to provide an anonymous access with a <code>CVS</code> SCM. For example, generate
+         * the following command line:
+         * <p>
+         * cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic login
+         * </p>
+         * <p>
+         * cvs -z3 -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co maven-plugins/dist
+         * </p>
          *
          * @param cvsRepo
-         * @see <a href="https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115">https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115</a>
+         * @see <a
+         *      href="https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115">https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115</a>
          */
         private void anonymousAccessCVS( CvsScmProviderRepository cvsRepo )
         {
@@ -543,9 +551,11 @@ public class ScmReport
         }
 
         /**
-         * Create the documentation to provide an anonymous access with a <code>Git</code> SCM.
-         * For example, generate the following command line:
-         * <p>git clone uri</p>
+         * Create the documentation to provide an anonymous access with a <code>Git</code> SCM. For example, generate
+         * the following command line:
+         * <p>
+         * git clone uri
+         * </p>
          *
          * @param gitRepo
          */
@@ -561,9 +571,11 @@ public class ScmReport
         // Mercurial
 
         /**
-         * Create the documentation to provide an anonymous access with a <code>Mercurial</code> SCM.
-         * For example, generate the following command line:
-         * <p>hg clone uri</p>
+         * Create the documentation to provide an anonymous access with a <code>Mercurial</code> SCM. For example,
+         * generate the following command line:
+         * <p>
+         * hg clone uri
+         * </p>
          *
          * @param hgRepo
          */
@@ -577,13 +589,18 @@ public class ScmReport
         }
 
         /**
-         * Create the documentation to provide an developer access with a <code>CVS</code> SCM.
-         * For example, generate the following command line:
-         * <p>cvs -d :pserver:username@cvs.apache.org:/home/cvs login</p>
-         * <p>cvs -z3 -d :ext:username@cvs.apache.org:/home/cvs co maven-plugins/dist</p>
+         * Create the documentation to provide an developer access with a <code>CVS</code> SCM. For example, generate
+         * the following command line:
+         * <p>
+         * cvs -d :pserver:username@cvs.apache.org:/home/cvs login
+         * </p>
+         * <p>
+         * cvs -z3 -d :ext:username@cvs.apache.org:/home/cvs co maven-plugins/dist
+         * </p>
          *
          * @param cvsRepo
-         * @see <a href="https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115">https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115</a>
+         * @see <a
+         *      href="https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115">https://www.cvshome.org/docs/manual/cvs-1.12.12/cvs_16.html#SEC115</a>
          */
         private void developerAccessCVS( CvsScmProviderRepository cvsRepo )
         {
@@ -599,9 +616,11 @@ public class ScmReport
         // Git
 
         /**
-         * Create the documentation to provide an developer access with a <code>Git</code> SCM.
-         * For example, generate the following command line:
-         * <p>git clone repo </p>
+         * Create the documentation to provide an developer access with a <code>Git</code> SCM. For example, generate
+         * the following command line:
+         * <p>
+         * git clone repo
+         * </p>
          *
          * @param gitRepo
          */
@@ -617,9 +636,11 @@ public class ScmReport
         // Mercurial
 
         /**
-         * Create the documentation to provide an developer access with a <code>Mercurial</code> SCM.
-         * For example, generate the following command line:
-         * <p>hg clone repo </p>
+         * Create the documentation to provide an developer access with a <code>Mercurial</code> SCM. For example,
+         * generate the following command line:
+         * <p>
+         * hg clone repo
+         * </p>
          *
          * @param hgRepo
          */
@@ -635,13 +656,19 @@ public class ScmReport
         // Perforce
 
         /**
-         * Create the documentation to provide an developer access with a <code>Perforce</code> SCM.
-         * For example, generate the following command line:
-         * <p>p4 -H hostname -p port -u username -P password path</p>
-         * <p>p4 -H hostname -p port -u username -P password path submit -c changement</p>
+         * Create the documentation to provide an developer access with a <code>Perforce</code> SCM. For example,
+         * generate the following command line:
+         * <p>
+         * p4 -H hostname -p port -u username -P password path
+         * </p>
+         * <p>
+         * p4 -H hostname -p port -u username -P password path submit -c changement
+         * </p>
          *
          * @param perforceRepo
-         * @see <a href="http://www.perforce.com/perforce/doc.051/manuals/cmdref/index.html">http://www.perforce.com/perforce/doc.051/manuals/cmdref/index.html</>
+         * @see <a
+         *      href="http://www.perforce.com/perforce/doc.051/manuals/cmdref/index.html">http://www.perforce.com/perforce
+         *      /doc.051/manuals/cmdref/index.html</>
          */
         private void developerAccessPerforce( PerforceScmProviderRepository perforceRepo )
         {
@@ -670,10 +697,14 @@ public class ScmReport
         // Starteam
 
         /**
-         * Create the documentation to provide an developer access with a <code>Starteam</code> SCM.
-         * For example, generate the following command line:
-         * <p>stcmd co -x -nologo -stop -p myusername:mypassword@myhost:1234/projecturl -is</p>
-         * <p>stcmd ci -x -nologo -stop -p myusername:mypassword@myhost:1234/projecturl -f NCI -is</p>
+         * Create the documentation to provide an developer access with a <code>Starteam</code> SCM. For example,
+         * generate the following command line:
+         * <p>
+         * stcmd co -x -nologo -stop -p myusername:mypassword@myhost:1234/projecturl -is
+         * </p>
+         * <p>
+         * stcmd ci -x -nologo -stop -p myusername:mypassword@myhost:1234/projecturl -f NCI -is
+         * </p>
          *
          * @param starteamRepo
          */
@@ -701,9 +732,11 @@ public class ScmReport
         // SVN
 
         /**
-         * Create the documentation to provide an anonymous access with a <code>SVN</code> SCM.
-         * For example, generate the following command line:
-         * <p>svn checkout http://svn.apache.org/repos/asf/maven/components/trunk maven</p>
+         * Create the documentation to provide an anonymous access with a <code>SVN</code> SCM. For example, generate
+         * the following command line:
+         * <p>
+         * svn checkout http://svn.apache.org/repos/asf/maven/components/trunk maven
+         * </p>
          *
          * @param svnRepo
          * @see <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>
@@ -716,10 +749,14 @@ public class ScmReport
         }
 
         /**
-         * Create the documentation to provide an developer access with a <code>SVN</code> SCM.
-         * For example, generate the following command line:
-         * <p>svn checkout https://svn.apache.org/repos/asf/maven/components/trunk maven</p>
-         * <p>svn commit --username your-username -m "A message"</p>
+         * Create the documentation to provide an developer access with a <code>SVN</code> SCM. For example, generate
+         * the following command line:
+         * <p>
+         * svn checkout https://svn.apache.org/repos/asf/maven/components/trunk maven
+         * </p>
+         * <p>
+         * svn commit --username your-username -m "A message"
+         * </p>
          *
          * @param svnRepo
          * @see <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>

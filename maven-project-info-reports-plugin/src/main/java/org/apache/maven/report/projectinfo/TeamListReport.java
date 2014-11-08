@@ -53,12 +53,11 @@ public class TeamListReport
     extends AbstractProjectInfoReport
 {
     /**
-     * Shows avatar images for team members that have
-     * a) properties/picUrl set
-     * b) An avatar at gravatar.com for their email address
+     * Shows avatar images for team members that have a) properties/picUrl set b) An avatar at gravatar.com for their
+     * email address
      * <p/>
-     * Future versions of this plugin may choose to implement different strategies for resolving
-     * avatar images, possibly using different providers.
+     * Future versions of this plugin may choose to implement different strategies for resolving avatar images, possibly
+     * using different providers.
      *
      * @since 2.6
      */
@@ -72,8 +71,8 @@ public class TeamListReport
     @Override
     public void executeReport( Locale locale )
     {
-        TeamListRenderer r = new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog(),
-                                                   showAvatarImages );
+        TeamListRenderer r =
+            new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog(), showAvatarImages );
 
         r.render();
     }
@@ -158,11 +157,9 @@ public class TeamListReport
             javascript.append( "    var localOffset = now.getTimezoneOffset();" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 )"
                                    + "+ ( localOffset * 60 * 1000 );" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var developerDate = new Date(developerTime);" ).append(
-                SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    var developerDate = new Date(developerTime);" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append(
-                SystemUtils.LINE_SEPARATOR );
+            javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR );
             javascript.append( SystemUtils.LINE_SEPARATOR );
             javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
@@ -239,8 +236,7 @@ public class TeamListReport
             }
 
             // To handle JS
-            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR ).append( SystemUtils.LINE_SEPARATOR ).append(
-                "window.onLoad = init();" ).append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR ).append( SystemUtils.LINE_SEPARATOR ).append( "window.onLoad = init();" ).append( SystemUtils.LINE_SEPARATOR );
             javaScript( javascript.toString() );
 
             endSection();
@@ -261,7 +257,7 @@ public class TeamListReport
                 {
                     picUrl = getGravatarUrl( member.getEmail() );
                 }
-                if (StringUtils.isEmpty( picUrl ))
+                if ( StringUtils.isEmpty( picUrl ) )
                 {
                     picUrl = getSpacerGravatarUrl();
                 }
@@ -314,7 +310,7 @@ public class TeamListReport
                 {
                     // Comma separated roles
                     List<String> var = member.getRoles();
-                    tableCell( StringUtils.join(var.toArray(new String[var.size()]), ", " ) );
+                    tableCell( StringUtils.join( var.toArray( new String[var.size()] ), ", " ) );
                 }
                 else
                 {
@@ -325,8 +321,8 @@ public class TeamListReport
             {
                 tableCell( member.getTimezone() );
 
-                if ( StringUtils.isNotEmpty( member.getTimezone() ) && ( !ProjectInfoReportUtils.isNumber(
-                    member.getTimezone().trim() ) ) )
+                if ( StringUtils.isNotEmpty( member.getTimezone() )
+                    && ( !ProjectInfoReportUtils.isNumber( member.getTimezone().trim() ) ) )
                 {
                     String tz = member.getTimezone().trim();
                     try
@@ -337,9 +333,9 @@ public class TeamListReport
                         sink.tableCell();
                         sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
                         text( tz );
-                        String offSet = String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / 3600000 );
-                        javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append(
-                            "', '" );
+                        final long oneHoursInMilliSeconds = 3600000;
+                        String offSet = String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / oneHoursInMilliSeconds );
+                        javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
                         javascript.append( offSet ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                         sink.rawText( "</span>" );
                         sink.tableCell_();
@@ -347,7 +343,7 @@ public class TeamListReport
                     catch ( IllegalArgumentException e )
                     {
                         log.warn( "The time zone '" + tz + "' for the " + type + " '" + member.getName()
-                                      + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
+                            + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
 
                         sink.tableCell();
                         sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
@@ -368,21 +364,21 @@ public class TeamListReport
                     else
                     {
                         // check if number is between -12 and +14
+                        final int lowerLimit = -12;
+                        final int upperLimit = 14;
                         float tz = ProjectInfoReportUtils.toFloat( member.getTimezone().trim(), Integer.MIN_VALUE );
-                        if ( tz == Integer.MIN_VALUE || !( tz >= -12 && tz <= 14 ) )
+                        if ( tz == Integer.MIN_VALUE || !( tz >= lowerLimit && tz <= upperLimit ) )
                         {
                             text( null );
                             log.warn( "The time zone '" + member.getTimezone().trim() + "' for the " + type + " '"
-                                          + member.getName()
-                                          + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
+                                + member.getName()
+                                + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
                         }
                         else
                         {
                             text( member.getTimezone().trim() );
-                            javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append(
-                                "', '" );
-                            javascript.append( member.getTimezone() ).append( "');" ).append(
-                                SystemUtils.LINE_SEPARATOR );
+                            javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
+                            javascript.append( member.getTimezone() ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
                         }
                     }
                     sink.rawText( "</span>" );
@@ -406,11 +402,11 @@ public class TeamListReport
             sink.tableRow_();
         }
 
-        private static final String avatar_size = "s=60";
+        private static final String AVATAR_SIZE = "s=60";
 
         private String getSpacerGravatarUrl()
         {
-            return "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y&" + avatar_size;
+            return "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y&" + AVATAR_SIZE;
         }
 
         private String getGravatarUrl( String email )
@@ -428,11 +424,12 @@ public class TeamListReport
                 md.update( email.getBytes() );
                 byte byteData[] = md.digest();
                 StringBuilder sb = new StringBuilder();
+                final int lowerEightBitsOnly = 0xff;
                 for ( byte aByteData : byteData )
                 {
-                    sb.append( Integer.toString( ( aByteData & 0xff ) + 0x100, 16 ).substring( 1 ) );
+                    sb.append( Integer.toString( ( aByteData & lowerEightBitsOnly ) + 0x100, 16 ).substring( 1 ) );
                 }
-                return "http://www.gravatar.com/avatar/" + sb.toString() + "?d=mm&" + avatar_size;
+                return "http://www.gravatar.com/avatar/" + sb.toString() + "?d=mm&" + AVATAR_SIZE;
             }
             catch ( NoSuchAlgorithmException e )
             {
@@ -466,12 +463,12 @@ public class TeamListReport
             String timeZone = getI18nString( "contributors.timezone" );
             String actualTime = getI18nString( "contributors.actualtime" );
             String properties = getI18nString( "contributors.properties" );
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages)
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages )
             {
                 requiredArray.add( image );
             }
-            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl, roles,
-                              timeZone, actualTime, properties );
+            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl,
+                              roles, timeZone, actualTime, properties );
 
             return requiredArray.toArray( new String[requiredArray.size()] );
         }
@@ -496,7 +493,7 @@ public class TeamListReport
             String actualTime = getI18nString( "developers.actualtime" );
             String properties = getI18nString( "developers.properties" );
 
-            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages)
+            if ( requiredHeaders.get( IMAGE ) == Boolean.TRUE && showAvatarImages )
             {
                 requiredArray.add( image );
             }
@@ -505,8 +502,8 @@ public class TeamListReport
                 requiredArray.add( id );
             }
 
-            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl, roles,
-                              timeZone, actualTime, properties );
+            setRequiredArray( requiredHeaders, requiredArray, image, name, email, url, organization, organizationUrl,
+                              roles, timeZone, actualTime, properties );
 
             return requiredArray.toArray( new String[requiredArray.size()] );
         }
@@ -526,8 +523,9 @@ public class TeamListReport
          * @param properties
          */
         private void setRequiredArray( Map<String, Boolean> requiredHeaders, List<String> requiredArray, String image,
-                                       String name, String email, String url, String organization, String organizationUrl,
-                                       String roles, String timeZone, String actualTime, String properties )
+                                       String name, String email, String url, String organization,
+                                       String organizationUrl, String roles, String timeZone, String actualTime,
+                                       String properties )
         {
             if ( requiredHeaders.get( NAME ) == Boolean.TRUE )
             {

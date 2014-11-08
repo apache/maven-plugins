@@ -156,7 +156,19 @@ public class DependenciesRenderer
         jarSubtype.add( "ejb" );
         JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
 
-        JAVASCRIPT = "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {" + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );" + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );" + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>" + SystemUtils.LINE_SEPARATOR;
+        JAVASCRIPT =
+            "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR
+                + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {"
+                + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );"
+                + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );"
+                + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR
+                + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';"
+                + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR
+                + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {"
+                + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR
+                + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }"
+                + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>"
+                + SystemUtils.LINE_SEPARATOR;
     }
 
     /**
@@ -528,12 +540,12 @@ public class DependenciesRenderer
         if ( hasSealed )
         {
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation, sealed };
-            tableHeaderTitles = new String[] {null, null, null, null, null, null, debugInformationTitle, null};
+            tableHeaderTitles = new String[] { null, null, null, null, null, null, debugInformationTitle, null };
         }
         else
         {
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation };
-            tableHeaderTitles = new String[] {null, null, null, null, null, null, debugInformationTitle};
+            tableHeaderTitles = new String[] { null, null, null, null, null, null, debugInformationTitle };
         }
         tableHeader( tableHeader, tableHeaderTitles );
 
@@ -648,14 +660,20 @@ public class DependenciesRenderer
         if ( content != null )
         {
             if ( titles != null && content.length != titles.length )
+            {
                 throw new IllegalArgumentException( "Length of title array must equal the length of the content array" );
+            }
 
             for ( int i = 0; i < content.length; i++ )
             {
                 if ( titles != null )
+                {
                     tableHeaderCell( content[i], titles[i] );
+                }
                 else
+                {
                     tableHeaderCell( content[i] );
+                }
             }
         }
 
@@ -1362,7 +1380,7 @@ public class DependenciesRenderer
                         sink.link_();
                         sink.tableCell_();
 
-                        totalByRepo.put( repokey, old.intValue() + 1);
+                        totalByRepo.put( repokey, old.intValue() + 1 );
                     }
                     else
                     {
@@ -1501,7 +1519,8 @@ public class DependenciesRenderer
      *
      * @see <a href="https://en.wikipedia.org/wiki/Metric_prefix">https://en.wikipedia.org/wiki/Metric_prefix</a>
      * @see <a href="https://en.wikipedia.org/wiki/Binary_prefix">https://en.wikipedia.org/wiki/Binary_prefix</a>
-     * @see <a href="https://en.wikipedia.org/wiki/Octet_%28computing%29">https://en.wikipedia.org/wiki/Octet_(computing)</a>
+     * @see <a
+     *      href="https://en.wikipedia.org/wiki/Octet_%28computing%29">https://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
     static class FileDecimalFormat
         extends DecimalFormat

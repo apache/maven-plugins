@@ -9,7 +9,7 @@ package org.apache.maven.report.projectinfo.dependencies;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -25,11 +25,9 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 
-
-
 /**
- * A dependency node visitor that serializes visited nodes to a sink writer.
- * It's used to serialize tree in project information report page.
+ * A dependency node visitor that serializes visited nodes to a sink writer. It's used to serialize tree in project
+ * information report page.
  *
  * @author <a href="mailto:wangyf2010@gmail.com">Simon Wang</a>
  */
@@ -52,10 +50,13 @@ public class SinkSerializingDependencyNodeVisitor
 
         public void addNodeIndent( boolean last )
         {
-            if (last){
+            if ( last )
+            {
                 sink.text( "\\-" );
                 sink.nonBreakingSpace();
-            }else{
+            }
+            else
+            {
                 sink.text( "+-" );
                 sink.nonBreakingSpace();
             }
@@ -63,11 +64,14 @@ public class SinkSerializingDependencyNodeVisitor
 
         public void fillIndent( boolean last )
         {
-            if (last){
+            if ( last )
+            {
                 sink.nonBreakingSpace();
                 sink.nonBreakingSpace();
                 sink.nonBreakingSpace();
-            }else{
+            }
+            else
+            {
                 sink.text( "|" );
                 sink.nonBreakingSpace();
                 sink.nonBreakingSpace();
@@ -85,7 +89,7 @@ public class SinkSerializingDependencyNodeVisitor
     /**
      * The tokens to use when serializing the dependency tree.
      */
-    private final TreeTokens tokens ;
+    private final TreeTokens tokens;
 
     /**
      * The depth of the currently visited dependency node.
@@ -98,15 +102,13 @@ public class SinkSerializingDependencyNodeVisitor
      * Creates a dependency node visitor that serializes visited nodes to the specified writer using the specified
      * tokens.
      *
-     * @param sink
-     *            the writer to serialize to
-     * @param tokens
-     *            the tokens to use when serializing the dependency tree
+     * @param sink the writer to serialize to
+     * @param tokens the tokens to use when serializing the dependency tree
      */
     public SinkSerializingDependencyNodeVisitor( Sink sink )
     {
         this.sink = sink;
-        this.tokens = new TreeTokens(sink);
+        this.tokens = new TreeTokens( sink );
         depth = 0;
     }
 
@@ -142,8 +144,7 @@ public class SinkSerializingDependencyNodeVisitor
     /**
      * Writes the necessary tokens to indent the specified dependency node to this visitor's writer.
      *
-     * @param node
-     *            the dependency node to indent
+     * @param node the dependency node to indent
      */
     private void indent( DependencyNode node )
     {
@@ -161,8 +162,7 @@ public class SinkSerializingDependencyNodeVisitor
     /**
      * Gets whether the specified dependency node is the last of its siblings.
      *
-     * @param node
-     *            the dependency node to check
+     * @param node the dependency node to check
      * @return <code>true</code> if the specified dependency node is the last of its last siblings
      */
     private boolean isLast( DependencyNode node )
@@ -190,10 +190,8 @@ public class SinkSerializingDependencyNodeVisitor
     /**
      * Gets whether the specified dependency node ancestor is the last of its siblings.
      *
-     * @param node
-     *            the dependency node whose ancestor to check
-     * @param ancestorDepth
-     *            the depth of the ancestor of the specified dependency node to check
+     * @param node the dependency node whose ancestor to check
+     * @param ancestorDepth the depth of the ancestor of the specified dependency node to check
      * @return <code>true</code> if the specified dependency node ancestor is the last of its siblings
      */
     private boolean isLast( DependencyNode node, int ancestorDepth )
