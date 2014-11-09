@@ -27,7 +27,8 @@ Custom Toolchains
 
   You can create your own custom toolchains with plugins using them.
 
-  A full working sample is included in <<<maven-toolchains-plugin>>> ITs:
+  A full working sample is included in <<<maven-toolchains-plugin>>> ITs, which are part of 
+  {{{../source-repository.html}the plugin source tree}}:
 
   * see <<<src/it/custom-toolchain-plugin>>> for the custom toolchain and plugin,
 
@@ -43,9 +44,9 @@ Custom Toolchains
 
   * an interface extending {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/Toolchain.html}<<<org.apache.maven.toolchain.Toolchain>>>}},
 
-  * an implementation of this interface, extending
+  * an implementation of this interface. Extending
   {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/DefaultToolchain.html}<<<org.apache.maven.toolchain.DefaultToolchain>>>}}
-  and implementing previous interface,
+  is strongly encouraged, since its provides other implementation details that would be too hard to explain in this little tutorial,
 
   * a {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/ToolchainFactory.html}<<<org.apache.maven.toolchain.ToolchainFactory>>>}},
   provided as Plexus component: Plexus {{{http://plexus.codehaus.org/plexus-containers/plexus-component-annotations/}<<<@Component>>>}}
@@ -58,7 +59,7 @@ Custom Toolchains
 
   To get a configured toolchain, a plugin uses
   {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/ToolchainManager.html}<<<ToolchainManager>>>}} API
-  to get epxected toolchain, then tool in the toolchain:
+  to get expected toolchain, then some tool in the toolchain:
 
 +--------+
     @Component
@@ -122,3 +123,7 @@ Custom Toolchains
 +--------+
 
   []
+
+  Notice that packaging a toolchain in its own artifact separate from plugin is only useful when there are multiple plugins
+  using the toolchain. As it is expected in general that a custom toolchain will be used by only one plugin
+  (eventually providing multiple goals), it is simpler to package the toolchain with the plugin in only one artifact.
