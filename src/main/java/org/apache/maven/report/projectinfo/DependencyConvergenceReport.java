@@ -481,6 +481,10 @@ public class DependencyConvergenceReport
         return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
     }
 
+    /**
+     * @param sink {@link Sink}
+     * @return {@link DependencyNodeVisitor}
+     */
     public DependencyNodeVisitor getSerializingDependencyNodeVisitor( Sink sink )
     {
         return new SinkSerializingDependencyNodeVisitor( sink );
