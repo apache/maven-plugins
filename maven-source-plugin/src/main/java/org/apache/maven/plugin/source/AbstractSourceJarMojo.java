@@ -51,9 +51,9 @@ import org.codehaus.plexus.util.FileUtils;
 public abstract class AbstractSourceJarMojo
     extends AbstractMojo
 {
-    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/*" };
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/*" };
 
-    private static final String[] DEFAULT_EXCLUDES = new String[]{ };
+    private static final String[] DEFAULT_EXCLUDES = new String[] {};
 
     /**
      * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
@@ -84,9 +84,8 @@ public abstract class AbstractSourceJarMojo
 
     /**
      * The Maven Project Object
-     *
      */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
@@ -110,8 +109,9 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", readonly = false,
-                required = true )
+    // CHECKSTYLE_OFF: LineLength
+    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", readonly = false, required = true )
+    // CHECKSTYLE_ON: LineLength
     private File defaultManifestFile;
 
     /**
@@ -173,8 +173,8 @@ public abstract class AbstractSourceJarMojo
     protected List reactorProjects;
 
     /**
-     * Whether creating the archive should be forced.  If set to true, the jar will
-     * always be created.  If set to false, the jar will only be created when the
+     * Whether creating the archive should be forced. If set to true, the jar will
+     * always be created. If set to false, the jar will only be created when the
      * sources are newer than the jar.
      *
      * @since 2.1
@@ -196,7 +196,7 @@ public abstract class AbstractSourceJarMojo
      */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
-    
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -352,7 +352,7 @@ public abstract class AbstractSourceJarMojo
             }
         }
 
-        //MAPI: this should be taken from the resources plugin
+        // MAPI: this should be taken from the resources plugin
         for ( Resource resource : getResources( p ) )
         {
 
