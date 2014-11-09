@@ -145,6 +145,10 @@ public class CimReport
             {
                 linkPatternedText( getI18nString( "luntbuild.intro" ) );
             }
+            else if ( isCimSystem( system, "travis" ) )
+            {
+                linkPatternedText( getI18nString( "travis.intro" ) );
+            }
             else
             {
                 linkPatternedText( getI18nString( "general.intro" ) );
