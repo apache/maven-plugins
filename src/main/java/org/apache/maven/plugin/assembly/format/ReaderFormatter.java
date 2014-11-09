@@ -82,7 +82,7 @@ public class ReaderFormatter
         }
         catch ( MavenFilteringException e )
         {
-            throw new IOException( "Error filtering file '" + source + "': " + e.getMessage(), e );
+            throw new IOException( "Error filtering file '" + source + "': " + e.getMessage() );
         }
     }
 
