@@ -164,7 +164,7 @@ public final class LineEndingsUtils
             : lineEndings.isCrLF() ? new WindowsLineFeedInputStream( in, false ) : in;
     }
 
-    public static LineEndings getLineEnding( @Nullable String lineEnding )
+    public static @Nonnull LineEndings getLineEnding( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
         LineEndings result = LineEndings.keep;
