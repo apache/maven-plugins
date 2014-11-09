@@ -46,7 +46,9 @@ Custom Toolchains
 
   * an implementation of this interface. Extending
   {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/DefaultToolchain.html}<<<org.apache.maven.toolchain.DefaultToolchain>>>}}
-  is strongly encouraged, since its provides other implementation details that would be too hard to explain in this little tutorial,
+  is strongly encouraged, since its provides
+  {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/ToolchainPrivate.html}<<<org.apache.maven.toolchain.ToolchainPrivate>>>}},
+  which is an internal requirement,
 
   * a {{{/ref/current/maven-core/apidocs/org/apache/maven/toolchain/ToolchainFactory.html}<<<org.apache.maven.toolchain.ToolchainFactory>>>}},
   provided as Plexus component: Plexus {{{http://plexus.codehaus.org/plexus-containers/plexus-component-annotations/}<<<@Component>>>}}
