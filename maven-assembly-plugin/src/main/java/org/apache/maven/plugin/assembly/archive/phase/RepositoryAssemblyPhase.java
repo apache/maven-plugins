@@ -48,7 +48,7 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 @Component( role = AssemblyArchiverPhase.class, hint = "repositories" )
 public class RepositoryAssemblyPhase
     extends AbstractLogEnabled
-    implements AssemblyArchiverPhase
+    implements AssemblyArchiverPhase, PhaseOrder
 {
 
     @Requirement
@@ -133,4 +133,9 @@ public class RepositoryAssemblyPhase
         return new RepoInfoWrapper( repository );
     }
 
+    public int order()
+    {
+        return 50;
+    }
 }
+

@@ -41,7 +41,7 @@ import javax.annotation.Nonnull;
 @Component( role = AssemblyArchiverPhase.class, hint = "file-sets" )
 public class FileSetAssemblyPhase
     extends AbstractLogEnabled
-    implements AssemblyArchiverPhase
+    implements AssemblyArchiverPhase, PhaseOrder
 {
 
     /**
@@ -62,4 +62,9 @@ public class FileSetAssemblyPhase
         }
     }
 
+
+    public int order()
+    {
+        return 20;
+    }
 }

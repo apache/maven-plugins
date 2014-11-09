@@ -49,7 +49,7 @@ import java.util.Set;
 @Component( role = AssemblyArchiverPhase.class, hint = "dependency-sets" )
 public class DependencySetAssemblyPhase
     extends AbstractLogEnabled
-    implements AssemblyArchiverPhase
+    implements AssemblyArchiverPhase, PhaseOrder
 {
 
     @Requirement
@@ -100,5 +100,10 @@ public class DependencySetAssemblyPhase
 
             task.execute( archiver, configSource );
         }
+    }
+
+    public int order()
+    {
+        return 40;
     }
 }

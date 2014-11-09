@@ -24,6 +24,7 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.archiver.AssemblyProxyArchiver;
 import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhase;
+import org.apache.maven.plugin.assembly.archive.phase.AssemblyArchiverPhaseComparator;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.filter.ComponentsXmlArchiverFileFilter;
 import org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler;
@@ -70,6 +71,7 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +115,12 @@ public class DefaultAssemblyArchiver
     {
         this.archiverManager = archiverManager;
         this.assemblyPhases = assemblyPhases;
+    }
+
+    private List<AssemblyArchiverPhase> sortedPhases(){
+        List<AssemblyArchiverPhase> sorted = new ArrayList<AssemblyArchiverPhase>( assemblyPhases );
+        Collections.sort( sorted, new AssemblyArchiverPhaseComparator() );
+        return sorted;
     }
 
     /** {@inheritDoc} */
@@ -159,7 +167,7 @@ public class DefaultAssemblyArchiver
 
             archiver.setDestFile( destFile );
 
-            for ( AssemblyArchiverPhase phase : assemblyPhases )
+            for ( AssemblyArchiverPhase phase : sortedPhases() )
             {
                 phase.execute( assembly, archiver, configSource );
             }
