@@ -42,7 +42,7 @@ public class ReaderFormatter
 {
     private static Reader createReaderFilter( @Nonnull Reader source, String escapeString, List<String> delimiters,
                                               AssemblerConfigurationSource configSource, boolean isPropertiesFile )
-        throws AssemblyFormattingException
+        throws IOException
     {
         try
         {
@@ -82,7 +82,7 @@ public class ReaderFormatter
         }
         catch ( MavenFilteringException e )
         {
-            throw new AssemblyFormattingException( "Error filtering file '" + source + "': " + e.getMessage(), e );
+            throw new IOException( "Error filtering file '" + source + "': " + e.getMessage(), e );
         }
     }
 
@@ -92,53 +92,36 @@ public class ReaderFormatter
                                                    final boolean isFiltered, String fileSetLineEnding )
         throws AssemblyFormattingException
     {
-        final String lineEndingHint = fileSetLineEnding;
+        final LineEndings lineEndingToUse = LineEndingsUtils.getLineEnding( fileSetLineEnding );
 
-        String lineEnding = LineEndingsUtils.getLineEndingCharacters( lineEndingHint );
+        final boolean transformLineEndings = !LineEndings.keep.equals( lineEndingToUse );
 
-        if ( ( lineEnding != null ) || isFiltered )
+        if ( transformLineEndings || isFiltered )
         {
             return new InputStreamTransformer()
             {
                 public InputStream transform( PlexusIoResource plexusIoResource, InputStream inputStream )
                     throws IOException
                 {
+                    InputStream result = inputStream;
                     if ( isFiltered )
                     {
                         final String encoding = configSource.getEncoding();
 
-                        Reader source = encoding != null
-                            ? new InputStreamReader( inputStream, encoding )
+                        Reader source = encoding != null ? new InputStreamReader( inputStream, encoding )
                             : new InputStreamReader( inputStream ); // wtf platform encoding ? TODO: Fix this
-                        try
-                        {
-                            boolean isPropertyFile = AssemblyFileUtils.isPropertyFile( plexusIoResource.getName() );
-                            Reader filtered =
-                                createReaderFilter( source, configSource.getEscapeString(), configSource.getDelimiters(),
-                                                    configSource, isPropertyFile );
-                            final ReaderInputStream readerInputStream = encoding != null
-                                ? new ReaderInputStream( filtered, encoding )
-                                : new ReaderInputStream( filtered );
-
-                            LineEndings lineEnding = LineEndingsUtils.getLineEnding( lineEndingHint );
-                            if ( !LineEndings.keep.equals( lineEnding ) )
-                            {
-                                return LineEndingsUtils.lineEndingConverter( readerInputStream, lineEnding );
-
-                            }
-                            return readerInputStream;
-
-                        }
-                        catch ( AssemblyFormattingException e )
-                        {
-                            throw new IOException( e.getMessage() );
-                        }
-
+                        boolean isPropertyFile = AssemblyFileUtils.isPropertyFile( plexusIoResource.getName() );
+                        Reader filtered =
+                            createReaderFilter( source, configSource.getEscapeString(), configSource.getDelimiters(),
+                                                configSource, isPropertyFile );
+                        result = encoding != null ? new ReaderInputStream( filtered, encoding )
+                            : new ReaderInputStream( filtered );
                     }
-                    else
+                    if ( transformLineEndings )
                     {
-                        return inputStream;
+                        result = LineEndingsUtils.lineEndingConverter( result, lineEndingToUse );
                     }
+                    return result;
                 }
             };
         }

@@ -52,6 +52,16 @@ public class ReaderFormatterTest
     }
 
     @Test
+    public void lineDosFeed_withoutFiltering()
+        throws IOException, AssemblyFormattingException
+    {
+        final PojoConfigSource cfg = getPojoConfigSource();
+        InputStreamTransformer fileSetTransformers = getFileSetTransformers( cfg, false, "dos" );
+        InputStream fud = fileSetTransformers.transform( dummyResource(), payload( "This is a\ntest." ) );
+        assertEquals( "This is a\r\ntest.", readResultStream( fud ) );
+    }
+
+    @Test
     public void lineUnixFeedWithInterpolation()
         throws IOException, AssemblyFormattingException
     {
