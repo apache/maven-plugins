@@ -144,8 +144,10 @@ public class DefaultAssemblyArchiver
             if ( specifiedBasedir != null )
             {
                 basedir =
-                    AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, configSource.getProject(), null,
-                                                            finalName, configSource );
+                    AssemblyFormatUtils.getOutputDirectory( specifiedBasedir, finalName, configSource,
+                                                            AssemblyFormatUtils.moduleProjectInterpolator(
+                                                                configSource.getProject() ),
+                                                            AssemblyFormatUtils.artifactProjectInterpolator( null ) );
             }
 
             final List<ContainerDescriptorHandler> containerHandlers =

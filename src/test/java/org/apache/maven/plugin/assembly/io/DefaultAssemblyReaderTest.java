@@ -25,6 +25,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
@@ -487,11 +488,12 @@ public class DefaultAssemblyReaderTest
 
         final File basedir = componentFile.getParentFile();
 
-        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
         final MavenProject project = new MavenProject();
 
         expect( configSource.getProject()).andReturn( project ).anyTimes();
+        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -536,6 +538,7 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getProject()).andReturn( project ).anyTimes();
 
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -579,6 +582,7 @@ public class DefaultAssemblyReaderTest
         expect(configSource.getProject()).andReturn( project ).anyTimes();
 
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -627,6 +631,7 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getProject()).andReturn( project ).anyTimes();
 
         expect( configSource.isSiteIncluded()).andReturn( true ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -694,6 +699,7 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getProject()).andReturn( project ).anyTimes();
 
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -762,6 +768,7 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getProject()).andReturn( project ).atLeastOnce();
 
         expect( configSource.isSiteIncluded()).andReturn( false );
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -807,6 +814,8 @@ public class DefaultAssemblyReaderTest
 
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
+
         mockManager.replayAll();
 
         final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
@@ -836,6 +845,8 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getProject()).andReturn( new MavenProject( new Model() )).anyTimes();
 
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
+
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         Writer writer = null;
         try
@@ -869,6 +880,8 @@ public class DefaultAssemblyReaderTest
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         expect( configSource.isIgnoreMissingDescriptor()).andReturn( false ).anyTimes();
+
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 
@@ -1130,6 +1143,7 @@ public class DefaultAssemblyReaderTest
         expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
 
         expect( configSource.isIgnoreMissingDescriptor()).andReturn(  ignoreMissing).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
 

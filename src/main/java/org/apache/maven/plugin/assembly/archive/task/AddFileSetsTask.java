@@ -113,9 +113,20 @@ public class AddFileSetsTask
         }
 
         destDirectory =
-            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getProject(), moduleProject, project,
-                                                    configSource.getFinalName(), configSource );
+            AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getFinalName(), configSource,
+                                                    AssemblyFormatUtils.moduleProjectInterpolator( moduleProject ),
+                                                    AssemblyFormatUtils.artifactProjectInterpolator( project ) );
 
+
+/*
+        destDirectory =
+            AssemblyFormatUtils.getOutputDirectory( destDirectory, moduleProjectInterpolator(
+                moduleProject ), artifactProjectInterpolator( project ),
+                                                    finalNameInterpolator( configSource.getFinalName() ),
+                                                    createProjectInterpolator( configSource.getProject() ),
+                                                    configSource.getSessionExecutionUserInterpolator() );
+
+ */
         if ( logger.isDebugEnabled() )
         {
             logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: "

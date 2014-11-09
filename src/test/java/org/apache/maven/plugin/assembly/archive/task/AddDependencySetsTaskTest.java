@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -102,6 +103,8 @@ public class AddDependencySetsTaskTest
         macTask.expectAddFile( newFile, outDir + depAid + "-" + depVer + "." + depExt, 10 );
 
         macTask.expectGetSession( null );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
+
 
         mockManager.replayAll();
 
@@ -174,6 +177,7 @@ public class AddDependencySetsTaskTest
 
         final DependencySet ds = new DependencySet();
         ds.setOutputDirectory( "/out" );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mockManager.replayAll();
 
@@ -249,6 +253,7 @@ public class AddDependencySetsTaskTest
             new AddDependencySetsTask( Collections.singletonList( ds ),
                                        Collections.singleton( artifactMock.getArtifact() ), project,
                                        macTask.projectBuilder, logger );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mockManager.replayAll();
 

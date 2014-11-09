@@ -27,12 +27,14 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.project.MavenProject;
 import org.easymock.classextension.EasyMockSupport;
 
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.*;
 import static org.easymock.EasyMock.expect;
 
 public class AssemblyFormatUtilsTest
@@ -302,13 +304,28 @@ public class AssemblyFormatUtilsTest
 
         final AssemblerConfigurationSource cs = mockManager.createMock( AssemblerConfigurationSource.class );
         expect( cs.getMavenSession()).andReturn( session ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( cs);
 
         mockManager.replayAll();
 
         final String result =
-            AssemblyFormatUtils.evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}",
-                                                         artifactMock.getArtifact(), mainProject, artifactProject, cs );
+            evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}", artifactMock.getArtifact(),
+                                     mainProject, null, cs, moduleProjectInterpolator( null ),
+                                     artifactProjectInterpolator( artifactProject ) );
 
+/*
+        final Artifact artifact = artifactMock.getArtifact();
+        final String result =
+            AssemblyFormatUtils.evaluateFileNameMapping( "${artifact.artifactId}-${artifact.baseVersion}",
+                                                         moduleArtifactInterpolator( null ),
+                                                         moduleProjectInterpolator( null ),
+                                                         artifactInterpolator( artifact ),
+                                                         artifactProjectInterpolator( artifactProject ),
+                                                         mainArtifactPropsOnly( mainProject ),
+                                                         classifierRules( artifact ),
+                                                         FixedStringSearchInterpolator.empty() );
+
+         */
         assertEquals( "artifact-2-SNAPSHOT", result );
 
         mockManager.verifyAll();
@@ -612,14 +629,29 @@ public class AssemblyFormatUtilsTest
 
         final AssemblerConfigurationSource cs = mockManager.createMock( AssemblerConfigurationSource.class );
         expect( cs.getMavenSession()).andReturn( session ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( cs, mainProject);
+
 
         mockManager.replayAll();
 
         final String result =
             AssemblyFormatUtils.evaluateFileNameMapping( expression, artifactMock.getArtifact(), mainProject,
-                                                         moduleProject, moduleArtifactMock.getArtifact(),
-                                                         artifactProject, cs );
+                                                         moduleArtifactMock.getArtifact(), cs,
+                                                         moduleProjectInterpolator( moduleProject ),
+                                                         artifactProjectInterpolator( artifactProject ) );
 
+        /*
+                final String result =
+            AssemblyFormatUtils.evaluateFileNameMapping( expression,
+                                                         moduleArtifactInterpolator( moduleArtifactMock.getArtifact() ),
+                                                         moduleProjectInterpolator( moduleProject ),
+                                                         artifactInterpolator( artifactMock.getArtifact() ),
+                                                         artifactProjectInterpolator( artifactProject ),
+                                                         mainArtifactPropsOnly( mainProject ),
+                                                         classifierRules( artifactMock.getArtifact() ),
+                                                         FixedStringSearchInterpolator.create( new PropertiesBasedValueSource( System.getProperties()  )) );
+
+         */
         assertEquals( checkValue, result );
 
         mockManager.verifyAll();
@@ -713,14 +745,19 @@ public class AssemblyFormatUtilsTest
         expect( session.getUserProperties()).andReturn( new Properties(  ) ).anyTimes();
 
 
+
         final AssemblerConfigurationSource cs = mockManager.createMock( AssemblerConfigurationSource.class );
         expect( cs.getMavenSession()).andReturn( session ).anyTimes();
+        DefaultAssemblyArchiverTest.setupInterpolators( cs, mainProject);
 
         String result;
 
         mockManager.replayAll();
         result =
-            AssemblyFormatUtils.getOutputDirectory( outDir, mainProject, moduleProject, artifactProject, finalName, cs );
+            AssemblyFormatUtils.getOutputDirectory( outDir, finalName, cs,
+                                                    moduleProjectInterpolator( moduleProject ),
+                                                    artifactProjectInterpolator( artifactProject ) );
+
 
         assertEquals( checkValue, result );
 

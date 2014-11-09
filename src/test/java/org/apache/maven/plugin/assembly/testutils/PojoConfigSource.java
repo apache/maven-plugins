@@ -24,7 +24,9 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 
@@ -99,6 +101,14 @@ public class PojoConfigSource implements AssemblerConfigurationSource
     private boolean isIgnoreMissingDescriptor;
 
     private MavenSession mavenSession;
+
+    private FixedStringSearchInterpolator rootInterpolator  = FixedStringSearchInterpolator.empty();
+
+    private FixedStringSearchInterpolator environmentInterpolator = FixedStringSearchInterpolator.empty();
+
+    private FixedStringSearchInterpolator envInterpolator = FixedStringSearchInterpolator.empty();
+
+    private FixedStringSearchInterpolator mainProjectInterpolator;
 
     public String getDescriptor()
     {
@@ -448,5 +458,50 @@ public class PojoConfigSource implements AssemblerConfigurationSource
     public void setMavenSession( MavenSession mavenSession )
     {
         this.mavenSession = mavenSession;
+    }
+
+    @Nonnull
+    public FixedStringSearchInterpolator getRepositoryInterpolator()
+    {
+        return rootInterpolator;
+    }
+
+    @Nonnull
+    public FixedStringSearchInterpolator getCommandLinePropsInterpolator()
+    {
+        return environmentInterpolator;
+    }
+
+    public void setRootInterpolator( @Nonnull FixedStringSearchInterpolator rootInterpolator )
+    {
+        this.rootInterpolator = rootInterpolator;
+    }
+
+    @Nonnull
+    public FixedStringSearchInterpolator getEnvInterpolator()
+    {
+        return envInterpolator;
+    }
+
+    public void setEnvInterpolator( FixedStringSearchInterpolator envInterpolator )
+    {
+        this.envInterpolator = envInterpolator;
+    }
+
+    @Nonnull
+    public FixedStringSearchInterpolator getMainProjectInterpolator()
+    {
+        return mainProjectInterpolator;
+    }
+
+
+    public void setMainProjectInterpolator( FixedStringSearchInterpolator mainProjectInterpolator )
+    {
+        this.mainProjectInterpolator = mainProjectInterpolator;
+    }
+
+    public void setEnvironmentInterpolator( @Nonnull FixedStringSearchInterpolator environmentInterpolator )
+    {
+        this.environmentInterpolator = environmentInterpolator;
     }
 }

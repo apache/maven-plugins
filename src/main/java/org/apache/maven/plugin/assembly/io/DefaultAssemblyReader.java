@@ -54,12 +54,16 @@ import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Reader;
+import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.io.location.ClasspathResourceLocatorStrategy;
 import org.apache.maven.shared.io.location.FileLocatorStrategy;
 import org.apache.maven.shared.io.location.Location;
 import org.apache.maven.shared.io.location.Locator;
 import org.apache.maven.shared.io.location.LocatorStrategy;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+import org.codehaus.plexus.interpolation.fixed.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -352,7 +356,7 @@ public class DefaultAssemblyReader
             final Map<String, String> context = new HashMap<String, String>();
             final MavenSession session = configSource.getMavenSession();
 
-            Properties commandLineProperties = mergeExecutionPropertiesWithSystemPropertiew( session );
+            Properties commandLineProperties = mergeExecutionPropertiesWithSystemProperties( session );
 
             for ( final Enumeration<Object> e = commandLineProperties.keys(); e.hasMoreElements(); )
             {
@@ -374,7 +378,8 @@ public class DefaultAssemblyReader
 
             debugPrintAssembly( "Before assembly is interpolated:", assembly );
 
-            assembly = new AssemblyInterpolator().interpolate( assembly, project, configSource );
+            assembly = new AssemblyInterpolator().interpolate( assembly, project, configSource,
+                                                               createProjectInterpolator( project ) );
 
             debugPrintAssembly( "After assembly is interpolated:", assembly );
         }
@@ -409,7 +414,14 @@ public class DefaultAssemblyReader
         return assembly;
     }
 
-    public static Properties mergeExecutionPropertiesWithSystemPropertiew( MavenSession session )
+    public static FixedStringSearchInterpolator createProjectInterpolator( MavenProject project )
+    {
+        return FixedStringSearchInterpolator.create(
+            new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES, project.getProperties(), true ),
+            new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project, true ) );
+    }
+
+    public static Properties mergeExecutionPropertiesWithSystemProperties( MavenSession session )
     {
         Properties commandLineProperties = System.getProperties();
         if ( session != null )

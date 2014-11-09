@@ -19,29 +19,34 @@ package org.apache.maven.plugin.assembly.interpolation;
  * under the License.
  */
 
-import java.io.File;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
 import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.interpolation.InterpolationException;
-import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+import org.codehaus.plexus.interpolation.fixed.InterpolationState;
+
+import java.io.File;
 
 public class AssemblyExpressionEvaluator
     implements ExpressionEvaluator
 {
     
     private final AssemblerConfigurationSource configSource;
-    private final Interpolator interpolator;
+    private final FixedStringSearchInterpolator interpolator;
     private final PrefixAwareRecursionInterceptor interceptor;
 
     public AssemblyExpressionEvaluator( AssemblerConfigurationSource configSource )
     {
         this.configSource = configSource;
-        
-        interpolator = AssemblyInterpolator.buildInterpolator( configSource.getProject(), configSource );
+
+        final MavenProject project = configSource.getProject();
+        final FixedStringSearchInterpolator projectInterpolator =
+            DefaultAssemblyReader.createProjectInterpolator( project );
+        interpolator = AssemblyInterpolator.buildInterpolator( project, projectInterpolator,  configSource );
         interceptor = new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
     }
 
@@ -63,14 +68,9 @@ public class AssemblyExpressionEvaluator
     public Object evaluate( String expression )
         throws ExpressionEvaluationException
     {
-        try
-        {
-            return interpolator.interpolate( expression, interceptor );
-        }
-        catch ( InterpolationException e )
-        {
-            throw new ExpressionEvaluationException( "Interpolation failed for archiver expression: " + expression, e );
-        }
+        InterpolationState is = new InterpolationState();
+        is.setRecursionInterceptor( interceptor );
+        return interpolator.interpolate( expression, is );
     }
 
 }

@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddArtifactTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddDependencySetsTask;
@@ -151,6 +152,8 @@ public class ModuleSetAssemblyPhaseTest
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
 
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
+
         mm.replayAll();
 
         final FileSet result =
@@ -192,6 +195,7 @@ public class ModuleSetAssemblyPhaseTest
         final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
 
         artifactProject.setArtifact( artifactMock.getArtifact() );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mm.replayAll();
 
@@ -233,6 +237,7 @@ public class ModuleSetAssemblyPhaseTest
         final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "artifact", "version", "jar", false );
 
         project.setArtifact( artifactMock.getArtifact() );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mm.replayAll();
 
@@ -306,6 +311,8 @@ public class ModuleSetAssemblyPhaseTest
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
         macTask.expectResolveDependencySets();
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
+
         mm.replayAll();
 
         final ModuleSetAssemblyPhase phase = createPhase( logger, macTask.dependencyResolver, null);
@@ -385,6 +392,7 @@ public class ModuleSetAssemblyPhaseTest
         final Set<MavenProject> projects = singleton( project );
 
         macTask.expectResolveDependencySets();
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mm.replayAll();
 
@@ -466,6 +474,7 @@ public class ModuleSetAssemblyPhaseTest
         final Set<MavenProject> projects = singleton( project );
 
         macTask.expectResolveDependencySets();
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mm.replayAll();
 
@@ -529,6 +538,7 @@ public class ModuleSetAssemblyPhaseTest
         binaries.setOutputFileNameMapping( "artifact" );
         binaries.setUnpack( false );
         binaries.setFileMode( "777" );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mm.replayAll();
 
@@ -587,6 +597,7 @@ public class ModuleSetAssemblyPhaseTest
 
         macTask.expectAdditionOfSingleFileSet( project, "final-name", false, modes, 1, true,
                                                false );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mm.replayAll();
 

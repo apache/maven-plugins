@@ -43,6 +43,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMock;
@@ -104,6 +105,8 @@ public class RepositoryAssemblyPhaseTest
         macCS.expectGetTemporaryRootDirectory( tempRoot );
         macCS.expectGetProject( new MavenProject( new Model() ) );
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectInterpolators();
+
 
         final Assembly assembly = new Assembly();
 
@@ -223,6 +226,13 @@ public class RepositoryAssemblyPhaseTest
         public void expectGetFinalName( final String finalName )
         {
             expect(configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
+        }
+
+        public void expectInterpolators( )
+        {
+            expect(configSource.getCommandLinePropsInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+            expect(configSource.getEnvInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+            expect(configSource.getMainProjectInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
         }
 
         public void expectGetTemporaryRootDirectory( final File tempRoot )

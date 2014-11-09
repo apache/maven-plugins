@@ -33,6 +33,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
@@ -98,6 +99,7 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectInterpolators();
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
@@ -143,6 +145,7 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectInterpolators();
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
@@ -192,6 +195,7 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectInterpolators();
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
@@ -265,6 +269,8 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectInterpolators();
+
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
@@ -341,6 +347,7 @@ public class FileItemAssemblyPhaseTest
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
+        macCS.expectInterpolators();
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
 
@@ -444,6 +451,14 @@ public class FileItemAssemblyPhaseTest
         {
             expect( configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
         }
+
+        public void expectInterpolators( )
+        {
+            expect(configSource.getCommandLinePropsInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+            expect(configSource.getEnvInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+            expect(configSource.getMainProjectInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+        }
+
 
         public void expectGetTemporaryRootDirectory( final File tempRoot )
         {

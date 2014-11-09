@@ -21,6 +21,8 @@ package org.apache.maven.plugin.assembly.interpolation;
 
 
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
+import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 
@@ -29,8 +31,9 @@ import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
+import org.codehaus.plexus.interpolation.immutable.FixedStringSearchInterpolator;
 
-public class AssemblyInterpolatorTest
+public class AssemblyInterpolator2Test
     extends TestCase
 {
 
@@ -51,7 +54,8 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        Assembly outputAssembly = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP );
+        Assembly outputAssembly = interpolator.interpolate( assembly, model, Collections.EMPTY_MAP,
+                                                            DefaultAssemblyReader.create(model));
         
         List outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );

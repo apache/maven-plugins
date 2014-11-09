@@ -28,6 +28,8 @@ import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.testutils.PojoConfigSource;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+import org.codehaus.plexus.interpolation.fixed.PropertiesBasedValueSource;
 import org.easymock.classextension.EasyMockSupport;
 import org.easymock.classextension.IMocksControl;
 
@@ -51,10 +53,21 @@ public class AssemblyExpressionEvaluatorTest
         model.setPackaging( "jar" );
 
         configSourceStub.setMavenProject( new MavenProject( model ) );
+        setupInterpolation();
+
+
 
         final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
 
         assertEquals( "assembly.group.id", result );
+    }
+
+    private void setupInterpolation()
+    {
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create() );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+        configSourceStub.setEnvInterpolator( FixedStringSearchInterpolator.create() );
+
     }
 
     public void testShouldResolveModelPropertyBeforeModelGroupId()
@@ -72,6 +85,7 @@ public class AssemblyExpressionEvaluatorTest
         model.setProperties( props );
 
         configSourceStub.setMavenProject( new MavenProject( model ) );
+        setupInterpolation();
 
         final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${groupId}" );
 
@@ -99,12 +113,19 @@ public class AssemblyExpressionEvaluatorTest
         final Properties execProps = new Properties();
         execProps.setProperty( "groupId", "still.another.id" );
 
+        PropertiesBasedValueSource cliProps = new PropertiesBasedValueSource( execProps );
         expect( session.getExecutionProperties()).andReturn( execProps ).anyTimes();
         expect( session.getUserProperties()).andReturn( new Properties() ).anyTimes();
 
-        AssemblerConfigurationSource cs = mm.createControl().createMock( AssemblerConfigurationSource.class );
 
-        expect( cs.getMavenSession()).andReturn( session );
+
+
+        AssemblerConfigurationSource cs = mm.createControl().createMock( AssemblerConfigurationSource.class );
+        expect( cs.getCommandLinePropsInterpolator() ).andReturn( FixedStringSearchInterpolator.create(cliProps) ).anyTimes();
+        expect( cs.getRepositoryInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( cs.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+
+        expect( cs.getMavenSession() ).andReturn( session ).anyTimes();
         expect( cs.getProject() ).andReturn( new MavenProject( model ) );
 
         final IMocksControl lrCtl = mm.createControl();
@@ -132,6 +153,7 @@ public class AssemblyExpressionEvaluatorTest
         model.setPackaging( "jar" );
 
         configSourceStub.setMavenProject( new MavenProject( model ) );
+        setupInterpolation();
 
         final Object result = new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${unresolved}" );
 
@@ -148,6 +170,8 @@ public class AssemblyExpressionEvaluatorTest
         model.setBuild( build );
 
         configSourceStub.setMavenProject( new MavenProject( model ) );
+        setupInterpolation();
+
 
         final Object result =
             new AssemblyExpressionEvaluator( configSourceStub ).evaluate( "assembly.${project.build.finalName}" );

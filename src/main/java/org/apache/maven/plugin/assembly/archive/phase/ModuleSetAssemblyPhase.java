@@ -60,11 +60,14 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
 import static org.apache.maven.plugin.assembly.functions.MavenProjects.log;
 import static org.apache.maven.plugin.assembly.functions.MavenProjects.addTo;
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.artifactProjectInterpolator;
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.moduleProjectInterpolator;
 
 /**
  * Handles the &lt;moduleSets/&gt; top-level section of the assembly descriptor.
@@ -498,14 +501,16 @@ public class ModuleSetAssemblyPhase
         fs.setIncludes( fileSet.getIncludes() );
         fs.setLineEnding( fileSet.getLineEnding() );
 
+        FixedStringSearchInterpolator moduleProjectInterpolator = moduleProjectInterpolator( moduleProject );
+        FixedStringSearchInterpolator artifactProjectInterpolator = artifactProjectInterpolator( moduleProject );
         String destPathPrefix = "";
         if ( sources.isIncludeModuleDirectory() )
         {
             destPathPrefix =
                 AssemblyFormatUtils.evaluateFileNameMapping( sources.getOutputDirectoryMapping(),
                                                              moduleProject.getArtifact(), configSource.getProject(),
-                                                             moduleProject, moduleProject.getArtifact(), moduleProject,
-                                                             configSource );
+                                                             moduleProject.getArtifact(), configSource, moduleProjectInterpolator,
+                                                             artifactProjectInterpolator );
 
             if ( !destPathPrefix.endsWith( "/" ) )
             {
@@ -525,8 +530,8 @@ public class ModuleSetAssemblyPhase
         }
 
         destPath =
-            AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getProject(), moduleProject, moduleProject,
-                                                    configSource.getFinalName(), configSource );
+            AssemblyFormatUtils.getOutputDirectory( destPath, configSource.getFinalName(), configSource,
+                                                    moduleProjectInterpolator, artifactProjectInterpolator );
 
         fs.setOutputDirectory( destPath );
 
