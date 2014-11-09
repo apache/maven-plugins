@@ -43,10 +43,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Delegating archiver implementation that supports:
@@ -77,7 +75,6 @@ public class AssemblyProxyArchiver
 
     private boolean forced;
 
-    private final Set<String> seenPaths = new HashSet<String>();
 
     private final String assemblyWorkPath;
 
@@ -149,13 +146,6 @@ public class AssemblyProxyArchiver
     public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix, final String[] includes,
                                     final String[] excludes )
     {
-        final String archiveKey = getArchiveKey( archiveFile, prefix );
-        if ( seenPaths.contains( archiveKey ) )
-        {
-            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
-            return;
-        }
-
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -176,18 +166,12 @@ public class AssemblyProxyArchiver
             else
             {
                 delegate.addArchivedFileSet( fs );
-                seenPaths.add( archiveKey );
             }
         }
         finally
         {
             inPublicApi.set( null );
         }
-    }
-
-    private String getArchiveKey( final File archiveFile, final String prefix )
-    {
-        return archiveFile.getAbsolutePath() + ":" + prefix;
     }
 
     private void debug( final String message )
@@ -198,27 +182,12 @@ public class AssemblyProxyArchiver
         }
     }
 
-    private void warn( final String message )
-    {
-        if ( ( logger != null ) && logger.isWarnEnabled() )
-        {
-            logger.warn( message );
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
     public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix )
         throws ArchiverException
     {
-        final String archiveKey = getArchiveKey( archiveFile, prefix );
-        if ( seenPaths.contains( archiveKey ) )
-        {
-            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
-            return;
-        }
-
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -237,7 +206,6 @@ public class AssemblyProxyArchiver
             else
             {
                 delegate.addArchivedFileSet( fs );
-                seenPaths.add( archiveKey );
             }
         }
         finally
@@ -252,13 +220,6 @@ public class AssemblyProxyArchiver
     public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
         throws ArchiverException
     {
-        final String archiveKey = getArchiveKey( archiveFile, "" );
-        if ( seenPaths.contains( archiveKey ) )
-        {
-            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
-            return;
-        }
-
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -279,7 +240,6 @@ public class AssemblyProxyArchiver
             else
             {
                 delegate.addArchivedFileSet( fs );
-                seenPaths.add( archiveKey );
             }
         }
         finally
@@ -294,13 +254,6 @@ public class AssemblyProxyArchiver
     public void addArchivedFileSet( final @Nonnull File archiveFile )
         throws ArchiverException
     {
-        final String archiveKey = getArchiveKey( archiveFile, "" );
-        if ( seenPaths.contains( archiveKey ) )
-        {
-            warn( "Archive: " + archiveFile + " has already been added. Skipping." );
-            return;
-        }
-
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -319,7 +272,6 @@ public class AssemblyProxyArchiver
             else
             {
                 delegate.addArchivedFileSet( fs );
-                seenPaths.add( archiveKey );
             }
         }
         finally
@@ -801,13 +753,6 @@ public class AssemblyProxyArchiver
     public void addArchivedFileSet( final ArchivedFileSet fileSet )
         throws ArchiverException
     {
-        final String archiveKey = getArchiveKey( fileSet.getArchive(), fileSet.getPrefix() );
-        if ( seenPaths.contains( archiveKey ) )
-        {
-            warn( "Archive: " + fileSet.getArchive() + " has already been added. Skipping." );
-            return;
-        }
-
         inPublicApi.set( Boolean.TRUE );
         try
         {
@@ -822,7 +767,6 @@ public class AssemblyProxyArchiver
             else
             {
                 delegate.addArchivedFileSet( fs );
-                seenPaths.add( archiveKey );
             }
         }
         finally
