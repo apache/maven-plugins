@@ -34,10 +34,21 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractProjectInfoRenderer
     extends AbstractMavenReportRenderer
 {
+    /**
+     * {@link I18N}.
+     */
     protected I18N i18n;
 
+    /**
+     * The {@link Locale}
+     */
     protected Locale locale;
 
+    /**
+     * @param sink {@link Sink}
+     * @param i18n {@link I18N}
+     * @param locale {@link Locale}
+     */
     public AbstractProjectInfoRenderer( Sink sink, I18N i18n, Locale locale )
     {
         super( sink );
@@ -53,11 +64,20 @@ public abstract class AbstractProjectInfoRenderer
         return getI18nString( "title" );
     }
 
+    /**
+     * @param key The key.
+     * @return The translated string.
+     */
     protected String getI18nString( String key )
     {
         return getI18nString( getI18Nsection(), key );
     }
 
+    /**
+     * @param section The section.
+     * @param key The key to translate.
+     * @return the translated key.
+     */
     protected String getI18nString( String section, String key )
     {
         return i18n.getString( "project-info-report", locale, "report." + section + '.' + key );
