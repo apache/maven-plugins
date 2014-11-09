@@ -77,7 +77,7 @@ import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.moduleP
 @Component( role = AssemblyArchiverPhase.class, hint = "module-sets" )
 public class ModuleSetAssemblyPhase
     extends AbstractLogEnabled
-    implements AssemblyArchiverPhase
+    implements AssemblyArchiverPhase, PhaseOrder
 {
 
     // TODO: Remove if using something like commons-lang instead.
@@ -578,4 +578,9 @@ public class ModuleSetAssemblyPhase
         return FilterUtils.filterProjects( moduleProjects, moduleSet.getIncludes(), moduleSet.getExcludes(), true, logger );
     }
 
+
+    public int order()
+    {
+        return 30;
+    }
 }

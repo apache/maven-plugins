@@ -57,7 +57,7 @@ import java.util.List;
 @Component( role = AssemblyArchiverPhase.class, hint = "file-items" )
 public class FileItemAssemblyPhase
     extends AbstractLogEnabled
-    implements AssemblyArchiverPhase
+    implements AssemblyArchiverPhase, PhaseOrder
 {
 
     /**
@@ -272,4 +272,8 @@ public class FileItemAssemblyPhase
 
     }
 
+    public int order()
+    {
+        return 10;
+    }
 }
