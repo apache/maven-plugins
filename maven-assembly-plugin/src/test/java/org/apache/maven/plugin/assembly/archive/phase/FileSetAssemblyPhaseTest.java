@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -106,6 +107,8 @@ public class FileSetAssemblyPhaseTest
         final int[] modes = { -1, -1, dirMode, fileMode };
 
         macTask.expectAdditionOfSingleFileSet( project, "final-name", false, modes, 1, true );
+
+        DefaultAssemblyArchiverTest.setupInterpolators(  macTask.configSource  );
 
         mm.replayAll();
 

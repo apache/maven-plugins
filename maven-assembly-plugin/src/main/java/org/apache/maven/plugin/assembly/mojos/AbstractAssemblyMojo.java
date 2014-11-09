@@ -22,6 +22,7 @@ package org.apache.maven.plugin.assembly.mojos;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -38,14 +39,20 @@ import org.apache.maven.plugin.assembly.io.AssemblyReadException;
 import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
+import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
+import org.apache.maven.shared.utils.cli.CommandLineUtils;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource;
+import org.codehaus.plexus.interpolation.fixed.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -286,7 +293,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * If True (default) then the ${project.build.filters} are also used in addition to any
      * further filters defined for the Assembly.
-     * 
+     *
      * @since 2.4.2
      */
     @Parameter( property = "assembly.includeProjectBuildFilters", defaultValue = "true" )
@@ -326,7 +333,7 @@ public abstract class AbstractAssemblyMojo
      * For instance, to direct an assembly with the "ear" format to use a particular deployment descriptor, you should
      * specify the following for the archiverConfig value in your plugin configuration: <br/>
      * <p/>
-     * 
+     * <p/>
      * <pre>
      * &lt;appxml&gt;${project.basedir}/somepath/app.xml&lt;/appxml&gt;
      * </pre>
@@ -391,7 +398,7 @@ public abstract class AbstractAssemblyMojo
      * <p>
      * So, the default filtering delimiters might be specified as:
      * </p>
-     * 
+     * <p/>
      * <pre>
      * &lt;delimiters&gt;
      *   &lt;delimiter&gt;${*}&lt;/delimiter&gt;
@@ -407,14 +414,23 @@ public abstract class AbstractAssemblyMojo
     @Parameter
     private List<String> delimiters;
 
+    protected FixedStringSearchInterpolator commanndLinePropertiesInterpolator;
+
+    protected FixedStringSearchInterpolator envInterpolator;
+
+    protected FixedStringSearchInterpolator mainProjectInterpolator;
+
+    protected FixedStringSearchInterpolator rootInterpolator;
+
     /**
      * Create the binary distribution.
-     * 
+     *
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+
         if ( skipAssembly )
         {
             getLog().info( "Assemblies have been skipped per configuration of the skipAssembly parameter." );
@@ -439,9 +455,11 @@ public abstract class AbstractAssemblyMojo
         }
         catch ( final InvalidAssemblerConfigurationException e )
         {
-            throw new MojoFailureException( assemblyReader, e.getMessage(), "Mojo configuration is invalid: "
-                + e.getMessage() );
+            throw new MojoFailureException( assemblyReader, e.getMessage(),
+                                            "Mojo configuration is invalid: " + e.getMessage() );
         }
+
+        FixedStringSearchInterpolator rootInterpolator = createRepositoryInterpolator();
 
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
@@ -461,7 +479,7 @@ public abstract class AbstractAssemblyMojo
                 if ( effectiveFormats == null || effectiveFormats.size() == 0 )
                 {
                     throw new MojoFailureException(
-                                                    "No formats specified in the execution parameters or the assembly descriptor." );
+                        "No formats specified in the execution parameters or the assembly descriptor." );
                 }
 
                 for ( final String format : effectiveFormats )
@@ -489,9 +507,12 @@ public abstract class AbstractAssemblyMojo
                             {
                                 final StringBuilder message = new StringBuilder();
 
-                                message.append( "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
-                                message.append( "\nInstead of attaching the assembly file: " ).append( destFile ).append( ", it will become the file for main project artifact." );
-                                message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
+                                message.append(
+                                    "Configuration options: 'appendAssemblyId' is set to false, and 'classifier' is missing." );
+                                message.append( "\nInstead of attaching the assembly file: " ).append(
+                                    destFile ).append( ", it will become the file for main project artifact." );
+                                message.append(
+                                    "\nNOTE: If multiple descriptors or descriptor-formats are provided for this project, the value of this file will be non-deterministic!" );
 
                                 getLog().warn( message );
                                 warnedAboutMainProjectArtifact = true;
@@ -513,8 +534,7 @@ public abstract class AbstractAssemblyMojo
                     }
                     else if ( attach )
                     {
-                        getLog().warn( "Assembly file: "
-                                           + destFile
+                        getLog().warn( "Assembly file: " + destFile
                                            + " is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment." );
                     }
                 }
@@ -536,9 +556,61 @@ public abstract class AbstractAssemblyMojo
         }
     }
 
+    private FixedStringSearchInterpolator createRepositoryInterpolator()
+    {
+        final Properties settingsProperties = new Properties();
+        final MavenSession session = getMavenSession();
+
+        if ( getLocalRepository() != null )
+        {
+            settingsProperties.setProperty( "localRepository", getLocalRepository().getBasedir() );
+            settingsProperties.setProperty( "settings.localRepository", getLocalRepository().getBasedir() );
+        }
+        else if ( session != null && session.getSettings() != null )
+        {
+            settingsProperties.setProperty( "localRepository", session.getSettings().getLocalRepository() );
+            settingsProperties.setProperty( "settings.localRepository", getLocalRepository().getBasedir() );
+        }
+
+        return FixedStringSearchInterpolator.create( new PropertiesBasedValueSource( settingsProperties ) );
+
+    }
+
+    private FixedStringSearchInterpolator createCommandLinePropertiesInterpolator()
+    {
+        Properties commandLineProperties = System.getProperties();
+        final MavenSession session = getMavenSession();
+
+        if ( session != null )
+        {
+            commandLineProperties = new Properties();
+            if ( session.getExecutionProperties() != null )
+            {
+                commandLineProperties.putAll( session.getExecutionProperties() );
+            }
+
+            if ( session.getUserProperties() != null )
+            {
+                commandLineProperties.putAll( session.getUserProperties() );
+            }
+        }
+
+        PropertiesBasedValueSource cliProps = new PropertiesBasedValueSource( commandLineProperties );
+        return FixedStringSearchInterpolator.create( cliProps );
+
+    }
+
+    private FixedStringSearchInterpolator createEnvInterpolator()
+    {
+        PrefixedPropertiesValueSource envProps = new PrefixedPropertiesValueSource( Collections.singletonList( "env." ),
+                                                                                    CommandLineUtils.getSystemEnvVars(
+                                                                                        false ), true );
+        return FixedStringSearchInterpolator.create( envProps );
+    }
+
     /**
      * Returns true if the current project is located at the Execution Root Directory (where mvn was launched)
-     * 
+     *
      * @return if this is the execution root
      */
     boolean isThisTheExecutionRoot()
@@ -576,7 +648,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @deprecated This has been replaced by {@link #getDescriptors()}
      */
     @Deprecated
@@ -587,7 +659,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @deprecated This has been replaced by {@link #getDescriptorReferences()}
      */
     @Deprecated
@@ -725,7 +797,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @deprecated This has been replaced by {@link #setDescriptors(String[])}
      */
     @Deprecated
@@ -736,7 +808,7 @@ public abstract class AbstractAssemblyMojo
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @deprecated This has been replaced by {@link #setDescriptorRefs(String[])}
      */
     @Deprecated
@@ -889,6 +961,65 @@ public abstract class AbstractAssemblyMojo
     {
         return delimiters;
     }
+
+    public FixedStringSearchInterpolator getCommandLinePropsInterpolator()
+    {
+        if ( commanndLinePropertiesInterpolator == null )
+        {
+            this.commanndLinePropertiesInterpolator = createCommandLinePropertiesInterpolator();
+        }
+        return commanndLinePropertiesInterpolator;
+    }
+
+    @Nonnull
+    public FixedStringSearchInterpolator getEnvInterpolator()
+    {
+        if ( envInterpolator == null )
+        {
+            this.envInterpolator = createEnvInterpolator();
+        }
+        return envInterpolator;
+    }
+
+    public FixedStringSearchInterpolator getRepositoryInterpolator()
+    {
+        if ( rootInterpolator == null )
+        {
+            this.rootInterpolator = createRepositoryInterpolator();
+        }
+        return rootInterpolator;
+    }
+
+
+    @Nonnull
+    public FixedStringSearchInterpolator getMainProjectInterpolator()
+    {
+        if ( mainProjectInterpolator == null )
+        {
+            this.mainProjectInterpolator = mainProjectInterpolator( getProject() );
+        }
+        return mainProjectInterpolator;
+    }
+
+    public static FixedStringSearchInterpolator mainProjectInterpolator( MavenProject mainProject )
+    {
+        if ( mainProject != null )
+        {
+            // 5
+            return FixedStringSearchInterpolator.create(
+                new org.codehaus.plexus.interpolation.fixed.PrefixedObjectValueSource(
+                    InterpolationConstants.PROJECT_PREFIXES, mainProject, true ),
+
+                // 6
+                new org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource(
+                    InterpolationConstants.PROJECT_PROPERTIES_PREFIXES, mainProject.getProperties(), true ) );
+        }
+        else
+        {
+            return FixedStringSearchInterpolator.empty();
+        }
+    }
+
 
     public void setDelimiters( List<String> delimiters )
     {

@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.archive.task.testutils.MockAndControlForAddFileSetsTask;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.FileSet;
@@ -144,10 +145,11 @@ public class AddFileSetsTaskTest
 
         macTask.expectAdditionOfSingleFileSet( null, null, true, modes, 1, true, false );
 
-        macTask.expectGetProject( null );
+//        macTask.expectGetProject( null );
 
         final MavenProject project = new MavenProject( new Model() );
 
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
         mockManager.replayAll();
 
         final AddFileSetsTask task = new AddFileSetsTask( new ArrayList<FileSet>() );
@@ -179,9 +181,10 @@ public class AddFileSetsTaskTest
 
         macTask.expectAdditionOfSingleFileSet( null, null, true, modes, 1, true, false );
 
-        macTask.expectGetProject( null );
+        //macTask.expectGetProject( null );
 
         final MavenProject project = new MavenProject( new Model() );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mockManager.replayAll();
 
@@ -208,12 +211,13 @@ public class AddFileSetsTaskTest
 
         macTask.expectGetFinalName( "finalName" );
 
-        macTask.expectGetProject( null );
+        //macTask.expectGetProject( null );
 
         expect(macTask.archiver.getOverrideDirectoryMode()).andReturn( -1 );
         expect(macTask.archiver.getOverrideFileMode()).andReturn( -1 );
 
         final MavenProject project = new MavenProject( new Model() );
+        DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
         mockManager.replayAll();
 

@@ -25,10 +25,13 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.testutils.PojoConfigSource;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+import org.codehaus.plexus.interpolation.fixed.PropertiesBasedValueSource;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
@@ -45,7 +48,7 @@ public class AssemblyInterpolatorTest
 
     private AssemblyInterpolator interpolator;
 
-    private final AssemblerConfigurationSource configSourceStub = new PojoConfigSource();
+    private final PojoConfigSource configSourceStub = new PojoConfigSource();
 
     @Override
     public void setUp()
@@ -77,7 +80,10 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
-        final Assembly outputAssembly = interpolator.interpolate( assembly, project, configSourceStub );
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+        final Assembly outputAssembly = interpolator.interpolate( assembly, project, configSourceStub,
+                                                                  createProjectInterpolator( project ) );
 
         final List<DependencySet> outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -105,8 +111,12 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create() );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+
+        final MavenProject project = new MavenProject( model );
         final Assembly outputAssembly =
-            interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
+            interpolator.interpolate( assembly, project, configSourceStub, createProjectInterpolator( project ) );
 
         final List<DependencySet> outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -129,7 +139,11 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${groupId}" );
 
-        final Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
+        final MavenProject project = new MavenProject( model );
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create() );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
+                                                          createProjectInterpolator( project ) );
 
         assertEquals( "assembly.group.id", result.getId() );
     }
@@ -148,13 +162,23 @@ public class AssemblyInterpolatorTest
 
         model.setProperties( props );
 
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+
         final Assembly assembly = new Assembly();
 
         assembly.setId( "assembly.${groupId}" );
 
-        final Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
+        final MavenProject project = new MavenProject( model );
+        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
+                                                          createProjectInterpolator( project ) );
 
         assertEquals( "assembly.other.id", result.getId() );
+    }
+
+    private FixedStringSearchInterpolator createProjectInterpolator( MavenProject project )
+    {
+        return DefaultAssemblyReader.createProjectInterpolator( project );
     }
 
     public void testShouldResolveContextValueBeforeModelPropertyOrModelGroupIdInAssemblyId()
@@ -196,9 +220,15 @@ public class AssemblyInterpolatorTest
 
         expect( cs.getMavenSession()).andReturn( session ).anyTimes();
 
+        expect( cs.getRepositoryInterpolator()).andReturn(  FixedStringSearchInterpolator.create(  ) ).anyTimes();
+        expect( cs.getCommandLinePropsInterpolator()).andReturn( FixedStringSearchInterpolator.create(
+            new PropertiesBasedValueSource(execProps) ) ).anyTimes();
+        expect( cs.getEnvInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+
         mm.replayAll();
 
-        final Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), cs );
+        final MavenProject project = new MavenProject( model );
+        final Assembly result = interpolator.interpolate( assembly, project, cs, createProjectInterpolator( project ) );
 
         assertEquals( "assembly.still.another.id", result.getId() );
 
@@ -219,7 +249,12 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${unresolved}" );
 
-        final Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+
+        final MavenProject project = new MavenProject( model );
+        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
+                                                          createProjectInterpolator( project ) );
 
         assertEquals( "assembly.${unresolved}", result.getId() );
     }
@@ -237,7 +272,12 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${project.build.finalName}" );
 
-        final Assembly result = interpolator.interpolate( assembly, new MavenProject( model ), configSourceStub );
+        configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
+        configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
+
+        final MavenProject project = new MavenProject( model );
+        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
+                                                          createProjectInterpolator( project ) );
 
         assertEquals( "assembly.final-name", result.getId() );
     }

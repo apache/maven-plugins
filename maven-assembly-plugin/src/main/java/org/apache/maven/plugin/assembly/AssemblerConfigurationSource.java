@@ -24,7 +24,9 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 
@@ -210,4 +212,13 @@ public interface AssemblerConfigurationSource
      */
     List<String> getDelimiters();
 
+    @Nonnull FixedStringSearchInterpolator getRepositoryInterpolator();
+
+    /** Gets an interpolator from environment variables and stuff */
+    @Nonnull FixedStringSearchInterpolator getCommandLinePropsInterpolator();
+
+    /** Gets an interpolator from environment variables and stuff */
+    @Nonnull FixedStringSearchInterpolator getEnvInterpolator();
+
+    @Nonnull FixedStringSearchInterpolator getMainProjectInterpolator();
 }

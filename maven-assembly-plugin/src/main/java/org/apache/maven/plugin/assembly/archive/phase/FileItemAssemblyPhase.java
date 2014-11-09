@@ -94,8 +94,10 @@ public class FileItemAssemblyPhase
             }
 
             final String outputDirectory =
-                AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getProject(), null,
-                                                        configSource.getFinalName(), configSource );
+                AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getFinalName(), configSource,
+                                                        AssemblyFormatUtils.moduleProjectInterpolator(
+                                                            configSource.getProject() ),
+                                                        AssemblyFormatUtils.artifactProjectInterpolator( null ) );
 
             String target;
 

@@ -76,6 +76,7 @@ public class AddArtifactTaskTest
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( artifactFile, outputLocation );
+        mac.expectInterpolators();
         
         mockManager.replayAll();
 
@@ -101,7 +102,7 @@ public class AddArtifactTaskTest
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( file, outputDir + artifactId + "-" + version + "." + ext );
-        
+        mac.expectInterpolators();
         mockManager.replayAll();
 
         AddArtifactTask task = new AddArtifactTask( mock.getArtifact(), new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
@@ -133,6 +134,9 @@ public class AddArtifactTaskTest
         throws ArchiveCreationException, AssemblyFormattingException, IOException
     {
         mac.expectModeChange( -1, -1, -1, -1, 1 );
+        mac.expectInterpolators();
+
+
 
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
         File artifactFile = artifactMock.setNewFile();
@@ -168,6 +172,10 @@ public class AddArtifactTaskTest
         int fileMode = TypeConversionUtils.modeToInt( "777", new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
+        mac.expectInterpolators();
+
+
+
 //        mac.expectIsSnapshot( false );
 
         String outputLocation = "";
@@ -212,6 +220,7 @@ public class AddArtifactTaskTest
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddArchivedFileSet();
+        mac.expectInterpolators();
 
         mockManager.replayAll();
 

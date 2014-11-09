@@ -80,8 +80,10 @@ public class RepositoryAssemblyPhase
         for ( final Repository repository : repositoriesList )
         {
             final String outputDirectory =
-                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getProject(),
-                                                        null, configSource.getFinalName(), configSource );
+                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getFinalName(), configSource,
+                                                        AssemblyFormatUtils.moduleProjectInterpolator(
+                                                            configSource.getProject() ),
+                                                        AssemblyFormatUtils.artifactProjectInterpolator( null ) );
 
             final File repositoryDirectory = new File( tempRoot, outputDirectory );
 

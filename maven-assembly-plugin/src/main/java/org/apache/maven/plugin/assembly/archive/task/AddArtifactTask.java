@@ -34,11 +34,13 @@ import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-import sun.util.calendar.CalendarUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.artifactProjectInterpolator;
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.moduleProjectInterpolator;
 
 /**
  * @version $Id$
@@ -94,8 +96,10 @@ public class AddArtifactTask
         }
 
         String destDirectory =
-            AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), moduleProject, project,
-                                                    configSource.getFinalName(), configSource );
+            AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getFinalName(), configSource,
+                                                    moduleProjectInterpolator( moduleProject ),
+                                                    artifactProjectInterpolator( project ) );
+
 
         if ( unpack )
         {
@@ -187,8 +191,9 @@ public class AddArtifactTask
         {
             final String tempMapping =
                 AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact,
-                                                             configSource.getProject(), moduleProject, moduleArtifact,
-                                                             project, configSource );
+                                                             configSource.getProject(), moduleArtifact, configSource,
+                                                             moduleProjectInterpolator( moduleProject ),
+                                                             artifactProjectInterpolator( project ) );
 
 
             final String outputLocation = destDirectory + tempMapping;

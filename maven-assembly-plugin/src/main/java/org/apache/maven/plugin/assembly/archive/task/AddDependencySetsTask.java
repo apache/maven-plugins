@@ -39,6 +39,7 @@ import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
@@ -47,6 +48,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.artifactProjectInterpolator;
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.moduleProjectInterpolator;
 
 /**
  * @version $Id$
@@ -319,7 +323,7 @@ public class AddDependencySetsTask
         return dependencyArtifacts;
     }
 
-    void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
+    private void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
                                   final DependencySet dependencySet, final Archiver archiver,
                                   final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
@@ -328,14 +332,17 @@ public class AddDependencySetsTask
 
         String outputDirectory = dependencySet.getOutputDirectory();
 
+        FixedStringSearchInterpolator moduleProjectInterpolator = moduleProjectInterpolator( moduleProject );
+        FixedStringSearchInterpolator artifactProjectInterpolator = artifactProjectInterpolator( depProject );
         outputDirectory =
-            AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getProject(), moduleProject,
-                                                    depProject, depProject.getBuild().getFinalName(), configSource );
+            AssemblyFormatUtils.getOutputDirectory( outputDirectory, depProject.getBuild().getFinalName(), configSource,
+                                                    moduleProjectInterpolator, artifactProjectInterpolator );
 
         final String destName =
             AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact,
-                                                         configSource.getProject(), moduleProject, moduleArtifact,
-                                                         depProject, configSource );
+                                                         configSource.getProject(), moduleArtifact, configSource, moduleProjectInterpolator,
+                                                         artifactProjectInterpolator );
+
 
         String target;
 

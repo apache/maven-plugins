@@ -20,7 +20,6 @@ package org.apache.maven.plugin.assembly.archive;
  */
 
 import junit.framework.Assert;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -30,6 +29,7 @@ import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
+import org.apache.maven.plugin.assembly.mojos.AbstractAssemblyMojo;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -44,6 +44,7 @@ import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
@@ -56,7 +57,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.easymock.EasyMock.*;
@@ -212,7 +212,9 @@ public class DefaultAssemblyArchiverTest
         expect(lr.getBasedir()).andReturn(  "/path/to/local/repo" ).anyTimes();
 
         expect(configSource.getLocalRepository()).andReturn( lr ).anyTimes();
-        expect(configSource.isIgnorePermissions()).andReturn( true );
+        expect( configSource.isIgnorePermissions() ).andReturn( true );
+        setupInterpolators( configSource, project );
+
 
         mm.replayAll();
 
@@ -225,6 +227,25 @@ public class DefaultAssemblyArchiverTest
 
         mm.verifyAll();
     }
+
+    public static  void setupInterpolators( AssemblerConfigurationSource configSource )
+    {
+        expect( configSource.getRepositoryInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getCommandLinePropsInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getMainProjectInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+
+    }
+
+    public static  void setupInterpolators( AssemblerConfigurationSource configSource, MavenProject mavenProject )
+    {
+        expect( configSource.getRepositoryInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getCommandLinePropsInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getMainProjectInterpolator() ).andReturn( AbstractAssemblyMojo.mainProjectInterpolator( mavenProject) ).anyTimes();
+
+    }
+
 
     @Test
     public void testCreateArchiver_ShouldCreateTarArchiverWithNoCompression()

@@ -28,6 +28,7 @@ import junit.framework.Assert;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -178,4 +179,9 @@ public class MockAndControlForAddArtifactTask
 
     }
 
+    public void expectInterpolators()
+    {
+        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
+
+    }
 }
