@@ -29,6 +29,6 @@ public class AssemblyArchiverPhaseComparator implements Comparator<AssemblyArchi
         if (!o1hasOrder && ! o2hasOrder) return o1.getClass().getName().compareTo( o2.getClass().getName() );
         if (!o1hasOrder) return -1;
         if (!o2hasOrder) return +1;
-        return Integer.compare( ((PhaseOrder)o1).order(), ((PhaseOrder)o2).order() );
+        return new Integer(((PhaseOrder)o1).order()).compareTo( ((PhaseOrder)o2).order() );
     }
 }
