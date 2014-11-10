@@ -33,6 +33,10 @@ under the License.
     Check that toolchain requirements are checked and not covered as expected
   </description>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
