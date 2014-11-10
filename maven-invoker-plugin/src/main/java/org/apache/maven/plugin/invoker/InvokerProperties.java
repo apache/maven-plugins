@@ -191,7 +191,9 @@ class InvokerProperties
         String profiles = get( InvocationProperty.PROFILES, index );
         if ( profiles != null )
         {
+            // CHECKSTYLE_OFF: LineLength
             request.setProfiles( new ArrayList<String>( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
+            // CHECKSTYLE_ON: LineLength
         }
 
         String mvnOpts = get( InvocationProperty.MAVEN_OPTS, index );

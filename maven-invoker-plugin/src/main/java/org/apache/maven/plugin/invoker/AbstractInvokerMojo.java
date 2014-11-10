@@ -650,6 +650,8 @@ public abstract class AbstractInvokerMojo
             reportsDirectory.mkdirs();
         }
 
+        // CHECKSTYLE_OFF: LineLength
+
         BuildJob[] buildJobs;
         if ( pom != null )
         {
@@ -679,6 +681,7 @@ public abstract class AbstractInvokerMojo
                                                       + e.getMessage(), e );
             }
         }
+        // CHECKSTYLE_ON: LineLength
 
         if ( ( buildJobs == null ) || ( buildJobs.length < 1 ) )
         {
@@ -2303,6 +2306,7 @@ public abstract class AbstractInvokerMojo
 
             Interpolator interpolator = new RegexBasedInterpolator();
             interpolator.addValueSource( new MapBasedValueSource( getInterpolationValueSource() ) );
+            // CHECKSTYLE_OFF: LineLength
             for ( String key : (Set<String>) ( (Map) props ).keySet() )
             {
                 String value = props.getProperty( key );
@@ -2316,6 +2320,7 @@ public abstract class AbstractInvokerMojo
                 }
                 props.setProperty( key, value );
             }
+            // CHECKSTYLE_ON: LineLength
         }
         return new InvokerProperties( props );
     }

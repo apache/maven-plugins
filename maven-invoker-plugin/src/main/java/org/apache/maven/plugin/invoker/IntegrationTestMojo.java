@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @author <a href="mailto:stephenconnolly at codehaus">Stephen Connolly</a>
  * @version $Id$
  */
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "integration-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 public class IntegrationTestMojo
     extends AbstractInvokerMojo
@@ -44,3 +45,4 @@ public class IntegrationTestMojo
     }
 
 }
+// CHECKSTYLE_ON: LineLength
