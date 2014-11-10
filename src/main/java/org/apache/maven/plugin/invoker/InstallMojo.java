@@ -60,7 +60,9 @@ import org.codehaus.plexus.util.FileUtils;
  * @author Benjamin Bentmann
  * @version $Id$
  */
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "install", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true )
+// CHECKSTYLE_ON: LineLength
 public class InstallMojo
     extends AbstractMojo
 {
@@ -459,7 +461,8 @@ public class InstallMojo
             projects.put( projectId, reactorProject );
 
             // only add projects of reactor build previous to this mvnProject
-            if ( !( foundCurrent |= ( mvnProject.equals( reactorProject ) ) ) )
+            foundCurrent |= ( mvnProject.equals( reactorProject ) );
+            if ( !foundCurrent )
             {
                 dependencyProjects.add( projectId );
             }

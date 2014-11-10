@@ -81,45 +81,43 @@ class MetadataUtils
             writeMetadata( metadataFile, metadata );
         }
 
+        File metadataFile = new File( file.getParentFile().getParentFile(), "maven-metadata-local.xml" );
+
+        Set<String> allVersions = new LinkedHashSet<String>();
+
+        Xpp3Dom metadata = readMetadata( metadataFile );
+
+        if ( metadata != null )
         {
-            File metadataFile = new File( file.getParentFile().getParentFile(), "maven-metadata-local.xml" );
-
-            Set<String> allVersions = new LinkedHashSet<String>();
-
-            Xpp3Dom metadata = readMetadata( metadataFile );
-
-            if ( metadata != null )
+            Xpp3Dom versioning = metadata.getChild( "versioning" );
+            if ( versioning != null )
             {
-                Xpp3Dom versioning = metadata.getChild( "versioning" );
-                if ( versioning != null )
+                Xpp3Dom versions = versioning.getChild( "versions" );
+                if ( versions != null )
                 {
-                    Xpp3Dom versions = versioning.getChild( "versions" );
-                    if ( versions != null )
-                    {
 
-                        Xpp3Dom[] children = versions.getChildren( "version" );
-                        for ( Xpp3Dom aChildren : children )
-                        {
-                            allVersions.add( aChildren.getValue() );
-                        }
+                    Xpp3Dom[] children = versions.getChildren( "version" );
+                    for ( Xpp3Dom aChildren : children )
+                    {
+                        allVersions.add( aChildren.getValue() );
                     }
                 }
             }
-
-            allVersions.add( artifact.getBaseVersion() );
-
-            metadata = new Xpp3Dom( "metadata" );
-            addChild( metadata, "groupId", artifact.getGroupId() );
-            addChild( metadata, "artifactId", artifact.getArtifactId() );
-            Xpp3Dom versioning = new Xpp3Dom( "versioning" );
-            versioning.addChild( addChildren( new Xpp3Dom( "versions" ), "version", allVersions ) );
-            addChild( versioning, "lastUpdated", timestamp );
-            metadata.addChild( versioning );
-
-            metadata = Xpp3DomUtils.mergeXpp3Dom( metadata, readMetadata( metadataFile ) );
-
-            writeMetadata( metadataFile, metadata );
         }
+
+        allVersions.add( artifact.getBaseVersion() );
+
+        metadata = new Xpp3Dom( "metadata" );
+        addChild( metadata, "groupId", artifact.getGroupId() );
+        addChild( metadata, "artifactId", artifact.getArtifactId() );
+        Xpp3Dom versioning = new Xpp3Dom( "versioning" );
+        versioning.addChild( addChildren( new Xpp3Dom( "versions" ), "version", allVersions ) );
+        addChild( versioning, "lastUpdated", timestamp );
+        metadata.addChild( versioning );
+
+        metadata = Xpp3DomUtils.mergeXpp3Dom( metadata, readMetadata( metadataFile ) );
+
+        writeMetadata( metadataFile, metadata );
     }
 
     private static Xpp3Dom addChild( Xpp3Dom parent, String childName, String childValue )

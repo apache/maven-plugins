@@ -104,7 +104,9 @@ class SelectorUtils
             // and that should have a pom.properties file
             // if this ever changes, we will have to revisit this code.
             Properties properties = new Properties();
+            // CHECKSTYLE_OFF: LineLength
             properties.load( MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" ) );
+            // CHECKSTYLE_ON: LineLength
             return StringUtils.trim( properties.getProperty( "version" ) );
         }
         catch ( Exception e )
