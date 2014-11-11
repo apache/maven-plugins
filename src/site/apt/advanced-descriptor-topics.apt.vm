@@ -46,7 +46,7 @@ Advanced Assembly-Descriptor Topics
   Elements of the same type will be processed in the order they appear in the
   descriptors. If you need to "overwrite" a file included by a previous set,
   the only way to do this is to exclude that file from the earlier set.
-  
+
   Note that this behaviour was slightly different in earlier versions of the
   assembly plugin.
 
