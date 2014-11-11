@@ -19,22 +19,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<project xmlns="http://maven.apache.org/DECORATION/1.4.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.4.0 http://maven.apache.org/xsd/decoration-1.4.0.xsd">
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
-      <item name="Standard Toolchains" href="toolchains/index.html"/>
       <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
       <item name="License" href="http://www.apache.org/licenses/"/>
       <item name="Download" href="download.html"/>
     </menu>
-    <!--menu name="Custom Toolchains">
-          <item name="Writing a custom toolchain TBD" href="http://maven.apache.org/"/>
-    </menu-->
+    <menu name="Toolchains">
+      <item name="Standard Toolchains" href="toolchains/index.html"/>
+      <item name="JDK Standard Toolchain" href="toolchains/jdk.html"/>
+      <item name="Custom Toolchains" href="toolchains/custom.html"/>
+    </menu>
     <!--menu name="Resources">
       <item name="Maven 2.0.x Version Range Syntax" href="http://maven.apache.org/plugins/maven-enforcer-plugin/rules/versionRanges.html" />
     </menu-->
