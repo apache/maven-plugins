@@ -77,7 +77,7 @@ Including Module Binaries
         <include>org.test:child1</include>
       </includes>
       <binaries>
-        <outputDirectory>modules/${artifactId}</outputDirectory>
+        <outputDirectory>modules/${project.artifactId}</outputDirectory>
         <unpack>false</unpack>
       </binaries>
     </moduleSet>
