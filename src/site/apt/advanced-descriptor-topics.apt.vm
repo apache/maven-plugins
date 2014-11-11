@@ -34,21 +34,19 @@ Advanced Assembly-Descriptor Topics
 
 * Archive file resolution
 
+  If two or more elements (e.g., file, fileSet) select different sources for
+  the same file for archiving, only one of the source files will be archived.
+
   As per version 2.5.2 of the assembly plugin, the first phase to
   add the file to the archive "wins". The filtering is done solely based
   on name inside the archive, so the same source file can be added under
   different output names. The order of the phases is as follows:
   1) FileItem 2) FileSets 3) ModuleSet 4) DepenedencySet and 5) Repository elements.
 
-  Within elements of the same type, there is no guarantee of which will
-  win for the same output name. If two filesets choose the same output file
-  with different content, the result is arbitrary. Use exclusions to avoid this.
-
-  If two or more elements (e.g., file, fileSet) select different sources for
-  the same file for archiving, only one of the source files will be archived.
-  The assembly plugin decides which source will be archived according to the
-  following behavior (as per 2.5.2).
-
+  Elements of the same type will be processed in the order they appear in the
+  descriptors. If you need to "overwrite" a file included by a previous set,
+  the only way to do this is to exclude that file from the earlier set.
+  
   Note that this behaviour was slightly different in earlier versions of the
   assembly plugin.
 
