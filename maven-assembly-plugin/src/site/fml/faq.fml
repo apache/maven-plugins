@@ -63,8 +63,6 @@ under the License.
         </pre>
       </answer>
     </faq>
-  </part>
-  <part id="Assembly Descriptors">
     <faq id="shared-descriptor-bug">
       <question>
         In previous versions (before 2.2 final), I followed the example in the documentation for <a href="/examples/sharing-descriptors.html">sharing assembly descriptors</a>, 
@@ -81,8 +79,6 @@ under the License.
         </p>
       </answer>
     </faq>
-  </part>
-  <part id="Build Lifecycle">
     <faq id="binding">
       <question>What goal should I use to create an assembly as part of my normal build process?</question>
       <answer>
@@ -157,8 +153,6 @@ under the License.
         </p>
       </answer>
     </faq>
-  </part>
-  <part id="Artifact and Directory Formatting">
     <faq id="dashClassifier">
       <question>
         I have a dependencySet that includes some artifacts with classifiers, and others without classifiers.
@@ -208,5 +202,18 @@ under the License.
         </ul>
       </answer>
     </faq>
+    <faq id="tarFileModes">
+      <question>
+        Tar complains about groupid value being too big
+      </question>
+      <answer>
+        <p>
+          GNU tar has restrictions on max value of UID/GUID in tar files.
+          Consider using the more well defined POSIX tar format, which should support
+          larger values. Use tarLongFileMode=posix.
+        </p>
+      </answer>
+    </faq>
+
   </part>
 </faqs>
