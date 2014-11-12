@@ -54,7 +54,9 @@ import org.codehaus.plexus.util.FileUtils;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id:
  */
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "acr", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE )
+// CHECKSTYLE_ON: LineLength
 public class AcrMojo
     extends AbstractMojo
 {
@@ -191,7 +193,9 @@ public class AcrMojo
             }
             else
             {
+                // CHECKSTYLE_OFF: LineLength
                 getLog().info( "JAR will only contain the META-INF/application-client.xml as no content was marked for inclusion" );
+                // CHECKSTYLE_ON: LineLength
             }
 
             if ( deploymentDescriptor.exists() )
@@ -218,6 +222,7 @@ public class AcrMojo
 
             // create archive
             archiver.createArchive( session, project, archive );
+            // CHECKSTYLE_OFF: LineLength
         }
         catch ( ArchiverException e )
         {
@@ -250,6 +255,7 @@ public class AcrMojo
 
         project.getArtifact().setFile( jarFile );
 
+        // CHECKSTYLE_ON: LineLength
     }
 
     /**
