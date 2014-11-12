@@ -126,7 +126,7 @@ public class ModulesReport
 
                 for ( Object module : project.getModules() )
                 {
-                	Model moduleModel;
+                    Model moduleModel;
                     File f = new File( project.getBasedir(), module + "/pom.xml" );
                     if ( f.exists() )
                     {
@@ -141,13 +141,14 @@ public class ModulesReport
                     }
                     else
                     {
-                    	moduleModel = new Model();
-                    	moduleModel.setName(module.toString());
+                        moduleModel = new Model();
+                        moduleModel.setName(module.toString());
                         setDistMgmntSiteUrl( moduleModel, module.toString() );
                     }
 
                     final String moduleName = name( moduleModel );
-                    final String moduleHref = getRelativeLink( baseUrl, getDistMgmntSiteUrl( moduleModel ), moduleModel.getArtifactId() );
+                    final String moduleHref = getRelativeLink( baseUrl, getDistMgmntSiteUrl( moduleModel ),
+                                                moduleModel.getArtifactId() );
 
                     tableRow( new String[] {linkedName( moduleName, moduleHref ), moduleModel.getDescription()} );
 
