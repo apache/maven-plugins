@@ -101,124 +101,135 @@ public class AddArtifactTask
                                                     artifactProjectInterpolator( project ) );
 
 
-        if ( unpack )
+        boolean fileModeSet = false;
+        boolean dirModeSet = false;
+
+        final int oldDirMode = archiver.getOverrideDirectoryMode();
+        final int oldFileMode = archiver.getOverrideFileMode();
+
+        if ( fileMode != -1 )
         {
-            String outputLocation = destDirectory;
+            archiver.setFileMode( fileMode );
+            fileModeSet = true;
+        }
 
-            if ( ( outputLocation.length() > 0 ) && !outputLocation.endsWith( "/" ) )
+        if ( directoryMode != -1 )
+        {
+            archiver.setDirectoryMode( directoryMode );
+            dirModeSet = true;
+        }
+        try
+        {
+
+            if ( unpack )
             {
-                outputLocation += "/";
+                unpacked( archiver, destDirectory );
             }
-
-            String[] includesArray = TypeConversionUtils.toStringArray( includes );
-            if ( includesArray == null )
+            else
             {
-                includesArray = DEFAULT_INCLUDES_ARRAY;
-            }
-            final String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
-
-            final int oldDirMode = archiver.getOverrideDirectoryMode();
-            final int oldFileMode = archiver.getOverrideFileMode();
-
-            boolean fileModeSet = false;
-            boolean dirModeSet = false;
-
-            try
-            {
-                if ( fileMode != -1 )
-                {
-                    archiver.setFileMode( fileMode );
-                    fileModeSet = true;
-                }
-
-                if ( directoryMode != -1 )
-                {
-                    archiver.setDirectoryMode( directoryMode );
-                    dirModeSet = true;
-                }
-
-                final File artifactFile = artifact.getFile();
-                if ( artifactFile == null )
-                {
-                    logger.warn( "Skipping artifact: " + artifact.getId()
-                                    + "; it does not have an associated file or directory." );
-                }
-                else if ( artifactFile.isDirectory() )
-                {
-                    logger.debug( "Adding artifact directory contents for: " + artifact + " to: " + outputLocation );
-
-                    DefaultFileSet fs = DefaultFileSet.fileSet( artifactFile);
-                    fs.setIncludes(includesArray);
-                    fs.setExcludes(excludesArray);
-                    fs.setPrefix( outputLocation);
-                    fs.setStreamTransformer(transformer);
-                    archiver.addFileSet(fs);
-                }
-                else
-                {
-                    logger.debug( "Unpacking artifact contents for: " + artifact + " to: " + outputLocation );
-                    logger.debug( "includes:\n" + StringUtils.join( includesArray, "\n" ) + "\n" );
-                    logger.debug( "excludes:\n"
-                                    + ( excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) )
-                                    + "\n" );
-                    DefaultArchivedFileSet afs = DefaultArchivedFileSet.archivedFileSet(artifactFile);
-                    afs.setIncludes(includesArray);
-                    afs.setExcludes(excludesArray);
-                    afs.setPrefix(outputLocation);
-                    afs.setStreamTransformer(transformer);
-                    archiver.addArchivedFileSet( afs );
-                }
-            }
-            catch ( final ArchiverException e )
-            {
-                throw new ArchiveCreationException( "Error adding file-set for '" + artifact.getId() + "' to archive: "
-                                + e.getMessage(), e );
-            }
-            finally
-            {
-                if ( dirModeSet )
-                {
-                    archiver.setDirectoryMode( oldDirMode );
-                }
-
-                if ( fileModeSet )
-                {
-                    archiver.setFileMode( oldFileMode );
-                }
+                asFile( archiver, configSource, destDirectory );
             }
         }
-        else
+        finally
         {
-            final String tempMapping =
-                AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact,
-                                                             configSource.getProject(), moduleArtifact, configSource,
-                                                             moduleProjectInterpolator( moduleProject ),
-                                                             artifactProjectInterpolator( project ) );
-
-
-            final String outputLocation = destDirectory + tempMapping;
-
-            try
+            if ( dirModeSet )
             {
-                final File artifactFile = artifact.getFile();
-
-                logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile
-                                + " to assembly location: " + outputLocation + "." );
-
-                if ( fileMode != -1 )
-                {
-                    archiver.addFile( artifactFile, outputLocation, fileMode );
-                }
-                else
-                {
-                    archiver.addFile( artifactFile, outputLocation );
-                }
+                archiver.setDirectoryMode( oldDirMode );
             }
-            catch ( final ArchiverException e )
+
+            if ( fileModeSet )
             {
-                throw new ArchiveCreationException( "Error adding file '" + artifact.getId() + "' to archive: "
-                                + e.getMessage(), e );
+                archiver.setFileMode( oldFileMode );
             }
+        }
+
+    }
+
+    private void asFile( Archiver archiver, AssemblerConfigurationSource configSource, String destDirectory )
+        throws AssemblyFormattingException, ArchiveCreationException
+    {
+        final String tempMapping =
+            AssemblyFormatUtils.evaluateFileNameMapping( outputFileNameMapping, artifact, configSource.getProject(),
+                                                         moduleArtifact, configSource,
+                                                         moduleProjectInterpolator( moduleProject ),
+                                                         artifactProjectInterpolator( project ) );
+
+        final String outputLocation = destDirectory + tempMapping;
+
+        try
+        {
+            final File artifactFile = artifact.getFile();
+
+            logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile + " to assembly location: " + outputLocation + "." );
+
+            if ( fileMode != -1 )
+            {
+                archiver.addFile( artifactFile, outputLocation, fileMode );
+            }
+            else
+            {
+                archiver.addFile( artifactFile, outputLocation );
+            }
+        }
+        catch ( final ArchiverException e )
+        {
+            throw new ArchiveCreationException( "Error adding file '" + artifact.getId() + "' to archive: " + e.getMessage(), e );
+        }
+    }
+
+    private void unpacked( Archiver archiver, String destDirectory )
+        throws ArchiveCreationException
+    {
+        String outputLocation = destDirectory;
+
+        if ( ( outputLocation.length() > 0 ) && !outputLocation.endsWith( "/" ) )
+        {
+            outputLocation += "/";
+        }
+
+        String[] includesArray = TypeConversionUtils.toStringArray( includes );
+        if ( includesArray == null )
+        {
+            includesArray = DEFAULT_INCLUDES_ARRAY;
+        }
+        final String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
+
+        try  {
+
+            final File artifactFile = artifact.getFile();
+            if ( artifactFile == null )
+            {
+                logger.warn( "Skipping artifact: " + artifact.getId() + "; it does not have an associated file or directory." );
+            }
+            else if ( artifactFile.isDirectory() )
+            {
+                logger.debug( "Adding artifact directory contents for: " + artifact + " to: " + outputLocation );
+
+                DefaultFileSet fs = DefaultFileSet.fileSet( artifactFile );
+                fs.setIncludes( includesArray );
+                fs.setExcludes( excludesArray );
+                fs.setPrefix( outputLocation );
+                fs.setStreamTransformer( transformer );
+                archiver.addFileSet( fs );
+            }
+            else
+            {
+                logger.debug( "Unpacking artifact contents for: " + artifact + " to: " + outputLocation );
+                logger.debug( "includes:\n" + StringUtils.join( includesArray, "\n" ) + "\n" );
+                logger.debug( "excludes:\n" + ( excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) )
+                                  + "\n" );
+                DefaultArchivedFileSet afs = DefaultArchivedFileSet.archivedFileSet( artifactFile );
+                afs.setIncludes( includesArray );
+                afs.setExcludes( excludesArray );
+                afs.setPrefix( outputLocation );
+                afs.setStreamTransformer( transformer );
+                archiver.addArchivedFileSet( afs );
+            }
+        }
+        catch ( final ArchiverException e )
+        {
+            throw new ArchiveCreationException(
+                "Error adding file-set for '" + artifact.getId() + "' to archive: " + e.getMessage(), e );
         }
     }
 
