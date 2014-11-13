@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.util.Collections;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
 
 public class DependencySetAssemblyPhaseTest

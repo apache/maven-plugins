@@ -19,25 +19,7 @@ package org.apache.maven.plugin.assembly.io;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.maven.execution.MavenSession;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
@@ -61,6 +43,7 @@ import org.apache.maven.shared.io.location.FileLocatorStrategy;
 import org.apache.maven.shared.io.location.Location;
 import org.apache.maven.shared.io.location.Locator;
 import org.apache.maven.shared.io.location.LocatorStrategy;
+import org.apache.maven.shared.utils.ReaderFactory;
 import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.interpolation.fixed.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource;
@@ -70,6 +53,18 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Id$
@@ -133,46 +128,21 @@ public class DefaultAssemblyReader
 
         if ( ( descriptorSourceDirectory != null ) && descriptorSourceDirectory.isDirectory() )
         {
-            locator.setStrategies( Collections.singletonList( new RelativeFileLocatorStrategy(
-                                                                                               descriptorSourceDirectory ) ) );
+            locator.setStrategies(
+                Collections.singletonList( new RelativeFileLocatorStrategy( descriptorSourceDirectory ) ) );
 
             final DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( descriptorSourceDirectory );
-            scanner.setIncludes( new String[] { "**/*.xml" } );
+            scanner.setIncludes( new String[]{ "**/*.xml" } );
             scanner.addDefaultExcludes();
 
-            try
-            {
-                scanner.scan();
-            }
-            // FIXME: plexus-utils >= 1.3-SNAPSHOT should fix this.
-            catch ( final NullPointerException e )
-            {
-                final StackTraceElement frameZero = e.getStackTrace()[0];
-
-                if ( "org.codehaus.plexus.util.DirectoryScanner".equals( frameZero.getClassName() )
-                    && "scandir".equals( frameZero.getMethodName() ) )
-                {
-                    if ( getLogger().isDebugEnabled() )
-                    {
-                        getLogger().debug( "Caught filesystem error while scanning directories..."
-                                               + "using zero-length list as the result.", e );
-                    }
-                }
-                else
-                {
-                    throw e;
-                }
-            }
+            scanner.scan();
 
             final String[] paths = scanner.getIncludedFiles();
 
-            if ( paths != null )
+            for ( String path : paths )
             {
-                for ( String path : paths )
-                {
-                    addAssemblyFromDescriptor( path, locator, configSource, assemblies );
-                }
+                addAssemblyFromDescriptor( path, locator, configSource, assemblies );
             }
         }
 
@@ -180,7 +150,8 @@ public class DefaultAssemblyReader
         {
             if ( configSource.isIgnoreMissingDescriptor() )
             {
-                getLogger().debug( "Ignoring missing assembly descriptors per configuration. See messages above for specifics." );
+                getLogger().debug(
+                    "Ignoring missing assembly descriptors per configuration. See messages above for specifics." );
             }
             else
             {
@@ -201,7 +172,8 @@ public class DefaultAssemblyReader
         return assemblies;
     }
 
-    public Assembly getAssemblyForDescriptorReference( final String ref, final AssemblerConfigurationSource configSource )
+    public Assembly getAssemblyForDescriptorReference( final String ref,
+                                                       final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         return addAssemblyForDescriptorReference( ref, configSource, new ArrayList<Assembly>( 1 ) );
@@ -234,19 +206,22 @@ public class DefaultAssemblyReader
             }
         }
 
+        Reader reader = null;
         try
         {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            final Assembly assembly =
-                readAssembly( new InputStreamReader( resourceAsStream, "UTF-8" ), ref, null, configSource );
+            reader = ReaderFactory.newXmlReader( resourceAsStream );
+            final Assembly assembly = readAssembly( reader, ref, null, configSource );
 
             assemblies.add( assembly );
             return assembly;
         }
-        catch ( final UnsupportedEncodingException e )
+        catch ( final IOException e )
         {
-            // should not occur since UTF-8 support is mandatory
-            throw new AssemblyReadException( "Encoding not supported for descriptor with ID '" + ref + "'" );
+            throw new AssemblyReadException( "Problem with descriptor with ID '" + ref + "'", e );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( reader );
         }
     }
 
@@ -271,8 +246,7 @@ public class DefaultAssemblyReader
         Reader r = null;
         try
         {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            r = new InputStreamReader( new FileInputStream( descriptor ), "UTF-8" );
+            r = ReaderFactory.newXmlReader( descriptor );
             final Assembly assembly =
                 readAssembly( r, descriptor.getAbsolutePath(), descriptor.getParentFile(), configSource );
 
@@ -308,16 +282,15 @@ public class DefaultAssemblyReader
             }
             else
             {
-                throw new AssemblyReadException( "Error locating assembly descriptor: " + spec + "\n\n"
-                    + locator.getMessageHolder().render() );
+                throw new AssemblyReadException(
+                    "Error locating assembly descriptor: " + spec + "\n\n" + locator.getMessageHolder().render() );
             }
         }
 
         Reader r = null;
         try
         {
-            // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-            r = new InputStreamReader( location.getInputStream(), "UTF-8" );
+            r = ReaderFactory.newXmlReader( location.getInputStream() );
 
             File dir = null;
             if ( location.getFile() != null )
@@ -348,29 +321,9 @@ public class DefaultAssemblyReader
     {
         Assembly assembly;
 
-        final File basedir = configSource.getBasedir();
         final MavenProject project = configSource.getProject();
-
         try
         {
-            final Map<String, String> context = new HashMap<String, String>();
-            final MavenSession session = configSource.getMavenSession();
-
-            Properties commandLineProperties = mergeExecutionPropertiesWithSystemProperties( session );
-
-            for ( final Enumeration<Object> e = commandLineProperties.keys(); e.hasMoreElements(); )
-            {
-                final String key = (String) e.nextElement();
-                if ( key == null || key.trim().length() < 1 )
-                {
-                    continue;
-                }
-
-                context.put( key, commandLineProperties.getProperty( key ) );
-            }
-
-            context.put( "basedir", basedir.getAbsolutePath() );
-
             final AssemblyXpp3Reader r = new AssemblyXpp3Reader();
             assembly = r.read( reader );
 
@@ -385,20 +338,17 @@ public class DefaultAssemblyReader
         }
         catch ( final IOException e )
         {
-            throw new AssemblyReadException(
-                                             "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
+            throw new AssemblyReadException( "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
                                              e );
         }
         catch ( final XmlPullParserException e )
         {
-            throw new AssemblyReadException(
-                                             "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
+            throw new AssemblyReadException( "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
                                              e );
         }
         catch ( final AssemblyInterpolationException e )
         {
-            throw new AssemblyReadException(
-                                             "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
+            throw new AssemblyReadException( "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
                                              e );
         }
         finally
@@ -417,27 +367,9 @@ public class DefaultAssemblyReader
     public static FixedStringSearchInterpolator createProjectInterpolator( MavenProject project )
     {
         return FixedStringSearchInterpolator.create(
-            new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES, project.getProperties(), true ),
+            new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
+                                               project.getProperties(), true ),
             new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project, true ) );
-    }
-
-    public static Properties mergeExecutionPropertiesWithSystemProperties( MavenSession session )
-    {
-        Properties commandLineProperties = System.getProperties();
-        if ( session != null )
-        {
-            commandLineProperties = new Properties();
-            if ( session.getExecutionProperties() != null )
-            {
-                commandLineProperties.putAll( session.getExecutionProperties() );
-            }
-
-            if ( session.getUserProperties() != null )
-            {
-                commandLineProperties.putAll( session.getUserProperties() );
-            }
-        }
-        return commandLineProperties;
     }
 
     private void debugPrintAssembly( final String message, final Assembly assembly )
@@ -449,8 +381,8 @@ public class DefaultAssemblyReader
         }
         catch ( final IOException e )
         {
-            getLogger().debug( "Failed to print debug message with assembly descriptor listing, and message: "
-                                   + message, e );
+            getLogger().debug(
+                "Failed to print debug message with assembly descriptor listing, and message: " + message, e );
         }
 
         getLogger().debug( message + "\n\n" + sWriter.toString() + "\n\n" );
@@ -458,10 +390,10 @@ public class DefaultAssemblyReader
 
     /**
      * Add the contents of all included components to main assembly
-     * 
-     * @param assembly
-     * @param assemblyDir
-     * @throws AssemblyReadException
+     *
+     * @param assembly    The assembly
+     * @param assemblyDir The assembly directory
+     * @throws AssemblyReadException .
      */
     protected void mergeComponentsWithMainAssembly( final Assembly assembly, final File assemblyDir,
                                                     final AssemblerConfigurationSource configSource )
@@ -512,12 +444,12 @@ public class DefaultAssemblyReader
             catch ( final IOException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                    + resolvedLocation.getSpecification() + ")", e );
+                                                     + resolvedLocation.getSpecification() + ")", e );
             }
             catch ( final XmlPullParserException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                    + resolvedLocation.getSpecification() + ")", e );
+                                                     + resolvedLocation.getSpecification() + ")", e );
             }
             finally
             {
@@ -530,9 +462,9 @@ public class DefaultAssemblyReader
 
     /**
      * Add the content of a single Component to main assembly
-     * 
-     * @param component
-     * @param assembly
+     *
+     * @param component The component
+     * @param assembly The assembly
      */
     protected void mergeComponentWithAssembly( final Component component, final Assembly assembly )
     {
@@ -587,7 +519,7 @@ public class DefaultAssemblyReader
         if ( !siteDirectory.exists() )
         {
             throw new InvalidAssemblerConfigurationException(
-                                                              "site did not exist in the target directory - please run site:site before creating the assembly" );
+                "site did not exist in the target directory - please run site:site before creating the assembly" );
         }
 
         getLogger().info( "Adding site directory to assembly : " + siteDirectory );
