@@ -100,6 +100,7 @@ public class ModulesReport
 
             this.project = project;
             this.mavenProjectBuilder = mavenProjectBuilder;
+            this.localRepository = localRepository;
             this.siteTool = siteTool;
         }
 
