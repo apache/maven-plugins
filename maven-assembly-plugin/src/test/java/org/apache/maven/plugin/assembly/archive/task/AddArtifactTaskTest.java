@@ -74,6 +74,7 @@ public class AddArtifactTaskTest
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
         File artifactFile = artifactMock.setNewFile();
 
+        mac.expectGetMode( 0222, 0222 );
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( artifactFile, outputLocation );
         mac.expectInterpolators();
@@ -99,6 +100,8 @@ public class AddArtifactTaskTest
 
         File file = mock.setNewFile();
         mock.setExtension( ext );
+
+        mac.expectGetMode( 0222, 0222 );
 
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( file, outputDir + artifactId + "-" + version + "." + ext );

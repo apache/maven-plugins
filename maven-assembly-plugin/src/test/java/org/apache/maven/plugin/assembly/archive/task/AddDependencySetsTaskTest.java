@@ -103,6 +103,8 @@ public class AddDependencySetsTaskTest
         macTask.expectAddFile( newFile, outDir + depAid + "-" + depVer + "." + depExt, 10 );
 
         macTask.expectGetSession( null );
+        macTask.expectGetMode( 0222, 0222 );
+
         DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
 
 
@@ -173,6 +175,7 @@ public class AddDependencySetsTaskTest
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectAddFile( file, "out/" + aid + "-" + version + "." + type );
 
+        macTask.expectGetMode( 0222, 0222 );
         macTask.expectGetSession( null );
 
         final DependencySet ds = new DependencySet();
@@ -230,7 +233,7 @@ public class AddDependencySetsTaskTest
         if ( unpack )
         {
             macTask.expectAddArchivedFileSet();
-            macTask.expectModeChange( -1, -1, 10, 10, 2 );
+//            macTask.expectModeChange( -1, -1, 10, 10, 2 );
         }
         else
         {
@@ -246,6 +249,7 @@ public class AddDependencySetsTaskTest
         final MavenProject depProject = new MavenProject( new Model() );
 
         macTask.expectBuildFromRepository( depProject );
+        macTask.expectGetMode( 0222, 0222 );
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
