@@ -19,6 +19,8 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -29,6 +31,7 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
+import org.apache.maven.shared.utils.StringUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.ArchiverAttributeUtils;
@@ -93,8 +96,16 @@ public class FileItemAssemblyPhase
                 destName = sourceName;
             }
 
+            final String outputDirectory1;
+            if (!StringUtils.isEmpty( assembly.getBaseDirectory()))
+            {
+                outputDirectory1  =  assembly.getBaseDirectory() +  File.separator + fileItem.getOutputDirectory();
+            } else {
+                outputDirectory1 = fileItem.getOutputDirectory();
+            }
+
             final String outputDirectory =
-                AssemblyFormatUtils.getOutputDirectory( fileItem.getOutputDirectory(), configSource.getFinalName(), configSource,
+                AssemblyFormatUtils.getOutputDirectory( outputDirectory1, configSource.getFinalName(), configSource,
                                                         AssemblyFormatUtils.moduleProjectInterpolator(
                                                             configSource.getProject() ),
                                                         AssemblyFormatUtils.artifactProjectInterpolator( null ) );
