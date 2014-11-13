@@ -147,7 +147,8 @@ public class DescribeMojo
      * The local repository ArtifactRepository instance. This is used
      * for plugin manager API calls.
      */
-    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
+    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${localRepository}", required = true,
+                    readonly = true )
     private ArtifactRepository localRepository;
 
     /**
@@ -397,9 +398,18 @@ public class DescribeMojo
         }
         else
         {
-
-            throw new MojoFailureException(("You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
-                    + " OR a 'cmd' parameter. For instance:\n") + "  # mvn help:describe -Dcmd=install\n" + "or\n" + "  # mvn help:describe -Dcmd=help:describe\n" + "or\n" + "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n" + "or\n" + "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n" + "Try 'mvn help:help -Ddetail=true' for more information.");
+            String msg =
+                "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
+                    + " OR a 'cmd' parameter. For instance:\n"
+                    + "  # mvn help:describe -Dcmd=install\n"
+                    + "or\n"
+                    + "  # mvn help:describe -Dcmd=help:describe\n"
+                    + "or\n"
+                    + "  # mvn help:describe -Dplugin=org.apache.maven.plugins:maven-help-plugin\n"
+                    + "or\n"
+                    + "  # mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin\n\n"
+                    + "Try 'mvn help:help -Ddetail=true' for more information.";
+            throw new MojoFailureException( msg );
         }
 
         if ( descriptor == null && forLookup != null )
@@ -410,21 +420,18 @@ public class DescribeMojo
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new MojoExecutionException(
-                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
-                        + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId
+                    + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginManagerException e )
             {
-                throw new MojoExecutionException(
-                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
-                        + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId
+                    + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginVersionResolutionException e )
             {
-                throw new MojoExecutionException(
-                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
-                        + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId
+                    + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( ArtifactNotFoundException e )
             {
@@ -432,15 +439,13 @@ public class DescribeMojo
             }
             catch ( InvalidVersionSpecificationException e )
             {
-                throw new MojoExecutionException(
-                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
-                        + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId
+                    + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( InvalidPluginException e )
             {
-                throw new MojoExecutionException(
-                    "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId + "'\nartifactId: '" + artifactId
-                        + "'\nversion: '" + version + "'\n\n", e );
+                throw new MojoExecutionException( "Error retrieving plugin descriptor for:\n\ngroupId: '" + groupId
+                    + "'\nartifactId: '" + artifactId + "'\nversion: '" + version + "'\n\n", e );
             }
             catch ( PluginNotFoundException e )
             {
@@ -830,7 +835,8 @@ public class DescribeMojo
 
                 if ( lifecycle.getDefaultPhases() == null )
                 {
-                    descriptionBuffer.append("'").append(cmd).append("' is a phase corresponding to this plugin:\n");
+                    descriptionBuffer.append( "'" ).append( cmd );
+                    descriptionBuffer.append( "' is a phase corresponding to this plugin:\n" );
                     for ( String key : phases )
                     {
                         if ( !key.equals( cmd ) )
@@ -846,11 +852,13 @@ public class DescribeMojo
                     }
 
                     descriptionBuffer.append( "\n" );
-                    descriptionBuffer.append("It is a part of the lifecycle for the POM packaging '").append(project.getPackaging()).append("'. This lifecycle includes the following phases:");
+                    descriptionBuffer.append( "It is a part of the lifecycle for the POM packaging '" );
+                    descriptionBuffer.append( project.getPackaging() );
+                    descriptionBuffer.append( "'. This lifecycle includes the following phases:" );
                     descriptionBuffer.append( "\n" );
                     for ( String key : phases )
                     {
-                        descriptionBuffer.append("* ").append(key).append(": ");
+                        descriptionBuffer.append( "* " ).append( key ).append( ": " );
                         String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
                         if ( StringUtils.isNotEmpty( value ) )
                         {
@@ -876,12 +884,13 @@ public class DescribeMojo
                 }
                 else
                 {
-                    descriptionBuffer.append("'").append(cmd).append("' is a lifecycle with the following phases: ");
+                    descriptionBuffer.append( "'" ).append( cmd );
+                    descriptionBuffer.append( "' is a lifecycle with the following phases: " );
                     descriptionBuffer.append( "\n" );
 
                     for ( String key : phases )
                     {
-                        descriptionBuffer.append("* ").append(key).append(": ");
+                        descriptionBuffer.append( "* " ).append( key ).append( ": " );
                         if ( lifecycle.getDefaultPhases().get( key ) != null )
                         {
                             descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( "\n" );
@@ -908,7 +917,7 @@ public class DescribeMojo
         // goals
         MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
 
-        descriptionBuffer.append("'").append(cmd).append("' is a plugin goal (aka mojo)").append(".\n");
+        descriptionBuffer.append( "'" ).append( cmd ).append( "' is a plugin goal (aka mojo)" ).append( ".\n" );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
         goal = mojoDescriptor.getGoal();
 
@@ -937,9 +946,7 @@ public class DescribeMojo
                                                          new Class[]{ String.class, Integer.TYPE, Integer.TYPE,
                                                              Integer.TYPE } );
             m.setAccessible( true );
-            List<String> output = (List<String>) m.invoke( HelpMojo.class,
-                    text, indent, indentSize,
-                    lineLength);
+            List<String> output = (List<String>) m.invoke( HelpMojo.class, text, indent, indentSize, lineLength );
 
             if ( output == null )
             {

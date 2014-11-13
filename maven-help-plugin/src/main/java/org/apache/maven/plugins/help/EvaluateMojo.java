@@ -186,7 +186,8 @@ public class EvaluateMojo
         if ( expression == null && !settings.isInteractiveMode() )
         {
 
-            getLog().error("Maven is configured to NOT interact with the user for input. " + "This Mojo requires that 'interactiveMode' in your settings file is flag to 'true'.");
+            getLog().error( "Maven is configured to NOT interact with the user for input. "
+                            + "This Mojo requires that 'interactiveMode' in your settings file is flag to 'true'." );
             return;
         }
 
@@ -599,7 +600,7 @@ public class EvaluateMojo
                     String name = jarEntry.getName().substring( 0, jarEntry.getName().indexOf( "." ) );
                     name = name.replaceAll( "/", "\\." );
 
-                    if (name.contains(packageFilter))
+                    if ( name.contains( packageFilter ) )
                     {
                         try
                         {

@@ -65,10 +65,11 @@ public class SystemMojo
         message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
 
         Properties systemProperties = System.getProperties();
-        for (Object o1 : systemProperties.keySet()) {
+        for ( Object o1 : systemProperties.keySet() )
+        {
             String key = o1.toString();
-            message.append("\n");
-            message.append(key).append("=").append(systemProperties.get(key));
+            message.append( "\n" );
+            message.append( key ).append( "=" ).append( systemProperties.get( key ) );
         }
 
         message.append( '\n' ).append( '\n' );
@@ -78,10 +79,11 @@ public class SystemMojo
         try
         {
             Properties envVars = CommandLineUtils.getSystemEnvVars();
-            for (Object o : envVars.keySet()) {
+            for ( Object o : envVars.keySet() )
+            {
                 String key = o.toString();
-                message.append("\n");
-                message.append(key).append("=").append(envVars.get(key));
+                message.append( "\n" );
+                message.append( key ).append( "=" ).append( envVars.get( key ) );
             }
         }
         catch ( IOException e )
@@ -97,8 +99,8 @@ public class SystemMojo
         if ( output != null )
         {
             StringBuilder sb = new StringBuilder();
-            sb.append("Created by: ").append(getClass().getName()).append("\n");
-            sb.append("Created on: ").append(new Date()).append("\n").append( "\n" );
+            sb.append( "Created by: " ).append( getClass().getName() ).append( "\n" );
+            sb.append( "Created on: " ).append( new Date() ).append( "\n" ).append( "\n" );
             sb.append( message.toString() );
 
             try
