@@ -213,8 +213,10 @@ public abstract class AbstractProjectInfoReport
             Artifact defaultSkin =
                 siteTool.getDefaultSkinArtifact( localRepository, project.getRemoteArtifactRepositories() );
 
+            // CHECKSTYLE_OFF: LineLength
             SiteRenderingContext siteContext =
                 siteRenderer.createContextForSkin( defaultSkin.getFile(), attributes, model, getName( locale ), locale );
+            // CHECKSTYLE_ON: LineLength
 
             RenderingContext context = new RenderingContext( outputDirectory, filename );
 
@@ -267,6 +269,10 @@ public abstract class AbstractProjectInfoReport
     // Protected methods
     // ----------------------------------------------------------------------
 
+    /**
+     * @param coll The collection to be checked.
+     * @return true if coll is empty false otherwise. 
+     */
     protected boolean isEmpty( Collection<?> coll )
     {
         return coll == null || coll.isEmpty();
@@ -296,6 +302,10 @@ public abstract class AbstractProjectInfoReport
         return project;
     }
 
+    /**
+     * @param pluginId The id of the plugin
+     * @return The information about the plugin.
+     */
     protected Plugin getPlugin( String pluginId )
     {
         if ( ( getProject().getBuild() == null ) || ( getProject().getBuild().getPluginsAsMap() == null ) )
@@ -305,8 +315,8 @@ public abstract class AbstractProjectInfoReport
 
         Plugin plugin = (Plugin) getProject().getBuild().getPluginsAsMap().get( pluginId );
 
-        if ( ( plugin == null ) && ( getProject().getBuild().getPluginManagement() != null ) && (
-                getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
+        if ( ( plugin == null ) && ( getProject().getBuild().getPluginManagement() != null )
+            && ( getProject().getBuild().getPluginManagement().getPluginsAsMap() != null ) )
         {
             plugin = (Plugin) getProject().getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
         }
@@ -314,6 +324,11 @@ public abstract class AbstractProjectInfoReport
         return plugin;
     }
 
+    /**
+     * @param pluginId The pluginId
+     * @param param The child which should be checked.
+     * @return The value of the dom tree.
+     */
     protected String getPluginParameter( String pluginId, String param )
     {
         Plugin plugin = getPlugin( pluginId );
@@ -330,17 +345,29 @@ public abstract class AbstractProjectInfoReport
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
     }
 
+    /**
+     * @param locale The locale
+     * @param key The key to search for
+     * @return The text appropriate for the locale.
+     */
     protected String getI18nString( Locale locale, String key )
     {
         return getI18N( locale ).getString( "project-info-report", locale, "report." + getI18Nsection() + '.' + key );
     }
 
+    /**
+     * @param locale The local.
+     * @return I18N for the locale
+     */
     protected I18N getI18N( Locale locale )
     {
         if ( customBundle != null )
@@ -363,6 +390,9 @@ public abstract class AbstractProjectInfoReport
         return i18n;
     }
 
+    /**
+     * @return The according string for the section.
+     */
     protected abstract String getI18Nsection();
 
     /** {@inheritDoc} */
@@ -392,7 +422,7 @@ public abstract class AbstractProjectInfoReport
 
         private ResourceBundle bundle;
 
-        private final static Object[] NO_ARGS = new Object[0];
+        private static final Object[] NO_ARGS = new Object[0];
 
         public CustomI18N( MavenProject project, Settings settings, File customBundleFile, Locale locale,
                            I18N i18nOriginal )
@@ -412,6 +442,7 @@ public abstract class AbstractProjectInfoReport
             }
             catch ( MalformedURLException e )
             {
+                //could not happen.
             }
 
             this.bundle = ResourceBundle.getBundle( this.bundleName, locale, classLoader );
@@ -506,7 +537,7 @@ public abstract class AbstractProjectInfoReport
                 value = i18nOriginal.getString( bundleName, locale, key );
             }
 
-            if (!value.contains("${"))
+            if ( !value.contains( "${" ) )
             {
                 return value;
             }
@@ -518,6 +549,7 @@ public abstract class AbstractProjectInfoReport
             }
             catch ( final IOException e )
             {
+                //In which cases could this happen? And what should we do?
             }
 
             interpolator.addValueSource( new PropertiesBasedValueSource( System.getProperties() ) );
@@ -532,6 +564,7 @@ public abstract class AbstractProjectInfoReport
             }
             catch ( final InterpolationException e )
             {
+                //What does this exception mean?
             }
 
             return value;

@@ -156,25 +156,37 @@ public class DependenciesRenderer
         jarSubtype.add( "ejb" );
         JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
 
-        JAVASCRIPT = "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {" + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );" + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );" + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }" + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>" + SystemUtils.LINE_SEPARATOR;
+        JAVASCRIPT =
+            "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR
+                + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {"
+                + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );"
+                + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );"
+                + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR
+                + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';"
+                + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR
+                + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {"
+                + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR
+                + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }"
+                + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>"
+                + SystemUtils.LINE_SEPARATOR;
     }
 
     /**
      * Default constructor.
      *
-     * @param sink
-     * @param locale
-     * @param i18n
-     * @param log
-     * @param settings
-     * @param dependencies
-     * @param dependencyTreeNode
-     * @param config
-     * @param repoUtils
-     * @param artifactFactory
-     * @param mavenProjectBuilder
-     * @param remoteRepositories
-     * @param localRepository
+     * @param sink {@link Sink}
+     * @param locale {@link Locale}
+     * @param i18n {@link I18N}
+     * @param log {@link Log}
+     * @param settings {@link Settings}
+     * @param dependencies {@link Dependencies}
+     * @param dependencyTreeNode {@link DependencyNode}
+     * @param config {@link DependenciesReportConfiguration}
+     * @param repoUtils {@link RepositoryUtils}
+     * @param artifactFactory {@link ArtifactFactory}
+     * @param mavenProjectBuilder {@link MavenProjectBuilder}
+     * @param remoteRepositories {@link ArtifactRepository}
+     * @param localRepository {@link ArtifactRepository}
      */
     public DependenciesRenderer( Sink sink, Locale locale, I18N i18n, Log log, Settings settings,
                                  Dependencies dependencies, DependencyNode dependencyTreeNode,
@@ -528,12 +540,12 @@ public class DependenciesRenderer
         if ( hasSealed )
         {
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation, sealed };
-            tableHeaderTitles = new String[] {null, null, null, null, null, null, debugInformationTitle, null};
+            tableHeaderTitles = new String[] { null, null, null, null, null, null, debugInformationTitle, null };
         }
         else
         {
             tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation };
-            tableHeaderTitles = new String[] {null, null, null, null, null, null, debugInformationTitle};
+            tableHeaderTitles = new String[] { null, null, null, null, null, null, debugInformationTitle };
         }
         tableHeader( tableHeader, tableHeaderTitles );
 
@@ -648,14 +660,22 @@ public class DependenciesRenderer
         if ( content != null )
         {
             if ( titles != null && content.length != titles.length )
+            {
+                // CHECKSTYLE_OFF: LineLength
                 throw new IllegalArgumentException( "Length of title array must equal the length of the content array" );
+                // CHECKSTYLE_ON: LineLength
+            }
 
             for ( int i = 0; i < content.length; i++ )
             {
                 if ( titles != null )
+                {
                     tableHeaderCell( content[i], titles[i] );
+                }
                 else
+                {
                     tableHeaderCell( content[i] );
+                }
             }
         }
 
@@ -1362,7 +1382,7 @@ public class DependenciesRenderer
                         sink.link_();
                         sink.tableCell_();
 
-                        totalByRepo.put( repokey, old.intValue() + 1);
+                        totalByRepo.put( repokey, old.intValue() + 1 );
                     }
                     else
                     {
@@ -1495,14 +1515,17 @@ public class DependenciesRenderer
         return false;
     }
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * Formats file length with the associated <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI</a> prefix
      * (GB, MB, kB) and using the pattern <code>###0.00</code> by default.
      *
      * @see <a href="https://en.wikipedia.org/wiki/Metric_prefix">https://en.wikipedia.org/wiki/Metric_prefix</a>
      * @see <a href="https://en.wikipedia.org/wiki/Binary_prefix">https://en.wikipedia.org/wiki/Binary_prefix</a>
-     * @see <a href="https://en.wikipedia.org/wiki/Octet_%28computing%29">https://en.wikipedia.org/wiki/Octet_(computing)</a>
+     * @see <a
+     *      href="https://en.wikipedia.org/wiki/Octet_%28computing%29">https://en.wikipedia.org/wiki/Octet_(computing)</a>
      */
+    // CHECKSTYLE_ON: LineLength
     static class FileDecimalFormat
         extends DecimalFormat
     {

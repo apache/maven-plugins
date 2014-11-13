@@ -51,7 +51,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -204,10 +203,11 @@ public class ProjectInfoReportUtils
      * @param localRepository not null
      * @return the artifact url or null if an error occurred.
      */
+    // CHECKSTYLE_OFF: LineLength
     public static String getArtifactUrl( ArtifactFactory factory, Artifact artifact,
                                          MavenProjectBuilder mavenProjectBuilder,
-                                         List<ArtifactRepository> remoteRepositories,
-                                         ArtifactRepository localRepository )
+                                         List<ArtifactRepository> remoteRepositories, ArtifactRepository localRepository )
+    // CHECKSTYLE_ON: LineLength
     {
         if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
         {
@@ -286,12 +286,19 @@ public class ProjectInfoReportUtils
         conn.setReadTimeout( TIMEOUT );
 
         // conn authorization
+        //@formatter:off
         if ( settings.getServers() != null
             && !settings.getServers().isEmpty()
             && project != null
             && project.getDistributionManagement() != null
-            && ( project.getDistributionManagement().getRepository() != null || project.getDistributionManagement().getSnapshotRepository() != null )
-            && ( StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() ) || StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() ) ) )
+            && ( 
+                    project.getDistributionManagement().getRepository() != null 
+                 || project.getDistributionManagement().getSnapshotRepository() != null 
+               )
+            && ( StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() ) 
+                 || StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() ) ) 
+               )
+        //@formatter:on
         {
             Server server = null;
             if ( url.toString().contains( project.getDistributionManagement().getRepository().getUrl() ) )
@@ -367,6 +374,10 @@ public class ProjectInfoReportUtils
         return conn;
     }
 
+    /**
+     * @param str The string to be checked.
+     * @return true if is number false otherwise.
+     */
     public static boolean isNumber( String str )
     {
         if ( str.startsWith( "+" ) )
@@ -376,6 +387,11 @@ public class ProjectInfoReportUtils
         return NumberUtils.isNumber( str );
     }
 
+    /**
+     * @param str The string which should be converted.
+     * @param defaultValue The default value.
+     * @return Converted string.
+     */
     public static float toFloat( String str, float defaultValue )
     {
         if ( str.startsWith( "+" ) )
