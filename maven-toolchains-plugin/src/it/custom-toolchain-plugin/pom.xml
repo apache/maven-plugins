@@ -98,21 +98,21 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.3</version>
-          <executions>
-            <execution>
-              <id>default-descriptor</id>
-              <phase>process-classes</phase>
-            </execution>
-            <execution>
-              <id>generated-helpmojo</id>
-              <goals>
-                <goal>helpmojo</goal>
-              </goals>
-              <configuration><!-- TODO: remove when upgrading plugin-tools to 3.4: see MPLUGIN-238 -->
-                <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-              </configuration>
-            </execution>
-          </executions>
+        <executions>
+          <execution>
+            <id>default-descriptor</id>
+            <phase>process-classes</phase>
+          </execution>
+          <execution>
+            <id>generated-helpmojo</id>
+            <goals>
+              <goal>helpmojo</goal>
+            </goals>
+            <configuration><!-- TODO: remove when upgrading plugin-tools to 3.4: see MPLUGIN-238 -->
+              <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
