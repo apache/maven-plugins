@@ -19,8 +19,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;

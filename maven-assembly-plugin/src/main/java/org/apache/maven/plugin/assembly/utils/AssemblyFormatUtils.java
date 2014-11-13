@@ -398,10 +398,6 @@ public final class AssemblyFormatUtils
     {
         String value = expression;
 
-        // TODO: This is BAD! Accessors SHOULD NOT change the behavior of the object.
-        // [jdcasey; 16-Aug-1007] This is fixed in SVN, just waiting for it to pass out of legacy.
-        artifact.isSnapshot();
-
         final FixedStringSearchInterpolator interpolator = FixedStringSearchInterpolator.create(
             moduleArtifactInterpolator( moduleArtifact ), moduleProjectInterpolator,
             artifactInterpolator( artifact ), artifactProjectInterpolator,

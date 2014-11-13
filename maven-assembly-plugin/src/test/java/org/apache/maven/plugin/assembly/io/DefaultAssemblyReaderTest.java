@@ -953,7 +953,6 @@ public class DefaultAssemblyReaderTest
         }
         catch ( final AssemblyReadException e )
         {
-            e.printStackTrace();
             fail( "Setting ignoreMissingDescriptor == true (true flag in performReadAssemblies, above) should NOT produce an exception." );
         }
     }
