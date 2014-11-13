@@ -34,9 +34,11 @@ import java.io.File;
 public class AssemblyExpressionEvaluator
     implements ExpressionEvaluator
 {
-    
+
     private final AssemblerConfigurationSource configSource;
+
     private final FixedStringSearchInterpolator interpolator;
+
     private final PrefixAwareRecursionInterceptor interceptor;
 
     public AssemblyExpressionEvaluator( AssemblerConfigurationSource configSource )
@@ -46,7 +48,7 @@ public class AssemblyExpressionEvaluator
         final MavenProject project = configSource.getProject();
         final FixedStringSearchInterpolator projectInterpolator =
             DefaultAssemblyReader.createProjectInterpolator( project );
-        interpolator = AssemblyInterpolator.buildInterpolator( project, projectInterpolator,  configSource );
+        interpolator = AssemblyInterpolator.buildInterpolator( project, projectInterpolator, configSource );
         interceptor = new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
     }
 
@@ -54,7 +56,7 @@ public class AssemblyExpressionEvaluator
     {
         String basePath = configSource.getBasedir().getAbsolutePath();
         String path = f.getPath();
-        
+
         if ( !f.isAbsolute() && !path.startsWith( basePath ) )
         {
             return new File( configSource.getBasedir(), path );

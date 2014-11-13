@@ -28,15 +28,14 @@ import org.apache.maven.project.MavenProject;
  * descriptor. This goal is suitable either for binding to the lifecycle or calling directly from the command line
  * (provided all required files are available before the build starts, or are produced by another goal specified before
  * this one on the command line). <br/>
- * 
+ * <p/>
  * This goal differs from <code>assembly:single</code> in that it ignores the &lt;formats/&gt; section of the assembly
  * descriptor, and forces the assembly to be created as a directory in the project's build-output directory (usually
  * <code>./target</code>).
- * 
+ *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:gscokart@users.sourceforge.net">Gilles Scokart</a>
  * @version $Id$
- * 
  * @deprecated Use assembly:single and an assembly with format == dir instead! This mojo is redundant.
  */
 @Mojo( name = "directory-single", inheritByDefault = false )

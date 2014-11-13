@@ -45,13 +45,17 @@ public class RepoInfoWrapper
         this.repo = repo;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<String> getExcludes()
     {
         return repo.getExcludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<GroupVersionAlignmentWrapper> getGroupVersionAlignments()
     {
         final List<GroupVersionAlignment> alignments = repo.getGroupVersionAlignments();
@@ -72,19 +76,25 @@ public class RepoInfoWrapper
         return convertedAlignments;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<String> getIncludes()
     {
         return repo.getIncludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getScope()
     {
         return repo.getScope();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isIncludeMetadata()
     {
         return repo.isIncludeMetadata();

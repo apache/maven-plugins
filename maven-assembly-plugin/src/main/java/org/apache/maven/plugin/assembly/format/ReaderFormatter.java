@@ -110,13 +110,15 @@ public class ReaderFormatter
                     {
                         final String encoding = configSource.getEncoding();
 
-                        Reader source = encoding != null ? new InputStreamReader( inputStream, encoding )
+                        Reader source = encoding != null
+                            ? new InputStreamReader( inputStream, encoding )
                             : new InputStreamReader( inputStream ); // wtf platform encoding ? TODO: Fix this
                         boolean isPropertyFile = AssemblyFileUtils.isPropertyFile( plexusIoResource.getName() );
                         Reader filtered =
                             createReaderFilter( source, configSource.getEscapeString(), configSource.getDelimiters(),
                                                 configSource, isPropertyFile );
-                        result = encoding != null ? new ReaderInputStream( filtered, encoding )
+                        result = encoding != null
+                            ? new ReaderInputStream( filtered, encoding )
                             : new ReaderInputStream( filtered );
                     }
                     if ( transformLineEndings )

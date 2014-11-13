@@ -30,7 +30,7 @@ import org.codehaus.plexus.archiver.Archiver;
 /**
  * Handles one top-level section of the assembly descriptor, to determine which files to include in the assembly archive
  * for that section.
- * 
+ *
  * @version $Id$
  */
 public interface AssemblyArchiverPhase
@@ -39,13 +39,13 @@ public interface AssemblyArchiverPhase
 
     /**
      * Handle the associated section of the assembly descriptor.
-     * 
-     * @param assembly The assembly descriptor to use
-     * @param archiver The archiver used to create the assembly archive, to which files/directories/artifacts are added
+     *
+     * @param assembly     The assembly descriptor to use
+     * @param archiver     The archiver used to create the assembly archive, to which files/directories/artifacts are added
      * @param configSource The configuration for this assembly build, normally derived from the plugin that launched the
-     *            assembly process.
-     * @throws ArchiveCreationException in case of an archive creation error.
-     * @throws AssemblyFormattingException in case of a assembly formatting exception.
+     *                     assembly process.
+     * @throws ArchiveCreationException               in case of an archive creation error.
+     * @throws AssemblyFormattingException            in case of a assembly formatting exception.
      * @throws InvalidAssemblerConfigurationException in case of an invalid assembler configuration.
      */
     void execute( Assembly assembly, Archiver archiver, AssemblerConfigurationSource configSource )

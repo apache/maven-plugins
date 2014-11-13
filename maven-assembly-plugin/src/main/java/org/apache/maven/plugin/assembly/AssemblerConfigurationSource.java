@@ -178,6 +178,7 @@ public interface AssemblerConfigurationSource
 
     /**
      * Maven shared filtering utility.
+     *
      * @ return the maven reader filter
      */
     MavenReaderFilter getMavenReaderFilter();
@@ -212,13 +213,21 @@ public interface AssemblerConfigurationSource
      */
     List<String> getDelimiters();
 
-    @Nonnull FixedStringSearchInterpolator getRepositoryInterpolator();
+    @Nonnull
+    FixedStringSearchInterpolator getRepositoryInterpolator();
 
-    /** Gets an interpolator from environment variables and stuff */
-    @Nonnull FixedStringSearchInterpolator getCommandLinePropsInterpolator();
+    /**
+     * Gets an interpolator from environment variables and stuff
+     */
+    @Nonnull
+    FixedStringSearchInterpolator getCommandLinePropsInterpolator();
 
-    /** Gets an interpolator from environment variables and stuff */
-    @Nonnull FixedStringSearchInterpolator getEnvInterpolator();
+    /**
+     * Gets an interpolator from environment variables and stuff
+     */
+    @Nonnull
+    FixedStringSearchInterpolator getEnvInterpolator();
 
-    @Nonnull FixedStringSearchInterpolator getMainProjectInterpolator();
+    @Nonnull
+    FixedStringSearchInterpolator getMainProjectInterpolator();
 }

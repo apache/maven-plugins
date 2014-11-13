@@ -96,8 +96,9 @@ abstract class AbstractLineAggregatingHandler
             }
             catch ( final IOException e )
             {
-                throw new ArchiverException( "Error adding aggregated content for: " + fname
-                                + " to finalize archive creation. Reason: " + e.getMessage(), e );
+                throw new ArchiverException(
+                    "Error adding aggregated content for: " + fname + " to finalize archive creation. Reason: "
+                        + e.getMessage(), e );
             }
             finally
             {
@@ -128,7 +129,7 @@ abstract class AbstractLineAggregatingHandler
             return true;
         }
 
-        String name = AssemblyFileUtils.normalizeFileInfo(fileInfo );
+        String name = AssemblyFileUtils.normalizeFileInfo( fileInfo );
 
         if ( fileInfo.isFile() && fileMatches( fileInfo ) )
         {

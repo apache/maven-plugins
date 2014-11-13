@@ -46,8 +46,9 @@ public final class FilterUtils
     {
     }
 
-    public static  Set<MavenProject>  filterProjects( final Set<MavenProject> projects, final List<String> includes,
-                                       final List<String> excludes, final boolean actTransitively, final Logger logger )
+    public static Set<MavenProject> filterProjects( final Set<MavenProject> projects, final List<String> includes,
+                                                    final List<String> excludes, final boolean actTransitively,
+                                                    final Logger logger )
     {
         final List<PatternIncludesArtifactFilter> allFilters = new ArrayList<PatternIncludesArtifactFilter>();
 
@@ -70,14 +71,14 @@ public final class FilterUtils
             allFilters.add( excludeFilter );
         }
 
-        Set<MavenProject> result = new LinkedHashSet<MavenProject>(  projects.size());
+        Set<MavenProject> result = new LinkedHashSet<MavenProject>( projects.size() );
         for ( MavenProject project : projects )
         {
             final Artifact artifact = project.getArtifact();
 
             if ( filter.include( artifact ) )
             {
-                result.add( project);
+                result.add( project );
             }
         }
 
@@ -162,7 +163,7 @@ public final class FilterUtils
                 if ( strictFiltering && sFilter.hasMissedCriteria() )
                 {
                     throw new InvalidAssemblerConfigurationException(
-                                                                      "One or more filters had unmatched criteria. Check debug log for more information." );
+                        "One or more filters had unmatched criteria. Check debug log for more information." );
                 }
             }
         }

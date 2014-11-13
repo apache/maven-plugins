@@ -19,10 +19,6 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
-import java.io.File;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,6 +32,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+
+import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Unpack project dependencies. Currently supports dependencies of type jar and zip.
@@ -81,8 +81,7 @@ public class UnpackMojo
             dependencies.add( project.getArtifact() );
         }
 
-        @SuppressWarnings( "unchecked" )
-        final Set<Artifact> projectArtifacts = project.getArtifacts();
+        @SuppressWarnings( "unchecked" ) final Set<Artifact> projectArtifacts = project.getArtifacts();
         if ( projectArtifacts != null )
         {
             dependencies.addAll( projectArtifacts );

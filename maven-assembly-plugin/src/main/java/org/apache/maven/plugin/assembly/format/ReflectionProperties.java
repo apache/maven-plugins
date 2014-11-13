@@ -28,7 +28,6 @@ import java.util.Properties;
 /**
  * @author Andreas Hoheneder (ahoh_at_inode.at)
  * @version $Id$
- * 
  * @deprecated
  */
 @Deprecated
@@ -59,8 +58,8 @@ public class ReflectionProperties
         {
             value = ReflectionValueExtractor.evaluate( "" + key, project );
 
-            if ( escapedBackslashesInFilePath && value != null && "java.lang.String".equals( value.getClass()
-                                                                                                  .getName() ) )
+            if ( escapedBackslashesInFilePath && value != null && "java.lang.String".equals(
+                value.getClass().getName() ) )
             {
                 final String val = (String) value;
 

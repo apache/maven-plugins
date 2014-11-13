@@ -46,14 +46,15 @@ public interface AssemblyArchiver
      * instances, executing each to handle a different
      * top-level section of the assembly descriptor, if that section is present.</li>
      * </ol>
-     * @param assembly The {@link Assembly}
-     * @param fullName The full name.
-     * @param format The format.
-     * @param configSource The {@link AssemblerConfigurationSource}
+     *
+     * @param assembly              The {@link Assembly}
+     * @param fullName              The full name.
+     * @param format                The format.
+     * @param configSource          The {@link AssemblerConfigurationSource}
      * @param recompressZippedFiles recompress zipped files.
      * @return The resulting archive file.
-     * @throws ArchiveCreationException when creation fails
-     * @throws AssemblyFormattingException when formatting fails
+     * @throws ArchiveCreationException               when creation fails
+     * @throws AssemblyFormattingException            when formatting fails
      * @throws InvalidAssemblerConfigurationException when the configurationis bad
      */
     File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource,

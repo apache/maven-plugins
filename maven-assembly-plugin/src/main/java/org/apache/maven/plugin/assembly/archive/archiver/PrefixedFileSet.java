@@ -39,9 +39,9 @@ class PrefixedFileSet
     private final FileSelector[] selectors;
 
     /**
-     * @param fileSet The file set.
+     * @param fileSet    The file set.
      * @param rootPrefix The root prefix
-     * @param selectors The file selectors.
+     * @param selectors  The file selectors.
      */
     public PrefixedFileSet( final FileSet fileSet, final String rootPrefix, final FileSelector[] selectors )
     {
@@ -58,13 +58,17 @@ class PrefixedFileSet
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String[] getExcludes()
     {
         return fileSet.getExcludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public FileSelector[] getFileSelectors()
     {
         FileSelector[] sel = fileSet.getFileSelectors();
@@ -72,7 +76,9 @@ class PrefixedFileSet
         return combineSelectors( sel, selectors1 );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     static FileSelector[] combineSelectors( FileSelector[] first, FileSelector[] second )
     {
         if ( ( first != null ) && ( second != null ) )
@@ -92,13 +98,17 @@ class PrefixedFileSet
         return first;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String[] getIncludes()
     {
         return fileSet.getIncludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getPrefix()
     {
         String prefix = fileSet.getPrefix();
@@ -122,25 +132,33 @@ class PrefixedFileSet
         return rootPrefix + prefix;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isCaseSensitive()
     {
         return fileSet.isCaseSensitive();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isIncludingEmptyDirectories()
     {
         return fileSet.isIncludingEmptyDirectories();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isUsingDefaultExcludes()
     {
         return fileSet.isUsingDefaultExcludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public File getDirectory()
     {
         return fileSet.getDirectory();

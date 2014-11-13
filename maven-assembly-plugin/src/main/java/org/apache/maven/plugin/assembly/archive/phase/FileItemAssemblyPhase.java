@@ -95,10 +95,12 @@ public class FileItemAssemblyPhase
             }
 
             final String outputDirectory1;
-            if (!StringUtils.isEmpty( assembly.getBaseDirectory()))
+            if ( !StringUtils.isEmpty( assembly.getBaseDirectory() ) )
             {
-                outputDirectory1  =  assembly.getBaseDirectory() +  File.separator + fileItem.getOutputDirectory();
-            } else {
+                outputDirectory1 = assembly.getBaseDirectory() + File.separator + fileItem.getOutputDirectory();
+            }
+            else
+            {
                 outputDirectory1 = fileItem.getOutputDirectory();
             }
 
@@ -124,32 +126,36 @@ public class FileItemAssemblyPhase
                 target = outputDirectory + "/" + destName;
             }
 
-            final PlexusIoFileResource
-                res = new PlexusIoFileResource( source, ArchiverAttributeUtils.getFileAttributes( source ));
+            final PlexusIoFileResource res =
+                new PlexusIoFileResource( source, ArchiverAttributeUtils.getFileAttributes( source ) );
             PlexusIoResource restoUse = res;
             try
             {
                 final InputStreamTransformer fileSetTransformers =
-                    ReaderFormatter.getFileSetTransformers( configSource, fileItem.isFiltered(), fileItem.getLineEnding() );
+                    ReaderFormatter.getFileSetTransformers( configSource, fileItem.isFiltered(),
+                                                            fileItem.getLineEnding() );
 
-                if (fileSetTransformers != null){
-                    restoUse = new Deferred( res ){
+                if ( fileSetTransformers != null )
+                {
+                    restoUse = new Deferred( res )
+                    {
                         @Override
                         protected InputStream getInputStream()
                             throws IOException
                         {
-                            return fileSetTransformers.transform(res, res.getContents());
+                            return fileSetTransformers.transform( res, res.getContents() );
                         }
 
                         @Override
                         public String getName()
-                        { return res.getName();
+                        {
+                            return res.getName();
                         }
                     }.asResource();
                 }
 
-                    int mode = TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() );
-                    archiver.addResource( restoUse, target, mode );
+                int mode = TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() );
+                archiver.addResource( restoUse, target, mode );
             }
             catch ( final ArchiverException e )
             {
@@ -179,7 +185,8 @@ public class FileItemAssemblyPhase
             IOUtils.closeQuietly( inputStream );
         }
 
-        protected abstract  InputStream getInputStream() throws IOException;
+        protected abstract InputStream getInputStream()
+            throws IOException;
 
         @Nonnull
         public InputStream getContents()

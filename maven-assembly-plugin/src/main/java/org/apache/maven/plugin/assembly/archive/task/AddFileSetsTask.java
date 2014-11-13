@@ -19,11 +19,6 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -36,6 +31,11 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @version $Id$
@@ -75,13 +75,13 @@ public class AddFileSetsTask
         {
             if ( !archiveBaseDir.exists() )
             {
-                throw new ArchiveCreationException( "The archive base directory '" + archiveBaseDir.getAbsolutePath()
-                    + "' does not exist" );
+                throw new ArchiveCreationException(
+                    "The archive base directory '" + archiveBaseDir.getAbsolutePath() + "' does not exist" );
             }
             else if ( !archiveBaseDir.isDirectory() )
             {
                 throw new ArchiveCreationException( "The archive base directory '" + archiveBaseDir.getAbsolutePath()
-                    + "' exists, but it is not a directory" );
+                                                        + "' exists, but it is not a directory" );
             }
         }
 
@@ -129,10 +129,11 @@ public class AddFileSetsTask
  */
         if ( logger.isDebugEnabled() )
         {
-            logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: "
-                + Integer.toString( archiver.getOverrideDirectoryMode(), 8 ) + " file perms: "
-                + Integer.toString( archiver.getOverrideFileMode(), 8 )
-                + ( fileSet.getLineEnding() == null ? "" : " lineEndings: " + fileSet.getLineEnding() ) );
+            logger.debug( "FileSet[" + destDirectory + "]" + " dir perms: " + Integer.toString(
+                archiver.getOverrideDirectoryMode(), 8 ) + " file perms: " + Integer.toString(
+                archiver.getOverrideFileMode(), 8 ) + ( fileSet.getLineEnding() == null
+                ? ""
+                : " lineEndings: " + fileSet.getLineEnding() ) );
         }
 
         logger.debug( "The archive base directory is '" + archiveBaseDir + "'" );
@@ -141,18 +142,18 @@ public class AddFileSetsTask
 
         if ( fileSetDir.exists() )
         {
-            InputStreamTransformer fileSetTransformers = ReaderFormatter.getFileSetTransformers( configSource, fileSet.isFiltered(),
-                                                                                                 fileSet.getLineEnding() );
-            if (fileSetTransformers == null)
+            InputStreamTransformer fileSetTransformers =
+                ReaderFormatter.getFileSetTransformers( configSource, fileSet.isFiltered(), fileSet.getLineEnding() );
+            if ( fileSetTransformers == null )
             {
                 logger.debug( "NOT reformatting any files in " + fileSetDir );
             }
 
             if ( fileSetDir.getPath().equals( File.separator ) )
             {
-                throw new AssemblyFormattingException( "Your assembly descriptor specifies a directory of "
-                    + File.separator
-                    + ", which is your *entire* file system.\nThese are not the files you are looking for" );
+                throw new AssemblyFormattingException(
+                    "Your assembly descriptor specifies a directory of " + File.separator
+                        + ", which is your *entire* file system.\nThese are not the files you are looking for" );
             }
             final AddDirectoryTask task = new AddDirectoryTask( fileSetDir, fileSetTransformers );
 

@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * Helper class used to accumulate scopes and modules (with binaries included) that are used in an assembly, for the
  * purposes of creating an aggregated managed-version map with dependency version conflicts resolved.
- * 
+ *
  * @author jdcasey
  */
 class ResolutionManagementInfo
@@ -137,22 +137,24 @@ class ResolutionManagementInfo
     {
         for ( Artifact existing : artifacts )
         {
-            if (existing.equals( artifact )){
-                if (isScopeUpgrade(artifact, existing)){
+            if ( existing.equals( artifact ) )
+            {
+                if ( isScopeUpgrade( artifact, existing ) )
+                {
                     artifacts.remove( existing );
-                    artifacts.add( artifact);
+                    artifacts.add( artifact );
                     return;
                 }
             }
         }
     }
 
-    private boolean isScopeUpgrade( Artifact a,  Artifact existing )
+    private boolean isScopeUpgrade( Artifact a, Artifact existing )
     {
         return scopeValue( a.getScope() ) > scopeValue( existing.getScope() );
     }
 
-    private int scopeValue( final String scope)
+    private int scopeValue( final String scope )
     {
         if ( Artifact.SCOPE_COMPILE.equals( scope ) )
         {

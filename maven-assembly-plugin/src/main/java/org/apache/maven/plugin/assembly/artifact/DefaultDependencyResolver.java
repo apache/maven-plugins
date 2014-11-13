@@ -19,15 +19,6 @@ package org.apache.maven.plugin.assembly.artifact;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -55,6 +46,15 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author jdcasey
@@ -153,7 +153,7 @@ public class DefaultDependencyResolver
             final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
             updateRepositoryResolutionRequirements( assembly, info );
             final AssemblyId assemblyId = AssemblyId.createAssemblyId( assembly );
-            updateDependencySetResolutionRequirements( dependencySet , info, assemblyId, currentProject );
+            updateDependencySetResolutionRequirements( dependencySet, info, assemblyId, currentProject );
 
             Set<Artifact> artifacts;
             if ( info.isResolutionRequired() )
@@ -324,8 +324,7 @@ public class DefaultDependencyResolver
 
             if ( binaries.isIncludeDependencies() )
             {
-                updateDependencySetResolutionRequirements( dependencySet,
-                                                           requirements, assemblyId,
+                updateDependencySetResolutionRequirements( dependencySet, requirements, assemblyId,
                                                            projects.toArray( new MavenProject[projects.size()] ) );
             }
         }

@@ -81,8 +81,8 @@ public class SimpleAggregatingDescriptorHandler
         if ( outputPath.endsWith( "/" ) )
         {
             throw new ArchiverException(
-                                         "Cannot write aggregated properties to a directory. You must specify a file name in the outputPath configuration for this handler. (handler: "
-                                             + getClass().getName() );
+                "Cannot write aggregated properties to a directory. You must specify a file name in the outputPath configuration for this handler. (handler: "
+                    + getClass().getName() );
         }
 
         if ( outputPath.startsWith( "/" ) )
@@ -110,11 +110,11 @@ public class SimpleAggregatingDescriptorHandler
             f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-
-            boolean isProperty = AssemblyFileUtils.isPropertyFile(f);
+            boolean isProperty = AssemblyFileUtils.isPropertyFile( f );
             FileOutputStream fos = new FileOutputStream( f );
-            writer = isProperty ? new OutputStreamWriter( fos,  "ISO-8859-1")
-                : new OutputStreamWriter( fos); // Still platform encoding
+            writer = isProperty
+                ? new OutputStreamWriter( fos, "ISO-8859-1" )
+                : new OutputStreamWriter( fos ); // Still platform encoding
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
@@ -129,8 +129,8 @@ public class SimpleAggregatingDescriptorHandler
         }
         catch ( final IOException e )
         {
-            throw new ArchiverException( "Error adding aggregated properties to finalize archive creation. Reason: "
-                + e.getMessage(), e );
+            throw new ArchiverException(
+                "Error adding aggregated properties to finalize archive creation. Reason: " + e.getMessage(), e );
         }
         finally
         {
@@ -181,7 +181,7 @@ public class SimpleAggregatingDescriptorHandler
         if ( filePattern == null || outputPath == null )
         {
             throw new IllegalStateException(
-                                             "You must configure filePattern and outputPath in your containerDescriptorHandler declaration." );
+                "You must configure filePattern and outputPath in your containerDescriptorHandler declaration." );
         }
     }
 
@@ -192,10 +192,11 @@ public class SimpleAggregatingDescriptorHandler
         Reader reader = null;
         try
         {
-            boolean isProperty = AssemblyFileUtils.isPropertyFile(fileInfo.getName());
+            boolean isProperty = AssemblyFileUtils.isPropertyFile( fileInfo.getName() );
 
-            reader = isProperty ? new InputStreamReader( fileInfo.getContents(), "ISO-8859-1" ) :
-            new InputStreamReader( fileInfo.getContents() ); // platform encoding
+            reader = isProperty
+                ? new InputStreamReader( fileInfo.getContents(), "ISO-8859-1" )
+                : new InputStreamReader( fileInfo.getContents() ); // platform encoding
 
             IOUtil.copy( reader, writer );
         }

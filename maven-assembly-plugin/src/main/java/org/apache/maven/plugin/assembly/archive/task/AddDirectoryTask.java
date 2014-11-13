@@ -58,9 +58,10 @@ public class AddDirectoryTask
 
         this.transformer = transformers;
     }
+
     public AddDirectoryTask( final File directory )
     {
-        this( directory, null);
+        this( directory, null );
     }
 
     public void execute( final Archiver archiver )
@@ -72,8 +73,9 @@ public class AddDirectoryTask
         }
         else if ( "..".equals( outputDirectory ) )
         {
-            throw new ArchiveCreationException( "Cannot add source directory: " + directory + " to archive-path: "
-                + outputDirectory + ". All paths must be within the archive root directory." );
+            throw new ArchiveCreationException(
+                "Cannot add source directory: " + directory + " to archive-path: " + outputDirectory
+                    + ". All paths must be within the archive root directory." );
         }
 
         final int oldDirMode = archiver.getOverrideDirectoryMode();
@@ -137,8 +139,9 @@ public class AddDirectoryTask
                     fs.setDirectory( directory );
                     fs.setIncludes( includesArray );
                     fs.setExcludes( excludesArray );
-                    if (transformer != null){
-                            fs.setStreamTransformer( transformer );
+                    if ( transformer != null )
+                    {
+                        fs.setStreamTransformer( transformer );
                     }
 
                     archiver.addFileSet( fs );

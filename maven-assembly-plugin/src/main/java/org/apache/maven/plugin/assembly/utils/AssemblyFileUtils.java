@@ -82,8 +82,7 @@ public final class AssemblyFileUtils
     }
 
     @SuppressWarnings( "ResultOfMethodCallIgnored" )
-    public static void verifyTempDirectoryAvailability( @Nonnull
-    final File tempDir )
+    public static void verifyTempDirectoryAvailability( @Nonnull final File tempDir )
     {
         if ( !tempDir.exists() )
         {
@@ -94,7 +93,7 @@ public final class AssemblyFileUtils
     /**
      * Unpacks the archive file.
      *
-     * @param source File to be unpacked.
+     * @param source  File to be unpacked.
      * @param destDir Location where to put the unpacked files.
      */
     public static void unpack( File source, File destDir, ArchiverManager archiverManager )
@@ -137,6 +136,6 @@ public final class AssemblyFileUtils
 
     public static boolean isPropertyFile( File file )
     {
-        return isPropertyFile( file.getName());
+        return isPropertyFile( file.getName() );
     }
 }

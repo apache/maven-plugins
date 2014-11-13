@@ -73,9 +73,10 @@ public class AddArtifactTask
     private String outputFileNameMapping;
 
     private final Logger logger;
+
     private final InputStreamTransformer transformer;
 
-    public AddArtifactTask( final Artifact artifact, final Logger logger,  InputStreamTransformer transformer )
+    public AddArtifactTask( final Artifact artifact, final Logger logger, InputStreamTransformer transformer )
     {
         this.artifact = artifact;
         this.logger = logger;
@@ -84,22 +85,21 @@ public class AddArtifactTask
 
     public AddArtifactTask( final Artifact artifact, final Logger logger )
     {
-        this(artifact, logger, null);
+        this( artifact, logger, null );
     }
 
     public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
     {
-        if (artifactIsArchiverDestination(archiver))
+        if ( artifactIsArchiverDestination( archiver ) )
         {
-            artifact.setFile(moveArtifactSomewhereElse(configSource));
+            artifact.setFile( moveArtifactSomewhereElse( configSource ) );
         }
 
         String destDirectory =
             AssemblyFormatUtils.getOutputDirectory( outputDirectory, configSource.getFinalName(), configSource,
                                                     moduleProjectInterpolator( moduleProject ),
                                                     artifactProjectInterpolator( project ) );
-
 
         boolean fileModeSet = false;
         boolean dirModeSet = false;
@@ -160,7 +160,9 @@ public class AddArtifactTask
         {
             final File artifactFile = artifact.getFile();
 
-            logger.debug( "Adding artifact: " + artifact.getId() + " with file: " + artifactFile + " to assembly location: " + outputLocation + "." );
+            logger.debug(
+                "Adding artifact: " + artifact.getId() + " with file: " + artifactFile + " to assembly location: "
+                    + outputLocation + "." );
 
             if ( fileMode != -1 )
             {
@@ -173,7 +175,8 @@ public class AddArtifactTask
         }
         catch ( final ArchiverException e )
         {
-            throw new ArchiveCreationException( "Error adding file '" + artifact.getId() + "' to archive: " + e.getMessage(), e );
+            throw new ArchiveCreationException(
+                "Error adding file '" + artifact.getId() + "' to archive: " + e.getMessage(), e );
         }
     }
 
@@ -194,12 +197,14 @@ public class AddArtifactTask
         }
         final String[] excludesArray = TypeConversionUtils.toStringArray( excludes );
 
-        try  {
+        try
+        {
 
             final File artifactFile = artifact.getFile();
             if ( artifactFile == null )
             {
-                logger.warn( "Skipping artifact: " + artifact.getId() + "; it does not have an associated file or directory." );
+                logger.warn(
+                    "Skipping artifact: " + artifact.getId() + "; it does not have an associated file or directory." );
             }
             else if ( artifactFile.isDirectory() )
             {
@@ -216,8 +221,9 @@ public class AddArtifactTask
             {
                 logger.debug( "Unpacking artifact contents for: " + artifact + " to: " + outputLocation );
                 logger.debug( "includes:\n" + StringUtils.join( includesArray, "\n" ) + "\n" );
-                logger.debug( "excludes:\n" + ( excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) )
-                                  + "\n" );
+                logger.debug(
+                    "excludes:\n" + ( excludesArray == null ? "none" : StringUtils.join( excludesArray, "\n" ) )
+                        + "\n" );
                 DefaultArchivedFileSet afs = DefaultArchivedFileSet.archivedFileSet( artifactFile );
                 afs.setIncludes( includesArray );
                 afs.setExcludes( excludesArray );
@@ -233,30 +239,31 @@ public class AddArtifactTask
         }
     }
 
-    private File moveArtifactSomewhereElse(AssemblerConfigurationSource configSource) throws ArchiveCreationException {
+    private File moveArtifactSomewhereElse( AssemblerConfigurationSource configSource )
+        throws ArchiveCreationException
+    {
         final File tempRoot = configSource.getTemporaryRootDirectory();
-        final File tempArtifactFile = new File( tempRoot, artifact.getFile()
-                                                                  .getName() );
+        final File tempArtifactFile = new File( tempRoot, artifact.getFile().getName() );
 
-        logger.warn( "Artifact: "
-                        + artifact.getId()
-                        + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
+        logger.warn( "Artifact: " + artifact.getId()
+                         + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
         try
         {
-            FileUtils.copyFile(artifact.getFile(), tempArtifactFile);
+            FileUtils.copyFile( artifact.getFile(), tempArtifactFile );
         }
         catch ( final IOException e )
         {
-            throw new ArchiveCreationException( "Error moving artifact file: '" + artifact.getFile()
-                            + "' to temporary location: " + tempArtifactFile + ". Reason: " + e.getMessage(), e );
+            throw new ArchiveCreationException(
+                "Error moving artifact file: '" + artifact.getFile() + "' to temporary location: " + tempArtifactFile
+                    + ". Reason: " + e.getMessage(), e );
         }
         return tempArtifactFile;
     }
 
-    private boolean artifactIsArchiverDestination(Archiver archiver) {
-        return ( ( artifact.getFile() != null ) && ( archiver.getDestFile() != null ) )
-                        && artifact.getFile()
-                                   .equals( archiver.getDestFile() );
+    private boolean artifactIsArchiverDestination( Archiver archiver )
+    {
+        return ( ( artifact.getFile() != null ) && ( archiver.getDestFile() != null ) ) && artifact.getFile().equals(
+            archiver.getDestFile() );
     }
 
     public void setDirectoryMode( final int directoryMode )

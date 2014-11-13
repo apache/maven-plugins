@@ -52,7 +52,7 @@ public final class AssemblyFormatUtils
     /**
      * Get the full name of the distribution artifact
      *
-     * @param assembly  the assembly
+     * @param assembly the assembly
      * @return the distribution name
      */
     public static String getDistributionName( final Assembly assembly, final AssemblerConfigurationSource configSource )
@@ -194,8 +194,6 @@ public final class AssemblyFormatUtils
     }
 
 
-
-
     /**
      * ORDER OF INTERPOLATION PRECEDENCE:
      * <ol>
@@ -222,14 +220,13 @@ public final class AssemblyFormatUtils
      * <li>environment variables.</li>
      * </ol>
      */
-    public static String getOutputDirectory( final String output, final MavenProject artifactProject, final String finalName,
-                                             final AssemblerConfigurationSource configSource )
+    public static String getOutputDirectory( final String output, final MavenProject artifactProject,
+                                             final String finalName, final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException
     {
         return getOutputDirectory( output, finalName, configSource, moduleProjectInterpolator( null ),
                                    artifactProjectInterpolator( artifactProject ) );
     }
-
 
 
     private static FixedStringSearchInterpolator executionPropertiesInterpolator(
@@ -261,9 +258,12 @@ public final class AssemblyFormatUtils
             // 5
             return FixedStringSearchInterpolator.create(
                 new org.codehaus.plexus.interpolation.fixed.PrefixedObjectValueSource(
-                    InterpolationConstants.PROJECT_PREFIXES, mainProject, true )
-             );
-        } else return FixedStringSearchInterpolator.empty();
+                    InterpolationConstants.PROJECT_PREFIXES, mainProject, true ) );
+        }
+        else
+        {
+            return FixedStringSearchInterpolator.empty();
+        }
     }
 
 
@@ -390,7 +390,8 @@ public final class AssemblyFormatUtils
      * </ol>
      */
     public static String evaluateFileNameMapping( final String expression, @Nonnull final Artifact artifact,
-                                                  @Nullable final MavenProject mainProject, @Nullable final Artifact moduleArtifact,
+                                                  @Nullable final MavenProject mainProject,
+                                                  @Nullable final Artifact moduleArtifact,
                                                   @Nonnull final AssemblerConfigurationSource configSource,
                                                   FixedStringSearchInterpolator moduleProjectInterpolator,
                                                   FixedStringSearchInterpolator artifactProjectInterpolator )
@@ -398,15 +399,16 @@ public final class AssemblyFormatUtils
     {
         String value = expression;
 
-        final FixedStringSearchInterpolator interpolator = FixedStringSearchInterpolator.create(
-            moduleArtifactInterpolator( moduleArtifact ), moduleProjectInterpolator,
-            artifactInterpolator( artifact ), artifactProjectInterpolator,
-            mainProjectOnlyInterpolator( mainProject ),
-            classifierRules( artifact ),
-            executionPropertiesInterpolator( configSource ),
-            configSource.getMainProjectInterpolator(),
-            configSource.getCommandLinePropsInterpolator(),
-            configSource.getEnvInterpolator() );
+        final FixedStringSearchInterpolator interpolator =
+            FixedStringSearchInterpolator.create( moduleArtifactInterpolator( moduleArtifact ),
+                                                  moduleProjectInterpolator, artifactInterpolator( artifact ),
+                                                  artifactProjectInterpolator,
+                                                  mainProjectOnlyInterpolator( mainProject ),
+                                                  classifierRules( artifact ),
+                                                  executionPropertiesInterpolator( configSource ),
+                                                  configSource.getMainProjectInterpolator(),
+                                                  configSource.getCommandLinePropsInterpolator(),
+                                                  configSource.getEnvInterpolator() );
 
         value = interpolator.interpolate( value );
 
@@ -443,7 +445,8 @@ public final class AssemblyFormatUtils
      * <li>environment variables.</li>
      * </ol>
      */
-    public static String getOutputDirectory( final String output, final String finalName, final AssemblerConfigurationSource configSource,
+    public static String getOutputDirectory( final String output, final String finalName,
+                                             final AssemblerConfigurationSource configSource,
                                              FixedStringSearchInterpolator moduleProjectIntrpolator,
                                              FixedStringSearchInterpolator artifactProjectInterpolator )
         throws AssemblyFormattingException
@@ -454,14 +457,13 @@ public final class AssemblyFormatUtils
             value = "";
         }
 
-        final FixedStringSearchInterpolator interpolator = FixedStringSearchInterpolator.create(
-            finalNameInterpolator( finalName ),
-            moduleProjectIntrpolator,
-            artifactProjectInterpolator,
-            executionPropertiesInterpolator( configSource ),
-            configSource.getMainProjectInterpolator(),
-            configSource.getCommandLinePropsInterpolator(),
-            configSource.getEnvInterpolator() );
+        final FixedStringSearchInterpolator interpolator =
+            FixedStringSearchInterpolator.create( finalNameInterpolator( finalName ), moduleProjectIntrpolator,
+                                                  artifactProjectInterpolator,
+                                                  executionPropertiesInterpolator( configSource ),
+                                                  configSource.getMainProjectInterpolator(),
+                                                  configSource.getCommandLinePropsInterpolator(),
+                                                  configSource.getEnvInterpolator() );
 
         value = interpolator.interpolate( value );
 

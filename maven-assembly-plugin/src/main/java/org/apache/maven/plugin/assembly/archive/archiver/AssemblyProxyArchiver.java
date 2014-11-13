@@ -943,7 +943,7 @@ public class AssemblyProxyArchiver
     public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
         throws ArchiverException
     {
-        File file = new File(resource.getName()); // zOMG.
+        File file = new File( resource.getName() ); // zOMG.
         if ( acceptFile( file ) )
         {
 

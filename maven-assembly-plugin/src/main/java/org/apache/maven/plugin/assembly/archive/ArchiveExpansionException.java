@@ -30,7 +30,7 @@ public class ArchiveExpansionException
 
     /**
      * @param message The message to use for this instance.
-     * @param error The error which has been thrown.
+     * @param error   The error which has been thrown.
      */
     public ArchiveExpansionException( final String message, final Throwable error )
     {
