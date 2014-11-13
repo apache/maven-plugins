@@ -19,8 +19,7 @@
 
 import java.io.*;
 import java.net.*;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import java.util.zip.*;
 
 
 
@@ -38,7 +37,7 @@ try
     
     ZipFile zf = new ZipFile( zipFile );
 
-    ZipArchiveEntry ze = zf.getEntry( "spring-0.0.1-SNAPSHOT/lib/project2-0.0.1-SNAPSHOT.jar" );
+    ZipEntry ze = zf.getEntry( "spring-0.0.1-SNAPSHOT/lib/project2-0.0.1-SNAPSHOT.jar" );
     if ( ze == null )
     {
         System.err.println( "filename is incorrect" );
