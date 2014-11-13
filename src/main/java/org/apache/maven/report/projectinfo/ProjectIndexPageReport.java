@@ -19,10 +19,12 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.i18n.I18N;
 
 import java.util.Locale;
@@ -69,7 +71,8 @@ public class ProjectIndexPageReport
     public void executeReport( Locale locale )
     {
         ProjectIndexRenderer r =
-            new ProjectIndexRenderer( project, getName( locale ), getDescription( locale ), getSink(),
+            new ProjectIndexRenderer( project, mavenProjectBuilder, localRepository,
+                                      getName( locale ), getDescription( locale ), getSink(),
                                       getI18N( locale ), locale, siteTool );
 
         r.render();
@@ -103,10 +106,11 @@ public class ProjectIndexPageReport
 
         private boolean modules = false;
 
-        ProjectIndexRenderer( MavenProject project, String title, String description, Sink sink, I18N i18n,
-                              Locale locale, SiteTool siteTool )
+        ProjectIndexRenderer( MavenProject project, MavenProjectBuilder mavenProjectBuilder,
+                              ArtifactRepository localRepository, String title, String description,
+                              Sink sink, I18N i18n, Locale locale, SiteTool siteTool )
         {
-            super( sink, project, i18n, locale, siteTool );
+            super( sink, project, mavenProjectBuilder, localRepository, i18n, locale, siteTool );
 
             this.title = title;
 
