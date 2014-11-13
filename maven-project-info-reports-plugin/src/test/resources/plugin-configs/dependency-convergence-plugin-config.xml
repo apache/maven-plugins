@@ -22,7 +22,7 @@ under the License.
   <groupId>org.apache.maven.plugin.projectinfo.tests</groupId>
   <artifactId>dependency-convergence</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>dependency-convergence project info</name>
   <dependencies>
     <dependency>

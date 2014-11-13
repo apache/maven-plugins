@@ -54,6 +54,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
@@ -112,6 +113,12 @@ public abstract class AbstractProjectInfoReport
      */
     @Component
     private I18N i18n;
+
+    /**
+     * Project builder.
+     */
+    @Component
+    protected MavenProjectBuilder mavenProjectBuilder;
 
     // ----------------------------------------------------------------------
     // Mojo parameters

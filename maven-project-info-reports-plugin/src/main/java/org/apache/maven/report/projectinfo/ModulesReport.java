@@ -19,15 +19,21 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.Locale;
+
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Site;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.i18n.I18N;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Generates the Project Modules report.
@@ -47,7 +53,8 @@ public class ModulesReport
     @Override
     public void executeReport( Locale locale )
     {
-        new ModulesRenderer( getSink(), getProject(), getI18N( locale ), locale, siteTool ).render();
+        new ModulesRenderer( getSink(), getProject(), mavenProjectBuilder, localRepository,
+                             getI18N( locale ), locale, siteTool ).render();
     }
 
     /** {@inheritDoc} */
@@ -80,13 +87,21 @@ public class ModulesReport
     {
         protected MavenProject project;
 
+        protected MavenProjectBuilder mavenProjectBuilder;
+
+        protected ArtifactRepository localRepository;
+
         protected SiteTool siteTool;
 
-        ModulesRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, SiteTool siteTool )
+        ModulesRenderer( Sink sink, MavenProject project, MavenProjectBuilder mavenProjectBuilder,
+                         ArtifactRepository localRepository, I18N i18n, Locale locale,
+                         SiteTool siteTool )
         {
             super( sink, i18n, locale );
 
             this.project = project;
+            this.mavenProjectBuilder = mavenProjectBuilder;
+            this.localRepository = localRepository;
             this.siteTool = siteTool;
         }
 
@@ -109,26 +124,118 @@ public class ModulesReport
             String description = getI18nString( "header.description" );
             tableHeader( new String[] { name, description } );
 
-            final String baseURL = project.getUrl();
+            final String baseUrl = getDistMgmntSiteUrl( project );
 
-            // before MPIR-229 this was model.getModules(), which could have uninherited/unresolved values
-            // @todo also include modules which are not part of reactor, e.g. caused by -pl
-            List<MavenProject> modules = project.getCollectedProjects();
-            for ( MavenProject moduleProject : modules )
+            for ( Object module : project.getModules() )
             {
-                Model moduleModel = moduleProject.getModel();
+                Model moduleModel;
+                File f = new File( project.getBasedir(), module + "/pom.xml" );
+                if ( f.exists() )
+                {
+                    try
+                    {
+                        moduleModel = mavenProjectBuilder.build( f, localRepository, null ).getModel();
+                    }
+                    catch ( ProjectBuildingException e )
+                    {
+                       throw new IllegalStateException( "Unable to read local module POM", e );
+                    }
+                }
+                else
+                {
+                    moduleModel = new Model();
+                    moduleModel.setName( module.toString() );
+                    setDistMgmntSiteUrl( moduleModel, module.toString() );
+                }
 
-                final String moduleName = moduleProject.getName();
-
-                final String moduleHref =
-                    getRelativeLink( baseURL, moduleProject.getUrl(), moduleProject.getArtifactId() );
+                final String moduleName = name( moduleModel );
+                final String moduleHref = getRelativeLink( baseUrl, getDistMgmntSiteUrl( moduleModel ),
+                                            moduleModel.getArtifactId() );
 
                 tableRow( new String[] { linkedName( moduleName, moduleHref ), moduleModel.getDescription() } );
+
             }
 
             endTable();
 
             endSection();
+        }
+
+        private static void setDistMgmntSiteUrl( Model model, String url )
+        {
+            if ( model.getDistributionManagement() == null )
+            {
+                model.setDistributionManagement( new DistributionManagement() );
+            }
+
+            if ( model.getDistributionManagement().getSite() == null )
+            {
+                model.getDistributionManagement().setSite( new Site() );
+            }
+
+            model.getDistributionManagement().getSite().setUrl( url );
+        }
+
+        /**
+         * Return distributionManagement.site.url if defined, null otherwise.
+         *
+         * @param project not null
+         * @return could be null
+         */
+        private static String getDistMgmntSiteUrl( MavenProject project )
+        {
+            return getDistMgmntSiteUrl( project.getDistributionManagement() );
+        }
+
+        /**
+         * Return distributionManagement.site.url if defined, null otherwise.
+         *
+         * @param model not null
+         * @return could be null
+         */
+        private static String getDistMgmntSiteUrl( Model model )
+        {
+            return getDistMgmntSiteUrl( model.getDistributionManagement() );
+        }
+
+        private static String getDistMgmntSiteUrl( DistributionManagement distMgmnt )
+        {
+            if ( distMgmnt != null && distMgmnt.getSite() != null && distMgmnt.getSite().getUrl() != null )
+            {
+                return urlEncode( distMgmnt.getSite().getUrl() );
+            }
+
+            return null;
+        }
+
+        private static String urlEncode( final String url )
+        {
+            if ( url == null )
+            {
+                return null;
+            }
+
+            try
+            {
+                return new File( url ).toURI().toURL().toExternalForm();
+            }
+            catch ( MalformedURLException ex )
+            {
+                return url; // this will then throw somewhere else
+            }
+        }
+
+        private static String name( final Model model )
+        {
+            String name = model.getName();
+
+            if ( name == null )
+            {
+                name = "Unnamed &#x2013; " + model.getGroupId() + ":" + model.getArtifactId() + ":"
+                        + model.getPackaging() + ":" + model.getVersion();
+            }
+
+            return name;
         }
 
         // adapted from DefaultSiteTool#appendMenuItem
