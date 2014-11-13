@@ -210,7 +210,7 @@ under the License.
         <p>
           GNU tar has restrictions on max value of UID/GUID in tar files.
           Consider using the more well defined POSIX tar format, which should support
-          larger values. Use tarLongFileMode=posix.
+          larger values. Use tarLongFileMode=posix in the assembly:single goal.
         </p>
       </answer>
     </faq>
