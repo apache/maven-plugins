@@ -21,12 +21,17 @@ package org.apache.maven.plugin.assembly.utils;
 
 /**
  * Enumeration to keep the different line ending types we support.
- * 
+ *
  * @author Karl-Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
 public enum LineEndings
 {
-    keep( null ), dos( "\r\n" ), windows( "\r\n" ), unix( "\n" ), crlf( "\r\n" ), lf( "\n" );
+    keep( null ),
+    dos( "\r\n" ),
+    windows( "\r\n" ),
+    unix( "\n" ),
+    crlf( "\r\n" ),
+    lf( "\n" );
 
     private final String lineEndingCharacters;
 
@@ -35,11 +40,14 @@ public enum LineEndings
         this.lineEndingCharacters = lineEndingCharacters;
     }
 
-    public boolean isNewLine(){
-        return this== unix || this == lf;
+    public boolean isNewLine()
+    {
+        return this == unix || this == lf;
     }
-    public boolean isCrLF(){
-        return this== windows || this == crlf || this == dos;
+
+    public boolean isCrLF()
+    {
+        return this == windows || this == crlf || this == dos;
     }
 
     public String getLineEndingCharacters()

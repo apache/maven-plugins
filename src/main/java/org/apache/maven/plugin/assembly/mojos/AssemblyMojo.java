@@ -28,15 +28,14 @@ import org.apache.maven.project.MavenProject;
 /**
  * Assemble an application bundle or distribution using an assembly descriptor from the command line. This goal will
  * force Maven to build all included POMs up to the <code>package</code> phase BEFORE the assembly is processed. <br/>
- * 
+ * <p/>
  * <b>NOTE:</b> This goal should ONLY be run from the command line, and if building a multimodule project it should be
  * used from the root POM. Use the <code>assembly:single</code> goal for binding your assembly to the lifecycle. <br/>
- * 
+ *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * 
  * @deprecated Use assembly:single instead! The assembly:assembly mojo leads to non-standard builds.
  */
 @Deprecated

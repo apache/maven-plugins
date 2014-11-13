@@ -40,19 +40,25 @@ class GroupVersionAlignmentWrapper
         this.alignment = alignment;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<String> getExcludes()
     {
         return alignment.getExcludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getId()
     {
         return alignment.getId();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getVersion()
     {
         return alignment.getVersion();

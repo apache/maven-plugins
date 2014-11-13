@@ -19,13 +19,13 @@ package org.apache.maven.plugin.assembly.archive.archiver;
  * under the License.
  */
 
-import static org.apache.maven.plugin.assembly.archive.archiver.PrefixedFileSet.combineSelectors;
-
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 
 import java.io.File;
+
+import static org.apache.maven.plugin.assembly.archive.archiver.PrefixedFileSet.combineSelectors;
 
 /**
  * @version $Id$
@@ -41,9 +41,9 @@ class PrefixedArchivedFileSet
     private final FileSelector[] selectors;
 
     /**
-     * @param fileSet The archived file set.
+     * @param fileSet    The archived file set.
      * @param rootPrefix The root prefix.
-     * @param selectors The file selectors.
+     * @param selectors  The file selectors.
      */
     public PrefixedArchivedFileSet( ArchivedFileSet fileSet, String rootPrefix, FileSelector[] selectors )
     {
@@ -60,31 +60,41 @@ class PrefixedArchivedFileSet
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public File getArchive()
     {
         return fileSet.getArchive();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String[] getExcludes()
     {
         return fileSet.getExcludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public FileSelector[] getFileSelectors()
     {
         return combineSelectors( fileSet.getFileSelectors(), selectors );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String[] getIncludes()
     {
         return fileSet.getIncludes();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getPrefix()
     {
         String prefix = fileSet.getPrefix();
@@ -103,19 +113,25 @@ class PrefixedArchivedFileSet
         return rootPrefix + prefix;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isCaseSensitive()
     {
         return fileSet.isCaseSensitive();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isIncludingEmptyDirectories()
     {
         return fileSet.isIncludingEmptyDirectories();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isUsingDefaultExcludes()
     {
         return fileSet.isUsingDefaultExcludes();

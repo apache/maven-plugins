@@ -164,7 +164,9 @@ public final class LineEndingsUtils
             : lineEndings.isCrLF() ? new WindowsLineFeedInputStream( in, false ) : in;
     }
 
-    public static @Nonnull LineEndings getLineEnding( @Nullable String lineEnding )
+    public static
+    @Nonnull
+    LineEndings getLineEnding( @Nullable String lineEnding )
         throws AssemblyFormattingException
     {
         LineEndings result = LineEndings.keep;
@@ -184,6 +186,7 @@ public final class LineEndingsUtils
 
     /**
      * Returns the appopriate line ending characters for the specified style
+     *
      * @param lineEnding The name of the line ending style, see org.apache.maven.plugin.assembly.utils.LineEndings#valueOf
      * @return The proper line ending characters
      * @throws AssemblyFormattingException

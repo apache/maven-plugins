@@ -17,9 +17,10 @@ package org.apache.maven.plugin.assembly.functions;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import org.apache.maven.project.MavenProject;
 
 public interface MavenProjectConsumer
 {
-    public void accept(MavenProject project);
+    public void accept( MavenProject project );
 }

@@ -89,7 +89,8 @@ public class AddDependencySetsTask
 
 
     public AddDependencySetsTask( final List<DependencySet> dependencySets, final Set<Artifact> resolvedArtifacts,
-                                  final MavenProject project, final MavenProjectBuilder projectBuilder, final Logger logger )
+                                  final MavenProject project, final MavenProjectBuilder projectBuilder,
+                                  final Logger logger )
     {
         this.dependencySets = dependencySets;
         this.resolvedArtifacts = resolvedArtifacts;
@@ -107,8 +108,7 @@ public class AddDependencySetsTask
             return;
         }
 
-        @SuppressWarnings( "unchecked" )
-        final List<Dependency> deps = project.getDependencies();
+        @SuppressWarnings( "unchecked" ) final List<Dependency> deps = project.getDependencies();
         if ( ( deps == null ) || deps.isEmpty() )
         {
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
@@ -129,7 +129,7 @@ public class AddDependencySetsTask
         if ( !dependencySet.isUseTransitiveDependencies() && dependencySet.isUseTransitiveFiltering() )
         {
             logger.warn( "DependencySet has nonsensical configuration: useTransitiveDependencies == false "
-                + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
+                             + "AND useTransitiveFiltering == true. Transitive filtering flag will be ignored." );
         }
 
         final Set<Artifact> dependencyArtifacts = resolveDependencyArtifacts( dependencySet );
@@ -152,20 +152,19 @@ public class AddDependencySetsTask
                                                           dependencySet.getUnpackOptions().getLineEnding() )
                 : null;
 
-
         for ( final Artifact depArtifact : dependencyArtifacts )
         {
             MavenProject depProject;
             try
             {
-                depProject =
-                    projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                        configSource.getLocalRepository() );
+                depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
+                                                                 configSource.getLocalRepository() );
             }
             catch ( final ProjectBuildingException e )
             {
-                logger.debug( "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: "
-                    + e.getMessage() + "\n\nBuilding stub project instance." );
+                logger.debug(
+                    "Error retrieving POM of module-dependency: " + depArtifact.getId() + "; Reason: " + e.getMessage()
+                        + "\n\nBuilding stub project instance." );
 
                 depProject = buildProjectStub( depArtifact );
             }
@@ -176,7 +175,8 @@ public class AddDependencySetsTask
             }
             else
             {
-                addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource, fileSetTransformers );
+                addNormalArtifact( dependencySet, depArtifact, depProject, archiver, configSource,
+                                   fileSetTransformers );
             }
         }
     }
@@ -197,10 +197,10 @@ public class AddDependencySetsTask
 
         if ( ( dir == null || !dir.contains( "${" ) ) && ( mapping == null || !mapping.contains( "${" ) ) )
         {
-            logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
-                + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '"
-                + dir
-                + "'\nOutput filename mapping: '" + mapping + "'" );
+            logger.warn(
+                "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
+                    + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '" + dir
+                    + "'\nOutput filename mapping: '" + mapping + "'" );
         }
     }
 
@@ -280,14 +280,13 @@ public class AddDependencySetsTask
             else
             {
                 logger.warn( "Cannot include project artifact: " + projectArtifact
-                    + "; it doesn't have an associated file or directory." );
+                                 + "; it doesn't have an associated file or directory." );
             }
         }
 
         if ( dependencySet.isUseProjectAttachments() )
         {
-            @SuppressWarnings( "unchecked" )
-            final List<Artifact> attachments = project.getAttachedArtifacts();
+            @SuppressWarnings( "unchecked" ) final List<Artifact> attachments = project.getAttachedArtifacts();
             if ( attachments != null )
             {
                 for ( final Artifact attachment : attachments )
@@ -298,8 +297,9 @@ public class AddDependencySetsTask
                     }
                     else
                     {
-                        logger.warn( "Cannot include attached artifact: " + project.getId() + " for project: "
-                            + project.getId() + "; it doesn't have an associated file or directory." );
+                        logger.warn(
+                            "Cannot include attached artifact: " + project.getId() + " for project: " + project.getId()
+                                + "; it doesn't have an associated file or directory." );
                     }
                 }
             }
@@ -324,8 +324,8 @@ public class AddDependencySetsTask
     }
 
     private void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
-                                  final DependencySet dependencySet, final Archiver archiver,
-                                  final AssemblerConfigurationSource configSource )
+                                          final DependencySet dependencySet, final Archiver archiver,
+                                          final AssemblerConfigurationSource configSource )
         throws AssemblyFormattingException, ArchiveCreationException
     {
         final File source = depArtifact.getFile();
@@ -340,9 +340,8 @@ public class AddDependencySetsTask
 
         final String destName =
             AssemblyFormatUtils.evaluateFileNameMapping( dependencySet.getOutputFileNameMapping(), depArtifact,
-                                                         configSource.getProject(), moduleArtifact, configSource, moduleProjectInterpolator,
-                                                         artifactProjectInterpolator );
-
+                                                         configSource.getProject(), moduleArtifact, configSource,
+                                                         moduleProjectInterpolator, artifactProjectInterpolator );
 
         String target;
 

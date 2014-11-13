@@ -464,7 +464,7 @@ public class DefaultAssemblyReader
      * Add the content of a single Component to main assembly
      *
      * @param component The component
-     * @param assembly The assembly
+     * @param assembly  The assembly
      */
     protected void mergeComponentWithAssembly( final Component component, final Assembly assembly )
     {

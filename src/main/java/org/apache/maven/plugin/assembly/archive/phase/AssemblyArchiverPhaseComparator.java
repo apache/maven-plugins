@@ -20,15 +20,25 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import java.util.Comparator;
 
-public class AssemblyArchiverPhaseComparator implements Comparator<AssemblyArchiverPhase>
+public class AssemblyArchiverPhaseComparator
+    implements Comparator<AssemblyArchiverPhase>
 {
     public int compare( AssemblyArchiverPhase o1, AssemblyArchiverPhase o2 )
     {
         boolean o1hasOrder = o1 instanceof PhaseOrder;
         boolean o2hasOrder = o2 instanceof PhaseOrder;
-        if (!o1hasOrder && ! o2hasOrder) return o1.getClass().getName().compareTo( o2.getClass().getName() );
-        if (!o1hasOrder) return -1;
-        if (!o2hasOrder) return +1;
-        return new Integer(((PhaseOrder)o1).order()).compareTo( ((PhaseOrder)o2).order() );
+        if ( !o1hasOrder && !o2hasOrder )
+        {
+            return o1.getClass().getName().compareTo( o2.getClass().getName() );
+        }
+        if ( !o1hasOrder )
+        {
+            return -1;
+        }
+        if ( !o2hasOrder )
+        {
+            return +1;
+        }
+        return new Integer( ( (PhaseOrder) o1 ).order() ).compareTo( ( (PhaseOrder) o2 ).order() );
     }
 }

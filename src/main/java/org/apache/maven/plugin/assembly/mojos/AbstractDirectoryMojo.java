@@ -55,7 +55,8 @@ public abstract class AbstractDirectoryMojo
         }
         catch ( final InvalidAssemblerConfigurationException e )
         {
-            throw new MojoFailureException( reader, e.getMessage(), "Mojo configuration is invalid: " + e.getMessage() );
+            throw new MojoFailureException( reader, e.getMessage(),
+                                            "Mojo configuration is invalid: " + e.getMessage() );
         }
 
         for ( Assembly assembly : assemblies )
@@ -96,7 +97,7 @@ public abstract class AbstractDirectoryMojo
         {
             throw new MojoFailureException( assembly, "Assembly is incorrectly configured: " + assembly.getId(),
                                             "Assembly: " + assembly.getId() + " is not configured correctly: "
-                                                            + e.getMessage() );
+                                                + e.getMessage() );
         }
     }
 

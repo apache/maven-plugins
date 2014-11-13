@@ -19,8 +19,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
@@ -32,10 +30,11 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Handles the &lt;fileSets/&gt; top-level section of the assembly descriptor.
- * 
+ *
  * @version $Id$
  */
 @Component( role = AssemblyArchiverPhase.class, hint = "file-sets" )

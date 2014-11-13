@@ -30,7 +30,7 @@ public class InvalidAssemblerConfigurationException
 
     /**
      * @param message The message.
-     * @param error The error
+     * @param error   The error
      */
     public InvalidAssemblerConfigurationException( final String message, final Throwable error )
     {

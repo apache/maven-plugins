@@ -83,21 +83,22 @@ public class AssemblyInterpolator
     }
 
     public Assembly interpolate( final Assembly assembly, final MavenProject project,
-                                 final AssemblerConfigurationSource configSource, FixedStringSearchInterpolator projectInterpolator )
+                                 final AssemblerConfigurationSource configSource,
+                                 FixedStringSearchInterpolator projectInterpolator )
         throws AssemblyInterpolationException
     {
-        @SuppressWarnings( "unchecked" )
-        final Set<String> blacklistFields =
+        @SuppressWarnings( "unchecked" ) final Set<String> blacklistFields =
             new HashSet<String>( FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES );
         blacklistFields.addAll( INTERPOLATION_BLACKLIST );
 
-        @SuppressWarnings( "unchecked" )
-        final Set<String> blacklistPkgs = FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_PACKAGE_PREFIXES;
+        @SuppressWarnings( "unchecked" ) final Set<String> blacklistPkgs =
+            FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_PACKAGE_PREFIXES;
 
         final FieldBasedObjectInterpolator objectInterpolator =
             new FieldBasedObjectInterpolator( blacklistFields, blacklistPkgs );
 
-        final FixedStringSearchInterpolator interpolator = buildInterpolator( project, projectInterpolator, configSource );
+        final FixedStringSearchInterpolator interpolator =
+            buildInterpolator( project, projectInterpolator, configSource );
 
         // TODO: Will this adequately detect cycles between prefixed property references and prefixed project
         // references??
@@ -110,18 +111,19 @@ public class AssemblyInterpolator
         }
         catch ( final InterpolationException e )
         {
-            throw new AssemblyInterpolationException( "Failed to interpolate assembly with ID: " + assembly.getId()
-                + ". Reason: " + e.getMessage(), e );
+            throw new AssemblyInterpolationException(
+                "Failed to interpolate assembly with ID: " + assembly.getId() + ". Reason: " + e.getMessage(), e );
         }
 
         if ( objectInterpolator.hasWarnings() && getLogger().isDebugEnabled() )
         {
             final StringBuilder sb = new StringBuilder();
 
-            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: " ).append( assembly.getId() ).append( ":\n" );
+            sb.append( "One or more minor errors occurred while interpolating the assembly with ID: " ).append(
+                assembly.getId() ).append( ":\n" );
 
-            @SuppressWarnings( "unchecked" )
-            final List<ObjectInterpolationWarning> warnings = objectInterpolator.getWarnings();
+            @SuppressWarnings( "unchecked" ) final List<ObjectInterpolationWarning> warnings =
+                objectInterpolator.getWarnings();
             for ( final ObjectInterpolationWarning warning : warnings )
             {
                 sb.append( '\n' ).append( warning );
@@ -135,12 +137,14 @@ public class AssemblyInterpolator
         return assembly;
     }
 
-    public static FixedStringSearchInterpolator buildInterpolator( final MavenProject project, @Nonnull FixedStringSearchInterpolator projectIp,
-                                                  final AssemblerConfigurationSource configSource )
+    public static FixedStringSearchInterpolator buildInterpolator( final MavenProject project,
+                                                                   @Nonnull FixedStringSearchInterpolator projectIp,
+                                                                   final AssemblerConfigurationSource configSource )
     {
-        return FixedStringSearchInterpolator
-            .create( configSource.getRepositoryInterpolator(), configSource.getCommandLinePropsInterpolator(), configSource.getEnvInterpolator(),  projectIp )
-            .withPostProcessor( new PathTranslatingPostProcessor( project.getBasedir() ) );
+        return FixedStringSearchInterpolator.create( configSource.getRepositoryInterpolator(),
+                                                     configSource.getCommandLinePropsInterpolator(),
+                                                     configSource.getEnvInterpolator(), projectIp ).withPostProcessor(
+            new PathTranslatingPostProcessor( project.getBasedir() ) );
     }
 
     @Override

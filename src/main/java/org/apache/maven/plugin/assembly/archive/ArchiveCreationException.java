@@ -30,8 +30,9 @@ public class ArchiveCreationException
 
     /**
      * Create in instance.
+     *
      * @param message The message to use.
-     * @param error The error.
+     * @param error   The error.
      */
     public ArchiveCreationException( final String message, final Throwable error )
     {

@@ -19,9 +19,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -41,6 +38,9 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @version $Id$
@@ -80,10 +80,9 @@ public class RepositoryAssemblyPhase
         for ( final Repository repository : repositoriesList )
         {
             final String outputDirectory =
-                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getFinalName(), configSource,
-                                                        AssemblyFormatUtils.moduleProjectInterpolator(
-                                                            configSource.getProject() ),
-                                                        AssemblyFormatUtils.artifactProjectInterpolator( null ) );
+                AssemblyFormatUtils.getOutputDirectory( repository.getOutputDirectory(), configSource.getFinalName(),
+                                                        configSource, AssemblyFormatUtils.moduleProjectInterpolator(
+                        configSource.getProject() ), AssemblyFormatUtils.artifactProjectInterpolator( null ) );
 
             final File repositoryDirectory = new File( tempRoot, outputDirectory );
 
@@ -95,7 +94,8 @@ public class RepositoryAssemblyPhase
             try
             {
                 getLogger().debug( "Assembling repository to: " + repositoryDirectory );
-                repositoryAssembler.buildRemoteRepository( repositoryDirectory, wrap( repository ), wrap( configSource ) );
+                repositoryAssembler.buildRemoteRepository( repositoryDirectory, wrap( repository ),
+                                                           wrap( configSource ) );
                 getLogger().debug( "Finished assembling repository to: " + repositoryDirectory );
             }
             catch ( final RepositoryAssemblyException e )

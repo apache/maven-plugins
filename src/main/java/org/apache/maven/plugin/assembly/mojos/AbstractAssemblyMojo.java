@@ -19,11 +19,6 @@ package org.apache.maven.plugin.assembly.mojos;
  * under the License.
  */
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
@@ -48,11 +43,15 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
 import org.apache.maven.shared.utils.cli.CommandLineUtils;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.fixed.PropertiesBasedValueSource;
-import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>

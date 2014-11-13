@@ -41,12 +41,11 @@ public interface DependencyResolver
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly, ModuleSet moduleSet,
                                                                     final AssemblerConfigurationSource configSource,
                                                                     List<DependencySet> dependencySets )
-        throws DependencyResolutionException
-    ;
+        throws DependencyResolutionException;
+
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly,
                                                                     final AssemblerConfigurationSource configSource,
                                                                     List<DependencySet> dependencySets )
-        throws DependencyResolutionException
-        ;
+        throws DependencyResolutionException;
 
 }

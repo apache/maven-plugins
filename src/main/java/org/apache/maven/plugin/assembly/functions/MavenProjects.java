@@ -30,7 +30,8 @@ import java.util.Set;
 
 public class MavenProjects
 {
-    public static void without(Iterable<MavenProject> source, String packagingType, MavenProjectConsumer consumer){
+    public static void without( Iterable<MavenProject> source, String packagingType, MavenProjectConsumer consumer )
+    {
         for ( MavenProject project : source )
         {
             if ( !packagingType.equals( project.getPackaging() ) )
@@ -40,7 +41,8 @@ public class MavenProjects
         }
     }
 
-    public static void select(Iterable<MavenProject> source, String packagingType, MavenProjectConsumer consumer){
+    public static void select( Iterable<MavenProject> source, String packagingType, MavenProjectConsumer consumer )
+    {
         for ( MavenProject project : source )
         {
             if ( packagingType.equals( project.getPackaging() ) )
@@ -51,23 +53,26 @@ public class MavenProjects
     }
 
     public static void select( Iterable<MavenProject> source, String packagingType, MavenProjectConsumer include,
-                               MavenProjectConsumer excluded ){
+                               MavenProjectConsumer excluded )
+    {
         for ( MavenProject project : source )
         {
             if ( packagingType.equals( project.getPackaging() ) )
             {
-                include.accept( project);
-            } else {
+                include.accept( project );
+            }
+            else
+            {
                 excluded.accept( project );
             }
         }
     }
 
-    public static @Nullable
+    public static
+    @Nullable
     Artifact findArtifactByClassifier( MavenProject mavenProject, String classifier )
     {
-        @SuppressWarnings( "unchecked" )
-        final List<Artifact> attachments = mavenProject.getAttachedArtifacts();
+        @SuppressWarnings( "unchecked" ) final List<Artifact> attachments = mavenProject.getAttachedArtifacts();
         if ( ( attachments != null ) && !attachments.isEmpty() )
         {
             for ( final Artifact attachment : attachments )
@@ -95,12 +100,13 @@ public class MavenProjects
         };
     }
 
-    public static MavenProjectConsumer addTo( final Set<MavenProject> set ){
+    public static MavenProjectConsumer addTo( final Set<MavenProject> set )
+    {
         return new MavenProjectConsumer()
         {
             public void accept( MavenProject project )
             {
-                set.add( project);
+                set.add( project );
             }
         };
     }

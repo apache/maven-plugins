@@ -18,6 +18,7 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 /**
  * Indicates the order of a phase
  * Elements without order will come before the ordered elements

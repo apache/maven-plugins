@@ -74,7 +74,8 @@ public class DependencySetAssemblyPhase
      * @param projectBuilder The Maven Project Builder.
      * @param logger         The Logger.
      */
-    public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver, final Logger logger )
+    public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver,
+                                       final Logger logger )
     {
         this.projectBuilder = projectBuilder;
         this.dependencyResolver = dependencyResolver;
@@ -90,13 +91,14 @@ public class DependencySetAssemblyPhase
         DependencyResolutionException
     {
 
-        Map<DependencySet, Set<Artifact>>
-            resolved = dependencyResolver.resolveDependencySets( assembly, configSource, assembly.getDependencySets() );
+        Map<DependencySet, Set<Artifact>> resolved =
+            dependencyResolver.resolveDependencySets( assembly, configSource, assembly.getDependencySets() );
         for ( Map.Entry<DependencySet, Set<Artifact>> dependencySetSetEntry : resolved.entrySet() )
         {
             final AddDependencySetsTask task =
-                new AddDependencySetsTask( Collections.singletonList(dependencySetSetEntry.getKey()), dependencySetSetEntry.getValue(), configSource.getProject(),
-                                           projectBuilder, getLogger() );
+                new AddDependencySetsTask( Collections.singletonList( dependencySetSetEntry.getKey() ),
+                                           dependencySetSetEntry.getValue(), configSource.getProject(), projectBuilder,
+                                           getLogger() );
 
             task.execute( archiver, configSource );
         }

@@ -61,7 +61,8 @@ class WindowsLineFeedInputStream
         return target;
     }
 
-    @Override public int read()
+    @Override
+    public int read()
         throws IOException
     {
         if ( eofSeen )
@@ -116,14 +117,16 @@ class WindowsLineFeedInputStream
         }
     }
 
-    @Override public void close()
+    @Override
+    public void close()
         throws IOException
     {
         super.close();
         target.close();
     }
 
-    @Override public synchronized void mark( int readlimit )
+    @Override
+    public synchronized void mark( int readlimit )
     {
         throw new UnsupportedOperationException( "Mark not implemented yet" );
     }
