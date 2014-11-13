@@ -114,9 +114,7 @@ public class MockAndControlForAddDependencySetsTask
     public void expectModeChange( final int originalDirMode, final int originalFileMode, final int dirMode,
                                   final int fileMode, final int numberOfChanges )
     {
-        expect( archiver.getOverrideDirectoryMode()).andReturn( originalDirMode );
-        expect(archiver.getOverrideFileMode()).andReturn( originalFileMode );
-
+        expectGetMode( originalDirMode, originalFileMode );
         // one of the changes will occur below, when we restore the original mode.
         if ( numberOfChanges > 1 )
         {
@@ -129,6 +127,17 @@ public class MockAndControlForAddDependencySetsTask
 
         archiver.setDirectoryMode( originalDirMode );
         archiver.setFileMode( originalFileMode );
+    }
+
+    public void expectGetMode( final int originalDirMode, final int originalFileMode )
+    {
+        archiver.setFileMode( anyInt() );
+        EasyMock.expectLastCall().anyTimes();
+        expect( archiver.getOverrideDirectoryMode()).andReturn( originalDirMode );
+        expect( archiver.getOverrideFileMode() ).andReturn( originalFileMode );
+        archiver.setDirectoryMode( anyInt() );
+        EasyMock.expectLastCall().anyTimes();
+
     }
 
     public void expectAddFile( final File file, final String outputLocation )

@@ -88,6 +88,15 @@ public class MockAndControlForAddArtifactTask
         expect(archiver.getDestFile()).andReturn( destFile ).atLeastOnce();
     }
 
+    public void expectGetMode( final int originalDirMode, final int originalFileMode )
+    {
+        expect( archiver.getOverrideDirectoryMode()).andReturn( originalDirMode );
+        expect(archiver.getOverrideFileMode()).andReturn( originalFileMode );
+        archiver.setFileMode( anyInt() );
+        EasyMock.expectLastCall().anyTimes();
+    }
+
+
     public void expectAddArchivedFileSet()
     {
         try
@@ -150,6 +159,7 @@ public class MockAndControlForAddArtifactTask
             Assert.fail( "Should never happen." );
         }
     }
+
 
     public void expectAddFile( final File file, final String outputLocation )
     {
