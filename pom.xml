@@ -68,7 +68,6 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -97,7 +96,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -140,36 +138,6 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-          <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-          <executions>
-            <execution>
-              <id>mojo-descriptor</id>
-              <phase>process-classes</phase>
-              <goals>
-                <goal>descriptor</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>help-goal</id>
-              <goals>
-                <goal>helpmojo</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 
   <profiles>
     <profile>
