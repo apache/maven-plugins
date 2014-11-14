@@ -950,7 +950,7 @@ public class AssemblyProxyArchiver
             inPublicApi.set( Boolean.TRUE );
             try
             {
-                delegate.addResource( resource, destFileName, permissions );
+                delegate.addResource( resource, rootPrefix + destFileName, permissions );
             }
             finally
             {
