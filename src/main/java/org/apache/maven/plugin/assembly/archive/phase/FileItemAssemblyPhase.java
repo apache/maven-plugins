@@ -94,15 +94,7 @@ public class FileItemAssemblyPhase
                 destName = sourceName;
             }
 
-            final String outputDirectory1;
-            if ( !StringUtils.isEmpty( assembly.getBaseDirectory() ) )
-            {
-                outputDirectory1 = assembly.getBaseDirectory() + File.separator + fileItem.getOutputDirectory();
-            }
-            else
-            {
-                outputDirectory1 = fileItem.getOutputDirectory();
-            }
+            final String outputDirectory1 = fileItem.getOutputDirectory();
 
             final String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( outputDirectory1, configSource.getFinalName(), configSource,
