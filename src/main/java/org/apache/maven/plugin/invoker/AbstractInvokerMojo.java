@@ -1014,11 +1014,8 @@ public abstract class AbstractInvokerMojo
          * NOTE: Make sure the destination directory is always there (even if empty) to support POM-less ITs.
          */
         destDir.mkdirs();
-        for ( String includedDir : scanner.getIncludedDirectories() )
-        {
-            File clonedDir = new File( destDir, includedDir );
-            clonedDir.mkdirs();
-        }
+        // Create all the directories, including any symlinks present in source
+        FileUtils.mkDirs( sourceDir, scanner.getIncludedDirectories(), destDir );
 
         for ( String includedFile : scanner.getIncludedFiles() )
         {
