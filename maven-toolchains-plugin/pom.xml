@@ -34,6 +34,10 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Toolchains Plugin</name>
+  <description>
+    The Toolchains Plugins allows to share configuration across plugins. For example to make sure the plugins like
+    compiler, surefire, javadoc, webstart etc. all use the same JDK for execution.
+  </description>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
