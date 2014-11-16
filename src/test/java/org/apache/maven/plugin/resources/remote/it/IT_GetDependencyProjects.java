@@ -51,15 +51,25 @@ public class IT_GetDependencyProjects
 
         verifier.deleteArtifacts( "org.apache.maven.plugin.rresource.it.gdp" );
 
-        verifier.executeGoal( "generate-resources" );
-        verifier.verifyErrorFreeLog();
-        verifier.resetStreams();
+        try
+        {
+            verifier.executeGoal( "generate-resources" );
+            verifier.resetStreams();
+        }
+        catch ( VerificationException e)
+        {
+            // We will get an exception from harness in case
+            // of execution failure (return code non zero).
+            // This is the case if we have missing artifacts
+            // as in this test case.
+            File output = new File( verifier.getBasedir(), "log.txt" );
+            String content = FileUtils.fileRead( output );
+            
+            assertTrue(content.contains( "mvn install:install-file -DgroupId=org.apache.maven.plugin.rresource.it.gdp -DartifactId=release -Dversion=1.0 -Dpackaging=jar" ));
+            assertTrue (content.contains( "mvn install:install-file -DgroupId=org.apache.maven.plugin.rresource.it.gdp -DartifactId=snapshot -Dversion=1.0-SNAPSHOT -Dpackaging=jar" ));
+        }
 
-        File output = new File( dir, "project/target/maven-shared-archive-resources/DEPENDENCIES" );
-        String content = FileUtils.fileRead( output );
-
-        assertTrue(content.contains("Dependency Id: org.apache.maven.plugin.rresource.it.gdp:release:1.0"));
-        assertTrue(content.contains("Dependency Id: org.apache.maven.plugin.rresource.it.gdp:snapshot:1.0-SNAPSHOT"));
+        
     }
 
 }

@@ -485,7 +485,7 @@ public class RemoteResourcesMojoTest
     {
         final ProcessRemoteResourcesMojo mojo = lookupProcessMojo();
 
-        MavenSession session = new MavenSession( container,
+        MavenSession session = new MavenSession( getContainer(),
                                     null, //Settings settings,
                                     null, //ArtifactRepository localRepository,
                                     null, //EventDispatcher eventDispatcher,
