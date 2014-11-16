@@ -29,10 +29,9 @@ import java.util.Properties;
 
 /**
  * @deprecated use classes in the component maven-filtering
- * TODO remove the class ?
+ *             TODO remove the class ?
  * @author <a href="mailto:kenney@neonics.com">Kenney Westerhof</a>
  * @author William Ferguson
- *
  */
 public final class PropertyUtils
 {
@@ -85,10 +84,11 @@ public final class PropertyUtils
         // as can be verified by replacing the implementation of #loadPropertyFile(File, boolean, boolean)
         // with the commented variant I have provided that reuses this method.
 
-        for (Object o : fileProps.keySet()) {
+        for ( Object o : fileProps.keySet() )
+        {
             final String k = (String) o;
-            final String propValue = getPropertyValue(k, combinedProps);
-            fileProps.setProperty(k, propValue);
+            final String propValue = getPropertyValue( k, combinedProps );
+            fileProps.setProperty( k, propValue );
         }
 
         return fileProps;
@@ -137,7 +137,6 @@ public final class PropertyUtils
     /**
      * Retrieves a property value, replacing values like ${token}
      * using the Properties to look them up.
-     *
      * It will leave unresolved properties alone, trying for System
      * properties, and implements reparsing (in the case that
      * the value of a property contains a key), and will
