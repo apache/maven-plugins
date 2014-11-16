@@ -28,7 +28,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>25</version>
+    <version>26</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -212,7 +212,7 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
+            <excludes combine.children="append">
               <!--
                 These files cannot contain a license header as that would break
                 the tests.
