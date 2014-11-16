@@ -163,13 +163,6 @@ under the License.
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- TODO: Should be removed only Maven 2.0 -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9-stable-1</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
