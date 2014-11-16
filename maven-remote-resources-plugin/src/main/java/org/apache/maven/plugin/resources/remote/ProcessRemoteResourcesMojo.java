@@ -108,15 +108,13 @@ import java.util.TreeMap;
 
 /**
  * <p>
- * Pull down resourceBundles containing remote resources and process the
- * resources contained inside. When that is done the resources are injected
- * into the current (in-memory) Maven project, making them available to the
- * process-resources phase.
+ * Pull down resourceBundles containing remote resources and process the resources contained inside. When that is done
+ * the resources are injected into the current (in-memory) Maven project, making them available to the process-resources
+ * phase.
  * </p>
  * <p>
- * Resources that end in ".vm" are treated as velocity templates.  For those, the ".vm" is
- * stripped off for the final artifact name and it's  fed through velocity to have properties
- * expanded, conditions processed, etc...
+ * Resources that end in ".vm" are treated as velocity templates. For those, the ".vm" is stripped off for the final
+ * artifact name and it's fed through velocity to have properties expanded, conditions processed, etc...
  * </p>
  * <p/>
  * Resources that don't end in ".vm" are copied "as is".
@@ -128,21 +126,23 @@ import java.util.TreeMap;
 // @requiresDependencyResolution test
 @Mojo( name = "process", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true )
 public class ProcessRemoteResourcesMojo
-    extends AbstractMojo implements LogChute
+    extends AbstractMojo
+    implements LogChute
 {
 
     private static final String TEMPLATE_SUFFIX = ".vm";
 
     /**
      * <p>
-     * In cases where a local resource overrides one from a remote resource bundle, that resource
-     * should be filtered if the resource set specifies it. In those cases, this parameter defines
-     * the list of delimiters for filterable expressions. These delimiters are specified in the
-     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * In cases where a local resource overrides one from a remote resource bundle, that resource should be filtered if
+     * the resource set specifies it. In those cases, this parameter defines the list of delimiters for filterable
+     * expressions. These delimiters are specified in the form 'beginToken*endToken'. If no '*' is given, the delimiter
+     * is assumed to be the same for start and end.
      * </p>
      * <p>
      * So, the default filtering delimiters might be specified as:
      * </p>
+     * 
      * <pre>
      * &lt;delimiters&gt;
      *   &lt;delimiter&gt;${*}&lt/delimiter&gt;
@@ -215,11 +215,11 @@ public class ProcessRemoteResourcesMojo
     private File appendedResourcesDirectory;
 
     /**
-     * Supplemental model data.  Useful when processing
+     * Supplemental model data. Useful when processing
      * artifacts with incomplete POM metadata.
      * <p/>
-     * By default, this Mojo looks for supplemental model
-     * data in the file "${appendedResourcesDirectory}/supplemental-models.xml".
+     * By default, this Mojo looks for supplemental model data in the file
+     * "${appendedResourcesDirectory}/supplemental-models.xml".
      *
      * @since 1.0-alpha-5
      */
@@ -228,8 +228,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * List of artifacts that are added to the search path when looking
-     * for supplementalModels, expressed with
-     * <code>groupId:artifactId:version[:type[:classifier]]</code> format.
+     * for supplementalModels, expressed with <code>groupId:artifactId:version[:type[:classifier]]</code> format.
      *
      * @since 1.1
      */
@@ -243,7 +242,7 @@ public class ProcessRemoteResourcesMojo
 
     /**
      * Merges supplemental data model with artifact
-     * metadata.  Useful when processing artifacts with
+     * metadata. Useful when processing artifacts with
      * incomplete POM metadata.
      */
     @Component
@@ -301,12 +300,13 @@ public class ProcessRemoteResourcesMojo
      * projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
      * locator - the ResourceManager that can be used to retrieve additional resources<br/>
      * <p/>
-     * See <a href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html">
-     * the javadoc for MavenProject</a> for information about the properties on the MavenProject.
+     * See <a
+     * href="http://maven.apache.org/ref/current/maven-project/apidocs/org/apache/maven/project/MavenProject.html"> the
+     * javadoc for MavenProject</a> for information about the properties on the MavenProject.
      */
     @Parameter
     private Map<String, Object> properties = new HashMap<String, Object>();
-    
+
     /**
      * Whether to include properties defined in the project when filtering resources.
      *
@@ -356,7 +356,6 @@ public class ProcessRemoteResourcesMojo
     @Component
     private ResourceManager locator;
 
-
     /**
      * Scope to include. An Empty string indicates all scopes (default is "runtime").
      *
@@ -372,18 +371,17 @@ public class ProcessRemoteResourcesMojo
      */
     @Parameter( property = "excludeScope", defaultValue = "" )
     protected String excludeScope;
-    
-    
+
     /**
      * When resolving project dependencies, specify the scopes to include.
      * The default is the same as "includeScope" if there are no exclude scopes set.
      * Otherwise, it defaults to "test" to grab all the dependencies so the
      * exclude filters can filter out what is not needed.
-     * @since 1.5 
+     * 
+     * @since 1.5
      */
     @Parameter
     private String[] resolveScopes;
-    
 
     /**
      * Comma separated list of Artifact names too exclude.
@@ -430,9 +428,8 @@ public class ProcessRemoteResourcesMojo
     @Component( hint = "default" )
     protected ProjectDependenciesResolver dependencyResolver;
 
-    
     private VelocityEngine velocity;
-    
+
     @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException
@@ -471,11 +468,11 @@ public class ProcessRemoteResourcesMojo
             {
                 try
                 {
-                    supplementalModels = new String[]{ sups.toURI().toURL().toString() };
+                    supplementalModels = new String[] { sups.toURI().toURL().toString() };
                 }
                 catch ( MalformedURLException e )
                 {
-                    //ignore
+                    // ignore
                     getLog().debug( "URL issue with supplemental-models.xml: " + e.toString() );
                 }
             }
@@ -608,7 +605,6 @@ public class ProcessRemoteResourcesMojo
                 }
             }
 
-
         }
     }
 
@@ -672,9 +668,9 @@ public class ProcessRemoteResourcesMojo
                 }
                 catch ( InvalidProjectModelException e )
                 {
-                    getLog().warn( "Invalid project model for artifact [" + artifact.getArtifactId() + ":" +
-                                       artifact.getGroupId() + ":" + artifact.getVersion() + "]. " +
-                                       "It will be ignored by the remote resources Mojo." );
+                    getLog().warn( "Invalid project model for artifact [" + artifact.getArtifactId() + ":"
+                                       + artifact.getGroupId() + ":" + artifact.getVersion() + "]. "
+                                       + "It will be ignored by the remote resources Mojo." );
                     continue;
                 }
 
@@ -708,32 +704,32 @@ public class ProcessRemoteResourcesMojo
     private Set<Artifact> resolveProjectArtifacts()
         throws MojoExecutionException
     {
+        // CHECKSTYLE_OFF: LineLength
         try
         {
             if ( runOnlyAtExecutionRoot )
             {
                 List<MavenProject> projects = mavenSession.getSortedProjects();
-                return dependencyResolver.resolve( projects, Arrays.asList( resolveScopes ),
-                                                   mavenSession );
+                return dependencyResolver.resolve( projects, Arrays.asList( resolveScopes ), mavenSession );
             }
             else
             {
-                return dependencyResolver.resolve( project, Arrays.asList( resolveScopes ),
-                                                   mavenSession );
+                return dependencyResolver.resolve( project, Arrays.asList( resolveScopes ), mavenSession );
             }
         }
         catch ( ArtifactResolutionException e )
         {
             throw new MojoExecutionException(
-                "Failed to resolve dependencies for one or more projects in the reactor. Reason: " + e.getMessage(),
-                e );
+                                              "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
+                                                  + e.getMessage(), e );
         }
         catch ( ArtifactNotFoundException e )
         {
             throw new MojoExecutionException(
-                "Failed to resolve dependencies for one or more projects in the reactor. Reason: " + e.getMessage(),
-                e );
+                                              "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
+                                                  + e.getMessage(), e );
         }
+        // CHECKSTYLE_ON: LineLength
     }
 
     @SuppressWarnings( "unchecked" )
@@ -764,13 +760,13 @@ public class ProcessRemoteResourcesMojo
                                 artifact.setResolvedVersion( Artifact.LATEST_VERSION );
                             }
                             artifacts.add( artifact );
-                        }  
+                        }
                     }
                 }
                 catch ( InvalidDependencyVersionException e )
                 {
-                    throw new MojoExecutionException(
-                        "Failed to create dependency artifacts for: " + p.getId() + ". Reason: " + e.getMessage(), e );
+                    throw new MojoExecutionException( "Failed to create dependency artifacts for: " + p.getId()
+                        + ". Reason: " + e.getMessage(), e );
                 }
             }
         }
@@ -825,7 +821,7 @@ public class ProcessRemoteResourcesMojo
                 continue;
             }
 
-            //TODO - really should use the resource includes/excludes and name mapping
+            // TODO - really should use the resource includes/excludes and name mapping
             File source = new File( resourceDirectory, relFileName );
             File templateSource = new File( resourceDirectory, relFileName + TEMPLATE_SUFFIX );
 
@@ -893,7 +889,7 @@ public class ProcessRemoteResourcesMojo
                     FileUtils.copyFile( source, file );
                 }
 
-                //exclude the original (so eclipse doesn't complain about duplicate resources)
+                // exclude the original (so eclipse doesn't complain about duplicate resources)
                 resource.addExclude( relFileName );
 
                 return true;
@@ -977,12 +973,12 @@ public class ProcessRemoteResourcesMojo
                     position = bundleCount + "th";
                 }
 
-                throw new MojoExecutionException( "The " + position +
-                                                      " resource bundle configured must specify a groupId, artifactId, " +
-                                                      " version and, optionally, type and classifier for a remote resource bundle. " +
-                                                      "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, " +
-                                                      "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or " +
-                                                      "<resourceBundle>groupId:artifactId:version:type:classifier</resourceBundle>" );
+                throw new MojoExecutionException( "The " + position
+                    + " resource bundle configured must specify a groupId, artifactId, "
+                    + " version and, optionally, type and classifier for a remote resource bundle. "
+                    + "Must be of the form <resourceBundle>groupId:artifactId:version</resourceBundle>, "
+                    + "<resourceBundle>groupId:artifactId:version:type</resourceBundle> or "
+                    + "<resourceBundle>groupId:artifactId:version:type:classifier</resourceBundle>" );
             }
 
             bundleCount++;
@@ -1010,7 +1006,7 @@ public class ProcessRemoteResourcesMojo
         context.put( "projects", projects );
         context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
         context.put( "presentYear", year );
-        context.put( "locator", locator);
+        context.put( "locator", locator );
 
         if ( inceptionYear.equals( year ) )
         {
@@ -1035,20 +1031,20 @@ public class ProcessRemoteResourcesMojo
                 String[] s = artifactDescriptor.split( ":" );
 
                 File artifactFile = null;
-                //check if the artifact is part of the reactor
+                // check if the artifact is part of the reactor
                 if ( mavenSession != null )
                 {
                     List<MavenProject> list = mavenSession.getSortedProjects();
                     for ( MavenProject p : list )
                     {
-                        if ( s[0].equals( p.getGroupId() ) && s[1].equals( p.getArtifactId() ) &&
-                            s[2].equals( p.getVersion() ) )
+                        if ( s[0].equals( p.getGroupId() ) && s[1].equals( p.getArtifactId() )
+                            && s[2].equals( p.getVersion() ) )
                         {
-                            if ( s.length >= 4 && "test-jar".equals( s[3] ) ) 
+                            if ( s.length >= 4 && "test-jar".equals( s[3] ) )
                             {
                                 artifactFile = new File( p.getBuild().getTestOutputDirectory() );
-                            } 
-                            else 
+                            }
+                            else
                             {
                                 artifactFile = new File( p.getBuild().getOutputDirectory() );
                             }
@@ -1105,9 +1101,8 @@ public class ProcessRemoteResourcesMojo
 
         try
         {
-
-            for ( Enumeration<URL> e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST );
-                  e.hasMoreElements(); )
+            // CHECKSTYLE_OFF: LineLength
+            for ( Enumeration<URL> e = classLoader.getResources( BundleRemoteResourcesMojo.RESOURCES_MANIFEST ); e.hasMoreElements(); )
             {
                 URL url = e.nextElement();
 
@@ -1147,8 +1142,9 @@ public class ProcessRemoteResourcesMojo
                                 }
                                 else
                                 {
-                                    writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ),
-                                                                                      bundle.getSourceEncoding() ) );
+                                    writer =
+                                        new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ),
+                                                                                 bundle.getSourceEncoding() ) );
 
                                 }
 
@@ -1156,13 +1152,12 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     if ( bundle.getSourceEncoding() == null )
                                     {
-                                        velocity.mergeTemplate( bundleResource, "ISO-8859-1",
-                                                                            context, writer );
+                                        velocity.mergeTemplate( bundleResource, "ISO-8859-1", context, writer );
                                     }
                                     else
                                     {
-                                        velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(),
-                                                                            context, writer );
+                                        velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(), context,
+                                                                writer );
 
                                     }
                                 }
@@ -1208,8 +1203,9 @@ public class ProcessRemoteResourcesMojo
                                 }
                                 else
                                 {
-                                    writer = new PrintWriter( new OutputStreamWriter( new FileOutputStream( f, true ),
-                                                                                      bundle.getSourceEncoding() ) );
+                                    writer =
+                                        new PrintWriter( new OutputStreamWriter( new FileOutputStream( f, true ),
+                                                                                 bundle.getSourceEncoding() ) );
                                 }
 
                                 try
@@ -1231,6 +1227,7 @@ public class ProcessRemoteResourcesMojo
                 {
                     reader.close();
                 }
+                // CHECKSTYLE_ON: LineLength
             }
         }
         catch ( IOException e )
@@ -1261,14 +1258,14 @@ public class ProcessRemoteResourcesMojo
 
             if ( groupId == null || groupId.trim().equals( "" ) )
             {
-                throw new MojoExecutionException(
-                    "Supplemental project XML " + "requires that a <groupId> element be present." );
+                throw new MojoExecutionException( "Supplemental project XML "
+                    + "requires that a <groupId> element be present." );
             }
 
             if ( artifactId == null || artifactId.trim().equals( "" ) )
             {
-                throw new MojoExecutionException(
-                    "Supplemental project XML " + "requires that a <artifactId> element be present." );
+                throw new MojoExecutionException( "Supplemental project XML "
+                    + "requires that a <artifactId> element be present." );
             }
         }
         catch ( IOException e )
@@ -1304,29 +1301,34 @@ public class ProcessRemoteResourcesMojo
         }
 
         List<Supplement> supplements = new ArrayList<Supplement>();
-        for (String set : models) {
-            getLog().debug("Preparing ruleset: " + set);
-            try {
-                File f = locator.getResourceAsFile(set, getLocationTemp(set));
+        for ( String set : models )
+        {
+            getLog().debug( "Preparing ruleset: " + set );
+            try
+            {
+                File f = locator.getResourceAsFile( set, getLocationTemp( set ) );
 
-                if (null == f || !f.exists()) {
-                    throw new MojoExecutionException("Cold not resolve " + set);
+                if ( null == f || !f.exists() )
+                {
+                    throw new MojoExecutionException( "Cold not resolve " + set );
                 }
-                if (!f.canRead()) {
-                    throw new MojoExecutionException("Supplemental data models won't be loaded. " + "File " +
-                            f.getAbsolutePath() +
-                            " cannot be read, check permissions on the file.");
+                if ( !f.canRead() )
+                {
+                    throw new MojoExecutionException( "Supplemental data models won't be loaded. " + "File "
+                        + f.getAbsolutePath() + " cannot be read, check permissions on the file." );
                 }
 
-                getLog().debug("Loading supplemental models from " + f.getAbsolutePath());
+                getLog().debug( "Loading supplemental models from " + f.getAbsolutePath() );
 
                 SupplementalDataModelXpp3Reader reader = new SupplementalDataModelXpp3Reader();
-                SupplementalDataModel supplementalModel = reader.read(new FileReader(f));
-                supplements.addAll(supplementalModel.getSupplement());
-            } catch (Exception e) {
+                SupplementalDataModel supplementalModel = reader.read( new FileReader( f ) );
+                supplements.addAll( supplementalModel.getSupplement() );
+            }
+            catch ( Exception e )
+            {
                 String msg = "Error loading supplemental data models: " + e.getMessage();
-                getLog().error(msg, e);
-                throw new MojoExecutionException(msg, e);
+                getLog().error( msg, e );
+                throw new MojoExecutionException( msg, e );
             }
         }
 
@@ -1442,7 +1444,7 @@ public class ProcessRemoteResourcesMojo
             default:
                 getLog().debug( message );
                 break;
-        }       
+        }
     }
 
     public void log( int level, String message, Throwable t )
@@ -1465,7 +1467,7 @@ public class ProcessRemoteResourcesMojo
             default:
                 getLog().debug( message, t );
                 break;
-        }        
+        }
     }
 
     public boolean isLevelEnabled( int level )
