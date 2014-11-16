@@ -141,12 +141,14 @@ public class SiteStageDeployMojo
         MavenProject current = project;
         MavenProject parent;
 
+        // CHECKSTYLE_OFF: InnerAssignment
         while (   // MSITE-585, MNG-1943
                 ( parent = siteTool.getParentProject( current, reactorProjects, localRepository ) ) != null
                 && stagingSiteURL.equals( getStagingSiteURL( parent ) ) )
         {
             current = parent;
         }
+        // CHECKSTYLE_ON: InnerAssignment
 
         return current;
     }

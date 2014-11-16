@@ -204,7 +204,8 @@ public class SiteMojo
      * @return the sublist of documents that are not Doxia parsed
      */
     private List<DocumentRenderer> renderDoxiaDocuments( Map<String, DocumentRenderer> documents,
-                                                         SiteRenderingContext context, File outputDir, boolean generated )
+                                                         SiteRenderingContext context, File outputDir,
+                                                         boolean generated )
         throws RendererException, IOException
     {
         Map<String, DocumentRenderer> doxiaDocuments = new TreeMap<String, DocumentRenderer>();

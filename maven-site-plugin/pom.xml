@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>25</version>
+    <version>26</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -197,7 +197,6 @@ under the License.
     <wagonVersion>1.0</wagonVersion>
     <plexusVersion>1.5.4</plexusVersion>
     <scmVersion>1.4</scmVersion>
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
     <!-- for ITs -->
     <javadocPluginVersion>2.9.1</javadocPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
@@ -265,7 +264,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Doxia -->
@@ -473,11 +471,6 @@ under the License.
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <releaseProfiles>apache-release,rat,run-its</releaseProfiles><!-- TODO add to parent pom -->
@@ -497,25 +490,6 @@ under the License.
               <goal>generate-metadata</goal>
               <!--goal>generate-test-metadata</goal-->
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-descriptor</id>
-            <phase>process-classes</phase>
-          </execution>
-          <execution>
-            <id>generated-helpmojo</id>
-            <goals>
-              <goal>helpmojo</goal>
-            </goals>
-            <configuration>
-              <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -568,15 +542,10 @@ under the License.
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
-                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                <showVersion>true</showVersion>
-                <postBuildHookScript>verify</postBuildHookScript>
-                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                 <goals>
                   <goal>clean</goal>
                   <goal>${project.groupId}:${project.artifactId}:${project.version}:site</goal>
                 </goals>
-                <settingsFile>src/it/settings.xml</settingsFile>
               </configuration>
             </plugin>
           </plugins>
@@ -638,34 +607,5 @@ under the License.
         </pluginManagement>
       </build>
     </profile>
-    <profile>
-      <id>maven-2</id>
-      <activation>
-        <file>
-          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
-          <missing>${basedir}</missing>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <configuration>
-              <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
-              <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-            </configuration>
-            <executions>
-              <execution>
-                <id>mojo-descriptor</id>
-                <goals>
-                  <goal>descriptor</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>    
   </profiles>
 </project>
