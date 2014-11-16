@@ -48,8 +48,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
- * Copy resources for the main source code to the main output directory.
- * Always uses the project.build.resources element to specify the resources to copy.
+ * Copy resources for the main source code to the main output directory. Always uses the project.build.resources element
+ * to specify the resources to copy.
  *
  * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
@@ -87,9 +87,8 @@ public class ResourcesMojo
     protected MavenProject project;
 
     /**
-     * The list of additional filter properties files to be used along with System and project
-     * properties, which would be used for the filtering.
-     * <br/>
+     * The list of additional filter properties files to be used along with System and project properties, which would
+     * be used for the filtering. <br/>
      * See also: {@link ResourcesMojo#filters}.
      *
      * @since 2.4
@@ -98,24 +97,21 @@ public class ResourcesMojo
     protected List<String> buildFilters;
 
     /**
-     * The list of extra filter properties files to be used along with System properties,
-     * project properties, and filter properties files specified in the POM build/filters section,
-     * which should be used for the filtering during the current mojo execution.
-     * <br/>
-     * Normally, these will be configured from a plugin's execution section, to provide a different
-     * set of filters for a particular execution. For instance, starting in Maven 2.2.0, you have the
-     * option of configuring executions with the id's <code>default-resources</code> and
-     * <code>default-testResources</code> to supply different configurations for the two
-     * different types of resources. By supplying <code>extraFilters</code> configurations, you
-     * can separate which filters are used for which type of resource.
+     * The list of extra filter properties files to be used along with System properties, project properties, and filter
+     * properties files specified in the POM build/filters section, which should be used for the filtering during the
+     * current mojo execution. <br/>
+     * Normally, these will be configured from a plugin's execution section, to provide a different set of filters for a
+     * particular execution. For instance, starting in Maven 2.2.0, you have the option of configuring executions with
+     * the id's <code>default-resources</code> and <code>default-testResources</code> to supply different configurations
+     * for the two different types of resources. By supplying <code>extraFilters</code> configurations, you can separate
+     * which filters are used for which type of resource.
      */
     @Parameter
     protected List<String> filters;
 
     /**
-     * If false, don't use the filters specified in the build/filters section of the POM when
-     * processing resources in this mojo execution.
-     * <br/>
+     * If false, don't use the filters specified in the build/filters section of the POM when processing resources in
+     * this mojo execution. <br/>
      * See also: {@link ResourcesMojo#buildFilters} and {@link ResourcesMojo#filters}
      *
      * @since 2.4
@@ -136,8 +132,7 @@ public class ResourcesMojo
     protected MavenSession session;
 
     /**
-     * Expression preceded with the String won't be interpolated
-     * \${foo} will be replaced with ${foo}
+     * Expression preceded with the String won't be interpolated \${foo} will be replaced with ${foo}
      *
      * @since 2.3
      */
@@ -178,11 +173,13 @@ public class ResourcesMojo
 
     /**
      * <p>
-     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the
-     * form 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
-     * </p><p>
+     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the form
+     * 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p>
+     * <p>
      * So, the default filtering delimiters might be specified as:
      * </p>
+     * 
      * <pre>
      * &lt;delimiters&gt;
      *   &lt;delimiter&gt;${*}&lt;/delimiter&gt;
@@ -206,8 +203,9 @@ public class ResourcesMojo
 
     /**
      * <p>
-     * List of plexus components hint which implements {@link MavenResourcesFiltering#filterResources(MavenResourcesExecution)}.
-     * They will be executed after the resources copying/filtering.
+     * List of plexus components hint which implements
+     * {@link MavenResourcesFiltering#filterResources(MavenResourcesExecution)}. They will be executed after the
+     * resources copying/filtering.
      * </p>
      *
      * @since 2.4
@@ -232,6 +230,14 @@ public class ResourcesMojo
      */
     @Parameter( property = "maven.resources.supportMultiLineFiltering", defaultValue = "false" )
     private boolean supportMultiLineFiltering;
+
+    /**
+     * Support filtering of filenames folders etc.
+     * 
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean fileNameFiltering;
 
     public void contextualize( Context context )
         throws ContextException
@@ -267,6 +273,7 @@ public class ResourcesMojo
             mavenResourcesExecution.setOverwrite( overwrite );
             mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
             mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
+            mavenResourcesExecution.setFilterFilenames( fileNameFiltering );
 
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
             if ( delimiters != null && !delimiters.isEmpty() )
@@ -320,9 +327,10 @@ public class ResourcesMojo
             {
                 try
                 {
-                    mavenFilteringComponents.add(
-                        (MavenResourcesFiltering) plexusContainer.lookup( MavenResourcesFiltering.class.getName(),
-                                                                          hint ) );
+                    // CHECKSTYLE_OFF: LineLength
+                    mavenFilteringComponents.add( (MavenResourcesFiltering) plexusContainer.lookup( MavenResourcesFiltering.class.getName(),
+                                                                                                    hint ) );
+                    // CHECKSTYLE_ON: LineLength
                 }
                 catch ( ComponentLookupException e )
                 {
