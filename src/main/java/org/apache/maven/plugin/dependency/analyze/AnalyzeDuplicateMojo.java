@@ -117,7 +117,7 @@ public class AnalyzeDuplicateMojo
                 {
                     String dup = it.next();
 
-                    sb.append("\to ").append(dup);
+                    sb.append( "\to " ).append( dup );
                     if ( it.hasNext() )
                     {
                         sb.append( "\n" );
@@ -131,13 +131,12 @@ public class AnalyzeDuplicateMojo
                 {
                     sb.append( "\n" );
                 }
-                sb.append(
-                    "List of duplicate dependencies defined in <dependencyManagement/> in " + "your pom.xml:\n" );
+                sb.append( "List of duplicate dependencies defined in <dependencyManagement/> in your pom.xml:\n" );
                 for ( Iterator<String> it = duplicateDependenciesManagement.iterator(); it.hasNext(); )
                 {
                     String dup = it.next();
 
-                    sb.append("\to ").append(dup);
+                    sb.append( "\to " ).append( dup );
                     if ( it.hasNext() )
                     {
                         sb.append( "\n" );

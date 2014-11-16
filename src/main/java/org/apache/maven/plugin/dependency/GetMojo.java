@@ -48,8 +48,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Resolves a single artifact, eventually transitively, from the specified remote repositories. Caveat: will always check the
- * central repository defined in the super pom. You could use a mirror entry in your settings.xml
+ * Resolves a single artifact, eventually transitively, from the specified remote repositories.
+ * Caveat: will always check thecentral repository defined in the super pom. You could use a mirror entry in your
+ * <code>settings.xml</code>
  */
 @Mojo( name = "get", requiresProject = false, threadSafe = true )
 public class GetMojo
@@ -320,7 +321,7 @@ public class GetMojo
         String url = repo;
 
         // if it's an extended repo URL of the form id::layout::url
-        if (repo.contains("::"))
+        if ( repo.contains( "::" ) )
         {
             Matcher matcher = ALT_REPO_SYNTAX_PATTERN.matcher( repo );
             if ( !matcher.matches() )

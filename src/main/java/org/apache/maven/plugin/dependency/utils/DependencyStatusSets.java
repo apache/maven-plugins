@@ -144,7 +144,7 @@ public class DependencyStatusSets
 
     public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope )
     {
-        return getOutput(outputAbsoluteArtifactFilename, outputScope, false);
+        return getOutput( outputAbsoluteArtifactFilename, outputScope, false );
     }
 
     public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope, boolean sort )
@@ -158,7 +158,8 @@ public class DependencyStatusSets
         }
         else
         {
-            sb.append( buildArtifactListOutput( resolvedDependencies, outputAbsoluteArtifactFilename, outputScope, sort ) );
+            sb.append( buildArtifactListOutput( resolvedDependencies, outputAbsoluteArtifactFilename,
+                                                outputScope, sort ) );
         }
 
         if ( this.skippedDependencies != null && !this.skippedDependencies.isEmpty() )
@@ -167,7 +168,8 @@ public class DependencyStatusSets
             sb.append( "The following files were skipped:\n" );
             Set<Artifact> skippedDependencies = new LinkedHashSet<Artifact>();
             skippedDependencies.addAll( this.skippedDependencies );
-            sb.append( buildArtifactListOutput( skippedDependencies, outputAbsoluteArtifactFilename, outputScope, sort ) );
+            sb.append( buildArtifactListOutput( skippedDependencies, outputAbsoluteArtifactFilename,
+                                                outputScope, sort ) );
         }
 
         if ( this.unResolvedDependencies != null && !this.unResolvedDependencies.isEmpty() )
@@ -176,14 +178,16 @@ public class DependencyStatusSets
             sb.append( "The following files have NOT been resolved:\n" );
             Set<Artifact> unResolvedDependencies = new LinkedHashSet<Artifact>();
             unResolvedDependencies.addAll( this.unResolvedDependencies );
-            sb.append( buildArtifactListOutput( unResolvedDependencies, outputAbsoluteArtifactFilename, outputScope, sort ) );
+            sb.append( buildArtifactListOutput( unResolvedDependencies, outputAbsoluteArtifactFilename,
+                                                outputScope, sort ) );
         }
         sb.append( "\n" );
 
         return sb.toString();
     }
 
-    private StringBuilder buildArtifactListOutput(Set<Artifact> artifacts,  boolean outputAbsoluteArtifactFilename, boolean outputScope, boolean sort )
+    private StringBuilder buildArtifactListOutput( Set<Artifact> artifacts, boolean outputAbsoluteArtifactFilename,
+                                                   boolean outputScope, boolean sort )
     {
         StringBuilder sb = new StringBuilder();
         List<String> artifactStringList = new ArrayList<String>();
@@ -206,13 +210,14 @@ public class DependencyStatusSets
 
             String id = outputScope ? artifact.toString() : artifact.getId();
 
-            artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) + "\n" );
+            artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
+                + "\n" );
         }
         if ( sort )
         {
             Collections.sort( artifactStringList );
         }
-        for (String artifactString : artifactStringList)
+        for ( String artifactString : artifactStringList )
         {
             sb.append( artifactString );
         }

@@ -390,14 +390,16 @@ public class TreeMojo
     {
         StringWriter writer = new StringWriter();
 
+        final TreeTokens treeTokens = toTreeTokens( tokens );
         org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor visitor =
             new org.apache.maven.shared.dependency.tree.traversal.SerializingDependencyNodeVisitor( writer,
-                                                                                                    toTreeTokens( tokens ) );
+                                                                                                    treeTokens );
 
         // TODO: remove the need for this when the serializer can calculate last nodes from visitor calls only
         visitor = new org.apache.maven.shared.dependency.tree.traversal.BuildingDependencyNodeVisitor( visitor );
 
-        org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter filter = createVerboseDependencyNodeFilter();
+        org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter filter =
+            createVerboseDependencyNodeFilter();
 
         if ( filter != null )
         {
@@ -408,11 +410,12 @@ public class TreeMojo
                                                                                                       filter );
             rootNode.accept( firstPassVisitor );
 
-            org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter secondPassFilter =
-                new org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter( collectingVisitor.getNodes() );
+            final List<org.apache.maven.shared.dependency.tree.DependencyNode> nodes = collectingVisitor.getNodes();
+            org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter secondPass =
+                new org.apache.maven.shared.dependency.tree.filter.AncestorOrSelfDependencyNodeFilter( nodes );
             visitor =
                 new org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor( visitor,
-                                                                                                      secondPassFilter );
+                                                                                                      secondPass );
         }
 
         rootNode.accept( visitor );
@@ -546,6 +549,7 @@ public class TreeMojo
     {
         List<org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter> filters =
             new ArrayList<org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter>();
+        org.apache.maven.shared.dependency.tree.filter.DependencyNodeFilter filter;
 
         // filter includes
         if ( includes != null )
@@ -555,8 +559,8 @@ public class TreeMojo
             getLog().debug( "+ Filtering dependency tree by artifact include patterns: " + patterns );
 
             ArtifactFilter artifactFilter = new StrictPatternIncludesArtifactFilter( patterns );
-            filters.add( new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter(
-                                                                                                          artifactFilter ) );
+            filter = new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter( artifactFilter );
+            filters.add( filter );
         }
 
         // filter excludes
@@ -567,8 +571,8 @@ public class TreeMojo
             getLog().debug( "+ Filtering dependency tree by artifact exclude patterns: " + patterns );
 
             ArtifactFilter artifactFilter = new StrictPatternExcludesArtifactFilter( patterns );
-            filters.add( new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter(
-                                                                                                          artifactFilter ) );
+            filter = new org.apache.maven.shared.dependency.tree.filter.ArtifactDependencyNodeFilter( artifactFilter );
+            filters.add( filter );
         }
 
         return filters.isEmpty() ? null
@@ -616,7 +620,7 @@ public class TreeMojo
         return !canFindCoreClass( "org.apache.maven.project.DependencyResolutionRequest" ); // Maven 3 specific
     }
 
-    private static boolean canFindCoreClass( String className)
+    private static boolean canFindCoreClass( String className )
     {
         try
         {

@@ -180,20 +180,19 @@ public class ResolvePluginsMojo
         //        final ArtifactFilter filter = getPluginFilter();
         for ( final Artifact artifact : new HashSet<Artifact>( artifacts ) )
         {
-            //            if ( !filter.include( artifact ) )
-            //            {
-            //                final String logStr =
-            //                    String.format( "    Plugin SKIPPED: %s", DependencyUtil.getFormattedFileName( artifact, false ) );
+            // if ( !filter.include( artifact ) )
+            // {
+            //     final String logStr =
+            //     String.format( "    Plugin SKIPPED: %s", DependencyUtil.getFormattedFileName( artifact, false ) );
             //
-            //                if ( !silent )
-            //                {
-            //                    this.getLog()
-            //                        .info( logStr );
-            //                }
+            //     if ( !silent )
+            //     {
+            //         this.getLog().info( logStr );
+            //     }
             //
-            //                artifacts.remove( artifact );
-            //                continue;
-            //            }
+            //     artifacts.remove( artifact );
+            //     continue;
+            // }
 
             // resolve the new artifact
             this.resolver.resolve( artifact, this.remotePluginRepositories, this.getLocal() );
