@@ -45,15 +45,28 @@ public class IT_BadDependencyPoms
         verifier = new Verifier( dir.getAbsolutePath() );
         verifier.deleteArtifacts( "test" );
         verifier.getSystemProperties().setProperty( "it.dir", dir.getAbsolutePath() );
-        verifier.executeGoal( "generate-resources" );
-        verifier.verifyErrorFreeLog();
-        verifier.resetStreams();
+//        verifier.setLogFileName( "build.log" );
+        
+        try
+        {
+            verifier.executeGoal( "generate-resources" );
+        }
+        catch ( VerificationException e )
+        {
+            // We will get an exception from harness in case
+            // of execution failure (return code non zero).
+            // This is the case if we have missing artifacts
+            // as in this test case.
+            verifier.resetStreams();
 
-        File output = new File( dir, "target/maven-shared-archive-resources/DEPENDENCIES" );
-        String content = FileUtils.fileRead( output );
-
-        assertTrue(content.contains("Dependency Id: test:missing:0.1"));
-        assertTrue(content.contains("Dependency Id: test:pom:0.2"));
+            File output = new File( dir, "log.txt" );
+            String content = FileUtils.fileRead( output );
+            
+            assertTrue(content.contains("mvn install:install-file -DgroupId=test -DartifactId=pom -Dversion=0.2 -Dpackaging=jar"));
+            assertTrue(content.contains("mvn install:install-file -DgroupId=test -DartifactId=missing -Dversion=0.1 -Dpackaging=jar"));
+            assertTrue(content.contains("mvn install:install-file -DgroupId=test -DartifactId=invalid -Dversion=0.1 -Dpackaging=jar"));
+        }
+        
     }
 
 }
