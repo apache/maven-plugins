@@ -66,7 +66,8 @@ public class ReportDocumentRenderer
     
     private final Log log;
 
-    public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext, Log log )
+    public ReportDocumentRenderer( MavenReportExecution mavenReportExecution, RenderingContext renderingContext,
+                                   Log log )
     {
         this.report = mavenReportExecution.getMavenReport();
 
@@ -202,8 +203,10 @@ public class ReportDocumentRenderer
         String localReportName = report.getName( locale );
 
         String msg = "Generating \"" + localReportName + "\" report";
+        // CHECKSTYLE_OFF: MagicNumber
         log.info( reportMojoInfo == null ? ( msg + '.' )
                         : ( StringUtils.rightPad( msg, 40 ) + " --- " + reportMojoInfo ) );
+        // CHECKSTYLE_ON: MagicNumber
 
         // main sink
         SiteRendererSink mainSink = new SiteRendererSink( renderingContext );

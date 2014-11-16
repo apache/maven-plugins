@@ -430,7 +430,8 @@ public abstract class AbstractSiteRenderingMojo
             else
             {
                 RenderingContext renderingContext = new RenderingContext( siteDirectory, outputName );
-                DocumentRenderer renderer = new ReportDocumentRenderer( mavenReportExecution, renderingContext, getLog() );
+                DocumentRenderer renderer =
+                    new ReportDocumentRenderer( mavenReportExecution, renderingContext, getLog() );
                 documents.put( outputName, renderer );
             }
         }
@@ -467,8 +468,8 @@ public abstract class AbstractSiteRenderingMojo
      * <li>"Project Information" and "Project Reports" category summaries.</li>
      * </ul>
      */
-    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context, List<MavenReportExecution> reports,
-                                                             Locale locale )
+    protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context,
+                                                             List<MavenReportExecution> reports, Locale locale )
         throws IOException, RendererException
     {
         Map<String, DocumentRenderer> documents = siteRenderer.locateDocumentFiles( context );

@@ -121,7 +121,8 @@ public class SiteStageMojo
 
         // The user didn't specify a URL: calculate default in the execution root target dir
         File defaultStagingDirectory = new File( getExecutionRootBuildDirectory(), DEFAULT_STAGING_DIRECTORY );
-        getLog().debug( "stagingDirectory NOT specified, using the execution root project: " + defaultStagingDirectory );
+        getLog().debug( "stagingDirectory NOT specified, using the execution root project: "
+                        + defaultStagingDirectory );
         return defaultStagingDirectory;
     }
 
@@ -147,7 +148,8 @@ public class SiteStageMojo
         }
         else
         {
-            getLog().debug( "Using the execution root project found in the reactor: " + executionRootProject.getArtifactId() );
+            getLog().debug( "Using the execution root project found in the reactor: "
+                            + executionRootProject.getArtifactId() );
 
             buildDirectory = new File( executionRootProject.getBuild().getDirectory() );
         }
@@ -158,7 +160,8 @@ public class SiteStageMojo
     /**
      * Find the execution root in the reactor.
      *
-     * @param reactorProjects The projects in the reactor. May be <code>null</code> in which case <code>null</code> is returned.
+     * @param reactorProjects The projects in the reactor. May be <code>null</code> in which case <code>null</code> is
+     *            returned.
      * @return The execution root project in the reactor, or <code>null</code> if none can be found
      */
     private static MavenProject getExecutionRootProject( List<MavenProject> reactorProjects )

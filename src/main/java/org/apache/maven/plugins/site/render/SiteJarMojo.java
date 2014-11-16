@@ -46,7 +46,8 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  * @since 2.0-beta-6
  */
 // MSITE-665: requiresDependencyResolution workaround for MPLUGIN-253 
-@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST, requiresReports = true )
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST,
+       requiresReports = true )
 public class SiteJarMojo
     extends SiteMojo
 {

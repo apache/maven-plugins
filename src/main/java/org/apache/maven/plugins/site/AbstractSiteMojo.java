@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.List;
 import java.util.Properties;
 
@@ -33,7 +32,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -144,9 +142,9 @@ public abstract class AbstractSiteMojo
         // and that should have a pom.properties file
         // if this ever changes, we will have to revisit this code.
         final Properties properties = new Properties();
-        final InputStream in =
-            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
-        try
+        final String corePomProperties = "META-INF/maven/org.apache.maven/maven-core/pom.properties";
+        final InputStream in = MavenProject.class.getClassLoader().getResourceAsStream( corePomProperties );
+       try
         {
             properties.load( in );
         }

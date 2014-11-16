@@ -249,7 +249,8 @@ public abstract class AbstractDeployMojo
     protected String getDeployModuleDirectory()
         throws MojoExecutionException
     {
-        String relative = siteTool.getRelativePath( getSite( project ).getUrl(), getTopDistributionManagementSiteUrl() );
+        String relative = siteTool.getRelativePath( getSite( project ).getUrl(),
+                                                    getTopDistributionManagementSiteUrl() );
 
         // SiteTool.getRelativePath() uses File.separatorChar,
         // so we need to convert '\' to '/' in order for the URL to be valid for Windows users
@@ -616,7 +617,8 @@ public abstract class AbstractDeployMojo
 
                             ProxyInfo proxyInfo = new ProxyInfo();
                             proxyInfo.setHost( proxy.getHost() );
-                            // so hackish for wagon the protocol is https for site dav : dav:https://dav.codehaus.org/mojo/
+                            // so hackish for wagon the protocol is https for site dav:
+                            // dav:https://dav.codehaus.org/mojo/
                             proxyInfo.setType( protocol ); //proxy.getProtocol() );
                             proxyInfo.setPort( proxy.getPort() );
                             proxyInfo.setNonProxyHosts( proxy.getNonProxyHosts() );
