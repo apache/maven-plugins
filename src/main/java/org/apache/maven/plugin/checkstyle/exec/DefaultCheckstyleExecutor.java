@@ -131,7 +131,8 @@ public class DefaultCheckstyleExecutor
         
         // aggregator
         Map<MavenProject, Collection<File>> sourceDirectoriesByProject = new HashMap<MavenProject, Collection<File>>();
-        Map<MavenProject, Collection<File>> testSourceDirectoriesByProject = new HashMap<MavenProject, Collection<File>>();
+        Map<MavenProject, Collection<File>> testSourceDirectoriesByProject =
+            new HashMap<MavenProject, Collection<File>>();
         
         if ( request.isAggregate() )
         {
@@ -308,7 +309,7 @@ public class DefaultCheckstyleExecutor
         {
             for ( File testSourceDirectory : testSourceDirectories )
             {
-                if( testSourceDirectory.isDirectory() )
+                if ( testSourceDirectory.isDirectory() )
                 {
                     sinkListener.addSourceDirectory( testSourceDirectory );
                 }
@@ -625,8 +626,9 @@ public class DefaultCheckstyleExecutor
         return new ArrayList<File>( files );
     }
 
-    private void addFilesToProcess( CheckstyleExecutorRequest request, Collection<File> sourceDirectories, List<Resource> resources,
-                                    List<Resource> testResources, Collection<File> files, Collection<File> testSourceDirectories )
+    private void addFilesToProcess( CheckstyleExecutorRequest request, Collection<File> sourceDirectories,
+                                    List<Resource> resources, List<Resource> testResources, Collection<File> files,
+                                    Collection<File> testSourceDirectories )
         throws IOException
     {
         if ( sourceDirectories != null )
@@ -651,7 +653,7 @@ public class DefaultCheckstyleExecutor
                 if ( testSourceDirectory.isDirectory() )
                 {
                     final List<File> testSourceFiles =
-                                    FileUtils.getFiles( testSourceDirectory, request.getIncludes(), request.getExcludes() );
+                        FileUtils.getFiles( testSourceDirectory, request.getIncludes(), request.getExcludes() );
                     
                     files.addAll( testSourceFiles );
                     getLogger().debug( "Added " + testSourceFiles.size() + " test source files found in '"
@@ -707,7 +709,7 @@ public class DefaultCheckstyleExecutor
                         }
                         
                         String resourceExcludes = StringUtils.join( resource.getExcludes().iterator(), "," );
-                        if( StringUtils.isEmpty( excludes ) )
+                        if ( StringUtils.isEmpty( excludes ) )
                         {
                             excludes = resourceExcludes;
                         }

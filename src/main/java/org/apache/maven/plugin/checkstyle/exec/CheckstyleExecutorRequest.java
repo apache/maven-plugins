@@ -236,7 +236,7 @@ public class CheckstyleExecutorRequest
     @Deprecated
     public File getTestSourceDirectory()
     {
-        if( testSourceDirectories == null || testSourceDirectories.size() == 0 )
+        if ( testSourceDirectories == null || testSourceDirectories.size() == 0 )
         {
             return null;
         }
@@ -277,7 +277,7 @@ public class CheckstyleExecutorRequest
     @Deprecated
     public File getSourceDirectory()
     {
-        if( sourceDirectories == null || sourceDirectories.size() == 0 )
+        if ( sourceDirectories == null || sourceDirectories.size() == 0 )
         {
             return null;
         }

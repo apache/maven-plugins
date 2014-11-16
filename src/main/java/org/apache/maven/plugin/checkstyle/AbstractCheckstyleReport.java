@@ -729,7 +729,7 @@ public abstract class AbstractCheckstyleReport
     {
         List<File> sourceDirs = null;
         // if sourceDirectory is explicitly set, use it
-        if( sourceDirectory != null )
+        if ( sourceDirectory != null )
         {
             sourceDirs = Collections.singletonList( sourceDirectory );
         }
@@ -749,7 +749,7 @@ public abstract class AbstractCheckstyleReport
     {
         List<File> testSourceDirs = null;
         // if testSourceDirectory is explicitly set, use it
-        if( testSourceDirectory != null )
+        if ( testSourceDirectory != null )
         {
             testSourceDirs = Collections.singletonList( testSourceDirectory );
         }

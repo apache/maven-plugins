@@ -146,7 +146,7 @@ public final class RuleUtil
     /**
      * Audit event source name matcher.
      */
-    public static interface Matcher
+    public interface Matcher
     {
         /**
          * Does the event source name match?
