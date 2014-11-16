@@ -230,7 +230,7 @@ public class BuildClasspathMojo
             while ( i.hasNext() )
             {
                 sb.append( isPathSepSet ? this.pathSeparator : File.pathSeparator );
-                appendArtifactPath(i.next(), sb );
+                appendArtifactPath( i.next(), sb );
             }
         }
 
@@ -313,7 +313,8 @@ public class BuildClasspathMojo
             // TODO: add param for prepending groupId and version.
             sb.append( prefix );
             sb.append( File.separator );
-            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId, this.useBaseVersion, this.stripClassifier ) );
+            sb.append( DependencyUtil.getFormattedFileName( art, this.stripVersion, this.prependGroupId,
+                                                            this.useBaseVersion, this.stripClassifier ) );
         }
     }
 

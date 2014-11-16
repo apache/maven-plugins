@@ -50,7 +50,8 @@ public class ProcessArtifactItemsRequest
         // no op
     }
 
-    public ProcessArtifactItemsRequest( boolean removeVersion, boolean prependGroupId, boolean useBaseVersion, boolean removeClassifier )
+    public ProcessArtifactItemsRequest( boolean removeVersion, boolean prependGroupId, boolean useBaseVersion,
+                                        boolean removeClassifier )
     {
         this.removeVersion = removeVersion;
         this.prependGroupId = prependGroupId;

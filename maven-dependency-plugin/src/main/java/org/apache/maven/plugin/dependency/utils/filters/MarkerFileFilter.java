@@ -64,10 +64,9 @@ public class MarkerFileFilter
     public Set filter( Set artifacts )
         throws ArtifactFilterException
     {
-        Set<Artifact> artifacts_ = artifacts;
         Set<Artifact> result = new HashSet<Artifact>();
         
-        for ( Artifact artifact : artifacts_ )
+        for ( Artifact artifact : (Set<Artifact>) artifacts )
         {
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
