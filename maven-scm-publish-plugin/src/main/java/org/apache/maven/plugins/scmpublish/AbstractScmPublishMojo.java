@@ -69,12 +69,14 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 public abstract class AbstractScmPublishMojo
     extends AbstractMojo
 {
+    // CHECKSTYLE_OFF: LineLength
     /**
      * Location of the scm publication tree:
      * <code>scm:&lt;scm_provider&gt;&lt;delimiter&gt;&lt;provider_specific_part&gt;</code>.
      * Example:
      * <code>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin-LATEST/</code>
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter ( property = "scmpublish.pubScmUrl", defaultValue = "${project.distributionManagement.site.url}",
                  required = true )
     protected String pubScmUrl;
@@ -86,6 +88,7 @@ public abstract class AbstractScmPublishMojo
     @Parameter ( property = "scmpublish.tryUpdate", defaultValue = "false" )
     protected boolean tryUpdate;
 
+    // CHECKSTYLE_OFF: LineLength
    /**
      * Location where the scm check-out is done. By default, scm checkout is done in build (target) directory,
      * which is deleted on every <code>mvn clean</code>. To avoid this and get better performance, configure
@@ -93,6 +96,7 @@ public abstract class AbstractScmPublishMojo
      * See <a href="http://maven.apache.org/plugins/maven-scm-publish-plugin/various-tips.html#Improving_SCM_Checkout_Performance">
      * Improving SCM Checkout Performance</a> for more information.
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter ( property = "scmpublish.checkoutDirectory",
                  defaultValue = "${project.build.directory}/scmpublish-checkout" )
     protected File checkoutDirectory;
@@ -130,7 +134,8 @@ public abstract class AbstractScmPublishMojo
     /**
      * List of SCM provider implementations.
      * Key is the provider type, eg. <code>cvs</code>.
-     * Value is the provider implementation (the role-hint of the provider), eg. <code>cvs</code> or <code>cvs_native</code>.
+     * Value is the provider implementation (the role-hint of the provider), eg. <code>cvs</code> or
+     * <code>cvs_native</code>.
      * @see ScmManager.setScmProviderImplementation
      */
     @Parameter
@@ -167,8 +172,8 @@ public abstract class AbstractScmPublishMojo
     protected String password;
 
     /**
-     * Use a local checkout instead of doing a checkout from the upstream repository. <b>WARNING</b>: This will only work
-     * with distributed SCMs which support the file:// protocol
+     * Use a local checkout instead of doing a checkout from the upstream repository.
+     * <b>WARNING</b>: This will only work with distributed SCMs which support the file:// protocol.
      * TODO: we should think about having the defaults for the various SCM providers provided via Modello!
      */
     @Parameter ( property = "localCheckout", defaultValue = "false" )
@@ -230,7 +235,7 @@ public abstract class AbstractScmPublishMojo
     /**
      * Filename extensions of files which need new line normalization.
      */
-    private final static String[] NORMALIZE_EXTENSIONS = { "html", "css", "js" };
+    private static final String[] NORMALIZE_EXTENSIONS = { "html", "css", "js" };
 
     /**
      * Extra file extensions to normalize line ending (will be added to default
@@ -367,7 +372,8 @@ public abstract class AbstractScmPublishMojo
             checkCreateRemoteSvnPath();
         }
 
-        logInfo( "%s the pub tree from %s into %s", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl, checkoutDirectory );
+        logInfo( "%s the pub tree from %s into %s", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl,
+                 checkoutDirectory );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
 
@@ -684,7 +690,8 @@ public abstract class AbstractScmPublishMojo
                     AddScmResult addDirResult = scmProvider.add( scmRepository, fileSet, "Adding directory" );
                     if ( !addDirResult.isSuccess() )
                     {
-                        getLog().warn( " Error adding directory " + relativized + ": " + addDirResult.getCommandOutput() );
+                        getLog().warn( " Error adding directory " + relativized + ": "
+                                           + addDirResult.getCommandOutput() );
                     }
                 }
                 catch ( ScmException e )
@@ -731,7 +738,7 @@ public abstract class AbstractScmPublishMojo
         }
     }
 
-    private<T extends ScmResult> T checkScmResult( T result, String failure )
+    private <T extends ScmResult> T checkScmResult( T result, String failure )
         throws MojoExecutionException
     {
         if ( !result.isSuccess() )
