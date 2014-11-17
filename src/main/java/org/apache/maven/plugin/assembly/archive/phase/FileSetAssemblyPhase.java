@@ -64,6 +64,8 @@ public class FileSetAssemblyPhase
 
     public int order()
     {
+        // CHECKSTYLE_OFF: MagicNumber
         return 20;
+        // CHECKSTYLE_ON: MagicNumber
     }
 }

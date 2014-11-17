@@ -25,6 +25,9 @@ import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.functions.ModuleSetConsumer;
 
+/**
+ * 
+ */
 public class Assemblies
 {
 

@@ -38,6 +38,9 @@ import java.io.Reader;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+/**
+ * 
+ */
 public class ReaderFormatter
 {
     private static Reader createReaderFilter( @Nonnull Reader source, String escapeString, List<String> delimiters,

@@ -216,7 +216,9 @@ public class ComponentsXmlArchiverFileFilter
                     stream = fileInfo.getContents();
                     // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
                     reader = new InputStreamReader( stream, "UTF-8" );
+                    // CHECKSTYLE_OFF: MagicNumber
                     addComponentsXml( new BufferedReader( reader, 8192 ) );
+                    // CHECKSTYLE_ON: MagicNumber
                 }
                 catch ( final XmlPullParserException e )
                 {

@@ -80,9 +80,9 @@ public class SimpleAggregatingDescriptorHandler
 
         if ( outputPath.endsWith( "/" ) )
         {
-            throw new ArchiverException(
-                "Cannot write aggregated properties to a directory. You must specify a file name in the outputPath configuration for this handler. (handler: "
-                    + getClass().getName() );
+            throw new ArchiverException( "Cannot write aggregated properties to a directory. "
+                + "You must specify a file name in the outputPath configuration for this handler. (handler: "
+                + getClass().getName() );
         }
 
         if ( outputPath.startsWith( "/" ) )

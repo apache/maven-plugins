@@ -135,7 +135,9 @@ public class RepositoryAssemblyPhase
 
     public int order()
     {
+        // CHECKSTYLE_OFF: MagicNumber
         return 50;
+        // CHECKSTYLE_ON: MagicNumber
     }
 }
 
