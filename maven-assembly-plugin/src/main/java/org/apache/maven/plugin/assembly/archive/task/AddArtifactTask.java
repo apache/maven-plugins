@@ -245,8 +245,8 @@ public class AddArtifactTask
         final File tempRoot = configSource.getTemporaryRootDirectory();
         final File tempArtifactFile = new File( tempRoot, artifact.getFile().getName() );
 
-        logger.warn( "Artifact: " + artifact.getId()
-                         + " references the same file as the assembly destination file. Moving it to a temporary location for inclusion." );
+        logger.warn( "Artifact: " + artifact.getId() + " references the same file as the assembly destination file. "
+            + "Moving it to a temporary location for inclusion." );
         try
         {
             FileUtils.copyFile( artifact.getFile(), tempArtifactFile );

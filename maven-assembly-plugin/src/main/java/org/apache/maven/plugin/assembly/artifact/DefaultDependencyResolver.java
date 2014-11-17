@@ -123,8 +123,8 @@ public class DefaultDependencyResolver
                 }
                 else
                 {
-                    getLogger().debug(
-                        "Resolving project dependencies ONLY. Transitive dependencies WILL NOT be included in the results." );
+                    getLogger().debug( "Resolving project dependencies ONLY. "
+                                           + "Transitive dependencies WILL NOT be included in the results." );
                     artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
                 }
             }
@@ -170,8 +170,8 @@ public class DefaultDependencyResolver
                 }
                 else
                 {
-                    getLogger().debug(
-                        "Resolving project dependencies ONLY. Transitive dependencies WILL NOT be included in the results." );
+                    getLogger().debug( "Resolving project dependencies ONLY. "
+                                           + "Transitive dependencies WILL NOT be included in the results." );
                     artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
                 }
             }

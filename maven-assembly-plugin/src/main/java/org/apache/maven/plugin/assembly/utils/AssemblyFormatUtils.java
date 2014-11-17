@@ -121,11 +121,13 @@ public final class AssemblyFormatUtils
     {
         if ( moduleArtifact != null )
         {
+            // CHECKSTYLE_OFF: LineLength
             return FixedStringSearchInterpolator.create( new PrefixedObjectValueSource( "module.", moduleArtifact ),
                                                          new PrefixedObjectValueSource( "module.",
                                                                                         moduleArtifact.getArtifactHandler() ),
                                                          new PrefixedObjectValueSource( "module.handler.",
                                                                                         moduleArtifact.getArtifactHandler() ) );
+            // CHECKSTYLE_ON: LineLength
         }
         else
         {

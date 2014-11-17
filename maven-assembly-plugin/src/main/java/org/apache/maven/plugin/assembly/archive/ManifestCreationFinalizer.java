@@ -136,9 +136,11 @@ public class ManifestCreationFinalizer
             }
             catch ( final ManifestException ignore )
             {
+                // noop
             }
             catch ( final DependencyResolutionRequiredException ignore )
             {
+                // noop
             }
         }
 

@@ -25,6 +25,9 @@ import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.ModuleSet;
 
+/**
+ * 
+ */
 public interface ModuleSetConsumer
 {
     void accept( ModuleSet resolvedModule )

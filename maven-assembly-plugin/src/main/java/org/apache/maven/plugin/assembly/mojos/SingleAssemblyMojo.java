@@ -33,7 +33,8 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-@Mojo( name = "single", inheritByDefault = false, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
+@Mojo( name = "single", inheritByDefault = false, requiresDependencyResolution = ResolutionScope.COMPILE,
+       threadSafe = true )
 public class SingleAssemblyMojo
     extends AbstractAssemblyMojo
 {

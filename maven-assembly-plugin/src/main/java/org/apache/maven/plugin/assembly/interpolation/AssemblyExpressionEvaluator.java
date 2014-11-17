@@ -31,6 +31,9 @@ import org.codehaus.plexus.interpolation.fixed.InterpolationState;
 
 import java.io.File;
 
+/**
+ * 
+ */
 public class AssemblyExpressionEvaluator
     implements ExpressionEvaluator
 {

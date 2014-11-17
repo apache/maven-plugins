@@ -25,5 +25,5 @@ package org.apache.maven.plugin.assembly.archive.phase;
  */
 public interface PhaseOrder
 {
-    public int order();
+    int order();
 }

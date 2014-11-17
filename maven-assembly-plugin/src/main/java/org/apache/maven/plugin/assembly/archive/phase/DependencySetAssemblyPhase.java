@@ -106,6 +106,8 @@ public class DependencySetAssemblyPhase
 
     public int order()
     {
+        // CHECKSTYLE_OFF: MagicNumber
         return 40;
+        // CHECKSTYLE_ON: MagicNumber
     }
 }

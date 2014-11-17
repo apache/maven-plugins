@@ -580,6 +580,8 @@ public class ModuleSetAssemblyPhase
 
     public int order()
     {
+        // CHECKSTYLE_OFF: MagicNumber
         return 30;
+        // CHECKSTYLE_ON: MagicNumber
     }
 }

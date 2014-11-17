@@ -197,10 +197,9 @@ public class AddDependencySetsTask
 
         if ( ( dir == null || !dir.contains( "${" ) ) && ( mapping == null || !mapping.contains( "${" ) ) )
         {
-            logger.warn(
-                "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but specifies a concrete output format. "
-                    + "THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\nOutput directory: '" + dir
-                    + "'\nOutput filename mapping: '" + mapping + "'" );
+            logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but "
+                + "specifies a concrete output format. THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\n"
+                + "Output directory: '" + dir + "'\nOutput filename mapping: '" + mapping + "'" );
         }
     }
 

@@ -21,6 +21,9 @@ package org.apache.maven.plugin.assembly.resolved;
 
 import org.apache.maven.plugin.assembly.model.Assembly;
 
+/**
+ * 
+ */
 public class AssemblyId
 {
     private final String id;

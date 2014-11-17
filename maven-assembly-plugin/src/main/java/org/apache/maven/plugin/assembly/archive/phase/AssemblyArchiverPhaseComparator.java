@@ -1,4 +1,5 @@
 package org.apache.maven.plugin.assembly.archive.phase;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,6 +21,9 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import java.util.Comparator;
 
+/**
+ * 
+ */
 public class AssemblyArchiverPhaseComparator
     implements Comparator<AssemblyArchiverPhase>
 {

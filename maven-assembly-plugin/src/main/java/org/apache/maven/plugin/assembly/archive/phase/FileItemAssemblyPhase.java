@@ -29,7 +29,6 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
-import org.apache.maven.shared.utils.StringUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.ArchiverAttributeUtils;
@@ -143,7 +142,7 @@ public class FileItemAssemblyPhase
                         {
                             return res.getName();
                         }
-                    }.asResource();
+                    } .asResource();
                 }
 
                 int mode = TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() );
@@ -171,7 +170,9 @@ public class FileItemAssemblyPhase
             throws IOException
         {
             this.resource = resource;
+            // CHECKSTYLE_OFF: MagicNumber
             dfos = new DeferredFileOutputStream( 1000000, "m-assembly-archiver", null, null );
+            // CHECKSTYLE_ON: MagicNumber
             InputStream inputStream = getInputStream();
             IOUtils.copy( inputStream, dfos );
             IOUtils.closeQuietly( inputStream );
