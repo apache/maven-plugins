@@ -73,7 +73,11 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private String jiraProject;
 
-    public static class NoRest extends Exception
+    /**
+     * 
+     */
+    public static class NoRest
+        extends Exception
     {
         public NoRest( )
         {
@@ -122,8 +126,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             Response siResponse = client.get();
             if ( siResponse.getStatus() != Response.Status.OK.getStatusCode() )
             {
-                throw new NoRest(
-                    "This JIRA server does not support version 2 of the REST API, which maven-changes-plugin requires." );
+                throw new NoRest( "This JIRA server does not support version 2 of the REST API, "
+                    + "which maven-changes-plugin requires." );
             }
 
             doSessionAuth( client );
@@ -233,7 +237,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         }
         client.accept( MediaType.APPLICATION_JSON );
         Response resp = client.get();
-        if ( resp.getStatus() != 200 )
+        if ( resp.getStatus() != Response.Status.OK.getStatusCode() )
         {
             getLog().error( String.format( "Could not get %s list from %s", what, listRestUrlPattern ) );
             reportErrors( resp );
@@ -533,7 +537,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             Response authRes = client.post( jsWriter.toString() );
             if ( authRes.getStatus() != Response.Status.OK.getStatusCode() )
             {
-                if ( authRes.getStatus() != 401 && authRes.getStatus() != 403 )
+                if ( authRes.getStatus() != Response.Status.UNAUTHORIZED.getStatusCode()
+                    && authRes.getStatus() != Response.Status.FORBIDDEN.getStatusCode() )
                 {
                     // if not one of the documented failures, assume that there's no rest in there in the first place.
                     throw new NoRest();

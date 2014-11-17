@@ -51,6 +51,7 @@ public class GitHubMojo
     /**
      * Valid Github columns.
      */
+    @SuppressWarnings( "checkstyle:staticvariablename" )
     private static Map<String, Integer> GITHUB_COLUMNS = new HashMap<String, Integer>();
 
     static

@@ -328,8 +328,8 @@ public class ParameterQueryBuilder
             if ( validSortColumnNames == 0 )
             {
                 // Error in the configuration
-                getLog().error(
-                    "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames + "' are correct." );
+                getLog().error( "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames
+                                    + "' are correct." );
             }
         }
         return this;

@@ -50,11 +50,13 @@ public class TracMojo
     /**
      * Deprecated Trac columns.
      */
+    @SuppressWarnings( "checkstyle:staticvariablename" )
     private static Map<String, Integer> DEPRECATED_TRAC_COLUMNS = new HashMap<String, Integer>();
 
     /**
      * Valid Trac columns.
      */
+    @SuppressWarnings( "checkstyle:staticvariablename" )
     private static Map<String, Integer> TRAC_COLUMNS = new HashMap<String, Integer>();
 
     static
