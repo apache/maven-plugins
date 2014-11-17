@@ -33,7 +33,7 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo(name = "clean")
+@Mojo( name = "clean" )
 public class AntCleanMojo
     extends AbstractMojo
 {
@@ -56,7 +56,7 @@ public class AntCleanMojo
      *
      * @since 2.2
      */
-    @Parameter(property = "deleteCustomFiles", defaultValue = "false")
+    @Parameter( property = "deleteCustomFiles", defaultValue = "false" )
     private boolean deleteCustomFiles;
 
     /**
@@ -77,8 +77,8 @@ public class AntCleanMojo
             }
             else if ( getLog().isInfoEnabled() )
             {
-                getLog().info( "Not deleting custom " + buildXml.getName() +
-                                   ", use -DdeleteCustomFiles=true to force its deletion" );
+                getLog().info( "Not deleting custom " + buildXml.getName()
+                                   + ", use -DdeleteCustomFiles=true to force its deletion" );
             }
         }
 
@@ -94,8 +94,8 @@ public class AntCleanMojo
             throw new MojoExecutionException( "Cannot delete " + mavenBuildProperties.getAbsolutePath() );
         }
 
-        getLog().info( "Deleted Ant build files for project " + project.getArtifactId() + " in " +
-                           project.getBasedir().getAbsolutePath() );
+        getLog().info( "Deleted Ant build files for project " + project.getArtifactId() + " in "
+                           + project.getBasedir().getAbsolutePath() );
     }
 
 }

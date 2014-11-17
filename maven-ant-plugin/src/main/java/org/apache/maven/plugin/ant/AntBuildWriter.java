@@ -958,6 +958,7 @@ public class AntBuildWriter
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "depends", "test-junit-status", 2 );
             AntBuildWriterUtil.addWrapAttribute( writer, "target", "if", "junit.missing", 2 );
 
+            // CHECKSTYLE_OFF: MagicNumber
             writer.startElement( "echo" );
             writer.writeText( StringUtils.repeat( "=", 35 ) + " WARNING " + StringUtils.repeat( "=", 35 ) );
             writer.endElement(); // echo
@@ -970,6 +971,7 @@ public class AntBuildWriter
             writer.startElement( "echo" );
             writer.writeText( StringUtils.repeat( "=", 79 ) );
             writer.endElement(); // echo
+            // CHECKSTYLE_ON: MagicNumber
 
             writer.endElement(); // target
         }
@@ -1177,10 +1179,12 @@ public class AntBuildWriter
                                                  AntBuildWriterUtil.getMavenCompilerPluginBasicOption( project,
                                                                                                        "optimize",
                                                                                                        "false" ), 3 );
+            // CHECKSTYLE_OFF: LineLength
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "deprecation",
                                                  AntBuildWriterUtil.getMavenCompilerPluginBasicOption( project,
                                                                                                        "showDeprecation",
                                                                                                        "true" ), 3 );
+            // CHECKSTYLE_ON: LineLength
             AntBuildWriterUtil.addWrapAttribute( writer, "javac", "target",
                                                  AntBuildWriterUtil.getMavenCompilerPluginBasicOption( project,
                                                                                                        "target",
