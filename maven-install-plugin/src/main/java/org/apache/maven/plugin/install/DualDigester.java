@@ -45,9 +45,9 @@ public class DualDigester
 
     private final MessageDigest sh1 = getDigester( "SHA-1" );
 
-    private static final int bufsize = 65536 * 2;
+    private static final int BUFSIZE = 65536 * 2;
 
-    private final byte[] buffer = new byte[bufsize];
+    private final byte[] buffer = new byte[BUFSIZE];
 
     static MessageDigest getDigester( String algorithm )
     {
@@ -104,12 +104,12 @@ public class DualDigester
     private void update( InputStream is )
         throws IOException
     {
-        int size = is.read( buffer, 0, bufsize );
+        int size = is.read( buffer, 0, BUFSIZE );
         while ( size >= 0 )
         {
             md5.update( buffer, 0, size );
             sh1.update( buffer, 0, size );
-            size = is.read( buffer, 0, bufsize );
+            size = is.read( buffer, 0, BUFSIZE );
         }
     }
 }

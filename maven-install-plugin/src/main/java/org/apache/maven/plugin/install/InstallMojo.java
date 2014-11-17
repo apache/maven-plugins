@@ -53,9 +53,9 @@ public class InstallMojo
      * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready
      * to be installed
      */
-    private static final AtomicInteger readyProjectsCounter = new AtomicInteger();
+    private static final AtomicInteger READYPROJECTSCOUTNER = new AtomicInteger();
 
-    private static final List<InstallRequest> installRequests =
+    private static final List<InstallRequest> INSTALLREQUESTS =
         Collections.synchronizedList( new ArrayList<InstallRequest>() );
 
     /**
@@ -68,7 +68,8 @@ public class InstallMojo
 
     /**
      * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
-     * set to {@code true} and the build fails, none of the reactor projects is installed. <strong>(experimental)</strong>
+     * set to {@code true} and the build fails, none of the reactor projects is installed.
+     * <strong>(experimental)</strong>
      * 
      * @since 2.5
      */
@@ -118,8 +119,10 @@ public class InstallMojo
         }
         else
         {
+            // CHECKSTYLE_OFF: LineLength
             InstallRequest currentExecutionInstallRequest =
                 new InstallRequest().setProject( project ).setCreateChecksum( createChecksum ).setUpdateReleaseInfo( updateReleaseInfo );
+            // CHECKSTYLE_ON: LineLength
 
             if ( !installAtEnd )
             {
@@ -127,19 +130,19 @@ public class InstallMojo
             }
             else
             {
-                installRequests.add( currentExecutionInstallRequest );
+                INSTALLREQUESTS.add( currentExecutionInstallRequest );
                 addedInstallRequest = true;
             }
         }
 
-        boolean projectsReady = readyProjectsCounter.incrementAndGet() == reactorProjects.size();
+        boolean projectsReady = READYPROJECTSCOUTNER.incrementAndGet() == reactorProjects.size();
         if ( projectsReady )
         {
-            synchronized ( installRequests )
+            synchronized ( INSTALLREQUESTS )
             {
-                while ( !installRequests.isEmpty() )
+                while ( !INSTALLREQUESTS.isEmpty() )
                 {
-                    installProject( installRequests.remove( 0 ) );
+                    installProject( INSTALLREQUESTS.remove( 0 ) );
                 }
             }
         }
@@ -217,8 +220,10 @@ public class InstallMojo
                 }
                 else
                 {
+                    // CHECKSTYLE_OFF: LineLength
                     throw new MojoExecutionException(
                                                       "The packaging for this project did not assign a file to the build artifact" );
+                    // CHECKSTYLE_ON: LineLength
                 }
             }
 
