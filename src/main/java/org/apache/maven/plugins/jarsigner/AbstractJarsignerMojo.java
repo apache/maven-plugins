@@ -144,7 +144,7 @@ public abstract class AbstractJarsignerMojo
      * @since 1.1
      */
     @Parameter
-    private String[] excludes = { };
+    private String[] excludes = {};
 
     /**
      * List of additional arguments to append to the jarsigner command line.
@@ -262,7 +262,7 @@ public abstract class AbstractJarsignerMojo
             if ( toolchain != null )
             {
                 getLog().info( "Toolchain in maven-jarsigner-plugin: " + toolchain );
-                jarSigner.setToolchain(toolchain);
+                jarSigner.setToolchain( toolchain );
             }
 
             int processed = 0;
@@ -334,8 +334,8 @@ public abstract class AbstractJarsignerMojo
                     }
                     catch ( IOException e )
                     {
-                        throw new MojoExecutionException(
-                            "Failed to scan archive directory for JARs: " + e.getMessage(), e );
+                        throw new MojoExecutionException( "Failed to scan archive directory for JARs: "
+                            + e.getMessage(), e );
                     }
 
                     for ( File jarFile : jarFiles )
@@ -346,7 +346,7 @@ public abstract class AbstractJarsignerMojo
                 }
             }
 
-            getLog().info( getMessage( "processed", processed) );
+            getLog().info( getMessage( "processed", processed ) );
         }
         else
         {
@@ -366,7 +366,9 @@ public abstract class AbstractJarsignerMojo
 
     /**
      * Gets a string representation of a {@code Commandline}.
-     * <p>This method creates the string representation by calling {@code commandLine.toString()} by default.</p>
+     * <p>
+     * This method creates the string representation by calling {@code commandLine.toString()} by default.
+     * </p>
      *
      * @param commandLine The {@code Commandline} to get a string representation of.
      * @return The string representation of {@code commandLine}.
@@ -410,7 +412,7 @@ public abstract class AbstractJarsignerMojo
      *
      * @param artifact The artifact to process.
      * @return <code>true</code> if the artifact is a JAR and was processed, <code>false</code> otherwise.
-     * @throws NullPointerException   if {@code artifact} is {@code null}.
+     * @throws NullPointerException if {@code artifact} is {@code null}.
      * @throws MojoExecutionException if processing {@code artifact} fails.
      */
     private boolean processArtifact( final Artifact artifact )
@@ -460,7 +462,7 @@ public abstract class AbstractJarsignerMojo
      * Processes a given archive.
      *
      * @param archive The archive to process.
-     * @throws NullPointerException   if {@code archive} is {@code null}.
+     * @throws NullPointerException if {@code archive} is {@code null}.
      * @throws MojoExecutionException if processing {@code archive} fails.
      */
     private void processArchive( final File archive )
@@ -509,8 +511,9 @@ public abstract class AbstractJarsignerMojo
 
             if ( resultCode != 0 )
             {
-                throw new MojoExecutionException(
-                    getMessage( "failure", getCommandlineInfo( commandLine ), resultCode) );
+                // CHECKSTYLE_OFF: LineLength
+                throw new MojoExecutionException( getMessage( "failure", getCommandlineInfo( commandLine ), resultCode ) );
+                // CHECKSTYLE_ON: LineLength
             }
 
         }
@@ -520,7 +523,7 @@ public abstract class AbstractJarsignerMojo
         }
     }
 
-    protected String decrypt(String encoded)
+    protected String decrypt( String encoded )
         throws MojoExecutionException
     {
         try
@@ -537,13 +540,13 @@ public abstract class AbstractJarsignerMojo
     /**
      * Gets a message for a given key from the resource bundle backing the implementation.
      *
-     * @param key  The key of the message to return.
+     * @param key The key of the message to return.
      * @param args Arguments to format the message with or {@code null}.
      * @return The message with key {@code key} from the resource bundle backing the implementation.
      * @throws NullPointerException if {@code key} is {@code null}.
      * @throws java.util.MissingResourceException
-     *                              if there is no message available matching {@code key} or accessing
-     *                              the resource bundle fails.
+     *             if there is no message available matching {@code key} or accessing
+     *             the resource bundle fails.
      */
     private String getMessage( final String key, final Object[] args )
     {
@@ -562,12 +565,12 @@ public abstract class AbstractJarsignerMojo
 
     String getMessage( final String key, final Object arg )
     {
-        return getMessage( key, new Object[]{ arg } );
+        return getMessage( key, new Object[] { arg } );
     }
 
     private String getMessage( final String key, final Object arg1, final Object arg2 )
     {
-        return getMessage( key, new Object[]{ arg1, arg2 } );
+        return getMessage( key, new Object[] { arg1, arg2 } );
     }
 
     /**
