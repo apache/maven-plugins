@@ -64,29 +64,29 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@Mojo(name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo( name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class AntRunMojo
     extends AbstractMojo
 {
     /**
      * The refid used to store the Maven project object in the Ant build.
      */
-    public final static String DEFAULT_MAVEN_PROJECT_REFID = "maven.project";
+    public static final String DEFAULT_MAVEN_PROJECT_REFID = "maven.project";
 
     /**
      * The refid used to store the Maven project object in the Ant build.
      */
-    public final static String DEFAULT_MAVEN_PROJECT_HELPER_REFID = "maven.project.helper";
+    public static final String DEFAULT_MAVEN_PROJECT_HELPER_REFID = "maven.project.helper";
 
     /**
      * The default target name.
      */
-    public final static String DEFAULT_ANT_TARGET_NAME = "main";
+    public static final String DEFAULT_ANT_TARGET_NAME = "main";
 
     /**
      * The default encoding to use for the generated Ant build.
      */
-    public final static String UTF_8 = "UTF-8";
+    public static final String UTF_8 = "UTF-8";
 
     /**
      * The name used for the Ant target
@@ -96,12 +96,12 @@ public class AntRunMojo
     /**
      * The path to The XML file containing the definition of the Maven tasks.
      */
-    public final static String ANTLIB = "org/apache/maven/ant/tasks/antlib.xml";
+    public static final String ANTLIB = "org/apache/maven/ant/tasks/antlib.xml";
 
     /**
      * The URI which defines the built in Ant tasks
      */
-    public final static String TASK_URI = "antlib:org.apache.maven.ant.tasks";
+    public static final String TASK_URI = "antlib:org.apache.maven.ant.tasks";
 
     /**
      * The Maven project object
@@ -118,13 +118,13 @@ public class AntRunMojo
     /**
      * The plugin dependencies.
      */
-    @Parameter(property = "plugin.artifacts", required = true, readonly = true)
+    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
     /**
      * The local Maven repository
      */
-    @Parameter(property = "localRepository", readonly = true)
+    @Parameter( property = "localRepository", readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
@@ -132,7 +132,7 @@ public class AntRunMojo
      *
      * @since 1.4
      */
-    @Parameter(defaultValue = "")
+    @Parameter( defaultValue = "" )
     private String propertyPrefix;
 
     /**
@@ -142,14 +142,14 @@ public class AntRunMojo
      *
      * @since 1.5
      */
-    @Parameter(defaultValue = "")
+    @Parameter( defaultValue = "" )
     private String customTaskPrefix = "";
 
     /**
      * The name of a property containing the list of all dependency versions. This is used for the removing the versions
      * from the filenames.
      */
-    @Parameter(defaultValue = "maven.project.dependencies.versions")
+    @Parameter( defaultValue = "maven.project.dependencies.versions" )
     private String versionsPropertyName;
 
     /**
@@ -176,7 +176,7 @@ public class AntRunMojo
      *
      * @deprecated Use the build-helper-maven-plugin to bind source directories
      */
-    @Parameter(property = "sourceRoot")
+    @Parameter( property = "sourceRoot" )
     private File sourceRoot;
 
     /**
@@ -185,7 +185,7 @@ public class AntRunMojo
      *
      * @deprecated Use the build-helper-maven-plugin to bind test source directories
      */
-    @Parameter(property = "testSourceRoot")
+    @Parameter( property = "testSourceRoot" )
     private File testSourceRoot;
 
     /**
@@ -193,7 +193,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter(property = "maven.antrun.skip", defaultValue = "false")
+    @Parameter( property = "maven.antrun.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
@@ -201,7 +201,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter(defaultValue = "false")
+    @Parameter( defaultValue = "false" )
     private boolean exportAntProperties;
 
     /**
@@ -211,7 +211,7 @@ public class AntRunMojo
      *
      * @since 1.7
      */
-    @Parameter(defaultValue = "true")
+    @Parameter( defaultValue = "true" )
     private boolean failOnError;
 
     /**
@@ -436,7 +436,8 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "settings.localRepository" ), localRepository.getBasedir() );
 
         // Add properties for depenedency artifacts
-        @SuppressWarnings("unchecked") Set<Artifact> depArtifacts = mavenProject.getArtifacts();
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> depArtifacts = mavenProject.getArtifacts();
         for ( Artifact artifact : depArtifacts )
         {
             String propName = artifact.getDependencyConflictId();
@@ -486,7 +487,8 @@ public class AntRunMojo
             if ( mavenProperties.getProperty( key ) != null )
             {
                 getLog().debug( "Ant property '" + key + "=" + mavenProperties.getProperty( key )
-                                    + "' clashs with an existing Maven property, SKIPPING this Ant property propagation." );
+                                    + "' clashs with an existing Maven property, "
+                                    + "SKIPPING this Ant property propagation." );
                 continue;
             }
             mavenProperties.setProperty( key, (String) entry.getValue() );
@@ -510,9 +512,9 @@ public class AntRunMojo
      */
     public static String getDependencyArtifactPropertyName( Artifact artifact )
     {
-        return DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId() + (
-            artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" ) + ( artifact.getType() != null ?
-            "." + artifact.getType() : "" ) + ".path";
+        return DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
+            + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
+            + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
     }
 
     /**

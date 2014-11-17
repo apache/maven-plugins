@@ -44,7 +44,7 @@ public class DependencyFilesetsTask
     extends Task
 {
 
-    public final static String DEFAULT_PROJECT_DEPENDENCIES_ID = "maven.project.dependencies";
+    public static final String DEFAULT_PROJECT_DEPENDENCIES_ID = "maven.project.dependencies";
 
     /**
      * The project ref Id of the project being used.
@@ -96,7 +96,7 @@ public class DependencyFilesetsTask
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( "maven.project" );
 
         // Add filesets for depenedency artifacts
-        @SuppressWarnings("unchecked") Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
+        @SuppressWarnings( "unchecked" ) Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
 
         FileSet dependenciesFileSet = new FileSet();
         dependenciesFileSet.setProject( getProject() );

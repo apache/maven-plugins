@@ -29,6 +29,9 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 
+/**
+ * 
+ */
 public class AttachArtifactTask
     extends Task
 {
