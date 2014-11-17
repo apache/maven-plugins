@@ -231,7 +231,9 @@ public class InstallFileMojo
 
                     if ( pomEntry.matcher( entry.getName() ).matches() )
                     {
+                        // CHECKSTYLE_OFF: LineLength
                         getLog().debug( "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
+                        // CHECKSTYLE_ON: LineLength
 
                         foundPom = true;
 

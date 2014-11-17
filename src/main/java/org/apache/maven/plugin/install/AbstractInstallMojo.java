@@ -124,7 +124,9 @@ public abstract class AbstractInstallMojo
         installChecksums( artifactFile );
     }
 
+    // CHECKSTYLE_OFF: LineLength
     protected void addMetaDataFilesForArtifact( Artifact artifact, Collection<File> targetMetadataFiles, boolean createChecksum )
+    // CHECKSTYLE_ON: LineLength
     {
         if ( !createChecksum )
         {
