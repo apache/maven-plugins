@@ -76,11 +76,13 @@ public class ChangeLog
 
         List<ChangeLogSet> changeLogSets = new ArrayList<ChangeLogSet>();
 
+        // CHECKSTYLE_OFF: MagicNumber
         BufferedReader br = new BufferedReader( reader, 8192 );
+        // CHECKSTYLE_ON: MagicNumber
 
         parser.parse( new InputSource( br ), new ChangeLogHandler( changeLogSets ) );
 
         return changeLogSets;
     }
 
-} // end of ChangeLog
+}

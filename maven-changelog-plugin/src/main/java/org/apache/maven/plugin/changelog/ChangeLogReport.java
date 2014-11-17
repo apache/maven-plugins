@@ -84,7 +84,6 @@ import java.util.regex.Pattern;
  *
  * @version $Id$
  */
-@SuppressWarnings( "ALL" )
 @Mojo( name = "changelog" )
 public class ChangeLogReport
     extends AbstractMavenReport
@@ -526,8 +525,10 @@ public class ChangeLogReport
 
         if ( outputXML.exists() )
         {
+            // CHECKSTYLE_OFF: MagicNumber
             if ( outputXMLExpiration > 0
                 && outputXMLExpiration * 60000 > System.currentTimeMillis() - outputXML.lastModified() )
+                // CHECKSTYLE_ON: MagicNumber
             {
                 try
                 {
@@ -1045,8 +1046,8 @@ public class ChangeLogReport
         {
             if ( dates == null )
             {
-                throw new MavenReportException( "The dates parameter is required when type=\"date\"."
-                                                    + " The value should be the absolute date for the start of the log." );
+                throw new MavenReportException( "The dates parameter is required when type=\"date\". The value "
+                                                    + "should be the absolute date for the start of the log." );
             }
         }
         else if ( "tag".equals( type ) )

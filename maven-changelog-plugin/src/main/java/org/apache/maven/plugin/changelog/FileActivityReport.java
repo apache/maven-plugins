@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
  *
  * @version $Id$
  */
-@Mojo(name = "file-activity")
+@Mojo( name = "file-activity" )
 public class FileActivityReport
     extends ChangeLogReport
 {

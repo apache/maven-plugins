@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  *
  * @version $Id$
  */
-@Mojo(name = "dev-activity")
+@Mojo( name = "dev-activity" )
 public class DeveloperActivityReport
     extends ChangeLogReport
 {
