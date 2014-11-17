@@ -48,9 +48,9 @@ public class JarsignerVerifyMojo
     @Parameter( property = "jarsigner.certs", defaultValue = "false" )
     private boolean certs;
 
-    /** When <code>true</code> this will make the execute() operation fail,
+    /**
+     * When <code>true</code> this will make the execute() operation fail,
      * throwing an exception, when verifying a non signed jar.
-     *
      * Primarily to keep backwards compatibility with existing code, and allow reusing the
      * bean in unattended operations when set to <code>false</code>.
      *
@@ -75,7 +75,8 @@ public class JarsignerVerifyMojo
     {
         super.preProcessArchive( archive );
 
-        if (errorWhenNotSigned) {
+        if ( errorWhenNotSigned )
+        {
 
             // check archive if signed
             boolean archiveSigned;
@@ -85,10 +86,12 @@ public class JarsignerVerifyMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Failed to check if archive " + archive + " is signed: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Failed to check if archive " + archive + " is signed: "
+                    + e.getMessage(), e );
             }
 
-            if ( !archiveSigned ) {
+            if ( !archiveSigned )
+            {
 
                 // fails, archive must be signed
                 throw new MojoExecutionException( getMessage( "archiveNotSigned", archive ) );
