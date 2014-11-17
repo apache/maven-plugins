@@ -50,7 +50,7 @@ History
 *--------------+------------+
 || <<Version>> || <<Release Date>> ||
 *--------------+------------+
-| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-27/pom.xml?view=markup}26}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-27/pom.xml?r1=HEAD&r2=1632929&diff_format=h}diff}}) | 2014-11-13  |
+| {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-27/pom.xml?view=markup}27}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-27/pom.xml?r1=HEAD&r2=1632929&diff_format=h}diff}}) | 2014-11-13  |
 *--------------+------------+
 | {{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-26/pom.xml?view=markup}26}} ({{{http://svn.apache.org/viewvc/maven/plugins/tags/maven-plugins-26/pom.xml?r1=HEAD&r2=1582504&diff_format=h}diff}}) | 2014-10-22  |
 *--------------+------------+
