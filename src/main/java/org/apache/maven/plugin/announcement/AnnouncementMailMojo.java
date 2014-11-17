@@ -177,7 +177,8 @@ public class AnnouncementMailMojo
     /**
      * Directory which contains the template for announcement email.
      *
-     * @deprecated Starting with version 2.10 this parameter is no longer used. You must use {@link #announcementDirectory} instead.
+     * @deprecated Starting with version 2.10 this parameter is no longer used.
+     * You must use {@link #announcementDirectory} instead.
      */
     @Parameter
     private File templateOutputDirectory;
@@ -218,7 +219,8 @@ public class AnnouncementMailMojo
         // Fail build fast if it is using deprecated parameters
         if ( templateOutputDirectory != null )
         {
-            throw new MojoExecutionException( "You are using the old parameter 'templateOutputDirectory'. You must use 'announcementDirectory' instead." );
+            throw new MojoExecutionException( "You are using the old parameter 'templateOutputDirectory'. "
+                + "You must use 'announcementDirectory' instead." );
         }
 
         // Run only at the execution root

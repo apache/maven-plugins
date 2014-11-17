@@ -168,7 +168,8 @@ public class AnnouncementMojo
     /**
      * Directory where the announcement file will be generated.
      *
-     * @deprecated Starting with version 2.10 this parameter is no longer used. You must use {@link #announcementDirectory} instead.
+     * @deprecated Starting with version 2.10 this parameter is no longer used.
+     * You must use {@link #announcementDirectory} instead.
      */
     @Parameter
     private File outputDirectory;
@@ -273,7 +274,8 @@ public class AnnouncementMojo
     /**
      * Flag to determine if the plugin will generate a JIRA announcement.
      *
-     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
+     * @deprecated Since version 2.4 this parameter has been deprecated.
+     * Please use the issueManagementSystems parameter instead.
      */
     @Parameter( property = "generateJiraAnnouncement", defaultValue = "false", required = true )
     private boolean generateJiraAnnouncement;
@@ -283,7 +285,8 @@ public class AnnouncementMojo
      * changes.xml file.
      *
      * @since 2.1
-     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter instead.
+     * @deprecated Since version 2.4 this parameter has been deprecated.
+     * Please use the issueManagementSystems parameter instead.
      */
     @Parameter( property = "changes.jiraMerge", defaultValue = "false" )
     private boolean jiraMerge;
@@ -470,7 +473,8 @@ public class AnnouncementMojo
         // Fail build fast if it is using deprecated parameters
         if ( outputDirectory != null )
         {
-            throw new MojoExecutionException( "You are using the old parameter 'outputDirectory'. You must use 'announcementDirectory' instead." );
+            throw new MojoExecutionException( "You are using the old parameter 'outputDirectory'. "
+                + "You must use 'announcementDirectory' instead." );
         }
 
         // Run only at the execution root
@@ -552,7 +556,8 @@ public class AnnouncementMojo
 
             if ( issueManagementSystems.contains( GIT_HUB ) )
             {
-                if ( ProjectUtils.validateIfIssueManagementComplete( project, GIT_HUB, "GitHub announcement", getLog() ) )
+                if ( ProjectUtils.validateIfIssueManagementComplete( project, GIT_HUB, "GitHub announcement",
+                                                                     getLog() ) )
                 {
                     List<Release> gitHubReleases = getGitHubReleases();
                     releases = releaseUtils.mergeReleases( releases, gitHubReleases );
@@ -560,8 +565,8 @@ public class AnnouncementMojo
                 }
                 else
                 {
-                    throw new MojoExecutionException(
-                                                      "Something is wrong with the Issue Management section. See previous error messages." );
+                    throw new MojoExecutionException( "Something is wrong with the Issue Management section. "
+                        + "See previous error messages." );
                 }
             }
 

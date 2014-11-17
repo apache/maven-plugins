@@ -71,8 +71,8 @@ public class IssueUtils
 
         if ( !isFound )
         {
-            throw new MojoExecutionException(
-                "Couldn't find any issues with a Fix Version prefix of '" + prefix + "' among the supplied issues: "  + toString( issues ) );
+            throw new MojoExecutionException( "Couldn't find any issues with a Fix Version prefix of '" + prefix
+                + "' among the supplied issues: " + toString( issues ) );
         }
         return filteredIssues;
     }
@@ -116,8 +116,8 @@ public class IssueUtils
 
         if ( !isFound )
         {
-            throw new MojoExecutionException(
-                "Couldn't find any issues for the version '" + releaseVersion + "' among the supplied issues: " + toString( issues ) );
+            throw new MojoExecutionException( "Couldn't find any issues for the version '" + releaseVersion
+                + "' among the supplied issues: " + toString( issues ) );
         }
         return issuesForVersion;
     }

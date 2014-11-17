@@ -408,11 +408,13 @@ public abstract class AbstractJiraDownloader
         this.versionPrefix = versionPrefix;
     }
 
-    public void setConnectionTimeout( int connectionTimeout ) {
+    public void setConnectionTimeout( int connectionTimeout )
+    {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public void setReceiveTimout( int receiveTimout ) {
+    public void setReceiveTimout( int receiveTimout )
+    {
         this.receiveTimout = receiveTimout;
     }
 }

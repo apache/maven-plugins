@@ -40,22 +40,23 @@ public interface IssueManagementSystem
      *
      * @return The map from keys used in poms and other config files to issue types.
      */
-    abstract Map<String, IssueType> getIssueTypeMap();
+    Map<String, IssueType> getIssueTypeMap();
 
     /**
      * Get the name of the issue management system.
      *
      * @return The name of the IMS.
      */
-    abstract String getName();
+    String getName();
 
     /**
      * Configure this issue management system.
      *
-     * @param issueTypes The mapping of issue types used in this issue management system to the ones used in a changes.xml file
+     * @param issueTypes The mapping of issue types used in this issue management system to the ones used in a
+     *                   changes.xml file
      * @throws MojoExecutionException If the configuration fails
      */
-    abstract void applyConfiguration( Map<String, String> issueTypes )
+    void applyConfiguration( Map<String, String> issueTypes )
         throws MojoExecutionException;
 
 }
