@@ -383,7 +383,8 @@ public class DeployFileMojo
         {
             try
             {
-                deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository(), getRetryFailedDeploymentCount() );
+                deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository(),
+                        getRetryFailedDeploymentCount() );
             }
             catch ( ArtifactDeploymentException e )
             {

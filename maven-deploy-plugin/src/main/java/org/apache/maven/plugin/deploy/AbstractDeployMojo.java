@@ -138,12 +138,12 @@ public abstract class AbstractDeployMojo
     {
         return updateReleaseInfo;
     }
-    
+
     int getRetryFailedDeploymentCount()
     {
         return retryFailedDeploymentCount;
     }
-    
+
     /**
      * Deploy an artifact from a particular file.
      * 
@@ -166,7 +166,8 @@ public abstract class AbstractDeployMojo
             {
                 if ( count > 0 )
                 {
-                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCounter );
+                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of "
+                                       + retryFailedDeploymentCounter );
                 }
                 getDeployer().deploy( source, artifact, deploymentRepository, localRepository );
                 exception = null;

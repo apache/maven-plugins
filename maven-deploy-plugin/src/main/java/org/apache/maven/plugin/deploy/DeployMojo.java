@@ -59,9 +59,9 @@ public class DeployMojo
      * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready
      * to be deployed
      */
-    private static final AtomicInteger readyProjectsCounter = new AtomicInteger();
+    private static final AtomicInteger READYPROJECTSCOUNTER = new AtomicInteger();
 
-    private static final List<DeployRequest> deployRequests =
+    private static final List<DeployRequest> DEPLOYREQUESTS =
         Collections.synchronizedList( new ArrayList<DeployRequest>() );
 
     /**
@@ -74,7 +74,8 @@ public class DeployMojo
 
     /**
      * Whether every project should be deployed during its own deploy-phase or at the end of the multimodule build. If
-     * set to {@code true} and the build fails, none of the reactor projects is deployed. <strong>(experimental)</strong>
+     * set to {@code true} and the build fails, none of the reactor projects is deployed.
+     * <strong>(experimental)</strong>
      * 
      * @since 2.8
      */
@@ -136,8 +137,10 @@ public class DeployMojo
         {
             failIfOffline();
 
+            // CHECKSTYLE_OFF: LineLength
             DeployRequest currentExecutionDeployRequest =
                 new DeployRequest().setProject( project ).setUpdateReleaseInfo( isUpdateReleaseInfo() ).setRetryFailedDeploymentCount( getRetryFailedDeploymentCount() ).setAltReleaseDeploymentRepository( altReleaseDeploymentRepository ).setAltSnapshotDeploymentRepository( altSnapshotDeploymentRepository ).setAltDeploymentRepository( altDeploymentRepository );
+            // CHECKSTYLE_ON: LineLength
 
             if ( !deployAtEnd )
             {
@@ -145,19 +148,19 @@ public class DeployMojo
             }
             else
             {
-                deployRequests.add( currentExecutionDeployRequest );
+                DEPLOYREQUESTS.add( currentExecutionDeployRequest );
                 addedDeployRequest = true;
             }
         }
 
-        boolean projectsReady = readyProjectsCounter.incrementAndGet() == reactorProjects.size();
+        boolean projectsReady = READYPROJECTSCOUNTER.incrementAndGet() == reactorProjects.size();
         if ( projectsReady )
         {
-            synchronized ( deployRequests )
+            synchronized ( DEPLOYREQUESTS )
             {
-                while ( !deployRequests.isEmpty() )
+                while ( !DEPLOYREQUESTS.isEmpty() )
                 {
-                    deployProject( deployRequests.remove( 0 ) );
+                    deployProject( DEPLOYREQUESTS.remove( 0 ) );
                 }
             }
         }
