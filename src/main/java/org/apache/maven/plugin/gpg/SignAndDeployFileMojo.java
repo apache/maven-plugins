@@ -388,13 +388,13 @@ public class SignAndDeployFileMojo
             int classifiersLength = StringUtils.countMatches( classifiers, "," );
             if ( typesLength != filesLength )
             {
-                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
-                        "'types' (respectively " + filesLength + " and " + typesLength + " entries )" );
+                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and "
+                    + "'types' (respectively " + filesLength + " and " + typesLength + " entries )" );
             }
             if ( classifiersLength != filesLength )
             {
-                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and " +
-                        "'classifiers' (respectively " + filesLength + " and " + classifiersLength + " entries )" );
+                throw new MojoExecutionException( "You must specify the same number of entries in 'files' and "
+                    + "'classifiers' (respectively " + filesLength + " and " + classifiersLength + " entries )" );
             }
             int fi = 0;
             int ti = 0;
@@ -423,16 +423,16 @@ public class SignAndDeployFileMojo
                     file = new File( project.getBasedir(), files.substring( fi, nfi ) );
                 }
                 if ( file.isFile() )
-                {   
+                {
                     if ( StringUtils.isWhitespace( classifiers.substring( ci, nci ) ) )
                     {
                         projectHelper.attachArtifact( project, types.substring( ti, nti ).trim(), file );
                     }
                     else
                     {
-                        projectHelper.attachArtifact( project, types.substring( ti, nti).trim(),
-                                classifiers.substring( ci, nci ).trim(), file);
-                    } 
+                        projectHelper.attachArtifact( project, types.substring( ti, nti ).trim(),
+                                                      classifiers.substring( ci, nci ).trim(), file );
+                    }
                 }
                 else
                 {
@@ -442,31 +442,35 @@ public class SignAndDeployFileMojo
                 ti = nti + 1;
                 ci = nci + 1;
             }
-        }   
-        else    
-        {               
+        }
+        else
+        {
             if ( types != null )
             {
                 throw new MojoExecutionException( "You must specify 'files' if you specify 'types'" );
-            }   
+            }
             if ( classifiers != null )
-            {   
+            {
                 throw new MojoExecutionException( "You must specify 'files' if you specify 'classifiers'" );
-            }       
-        }       
+            }
+        }
 
         List attachedArtifacts = project.getAttachedArtifacts();
 
-        for (Object attachedArtifact : attachedArtifacts) {
+        for ( Object attachedArtifact : attachedArtifacts )
+        {
             Artifact attached = (Artifact) attachedArtifact;
 
-            fileSig = signer.generateSignatureForArtifact(attached.getFile());
-            attached = new AttachedSignedArtifact(attached, new AscArtifactMetadata(attached, fileSig, false));
-            try {
-                deploy(attached.getFile(), attached, deploymentRepository, localRepository);
-            } catch (ArtifactDeploymentException e) {
-                throw new MojoExecutionException(
-                        "Error deploying attached artifact " + attached.getFile() + ": " + e.getMessage(), e);
+            fileSig = signer.generateSignatureForArtifact( attached.getFile() );
+            attached = new AttachedSignedArtifact( attached, new AscArtifactMetadata( attached, fileSig, false ) );
+            try
+            {
+                deploy( attached.getFile(), attached, deploymentRepository, localRepository );
+            }
+            catch ( ArtifactDeploymentException e )
+            {
+                throw new MojoExecutionException( "Error deploying attached artifact " + attached.getFile() + ": "
+                    + e.getMessage(), e );
             }
         }
 
@@ -645,23 +649,26 @@ public class SignAndDeployFileMojo
         {
             try
             {
-                if (count > 0)
+                if ( count > 0 )
                 {
-                    getLog().info(
-                        "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
+                    // CHECKSTYLE_OFF: LineLength
+                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of " + retryFailedDeploymentCount );
+                    // CHECKSTYLE_ON: LineLength
                 }
                 deployer.deploy( source, artifact, deploymentRepository, localRepository );
-                for (Object o : artifact.getMetadataList()) {
+                for ( Object o : artifact.getMetadataList() )
+                {
                     ArtifactMetadata metadata = (ArtifactMetadata) o;
-                    getLog().info("Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename());
+                    getLog().info( "Metadata[" + metadata.getKey() + "].filename = " + metadata.getRemoteFilename() );
                 }
                 exception = null;
                 break;
             }
             catch ( ArtifactDeploymentException e )
             {
-                if (count + 1 < retryFailedDeploymentCount) {
-                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage());
+                if ( count + 1 < retryFailedDeploymentCount )
+                {
+                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage() );
                     getLog().debug( e );
                 }
                 if ( exception == null )

@@ -254,9 +254,12 @@ public abstract class AbstractGpgSigner
     private String readPassword( String prompt )
         throws IOException
     {
-        try {
+        try
+        {
             return readPasswordJava16( prompt );
-        } catch ( IOException e ) {
+        }
+        catch ( IOException e )
+        {
             throw e;
         }
         catch ( NoSuchMethodException e )

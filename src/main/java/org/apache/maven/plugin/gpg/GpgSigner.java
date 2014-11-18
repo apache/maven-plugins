@@ -22,7 +22,6 @@ package org.apache.maven.plugin.gpg;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.Os;
