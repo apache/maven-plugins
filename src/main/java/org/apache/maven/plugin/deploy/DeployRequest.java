@@ -1,7 +1,5 @@
 package org.apache.maven.plugin.deploy;
 
-import org.apache.maven.project.MavenProject;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,6 +18,8 @@ import org.apache.maven.project.MavenProject;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import org.apache.maven.project.MavenProject;
 
 /**
  * 
