@@ -458,8 +458,6 @@ public abstract class AbstractAssemblyMojo
                                             "Mojo configuration is invalid: " + e.getMessage() );
         }
 
-        FixedStringSearchInterpolator rootInterpolator = createRepositoryInterpolator();
-
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
 
