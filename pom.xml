@@ -158,11 +158,6 @@ under the License.
     <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-component-annotations</artifactId>
     </dependency>
     <dependency>
