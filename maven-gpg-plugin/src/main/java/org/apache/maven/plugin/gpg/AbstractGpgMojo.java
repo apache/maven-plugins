@@ -62,12 +62,12 @@ public abstract class AbstractGpgMojo
      * optional as the agent will provide it.
      * For gpg2, specify true as --no-use-agent was removed in gpg2 and doesn't ask for a passphrase anymore.
      */
-    @Parameter( property = "gpg.useagent", defaultValue = "true")
+    @Parameter( property = "gpg.useagent", defaultValue = "true" )
     private boolean useAgent;
 
     /**
      */
-    @Parameter( defaultValue = "${settings.interactiveMode}", readonly = true)
+    @Parameter( defaultValue = "${settings.interactiveMode}", readonly = true )
     private boolean interactive;
 
     /**
@@ -113,8 +113,8 @@ public abstract class AbstractGpgMojo
      * {@code multiple} and {@code never}. The lock mode gets translated into the corresponding {@code --lock-___}
      * command line argument. Improper usage of this option may lead to data and key corruption.
      *
-     * @see <a href="http://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html">the --lock-*
-     * options</a>
+     * @see <a href="http://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html">the
+     *      --lock-options</a>
      * @since 1.5
      */
     @Parameter( property = "gpg.lockMode" )
@@ -122,12 +122,14 @@ public abstract class AbstractGpgMojo
 
     /**
      * Sets the arguments to be passed to gpg. Example:
+     * 
      * <pre>
      * &lt;gpgArguments&gt;
      *   &lt;arg&gt;--no-random-seed-file&lt;/arg&gt;
      *   &lt;arg&gt;--no-permission-warning&lt;/arg&gt;
      * &lt;/gpgArguments&gt;
      * </pre>
+     * 
      * @since 1.5
      */
     @Parameter

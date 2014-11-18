@@ -29,6 +29,10 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadataStoreException;
 import org.codehaus.plexus.util.FileUtils;
 
+/**
+ * @author dkulp
+ *
+ */
 public class AscArtifactMetadata
     extends AbstractArtifactMetadata
 {
