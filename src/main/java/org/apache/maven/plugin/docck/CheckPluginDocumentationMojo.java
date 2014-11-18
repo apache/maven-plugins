@@ -150,30 +150,30 @@ public class CheckPluginDocumentationMojo
 
                 String siteHtml = IOUtil.toString( streamReader );
 
-                if (!siteHtml.contains("href=\"index.html\""))
+                if ( !siteHtml.contains( "href=\"index.html\"" ) )
                 {
                     reporter.error( "site.xml is missing the link to: index.html \"Introduction\"." );
                 }
 
-                if (!siteHtml.contains("href=\"usage.html\""))
+                if ( !siteHtml.contains( "href=\"usage.html\"" ) )
                 {
                     reporter.error( "site.xml is missing the link to: usage.html \"Usage\"." );
                 }
 
-                if (!siteHtml.contains("href=\"plugin-info.html\""))
+                if ( !siteHtml.contains( "href=\"plugin-info.html\"" ) )
                 {
                     reporter.error( "site.xml is missing the link to: plugin-info.html \"Goals\"." );
                 }
 
-                if (!siteHtml.contains("href=\"faq.html\""))
+                if ( !siteHtml.contains( "href=\"faq.html\"" ) )
                 {
                     reporter.error( "site.xml is missing the link to: faq.html \"FAQ\"." );
                 }
             }
             catch ( IOException e )
             {
-                reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath()
-                    + "\'.\nError: " + e.getMessage() );
+                reporter.error( "Unable to read site.xml file: \'" + siteXml.getAbsolutePath() + "\'.\nError: "
+                    + e.getMessage() );
             }
             finally
             {
@@ -193,9 +193,8 @@ public class CheckPluginDocumentationMojo
             reporter.error( "There is no \'usage\' file in your site directory (in apt|html|xml[.vm] format)." );
         }
 
-        // check for **/examples/**.(apt|html|xml)[.vm] or **/example*.(apt|html|xml)[.vm] 
-        if ( !findFiles( projectSiteDirectory, "**/examples/*" )
-             && !findFiles( projectSiteDirectory, "**/example*" ) )
+        // check for **/examples/**.(apt|html|xml)[.vm] or **/example*.(apt|html|xml)[.vm]
+        if ( !findFiles( projectSiteDirectory, "**/examples/*" ) && !findFiles( projectSiteDirectory, "**/example*" ) )
         {
             reporter.error( "There are no example files in your site directory (in apt|html|xml[.vm] format)."
                 + " They should either be called \'example*.(apt|html|xml)[.vm]\'"
@@ -211,7 +210,7 @@ public class CheckPluginDocumentationMojo
     /**
      * Checks the project configured plugins if the required report plugins are present.
      *
-     * @param project  MavenProject to check
+     * @param project MavenProject to check
      * @param reporter listener
      * @todo maybe this should be checked default for all project?
      */
