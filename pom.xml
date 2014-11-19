@@ -467,18 +467,6 @@ under the License.
   </dependencies>
 
   <build>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <configuration>
-            <releaseProfiles>apache-release,rat,run-its</releaseProfiles><!-- TODO add to parent pom -->
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
