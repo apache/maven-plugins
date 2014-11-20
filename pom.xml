@@ -98,6 +98,25 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes combine.children="append">
+              <!--
+                rat check errors seen on ASF Jenkins instance, but not on local machine...
+              -->
+              <exclude>src/test/resources/gnupg/*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <profiles>
     <profile>
       <id>run-its</id>
@@ -108,17 +127,10 @@ under the License.
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
-                <debug>true</debug>
-                <projectsDirectory>src/it</projectsDirectory>
-                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                 <pomIncludes>
                   <pomInclude>*/pom.xml</pomInclude>
                   <pomInclude>sign-and-deploy*</pomInclude>
                 </pomIncludes>
-                <preBuildHookScript>setup</preBuildHookScript>
-                <postBuildHookScript>verify</postBuildHookScript>
-                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                <settingsFile>src/it/settings.xml</settingsFile>
                 <goals>
                   <goal>clean</goal>
                   <goal>install</goal>
@@ -131,25 +143,6 @@ under the License.
           </plugins>
         </pluginManagement>
       </build>
-    </profile>
-
-    <profile>
-      <id>reporting</id>
-      <activation>
-        <property>
-          <name>skipReports</name>
-          <value>!true</value>
-        </property>
-      </activation>
-
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </reporting>
     </profile>
   </profiles>
 </project>
