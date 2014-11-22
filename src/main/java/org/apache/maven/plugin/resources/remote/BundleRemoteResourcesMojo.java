@@ -92,6 +92,7 @@ public class BundleRemoteResourcesMojo
     {
         if ( !resourcesDirectory.exists() )
         {
+            getLog().info( "skip non existing resourceDirectory " + resourcesDirectory.getAbsolutePath() );
             return;
         }
 
