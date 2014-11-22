@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -92,6 +93,13 @@ public class BundleRemoteResourcesMojo
         if ( !resourcesDirectory.exists() )
         {
             return;
+        }
+
+        if ( StringUtils.isEmpty( sourceEncoding ) )
+        {
+            getLog().warn( "sourceEncoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
+            sourceEncoding = ReaderFactory.FILE_ENCODING;
         }
 
         // Look at the content of the resourcesDirectory and create a manifest of the files
