@@ -54,7 +54,9 @@ import org.codehaus.plexus.util.FileUtils;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "ejb", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE )
+// CHECKSTYLE_ON: LineLength
 public class EjbMojo
     extends AbstractMojo
 {
