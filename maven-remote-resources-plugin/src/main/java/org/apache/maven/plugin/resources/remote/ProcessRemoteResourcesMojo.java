@@ -439,6 +439,12 @@ public class ProcessRemoteResourcesMojo
             return;
         }
 
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
+        }
+
         if ( runOnlyAtExecutionRoot && !isExecutionRoot() )
         {
             getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
