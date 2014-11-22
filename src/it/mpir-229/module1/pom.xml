@@ -33,4 +33,11 @@
 
   <url>${artifacts.url}/${project.artifactId}-${project.version}</url>
 
+  <distributionManagement>
+    <site>
+      <id>site</id>
+      <url>scp://my.server/${project.artifactId}-${project.version}</url>
+    </site>
+  </distributionManagement>
+
 </project>

@@ -200,6 +200,7 @@ public abstract class AbstractProjectInfoTestCase
         MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
         ProfileManager profileManager = new DefaultProfileManager( getContainer(), null, null );
 
+        assertNotNull( "Local repository", mojo.localRepository );
         testMavenProject = builder.buildWithDependencies( pluginXmlFile, mojo.localRepository, profileManager );
 
         File outputDir = mojo.getReportOutputDirectory();
