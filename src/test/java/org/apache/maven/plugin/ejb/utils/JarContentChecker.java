@@ -20,35 +20,31 @@ package org.apache.maven.plugin.ejb.utils;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 /**
  * Jar Content Checker
  */
 public class JarContentChecker
 {
-    private final static String FOUND = "1";
+    private final static Boolean FOUND = Boolean.TRUE;
 
-    private final static String NOT_FOUND = "0";
+    private final static Boolean NOT_FOUND = Boolean.FALSE;
 
-    private HashMap fileMap;
+    private Map<File, Boolean> fileMap;
 
-    private HashMap directoryMap;
-
-    private HashMap dataMap;
+    private Map<File, Boolean> directoryMap;
 
 
     public JarContentChecker()
     {
-        fileMap = new HashMap();
-        directoryMap = new HashMap();
-        dataMap = new HashMap();
+        fileMap = new HashMap<File, Boolean>();
+        directoryMap = new HashMap<File, Boolean>();
     }
 
     public void addDirectory( File dir )
@@ -61,13 +57,6 @@ public class JarContentChecker
         fileMap.put( file, NOT_FOUND );
     }
 
-    public void addFile( String file, String data )
-    {
-        fileMap.put( file, NOT_FOUND );
-        dataMap.put( file, data );
-    }
-
-
     /**
      * checks whether the jar file contains the files for this checker,
      * files with the same file name but with different data will not
@@ -79,17 +68,18 @@ public class JarContentChecker
     public boolean isOK( JarFile jarFile )
     {
         boolean bRetVal;
-        Enumeration zipentries = jarFile.entries();
-        ZipEntry entry;
+        Enumeration<JarEntry> zipentries = jarFile.entries();
+        JarEntry entry;
         File entryFile;
 
         resetList();
 
         while ( zipentries.hasMoreElements() )
         {
-            entry = (ZipEntry) zipentries.nextElement();
+            entry = zipentries.nextElement();
             entryFile = new File( entry.getName() );
 
+            System.out.println( "Entry:" + entry.getName() );
             if ( entry.isDirectory() )
             {
                 // cross out all files found in the jar file
@@ -102,17 +92,7 @@ public class JarContentChecker
             }
             else if ( fileMap.containsKey( entryFile ) )
             {
-                try
-                {
-                    if ( checkContent( entryFile, jarFile.getInputStream( entry ) ) )
-                    {
-                        fileMap.put( entryFile, FOUND );
-                    }
-                }
-                catch ( IOException ex )
-                {
-                    // TODO: handle exception
-                }
+                fileMap.put( entryFile, FOUND );
             }
         }
 
@@ -121,24 +101,11 @@ public class JarContentChecker
         return bRetVal;
     }
 
-
-    private boolean checkContent( File file, InputStream istream )
-    {
-        boolean bRetVal = true;
-
-        if ( dataMap.containsKey( file ) )
-        {
-            // TODO: do content checking here
-        }
-
-        return bRetVal;
-    }
-
     private boolean checkFinalResult()
     {
         boolean bRetVal = true;
 
-        Iterator keys = fileMap.keySet().iterator();
+        Iterator<File> keys = fileMap.keySet().iterator();
 
         while ( keys.hasNext() && bRetVal )
         {
@@ -163,7 +130,7 @@ public class JarContentChecker
 
     private void resetList()
     {
-        Iterator keys = fileMap.keySet().iterator();
+        Iterator<File> keys = fileMap.keySet().iterator();
 
         while ( keys.hasNext() )
         {
