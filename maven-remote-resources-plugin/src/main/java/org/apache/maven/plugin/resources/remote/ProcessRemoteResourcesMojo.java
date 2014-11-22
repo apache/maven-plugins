@@ -436,6 +436,7 @@ public class ProcessRemoteResourcesMojo
     {
         if ( skip )
         {
+            getLog().info( "Skipping remote resources execution." );
             return;
         }
 
