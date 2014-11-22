@@ -79,7 +79,6 @@ public class JarContentChecker
             entry = zipentries.nextElement();
             entryFile = new File( entry.getName() );
 
-            System.out.println( "Entry:" + entry.getName() );
             if ( entry.isDirectory() )
             {
                 // cross out all files found in the jar file
