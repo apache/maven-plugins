@@ -36,6 +36,13 @@
 
   <url>${artifacts.url}</url>
 
+  <distributionManagement>
+    <site>
+      <id>site</id>
+      <url>scp://my.server/</url>
+    </site>
+  </distributionManagement>
+
   <build>
     <plugins>
       <plugin>
