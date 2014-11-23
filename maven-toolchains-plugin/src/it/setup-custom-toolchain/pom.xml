@@ -116,4 +116,36 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>maven-2</id><!-- only necessary to build with Maven 2 -->
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <missing>${basedir}</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <configuration>
+              <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+              <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+            </configuration>
+            <executions>
+              <execution>
+                <id>mojo-descriptor</id>
+                <goals><!-- Maven 2 does not support phase overriding: need to add an execution -->
+                  <goal>descriptor</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>    
+  </profiles>
 </project>
