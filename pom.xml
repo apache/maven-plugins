@@ -60,7 +60,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <antVersion>1.8.1</antVersion>
+    <antVersion>1.9.1</antVersion>
   </properties>
 
   <contributors>
@@ -138,12 +138,6 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-embedder</artifactId>
       <version>2.0.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant-nodeps</artifactId>
-      <version>${antVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
