@@ -100,8 +100,7 @@ public class LinkcheckReport
     private boolean offline;
 
     /**
-     * If online, the HTTP method should automatically follow HTTP redirects,
-     * <tt>false</tt> otherwise.
+     * If online, the HTTP method should automatically follow HTTP redirects, <tt>false</tt> otherwise.
      *
      * @parameter default-value="true"
      */
@@ -120,25 +119,19 @@ public class LinkcheckReport
     @Parameter( defaultValue = "${project.build.directory}/linkcheck/linkcheck.xml", required = true )
     protected File linkcheckOutput;
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * The HTTP method to use. Currently supported are "GET" and "HEAD".
      * <dl>
      * <dt>HTTP GET</dt>
-     * <dd>
-     * The HTTP GET method is defined in section 9.3 of
-     * <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
-     * The GET method means retrieve whatever information (in the form of an
-     * entity) is identified by the Request-URI.
-     * </dd>
+     * <dd>The HTTP GET method is defined in section 9.3 of <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
+     * The GET method means retrieve whatever information (in the form of an entity) is identified by the Request-URI.</dd>
      * <dt>HTTP HEAD</dt>
-     * <dd>
-     * The HTTP HEAD method is defined in section 9.4 of
-     * <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
-     * The HEAD method is identical to GET except that the server MUST NOT
-     * return a message-body in the response.
-     * </dd>
+     * <dd>The HTTP HEAD method is defined in section 9.4 of <a href="http://www.ietf.org/rfc/rfc2616.txt">RFC2616</a>:
+     * The HEAD method is identical to GET except that the server MUST NOT return a message-body in the response.</dd>
      * </dl>
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter( defaultValue = "head", required = true )
     private String httpMethod;
 
@@ -159,10 +152,8 @@ public class LinkcheckReport
     private Integer[] excludedHttpStatusWarnings;
 
     /**
-     * A list of pages to exclude.
-     * <br/>
-     * <b>Note</b>:
-     * <br/>
+     * A list of pages to exclude. <br/>
+     * <b>Note</b>: <br/>
      * <ul>
      * <li>This report, i.e. <code>linkcheck.html</code>, is always excluded.</li>
      * <li>May contain Ant-style wildcards and double wildcards, e.g. <code>apidocs/**</code>, etc.</li>
@@ -172,8 +163,7 @@ public class LinkcheckReport
     private String[] excludedPages;
 
     /**
-     * The list of links to exclude.
-     * <br/>
+     * The list of links to exclude. <br/>
      * <b>Note</b>: Patterns like <code>&#42;&#42;/dummy/&#42;</code> are allowed for excludedLink.
      */
     @Parameter
@@ -188,6 +178,7 @@ public class LinkcheckReport
 
     /**
      * The extra HttpClient parameters to be used when fetching links. For instance:
+     * 
      * <pre>
      * &lt;httpClientParameters&gt;
      * &nbsp;&lt;property&gt;
@@ -196,6 +187,7 @@ public class LinkcheckReport
      * &nbsp;&lt;/property&gt;
      * &lt;/httpClientParameters&gt;
      * </pre>
+     * 
      * See <a href="http://hc.apache.org/httpclient-3.x/preference-api.html">HttpClient preference page</a>
      */
     @Parameter( property = "httpClientParameters" )
@@ -235,11 +227,16 @@ public class LinkcheckReport
     private LinkcheckModel result;
 
     protected static final String ICON_SUCCESS = "images/icon_success_sml.gif";
+
     protected static final String ICON_WARNING = "images/icon_warning_sml.gif";
+
     protected static final String ICON_INFO = "images/icon_info_sml.gif";
+
     protected static final String ICON_ERROR = "images/icon_error_sml.gif";
-    private static final String pluginResourcesBase = "org/apache/maven/plugin/linkcheck";
-    private static final String resourceNames[] = { ICON_SUCCESS, ICON_WARNING, ICON_INFO, ICON_ERROR };
+
+    private static final String PLUGIN_RESOURCES_BASE = "org/apache/maven/plugin/linkcheck";
+
+    private static final String RESOURCE_NAMES[] = { ICON_SUCCESS, ICON_WARNING, ICON_INFO, ICON_ERROR };
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -330,8 +327,8 @@ public class LinkcheckReport
         {
             if ( getLog().isWarnEnabled() )
             {
-                getLog().warn( "File encoding has not been set, using platform encoding "
-                    + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                                   + ", i.e. build is platform dependent!" );
             }
 
             encoding = ReaderFactory.FILE_ENCODING;
@@ -378,7 +375,7 @@ public class LinkcheckReport
         else
         {
             getLog().warn( "The number of documents analyzed by Linkcheck could differ from the actual "
-                                   + "number of documents!" );
+                               + "number of documents!" );
 
             basedir = outputDirectory;
             basedir.mkdirs();
@@ -441,7 +438,7 @@ public class LinkcheckReport
         // Exclude this report
         pagesToExclude.add( getOutputName() + ".html" );
 
-        return (String[]) pagesToExclude.toArray(new String[pagesToExclude.size()]);
+        return (String[]) pagesToExclude.toArray( new String[pagesToExclude.size()] );
     }
 
     // ----------------------------------------------------------------------
@@ -472,9 +469,10 @@ public class LinkcheckReport
         try
         {
             getLog().debug( "Copying static linkcheck resources." );
-            for (String resourceName : resourceNames) {
-                URL url = this.getClass().getClassLoader().getResource(pluginResourcesBase + "/" + resourceName);
-                FileUtils.copyURLToFile(url, new File(getReportOutputDirectory(), resourceName));
+            for ( String resourceName : RESOURCE_NAMES )
+            {
+                URL url = this.getClass().getClassLoader().getResource( PLUGIN_RESOURCES_BASE + "/" + resourceName );
+                FileUtils.copyURLToFile( url, new File( getReportOutputDirectory(), resourceName ) );
             }
         }
         catch ( IOException e )

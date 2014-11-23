@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>25</version>
+    <version>27</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -236,11 +236,11 @@ under the License.
                 <id>integration-test</id>
                 <phase>integration-test</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo /><echo /><echo /><echo /><echo />
                     <echo level="warning">NO INTEGRATION TESTS DEFINED</echo>
                     <echo /><echo /><echo /><echo /><echo />
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
