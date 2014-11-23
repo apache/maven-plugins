@@ -95,28 +95,4 @@ under the License.
       </plugins>
     </pluginManagement>
   </build>
-
-  <profiles>
-    <profile>
-      <id>run-its</id>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-invoker-plugin</artifactId>
-              <configuration>
-                <setupIncludes>
-                  <setupInclude>demo-toolchain/pom.xml</setupInclude>
-                </setupIncludes>
-                <goals>
-                  <goal>validate</goal>
-                </goals>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-  </profiles>
 </project>
