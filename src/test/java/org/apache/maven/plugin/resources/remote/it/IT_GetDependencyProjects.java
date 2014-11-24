@@ -54,14 +54,20 @@ public class IT_GetDependencyProjects
         try
         {
             verifier.executeGoal( "generate-resources" );
-            verifier.resetStreams();
         }
         catch ( VerificationException e)
         {
+            verifier.resetStreams();
+
             // We will get an exception from harness in case
             // of execution failure (return code non zero).
             // This is the case if we have missing artifacts
             // as in this test case.
+            // This means we can't test the created file which will never
+            // contain the appropriate data we wan't to check for. 
+            // So the only reliable way is to check the log output 
+            // from maven which will print out message according to
+            // the missing artifacts.
             File output = new File( verifier.getBasedir(), "log.txt" );
             String content = FileUtils.fileRead( output );
             

@@ -32,7 +32,6 @@ public class IT_CustomFilterDelimiter
     extends AbstractIT
 {
     
-    @SuppressWarnings( "unchecked" )
     public void test()
         throws IOException, URISyntaxException, VerificationException
     {
