@@ -117,12 +117,17 @@ public class MavenProjectBasicStub
 
     public String getGroupId()
     {
-        return "org.apache.maven.plugin.test";
+        String groupId = getModel().getGroupId();
+        if ( ( groupId == null ) && ( getModel().getParent() != null ) )
+        {
+            groupId = getModel().getParent().getGroupId();
+        }
+        return groupId;
     }
 
     public String getArtifactId()
     {
-        return "maven-resource-plugin-test#" + identifier;
+        return getModel().getArtifactId();
     }
 
     public String getPackaging()
