@@ -1159,6 +1159,8 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     if ( bundle.getSourceEncoding() == null )
                                     {
+                                        // TODO: Is this correct? Shouldn't we behave like the rest of maven and fail
+                                        // down to JVM default instead ISO-8859-1 ?
                                         velocity.mergeTemplate( bundleResource, "ISO-8859-1", context, writer );
                                     }
                                     else
