@@ -62,7 +62,7 @@ under the License.
     <mavenFilteringVersion>1.3</mavenFilteringVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <testOutputToFile>true</testOutputToFile>
-    <checkstyle.violation.ignore>RedundantThrows,NewlineAtEndOfFile,ParameterNumber,MethodLength,FileLength,ModifierOrder</checkstyle.violation.ignore>
+    <checkstyle.violation.ignore>RedundantThrows,NewlineAtEndOfFile,ParameterNumber,MethodLength,FileLength,ModifierOrder,JavadocMethod</checkstyle.violation.ignore>
   </properties>
 
   <contributors>

@@ -71,8 +71,6 @@ public class AssemblyProxyArchiver
 
     private final Logger logger;
 
-    private final boolean dryRun;
-
     private boolean forced;
 
 
@@ -86,7 +84,7 @@ public class AssemblyProxyArchiver
     public AssemblyProxyArchiver( final String rootPrefix, final Archiver delegate,
                                   final List<ContainerDescriptorHandler> containerDescriptorHandlers,
                                   final List<FileSelector> extraSelectors, final List<ArchiveFinalizer> extraFinalizers,
-                                  final File assemblyWorkDir, final Logger logger, final boolean dryRun )
+                                  final File assemblyWorkDir, final Logger logger )
     {
         this.rootPrefix = rootPrefix;
         this.delegate = delegate;
@@ -94,7 +92,6 @@ public class AssemblyProxyArchiver
         assemblyWorkPath = assemblyWorkDir.getAbsolutePath().replace( '\\', '/' );
 
         this.logger = logger;
-        this.dryRun = dryRun;
 
         if ( !"".equals( rootPrefix ) && !rootPrefix.endsWith( "/" ) )
         {
@@ -143,7 +140,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix, final String[] includes,
+    public void addArchivedFileSet( @Nonnull final File archiveFile, final String prefix, final String[] includes,
                                     final String[] excludes )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -159,14 +156,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addArchivedFileSet( fs );
-            }
+            delegate.addArchivedFileSet( fs );
         }
         finally
         {
@@ -185,8 +175,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addArchivedFileSet( final @Nonnull File archiveFile, final String prefix )
-        throws ArchiverException
+    public void addArchivedFileSet( @Nonnull final File archiveFile, final String prefix )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -199,14 +188,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addArchivedFileSet( fs );
-            }
+            delegate.addArchivedFileSet( fs );
         }
         finally
         {
@@ -218,7 +200,6 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -233,14 +214,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addArchivedFileSet( fs );
-            }
+            delegate.addArchivedFileSet( fs );
         }
         finally
         {
@@ -251,8 +225,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addArchivedFileSet( final @Nonnull File archiveFile )
-        throws ArchiverException
+    public void addArchivedFileSet( @Nonnull final File archiveFile )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -265,14 +238,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding archived file-set in: " + archiveFile + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addArchivedFileSet( fs );
-            }
+            delegate.addArchivedFileSet( fs );
         }
         finally
         {
@@ -283,9 +249,8 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addDirectory( final @Nonnull File directory, final String prefix, final String[] includes,
+    public void addDirectory( @Nonnull final File directory, final String prefix, final String[] includes,
                               final String[] excludes )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -300,14 +265,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                doAddFileSet( fs );
-            }
+            doAddFileSet( fs );
         }
         finally
         {
@@ -319,19 +277,11 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void addSymlink( String symlinkName, String symlinkDestination )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addSymlink( symlinkName, symlinkDestination );
-            }
+            delegate.addSymlink( symlinkName, symlinkDestination );
         }
         finally
         {
@@ -344,20 +294,11 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void addSymlink( String symlinkName, int permissions, String symlinkDestination )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addSymlink( symlinkName, permissions, symlinkDestination );
-            }
-
+            delegate.addSymlink( symlinkName, permissions, symlinkDestination );
         }
         finally
         {
@@ -369,8 +310,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addDirectory( final @Nonnull File directory, final String prefix )
-        throws ArchiverException
+    public void addDirectory( @Nonnull final File directory, final String prefix )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -383,14 +323,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                doAddFileSet( fs );
-            }
+            doAddFileSet( fs );
         }
         finally
         {
@@ -401,8 +334,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addDirectory( final @Nonnull File directory, final String[] includes, final String[] excludes )
-        throws ArchiverException
+    public void addDirectory( @Nonnull final File directory, final String[] includes, final String[] excludes )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -417,14 +349,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                doAddFileSet( fs );
-            }
+            doAddFileSet( fs );
         }
         finally
         {
@@ -435,8 +360,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addDirectory( final @Nonnull File directory )
-        throws ArchiverException
+    public void addDirectory( @Nonnull final File directory )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -449,14 +373,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding directory file-set in: " + directory + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                doAddFileSet( fs );
-            }
+            doAddFileSet( fs );
         }
         finally
         {
@@ -467,8 +384,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName, final int permissions )
-        throws ArchiverException
+    public void addFile( @Nonnull final File inputFile, @Nonnull final String destFileName, final int permissions )
     {
         if ( acceptFile( inputFile ) )
         {
@@ -477,14 +393,7 @@ public class AssemblyProxyArchiver
             {
                 debug( "Adding file: " + inputFile + " to archive location: " + rootPrefix + destFileName );
 
-                if ( dryRun )
-                {
-                    debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-                }
-                else
-                {
-                    delegate.addFile( inputFile, rootPrefix + destFileName, permissions );
-                }
+                delegate.addFile( inputFile, rootPrefix + destFileName, permissions );
             }
             finally
             {
@@ -496,8 +405,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addFile( final @Nonnull File inputFile, final @Nonnull String destFileName )
-        throws ArchiverException
+    public void addFile( @Nonnull final File inputFile, @Nonnull final String destFileName )
     {
         if ( acceptFile( inputFile ) )
         {
@@ -506,14 +414,7 @@ public class AssemblyProxyArchiver
             {
                 debug( "Adding file: " + inputFile + " to archive location: " + rootPrefix + destFileName );
 
-                if ( dryRun )
-                {
-                    debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-                }
-                else
-                {
-                    delegate.addFile( inputFile, rootPrefix + destFileName );
-                }
+                delegate.addFile( inputFile, rootPrefix + destFileName );
             }
             finally
             {
@@ -526,20 +427,13 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void createArchive()
-        throws ArchiverException, IOException
+        throws IOException
     {
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.setForced( forced );
-                delegate.createArchive();
-            }
+            delegate.setForced( forced );
+            delegate.createArchive();
         }
         finally
         {
@@ -751,7 +645,6 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void addArchivedFileSet( final ArchivedFileSet fileSet )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -760,14 +653,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding archived file-set in: " + fileSet.getArchive() + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                delegate.addArchivedFileSet( fs );
-            }
+            delegate.addArchivedFileSet( fs );
         }
         finally
         {
@@ -778,8 +664,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public void addFileSet( final @Nonnull FileSet fileSet )
-        throws ArchiverException
+    public void addFileSet( @Nonnull final FileSet fileSet )
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -788,14 +673,7 @@ public class AssemblyProxyArchiver
 
             debug( "Adding file-set in: " + fileSet.getDirectory() + " to archive location: " + fs.getPrefix() );
 
-            if ( dryRun )
-            {
-                debug( "DRY RUN: Skipping delegated call to: " + getMethodName() );
-            }
-            else
-            {
-                doAddFileSet( fs );
-            }
+            doAddFileSet( fs );
         }
         finally
         {
@@ -804,7 +682,6 @@ public class AssemblyProxyArchiver
     }
 
     private void doAddFileSet( final FileSet fs )
-        throws ArchiverException
     {
         final String fsPath = fs.getDirectory().getAbsolutePath().replace( '\\', '/' );
 
@@ -870,7 +747,6 @@ public class AssemblyProxyArchiver
     }
 
     private boolean acceptFile( final File inputFile )
-        throws ArchiverException
     {
         if ( !Boolean.TRUE.equals( inPublicApi.get() ) )
         {
@@ -941,7 +817,6 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
-        throws ArchiverException
     {
         File file = new File( resource.getName() ); // zOMG.
         if ( acceptFile( file ) )
@@ -963,7 +838,6 @@ public class AssemblyProxyArchiver
      * {@inheritDoc}
      */
     public void addResources( final PlexusIoResourceCollection resources )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
@@ -979,10 +853,8 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
-    public
     @Nonnull
-    ResourceIterator getResources()
-        throws ArchiverException
+    public ResourceIterator getResources()
     {
         return delegate.getResources();
     }

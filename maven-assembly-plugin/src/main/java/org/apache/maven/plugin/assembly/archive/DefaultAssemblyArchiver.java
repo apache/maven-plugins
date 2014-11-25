@@ -39,6 +39,7 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.diags.DryRunArchiver;
 import org.codehaus.plexus.archiver.filters.JarSecurityFileSelector;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -285,7 +286,7 @@ public class DefaultAssemblyArchiver
                                        final AssemblerConfigurationSource configSource,
                                        final List<ContainerDescriptorHandler> containerHandlers,
                                        boolean recompressZippedFiles )
-        throws ArchiverException, NoSuchArchiverException
+        throws NoSuchArchiverException
     {
         Archiver archiver;
         if ( "tgz".equals( format ) || "tbz2".equals( format ) || format.startsWith( "tar" ) )
@@ -330,8 +331,11 @@ public class DefaultAssemblyArchiver
         }
 
         archiver = new AssemblyProxyArchiver( prefix, archiver, containerHandlers, extraSelectors, extraFinalizers,
-                                              configSource.getWorkingDirectory(), getLogger(),
-                                              configSource.isDryRun() );
+                                              configSource.getWorkingDirectory(), getLogger() );
+        if ( configSource.isDryRun() )
+        {
+            archiver = new DryRunArchiver( archiver, getLogger() );
+        }
 
         archiver.setUseJvmChmod( configSource.isUpdateOnly() );
         archiver.setIgnorePermissions( configSource.isIgnorePermissions() );
@@ -365,7 +369,6 @@ public class DefaultAssemblyArchiver
     }
 
     private void configureArchiver( final Archiver archiver, final AssemblerConfigurationSource configSource )
-        throws ArchiverException
     {
         Xpp3Dom config;
         try
@@ -484,7 +487,7 @@ public class DefaultAssemblyArchiver
     }
 
     protected Archiver createTarArchiver( final String format, final TarLongFileMode tarLongFileMode )
-        throws NoSuchArchiverException, ArchiverException
+        throws NoSuchArchiverException
     {
         final TarArchiver tarArchiver = (TarArchiver) archiverManager.getArchiver( "tar" );
         final int index = format.indexOf( '.' );

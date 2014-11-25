@@ -71,9 +71,8 @@ public class MavenProjects
         }
     }
 
-    public static
     @Nullable
-    Artifact findArtifactByClassifier( MavenProject mavenProject, String classifier )
+    public static Artifact findArtifactByClassifier( MavenProject mavenProject, String classifier )
     {
         @SuppressWarnings( "unchecked" ) final List<Artifact> attachments = mavenProject.getAttachedArtifacts();
         if ( ( attachments != null ) && !attachments.isEmpty() )

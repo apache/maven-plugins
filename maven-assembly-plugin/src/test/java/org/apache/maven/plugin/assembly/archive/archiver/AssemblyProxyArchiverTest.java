@@ -71,7 +71,7 @@ public class AssemblyProxyArchiverTest
 
         final TrackingArchiver tracker = new TrackingArchiver();
         final AssemblyProxyArchiver archiver =
-            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
+            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger );
 
         archiver.setForced( true );
 
@@ -97,7 +97,7 @@ public class AssemblyProxyArchiverTest
 
         final TrackingArchiver tracker = new TrackingArchiver();
         final AssemblyProxyArchiver archiver =
-            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger, false );
+            new AssemblyProxyArchiver( "", tracker, null, null, null, workdir, logger );
 
         archiver.setForced( true );
 
@@ -135,7 +135,7 @@ public class AssemblyProxyArchiverTest
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
-                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
+                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         archiver.setForced( true );
 
@@ -164,7 +164,7 @@ public class AssemblyProxyArchiverTest
 
         final AssemblyProxyArchiver archiver =
             new AssemblyProxyArchiver( "", delegate, null, selectors, null, new File( "." ),
-                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), false );
+                                       new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         archiver.setForced( true );
 
