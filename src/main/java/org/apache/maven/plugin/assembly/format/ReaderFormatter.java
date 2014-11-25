@@ -91,9 +91,8 @@ public class ReaderFormatter
         }
     }
 
-    public static
     @Nullable
-    InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource,
+    public static InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource,
                                                    final boolean isFiltered, String fileSetLineEnding )
         throws AssemblyFormattingException
     {

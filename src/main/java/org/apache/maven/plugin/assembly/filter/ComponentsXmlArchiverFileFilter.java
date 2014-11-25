@@ -121,7 +121,7 @@ public class ComponentsXmlArchiverFileFilter
     // }
 
     private void addToArchive( final Archiver archiver )
-        throws IOException, ArchiverException
+        throws IOException
     {
         if ( components != null )
         {
@@ -157,7 +157,6 @@ public class ComponentsXmlArchiverFileFilter
     }
 
     public void finalizeArchiveCreation( final Archiver archiver )
-        throws ArchiverException
     {
         // this will prompt the isSelected() call, below, for all resources added to the archive.
         // FIXME: This needs to be corrected in the AbstractArchiver, where
@@ -189,7 +188,7 @@ public class ComponentsXmlArchiverFileFilter
         return null;
     }
 
-    public boolean isSelected( final @Nonnull FileInfo fileInfo )
+    public boolean isSelected( @Nonnull final FileInfo fileInfo )
         throws IOException
     {
         if ( fileInfo.isFile() )
@@ -248,7 +247,6 @@ public class ComponentsXmlArchiverFileFilter
     }
 
     public void finalizeArchiveExtraction( final UnArchiver unarchiver )
-        throws ArchiverException
     {
     }
 

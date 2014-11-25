@@ -78,9 +78,8 @@ public final class AssemblyFormatUtils
     }
 
 
-    public static
     @Nonnull
-    FixedStringSearchInterpolator finalNameInterpolator( String finalName )
+    public static FixedStringSearchInterpolator finalNameInterpolator( String finalName )
     {
         final Properties specialExpressionOverrides = new Properties();
 
@@ -97,9 +96,8 @@ public final class AssemblyFormatUtils
         return FixedStringSearchInterpolator.create( new PropertiesBasedValueSource( specialExpressionOverrides ) );
     }
 
-    public static
     @Nonnull
-    FixedStringSearchInterpolator moduleProjectInterpolator( final MavenProject moduleProject )
+    public static FixedStringSearchInterpolator moduleProjectInterpolator( final MavenProject moduleProject )
     {
         if ( moduleProject != null )
         {
@@ -136,9 +134,8 @@ public final class AssemblyFormatUtils
 
     }
 
-    public static
     @Nonnull
-    FixedStringSearchInterpolator artifactProjectInterpolator( final MavenProject artifactProject )
+    public static FixedStringSearchInterpolator artifactProjectInterpolator( final MavenProject artifactProject )
     {
         if ( artifactProject != null )
         {
@@ -162,9 +159,8 @@ public final class AssemblyFormatUtils
 
     }
 
-    public static
     @Nonnull
-    FixedStringSearchInterpolator artifactInterpolator( final @Nonnull Artifact artifact )
+    public static FixedStringSearchInterpolator artifactInterpolator( @Nonnull final Artifact artifact )
     {
         return FixedStringSearchInterpolator.create( new PrefixedObjectValueSource( "artifact.", artifact ),
                                                      new PrefixedObjectValueSource( "artifact.",
@@ -174,9 +170,8 @@ public final class AssemblyFormatUtils
     }
 
 
-    public static
     @Nonnull
-    FixedStringSearchInterpolator classifierRules( final Artifact artifact )
+    public static FixedStringSearchInterpolator classifierRules( final Artifact artifact )
     {
         final Properties specialRules = new Properties();
 
@@ -305,9 +300,8 @@ public final class AssemblyFormatUtils
      */
 
 
-    public static
     @Nonnull
-    String fixRelativeRefs( @Nonnull String src )
+    public static String fixRelativeRefs( @Nonnull String src )
     {
         String value = src;
 

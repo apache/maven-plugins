@@ -71,7 +71,6 @@ public class ManifestCreationFinalizer
 
     @Override
     public void finalizeArchiveCreation( final Archiver archiver )
-        throws ArchiverException
     {
         if ( archiveConfiguration != null )
         {

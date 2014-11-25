@@ -74,7 +74,6 @@ public class SimpleAggregatingDescriptorHandler
     private Logger logger;
 
     public void finalizeArchiveCreation( final Archiver archiver )
-        throws ArchiverException
     {
         checkConfig();
 
@@ -100,7 +99,6 @@ public class SimpleAggregatingDescriptorHandler
     }
 
     private File writePropertiesFile()
-        throws ArchiverException
     {
         File f;
 
@@ -141,7 +139,6 @@ public class SimpleAggregatingDescriptorHandler
     }
 
     public void finalizeArchiveExtraction( final UnArchiver unarchiver )
-        throws ArchiverException
     {
     }
 
@@ -152,7 +149,7 @@ public class SimpleAggregatingDescriptorHandler
         return Collections.singletonList( outputPath );
     }
 
-    public boolean isSelected( final @Nonnull FileInfo fileInfo )
+    public boolean isSelected(  @Nonnull final FileInfo fileInfo )
         throws IOException
     {
         checkConfig();

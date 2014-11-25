@@ -27,6 +27,7 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import java.io.File;
 
 /**
+ * Creates an archive
  * @version $Id$
  */
 public interface AssemblyArchiver
