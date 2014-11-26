@@ -60,6 +60,10 @@ Usage
  This will trigger the scanning of that project's <<<${basedir}/src/main/resources>>> directory and create the
  <<<${basedir}/target/classes/META-INF/maven/remote-resources.xml>>> manifest file.
 
+ <<Note:>> The files have to be named like <<<*.vm>>> to let them velocity macro files which will
+           be filtered by the <<process>> goal. If you don't name the files according to this
+           they will not been filtered.
+
 
 * How to Use Remote Resource Bundles 
 
