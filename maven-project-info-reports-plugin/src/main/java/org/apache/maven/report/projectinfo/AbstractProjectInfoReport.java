@@ -183,7 +183,7 @@ public abstract class AbstractProjectInfoReport
      *
      * @since 2.8
      */
-    @Parameter( property = "mpir.targetJavaVersion", defaultValue = "${maven.compiler.target}" )
+    @Parameter( defaultValue = "${maven.compiler.target}" )
     protected String targetJavaVersion;
 
     // ----------------------------------------------------------------------
