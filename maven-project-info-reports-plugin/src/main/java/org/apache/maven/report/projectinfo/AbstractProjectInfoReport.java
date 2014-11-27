@@ -177,6 +177,15 @@ public abstract class AbstractProjectInfoReport
     @Parameter( property = "mpir.skip", defaultValue = "false" )
     private boolean skip;
 
+    /**
+     * The target Java version the artifact is built for. Should match the target used in the
+     * compiler plugin.
+     *
+     * @since 2.8
+     */
+    @Parameter( property = "mpir.targetJavaVersion", defaultValue = "${maven.compiler.target}" )
+    protected String targetJavaVersion;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -271,7 +280,7 @@ public abstract class AbstractProjectInfoReport
 
     /**
      * @param coll The collection to be checked.
-     * @return true if coll is empty false otherwise. 
+     * @return true if coll is empty false otherwise.
      */
     protected boolean isEmpty( Collection<?> coll )
     {
