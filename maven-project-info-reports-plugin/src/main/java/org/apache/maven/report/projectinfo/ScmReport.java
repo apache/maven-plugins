@@ -739,8 +739,8 @@ public class ScmReport
         // Subversion
 
         /**
-         * Create the documentation to provide an anonymous access with a <code>Subversion</code> SCM. For example, generate
-         * the following command line:
+         * Create the documentation to provide an anonymous access with a <code>Subversion</code>
+         * SCM. For example, generate the following command line:
          * <p>
          * svn checkout http://svn.apache.org/repos/asf/maven/components/trunk maven
          * </p>
@@ -756,8 +756,8 @@ public class ScmReport
         }
 
         /**
-         * Create the documentation to provide an developer access with a <code>Subversion</code> SCM. For example, generate
-         * the following command line:
+         * Create the documentation to provide an developer access with a <code>Subversion</code>
+         * SCM. For example, generate the following command line:
          * <p>
          * svn checkout https://svn.apache.org/repos/asf/maven/components/trunk maven
          * </p>
