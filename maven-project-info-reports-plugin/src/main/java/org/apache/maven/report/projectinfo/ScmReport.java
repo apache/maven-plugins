@@ -220,10 +220,10 @@ public class ScmReport
             ScmRepository devRepository = getScmRepository( devConnection );
 
             // Overview section
-            renderOverViewSection( anonymousRepository );
+            renderOverviewSection( anonymousRepository );
 
             // Web access section
-            renderWebAccesSection( webAccessUrl );
+            renderWebAccessSection( webAccessUrl );
 
             // Anonymous access section if needed
             renderAnonymousAccessSection( anonymousRepository );
@@ -243,7 +243,7 @@ public class ScmReport
          *
          * @param anonymousRepository the anonymous repository
          */
-        private void renderOverViewSection( ScmRepository anonymousRepository )
+        private void renderOverviewSection( ScmRepository anonymousRepository )
         {
             startSection( getI18nString( "overview.title" ) );
 
@@ -302,7 +302,7 @@ public class ScmReport
          *
          * @param scmUrl The URL to the project's browsable repository.
          */
-        private void renderWebAccesSection( String scmUrl )
+        private void renderWebAccessSection( String scmUrl )
         {
             startSection( getI18nString( "webaccess.title" ) );
 
@@ -363,7 +363,7 @@ public class ScmReport
                 SvnScmProviderRepository svnRepo =
                     (SvnScmProviderRepository) anonymousRepository.getProviderRepository();
 
-                anonymousAccessSVN( svnRepo );
+                anonymousAccessSubversion( svnRepo );
             }
             else
             {
@@ -429,7 +429,7 @@ public class ScmReport
             {
                 SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) devRepository.getProviderRepository();
 
-                developerAccessSVN( svnRepo );
+                developerAccessSubversion( svnRepo );
             }
             else
             {
@@ -736,10 +736,10 @@ public class ScmReport
             verbatimText( command.toString() );
         }
 
-        // SVN
+        // Subversion
 
         /**
-         * Create the documentation to provide an anonymous access with a <code>SVN</code> SCM. For example, generate
+         * Create the documentation to provide an anonymous access with a <code>Subversion</code> SCM. For example, generate
          * the following command line:
          * <p>
          * svn checkout http://svn.apache.org/repos/asf/maven/components/trunk maven
@@ -748,7 +748,7 @@ public class ScmReport
          * @param svnRepo
          * @see <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>
          */
-        private void anonymousAccessSVN( SvnScmProviderRepository svnRepo )
+        private void anonymousAccessSubversion( SvnScmProviderRepository svnRepo )
         {
             paragraph( getI18nString( "anonymousaccess.svn.intro" ) );
 
@@ -756,7 +756,7 @@ public class ScmReport
         }
 
         /**
-         * Create the documentation to provide an developer access with a <code>SVN</code> SCM. For example, generate
+         * Create the documentation to provide an developer access with a <code>Subversion</code> SCM. For example, generate
          * the following command line:
          * <p>
          * svn checkout https://svn.apache.org/repos/asf/maven/components/trunk maven
@@ -768,7 +768,7 @@ public class ScmReport
          * @param svnRepo
          * @see <a href="http://svnbook.red-bean.com/">http://svnbook.red-bean.com/</a>
          */
-        private void developerAccessSVN( SvnScmProviderRepository svnRepo )
+        private void developerAccessSubversion( SvnScmProviderRepository svnRepo )
         {
             if ( svnRepo.getUrl() != null )
             {
@@ -896,7 +896,8 @@ public class ScmReport
         /**
          * Convenience method that return true is the defined <code>SCM repository</code> is a known provider.
          * <p>
-         * Actually, we fully support Clearcase, CVS, Perforce, Starteam, SVN by the maven-scm-providers component.
+         * Currently, we fully support ClearCase, CVS, Git, Perforce, Mercurial, Starteam and Subversion
+         * by the maven-scm-providers component.
          * </p>
          *
          * @param scmRepository a SCM repository
