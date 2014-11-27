@@ -305,7 +305,8 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Contributor}</code>
      * @return a none null list of <code>{@link Contributor}</code> which have an <code>helper</code> DOAP role.
      */
-    public static List<Contributor> getContributorsWithHelperRole( I18N i18n, List<Contributor> developersOrContributors )
+    public static List<Contributor> getContributorsWithHelperRole( I18N i18n,
+                                                                   List<Contributor> developersOrContributors )
     {
         return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "helpers" );
     }
@@ -326,7 +327,8 @@ public class DoapUtil
      * @param developersOrContributors list of <code>{@link Contributor}</code>
      * @return a none null list of <code>{@link Contributor}</code> which have a <code>tester</code> DOAP role.
      */
-    public static List<Contributor> getContributorsWithTesterRole( I18N i18n, List<Contributor> developersOrContributors )
+    public static List<Contributor> getContributorsWithTesterRole( I18N i18n,
+                                                                   List<Contributor> developersOrContributors )
     {
         return filterContributorsByDoapRoles( i18n, developersOrContributors ).get( "testers" );
     }
@@ -628,6 +630,7 @@ public class DoapUtil
         }
         catch ( IOException e )
         {
+            // ignore
         }
         interpolator.addValueSource( new PropertiesBasedValueSource( System.getProperties() ) );
         interpolator.addValueSource( new PropertiesBasedValueSource( project.getProperties() ) );
@@ -663,6 +666,7 @@ public class DoapUtil
         }
         catch ( InterpolationException e )
         {
+            // ignore
         }
 
         if ( interpolatedValue.startsWith( "${" ) )
@@ -690,7 +694,7 @@ public class DoapUtil
      *         list of <code>{@link Contributor}</code> as value.
      */
     private static Map<String, List<Contributor>> filterContributorsByDoapRoles( I18N i18n,
-                                                                                 List<Contributor> developersOrContributors )
+                                                                           List<Contributor> developersOrContributors )
     {
         Map<String, List<Contributor>> returnMap = new HashMap<String, List<Contributor>>( 7 );
         returnMap.put( "maintainers", new ArrayList<Contributor>() );
@@ -802,7 +806,8 @@ public class DoapUtil
         try
         {
             is =
-                DoapUtil.class.getResourceAsStream( "/META-INF/maven/org.apache.maven.plugins/maven-doap-plugin/pom.properties" );
+                DoapUtil.class.getResourceAsStream( "/META-INF/maven/org.apache.maven.plugins/"
+                    + "maven-doap-plugin/pom.properties" );
             if ( is == null )
             {
                 return "<unknown>";
@@ -837,7 +842,7 @@ public class DoapUtil
          * space overflows due to retention of discarded classloaders.
          */
         @SuppressWarnings( "rawtypes" )
-        private static final Map<Class,ClassMap> classMaps = new WeakHashMap<Class,ClassMap>();
+        private static final Map<Class, ClassMap> CLASS_MAPS = new WeakHashMap<Class, ClassMap>();
 
         private ReflectionValueExtractor()
         {
@@ -887,6 +892,7 @@ public class DoapUtil
                     }
                     catch ( NumberFormatException e )
                     {
+                        // ignore
                     }
                 }
 
@@ -935,13 +941,13 @@ public class DoapUtil
 
         private static ClassMap getClassMap( Class<? extends Object> clazz )
         {
-            ClassMap classMap = classMaps.get( clazz );
+            ClassMap classMap = CLASS_MAPS.get( clazz );
 
             if ( classMap == null )
             {
                 classMap = new ClassMap( clazz );
 
-                classMaps.put( clazz, classMap );
+                CLASS_MAPS.put( clazz, classMap );
             }
 
             return classMap;

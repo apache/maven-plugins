@@ -115,11 +115,11 @@ public class ASFExtOptionsUtil
      */
     public static String getCategorySupportedByASF( String category )
     {
-        for ( String category_ : CATEGORIES )
+        for ( String supportedCategory : CATEGORIES )
         {
-            if ( category_.equalsIgnoreCase( category ) )
+            if ( supportedCategory.equalsIgnoreCase( category ) )
             {
-                return category_;
+                return supportedCategory;
             }
         }
 
@@ -134,11 +134,11 @@ public class ASFExtOptionsUtil
      */
     public static String getProgrammingLanguageSupportedByASF( String programmingLanguage )
     {
-        for ( String programmingLanguage_ : PROGRAMMING_LANGUAGES )
+        for ( String supportedProgrammingLanguage : PROGRAMMING_LANGUAGES )
         {
-            if ( programmingLanguage_.equalsIgnoreCase( programmingLanguage ) )
+            if ( supportedProgrammingLanguage.equalsIgnoreCase( programmingLanguage ) )
             {
-                return programmingLanguage_;
+                return supportedProgrammingLanguage;
             }
         }
 
@@ -222,9 +222,8 @@ public class ASFExtOptionsUtil
 
         // check organization name
         if ( project.getOrganization() != null && StringUtils.isNotEmpty( project.getOrganization().getName() )
-            && project.getOrganization().getName().trim().equals( "The Apache Software Foundation" ) ) // see
-                                                                                                       // org.apache:apache
-                                                                                                       // artifact
+            && project.getOrganization().getName().trim().equals( "The Apache Software Foundation" ) )
+            // see org.apache:apache artifact
         {
             return true;
         }
@@ -313,6 +312,7 @@ public class ASFExtOptionsUtil
         }
         catch ( MalformedURLException e )
         {
+            // ignore
         }
 
         return false;
