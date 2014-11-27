@@ -220,7 +220,7 @@ public class ScmReport
             ScmRepository devRepository = getScmRepository( devConnection );
 
             // Overview section
-            renderOverviewSection( anonymousRepository );
+            renderOverviewSection( anonymousRepository, devRepository );
 
             // Web access section
             renderWebAccessSection( webAccessUrl );
@@ -242,48 +242,49 @@ public class ScmReport
          * Render the overview section
          *
          * @param anonymousRepository the anonymous repository
+         * @param devRepository the developer repository
          */
-        private void renderOverviewSection( ScmRepository anonymousRepository )
+        private void renderOverviewSection( ScmRepository anonymousRepository, ScmRepository devRepository )
         {
             startSection( getI18nString( "overview.title" ) );
 
-            if ( isScmSystem( anonymousRepository, "clearcase" ) )
+            if ( isScmSystem( anonymousRepository, "clearcase" ) || isScmSystem( devRepository, "clearcase" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "clearcase.intro" ) );
                 sink.paragraph_();
             }
-            else if ( isScmSystem( anonymousRepository, "cvs" ) )
+            else if ( isScmSystem( anonymousRepository, "cvs" ) || isScmSystem( devRepository, "cvs" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "cvs.intro" ) );
                 sink.paragraph_();
             }
-            else if ( isScmSystem( anonymousRepository, "git" ) )
+            else if ( isScmSystem( anonymousRepository, "git" ) || isScmSystem( devRepository, "git" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "git.intro" ) );
                 sink.paragraph_();
             }
-            else if ( isScmSystem( anonymousRepository, "hg" ) )
+            else if ( isScmSystem( anonymousRepository, "hg" ) || isScmSystem( devRepository, "hg" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "hg.intro" ) );
                 sink.paragraph_();
             }
-            else if ( isScmSystem( anonymousRepository, "perforce" ) )
+            else if ( isScmSystem( anonymousRepository, "perforce" ) || isScmSystem( devRepository, "perforce" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "perforce.intro" ) );
                 sink.paragraph_();
             }
-            else if ( isScmSystem( anonymousRepository, "starteam" ) )
+            else if ( isScmSystem( anonymousRepository, "starteam" ) || isScmSystem( devRepository, "starteam" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "starteam.intro" ) );
                 sink.paragraph_();
             }
-            else if ( isScmSystem( anonymousRepository, "svn" ) )
+            else if ( isScmSystem( anonymousRepository, "svn" ) || isScmSystem( devRepository, "svn" ) )
             {
                 sink.paragraph();
                 linkPatternedText( getI18nString( "svn.intro" ) );
