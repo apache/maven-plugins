@@ -617,19 +617,20 @@ public class DoapMojo
         boolean added = false;
         if ( artifact != null )
         {
-            String about_ = project.getUrl();
+            String about = project.getUrl();
 
-            if ( StringUtils.isNotEmpty( about_ ) )
+            if ( StringUtils.isNotEmpty( about ) )
             {
                 try
                 {
-                    new URL( about_ );
+                    new URL( about );
 
-                    writer.addAttribute( "rdf:about", about_ );
+                    writer.addAttribute( "rdf:about", about );
                     added = true;
                 }
                 catch ( MalformedURLException e )
                 {
+                    // ignore
                 }
             }
 
@@ -781,8 +782,8 @@ public class DoapMojo
 
             if ( ASFExtOptionsUtil.isASFProject( project ) )
             {
-                getLog().error(
-                    "For more information about the errors and possible solutions, please read the plugin documentation:" );
+                getLog().error( "For more information about the errors and possible solutions, "
+                                    + "please read the plugin documentation:" );
                 getLog().error( "http://maven.apache.org/plugins/maven-doap-plugin/usage.html#DOAP_ASF_Configuration" );
                 throw new MojoExecutionException( "The generated DOAP doesn't respect ASF rules, see above." );
             }
@@ -1227,17 +1228,17 @@ public class DoapMojo
      */
     private void writeOS( XMLWriter writer, MavenProject project )
     {
-        String os = DoapUtil.interpolate( doapOptions.getOs(), project, settings );
-        if ( StringUtils.isEmpty( os ) )
+        String osList = DoapUtil.interpolate( doapOptions.getOs(), project, settings );
+        if ( StringUtils.isEmpty( osList ) )
         {
             return;
         }
 
         DoapUtil.writeComment( writer, "Operating system that a project is limited to." );
-        String[] oses = StringUtils.split( os, "," );
-        for ( String os_ : oses )
+        String[] oses = StringUtils.split( osList, "," );
+        for ( String os : oses )
         {
-            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "os", os_.trim() );
+            DoapUtil.writeElement( writer, doapOptions.getXmlnsPrefix(), "os", os.trim() );
         }
     }
 
@@ -2368,7 +2369,7 @@ public class DoapMojo
         boolean addComment = false;
         for ( Map.Entry<Object, String> entry : map.entrySet() )
         {
-            String key = (String)entry.getKey();
+            String key = (String) entry.getKey();
             String value = entry.getValue();
 
             if ( value == null )
@@ -2636,12 +2637,12 @@ public class DoapMojo
                     errorMessages.add( "The POM " + toConfiguration( tags, value ) + " value is not a valid email." );
                     break;
                 case INVALID_ISO_DATE:
-                    errorMessages.add(
-                        "The " + toConfiguration( tags, value ) + " parameter is not a valid ISO language." );
+                    errorMessages.add( "The " + toConfiguration( tags, value )
+                        + " parameter is not a valid ISO language." );
                     break;
                 case SHORT_DESC_TOO_LONG:
-                    errorMessages.add(
-                        "The " + toConfiguration( tags, value ) + " first sentence is too long maximum words number is 10." );
+                    errorMessages.add( "The " + toConfiguration( tags, value )
+                        + " first sentence is too long maximum words number is 10." );
                     break;
                 default:
                     throw new IllegalArgumentException( "Unknown errorId=" + errorId );
