@@ -120,7 +120,7 @@ public class DefaultRepositoryCopier
         for ( String s : files )
         {
 
-            if (s.contains(".svn"))
+            if ( s.contains( ".svn" ) )
             {
                 continue;
             }
@@ -146,8 +146,8 @@ public class DefaultRepositoryCopier
 
         if ( ! ( targetWagon instanceof CommandExecutor ) )
         {
-            throw new CommandExecutionException( "Wagon class '" + targetWagon.getClass().getName() +
-                "' in use for target repository is not a CommandExecutor" );
+            throw new CommandExecutionException( "Wagon class '" + targetWagon.getClass().getName()
+                + "' in use for target repository is not a CommandExecutor" );
         }
 
         AuthenticationInfo targetAuth = wagonManager.getAuthenticationInfo( targetRepository.getId() );
@@ -213,12 +213,13 @@ public class DefaultRepositoryCopier
 
         logger.info( "Creating rename script." );
 
-        for (Object moveCommand : moveCommands) {
+        for ( Object moveCommand : moveCommands )
+        {
             String s = (String) moveCommand;
 
             // We use an explicit unix '\n' line-ending here instead of using the println() method.
             // Using println() will cause files and folders to have a '\r' at the end if the plugin is run on Windows.
-            rw.print(s + "\n");
+            rw.print( s + "\n" );
         }
 
         IOUtil.close( rw );
@@ -284,25 +285,31 @@ public class DefaultRepositoryCopier
 
         File[] files = dir.listFiles();
 
-        for (File f : files) {
-            if (f.isDirectory()) {
-                if (f.getName().equals(".svn")) {
+        for ( File f : files )
+        {
+            if ( f.isDirectory() )
+            {
+                if ( f.getName().equals( ".svn" ) )
+                {
                     continue;
                 }
 
-                if (f.getName().endsWith(version)) {
-                    String s = f.getAbsolutePath().substring(basedir.getAbsolutePath().length() + 1);
-                    s = StringUtils.replace(s, "\\", "/");
+                if ( f.getName().endsWith( version ) )
+                {
+                    String s = f.getAbsolutePath().substring( basedir.getAbsolutePath().length() + 1 );
+                    s = StringUtils.replace( s, "\\", "/" );
 
-                    moveCommands.add("mv " + s + IN_PROCESS_MARKER + " " + s);
+                    moveCommands.add( "mv " + s + IN_PROCESS_MARKER + " " + s );
                 }
 
-                scanDirectory(basedir, f, zos, version, moveCommands);
-            } else {
-                InputStream is = new FileInputStream(f);
+                scanDirectory( basedir, f, zos, version, moveCommands );
+            }
+            else
+            {
+                InputStream is = new FileInputStream( f );
 
-                String s = f.getAbsolutePath().substring(basedir.getAbsolutePath().length() + 1);
-                s = StringUtils.replace(s, "\\", "/");
+                String s = f.getAbsolutePath().substring( basedir.getAbsolutePath().length() + 1 );
+                s = StringUtils.replace( s, "\\", "/" );
 
                 // We are marking any version directories with the in-process flag so that
                 // anything being unpacked on the target side will not be recogized by Maven
@@ -310,22 +317,23 @@ public class DefaultRepositoryCopier
 
                 String vtag = "/" + version;
 
-                s = StringUtils.replace(s, vtag + "/", vtag + IN_PROCESS_MARKER + "/");
+                s = StringUtils.replace( s, vtag + "/", vtag + IN_PROCESS_MARKER + "/" );
 
-                ZipEntry e = new ZipEntry(s);
+                ZipEntry e = new ZipEntry( s );
 
-                zos.putNextEntry(e);
+                zos.putNextEntry( e );
 
-                IOUtil.copy(is, zos);
+                IOUtil.copy( is, zos );
 
-                IOUtil.close(is);
+                IOUtil.close( is );
 
-                int idx = s.indexOf(IN_PROCESS_MARKER);
+                int idx = s.indexOf( IN_PROCESS_MARKER );
 
-                if (idx > 0) {
-                    String d = s.substring(0, idx);
+                if ( idx > 0 )
+                {
+                    String d = s.substring( 0, idx );
 
-                    moveCommands.add("mv " + d + IN_PROCESS_MARKER + " " + d);
+                    moveCommands.add( "mv " + d + IN_PROCESS_MARKER + " " + d );
                 }
             }
         }
@@ -393,15 +401,16 @@ public class DefaultRepositoryCopier
         stagedMetadataFile.delete();
     }
 
-    private String checksum( File file,
-                             String type )
+    private String checksum( File file, String type )
         throws IOException, NoSuchAlgorithmException
     {
         MessageDigest md5 = MessageDigest.getInstance( type );
 
         InputStream is = new FileInputStream( file );
 
+        // CHECKSTYLE_OFF: MagicNumber
         byte[] buf = new byte[8192];
+        // CHECKSTYLE_ON: MagicNumber
 
         int i;
 
@@ -417,20 +426,28 @@ public class DefaultRepositoryCopier
 
     protected String encode( byte[] binaryData )
     {
+        // CHECKSTYLE_OFF: MagicNumber
         if ( binaryData.length != 16 && binaryData.length != 20 )
         {
             int bitLength = binaryData.length * 8;
             throw new IllegalArgumentException( "Unrecognised length for binary data: " + bitLength + " bits" );
         }
+        // CHECKSTYLE_ON: MagicNumber
 
         String retValue = "";
 
-        for (byte aBinaryData : binaryData) {
-            String t = Integer.toHexString(aBinaryData & 0xff);
+        for ( byte aBinaryData : binaryData )
+        {
+            // CHECKSTYLE_OFF: MagicNumber
+            String t = Integer.toHexString( aBinaryData & 0xff );
+            // CHECKSTYLE_ON: MagicNumber
 
-            if (t.length() == 1) {
-                retValue += ("0" + t);
-            } else {
+            if ( t.length() == 1 )
+            {
+                retValue += ( "0" + t );
+            }
+            else
+            {
                 retValue += t;
             }
         }
@@ -438,9 +455,7 @@ public class DefaultRepositoryCopier
         return retValue.trim();
     }
 
-    private void scan( Wagon wagon,
-                       String basePath,
-                       List<String> collected )
+    private void scan( Wagon wagon, String basePath, List<String> collected )
     {
         try
         {

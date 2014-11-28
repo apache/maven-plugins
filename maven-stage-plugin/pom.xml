@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>25</version>
+    <version>27</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -61,7 +61,6 @@ under the License.
   <properties>
     <wagonVersion>2.4</wagonVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
   <dependencies>
@@ -88,7 +87,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -135,9 +133,8 @@ under the License.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.11</version>
           <configuration>
-            <excludes>
+            <excludes combine.children="append">
               <exclude>src/test/staging-repository/**/*</exclude>
               <exclude>src/test/target-repository/**/*</exclude>
             </excludes>
@@ -151,21 +148,9 @@ under the License.
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginVersion}</version>
-          <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
@@ -173,17 +158,6 @@ under the License.
           <execution>
             <goals>
               <goal>generate-metadata</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
             </goals>
           </execution>
         </executions>
