@@ -19,7 +19,6 @@ package org.apache.maven.plugins.pdf;
  * under the License.
  */
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -223,28 +222,34 @@ public class DocumentModelBuilder
 
         final List<DocumentAuthor> ret = new ArrayList<DocumentAuthor>( 4 );
 
-        for (Object o : project.getDevelopers()) {
+        for ( Object o : project.getDevelopers() )
+        {
             final Developer developer = (Developer) o;
 
             final DocumentAuthor author = new DocumentAuthor();
-            author.setName(developer.getName());
-            author.setEmail(developer.getEmail());
-            author.setCompanyName(developer.getOrganization());
+            author.setName( developer.getName() );
+            author.setEmail( developer.getEmail() );
+            author.setCompanyName( developer.getOrganization() );
             StringBuilder roles = null;
 
-            for (final String role : developer.getRoles()) {
-                if (roles == null) {
-                    roles = new StringBuilder(32);
-                } else {
-                    roles.append(',').append(' ');
+            for ( final String role : developer.getRoles() )
+            {
+                if ( roles == null )
+                {
+                    roles = new StringBuilder( 32 );
                 }
-                roles.append(role);
+                else
+                {
+                    roles.append( ',' ).append( ' ' );
+                }
+                roles.append( role );
             }
-            if (roles != null) {
-                author.setPosition(roles.toString());
+            if ( roles != null )
+            {
+                author.setPosition( roles.toString() );
             }
 
-            ret.add(author);
+            ret.add( author );
         }
 
         return ret;

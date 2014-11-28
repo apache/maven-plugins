@@ -487,7 +487,7 @@ public class PdfMojo
 
         for ( final Locale locale : getAvailableLocales() )
         {
-            File generatedPdfSource = new File( getLocaleDirectory( workingDirectory, locale), outputName );
+            File generatedPdfSource = new File( getLocaleDirectory( workingDirectory, locale ), outputName );
 
             if ( !generatedPdfSource.exists() )
             {
@@ -495,7 +495,7 @@ public class PdfMojo
                 continue;
             }
 
-            File generatedPdfDest = new File( getLocaleDirectory( outputDirectory, locale), outputName );
+            File generatedPdfDest = new File( getLocaleDirectory( outputDirectory, locale ), outputName );
 
             FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
             generatedPdfSource.delete();
@@ -532,7 +532,7 @@ public class PdfMojo
             context.put( "StringUtils", new StringUtils() );
             context.put( "i18n", i18n );
             context.put( "generateTOC", generateTOC );
-            context.put( "validate", validate);
+            context.put( "validate", validate );
 
             // Put any of the properties in directly into the Velocity context
             for ( Map.Entry<Object, Object> entry : project.getProperties().entrySet() )
@@ -1021,13 +1021,16 @@ public class PdfMojo
                 }
     
                 List mojoDescriptors = pluginDescriptor.getMojos();
-                for (Object mojoDescriptor1 : mojoDescriptors) {
+                for ( Object mojoDescriptor1 : mojoDescriptors )
+                {
                     final MojoDescriptor mojoDescriptor = (MojoDescriptor) mojoDescriptor1;
 
-                    if (goals.isEmpty() || (!goals.isEmpty() && goals.contains(mojoDescriptor.getGoal()))) {
-                        MavenReport report = getMavenReport(mojoDescriptor);
+                    if ( goals.isEmpty() || ( !goals.isEmpty() && goals.contains( mojoDescriptor.getGoal() ) ) )
+                    {
+                        MavenReport report = getMavenReport( mojoDescriptor );
 
-                        generateMavenReport(report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(), locale);
+                        generateMavenReport( report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(),
+                                             locale );
                     }
                 }
             }
@@ -1212,7 +1215,8 @@ public class PdfMojo
         File generatedReport = new File( outDir, report.getOutputName() + ".xml" );
 
         String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-        List<String> files = FileUtils.getFileNames( siteDirectory, "*/" + report.getOutputName() + ".*", excludes, false );
+        List<String> files =
+            FileUtils.getFileNames( siteDirectory, "*/" + report.getOutputName() + ".*", excludes, false );
         if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
         {
             files =
@@ -1346,7 +1350,8 @@ public class PdfMojo
             if ( generatedSiteDirectory.exists() )
             {
                 String excludes = getDefaultExcludesWithLocales( getAvailableLocales(), getDefaultLocale() );
-                List<String> generatedDirs = FileUtils.getDirectoryNames( generatedSiteDirectory, "*", excludes, true );
+                List<String> generatedDirs = FileUtils.getDirectoryNames( generatedSiteDirectory, "*", excludes,
+                                                                          true );
                 if ( !locale.getLanguage().equals( getDefaultLocale().getLanguage() ) )
                 {
                     generatedDirs =
@@ -1487,18 +1492,21 @@ public class PdfMojo
                 if ( pluginProject.getMailingLists() != null && !pluginProject.getMailingLists().isEmpty() )
                 {
                     boolean appended = false;
-                    for (Object o : pluginProject.getMailingLists()) {
+                    for ( Object o : pluginProject.getMailingLists() )
+                    {
                         MailingList mailingList = (MailingList) o;
 
-                        if (StringUtils.isNotEmpty(mailingList.getName())
-                                && StringUtils.isNotEmpty(mailingList.getPost())) {
-                            if (!appended) {
-                                sb.append("  Mailing Lists:").append(EOL);
+                        if ( StringUtils.isNotEmpty( mailingList.getName() )
+                            && StringUtils.isNotEmpty( mailingList.getPost() ) )
+                        {
+                            if ( !appended )
+                            {
+                                sb.append( "  Mailing Lists:" ).append( EOL );
                                 appended = true;
                             }
-                            sb.append("    ").append(mailingList.getName());
-                            sb.append(": ").append(mailingList.getPost());
-                            sb.append(EOL);
+                            sb.append( "    " ).append( mailingList.getName() );
+                            sb.append( ": " ).append( mailingList.getPost() );
+                            sb.append( EOL );
                         }
                     }
                 }
@@ -1626,7 +1634,8 @@ public class PdfMojo
         // if this ever changes, we will have to revisit this code.
         final Properties properties = new Properties();
         final InputStream in =
-            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/pom.properties" );
+            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/"
+                                                                         + "pom.properties" );
         try
         {
             properties.load( in );
