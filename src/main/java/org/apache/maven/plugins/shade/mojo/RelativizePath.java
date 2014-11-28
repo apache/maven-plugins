@@ -37,7 +37,8 @@ public final class RelativizePath
     /**
      * relativize a pathname. 
      * @param thing Absolute File of something. (e.g., a parent pom)
-     * @param relativeTo base to relativize it do. (e.g., a pom into which a relative pathname to the 'thing' is to be installed).
+     * @param relativeTo base to relativize it do. (e.g., a pom into which a relative pathname to the 'thing' is to be
+     *        installed).
      * @return
      */
     static String convertToRelativePath( File thing, File relativeTo )
@@ -53,7 +54,9 @@ public final class RelativizePath
         List<String> relativeToDirectories = RelativizePath.parentDirs( relativeTo );
     
         //Get the shortest of the two paths
-        int length = thingDirectories.size() < relativeToDirectories.size() ? thingDirectories.size() : relativeToDirectories.size();
+        int length =
+            thingDirectories.size() < relativeToDirectories.size() ? thingDirectories.size()
+                            : relativeToDirectories.size();
     
         int lastCommonRoot = -1; // index of the lowest directory down from the root that the two have in common.
         int index;
@@ -83,7 +86,7 @@ public final class RelativizePath
             // now add down from the common point to the actual 'thing' item. 
             for ( index = lastCommonRoot + 1; index < thingDirectories.size(); index++ ) 
             {
-                relativePath.append(thingDirectories.get(index)).append('/');
+                relativePath.append( thingDirectories.get( index ) ).append( '/' );
             }
             relativePath.append( thing.getName() );
             return relativePath.toString();
