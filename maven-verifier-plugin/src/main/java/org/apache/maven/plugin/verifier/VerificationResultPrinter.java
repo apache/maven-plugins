@@ -19,6 +19,9 @@ package org.apache.maven.plugin.verifier;
  * under the License.
  */
 
+/**
+ * 
+ */
 public interface VerificationResultPrinter
 {
     void print( VerificationResult result );

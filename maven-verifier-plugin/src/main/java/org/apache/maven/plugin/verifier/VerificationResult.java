@@ -24,6 +24,9 @@ import org.apache.maven.plugin.verifier.model.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ */
 public class VerificationResult
 {
     private List existenceFailures = new ArrayList();
