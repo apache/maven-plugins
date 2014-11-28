@@ -154,7 +154,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * The default Javadoc API urls according the
-     * <a href="http://www.oracle.com/technetwork/java/javase/documentation/api-jsp-136079.html">Sun API Specifications</a>:
+     * <a href="http://www.oracle.com/technetwork/java/javase/documentation/api-jsp-136079.html">Sun API
+     * Specifications</a>:
      * <pre>
      * &lt;javaApiLinks&gt;
      *   &lt;property&gt;
@@ -243,7 +244,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * For Javadoc options appears since Java 1.4.2.
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * See <a
+     * href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * What's New in Javadoc 1.4.2</a>
      *
      * @since 2.1
@@ -252,7 +254,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * For Javadoc options appears since Java 5.0.
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.5.0.html#commandlineoptions">
+     * See <a
+     * href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * What's New in Javadoc 5.0</a>
      *
      * @since 2.1
@@ -373,7 +376,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp">vmoptions</a>.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html">Networking Properties</a>.
+     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html">Networking
+     * Properties</a>.
      *
      * @since 2.3
      */
@@ -400,11 +404,11 @@ public abstract class AbstractJavadocMojo
      * Example:
      * <pre>
      * &lt;resourcesArtifacts&gt;
-     * &nbsp;&nbsp;&lt;resourcesArtifact&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;external.group.id&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;external-resources&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/resourcesArtifact&gt;
+     *   &lt;resourcesArtifact&gt;
+     *     &lt;groupId&gt;external.group.id&lt;/groupId&gt;
+     *     &lt;artifactId&gt;external-resources&lt;/artifactId&gt;
+     *     &lt;version&gt;1.0&lt;/version&gt;
+     *   &lt;/resourcesArtifact&gt;
      * &lt;/resourcesArtifacts&gt;
      * </pre>
      * <br/>
@@ -437,7 +441,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Whether to build an aggregated report at the root, or build individual reports.
      *
-     * @deprecated since 2.5. Use the goals <code>javadoc:aggregate</code> and <code>javadoc:test-aggregate</code> instead.
+     * @deprecated since 2.5. Use the goals <code>javadoc:aggregate</code> and <code>javadoc:test-aggregate</code>
+     * instead.
      */
     @Parameter( property = "aggregate", defaultValue = "false" )
     protected boolean aggregate;
@@ -491,17 +496,18 @@ public abstract class AbstractJavadocMojo
     protected boolean failOnError;
 
     /**
-     * Specifies to use the <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#standard">
+     * Specifies to use the
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#standard">
      * options provided by the Standard Doclet</a> for a custom doclet.
      * <br/>
      * Example:
      * <pre>
      * &lt;docletArtifacts&gt;
-     * &nbsp;&nbsp;&lt;docletArtifact&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;doccheck&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/docletArtifact&gt;
+     *   &lt;docletArtifact&gt;
+     *     &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     *     &lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     *     &lt;version&gt;1.2b2&lt;/version&gt;
+     *   &lt;/docletArtifact&gt;
      * &lt;/docletArtifacts&gt;
      * &lt;useStandardDocletOptions&gt;true&lt;/useStandardDocletOptions&gt;
      * </pre>
@@ -559,7 +565,9 @@ public abstract class AbstractJavadocMojo
      * (defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>),
      * or try to compute it from the {@link #javadocExecutable} version.
      * <br/>
-     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a> for the default values.
+     * See
+     * <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a>
+     * for the default values.
      * <br/>
      *
      * @see #links
@@ -574,7 +582,8 @@ public abstract class AbstractJavadocMojo
      * Use this parameter <b>only</b> if the <a href="http://java.sun.com/reference/api/index.html">Sun Javadoc API</a>
      * urls have been changed or to use custom urls for Javadoc API url.
      * <br/>
-     * See <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a>
+     * See
+     * <a href="./apidocs/org/apache/maven/plugin/javadoc/AbstractJavadocMojo.html#DEFAULT_JAVA_API_LINKS">Javadoc</a>
      * for the default values.
      * <br/>
      *
@@ -601,7 +610,8 @@ public abstract class AbstractJavadocMojo
      * Specifies the paths where the boot classes reside. The <code>bootclasspath</code> can contain multiple paths
      * by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#bootclasspath">bootclasspath</a>.
+     * See <a
+     * href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#bootclasspath">bootclasspath</a>.
      * <br/>
      *
      * @since 2.5
@@ -612,16 +622,17 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the artifacts where the boot classes reside.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#bootclasspath">bootclasspath</a>.
+     * See <a
+     * href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#bootclasspath">bootclasspath</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;bootclasspathArtifacts&gt;
-     * &nbsp;&nbsp;&lt;bootclasspathArtifact&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;my-groupId&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;my-artifactId&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;my-version&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/bootclasspathArtifact&gt;
+     *   &lt;bootclasspathArtifact&gt;
+     *     &lt;groupId&gt;my-groupId&lt;/groupId&gt;
+     *     &lt;artifactId&gt;my-artifactId&lt;/artifactId&gt;
+     *     &lt;version&gt;my-version&lt;/version&gt;
+     *   &lt;/bootclasspathArtifact&gt;
      * &lt;/bootclasspathArtifacts&gt;
      * </pre>
      * <br/>
@@ -636,9 +647,11 @@ public abstract class AbstractJavadocMojo
     /**
      * Uses the sentence break iterator to determine the end of the first sentence.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#breakiterator">breakiterator</a>.
+     * See <a
+     * href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#breakiterator">breakiterator</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      * <br/>
      */
     @Parameter( property = "breakiterator", defaultValue = "false" )
@@ -656,14 +669,15 @@ public abstract class AbstractJavadocMojo
      * Specifies the artifact containing the doclet starting class file (specified with the <code>-doclet</code>
      * option).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docletpath">docletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docletpath">docletpath</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;docletArtifact&gt;
-     * &nbsp;&nbsp;&lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
-     * &nbsp;&nbsp;&lt;artifactId&gt;doccheck&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
+     *   &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     *   &lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     *   &lt;version&gt;1.2b2&lt;/version&gt;
      * &lt;/docletArtifact&gt;
      * </pre>
      * <br/>
@@ -677,16 +691,17 @@ public abstract class AbstractJavadocMojo
      * Specifies multiple artifacts containing the path for the doclet starting class file (specified with the
      * <code>-doclet</code> option).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docletpath">docletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docletpath">docletpath</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;docletArtifacts&gt;
-     * &nbsp;&nbsp;&lt;docletArtifact&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;doccheck&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.2b2&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/docletArtifact&gt;
+     *   &lt;docletArtifact&gt;
+     *     &lt;groupId&gt;com.sun.tools.doclets&lt;/groupId&gt;
+     *     &lt;artifactId&gt;doccheck&lt;/artifactId&gt;
+     *     &lt;version&gt;1.2b2&lt;/version&gt;
+     *   &lt;/docletArtifact&gt;
      * &lt;/docletArtifacts&gt;
      * </pre>
      * <br/>
@@ -703,7 +718,8 @@ public abstract class AbstractJavadocMojo
      * any jar files it depends on. The <code>docletPath</code> can contain multiple paths by separating them with
      * a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docletpath">docletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docletpath">docletpath</a>.
      */
     @Parameter( property = "docletPath" )
     private String docletPath;
@@ -733,7 +749,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#exclude">exclude</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      */
     @Parameter( property = "excludePackageNames" )
     private String excludePackageNames;
@@ -853,11 +870,13 @@ public abstract class AbstractJavadocMojo
     private String show;
 
     /**
-     * Necessary to enable javadoc to handle assertions introduced in J2SE v 1.4 source code or generics introduced in J2SE v5.
+     * Necessary to enable javadoc to handle assertions introduced in J2SE v 1.4 source code or generics introduced in
+     * J2SE v5.
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#source">source</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      */
     @Parameter( property = "source" )
     private String source;
@@ -866,7 +885,8 @@ public abstract class AbstractJavadocMojo
      * Specifies the source paths where the subpackages are located. The <code>sourcepath</code> can contain
      * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#sourcepath">sourcepath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#sourcepath">sourcepath</a>.
      */
     @Parameter( property = "sourcepath" )
     private String sourcepath;
@@ -875,9 +895,11 @@ public abstract class AbstractJavadocMojo
      * Specifies the package directory where javadoc will be executed. Multiple packages can be separated by
      * colons (<code>:</code>).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#subpackages">subpackages</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#subpackages">subpackages</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      */
     @Parameter( property = "subpackages" )
     private String subpackages;
@@ -913,7 +935,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      */
     @Parameter( property = "bottom",
-                defaultValue = "Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved." )
+                    defaultValue = "Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. "
+                        + "All rights reserved." )
     private String bottom;
 
     /**
@@ -930,7 +953,8 @@ public abstract class AbstractJavadocMojo
      * Specifies the encoding of the generated HTML files. If not specificed, the docencoding value will be
      * <code>UTF-8</code>.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docencoding">docencoding</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docencoding">docencoding</a>.
      */
     @Parameter( property = "docencoding", defaultValue = "${project.reporting.outputEncoding}" )
     private String docencoding;
@@ -943,7 +967,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#docfilessubdirs">
      * docfilessubdirs</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      * <br/>
      * See <a href="#javadocDirectory">javadocDirectory</a>.
      * <br/>
@@ -970,7 +995,8 @@ public abstract class AbstractJavadocMojo
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#excludedocfilessubdir">
      * excludedocfilessubdir</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      *
      * @see #docfilessubdirs
      */
@@ -994,19 +1020,19 @@ public abstract class AbstractJavadocMojo
      * Example:
      * <pre>
      * &lt;groups&gt;
-     * &nbsp;&nbsp;&lt;group&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Core Packages&lt;/title&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- To includes java.lang, java.lang.ref,
-     * &nbsp;&nbsp;&nbsp;&nbsp;java.lang.reflect and only java.util
-     * &nbsp;&nbsp;&nbsp;&nbsp;(i.e. not java.util.jar) --&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;packages&gt;java.lang*:java.util&lt;/packages&gt;
-     * &nbsp;&nbsp;&lt;/group&gt;
-     * &nbsp;&nbsp;&lt;group&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Extension Packages&lt;/title&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- To include javax.accessibility,
-     * &nbsp;&nbsp;&nbsp;&nbsp;javax.crypto, ... (among others) --&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;packages&gt;javax.*&lt;/packages&gt;
-     * &nbsp;&nbsp;&lt;/group&gt;
+     *   &lt;group&gt;
+     *     &lt;title&gt;Core Packages&lt;/title&gt;
+     *     &lt;!-- To includes java.lang, java.lang.ref,
+     *     java.lang.reflect and only java.util
+     *     (i.e. not java.util.jar) --&gt;
+     *     &lt;packages&gt;java.lang*:java.util&lt;/packages&gt;
+     *   &lt;/group&gt;
+     *   &lt;group&gt;
+     *     &lt;title&gt;Extension Packages&lt;/title&gt;
+     *     &nbsp;&lt;!-- To include javax.accessibility,
+     *     javax.crypto, ... (among others) --&gt;
+     *     &lt;packages&gt;javax.*&lt;/packages&gt;
+     *   &lt;/group&gt;
      * &lt;/groups&gt;
      * </pre>
      * <b>Note</b>: using <code>java.lang.*</code> for <code>packages</code> would omit the <code>java.lang</code>
@@ -1045,24 +1071,24 @@ public abstract class AbstractJavadocMojo
      * Where <code>path/to/your/resource/yourhelp-doc.html</code> could be in <code>src/main/javadoc</code>.
      * <pre>
      * &lt;build&gt;
-     * &nbsp;&nbsp;&lt;plugins&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;plugin&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;configuration&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;helpfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/helpfile&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/configuration&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;groupId&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifactId&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version&lt;/version&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/plugin&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;...
-     * &nbsp;&nbsp;&lt;plugins&gt;
+     *   &lt;plugins&gt;
+     *     &lt;plugin&gt;
+     *       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *       &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+     *       &lt;configuration&gt;
+     *         &lt;helpfile&gt;path/to/your/resource/yourhelp-doc.html&lt;/helpfile&gt;
+     *         ...
+     *       &lt;/configuration&gt;
+     *       &lt;dependencies&gt;
+     *         &lt;dependency&gt;
+     *           &lt;groupId&gt;groupId&lt;/groupId&gt;
+     *           &lt;artifactId&gt;artifactId&lt;/artifactId&gt;
+     *           &lt;version&gt;version&lt;/version&gt;
+     *         &lt;/dependency&gt;
+     *       &lt;/dependencies&gt;
+     *     &lt;/plugin&gt;
+     *     ...
+     *   &lt;plugins&gt;
      * &lt;/build&gt;
      * </pre>
      * Where <code>path/to/your/resource/yourhelp-doc.html</code> is defined in the
@@ -1078,10 +1104,12 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#keywords">keywords</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * Java 1.4.2</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.5.0.html#commandlineoptions">
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
      * <br/>
      *
@@ -1099,7 +1127,7 @@ public abstract class AbstractJavadocMojo
      * <li>all given links should have a fetchable <code>/package-list</code> file. For instance:
      * <pre>
      * &lt;links&gt;
-     * &nbsp;&nbsp;&lt;link&gt;http://docs.oracle.com/javase/1.4.2/docs/api&lt;/link&gt;
+     *   &lt;link&gt;http://docs.oracle.com/javase/1.4.2/docs/api&lt;/link&gt;
      * &lt;links&gt;
      * </pre>
      * will be used because <code>http://docs.oracle.com/javase/1.4.2/docs/api/package-list</code> exists.</li>
@@ -1120,9 +1148,11 @@ public abstract class AbstractJavadocMojo
      * Creates an HTML version of each source file (with line numbers) and adds links to them from the standard
      * HTML documentation.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#linksource">linksource</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#linksource">linksource</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      * <br/>
      */
     @Parameter( property = "linksource", defaultValue = "false" )
@@ -1133,7 +1163,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#nocomment">nocomment</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      * <br/>
      */
     @Parameter( property = "nocomment", defaultValue = "false" )
@@ -1142,7 +1173,9 @@ public abstract class AbstractJavadocMojo
     /**
      * Prevents the generation of any deprecated API at all in the documentation.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#nodeprecated">nodeprecated</a>.
+     * See
+     * <a
+     * href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#nodeprecated">nodeprecated</a>.
      * <br/>
      */
     @Parameter( property = "nodeprecated", defaultValue = "false" )
@@ -1211,9 +1244,11 @@ public abstract class AbstractJavadocMojo
      * or
      * &lt;noqualifier&gt;packagename1:packagename2&lt;/noqualifier&gt;
      * </pre>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#noqualifier">noqualifier</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#noqualifier">noqualifier</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java
+     * 1.4</a>.
      */
     @Parameter( property = "noqualifier" )
     private String noqualifier;
@@ -1230,9 +1265,11 @@ public abstract class AbstractJavadocMojo
     /**
      * Suppresses the timestamp, which is hidden in an HTML comment in the generated HTML near the top of each page.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#notimestamp">notimestamp</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#notimestamp">notimestamp</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.5.0.html#commandlineoptions">
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.5.0.html#commandlineoptions">
      * Java 5.0</a>.
      * <br/>
      *
@@ -1254,15 +1291,16 @@ public abstract class AbstractJavadocMojo
      * This option is a variation of <code>-link</code>; they both create links to javadoc-generated documentation
      * for external referenced classes.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#linkoffline">linkoffline</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#linkoffline">linkoffline</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;offlineLinks&gt;
-     * &nbsp;&nbsp;&lt;offlineLink&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;url&gt;http://docs.oracle.com/javase/1.5.0/docs/api/&lt;/url&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;location&gt;../javadoc/jdk-5.0/&lt;/location&gt;
-     * &nbsp;&nbsp;&lt;/offlineLink&gt;
+     *   &lt;offlineLink&gt;
+     *     &lt;url&gt;http://docs.oracle.com/javase/1.5.0/docs/api/&lt;/url&gt;
+     *     &lt;location&gt;../javadoc/jdk-5.0/&lt;/location&gt;
+     *   &lt;/offlineLink&gt;
      * &lt;/offlineLinks&gt;
      * </pre>
      * <br/>
@@ -1288,7 +1326,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Specify the text for upper left frame.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * Java 1.4.2</a>.
      *
      * @since 2.1
@@ -1312,7 +1351,8 @@ public abstract class AbstractJavadocMojo
      * Note: was <code>linksourcetab</code> in Java 1.4.2 (refer to bug ID
      * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4788919">4788919</a>).
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.2.html#commandlineoptions">
      * 1.4.2</a>.
      * <br/>
      * Since Java 5.0.
@@ -1328,7 +1368,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * <b>Note</b>: could be in conflict with &lt;noindex/&gt;.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#splitindex">splitindex</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#splitindex">splitindex</a>.
      * <br/>
      */
     @Parameter( property = "splitindex", defaultValue = "false" )
@@ -1358,24 +1399,24 @@ public abstract class AbstractJavadocMojo
      * Where <code>path/to/your/resource/yourstylesheet.css</code> could be in <code>src/main/javadoc</code>.
      * <pre>
      * &lt;build&gt;
-     * &nbsp;&nbsp;&lt;plugins&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;plugin&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;configuration&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/configuration&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;groupId&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifactId&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version&lt;/version&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/plugin&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;...
-     * &nbsp;&nbsp;&lt;plugins&gt;
+     *   &lt;plugins&gt;
+     *     &lt;plugin&gt;
+     *       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     *       &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+     *       &lt;configuration&gt;
+     *         &lt;stylesheetfile&gt;path/to/your/resource/yourstylesheet.css&lt;/stylesheetfile&gt;
+     *         ...
+     *       &lt;/configuration&gt;
+     *       &lt;dependencies&gt;
+     *         &lt;dependency&gt;
+     *           &lt;groupId&gt;groupId&lt;/groupId&gt;
+     *           &lt;artifactId&gt;artifactId&lt;/artifactId&gt;
+     *           &lt;version&gt;version&lt;/version&gt;
+     *         &lt;/dependency&gt;
+     *       &lt;/dependencies&gt;
+     *     &lt;/plugin&gt;
+     *     ...
+     *   &lt;plugins&gt;
      * &lt;/build&gt;
      * </pre>
      * Where <code>path/to/your/resource/yourstylesheet.css</code> is defined in the
@@ -1392,7 +1433,8 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      */
     @Parameter( property = "taglet" )
     private String taglet;
@@ -1400,23 +1442,24 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the Taglet artifact containing the taglet class files (.class).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;taglets&gt;
-     * &nbsp;&nbsp;&lt;taglet&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
-     * &nbsp;&nbsp;&lt;/taglet&gt;
-     * &nbsp;&nbsp;&lt;taglet&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletClass&gt;package.to.AnotherTagletClass&lt;/tagletClass&gt;
-     * &nbsp;&nbsp;&lt;/taglet&gt;
-     * &nbsp;&nbsp;...
+     *   &lt;taglet&gt;
+     *     &lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
+     *   &lt;/taglet&gt;
+     *   &lt;taglet&gt;
+     *     &lt;tagletClass&gt;package.to.AnotherTagletClass&lt;/tagletClass&gt;
+     *   &lt;/taglet&gt;
+     *   ...
      * &lt;/taglets&gt;
      * &lt;tagletArtifact&gt;
-     * &nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
-     * &nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
+     *   &lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     *   &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     *   &lt;version&gt;version-Taglet&lt;/version&gt;
      * &lt;/tagletArtifact&gt;
      * </pre>
      * <br/>
@@ -1434,17 +1477,18 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;tagletArtifacts&gt;
-     * &nbsp;&nbsp;&lt;tagletArtifact&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/tagletArtifact&gt;
-     * &nbsp;&nbsp;...
+     *   &lt;tagletArtifact&gt;
+     *     &lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     *     &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     *     &lt;version&gt;version-Taglet&lt;/version&gt;
+     *   &lt;/tagletArtifact&gt;
+     *   ...
      * &lt;/tagletArtifacts&gt;
      * </pre>
      * <br/>
@@ -1460,9 +1504,11 @@ public abstract class AbstractJavadocMojo
      * Specifies the search paths for finding taglet class files (.class). The <code>tagletpath</code> can contain
      * multiple paths by separating them with a colon (<code>:</code>) or a semi-colon (<code>;</code>).
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      */
     @Parameter( property = "tagletpath" )
     private String tagletpath;
@@ -1472,20 +1518,21 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#taglet">taglet</a>.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tagletpath">tagletpath</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;taglets&gt;
-     * &nbsp;&nbsp;&lt;taglet&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;!--&lt;tagletpath&gt;/home/taglets&lt;/tagletpath&gt;--&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;tagletArtifact&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;group-Taglet&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;version-Taglet&lt;/version&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/tagletArtifact&gt;
-     * &nbsp;&nbsp;&lt;/taglet&gt;
+     *   &lt;taglet&gt;
+     *     &lt;tagletClass&gt;com.sun.tools.doclets.ToDoTaglet&lt;/tagletClass&gt;
+     *     &lt;!--&lt;tagletpath&gt;/home/taglets&lt;/tagletpath&gt;--&gt;
+     *     &lt;tagletArtifact&gt;
+     *       &lt;groupId&gt;group-Taglet&lt;/groupId&gt;
+     *       &lt;artifactId&gt;artifact-Taglet&lt;/artifactId&gt;
+     *       &lt;version&gt;version-Taglet&lt;/version&gt;
+     *     &lt;/tagletArtifact&gt;
+     *   &lt;/taglet&gt;
      * &lt;/taglets&gt;
      * </pre>
      * <br/>
@@ -1502,16 +1549,17 @@ public abstract class AbstractJavadocMojo
      * <br/>
      * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#tag">tag</a>.
      * <br/>
-     * Since <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
+     * Since
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#summary">Java 1.4</a>.
      * <br/>
      * Example:
      * <pre>
      * &lt;tags&gt;
-     * &nbsp;&nbsp;&lt;tag&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;todo&lt;/name&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;placement&gt;a&lt;/placement&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;head&gt;To Do:&lt;/head&gt;
-     * &nbsp;&nbsp;&lt;/tag&gt;
+     *   &lt;tag&gt;
+     *     &lt;name&gt;todo&lt;/name&gt;
+     *     &lt;placement&gt;a&lt;/placement&gt;
+     *     &lt;head&gt;To Do:&lt;/head&gt;
+     *   &lt;/tag&gt;
      * &lt;/tags&gt;
      * </pre>
      * <b>Note</b>: the placement should be a combinaison of Xaoptcmf letters:
@@ -1564,7 +1612,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Specifies the title to be placed in the HTML title tag.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      */
     @Parameter( property = "windowtitle", defaultValue = "${project.name} ${project.version} API" )
@@ -1638,11 +1687,11 @@ public abstract class AbstractJavadocMojo
      * Exemple:
      * <pre>
      * &lt;additionalDependencies&gt;
-     * &nbsp;&nbsp;&lt;additionalDependency&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;geronimo-spec&lt;/groupId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;geronimo-spec-jta&lt;/artifactId&gt;
-     * &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.0.1B-rc4:&lt;/version&gt;
-     * &nbsp;&nbsp;&lt;/additionalDependency&gt;
+     *   &lt;additionalDependency&gt;
+     *     &lt;groupId&gt;geronimo-spec&lt;/groupId&gt;
+     *     &lt;artifactId&gt;geronimo-spec-jta&lt;/artifactId&gt;
+     *     &lt;version&gt;1.0.1B-rc4:&lt;/version&gt;
+     *   &lt;/additionalDependency&gt;
      * &lt;/additionalDependencies&gt;
      * </pre>
      *
@@ -1669,7 +1718,7 @@ public abstract class AbstractJavadocMojo
      * To apply the security fix on generated javadoc see http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1571
      * @since 2.9.1
      */
-    @Parameter(defaultValue = "true", property = "maven.javadoc.applyJavadocSecurityFix")
+    @Parameter( defaultValue = "true", property = "maven.javadoc.applyJavadocSecurityFix" )
     private boolean applyJavadocSecurityFix = true;
 
     // ----------------------------------------------------------------------
@@ -2084,7 +2133,8 @@ public abstract class AbstractJavadocMojo
             for ( String sourcePath : sourcePaths )
             {
                 File sourceDirectory = new File( sourcePath );
-                JavadocUtil.addFilesFromSource( files, sourceDirectory, sourceFileIncludes, sourceFileExcludes, excludedPackages );
+                JavadocUtil.addFilesFromSource( files, sourceDirectory, sourceFileIncludes, sourceFileExcludes,
+                                                excludedPackages );
             }
         }
 
@@ -2155,7 +2205,8 @@ public abstract class AbstractJavadocMojo
                         if ( getJavadocDirectory() != null )
                         {
                             String javadocDirRelative =
-                                    PathUtils.toRelative( project.getBasedir(), getJavadocDirectory().getAbsolutePath() );
+                                PathUtils.toRelative( project.getBasedir(),
+                                                      getJavadocDirectory().getAbsolutePath() );
                             File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                             if ( javadocDir.exists() && javadocDir.isDirectory() )
                             {
@@ -3529,7 +3580,7 @@ public abstract class AbstractJavadocMojo
             if ( !javadocExe.isFile() )
             {
                 throw new IOException( "The javadoc executable '" + javadocExe
-                                           + "' doesn't exist or is not a file. Verify the <javadocExecutable/> parameter." );
+                    + "' doesn't exist or is not a file. Verify the <javadocExecutable/> parameter." );
             }
 
             return javadocExe.getAbsolutePath();
@@ -3547,7 +3598,9 @@ public abstract class AbstractJavadocMojo
                 new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh", javadocCommand );
         }
         // For Apple's JDK 1.6.x (and older?) on Mac OSX
+        // CHECKSTYLE_OFF: MagicNumber
         else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
+        // CHECKSTYLE_ON: MagicNumber
         {
             javadocExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", javadocCommand );
         }
@@ -3568,10 +3621,11 @@ public abstract class AbstractJavadocMojo
             {
                 throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
             }
-            if ( ( !new File( javaHome ).getCanonicalFile().exists() ) || ( new File( javaHome ).getCanonicalFile().isFile() ) )
+            if ( ( !new File( javaHome ).getCanonicalFile().exists() )
+                || ( new File( javaHome ).getCanonicalFile().isFile() ) )
             {
-                throw new IOException(
-                    "The environment variable JAVA_HOME=" + javaHome + " doesn't exist or is not a valid directory." );
+                throw new IOException( "The environment variable JAVA_HOME=" + javaHome
+                    + " doesn't exist or is not a valid directory." );
             }
 
             javadocExe = new File( javaHome + File.separator + "bin", javadocCommand );
@@ -3580,7 +3634,7 @@ public abstract class AbstractJavadocMojo
         if ( !javadocExe.getCanonicalFile().exists() || !javadocExe.getCanonicalFile().isFile() )
         {
             throw new IOException( "The javadoc executable '" + javadocExe
-                                       + "' doesn't exist or is not a file. Verify the JAVA_HOME environment variable." );
+                + "' doesn't exist or is not a file. Verify the JAVA_HOME environment variable." );
         }
 
         return javadocExe.getAbsolutePath();
@@ -4222,7 +4276,7 @@ public abstract class AbstractJavadocMojo
                     currentSourcePath += "/";
                 }
 
-                if (currentFile.contains(currentSourcePath))
+                if ( currentFile.contains( currentSourcePath ) )
                 {
                     String packagename = currentFile.substring( currentSourcePath.length() + 1 );
 
@@ -4230,7 +4284,7 @@ public abstract class AbstractJavadocMojo
                      * Remove the miscellaneous files
                      * http://docs.oracle.com/javase/1.4.2/docs/tooldocs/solaris/javadoc.html#unprocessed
                      */
-                    if (packagename.contains("doc-files"))
+                    if ( packagename.contains( "doc-files" ) )
                     {
                         continue;
                     }
@@ -4274,7 +4328,8 @@ public abstract class AbstractJavadocMojo
         File optionsFile = new File( javadocOutputDirectory, OPTIONS_FILE_NAME );
 
         StringBuilder options = new StringBuilder();
-        options.append( StringUtils.join(arguments.toArray(new String[arguments.size()]), SystemUtils.LINE_SEPARATOR ) );
+        options.append( StringUtils.join( arguments.toArray( new String[arguments.size()] ),
+                                          SystemUtils.LINE_SEPARATOR ) );
 
         try
         {
@@ -4853,14 +4908,19 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        for (Taglet taglet1 : taglets) {
-            if ((taglet1 == null) || (StringUtils.isEmpty(taglet1.getTagletClass()))) {
-                if (getLog().isWarnEnabled()) {
-                    getLog().warn("A taglet option is empty. Ignore this option.");
+        for ( Taglet taglet1 : taglets )
+        {
+            if ( ( taglet1 == null ) || ( StringUtils.isEmpty( taglet1.getTagletClass() ) ) )
+            {
+                if ( getLog().isWarnEnabled() )
+                {
+                    getLog().warn( "A taglet option is empty. Ignore this option." );
                 }
-            } else {
-                addArgIfNotEmpty(arguments, "-taglet", JavadocUtil.quotedArgument(taglet1.getTagletClass()),
-                        SINCE_JAVADOC_1_4);
+            }
+            else
+            {
+                addArgIfNotEmpty( arguments, "-taglet", JavadocUtil.quotedArgument( taglet1.getTagletClass() ),
+                                  SINCE_JAVADOC_1_4 );
             }
         }
     }
@@ -5048,11 +5108,14 @@ public abstract class AbstractJavadocMojo
                 }
                 writeDebugJavadocScript( cmdLine, javadocOutputDirectory );
 
-                if ( StringUtils.isNotEmpty( output ) && StringUtils.isEmpty( err.getOutput() ) && isJavadocVMInitError(
-                    output ) )
+                if ( StringUtils.isNotEmpty( output ) && StringUtils.isEmpty( err.getOutput() )
+                    && isJavadocVMInitError( output ) )
                 {
-
-                    throw new MavenReportException(output + '\n' + '\n' + JavadocUtil.ERROR_INIT_VM + '\n' + "Or, try to reduce the Java heap size for the Javadoc goal using " + "-Dminmemory=<size> and -Dmaxmemory=<size>." + '\n' + '\n' + "Command line was: " + cmdLine + '\n' + '\n' + "Refer to the generated Javadoc files in '" + javadocOutputDirectory + "' dir.\n");
+                    throw new MavenReportException( output + '\n' + '\n' + JavadocUtil.ERROR_INIT_VM + '\n'
+                        + "Or, try to reduce the Java heap size for the Javadoc goal using "
+                        + "-Dminmemory=<size> and -Dmaxmemory=<size>." + '\n' + '\n' + "Command line was: " + cmdLine
+                        + '\n' + '\n' + "Refer to the generated Javadoc files in '" + javadocOutputDirectory
+                        + "' dir.\n" );
                 }
 
                 if ( StringUtils.isNotEmpty( output ) )
@@ -5069,8 +5132,8 @@ public abstract class AbstractJavadocMojo
                 msg.append( '\n' );
                 msg.append( "Command line was: " ).append( cmdLine ).append( '\n' ).append( '\n' );
 
-                msg.append( "Refer to the generated Javadoc files in '" ).append( javadocOutputDirectory ).append(
-                    "' dir.\n" );
+                msg.append( "Refer to the generated Javadoc files in '" ).append( javadocOutputDirectory )
+                .append( "' dir.\n" );
 
                 throw new MavenReportException( msg.toString() );
             }
@@ -5161,8 +5224,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * @param outputFile        not nul
-     * @param inputResourceName a not null resource in <code>src/main/java</code>, <code>src/main/resources</code> or <code>src/main/javadoc</code>
-     *                          or in the Javadoc plugin dependencies.
+     * @param inputResourceName a not null resource in <code>src/main/java</code>, <code>src/main/resources</code> or
+     *                          <code>src/main/javadoc</code> or in the Javadoc plugin dependencies.
      * @return the resource file absolute path as String
      * @since 2.6
      */
@@ -5279,7 +5342,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        ClassLoader javadocClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
+        ClassLoader javadocClassLoader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
 
         return javadocClassLoader.getResource( resource );
     }
@@ -5497,7 +5560,8 @@ public abstract class AbstractJavadocMojo
 
     /**
      * @return if {@link #detectJavaApiLink}, the Java API link based on the {@link #javaApiLinks} properties and the
-     *         value of the <code>source</code> parameter in the <code>org.apache.maven.plugins:maven-compiler-plugin</code>
+     *         value of the <code>source</code> parameter in the
+     *         <code>org.apache.maven.plugins:maven-compiler-plugin</code>
      *         defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>,
      *         or the {@link #fJavadocVersion}, or <code>null</code> if not defined.
      * @see #detectJavaApiLink
@@ -5536,6 +5600,7 @@ public abstract class AbstractJavadocMojo
                                 + fJavadocVersion );
         }
 
+        // CHECKSTYLE_OFF: MagicNumber
         String apiVersion = null;
         if ( sourceVersion >= 1.3f && sourceVersion < 1.4f )
         {
@@ -5562,6 +5627,7 @@ public abstract class AbstractJavadocMojo
             apiVersion = "1.8";
         }
         String javaApiLink = javaApiLinks.getProperty( "api_" + apiVersion, null );
+        // CHECKSTYLE_ON: MagicNumber
 
         if ( getLog().isDebugEnabled() )
         {

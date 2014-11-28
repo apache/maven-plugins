@@ -36,7 +36,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>
  * @see <a href="http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/javadoc.html#options">Javadoc Options </a>
  */
-@Mojo( name = "test-javadoc-no-fork", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
+@Mojo( name = "test-javadoc-no-fork", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 @Execute( phase = LifecyclePhase.NONE )
 public class TestJavadocNoForkReport
     extends TestJavadocReport

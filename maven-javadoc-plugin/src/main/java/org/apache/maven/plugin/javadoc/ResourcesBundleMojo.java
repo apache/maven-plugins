@@ -21,7 +21,6 @@ package org.apache.maven.plugin.javadoc;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.javadoc.options.JavadocOptions;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -76,7 +75,8 @@ extends AbstractJavadocMojo
     private ArchiverManager archiverManager;
 
     /**
-     * Assemble a new {@link JavadocOptions} instance that contains the configuration options in this
+     * Assemble a new {@link org.apache.maven.plugin.javadoc.options.JavadocOptions JavadocOptions} instance that
+     * contains the configuration options in this
      * mojo, which are a subset of those provided in derivatives of the {@link AbstractJavadocMojo}
      * class (most of the javadoc mojos, in other words). Then, bundle the contents of the 
      * <code>javadocDirectory</code> along with the assembled JavadocOptions instance (serialized to

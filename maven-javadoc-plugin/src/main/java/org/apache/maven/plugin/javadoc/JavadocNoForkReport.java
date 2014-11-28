@@ -38,5 +38,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo( name = "javadoc-no-fork", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
 @Execute( phase = LifecyclePhase.NONE )
 public class JavadocNoForkReport
-    extends JavadocReport {
+    extends JavadocReport
+{
 }

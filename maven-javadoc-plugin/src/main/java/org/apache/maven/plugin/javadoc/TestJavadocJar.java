@@ -42,7 +42,8 @@ import java.util.List;
  * @version $Id$
  * @since 2.5
  */
-@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.TEST,
+                threadSafe = true )
 public class TestJavadocJar
     extends JavadocJar
 {
@@ -87,7 +88,8 @@ public class TestJavadocJar
     /**
      * Specifies the Test title to be placed in the HTML title tag.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
      * @since 2.5

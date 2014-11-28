@@ -23,6 +23,9 @@ import org.apache.maven.plugin.javadoc.options.JavadocOptions;
 
 import java.io.File;
 
+/**
+ * 
+ */
 public class JavadocBundle
 {
 

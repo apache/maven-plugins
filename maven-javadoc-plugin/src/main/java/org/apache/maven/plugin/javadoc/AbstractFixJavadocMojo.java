@@ -80,7 +80,8 @@ import java.util.regex.Pattern;
 /**
  * Abstract class to fix Javadoc documentation and tags in source files.
  * <br/>
- * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#wheretags">Where Tags Can Be Used</a>.
+ * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#wheretags">Where Tags
+ * Can Be Used</a>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -442,10 +443,11 @@ public abstract class AbstractFixJavadocMojo
 
             if ( javaClasses != null )
             {
-                for (JavaClass javaClass : javaClasses) {
-                    processFix(javaClass);
+                for ( JavaClass javaClass : javaClasses )
+                {
+                    processFix( javaClass );
                 }
-            }
+         }
         }
         catch ( IOException e )
         {
@@ -528,14 +530,19 @@ public abstract class AbstractFixJavadocMojo
         {
             String[] split = StringUtils.split( fixTags, "," );
             List<String> filtered = new LinkedList<String>();
-            for (String aSplit : split) {
+            for ( String aSplit : split )
+            {
                 String s = aSplit.trim();
-                if (JavadocUtil.equalsIgnoreCase(s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
-                        THROWS_TAG, LINK_TAG, RETURN_TAG)) {
-                    filtered.add(s);
-                } else {
-                    if (getLog().isWarnEnabled()) {
-                        getLog().warn("Unrecognized '" + s + "' for fixTags parameter. Ignored it!");
+                if ( JavadocUtil.equalsIgnoreCase( s, FIX_TAGS_ALL, AUTHOR_TAG, VERSION_TAG, SINCE_TAG, PARAM_TAG,
+                                                   THROWS_TAG, LINK_TAG, RETURN_TAG ) )
+                {
+                    filtered.add( s );
+                }
+                else
+                {
+                    if ( getLog().isWarnEnabled() )
+                    {
+                        getLog().warn( "Unrecognized '" + s + "' for fixTags parameter. Ignored it!" );
                     }
                 }
             }
@@ -611,7 +618,7 @@ public abstract class AbstractFixJavadocMojo
                     getLog().info( "OK, let's proceed..." );
                     break;
                 }
-                if (JavadocUtil.equalsIgnoreCase( userExpression, "N", "No" ))
+                if ( JavadocUtil.equalsIgnoreCase( userExpression, "N", "No" ) )
                 {
                     getLog().info( "No changes in your sources occur." );
                     return false;
@@ -673,7 +680,7 @@ public abstract class AbstractFixJavadocMojo
                     StringUtils.unifyLineSeparators( FileUtils.fileRead( invokerLogFile, "UTF-8" ) );
                 // see org.codehaus.mojo.clirr.AbstractClirrMojo#getComparisonArtifact()
                 final String artifactNotFoundMsg = "Unable to find a previous version of the project in the repository";
-                if (invokerLogContent.contains(artifactNotFoundMsg))
+                if ( invokerLogContent.contains( artifactNotFoundMsg ) )
                 {
                     getLog().warn( "No previous artifact has been deployed, Clirr is ignored." );
                     return;
@@ -764,6 +771,7 @@ public abstract class AbstractFixJavadocMojo
                 // 8000 - Class Added
                 List<String> list;
                 String[] splits2;
+                // CHECKSTYLE_OFF: MagicNumber
                 switch ( code )
                 {
                     case 7011:
@@ -802,6 +810,7 @@ public abstract class AbstractFixJavadocMojo
                     default:
                         break;
                 }
+                // CHECKSTYLE_ON: MagicNumber
             }
         }
         finally
@@ -830,8 +839,10 @@ public abstract class AbstractFixJavadocMojo
             return true;
         }
 
-        for (String aFixTagsSplitted : fixTagsSplitted) {
-            if (aFixTagsSplitted.trim().equals(tag)) {
+        for ( String aFixTagsSplitted : fixTagsSplitted )
+        {
+            if ( aFixTagsSplitted.trim().equals( tag ) )
+            {
                 return true;
             }
         }
@@ -932,7 +943,7 @@ public abstract class AbstractFixJavadocMojo
                 }
             }
 
-            projectClassLoader = new URLClassLoader(urls.toArray( new URL[urls.size()] ), null );
+            projectClassLoader = new URLClassLoader( urls.toArray( new URL[urls.size()] ), null );
         }
 
         return projectClassLoader;
@@ -1095,7 +1106,7 @@ public abstract class AbstractFixJavadocMojo
         String extraComment = javadocComment.substring( javadocComment.indexOf( END_JAVADOC ) + END_JAVADOC.length() );
         if ( StringUtils.isNotEmpty( extraComment ) )
         {
-            if (extraComment.contains(EOL))
+            if ( extraComment.contains( EOL ) )
             {
                 stringWriter.write( extraComment.substring( extraComment.indexOf( EOL ) + EOL.length() ) );
             }
@@ -1320,23 +1331,28 @@ public abstract class AbstractFixJavadocMojo
             {
                 StringBuilder value = new StringBuilder();
                 String[] lines = getLines( field.getInitializationExpression() );
-                for (String line : lines) {
-                    StringTokenizer token = new StringTokenizer(line.trim(), "\"\n\r");
-                    while (token.hasMoreTokens()) {
+                for ( String line : lines )
+                {
+                    StringTokenizer token = new StringTokenizer( line.trim(), "\"\n\r" );
+                    while ( token.hasMoreTokens() )
+                    {
                         String s = token.nextToken();
 
-                        if (s.trim().equals("+")) {
+                        if ( s.trim().equals( "+" ) )
+                        {
                             continue;
                         }
-                        if (s.trim().endsWith("\\")) {
+                        if ( s.trim().endsWith( "\\" ) )
+                        {
                             s += "\"";
                         }
-                        value.append(s);
+                        value.append( s );
                     }
                 }
 
                 sb.append( "=\"" );
                 // reduce the size
+                // CHECKSTYLE_OFF: MagicNumber
                 if ( value.length() < 40 )
                 {
                     sb.append( value.toString() ).append( "\"" );
@@ -1345,6 +1361,7 @@ public abstract class AbstractFixJavadocMojo
                 {
                     sb.append( value.toString().substring( 0, 39 ) ).append( "\"{trunked}" );
                 }
+                // CHECKSTYLE_ON: MagicNumber
             }
         }
 
@@ -1697,9 +1714,10 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String[] lines = getLines( comment );
-        for (String line : lines) {
-            sb.append(indent).append(" ").append(line.trim());
-            sb.append(EOL);
+        for ( String line : lines )
+        {
+            sb.append( indent ).append( " " ).append( line.trim() );
+            sb.append( EOL );
         }
     }
 
@@ -1918,8 +1936,9 @@ public abstract class AbstractFixJavadocMojo
                     for ( Iterator<String> it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                     {
                         String originalJavadocTag = it.next();
+                        String simplified = StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim();
 
-                        if (StringUtils.removeDuplicateWhitespace(originalJavadocTag).trim().contains("@" + docletTag.getName()))
+                        if ( simplified.contains( "@" + docletTag.getName() ) )
                         {
                             it.remove();
                             sb.append( originalJavadocTag );
@@ -1933,8 +1952,9 @@ public abstract class AbstractFixJavadocMojo
                 for ( Iterator<String> it = javaEntityTags.getUnknownTags().iterator(); it.hasNext(); )
                 {
                     String originalJavadocTag = it.next();
+                    String simplified = StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim();
 
-                    if (StringUtils.removeDuplicateWhitespace(originalJavadocTag).trim().contains("@" + docletTag.getName()))
+                    if ( simplified.contains( "@" + docletTag.getName() ) )
                     {
                         it.remove();
                         sb.append( originalJavadocTag );
@@ -1952,8 +1972,8 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeParamTag( final StringBuilder sb, final JavaMethod javaMethod, final JavaEntityTags javaEntityTags,
-                                String[] params )
+    private void writeParamTag( final StringBuilder sb, final JavaMethod javaMethod,
+                                final JavaEntityTags javaEntityTags, String[] params )
     {
         params = fixQdox173( params );
 
@@ -1976,8 +1996,10 @@ public abstract class AbstractFixJavadocMojo
         {
             // is generic?
             TypeVariable[] typeParams = javaMethod.getTypeParameters();
-            for (TypeVariable typeParam : typeParams) {
-                if (typeParam.getGenericValue().equals(paramName)) {
+            for ( TypeVariable typeParam : typeParams )
+            {
+                if ( typeParam.getGenericValue().equals( paramName ) )
+                {
                     found = true;
                 }
             }
@@ -2520,7 +2542,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-        sb.append("<").append(typeParameter.getName()).append(">");
+        sb.append( "<" ).append( typeParameter.getName() ).append( ">" );
         sb.append( " " );
         sb.append( getDefaultJavadocForType( typeParameter ) );
         sb.append( EOL );
@@ -3338,12 +3360,13 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String originalJavadoc = extractOriginalJavadoc( javaClassContent, entity );
-        int index;
-        if ( ( index = originalJavadoc.indexOf( START_JAVADOC ) ) != -1 )
+        int index = originalJavadoc.indexOf( START_JAVADOC );
+        if ( index != -1 )
         {
             originalJavadoc = originalJavadoc.substring( index + START_JAVADOC.length() );
         }
-        if ( ( index = originalJavadoc.indexOf( END_JAVADOC ) ) != -1 )
+        index = originalJavadoc.indexOf( END_JAVADOC );
+        if ( index != -1 )
         {
             originalJavadoc = originalJavadoc.substring( 0, index );
         }
@@ -3368,7 +3391,7 @@ public abstract class AbstractFixJavadocMojo
     private static String removeLastEmptyJavadocLines( final String content )
         throws IOException
     {
-        if (!content.contains(EOL))
+        if ( !content.contains( EOL ) )
         {
             return content;
         }
@@ -3468,7 +3491,7 @@ public abstract class AbstractFixJavadocMojo
             line = reader.readLine();
         }
 
-        return lines.toArray(new String[lines.size()]);
+        return lines.toArray( new String[lines.size()] );
     }
 
     /**
@@ -3541,7 +3564,7 @@ public abstract class AbstractFixJavadocMojo
             l.remove( 0 );
             l.remove( 1 );
 
-            return l.toArray(new String[l.size()]);
+            return l.toArray( new String[l.size()] );
         }
 
         return params;
@@ -3656,7 +3679,8 @@ public abstract class AbstractFixJavadocMojo
         private String getMessage( String paramName, String mapName )
         {
             StringBuilder msg = new StringBuilder();
-            msg.append("No param '").append(paramName).append("' key found in ").append(mapName).append(" for the entity: ");
+            msg.append( "No param '" ).append( paramName ).append( "' key found in " ).append( mapName )
+            .append( " for the entity: " );
             if ( isJavaMethod )
             {
                 JavaMethod javaMethod = (JavaMethod) entity;

@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>25</version>
+    <version>27</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -65,9 +65,9 @@ under the License.
     <doxiaVersion>1.0</doxiaVersion>
     <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
+    <!-- for ITs -->
     <sitePluginVersion>3.3</sitePluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
 
   <contributors>
@@ -136,7 +136,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -278,14 +277,6 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-          <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
           <version>1.7.1</version>
         </plugin>
@@ -293,7 +284,7 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
+            <excludes combine.children="append">
               <!-- Photoshop files are binary -->
               <exclude>**/*.psd</exclude>
               <!-- Checksum files cannot contain a license header -->
@@ -328,17 +319,6 @@ under the License.
             <model>src/main/mdo/javadocOptions.mdo</model>
           </models>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -398,7 +378,6 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-110/pom.xml</pomInclude>
@@ -424,7 +403,6 @@ under the License.
                 <pomInclude>MJAVADOC-369/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-407/pom.xml</pomInclude>
               </pomIncludes>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
             </configuration>
           </plugin>
         </plugins>

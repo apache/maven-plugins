@@ -196,9 +196,10 @@ public class JavadocUtil
         List<String> excludedNames = new ArrayList<String>();
         for ( String path : sourcePaths )
         {
-            for (String aSubpackagesList : subpackagesList) {
-                List<String> excludes = getExcludedPackages(path, excludedPackages);
-                excludedNames.addAll(excludes);
+            for ( String aSubpackagesList : subpackagesList )
+            {
+                List<String> excludes = getExcludedPackages( path, excludedPackages );
+                excludedNames.addAll( excludes );
             }
         }
 
@@ -271,7 +272,7 @@ public class JavadocUtil
 
         if ( StringUtils.isNotEmpty( arg ) )
         {
-            if (arg.contains("'"))
+            if ( arg.contains( "'" ) )
             {
                 arg = StringUtils.replace( arg, "'", "\\'" );
             }
@@ -298,7 +299,7 @@ public class JavadocUtil
         if ( StringUtils.isNotEmpty( path ) )
         {
             path = path.replace( '\\', '/' );
-            if (path.contains("\'"))
+            if ( path.contains( "\'" ) )
             {
                 String split[] = path.split( "\'" );
                 path = "";
@@ -408,46 +409,62 @@ public class JavadocUtil
     {
         List<String> files = new ArrayList<String>();
 
-        for (String aFileList : fileList) {
+        for ( String aFileList : fileList )
+        {
             boolean include = true;
-            for (int k = 0; k < excludePackages.length && include; k++) {
+            for ( int k = 0; k < excludePackages.length && include; k++ )
+            {
                 // handle wildcards (*) in the excludePackageNames
-                String[] excludeName = excludePackages[k].split("[*]");
+                String[] excludeName = excludePackages[k].split( "[*]" );
 
-                if (excludeName.length == 0) {
+                if ( excludeName.length == 0 )
+                {
                     continue;
                 }
 
-                if (excludeName.length > 1) {
+                if ( excludeName.length > 1 )
+                {
                     int u = 0;
-                    while (include && u < excludeName.length) {
-                        if (!"".equals(excludeName[u].trim()) && aFileList.contains(excludeName[u])) {
+                    while ( include && u < excludeName.length )
+                    {
+                        if ( !"".equals( excludeName[u].trim() ) && aFileList.contains( excludeName[u] ) )
+                        {
                             include = false;
                         }
                         u++;
                     }
-                } else {
-                    if (aFileList.startsWith(sourceDirectory.toString() + File.separatorChar + excludeName[0])) {
-                        if (excludeName[0].endsWith(String.valueOf(File.separatorChar))) {
-                            int i = aFileList.lastIndexOf(File.separatorChar);
-                            String packageName = aFileList.substring(0, i + 1);
-                            File currentPackage = new File(packageName);
-                            File excludedPackage = new File(sourceDirectory, excludeName[0]);
-                            if (currentPackage.equals(excludedPackage)
-                                    && aFileList.substring(i).contains(".java")) {
+                }
+                else
+                {
+                    if ( aFileList.startsWith( sourceDirectory.toString() + File.separatorChar + excludeName[0] ) )
+                    {
+                        if ( excludeName[0].endsWith( String.valueOf( File.separatorChar ) ) )
+                        {
+                            int i = aFileList.lastIndexOf( File.separatorChar );
+                            String packageName = aFileList.substring( 0, i + 1 );
+                            File currentPackage = new File( packageName );
+                            File excludedPackage = new File( sourceDirectory, excludeName[0] );
+                            if ( currentPackage.equals( excludedPackage )
+                                && aFileList.substring( i ).contains( ".java" ) )
+                            {
                                 include = true;
-                            } else {
+                            }
+                            else
+                            {
                                 include = false;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             include = false;
                         }
                     }
                 }
             }
 
-            if (include) {
-                files.add(quotedPathArgument(aFileList));
+            if ( include )
+            {
+                files.add( quotedPathArgument( aFileList ) );
             }
         }
 
@@ -465,15 +482,19 @@ public class JavadocUtil
     protected static List<String> getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
     {
         List<String> files = new ArrayList<String>();
-        for (String excludePackagename : excludePackagenames) {
-            String[] fileList = FileUtils.getFilesFromExtension(sourceDirectory, new String[]{"java"});
-            for (String aFileList : fileList) {
-                String[] excludeName = excludePackagename.split("[*]");
+        for ( String excludePackagename : excludePackagenames )
+        {
+            String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
+            for ( String aFileList : fileList )
+            {
+                String[] excludeName = excludePackagename.split( "[*]" );
                 int u = 0;
-                while (u < excludeName.length) {
-                    if (!"".equals(excludeName[u].trim()) && aFileList.contains(excludeName[u])
-                            && !sourceDirectory.contains(excludeName[u])) {
-                        files.add(aFileList);
+                while ( u < excludeName.length )
+                {
+                    if ( !"".equals( excludeName[u].trim() ) && aFileList.contains( excludeName[u] )
+                        && !sourceDirectory.contains( excludeName[u] ) )
+                    {
+                        files.add( aFileList );
                     }
                     u++;
                 }
@@ -527,7 +548,7 @@ public class JavadocUtil
         String[] pathList = new String[fileList.length];
         for ( int x = 0; x < fileList.length; x++ )
         {
-            pathList[x] = new File( sourceDirectory, fileList[x] ).getAbsolutePath( );
+            pathList[x] = new File( sourceDirectory, fileList[x] ).getAbsolutePath();
         }
 
 
@@ -553,7 +574,8 @@ public class JavadocUtil
      * @see #parseJavadocVersion(String)
      */
     protected static float getJavadocVersion( File javadocExe )
-        throws IOException, CommandLineException, IllegalArgumentException {
+        throws IOException, CommandLineException, IllegalArgumentException
+    {
         if ( ( javadocExe == null ) || ( !javadocExe.exists() ) || ( !javadocExe.isFile() ) )
         {
             throw new IOException( "The javadoc executable '" + javadocExe + "' doesn't exist or is not a file. " );
@@ -631,7 +653,8 @@ public class JavadocUtil
      * @throws IllegalArgumentException if the output is null
      */
     protected static float parseJavadocVersion( String output )
-        throws IllegalArgumentException {
+        throws IllegalArgumentException
+    {
         if ( StringUtils.isEmpty( output ) )
         {
             throw new IllegalArgumentException( "The output could not be null." );
@@ -986,8 +1009,9 @@ public class JavadocUtil
             String invokerLogContent = readFile( invokerLog, "UTF-8" );
 
             // see DefaultMaven
-            if ( invokerLogContent != null && (!invokerLogContent.contains("Scanning for projects...")
-                || invokerLogContent.contains(OutOfMemoryError.class.getName())) )
+            if ( invokerLogContent != null
+                && ( !invokerLogContent.contains( "Scanning for projects..." )
+                                || invokerLogContent.contains( OutOfMemoryError.class.getName() ) ) )
             {
                 if ( log != null )
                 {
@@ -1007,8 +1031,9 @@ public class JavadocUtil
             String invokerLogContent = readFile( invokerLog, "UTF-8" );
 
             // see DefaultMaven
-            if ( invokerLogContent != null && (!invokerLogContent.contains("Scanning for projects...")
-                || invokerLogContent.contains(OutOfMemoryError.class.getName())) )
+            if ( invokerLogContent != null
+                && ( !invokerLogContent.contains( "Scanning for projects..." )
+                                || invokerLogContent.contains( OutOfMemoryError.class.getName() ) ) )
             {
                 throw new MavenInvocationException( ERROR_INIT_VM );
             }
@@ -1800,15 +1825,15 @@ public class JavadocUtil
             if ( StringUtils.isNotEmpty( activeProxy.getHost() )
                  && ( url == null || !ProxyUtils.validateNonProxyHosts( proxyInfo, url.getHost() ) ) )
             {
-                HttpHost proxy = new HttpHost(activeProxy.getHost(), activeProxy.getPort());
-                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+                HttpHost proxy = new HttpHost( activeProxy.getHost(), activeProxy.getPort() );
+                httpClient.getParams().setParameter( ConnRoutePNames.DEFAULT_PROXY, proxy );
 
                 if ( StringUtils.isNotEmpty( activeProxy.getUsername() ) && activeProxy.getPassword() != null )
                 {
                     Credentials credentials =
                         new UsernamePasswordCredentials( activeProxy.getUsername(), activeProxy.getPassword() );
 
-                    httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+                    httpClient.getCredentialsProvider().setCredentials( AuthScope.ANY, credentials );
                 }
             }
         }
