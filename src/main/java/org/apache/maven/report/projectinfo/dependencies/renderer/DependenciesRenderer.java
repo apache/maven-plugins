@@ -510,7 +510,7 @@ public class DependenciesRenderer
         String entries = getI18nString( "file.details.column.entries" );
         String classes = getI18nString( "file.details.column.classes" );
         String packages = getI18nString( "file.details.column.packages" );
-        String jdkrev = getI18nString( "file.details.column.jdkrev" );
+        String javaVersion = getI18nString( "file.details.column.javaVersion" );
         String debugInformation = getI18nString( "file.details.column.debuginformation" );
         String debugInformationTitle = getI18nString( "file.details.columntitle.debuginformation" );
         String debugInformationCellYes = getI18nString( "file.details.cell.debuginformation.yes" );
@@ -528,7 +528,7 @@ public class DependenciesRenderer
         TotalCell totalentries = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalclasses = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalpackages = new TotalCell( DEFAULT_DECIMAL_FORMAT );
-        double highestjdk = 0.0;
+        double highestJavaVersion = 0.0;
         TotalCell totalDebugInformation = new TotalCell( DEFAULT_DECIMAL_FORMAT );
         TotalCell totalsealed = new TotalCell( DEFAULT_DECIMAL_FORMAT );
 
@@ -539,12 +539,13 @@ public class DependenciesRenderer
         String[] tableHeaderTitles;
         if ( hasSealed )
         {
-            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation, sealed };
+            tableHeader = new String[] { filename, size, entries, classes, packages, javaVersion, debugInformation,
+                                         sealed };
             tableHeaderTitles = new String[] { null, null, null, null, null, null, debugInformationTitle, null };
         }
         else
         {
-            tableHeader = new String[] { filename, size, entries, classes, packages, jdkrev, debugInformation };
+            tableHeader = new String[] { filename, size, entries, classes, packages, javaVersion, debugInformation };
             tableHeaderTitles = new String[] { null, null, null, null, null, null, debugInformationTitle };
         }
         tableHeader( tableHeader, tableHeaderTitles );
@@ -584,7 +585,8 @@ public class DependenciesRenderer
                     {
                         if ( jarDetails.getJdkRevision() != null )
                         {
-                            highestjdk = Math.max( highestjdk, Double.parseDouble( jarDetails.getJdkRevision() ) );
+                            highestJavaVersion = Math.max( highestJavaVersion,
+                                                     Double.parseDouble( jarDetails.getJdkRevision() ) );
                         }
                     }
                     catch ( NumberFormatException e )
@@ -643,7 +645,7 @@ public class DependenciesRenderer
                 tableRow( hasSealed,
                           new String[] { totaldeps.getTotalString( i ), totaldepsize.getTotalString( i ),
                               totalentries.getTotalString( i ), totalclasses.getTotalString( i ),
-                              totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestjdk ) : "",
+                              totalpackages.getTotalString( i ), ( i < 0 ) ? String.valueOf( highestJavaVersion ) : "",
                               totalDebugInformation.getTotalString( i ), totalsealed.getTotalString( i ) } );
             }
         }
