@@ -49,7 +49,7 @@ import java.util.ResourceBundle;
  * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>
  * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#options">Javadoc Options </a>
  */
-@Mojo( name = "test-javadoc", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
+@Mojo( name = "test-javadoc", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
 @Execute( phase = LifecyclePhase.GENERATE_TEST_SOURCES )
 public class TestJavadocReport
     extends JavadocReport
@@ -88,7 +88,8 @@ public class TestJavadocReport
     /**
      * Specifies the Test title to be placed in the HTML title tag.
      * <br/>
-     * See <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#windowtitle">windowtitle</a>.
+     * See
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#windowtitle">windowtitle</a>.
      * <br/>
      *
      * @since 2.5

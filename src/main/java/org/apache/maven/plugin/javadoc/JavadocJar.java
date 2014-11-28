@@ -49,7 +49,8 @@ import java.util.Locale;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true )
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE,
+                threadSafe = true )
 public class JavadocJar
     extends AbstractJavadocMojo
 {

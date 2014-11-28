@@ -31,6 +31,9 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import java.io.File;
 import java.util.List;
 
+/**
+ * 
+ */
 public class SourceResolverConfig
 {
 
