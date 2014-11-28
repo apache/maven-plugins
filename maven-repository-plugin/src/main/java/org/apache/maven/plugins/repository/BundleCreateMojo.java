@@ -119,10 +119,11 @@ public class BundleCreateMojo
         
         if ( disableMaterialization )
         {
-            getLog().warn( "Validations to confirm support for project materialization have been DISABLED." +
-                "\n\nYour project may not provide the POM elements necessary to allow users to retrieve sources on-demand," +
-                "\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS." +
-                "\n\nContinue? [y/N]" );
+            getLog().warn( "Validations to confirm support for project materialization have been DISABLED."
+                   + "\n\nYour project may not provide the POM elements necessary to allow users to retrieve sources "
+                   + "on-demand,"
+                   + "\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS."
+                   + "\n\nContinue? [y/N]" );
             
             try
             {

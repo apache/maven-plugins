@@ -33,14 +33,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * 
+ */
 final class BundleUtils
 {
     private BundleUtils()
     {
     }
     
-    public static List<File> selectProjectFiles( final File dir, final InputHandler inputHandler, final String finalName,
-                                           final File pom, final Log log, final boolean batchMode )
+    public static List<File> selectProjectFiles( final File dir, final InputHandler inputHandler,
+                                                 final String finalName, final File pom, final Log log,
+                                                 final boolean batchMode )
         throws MojoExecutionException
     {
         File[] projectFiles = dir.listFiles( new FilenameFilter()
@@ -58,16 +62,23 @@ final class BundleUtils
             return result;
         }
 
-        for (File projectFile : projectFiles) {
-            if (projectFile.getName().endsWith(".pom")) {
-                if (!projectFile.equals(pom)) {
-                    log.info("Detected POM file will be excluded:\n" + projectFile
-                            + "\n\nInstead, the bundle will include the POM from:\n" + pom);
+        for ( File projectFile : projectFiles )
+        {
+            if ( projectFile.getName().endsWith( ".pom" ) )
+            {
+                if ( !projectFile.equals( pom ) )
+                {
+                    log.info( "Detected POM file will be excluded:\n" + projectFile
+                        + "\n\nInstead, the bundle will include the POM from:\n" + pom );
                 }
-            } else if (projectFile.getName().endsWith("-bundle.jar")) {
-                log.warn("Skipping project file which collides with repository bundle filename:\n" + projectFile);
-            } else {
-                result.add(projectFile);
+            }
+            else if ( projectFile.getName().endsWith( "-bundle.jar" ) )
+            {
+                log.warn( "Skipping project file which collides with repository bundle filename:\n" + projectFile );
+            }
+            else
+            {
+                result.add( projectFile );
             }
         }
         
@@ -107,7 +118,7 @@ final class BundleUtils
             return result;
         }
         
-        while( true )
+        while ( true )
         {
             StringBuilder message = new StringBuilder();
             message.append( "The following files are marked for inclusion in the repository bundle:\n" );
@@ -116,12 +127,12 @@ final class BundleUtils
             int i = 1;
             for ( File f : result )
             {
-                message.append( "\n" ).append( (i++) ).append( ".) " ).append( f.getName() );
+                message.append( "\n" ).append( ( i++ ) ).append( ".) " ).append( f.getName() );
             }
             
-            message.append( "\n\nPlease select the number(s) for any files you wish to exclude, " +
-                    "or '0' when you're done.\nSeparate the numbers for multiple files with a " +
-                    "comma (',').\n\nSelection: " );
+            message.append( "\n\nPlease select the number(s) for any files you wish to exclude, "
+                + "or '0' when you're done.\nSeparate the numbers for multiple files with a "
+                + "comma (',').\n\nSelection: " );
             
             log.info( message );
             String response;
@@ -131,7 +142,8 @@ final class BundleUtils
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Project file selection failed with an I/O exception: " + e.getMessage(), e );
+                throw new MojoExecutionException( "Project file selection failed with an I/O exception: "
+                    + e.getMessage(), e );
             }
             
             if ( response == null || "0".equals( response ) )
@@ -151,7 +163,7 @@ final class BundleUtils
                 
                 Arrays.sort( idxs );
                 
-                for( int k = idxs.length - 1; k > -1; k-- )
+                for ( int k = idxs.length - 1; k > -1; k-- )
                 {
                     if ( idxs[k] < 1 || idxs[k] > result.size() )
                     {
@@ -159,7 +171,7 @@ final class BundleUtils
                         continue;
                     }
                     
-                    File removed = result.remove( idxs[k] -1 );
+                    File removed = result.remove( idxs[k] - 1 );
                     log.info( "Removed: " + removed.getName() );
                 }
             }
