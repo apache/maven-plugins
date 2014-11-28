@@ -313,7 +313,7 @@ public class RarMojo
         // Check if jar file is there and if requested, copy it
         try
         {
-            if (includeJar)
+            if ( includeJar )
             {
                 File generatedJarFile = new File( outputDirectory, finalName + ".jar" );
                 if ( generatedJarFile.exists() )
@@ -331,16 +331,18 @@ public class RarMojo
         // Copy dependencies
         try
         {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings( "unchecked" )
             Set<Artifact> artifacts = project.getArtifacts();
-            for (Artifact artifact : artifacts) {
+            for ( Artifact artifact : artifacts )
+            {
 
-                ScopeArtifactFilter filter = new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME);
-                if (!artifact.isOptional() && filter.include(artifact)
-                        && artifact.getArtifactHandler().isAddedToClasspath()) {
-                    getLog().info("Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", "
-                            + artifact.getScope() + "]");
-                    FileUtils.copyFileToDirectory(artifact.getFile(), getBuildDir());
+                ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+                if ( !artifact.isOptional() && filter.include( artifact )
+                    && artifact.getArtifactHandler().isAddedToClasspath() )
+                {
+                    getLog().info( "Copying artifact[" + artifact.getGroupId() + ", " + artifact.getId() + ", "
+                                       + artifact.getScope() + "]" );
+                    FileUtils.copyFileToDirectory( artifact.getFile(), getBuildDir() );
                 }
             }
         }
@@ -433,7 +435,7 @@ public class RarMojo
             getLog().warn( "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
         }
 
-        File rarFile = getRarFile(outputDirectory, finalName, classifier);
+        File rarFile = getRarFile( outputDirectory, finalName, classifier );
         try
         {
             MavenArchiver archiver = new MavenArchiver();
