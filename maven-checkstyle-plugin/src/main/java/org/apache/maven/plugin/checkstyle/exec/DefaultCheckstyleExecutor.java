@@ -843,7 +843,14 @@ public class DefaultCheckstyleExecutor
             {
                 try
                 {
-                    resourceManager.addSearchPath( "jar", "jar:" + licenseArtifact.getFile().toURI().toURL() );
+                    if ( licenseArtifact.getFile().isDirectory() )
+                    {
+                        resourceManager.addSearchPath( "file", licenseArtifact.getFile().getAbsolutePath() );
+                    }
+                    else
+                    {
+                        resourceManager.addSearchPath( "jar", "jar:" + licenseArtifact.getFile().toURI().toURL() );
+                    }
                 }
                 catch ( MalformedURLException e )
                 {
