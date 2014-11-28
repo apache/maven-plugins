@@ -45,11 +45,11 @@ public class DontIncludeResourceTransformer
             return true;
         }
         
-        if( resources != null )
+        if ( resources != null )
         {
-            for( String resourceEnd : resources )
+            for ( String resourceEnd : resources )
             {
-                if( r.endsWith( resourceEnd ) )
+                if ( r.endsWith( resourceEnd ) )
                 {
                     return true;
                 }

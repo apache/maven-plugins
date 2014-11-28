@@ -19,7 +19,6 @@ package org.apache.maven.plugins.shade.pom;
  * under the License.
  */
 
-
 import org.apache.maven.model.ActivationFile;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.ActivationProperty;
@@ -74,7 +73,12 @@ import org.jdom.output.XMLOutputter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class MavenJDOMWriter.
@@ -1128,33 +1132,40 @@ public class MavenJDOMWriter
         {
             Xpp3Dom[] childs = parentDom.getChildren();
             Collection domChilds = new ArrayList();
-            Collections.addAll(domChilds, childs);
+            Collections.addAll( domChilds, childs );
             // int domIndex = 0;
-            for (Object o : parent.getChildren()) {
+            for ( Object o : parent.getChildren() )
+            {
                 Element elem = (Element) o;
                 Iterator it2 = domChilds.iterator();
                 Xpp3Dom corrDom = null;
-                while (it2.hasNext()) {
+                while ( it2.hasNext() )
+                {
                     Xpp3Dom dm = (Xpp3Dom) it2.next();
-                    if (dm.getName().equals(elem.getName())) {
+                    if ( dm.getName().equals( elem.getName() ) )
+                    {
                         corrDom = dm;
                         break;
                     }
                 }
-                if (corrDom != null) {
-                    domChilds.remove(corrDom);
-                    replaceXpp3DOM(elem, corrDom, new Counter(counter.getDepth() + 1));
+                if ( corrDom != null )
+                {
+                    domChilds.remove( corrDom );
+                    replaceXpp3DOM( elem, corrDom, new Counter( counter.getDepth() + 1 ) );
                     counter.increaseCount();
-                } else {
-                    parent.removeContent(elem);
+                }
+                else
+                {
+                    parent.removeContent( elem );
                 }
             }
-            for (Object domChild : domChilds) {
+            for ( Object domChild : domChilds )
+            {
                 Xpp3Dom dm = (Xpp3Dom) domChild;
-                Element elem = factory.element(dm.getName(), parent.getNamespace());
-                insertAtPreferredLocation(parent, elem, counter);
+                Element elem = factory.element( dm.getName(), parent.getNamespace() );
+                insertAtPreferredLocation( parent, elem, counter );
                 counter.increaseCount();
-                replaceXpp3DOM(elem, dm, new Counter(counter.getDepth() + 1));
+                replaceXpp3DOM( elem, dm, new Counter( counter.getDepth() + 1 ) );
             }
         }
         else if ( parentDom.getValue() != null )
@@ -1162,42 +1173,6 @@ public class MavenJDOMWriter
             parent.setText( parentDom.getValue() );
         }
     } // -- void replaceXpp3DOM(Element, Xpp3Dom, Counter)
-
-    /**
-     * Method updateActivation
-     *
-     * @param value
-     * @param element
-     * @param counter
-     * @param xmlTag
-     */
-    /*
-     * protected void updateActivation(Activation value, String xmlTag, Counter counter, Element element) { boolean
-     * shouldExist = value != null; Element root = updateElement(counter, element, xmlTag, shouldExist); if
-     * (shouldExist) { Counter innerCount = new Counter(counter.getDepth() + 1); findAndReplaceSimpleElement(innerCount,
-     * root, "activeByDefault", !value.isActiveByDefault() ? null : String.valueOf( value.isActiveByDefault() ),
-     * "false"); findAndReplaceSimpleElement(innerCount, root, "jdk", value.getJdk(), null); updateActivationOS(
-     * value.getOs(), "os", innerCount, root); updateActivationProperty( value.getProperty(), "property", innerCount,
-     * root); updateActivationFile( value.getFile(), "file", innerCount, root); updateActivationCustom(
-     * value.getCustom(), "custom", innerCount, root); } } //-- void updateActivation(Activation, String, Counter,
-     * Element)
-     */
-
-    /**
-     * Method updateActivationCustom
-     *
-     * @param value
-     * @param element
-     * @param counter
-     * @param xmlTag
-     */
-    /*
-     * protected void updateActivationCustom(ActivationCustom value, String xmlTag, Counter counter, Element element) {
-     * boolean shouldExist = value != null; Element root = updateElement(counter, element, xmlTag, shouldExist); if
-     * (shouldExist) { Counter innerCount = new Counter(counter.getDepth() + 1); findAndReplaceXpp3DOM(innerCount, root,
-     * "configuration", (Xpp3Dom)value.getConfiguration()); findAndReplaceSimpleElement(innerCount, root, "type",
-     * value.getType(), null); } } //-- void updateActivationCustom(ActivationCustom, String, Counter, Element)
-     */
 
     /**
      * Method updateActivationFile

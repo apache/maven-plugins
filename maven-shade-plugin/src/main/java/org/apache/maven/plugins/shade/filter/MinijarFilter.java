@@ -64,7 +64,7 @@ public class MinijarFilter
     /**
      * @since 1.6
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings( { "unchecked" } )
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -132,7 +132,7 @@ public class MinijarFilter
         removePackages( artifactUnit.getTransitiveDependencies(), packageNames );
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings( "rawtypes" )
     private void removePackages( Set clazzes, Set<String> packageNames )
     {
         for ( Object clazze : clazzes )

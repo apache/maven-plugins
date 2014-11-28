@@ -117,7 +117,9 @@ public class DefaultShader
             }
         }
 
+        // CHECKSTYLE_OFF: MagicNumber
         Multimap<String, File> duplicates = HashMultimap.create( 10000, 3 );
+        // CHECKSTYLE_ON: MagicNumber
 
         for ( File jar : shadeRequest.getJars() )
         {
@@ -195,7 +197,9 @@ public class DefaultShader
             jarFile.close();
         }
 
+        // CHECKSTYLE_OFF: MagicNumber
         Multimap<Collection<File>, String> overlapping = HashMultimap.create( 20, 15 );
+        // CHECKSTYLE_ON: MagicNumber
 
         for ( String clazz : duplicates.keySet() )
         {
@@ -212,22 +216,31 @@ public class DefaultShader
             List<String> jarzS = new LinkedList<String>();
 
             for ( File jjar : jarz )
+            {
                 jarzS.add( jjar.getName() );
+            }
 
             List<String> classes = new LinkedList<String>();
 
             for ( String clazz : overlapping.get( jarz ) )
+            {
                 classes.add( clazz.replace( ".class", "" ).replace( "/", "." ) );
+            }
 
-            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
+            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size()
+                              + " overlapping classes: " );
 
             int max = 10;
 
             for ( int i = 0; i < Math.min( max, classes.size() ); i++ )
+            {
                 getLogger().warn( "  - " + classes.get( i ) );
+            }
 
             if ( classes.size() > max )
+            {
                 getLogger().warn( "  - " + ( classes.size() - max ) + " more..." );
+            }
 
         }
 

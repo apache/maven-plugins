@@ -141,7 +141,7 @@ public class ApacheNoticeResourceTransformer
                     {
                         //resource-bundle 1.3 mode
                         if ( lineCount == 1
-                            && sb.toString().contains("This product includes/uses software(s) developed by"))
+                            && sb.toString().contains( "This product includes/uses software(s) developed by" ) )
                         {
                             currentOrg = organizationEntries.get( sb.toString().trim() );
                             if ( currentOrg == null )
@@ -164,7 +164,7 @@ public class ApacheNoticeResourceTransformer
                 else
                 {
                     String ent = sb.toString();
-                    if ( ent.startsWith( projectName ) && ent.contains("Copyright "))
+                    if ( ent.startsWith( projectName ) && ent.contains( "Copyright " ) )
                     {
                         copyright = ent;
                     }
