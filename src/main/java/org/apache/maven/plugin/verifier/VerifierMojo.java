@@ -33,12 +33,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Verifies the existence or non-existence of files/directories and optionally checks file content against a regular expression.
+ * Verifies the existence or non-existence of files/directories and optionally checks file content against a regular
+ * expression.
  *
  * @author <a href="vmassol@apache.org">Vincent Massol</a>
  * @version $Id$
@@ -109,14 +109,18 @@ public class VerifierMojo
             VerificationsXpp3Reader xppReader = new VerificationsXpp3Reader();
             Verifications verifications = xppReader.read( reader );
 
-            for (org.apache.maven.plugin.verifier.model.File file : verifications.getFiles()) {
+            for ( org.apache.maven.plugin.verifier.model.File file : verifications.getFiles() )
+            {
                 // Transform the file to check into an absolute path prefixing the basedir if
                 // the location is relative
-                if (file.getLocation() != null) {
-                    file.setLocation(getAbsoluteFileToCheck(new File(file.getLocation())).getPath());
-                    verifyFile(file, results);
-                } else {
-                    throw new MojoExecutionException("Missing <location> element");
+                if ( file.getLocation() != null )
+                {
+                    file.setLocation( getAbsoluteFileToCheck( new File( file.getLocation() ) ).getPath() );
+                    verifyFile( file, results );
+                }
+                else
+                {
+                    throw new MojoExecutionException( "Missing <location> element" );
                 }
             }
         }
