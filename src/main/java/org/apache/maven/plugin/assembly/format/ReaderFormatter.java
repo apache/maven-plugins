@@ -110,12 +110,12 @@ public class ReaderFormatter
                     InputStream result = inputStream;
                     if ( isFiltered )
                     {
-                        final String encoding = configSource.getEncoding();
+                        boolean isPropertyFile = AssemblyFileUtils.isPropertyFile( plexusIoResource.getName() );
+                        final String encoding = isPropertyFile ? "ISO-8859-1" : configSource.getEncoding();
 
                         Reader source = encoding != null
                             ? new InputStreamReader( inputStream, encoding )
                             : new InputStreamReader( inputStream ); // wtf platform encoding ? TODO: Fix this
-                        boolean isPropertyFile = AssemblyFileUtils.isPropertyFile( plexusIoResource.getName() );
                         Reader filtered =
                             createReaderFilter( source, configSource.getEscapeString(), configSource.getDelimiters(),
                                                 configSource, isPropertyFile );
