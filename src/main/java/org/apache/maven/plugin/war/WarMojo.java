@@ -48,15 +48,9 @@ import java.util.Arrays;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
-/**
- * @author kama
- *
- */
-@Mojo( 
-    name = "war", 
-    defaultPhase = LifecyclePhase.PACKAGE, 
-    threadSafe = true, 
-    requiresDependencyResolution = ResolutionScope.RUNTIME )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "war", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
+//CHECKSTYLE_ON: LineLength
 public class WarMojo
     extends AbstractWarMojo
 {
@@ -210,8 +204,8 @@ public class WarMojo
      * @throws MojoFailureException if a fatal exception occurred
      */
     private void performPackaging( File warFile )
-        throws IOException, ManifestException, DependencyResolutionRequiredException,
-        MojoExecutionException, MojoFailureException
+        throws IOException, ManifestException, DependencyResolutionRequiredException, MojoExecutionException,
+        MojoFailureException
     {
         getLog().info( "Packaging webapp" );
 
@@ -243,8 +237,7 @@ public class WarMojo
         if ( !failOnMissingWebXml )
         {
             getLog().debug( "Build won't fail if web.xml file is missing." );
-            // The flag is wrong in plexus-archiver so it will need to be fixed at some point
-            warArchiver.setIgnoreWebxml( false );
+            warArchiver.setExpectWebXml( false );
         }
 
         // create archive
@@ -295,7 +288,7 @@ public class WarMojo
     /**
      * @param basedir The basedir
      * @param finalName The finalName
-     * @param classifier The classifier. 
+     * @param classifier The classifier.
      * @param type The type.
      * @return {@link File}
      */
@@ -403,7 +396,7 @@ public class WarMojo
     }
 
     /**
-     * @param outputDirectory  {@link #outputDirectory}
+     * @param outputDirectory {@link #outputDirectory}
      */
     public void setOutputDirectory( String outputDirectory )
     {
