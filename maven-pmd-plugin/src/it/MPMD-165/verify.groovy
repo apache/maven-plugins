@@ -21,4 +21,4 @@ File pmdHtml = new File( basedir, "target/site/pmd.html" );
 assert pmdHtml.exists()
 
 def html = pmdHtml.text;
-assert html.contains( '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' );
+assert html.contains( '<meta http-equiv="Content-Type" content="text/html; charset=UTF-16" />' );

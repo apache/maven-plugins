@@ -28,6 +28,7 @@ under the License.
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-16</project.reporting.outputEncoding>
   </properties>
 
   <dependencies>
