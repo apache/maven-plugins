@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>26</version>
+    <version>27</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -78,7 +78,6 @@ under the License.
     <mavenArchiverVersion>2.6</mavenArchiverVersion>
     <mavenFilteringVersion>1.0-beta-2</mavenFilteringVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
   <dependencies>
@@ -110,7 +109,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -128,6 +126,13 @@ under the License.
       <artifactId>maven-filtering</artifactId>
       <version>${mavenFilteringVersion}</version>
     </dependency>
+    <!--
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-interpolation</artifactId>
+      <version>1.21</version>
+    </dependency>
+    -->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-verifier</artifactId>
@@ -162,7 +167,7 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
+            <excludes combine.children="append">
               <!--
                 The manifest specification does not describe any method for writing comments into the manifest.
               -->
