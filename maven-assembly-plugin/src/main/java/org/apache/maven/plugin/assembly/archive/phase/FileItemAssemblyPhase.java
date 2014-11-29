@@ -19,8 +19,6 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
@@ -31,23 +29,16 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.util.ArchiverAttributeUtils;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
-import org.codehaus.plexus.components.io.resources.PlexusIoFileResource;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
-import org.codehaus.plexus.components.io.resources.PlexusIoSymlink;
-import org.codehaus.plexus.components.io.resources.proxy.PlexusIoProxyResource;
-import org.codehaus.plexus.components.io.resources.proxy.PlexusIoProxySymlinkResource;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
-import javax.annotation.Nonnull;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
+
+import static org.codehaus.plexus.components.io.resources.ResourceFactory.createResource;
 
 /**
  * Handles the top-level &lt;files/&gt; section of the assembly descriptor.
@@ -117,33 +108,13 @@ public class FileItemAssemblyPhase
                 target = outputDirectory + "/" + destName;
             }
 
-            final PlexusIoFileResource res =
-                new PlexusIoFileResource( source, ArchiverAttributeUtils.getFileAttributes( source ) );
-            PlexusIoResource restoUse = res;
             try
             {
                 final InputStreamTransformer fileSetTransformers =
                     ReaderFormatter.getFileSetTransformers( configSource, fileItem.isFiltered(),
                                                             fileItem.getLineEnding() );
 
-                if ( fileSetTransformers != null )
-                {
-                    restoUse = new Deferred( res )
-                    {
-                        @Override
-                        protected InputStream getInputStream()
-                            throws IOException
-                        {
-                            return fileSetTransformers.transform( res, res.getContents() );
-                        }
-
-                        @Override
-                        public String getName()
-                        {
-                            return res.getName();
-                        }
-                    } .asResource();
-                }
+                final PlexusIoResource restoUse = createResource( source, fileSetTransformers );
 
                 int mode = TypeConversionUtils.modeToInt( fileItem.getFileMode(), getLogger() );
                 archiver.addResource( restoUse, target, mode );
@@ -157,128 +128,6 @@ public class FileItemAssemblyPhase
                 throw new ArchiveCreationException( "Error adding file to archive: " + e.getMessage(), e );
             }
         }
-    }
-
-    // Nicked from archiver until I can get a better solution. I am the author :)
-    abstract class Deferred
-    {
-        final DeferredFileOutputStream dfos;
-
-        final PlexusIoResource resource;
-
-        public Deferred( final PlexusIoResource resource )
-            throws IOException
-        {
-            this.resource = resource;
-            // CHECKSTYLE_OFF: MagicNumber
-            dfos = new DeferredFileOutputStream( 1000000, "m-assembly-archiver", null, null );
-            // CHECKSTYLE_ON: MagicNumber
-            InputStream inputStream = getInputStream();
-            IOUtils.copy( inputStream, dfos );
-            IOUtils.closeQuietly( inputStream );
-        }
-
-        protected abstract InputStream getInputStream()
-            throws IOException;
-
-        @Nonnull
-        public InputStream getContents()
-            throws IOException
-        {
-            if ( dfos.isInMemory() )
-            {
-                return new ByteArrayInputStream( dfos.getData() );
-            }
-            else
-            {
-                return new FileInputStream( dfos.getFile() )
-                {
-                    @Override
-                    public void close()
-                        throws IOException
-                    {
-                        super.close();
-                        dfos.getFile().delete();
-                    }
-                };
-            }
-        }
-
-        public long getSize()
-        {
-            if ( dfos == null )
-            {
-                return resource.getSize();
-            }
-            if ( dfos.isInMemory() )
-            {
-                return dfos.getByteCount();
-            }
-            else
-            {
-                return dfos.getFile().length();
-            }
-        }
-
-        public abstract String getName();
-
-        private PlexusIoResource asSymlinkResource()
-        {
-            return new PlexusIoProxySymlinkResource( resource )
-            {
-                @Override
-                public String getName()
-                {
-                    return Deferred.this.getName();
-                }
-
-                @Nonnull
-                @Override
-                public InputStream getContents()
-                    throws IOException
-                {
-                    return Deferred.this.getContents();
-                }
-
-                @Override
-                public long getSize()
-                {
-                    return Deferred.this.getSize();
-                }
-            };
-        }
-
-        public PlexusIoResource asResource()
-        {
-            if ( resource instanceof PlexusIoSymlink )
-            {
-                return asSymlinkResource();
-            }
-
-            return new PlexusIoProxyResource( resource )
-            {
-                @Override
-                public String getName()
-                {
-                    return Deferred.this.getName();
-                }
-
-                @Nonnull
-                @Override
-                public InputStream getContents()
-                    throws IOException
-                {
-                    return Deferred.this.getContents();
-                }
-
-                @Override
-                public long getSize()
-                {
-                    return Deferred.this.getSize();
-                }
-            };
-        }
-
     }
 
     public int order()

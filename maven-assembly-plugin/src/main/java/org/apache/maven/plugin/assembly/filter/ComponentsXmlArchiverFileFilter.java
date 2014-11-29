@@ -19,6 +19,8 @@ package org.apache.maven.plugin.assembly.filter;
  * under the License.
  */
 
+import org.apache.maven.shared.utils.ReaderFactory;
+import org.apache.maven.shared.utils.WriterFactory;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.ResourceIterator;
@@ -37,8 +39,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Collections;
@@ -104,22 +104,6 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
-    // public void addComponentsXml( File componentsXml )
-    // throws IOException, XmlPullParserException
-    // {
-    // FileReader fileReader = null;
-    // try
-    // {
-    // fileReader = new FileReader( componentsXml );
-    //
-    // addComponentsXml( fileReader );
-    // }
-    // finally
-    // {
-    // IOUtil.close( fileReader );
-    // }
-    // }
-
     private void addToArchive( final Archiver archiver )
         throws IOException
     {
@@ -128,8 +112,7 @@ public class ComponentsXmlArchiverFileFilter
             final File f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-            final Writer fileWriter = new OutputStreamWriter( new FileOutputStream( f ), "UTF-8" );
+            final Writer fileWriter = WriterFactory.newXmlWriter( new FileOutputStream( f ) );
             try
             {
                 final Xpp3Dom dom = new Xpp3Dom( "component-set" );
@@ -208,16 +191,13 @@ public class ComponentsXmlArchiverFileFilter
             if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
             {
                 InputStream stream = null;
-                InputStreamReader reader = null;
+                Reader reader = null;
 
                 try
                 {
                     stream = fileInfo.getContents();
-                    // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-                    reader = new InputStreamReader( stream, "UTF-8" );
-                    // CHECKSTYLE_OFF: MagicNumber
-                    addComponentsXml( new BufferedReader( reader, 8192 ) );
-                    // CHECKSTYLE_ON: MagicNumber
+                    reader = ReaderFactory.newXmlReader( stream );
+                    addComponentsXml( new BufferedReader( reader ) );
                 }
                 catch ( final XmlPullParserException e )
                 {
