@@ -20,5 +20,7 @@
 File pmdHtml = new File( basedir, "target/site/pmd.html" );
 assert pmdHtml.exists()
 
+// groovy's getText() automatically detects the correct encoding, so that UTF-16 works out of the box
+// see also http://groovy.codehaus.org/api/groovy/util/CharsetToolkit.html
 def html = pmdHtml.text;
 assert html.contains( '<meta http-equiv="Content-Type" content="text/html; charset=UTF-16" />' );
