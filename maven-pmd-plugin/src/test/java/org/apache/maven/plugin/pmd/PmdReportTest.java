@@ -345,4 +345,28 @@ public class PmdReportTest
 
     }
 
+    /**
+     * Verify that suppressMarker works
+     *
+     * @throws Exception
+     */
+    public void testSuppressMarkerConfiguration()
+            throws Exception
+        {
+            File testPom = new File( getBasedir(),
+                                     "src/test/resources/unit/default-configuration/pmd-with-suppressMarker-plugin-config.xml" );
+            PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+            mojo.execute();
+
+            //check if the PMD files were generated
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+            String str =
+                readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" ) );
+
+            //check that there is no violation reported for "unusedVar2" - as it is suppressed
+            assertFalse(str.contains("Avoid unused private fields such as 'unusedVar2'."));
+        }
+
 }

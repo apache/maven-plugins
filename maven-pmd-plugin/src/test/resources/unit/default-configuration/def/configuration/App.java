@@ -28,7 +28,7 @@ public class App
 {
     protected String unusedVar1;
 
-    private int unusedVar2;
+    private int unusedVar2; //SUPPRESSME test for the suppressMarker property
 
     String unusedvar3;
 
