@@ -74,28 +74,31 @@ public class ProjectInfoReportUtils
     /** The timeout when getting the url input stream */
     private static final int TIMEOUT = 1000 * 5;
 
+    /** The default encoding used to transform bytes to characters */
+    private static final String DEFAULT_ENCODING = "UTF-8";
+
     /**
-     * Get the input stream using ISO-8859-1 as charset from an URL.
+     * Get the input stream using UTF-8 as character encoding from a URL.
      *
      * @param url not null
      * @param settings not null to handle proxy settings
-     * @return the ISO-8859-1 inputstream found.
+     * @return the UTF-8 decoded input stream as string
      * @throws IOException if any
      * @see #getContent(URL, Settings, String)
      */
     public static String getContent( URL url, Settings settings )
         throws IOException
     {
-        return getContent( url, settings, "ISO-8859-1" );
+        return getContent( url, settings, DEFAULT_ENCODING );
     }
 
     /**
-     * Get the input stream from an URL.
+     * Get the input stream from a URL.
      *
      * @param url not null
      * @param settings not null to handle proxy settings
-     * @param encoding the wanted encoding for the inputstream. If null, encoding will be "ISO-8859-1".
-     * @return the inputstream found depending the wanted encoding.
+     * @param encoding the wanted encoding for the URL input stream. If null, UTF-8 will be used.
+     * @return the input stream decoded with the wanted encoding as string
      * @throws IOException if any
      */
     public static String getContent( URL url, Settings settings, String encoding )
@@ -105,13 +108,13 @@ public class ProjectInfoReportUtils
     }
 
     /**
-     * Get the input stream from an URL.
+     * Get the input stream from a URL.
      *
      * @param url not null
      * @param project could be null
      * @param settings not null to handle proxy settings
-     * @param encoding the wanted encoding for the inputstream. If empty, encoding will be "ISO-8859-1".
-     * @return the inputstream found depending the wanted encoding.
+     * @param encoding the wanted encoding for the URL input stream. If null, UTF-8 will be used.
+     * @return the input stream decoded with the wanted encoding as string
      * @throws IOException if any
      * @since 2.3
      */
@@ -122,7 +125,7 @@ public class ProjectInfoReportUtils
 
         if ( StringUtils.isEmpty( encoding ) )
         {
-            encoding = "ISO-8859-1";
+            encoding = DEFAULT_ENCODING;
         }
 
         if ( "file".equals( scheme ) )
@@ -291,12 +294,12 @@ public class ProjectInfoReportUtils
             && !settings.getServers().isEmpty()
             && project != null
             && project.getDistributionManagement() != null
-            && ( 
-                    project.getDistributionManagement().getRepository() != null 
-                 || project.getDistributionManagement().getSnapshotRepository() != null 
+            && (
+                    project.getDistributionManagement().getRepository() != null
+                 || project.getDistributionManagement().getSnapshotRepository() != null
                )
-            && ( StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() ) 
-                 || StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() ) ) 
+            && ( StringUtils.isNotEmpty( project.getDistributionManagement().getRepository().getUrl() )
+                 || StringUtils.isNotEmpty( project.getDistributionManagement().getSnapshotRepository().getUrl() ) )
                )
         //@formatter:on
         {
