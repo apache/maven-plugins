@@ -100,7 +100,7 @@ public class PmdViolationCheckMojoTest
         {
             String message = e.getMessage();
             if ( message.contains( "You have 5 PMD violations and 3 warnings." ) ) {
-                System.out.println( "Caught Expected Message: " + e.getMessage() );// expected
+                System.out.println( "Caught expected message: " + e.getMessage() );// expected
             } 
             else
             {

@@ -262,7 +262,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 message.append( warningCount ).append( " warning" ).append( warningCount > 1 ? "s" : "" );
             }
 
-            message.append( ". For more details see:" ).append( outputFile.getAbsolutePath() );
+            message.append( ". For more details see: " ).append( outputFile.getAbsolutePath() );
         }
         return message.toString();
     }
