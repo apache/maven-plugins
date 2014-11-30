@@ -23,6 +23,7 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Organization;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
@@ -44,6 +45,18 @@ import java.util.Locale;
 public class ProjectSummaryReport
     extends AbstractProjectInfoReport
 {
+    // ----------------------------------------------------------------------
+    // Mojo parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * The target Java version the artifact is built for. Should match the target used in the compiler plugin.
+     *
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "${maven.compiler.target}" )
+    private String targetJavaVersion;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
