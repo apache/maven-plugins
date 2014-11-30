@@ -177,15 +177,6 @@ public abstract class AbstractProjectInfoReport
     @Parameter( property = "mpir.skip", defaultValue = "false" )
     private boolean skip;
 
-    /**
-     * The target Java version the artifact is built for. Should match the target used in the
-     * compiler plugin.
-     *
-     * @since 2.8
-     */
-    @Parameter( defaultValue = "${maven.compiler.target}" )
-    protected String targetJavaVersion;
-
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
