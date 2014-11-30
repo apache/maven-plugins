@@ -149,6 +149,16 @@ public class PmdReport
     private String benchmarkOutputFilename;
 
     /**
+     * Source level marker used to indicate whether a RuleViolation should be suppressed.
+     * If it is not set, PMD's default will be used, which is <code>NOPMD</code>.
+     * See also <a href="http://pmd.sourceforge.net/usage/suppressing.html">PMD - Suppressing warnings</a>.
+     *
+     * @since 3.4
+     */
+    @Parameter( property = "pmd.suppressMarker" )
+    private String suppressMarker;
+
+    /**
      */
     @Component
     private ResourceManager locator;
@@ -560,6 +570,11 @@ public class PmdReport
             {
                 throw new MavenReportException( e.getMessage(), e );
             }
+        }
+
+        if ( null != suppressMarker )
+        {
+            configuration.setSuppressMarker( suppressMarker );
         }
 
         configuration.setBenchmark( benchmark );
