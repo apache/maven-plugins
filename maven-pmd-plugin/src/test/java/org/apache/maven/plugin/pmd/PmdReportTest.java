@@ -198,6 +198,10 @@ public class PmdReportTest
         assertTrue( "unnecessary constructor should not be triggered because of low priority",
                 !str.toLowerCase().contains("Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase()));
 
+        // veryLongVariableNameWithViolation is really too long
+        assertTrue( str.toLowerCase().contains( "veryLongVariableNameWithViolation".toLowerCase() ) );
+        // notSoLongVariableName should not be reported
+        assertFalse( str.toLowerCase().contains( "notSoLongVariableName".toLowerCase() ) );
     }
 
     /**
