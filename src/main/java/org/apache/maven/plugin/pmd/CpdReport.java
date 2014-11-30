@@ -156,6 +156,11 @@ public class CpdReport
 
     public boolean canGenerateReport()
     {
+        if ( skip )
+        {
+            return false;
+        }
+
         boolean result = super.canGenerateReport();
         if ( result )
         {
