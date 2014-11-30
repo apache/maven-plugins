@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>26</version>
+    <version>27</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -87,7 +87,7 @@ under the License.
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <pmdVersion>5.2.1</pmdVersion>
-    <sitePluginVersion>3.3</sitePluginVersion>
+    <sitePluginVersion>3.4</sitePluginVersion>
     <mavenPluginVersion>3.2</mavenPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
   </properties>
@@ -180,7 +180,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.9</version>
+      <version>3.0.21</version>
     </dependency>
 
     <!-- pmd -->
@@ -209,7 +209,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.2</version>
+      <version>1.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -217,14 +217,6 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
-        <plugin><!-- TODO remove when upgrading parent pom to version 27 -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>${maven.compiler.source}</source>
-            <target>${maven.compiler.target}</target>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
@@ -261,7 +253,6 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.4.1</version>
         <configuration>
           <useJava5>true</useJava5>
           <models>
@@ -294,12 +285,12 @@ under the License.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.6</version>
+        <version>1.12</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
             <artifactId>java16</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
           </signature>
         </configuration>
         <executions>

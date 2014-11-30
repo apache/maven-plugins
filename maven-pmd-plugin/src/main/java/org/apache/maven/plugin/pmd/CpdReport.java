@@ -113,6 +113,7 @@ public class CpdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -154,6 +155,7 @@ public class CpdReport
         }
     }
 
+    @Override
     public boolean canGenerateReport()
     {
         if ( skip )

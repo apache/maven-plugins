@@ -208,6 +208,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected MavenProject getProject()
     {
         return project;
@@ -216,6 +217,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -367,7 +369,7 @@ public abstract class AbstractPmdReport
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
-                @SuppressWarnings( "unchecked" ) List<File> newfiles =
+                List<File> newfiles =
                     FileUtils.getFiles( sourceDirectory, including, excluding );
                 for ( File newfile : newfiles )
                 {
@@ -405,7 +407,7 @@ public abstract class AbstractPmdReport
      */
     private String getExcludes()
     {
-        @SuppressWarnings( "unchecked" ) Collection<String> patterns =
+        Collection<String> patterns =
             new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
         if ( excludes != null )
         {
@@ -426,6 +428,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canGenerateReport()
     {
         if ( aggregate && !project.isExecutionRoot() )
@@ -462,6 +465,7 @@ public abstract class AbstractPmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
