@@ -22,6 +22,7 @@ package org.apache.maven.plugin.pmd.stubs;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -38,7 +39,7 @@ import java.util.List;
 public class DefaultConfigurationMavenProjectStub
     extends MavenProjectStub
 {
-    private List reportPlugins = new ArrayList();
+    private List<ReportPlugin> reportPlugins = new ArrayList<ReportPlugin>();
 
     private Build build;
 
@@ -78,7 +79,7 @@ public class DefaultConfigurationMavenProjectStub
         setReportPlugins( model.getReporting().getPlugins() );
 
         String basedir = getBasedir().getAbsolutePath();
-        List compileSourceRoots = new ArrayList();
+        List<String> compileSourceRoots = new ArrayList<String>();
         compileSourceRoots.add( basedir + "/src/test/resources/unit/default-configuration/def/configuration" );
         setCompileSourceRoots( compileSourceRoots );
 
@@ -91,24 +92,27 @@ public class DefaultConfigurationMavenProjectStub
 
     }
 
-    public void setReportPlugins( List plugins )
+    public void setReportPlugins( List<ReportPlugin> plugins )
     {
         this.reportPlugins = plugins;
     }
 
     /** {@inheritDoc} */
-    public List getReportPlugins()
+    @Override
+    public List<ReportPlugin> getReportPlugins()
     {
         return reportPlugins;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Build getBuild()
     {
         return build;

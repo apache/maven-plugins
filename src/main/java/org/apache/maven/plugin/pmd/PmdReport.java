@@ -197,6 +197,7 @@ public class PmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -237,6 +238,7 @@ public class PmdReport
         }
     }
 
+    @Override
     public boolean canGenerateReport()
     {
         if ( skip )

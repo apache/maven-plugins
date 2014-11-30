@@ -39,6 +39,7 @@ public class PmdReportTest
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void setUp()
         throws Exception
     {

@@ -85,6 +85,7 @@ public class CpdViolationCheckMojo
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void printError( Duplication item, String severity )
     {
         int lines = item.getLines();
@@ -110,6 +111,7 @@ public class CpdViolationCheckMojo
     /**
      * {@inheritDoc}
      */
+    @Override
     protected List<Duplication> getErrorDetails( File cpdFile )
         throws XmlPullParserException, IOException
     {

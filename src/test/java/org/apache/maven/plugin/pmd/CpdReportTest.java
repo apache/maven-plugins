@@ -47,6 +47,7 @@ public class CpdReportTest
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -251,6 +252,7 @@ public class CpdReportTest
             matches = tMatch;
         }
 
+        @Override
         public Iterator<Match> getMatches()
         {
             return matches;
