@@ -568,7 +568,6 @@ public class PmdReport
 
         if ( null != suppressMarker )
         {
-            getLog().debug( "Using suppressMarker: " + suppressMarker );
             configuration.setSuppressMarker( suppressMarker );
         }
 
