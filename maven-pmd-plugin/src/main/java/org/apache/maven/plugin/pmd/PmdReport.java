@@ -229,6 +229,11 @@ public class PmdReport
 
     public boolean canGenerateReport()
     {
+        if ( skip )
+        {
+            return false;
+        }
+
         boolean result = super.canGenerateReport();
         if ( result )
         {
