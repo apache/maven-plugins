@@ -129,16 +129,26 @@ public class ProjectInfoReportUtilsTest
         // file
         URL url = new File( getBasedir(), "/target/classes/project-info-report.properties" ).toURI().toURL();
 
-        String content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub, null );
+        String content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
+                                                            "ISO-8859-1" );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
+
+        // file
+        url = new File( getBasedir(), "/src/test/resources/iso-8859-5-encoded.txt" ).toURI().toURL();
+
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
+                                                            "ISO-8859-5" );
+        Assert.assertNotNull( content );
+        Assert.assertTrue( content.contains( "Свобода всем народам!" ) );
 
         // http + no auth
         startJetty( false, false );
 
         url = new URL( "http://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
+                                                     "ISO-8859-1" );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -149,7 +159,8 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "http://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
+                                                     "ISO-8859-1" );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -160,7 +171,8 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "https://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub,
+                                                     "ISO-8859-1" );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 
@@ -171,7 +183,8 @@ public class ProjectInfoReportUtilsTest
 
         url = new URL( "https://localhost:" + port + "/project-info-report.properties" );
 
-        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub, null );
+        content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub,
+                                                     "ISO-8859-1" );
         Assert.assertNotNull( content );
         Assert.assertTrue( content.contains( "Licensed to the Apache Software Foundation" ) );
 

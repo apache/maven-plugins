@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 /**
  * Generates the Project License report.
  *
- * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.0
  */
@@ -70,6 +70,14 @@ public class LicenseReport
     @Parameter( defaultValue = "false" )
     private boolean linkOnly;
 
+    /**
+     * Specifies the input encoding of the project's license file(s).
+     *
+     * @since 2.8
+     */
+    @Parameter
+    private String licenseFileEncoding;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -78,7 +86,8 @@ public class LicenseReport
     public void executeReport( Locale locale )
     {
         LicenseRenderer r =
-            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings, linkOnly );
+            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
+                                 linkOnly, licenseFileEncoding );
 
         r.render();
     }
@@ -214,8 +223,10 @@ public class LicenseReport
 
         private final boolean linkOnly;
 
+        private final String licenseFileEncoding;
+
         LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings,
-                         boolean linkOnly )
+                         boolean linkOnly, String licenseFileEncoding )
         {
             super( sink, i18n, locale );
 
@@ -224,6 +235,8 @@ public class LicenseReport
             this.settings = settings;
 
             this.linkOnly = linkOnly;
+
+            this.licenseFileEncoding = licenseFileEncoding;
         }
 
         @Override
@@ -335,10 +348,10 @@ public class LicenseReport
             try
             {
                 // All licenses are supposed in English...
-                String licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings );
+                String licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings, licenseFileEncoding );
 
                 // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
+                String licenseContentLC = licenseContent.toLowerCase( Locale.ROOT );
                 int bodyStart = licenseContentLC.indexOf( "<body" );
                 int bodyEnd = licenseContentLC.indexOf( "</body>" );
 
