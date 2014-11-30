@@ -31,5 +31,11 @@ under the License.
   <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor" >
 	<priority>5</priority>
   </rule>
+
+    <rule ref="rulesets/java/naming.xml/LongVariable">
+        <properties>
+            <property name="minimum" value="25"/>
+        </properties>
+    </rule>
   
 </ruleset>

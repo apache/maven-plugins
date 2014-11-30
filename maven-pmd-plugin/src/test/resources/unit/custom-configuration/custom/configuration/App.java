@@ -65,6 +65,10 @@ public class App
     public void testMethod( String unusedParam1, String unusedParam2 )
     {
         System.out.println( "Test method" );
+        String notSoLongVariableName = "a"; // just 21 characters, but threshold is 25 characters
+        String veryLongVariableNameWithViolation = "a"; // more than 25 characters
+        // so that the two variables are not reported as unused
+        System.out.println( notSoLongVariableName + veryLongVariableNameWithViolation );
     }
 
 }
