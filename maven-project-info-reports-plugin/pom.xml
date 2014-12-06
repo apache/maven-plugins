@@ -174,9 +174,9 @@ under the License.
       <version>2.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-doxia-tools</artifactId>
-      <version>1.4</version>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-integration-tools</artifactId>
+      <version>1.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
