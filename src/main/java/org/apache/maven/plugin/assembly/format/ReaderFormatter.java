@@ -39,7 +39,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
- * 
+ *
  */
 public class ReaderFormatter
 {
@@ -91,9 +91,32 @@ public class ReaderFormatter
         }
     }
 
+
+    private static boolean isForbiddenFiletypes( PlexusIoResource plexusIoResource )
+        throws IOException
+    {
+        String fileName = plexusIoResource.getName().toLowerCase();
+        return ( fileName.endsWith( ".zip" ) || fileName.endsWith( ".jar" ) );
+    }
+
+    private static void checkifFileTypeIsAppropriateForLineEndingTransformation( PlexusIoResource plexusIoResource )
+        throws IOException
+    {
+        if ( isForbiddenFiletypes( plexusIoResource ) )
+        {
+            throw new IOException( "Cannot transform line endings on this kind of file: " + plexusIoResource.getName() +
+                                       "\nDoing so is more or less guaranteed to destroy the file, and it indicates a "
+                                       + "problem with your assembly descriptor."
+                                       + "\nThis error message is new as of 2.5.3. "
+                                       + "\nEarlier versions of assembly-plugin will silently destroy your file. "
+                                       + "Fix your descriptor" );
+        }
+
+    }
+
     @Nullable
     public static InputStreamTransformer getFileSetTransformers( final AssemblerConfigurationSource configSource,
-                                                   final boolean isFiltered, String fileSetLineEnding )
+                                                                 final boolean isFiltered, String fileSetLineEnding )
         throws AssemblyFormattingException
     {
         final LineEndings lineEndingToUse = LineEndingsUtils.getLineEnding( fileSetLineEnding );
@@ -125,6 +148,7 @@ public class ReaderFormatter
                     }
                     if ( transformLineEndings )
                     {
+                        checkifFileTypeIsAppropriateForLineEndingTransformation( plexusIoResource );
                         result = LineEndingsUtils.lineEndingConverter( result, lineEndingToUse );
                     }
                     return result;
