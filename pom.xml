@@ -69,7 +69,6 @@ under the License.
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy-all</groovy-artifactId>
     <groovy-version>2.0.1</groovy-version>
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -232,13 +231,6 @@ under the License.
     <pluginManagement>
       <plugins>
         <plugin>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginPluginVersion}</version>
-          <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
@@ -248,14 +240,6 @@ under the License.
               <exclude>src/test/**/*.txt</exclude>
             </excludes>
           </configuration>
-          <executions>
-            <execution>
-              <id>check-rat</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -265,21 +249,6 @@ under the License.
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
       </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <configuration>
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-        </configuration>
-        <executions>
-          <execution>
-            <id>generate-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
@@ -326,10 +295,7 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <!-- m-release-p-2.3.2 doesn't allow to specify a different version then the project.
-                 This would be true for jar projects, but not always for plugins.
-               -->
-              <version>1.8</version>
+              <version>1.9</version>
               <configuration>
                 <debug>true</debug>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
