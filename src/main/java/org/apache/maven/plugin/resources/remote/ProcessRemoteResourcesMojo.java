@@ -264,16 +264,6 @@ public class ProcessRemoteResourcesMojo
     private boolean skip;
 
     /**
-     * Attaches the resources to the project as a resource directory.
-     *
-     * @since 1.0-beta-1
-     * @deprecated Please use {@link #attachToMain} and {@link #attachToTest} instead.
-     */
-    @Deprecated
-    @Parameter( defaultValue = "true" )
-    private boolean attached = true;
-
-    /**
      * Attaches the resources to the main build of the project as a resource
      * directory.
      *
@@ -534,11 +524,11 @@ public class ProcessRemoteResourcesMojo
                     Resource resource = new Resource();
                     resource.setDirectory( outputDirectory.getAbsolutePath() );
                     // MRRESOURCES-61 handle main and test resources separately
-                    if ( attached && attachToMain )
+                    if ( attachToMain )
                     {
                         project.getResources().add( resource );
                     }
-                    if ( attached && attachToTest )
+                    if ( attachToTest )
                     {
                         project.getTestResources().add( resource );
                     }
