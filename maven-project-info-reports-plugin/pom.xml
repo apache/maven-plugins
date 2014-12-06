@@ -402,7 +402,7 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
+            <excludes combine.children="append">
               <!--
                 This is a plugin-specific data file that must only contain the file names of available resources.
               -->
