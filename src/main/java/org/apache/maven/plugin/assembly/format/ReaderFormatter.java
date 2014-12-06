@@ -104,9 +104,9 @@ public class ReaderFormatter
     {
         if ( isForbiddenFiletypes( plexusIoResource ) )
         {
-            throw new IOException( "Cannot transform line endings on this kind of file: " + plexusIoResource.getName() +
-                                       "\nDoing so is more or less guaranteed to destroy the file, and it indicates a "
-                                       + "problem with your assembly descriptor."
+            throw new IOException( "Cannot transform line endings on this kind of file: " + plexusIoResource.getName()
+                                       + "\nDoing so is more or less guaranteed to destroy the file, and it indicates"
+                                       + " a problem with your assembly descriptor."
                                        + "\nThis error message is new as of 2.5.3. "
                                        + "\nEarlier versions of assembly-plugin will silently destroy your file. "
                                        + "Fix your descriptor" );
