@@ -239,6 +239,30 @@ public class CpdReportTest
         assertTrue(!str.toLowerCase().contains("Hello.java".toLowerCase()));
     }
 
+    public void testCpdEncodingConfiguration()
+            throws Exception
+    {
+        String originalEncoding = System.getProperty( "file.encoding" );
+        try
+        {
+            System.setProperty( "file.encoding", "UTF-16" );
+
+            File testPom = new File( getBasedir(),
+                    "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+            CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+            mojo.execute();
+
+            // check if the CPD files were generated
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            String str = readFile( generatedFile );
+            assertTrue(str.toLowerCase().contains("AppSample.java".toLowerCase()));
+        }
+        finally
+        {
+            System.setProperty( "file.encoding", originalEncoding );
+        }
+    }
 
     public static class MockCpd
         extends CPD
