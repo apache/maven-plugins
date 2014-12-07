@@ -518,18 +518,6 @@ public class EclipsePluginIT
     }
 
     /**
-     * [MECLIPSE-219] Allow file contents to be obtained from url or location
-     * 
-     * @since 2.5
-     * @throws Exception
-     */
-    public void testProject44()
-        throws Exception
-    {
-        testProject( "project-44" );
-    }
-
-    /**
      * [MECLIPSE-379] When downloading sources and javadocs dependency classifier is not respected.
      * 
      * @since 2.5
