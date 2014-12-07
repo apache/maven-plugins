@@ -30,7 +30,7 @@ Custom Toolchains
   A full working sample is included in <<<maven-toolchains-plugin>>> ITs, which are part of 
   {{{../source-repository.html}the plugin source tree}}:
 
-  * see <<<src/it/custom-toolchain-plugin>>> for the custom toolchain and plugin,
+  * see <<<src/it/setup-custom-toolchain>>> for the custom toolchain and plugin,
 
   * see <<<src/it/use-custom-toolchain>>> for a sample project using the toolchain through its plugin.
 
