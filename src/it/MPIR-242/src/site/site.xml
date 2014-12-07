@@ -20,12 +20,12 @@ under the License.
 -->
 
 <project xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
-  <publishDate position="right"/>
+  <publishDate position="right" />
   <body>
     <breadcrumbs>
       <item name="MPIR" href="http://maven.apache.org/plugins/maven-project-info-reports-plugin/index.html" />
     </breadcrumbs>
-    <menu ref="parent" inherit="top"/>
+    <menu ref="parent" inherit="top" />
     <menu ref="reports" inherit="bottom" />
   </body>
 </project>
