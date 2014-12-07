@@ -347,11 +347,10 @@ public class LicenseReport
         {
             try
             {
-                // All licenses are supposed in English...
+                // All licenses are supposed to be in English...
                 String licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings, licenseFileEncoding );
 
                 // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                // TODO Use Locale.ROOT as soon as we migrate to Java 6
                 String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
                 int bodyStart = licenseContentLC.indexOf( "<body" );
                 int bodyEnd = licenseContentLC.indexOf( "</body>" );
@@ -362,6 +361,7 @@ public class LicenseReport
                     bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                     String body = licenseContent.substring( bodyStart, bodyEnd );
 
+                    // TODO Localize the following the strings
                     link( licenseUrl.toExternalForm(), "[Original text]" );
                     paragraph( "Copy of the license follows." );
 
