@@ -119,14 +119,6 @@ public class DependencyConvergenceReport
     // Public methods
     // ----------------------------------------------------------------------
 
-    @Override
-    public boolean canGenerateReport()
-    {
-        // TODO Add a noconvergence property string aligned with the other reports
-        // should generate the convergency report, even its single Maven project.
-        return super.canGenerateReport() && reactorProjects.size() >= 1;
-    }
-
     /** {@inheritDoc} */
     public String getOutputName()
     {

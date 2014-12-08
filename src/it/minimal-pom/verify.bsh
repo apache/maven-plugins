@@ -46,7 +46,8 @@ try
                                 "source-repository",
                                 "dependency-management",
                                 "team-list",
-                                "distribution-management"
+                                "distribution-management",
+                                "modules"
                               };
 
     for ( String report : reports )

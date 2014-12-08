@@ -21,6 +21,7 @@ package org.apache.maven.report.projectinfo;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -51,6 +52,18 @@ public class ModulesReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = !isEmpty( getProject().getModel().getModules() ) ;
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         new ModulesRenderer( getSink(), getProject(), mavenProjectBuilder, localRepository,
@@ -67,13 +80,6 @@ public class ModulesReport
     protected String getI18Nsection()
     {
         return "modules";
-    }
-
-    @Override
-    public boolean canGenerateReport()
-    {
-        // TODO Add a nomodules property string aligned with the other reports
-        return !isEmpty( getProject().getModel().getModules() );
     }
 
     // ----------------------------------------------------------------------
@@ -115,6 +121,19 @@ public class ModulesReport
         @Override
         public void renderBody()
         {
+            List<String> modules = project.getModel().getModules();
+
+            if ( modules == null || modules.isEmpty() )
+             {
+                 startSection( getTitle() );
+
+                 paragraph( getI18nString( "nolist" ) );
+
+                 endSection();
+
+                 return;
+             }
+
             startSection( getTitle() );
 
             paragraph( getI18nString( "intro" ) );
@@ -127,7 +146,7 @@ public class ModulesReport
 
             final String baseUrl = getDistMgmntSiteUrl( project );
 
-            for ( Object module : project.getModules() )
+            for ( String module : modules )
             {
                 Model moduleModel;
                 File f = new File( project.getBasedir(), module + "/pom.xml" );
@@ -145,8 +164,8 @@ public class ModulesReport
                 else
                 {
                     moduleModel = new Model();
-                    moduleModel.setName( module.toString() );
-                    setDistMgmntSiteUrl( moduleModel, module.toString() );
+                    moduleModel.setName( module );
+                    setDistMgmntSiteUrl( moduleModel, module );
                 }
 
                 final String moduleName =

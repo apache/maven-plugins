@@ -41,6 +41,7 @@ try
                          "dependency-info",        // <report>dependency-info</report>
                          "dependency-management",  // <report>dependency-management</report>
                          "dependencies",           // <report>dependencies</report>
+                         "dependency-convergence", // <report>dependency-convergence</report>
                          "integration",            // <report>cim</report>
                          "plugin-management",      // <report>plugin-management</report>
                          "plugins",                // <report>plugins</report>

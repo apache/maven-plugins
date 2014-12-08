@@ -25,6 +25,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -97,9 +98,14 @@ public class PluginManagementReport
     @Override
     public boolean canGenerateReport()
     {
-        // TODO Add a nopluginmanagement property string aligned with the other reports
-        return super.canGenerateReport() && project.getPluginManagement() != null
-            && !isEmpty( project.getPluginManagement().getPlugins() );
+          boolean result = super.canGenerateReport();
+          if ( result && skipEmptyReport )
+          {
+              result = getProject().getPluginManagement() != null
+                      && !isEmpty( project.getPluginManagement().getPlugins() );
+          }
+
+          return result;
     }
 
     // ----------------------------------------------------------------------
@@ -165,6 +171,20 @@ public class PluginManagementReport
         @Override
         public void renderBody()
         {
+            PluginManagement pluginManagement = project.getPluginManagement();
+
+            if ( pluginManagement == null || pluginManagement.getPlugins() == null
+                || pluginManagement.getPlugins().isEmpty() )
+            {
+                startSection( getTitle() );
+
+                paragraph( getI18nString( "nolist" ) );
+
+                endSection();
+
+                return;
+            }
+
             // === Section: Project PluginManagement.
             renderSectionPluginManagement();
         }
