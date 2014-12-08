@@ -130,7 +130,7 @@ public class ProjectIndexPageReport
 
             paragraph( description );
 
-            if ( !project.getModules().isEmpty() )
+            if ( !project.getModel().getModules().isEmpty() )
             {
                 modules = true;
                 super.renderBody();

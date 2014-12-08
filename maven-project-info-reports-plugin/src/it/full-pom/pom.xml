@@ -201,6 +201,7 @@
               <report>dependency-info</report>
               <report>dependency-management</report>
               <report>dependencies</report>
+              <report>dependency-convergence</report>
               <report>cim</report>
               <report>plugin-management</report>
               <report>plugins</report>

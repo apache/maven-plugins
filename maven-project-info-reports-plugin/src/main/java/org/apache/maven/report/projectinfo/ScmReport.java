@@ -213,19 +213,9 @@ public class ScmReport
         public void renderBody()
         {
             Scm scm = model.getScm();
-            if ( scm == null )
-            {
-                startSection( getTitle() );
-
-                paragraph( getI18nString( "noscm" ) );
-
-                endSection();
-
-                return;
-            }
-
-            if ( StringUtils.isEmpty( anonymousConnection ) && StringUtils.isEmpty( devConnection )
-                && StringUtils.isEmpty( scm.getUrl() ) )
+            if ( scm == null || StringUtils.isEmpty( anonymousConnection )
+                                && StringUtils.isEmpty( devConnection )
+                                && StringUtils.isEmpty( scm.getUrl() ) )
             {
                 startSection( getTitle() );
 
