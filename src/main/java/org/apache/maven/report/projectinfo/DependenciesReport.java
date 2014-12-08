@@ -150,6 +150,21 @@ public class DependenciesReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            // This seems to be a bit too much but the DependenciesRenderer applies the same logic
+            DependencyNode dependencyNode = resolveProject();
+            Dependencies dependencies = new Dependencies( project, dependencyNode, classesAnalyzer );
+            result = dependencies.hasDependencies();
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         if ( settings.isOffline() && dependencyLocationsEnabled )

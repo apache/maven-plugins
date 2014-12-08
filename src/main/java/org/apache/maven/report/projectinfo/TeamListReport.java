@@ -69,6 +69,19 @@ public class TeamListReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = !isEmpty( getProject().getModel().getDevelopers() )
+                    || !isEmpty( getProject().getModel().getContributors() );
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         // CHECKSTYLE_OFF: LineLength
@@ -241,9 +254,9 @@ public class TeamListReport
 
             // To handle JS
             javascript.append( "}" );
-            javascript.append( SystemUtils.LINE_SEPARATOR ); 
-            javascript.append( SystemUtils.LINE_SEPARATOR ); 
-            javascript.append( "window.onLoad = init();" ); 
+            javascript.append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( SystemUtils.LINE_SEPARATOR );
+            javascript.append( "window.onLoad = init();" );
             javascript.append( SystemUtils.LINE_SEPARATOR );
             javaScript( javascript.toString() );
 

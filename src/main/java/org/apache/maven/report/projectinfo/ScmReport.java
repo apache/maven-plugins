@@ -110,6 +110,26 @@ public class ScmReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            Scm scm = getProject().getModel().getScm();
+            result = scm != null;
+
+            if ( result && StringUtils.isEmpty( anonymousConnection )
+                    && StringUtils.isEmpty( developerConnection )
+                    && StringUtils.isEmpty( scm.getUrl() ) )
+            {
+                result = false;
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         ScmRenderer r =

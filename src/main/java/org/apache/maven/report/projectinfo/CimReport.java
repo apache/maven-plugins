@@ -46,6 +46,19 @@ public class CimReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+         boolean result = super.canGenerateReport();
+         if ( result && skipEmptyReport )
+         {
+             CiManagement cim = getProject().getModel().getCiManagement();
+             result = cim != null ;
+         }
+
+         return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );

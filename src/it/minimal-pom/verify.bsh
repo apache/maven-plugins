@@ -30,26 +30,41 @@ try
         return false;
     }
 
-    String[] reports = { "dependencies",
+    String[] reports = { "dependency-info",
                          "index",
-                         "integration",
-                         "issue-tracking",
-                         "license",
-                         "mail-lists",
                          "plugin-management",
                          "plugins",
                          "project-info",
-                         "project-summary",
-                         "source-repository",
-                         "team-list",
-                         "distribution-management"
+                         "project-summary"
                        };
+
+    String[] skippedReports = { "dependencies",
+                                "integration",
+                                "issue-tracking",
+                                "license",
+                                "mail-lists",
+                                "source-repository",
+                                "dependency-management",
+                                "team-list",
+                                "distribution-management"
+                              };
+
     for ( String report : reports )
     {
         File reportFile = new File( siteDir, report + ".html" );
         if ( !reportFile.isFile() )
         {
             System.out.println( "Report file not existent: " + reportFile );
+            return false;
+        }
+    }
+
+    for ( String skippedReport : skippedReports )
+    {
+        File skippedReportFile = new File( siteDir, skippedReport + ".html" );
+        if ( skippedReportFile.isFile() )
+        {
+            System.out.println( "Skipped report file existent: " + skippedReportFile );
             return false;
         }
     }

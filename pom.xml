@@ -439,7 +439,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jarsigner-plugin</artifactId>
-        <executions>
+<!--        <executions>
           <execution>
             <id>sign</id>
             <goals>
@@ -452,7 +452,7 @@ under the License.
               <goal>verify</goal>
             </goals>
           </execution>
-        </executions>
+        </executions>-->
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

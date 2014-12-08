@@ -30,7 +30,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <artifacts.url>http://maven.apache.org/plugins/it/${project.artifactId}</artifacts.url>
   </properties>
+
+  <url>${artifacts.url}</url>
 
   <build>
     <plugins>
