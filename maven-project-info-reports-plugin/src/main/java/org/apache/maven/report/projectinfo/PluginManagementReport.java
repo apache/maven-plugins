@@ -97,6 +97,7 @@ public class PluginManagementReport
     @Override
     public boolean canGenerateReport()
     {
+        // TODO Add a nopluginmanagement property string aligned with the other reports
         return super.canGenerateReport() && project.getPluginManagement() != null
             && !isEmpty( project.getPluginManagement().getPlugins() );
     }

@@ -83,19 +83,15 @@ public class LicenseReport
     // ----------------------------------------------------------------------
 
     @Override
-    public void executeReport( Locale locale )
-    {
-        LicenseRenderer r =
-            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
-                                 linkOnly, licenseFileEncoding );
-
-        r.render();
-    }
-
-    @Override
     public boolean canGenerateReport()
     {
-        if ( !super.canGenerateReport() )
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = !isEmpty( getProject().getModel().getLicenses() ) ;
+        }
+
+        if ( !result )
         {
             return false;
         }
@@ -137,6 +133,16 @@ public class LicenseReport
         }
 
         return false;
+    }
+
+    @Override
+    public void executeReport( Locale locale )
+    {
+        LicenseRenderer r =
+            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
+                                 linkOnly, licenseFileEncoding );
+
+        r.render();
     }
 
     /**

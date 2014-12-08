@@ -72,6 +72,7 @@ public class ModulesReport
     @Override
     public boolean canGenerateReport()
     {
+        // TODO Add a nomodules property string aligned with the other reports
         return !isEmpty( getProject().getModel().getModules() );
     }
 

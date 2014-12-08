@@ -44,6 +44,18 @@ public class DistributionManagementReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = getProject().getDistributionManagement() != null;
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         DistributionManagementRenderer r =

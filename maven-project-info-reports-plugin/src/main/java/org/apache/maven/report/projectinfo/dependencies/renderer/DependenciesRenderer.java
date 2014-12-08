@@ -233,7 +233,6 @@ public class DependenciesRenderer
         {
             startSection( getTitle() );
 
-            // TODO: should the report just be excluded?
             paragraph( getI18nString( "nolist" ) );
 
             endSection();
