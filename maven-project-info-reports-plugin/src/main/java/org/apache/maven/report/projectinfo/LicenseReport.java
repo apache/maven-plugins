@@ -367,9 +367,8 @@ public class LicenseReport
                     bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                     String body = licenseContent.substring( bodyStart, bodyEnd );
 
-                    // TODO Localize the following the strings
-                    link( licenseUrl.toExternalForm(), "[Original text]" );
-                    paragraph( "Copy of the license follows." );
+                    link( licenseUrl.toExternalForm(), getI18nString( "originalText" ) );
+                    paragraph( getI18nString( "copy" ) );
 
                     body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
                     sink.rawText( body );
