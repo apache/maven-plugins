@@ -271,7 +271,7 @@ public class DependenciesRenderer
 
     /** {@inheritDoc} */
     // workaround for MPIR-140
-    // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
+    // TODO Remove me when MSHARED-390 has been resolved
     protected void startSection( String name )
     {
         startSection( name, name );
@@ -283,6 +283,7 @@ public class DependenciesRenderer
      * @param anchor not null
      * @param name not null
      */
+    // TODO Remove me when MSHARED-390 has been resolved
     protected void startSection( String anchor, String name )
     {
         section = section + 1;
@@ -346,7 +347,7 @@ public class DependenciesRenderer
 
     /** {@inheritDoc} */
     // workaround for MPIR-140
-    // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
+    // TODO Remove me when MSHARED-390 has been resolved
     protected void endSection()
     {
         switch ( section )
