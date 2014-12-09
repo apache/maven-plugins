@@ -43,10 +43,7 @@ under the License.
       <question>How to use developer/contributor time zone?</question>
       <answer>
         <p>
-          According the <a href="http://maven.apache.org/xsd/maven-4.0.0.xsd">Maven XSD</a>, the developer/contributor
-          time zone fields are string so you could use a time zone as a number in the range
-          <a href="http://en.wikipedia.org/wiki/UTC%E2%88%9212:00">-12</a> to <a href="http://en.wikipedia.org/wiki/UTC%2B14:00">+14</a>
-          or a valid time zone id like "America/Montreal" (UTC-05:00) or "Europe/Paris" (UTC+01:00).
+          Please refer to the <a href="http://maven.apache.org/pom.html#Developers">developer section</a> of the POM reference.
         </p>
       </answer>
     </faq>
