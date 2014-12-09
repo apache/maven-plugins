@@ -39,29 +39,6 @@ under the License.
       </answer>
     </faq>
 
-    <faq id="How to hide developer/contributor addresses">
-      <question>How to hide developer/contributor email addresses?</question>
-      <answer>
-        <p>
-          You could use services such as <a href="http://mailhide.recaptcha.net/">reCAPTCHA Mailhide</a>.
-          In this case, just replace email by the given URL, for instance:
-          <source><![CDATA[
-<project>
-  ...
-  <developers>
-    <developer>
-      <id>foo</id>
-      <email>http://mailhide.recaptcha.net/d?k=01ebFB9eM2hZL-T96IpUgRmA==&amp;c=AI-pouLFNTr5xMTBVDaj8iKeIFI5dy9Wj5cxSY0Nuhw=</email>
-      ...
-    </developer>
-    ...
-  </developers>
-  ...
-</project>]]></source>
-        </p>
-      </answer>
-    </faq>
-
     <faq id="How to use developer/contributor time zone">
       <question>How to use developer/contributor time zone?</question>
       <answer>
