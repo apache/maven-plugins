@@ -19,19 +19,20 @@ package org.apache.maven.plugin.rar.stubs;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Organization;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Organization;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -69,6 +70,16 @@ public class RarMavenProjectStub
         super.addTestCompileSourceRoot( getBasedir() + "/src/test/resources/unit/basic-rar-test/src/test/java" );
 
         super.setExecutionRoot( false );
+        
+        
+        Build build = new Build();
+        build.setDirectory( getBasedir() + "/target" );
+        build.setSourceDirectory( getBasedir() + "/src/main/java" );
+        build.setOutputDirectory( getBasedir() + "/target/classes" );
+        build.setTestSourceDirectory( getBasedir() + "/src/test/java" );
+        build.setTestOutputDirectory( getBasedir() + "/target/test-classes" );
+        setBuild( build );
+
     }
 
     public String getGroupId()
