@@ -233,7 +233,6 @@ public class CpdReport
             CPDConfiguration cpdConfiguration = new CPDConfiguration();
             cpdConfiguration.setMinimumTileSize( minimumTokens );
             cpdConfiguration.setLanguage( new JavaLanguage( p ) );
-            cpdConfiguration.setEncoding( encoding );
             cpdConfiguration.setSourceEncoding( encoding );
 
             cpd = new CPD( cpdConfiguration );
