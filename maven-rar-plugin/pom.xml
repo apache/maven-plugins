@@ -141,6 +141,8 @@ under the License.
                 The manifest specification does not describe any method for writing comments into the manifest.
               -->
               <exclude>src/test/resources/unit/basic-rar-with-manifest/src/main/rar/META-INF/MANIFEST.MF</exclude>
+              <exclude>src/test/remote-repo/org/apache/maven/test/maven-artifact01/1.0-SNAPSHOT/*.jar</exclude>
+              <exclude>maven-archiver/*</exclude>
             </excludes>
           </configuration>
         </plugin>
