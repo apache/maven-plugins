@@ -1109,12 +1109,9 @@ public class DependenciesRenderer
             sink.bold();
             if ( StringUtils.isEmpty( licenseName ) )
             {
-                sink.text( getI18nString( "unamed" ) );
+                licenseName = getI18nString( "unnamed" );
             }
-            else
-            {
-                sink.text( licenseName );
-            }
+            sink.text( licenseName );
             sink.text( ": " );
             sink.bold_();
 
