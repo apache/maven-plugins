@@ -289,6 +289,10 @@ public class LicenseReport
                     for ( License license : licenses )
                     {
                         String name = license.getName();
+                        if ( StringUtils.isEmpty( name ) )
+                        {
+                            name = getI18nString( "unnamed" );
+                        }
 
                         sink.listItem();
                         link( "#" + HtmlTools.encodeId( name ), name );
@@ -301,6 +305,11 @@ public class LicenseReport
             for ( License license : licenses )
             {
                 String name = license.getName();
+                if ( StringUtils.isEmpty( name ) )
+                {
+                    name = getI18nString( "unnamed" );
+                }
+
                 String url = license.getUrl();
                 String comments = license.getComments();
 
