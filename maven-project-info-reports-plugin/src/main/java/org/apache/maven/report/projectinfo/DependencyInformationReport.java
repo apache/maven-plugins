@@ -153,7 +153,7 @@ public final class DependencyInformationReport
             renderDependencyInfo( "Apache Buildr",
                                   new Formatter().format( "'%s:%s:%s:%s'", groupId, artifactId, packaging, version ) );
 
-            renderDependencyInfo( "Apache Ant",
+            renderDependencyInfo( "Apache Ivy",
                                   new Formatter().format( "<dependency org=\"%s\" name=\"%s\" rev=\"%s\">%n", groupId,
                                                           artifactId, version ).format(
                                       "  <artifact name=\"%s\" type=\"%s\" />%n", artifactId, packaging ).format(
