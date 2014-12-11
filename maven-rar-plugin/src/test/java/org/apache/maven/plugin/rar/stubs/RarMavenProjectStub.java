@@ -40,7 +40,7 @@ import org.codehaus.plexus.PlexusTestCase;
 public class RarMavenProjectStub
     extends MavenProject
 {
-    private List attachedArtifacts;
+    private List<Artifact> attachedArtifacts;
 
     public RarMavenProjectStub()
     {
@@ -120,9 +120,9 @@ public class RarMavenProjectStub
         return artifact;
     }
 
-    public Set getArtifacts()
+    public Set<Artifact> getArtifacts()
     {
-        Set artifacts = new HashSet();
+        Set<Artifact> artifacts = new HashSet<Artifact>();
 
         artifacts.add( createArtifact( "org.apache.maven.test", "maven-artifact01", "1.0-SNAPSHOT", false ) );
         artifacts.add( createArtifact( "org.apache.maven.test", "maven-artifact02", "1.0-SNAPSHOT", false ) );
@@ -130,11 +130,11 @@ public class RarMavenProjectStub
         return artifacts;
     }
 
-    public List getAttachedArtifacts()
+    public List<Artifact> getAttachedArtifacts()
     {
         if ( attachedArtifacts == null )
         {
-            attachedArtifacts = new ArrayList();
+            attachedArtifacts = new ArrayList<Artifact>();
         }
         return attachedArtifacts;
     }

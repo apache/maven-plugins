@@ -43,8 +43,6 @@ public class RarArtifactStub
 
     private File file;
 
-    private ArtifactHandler artifactHandler;
-
     public String getArtifactId()
     {
         return artifactId;

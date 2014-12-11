@@ -202,6 +202,8 @@ public class RarMojoTest
         assertTrue( entries.hasMoreElements() );
 
         assertEquals( 0, getSizeOfExpectedFiles( entries, expectedFiles ) );
+
+        rar.close();
     }
 
     public void testBasicRarWithManifest()
@@ -275,9 +277,11 @@ public class RarMojoTest
         assertTrue( entries.hasMoreElements() );
 
         assertEquals( 0, getSizeOfExpectedFiles( entries, expectedFiles ) );
+        
+        rar.close();
     }
 
-    private int getSizeOfExpectedFiles( Enumeration<? extends ZipEntry> entries, List expectedFiles )
+    private int getSizeOfExpectedFiles( Enumeration<? extends ZipEntry> entries, List<String> expectedFiles )
     {
         while ( entries.hasMoreElements() )
         {
@@ -296,7 +300,7 @@ public class RarMojoTest
         return expectedFiles.size();
     }
 
-    private int getSizeOfExpectedFiles( List fileList, List expectedFiles )
+    private int getSizeOfExpectedFiles( List<String> fileList, List<String> expectedFiles )
     {
         for (Object aFileList : fileList) {
             String fileName = (String) aFileList;
