@@ -210,12 +210,12 @@ public class AddFileSetsTask
 
     static boolean isWindowsPath( String destDirectory )
     {
-        return ( destDirectory.length() >= 2 && destDirectory.charAt( 1 ) == ':' );
+        return ( destDirectory != null && destDirectory.length() >= 2 && destDirectory.charAt( 1 ) == ':' );
     }
 
     static boolean isLinuxRootReference( String destDirectory )
     {
-        return ( destDirectory.startsWith( "/" ) );
+        return ( destDirectory != null && destDirectory.startsWith( "/" ) );
     }
 
     File getFileSetDirectory( final FileSet fileSet, final File basedir, final File archiveBaseDir )
