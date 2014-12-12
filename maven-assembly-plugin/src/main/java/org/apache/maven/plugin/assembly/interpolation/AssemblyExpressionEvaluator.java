@@ -51,7 +51,7 @@ public class AssemblyExpressionEvaluator
         final MavenProject project = configSource.getProject();
         final FixedStringSearchInterpolator projectInterpolator =
             DefaultAssemblyReader.createProjectInterpolator( project );
-        interpolator = AssemblyInterpolator.buildInterpolator( project, projectInterpolator, configSource );
+        interpolator = AssemblyInterpolator.fullInterpolator( project, projectInterpolator, configSource );
         interceptor = new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
     }
 

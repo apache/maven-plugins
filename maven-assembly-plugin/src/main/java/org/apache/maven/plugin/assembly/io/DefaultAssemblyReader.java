@@ -23,8 +23,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.interpolation.AssemblyExpressionEvaluator;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolationException;
-import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
@@ -36,6 +34,7 @@ import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Reader;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
 import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Reader;
+import org.apache.maven.plugin.assembly.resolved.AssemblyId;
 import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.io.location.ClasspathResourceLocatorStrategy;
@@ -44,7 +43,10 @@ import org.apache.maven.shared.io.location.Location;
 import org.apache.maven.shared.io.location.Locator;
 import org.apache.maven.shared.io.location.LocatorStrategy;
 import org.apache.maven.shared.utils.ReaderFactory;
+import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
+import org.codehaus.plexus.interpolation.RecursionInterceptor;
 import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+import org.codehaus.plexus.interpolation.fixed.InterpolationState;
 import org.codehaus.plexus.interpolation.fixed.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -65,6 +67,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator.componentInterpolator;
+import static org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator.assemblyInterpolator;
+import static org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator.fullInterpolator;
+import static org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator.checkErrors;
+
 
 /**
  * @version $Id$
@@ -315,7 +323,7 @@ public class DefaultAssemblyReader
 
     }
 
-    protected Assembly readAssembly( final Reader reader, final String locationDescription, final File assemblyDir,
+    public Assembly readAssembly( final Reader reader, final String locationDescription, final File assemblyDir,
                                      final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
@@ -324,17 +332,25 @@ public class DefaultAssemblyReader
         final MavenProject project = configSource.getProject();
         try
         {
-            final AssemblyXpp3Reader r = new AssemblyXpp3Reader();
+
+            InterpolationState is = new InterpolationState();
+            final RecursionInterceptor interceptor =
+                new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
+            is.setRecursionInterceptor( interceptor );
+
+            FixedStringSearchInterpolator interpolator =
+                fullInterpolator( project, createProjectInterpolator( project ), configSource );
+            AssemblyXpp3Reader.ContentTransformer transformer = assemblyInterpolator( interpolator, is, getLogger() );
+
+            final AssemblyXpp3Reader r = new AssemblyXpp3Reader( transformer );
             assembly = r.read( reader );
 
-            mergeComponentsWithMainAssembly( assembly, assemblyDir, configSource );
-
-            debugPrintAssembly( "Before assembly is interpolated:", assembly );
-
-            assembly = new AssemblyInterpolator().interpolate( assembly, project, configSource,
-                                                               createProjectInterpolator( project ) );
-
+            ComponentXpp3Reader.ContentTransformer ctrans = componentInterpolator( interpolator, is, getLogger() );
+            mergeComponentsWithMainAssembly( assembly, assemblyDir, configSource, ctrans );
             debugPrintAssembly( "After assembly is interpolated:", assembly );
+
+            checkErrors( AssemblyId.createAssemblyId( assembly ), is, getLogger() );
+
         }
         catch ( final IOException e )
         {
@@ -342,11 +358,6 @@ public class DefaultAssemblyReader
                                              e );
         }
         catch ( final XmlPullParserException e )
-        {
-            throw new AssemblyReadException( "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
-                                             e );
-        }
-        catch ( final AssemblyInterpolationException e )
         {
             throw new AssemblyReadException( "Error reading descriptor: " + locationDescription + ": " + e.getMessage(),
                                              e );
@@ -363,6 +374,7 @@ public class DefaultAssemblyReader
 
         return assembly;
     }
+
 
     public static FixedStringSearchInterpolator createProjectInterpolator( MavenProject project )
     {
@@ -393,10 +405,12 @@ public class DefaultAssemblyReader
      *
      * @param assembly    The assembly
      * @param assemblyDir The assembly directory
+     * @param transformer The component interpolator
      * @throws AssemblyReadException .
      */
     protected void mergeComponentsWithMainAssembly( final Assembly assembly, final File assemblyDir,
-                                                    final AssemblerConfigurationSource configSource )
+                                                    final AssemblerConfigurationSource configSource,
+                                                    ComponentXpp3Reader.ContentTransformer transformer )
         throws AssemblyReadException
     {
         final Locator locator = new Locator();
@@ -439,7 +453,7 @@ public class DefaultAssemblyReader
             try
             {
                 reader = new InputStreamReader( resolvedLocation.getInputStream() );
-                component = new ComponentXpp3Reader().read( reader );
+                component = new ComponentXpp3Reader( transformer ).read( reader );
             }
             catch ( final IOException e )
             {
