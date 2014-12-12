@@ -81,7 +81,7 @@ public class AssemblyInterpolator
                 if ( !source.equals( interpolated ) && logger.isDebugEnabled() )
                 {
                     logger.debug(
-                        "Field" + contextDescription + " value: " + source + " interpolated to: " + interpolated );
+                        "Field " + contextDescription + " source: " + source + " interpolated to: " + interpolated );
                 }
                 return interpolated;
             }
@@ -108,7 +108,7 @@ public class AssemblyInterpolator
                 if ( !source.equals( interpolated ) )
                 {
                     logger.debug(
-                        "Field" + contextDescription + " value: " + source + " interpolated to: " + interpolated );
+                        "Field " + contextDescription + " source: " + source + " interpolated to: " + interpolated );
                 }
                 return interpolated;
             }

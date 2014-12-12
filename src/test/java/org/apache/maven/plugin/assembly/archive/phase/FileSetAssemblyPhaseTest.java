@@ -99,7 +99,7 @@ public class FileSetAssemblyPhaseTest
 
         final MavenProject project = new MavenProject( new Model() );
 
-        macLogger.expectDebug( true, true );
+        macLogger.expectWarn( true, true );
 
         final int dirMode = Integer.parseInt( "777", 8 );
         final int fileMode = Integer.parseInt( "777", 8 );
@@ -145,6 +145,19 @@ public class FileSetAssemblyPhaseTest
             logger.debug( (String) anyObject() );
             EasyMock.expectLastCall().anyTimes();
         }
+        public void expectWarn( final boolean debugCheck, final boolean debugEnabled )
+        {
+            if ( debugCheck )
+            {
+                expect( logger.isDebugEnabled()).andReturn( debugEnabled ).anyTimes();
+            }
+
+            logger.debug( (String) anyObject() );
+            EasyMock.expectLastCall().anyTimes();
+            logger.warn( (String) anyObject() );
+            EasyMock.expectLastCall().anyTimes();
+        }
+
     }
 
 }
