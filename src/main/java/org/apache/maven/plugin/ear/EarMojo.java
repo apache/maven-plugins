@@ -136,13 +136,13 @@ public class EarMojo
     /**
      * In case of using the {@link #skinnyWars} and {@link #defaultLibBundleDir} usually the
      * classpath will be modified.
-     * By using this option you can change this and keep the classpath untouched.
+     * By settings this option {@code true} you can change this and keep the classpath untouched.
      * This option has been introduced to keep the backward compatibility with earlier versions
      * of the plugin.
      * 
      * @since 2.10
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter( defaultValue = "false" )
     private boolean skipClassPathModification;
 
     /**
@@ -804,7 +804,7 @@ public class EarMojo
                     }
                     else
                     {
-                        if ( skipClassPathModification )
+                        if ( !skipClassPathModification )
                         {
                             classPathElements.add( jm.getUri() );
                         }
