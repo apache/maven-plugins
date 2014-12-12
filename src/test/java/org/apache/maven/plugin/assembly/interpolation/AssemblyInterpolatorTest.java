@@ -25,7 +25,10 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
+import org.apache.maven.plugin.assembly.io.AssemblyReadException;
 import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
+import org.apache.maven.plugin.assembly.io.DefaultAssemblyReaderTest;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.plugin.assembly.testutils.PojoConfigSource;
@@ -37,6 +40,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,21 +50,9 @@ public class AssemblyInterpolatorTest
     extends TestCase
 {
 
-    private AssemblyInterpolator interpolator;
-
-    private final PojoConfigSource configSourceStub = new PojoConfigSource();
-
-    @Override
-    public void setUp()
-        throws IOException
-    {
-        interpolator = new AssemblyInterpolator();
-
-        interpolator.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
-    }
-
     public void testDependencySetOutputFileNameMappingsAreNotInterpolated()
-        throws IOException, AssemblyInterpolationException
+        throws IOException, AssemblyInterpolationException, AssemblyReadException,
+        InvalidAssemblerConfigurationException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -80,10 +72,14 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
+        final PojoConfigSource configSourceStub = new PojoConfigSource();
+
+
         configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
         configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
-        final Assembly outputAssembly = interpolator.interpolate( assembly, project, configSourceStub,
-                                                                  createProjectInterpolator( project ) );
+
+        configSourceStub.setMavenProject( project);
+        final Assembly outputAssembly = roundTripInterpolation( assembly, configSourceStub );
 
         final List<DependencySet> outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -94,7 +90,8 @@ public class AssemblyInterpolatorTest
     }
 
     public void testDependencySetOutputDirectoryIsNotInterpolated()
-        throws IOException, AssemblyInterpolationException
+        throws IOException, AssemblyInterpolationException, AssemblyReadException,
+        InvalidAssemblerConfigurationException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -111,12 +108,15 @@ public class AssemblyInterpolatorTest
 
         assembly.addDependencySet( set );
 
+        final PojoConfigSource configSourceStub = new PojoConfigSource();
+
+
         configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create() );
         configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
 
         final MavenProject project = new MavenProject( model );
-        final Assembly outputAssembly =
-            interpolator.interpolate( assembly, project, configSourceStub, createProjectInterpolator( project ) );
+        configSourceStub.setMavenProject( project);
+        final Assembly outputAssembly = roundTripInterpolation( assembly, configSourceStub );
 
         final List<DependencySet> outputDependencySets = outputAssembly.getDependencySets();
         assertEquals( 1, outputDependencySets.size() );
@@ -126,8 +126,17 @@ public class AssemblyInterpolatorTest
         assertEquals( "${artifactId}.${packaging}", outputSet.getOutputDirectory() );
     }
 
+    public Assembly roundTripInterpolation( Assembly assembly, AssemblerConfigurationSource configSource )
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
+        final StringReader stringReader = DefaultAssemblyReaderTest.writeToStringReader( assembly );
+        return new DefaultAssemblyReader().readAssembly( stringReader, "testLocation", null,
+                                                                            configSource );
+    }
+
     public void testShouldResolveModelGroupIdInAssemblyId()
-        throws AssemblyInterpolationException
+        throws AssemblyInterpolationException, InvalidAssemblerConfigurationException, AssemblyReadException,
+        IOException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -140,16 +149,18 @@ public class AssemblyInterpolatorTest
         assembly.setId( "assembly.${groupId}" );
 
         final MavenProject project = new MavenProject( model );
+        final PojoConfigSource configSourceStub = new PojoConfigSource();
+
         configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create() );
         configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
-        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
-                                                          createProjectInterpolator( project ) );
-
-        assertEquals( "assembly.group.id", result.getId() );
+        configSourceStub.setMavenProject( project);
+        final Assembly outputAssembly = roundTripInterpolation( assembly, configSourceStub );
+        assertEquals( "assembly.group.id", outputAssembly.getId() );
     }
 
     public void testShouldResolveModelPropertyBeforeModelGroupIdInAssemblyId()
-        throws AssemblyInterpolationException
+        throws AssemblyInterpolationException, InvalidAssemblerConfigurationException, AssemblyReadException,
+        IOException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -162,6 +173,8 @@ public class AssemblyInterpolatorTest
 
         model.setProperties( props );
 
+        final PojoConfigSource configSourceStub = new PojoConfigSource();
+
         configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
         configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
 
@@ -170,19 +183,15 @@ public class AssemblyInterpolatorTest
         assembly.setId( "assembly.${groupId}" );
 
         final MavenProject project = new MavenProject( model );
-        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
-                                                          createProjectInterpolator( project ) );
+        configSourceStub.setMavenProject( project);
+        final Assembly result = roundTripInterpolation( assembly, configSourceStub );
 
         assertEquals( "assembly.other.id", result.getId() );
     }
 
-    private FixedStringSearchInterpolator createProjectInterpolator( MavenProject project )
-    {
-        return DefaultAssemblyReader.createProjectInterpolator( project );
-    }
-
     public void testShouldResolveContextValueBeforeModelPropertyOrModelGroupIdInAssemblyId()
-        throws AssemblyInterpolationException
+        throws AssemblyInterpolationException, InvalidAssemblerConfigurationException, AssemblyReadException,
+        IOException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -210,25 +219,24 @@ public class AssemblyInterpolatorTest
 
         expect( session.getUserProperties()).andReturn(  new Properties()).anyTimes();
 
-        final AssemblerConfigurationSource cs = mm.createMock( AssemblerConfigurationSource.class );
+        final PojoConfigSource cs = new PojoConfigSource();
 
         final ArtifactRepository lr =  mm.createMock( ArtifactRepository.class );
 
-        expect( lr.getBasedir()).andReturn(  "/path/to/local/repo").anyTimes();
+        cs.setLocalRepository( lr );
+        cs.setMavenSession( session );
+        cs.setRootInterpolator( FixedStringSearchInterpolator.create() );
+        cs.setEnvironmentInterpolator( FixedStringSearchInterpolator.create(
+            new PropertiesBasedValueSource(execProps) ));
+        cs.setEnvInterpolator( FixedStringSearchInterpolator.empty() );
 
-        expect(cs.getLocalRepository()).andReturn( lr ).anyTimes();
-
-        expect( cs.getMavenSession()).andReturn( session ).anyTimes();
-
-        expect( cs.getRepositoryInterpolator()).andReturn(  FixedStringSearchInterpolator.create(  ) ).anyTimes();
-        expect( cs.getCommandLinePropsInterpolator()).andReturn( FixedStringSearchInterpolator.create(
-            new PropertiesBasedValueSource(execProps) ) ).anyTimes();
-        expect( cs.getEnvInterpolator()).andReturn( FixedStringSearchInterpolator.empty() ).anyTimes();
+        expect( lr.getBasedir() ).andReturn(  "/path/to/local/repo").anyTimes();
 
         mm.replayAll();
 
         final MavenProject project = new MavenProject( model );
-        final Assembly result = interpolator.interpolate( assembly, project, cs, createProjectInterpolator( project ) );
+        cs.setMavenProject( project );
+        final Assembly result = roundTripInterpolation( assembly, cs );
 
         assertEquals( "assembly.still.another.id", result.getId() );
 
@@ -237,7 +245,8 @@ public class AssemblyInterpolatorTest
     }
 
     public void testShouldNotTouchUnresolvedExpression()
-        throws AssemblyInterpolationException
+        throws AssemblyInterpolationException, InvalidAssemblerConfigurationException, AssemblyReadException,
+        IOException
     {
         final Model model = new Model();
         model.setArtifactId( "artifact-id" );
@@ -249,18 +258,21 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${unresolved}" );
 
+        final PojoConfigSource configSourceStub = new PojoConfigSource();
+
         configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
         configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
 
-        final MavenProject project = new MavenProject( model );
-        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
-                                                          createProjectInterpolator( project ) );
 
+        final MavenProject project = new MavenProject( model );
+        configSourceStub.setMavenProject( project);
+        final Assembly result = roundTripInterpolation( assembly, configSourceStub );
         assertEquals( "assembly.${unresolved}", result.getId() );
     }
 
     public void testShouldInterpolateMultiDotProjectExpression()
-        throws AssemblyInterpolationException
+        throws AssemblyInterpolationException, InvalidAssemblerConfigurationException, AssemblyReadException,
+        IOException
     {
         final Build build = new Build();
         build.setFinalName( "final-name" );
@@ -272,13 +284,14 @@ public class AssemblyInterpolatorTest
 
         assembly.setId( "assembly.${project.build.finalName}" );
 
+        final PojoConfigSource configSourceStub = new PojoConfigSource();
+
         configSourceStub.setRootInterpolator( FixedStringSearchInterpolator.create(  ) );
         configSourceStub.setEnvironmentInterpolator( FixedStringSearchInterpolator.create() );
 
         final MavenProject project = new MavenProject( model );
-        final Assembly result = interpolator.interpolate( assembly, project, configSourceStub,
-                                                          createProjectInterpolator( project ) );
-
+        configSourceStub.setMavenProject( project);
+        final Assembly result = roundTripInterpolation( assembly, configSourceStub );
         assertEquals( "assembly.final-name", result.getId() );
     }
 

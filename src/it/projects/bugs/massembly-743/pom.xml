@@ -29,7 +29,6 @@ under the License.
         <version>1</version>
     </parent>
 
-	<!-- groupId>ch.vd</groupId -->
 	<artifactId>massembly-743</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
@@ -69,7 +68,7 @@ under the License.
 	</build>
 
 	<properties>
-		<mine.includeBaseDirectory>faXse</mine.includeBaseDirectory>
+		<mine.includeBaseDirectory>true</mine.includeBaseDirectory>
 	</properties>
 
 </project>
