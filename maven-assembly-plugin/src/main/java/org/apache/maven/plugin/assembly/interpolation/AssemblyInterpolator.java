@@ -78,10 +78,10 @@ public class AssemblyInterpolator
                 }
 
                 String interpolated = interpolator.interpolate( source, is );
-                if ( !source.equals( interpolated ) && logger.isDebugEnabled())
+                if ( !source.equals( interpolated ) && logger.isDebugEnabled() )
                 {
-                   logger.debug(
-                       "Field" + contextDescription + " value: " + source + " interpolated to: " + interpolated );
+                    logger.debug(
+                        "Field" + contextDescription + " value: " + source + " interpolated to: " + interpolated );
                 }
                 return interpolated;
             }
