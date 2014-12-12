@@ -35,7 +35,6 @@ import java.util.List;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@SuppressWarnings( "JavaDoc" )
 public class ArtifactResolverWrapper
 {
     /**
@@ -74,10 +73,10 @@ public class ArtifactResolverWrapper
     }
 
     /**
-     * @param resolver
-     * @param factory
-     * @param localRepository
-     * @param remoteRepositories
+     * @param resolver {@link ArtifactResolver}
+     * @param factory {@link ArtifactFactory}
+     * @param localRepository {@link ArtifactRepository}
+     * @param remoteRepositories {@link XX}.
      * @return an instance of ArtifactResolverWrapper
      */
     public static ArtifactResolverWrapper getInstance( ArtifactResolver resolver, ArtifactFactory factory,
@@ -86,41 +85,65 @@ public class ArtifactResolverWrapper
         return new ArtifactResolverWrapper( resolver, factory, localRepository, remoteRepositories );
     }
 
+    /**
+     * @return {@link #factory}
+     */
     protected ArtifactFactory getFactory()
     {
         return factory;
     }
 
+    /**
+     * @param factory {@link ArtifactFactory}
+     */
     protected void setFactory( ArtifactFactory factory )
     {
         this.factory = factory;
     }
 
+    /**
+     * @return {@link #localRepository}
+     */
     protected ArtifactRepository getLocalRepository()
     {
         return localRepository;
     }
 
+    /**
+     * @param localRepository set {@link #localRepository}
+     */
     protected void setLocalRepository( ArtifactRepository localRepository )
     {
         this.localRepository = localRepository;
     }
 
+    /**
+     * @return {@link #remoteRepositories}
+     */
     protected List getRemoteRepositories()
     {
         return remoteRepositories;
     }
 
+    /**
+     * @param remoteRepositories {@link #remoteRepositories}
+     */
     protected void setRemoteRepositories( List remoteRepositories )
     {
         this.remoteRepositories = remoteRepositories;
     }
 
+    /**
+     * @return {@link #resolver}
+     */
     protected ArtifactResolver getResolver()
     {
         return resolver;
     }
 
+    /**
+     * @param resolver {@link #resolver}
+     */
     protected void setResolver( ArtifactResolver resolver )
     {
         this.resolver = resolver;
@@ -130,9 +153,9 @@ public class ArtifactResolverWrapper
      * Return the artifact path in the local repository for an artifact defined by its <code>groupId</code>,
      * its <code>artifactId</code> and its <code>version</code>.
      *
-     * @param groupId
-     * @param artifactId
-     * @param version
+     * @param groupId The groupId.
+     * @param artifactId The artifactId.
+     * @param version The version.
      * @return the locale artifact path
      * @throws IOException if any
      */
