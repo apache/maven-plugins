@@ -48,6 +48,7 @@ import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.apache.maven.shared.utils.io.FileUtils;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -60,7 +61,6 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -69,9 +69,9 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo( 
-       name = "ear", defaultPhase = LifecyclePhase.PACKAGE, 
-       threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "ear", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_ON: LineLength
 public class EarMojo
     extends AbstractEarMojo
 {
@@ -107,7 +107,7 @@ public class EarMojo
      * @since 2.3.2
      */
     @Parameter
-    private List filters;
+    private List<String> filters;
 
     /**
      * A list of file extensions that should not be filtered if filtering is enabled.
@@ -251,7 +251,7 @@ public class EarMojo
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
-    private List filterWrappers;
+    private List<FileUtils.FilterWrapper> filterWrappers;
 
     /**
      * @since 2.9
@@ -664,6 +664,7 @@ public class EarMojo
             {
                 target.getParentFile().mkdirs();
             }
+
             mavenFileFilter.copyFile( source, target, true, getFilterWrappers(), null );
         }
         else
@@ -677,7 +678,7 @@ public class EarMojo
         return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
     }
 
-    private List getFilterWrappers()
+    private List<FileUtils.FilterWrapper> getFilterWrappers()
         throws MojoExecutionException
     {
         if ( filterWrappers == null )
@@ -685,10 +686,12 @@ public class EarMojo
             try
             {
                 MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
+                mavenResourcesExecution.setMavenProject( getProject() );
+                mavenResourcesExecution.setEscapedBackslashesInFilePath( escapedBackslashesInFilePath );
+                mavenResourcesExecution.setFilters( filters );
                 mavenResourcesExecution.setEscapeString( escapeString );
-                filterWrappers =
-                    mavenFileFilter.getDefaultFilterWrappers( project, filters, escapedBackslashesInFilePath,
-                                                              this.session, mavenResourcesExecution );
+
+                filterWrappers = mavenFileFilter.getDefaultFilterWrappers( mavenResourcesExecution );
             }
             catch ( MavenFilteringException e )
             {
