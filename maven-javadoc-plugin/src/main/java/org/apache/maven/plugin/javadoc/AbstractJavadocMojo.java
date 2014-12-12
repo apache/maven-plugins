@@ -21,6 +21,7 @@ package org.apache.maven.plugin.javadoc;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.lf5.util.StreamUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -126,6 +127,7 @@ import static org.codehaus.plexus.util.IOUtil.close;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @author <a href="mailto:vincent.zurczak@linagora.com">Vincent Zurczak</a>
  * @version $Id$
  * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html">
  *      The Java API Documentation Generator, 7</a>
@@ -225,7 +227,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Default css file name
      */
-    private static final String DEFAULT_CSS_NAME = "stylesheet.css";
+    static final String DEFAULT_CSS_NAME = "stylesheet.css";
 
     /**
      * Default location for css
@@ -2709,6 +2711,20 @@ public abstract class AbstractJavadocMojo
         if ( new File( stylesheetfile ).exists() )
         {
             return new File( stylesheetfile ).getAbsolutePath();
+        }
+        
+        try {
+        	if( this.stylesheetfile.contains( ":/" )) {
+        		InputStream in = new URL( this.stylesheetfile ).openStream();
+		        File tempFile = File.createTempFile( "javadoc_", ".css" );
+		        tempFile.deleteOnExit();
+		        FileOutputStream out = new FileOutputStream( tempFile );
+		        StreamUtils.copyThenClose( in, out );
+		        return tempFile.getAbsolutePath();
+        	}
+
+        } catch( IOException e ) {
+        	getLog().debug( e );
         }
 
         return getResource( new File( javadocOutputDirectory, DEFAULT_CSS_NAME ), stylesheetfile );
