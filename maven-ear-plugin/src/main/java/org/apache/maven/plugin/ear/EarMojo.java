@@ -134,6 +134,18 @@ public class EarMojo
     protected String escapeString;
 
     /**
+     * In case of using the {@link #skinnyWars} and {@link #defaultLibBundleDir} usually the
+     * classpath will be modified.
+     * By using this option you can change this and keep the classpath untouched.
+     * This option has been introduced to keep the backward compatibility with earlier versions
+     * of the plugin.
+     * 
+     * @since 2.10
+     */
+    @Parameter( defaultValue = "true" )
+    private boolean skipClassPathModification;
+
+    /**
      * The location of the manifest file to be used within the EAR file. If no value if specified, the default location
      * in the workDirectory is taken. If the file does not exist, a manifest will be generated automatically.
      */
@@ -374,7 +386,7 @@ public class EarMojo
 
                     if ( skinnyWars && module.changeManifestClasspath() )
                     {
-                        changeManifestClasspath( module, destinationFile );
+                        changeManifestClasspath( module, destinationFile, javaEEVersion );
                     }
                 }
                 else
@@ -386,7 +398,7 @@ public class EarMojo
 
                         if ( skinnyWars && module.changeManifestClasspath() )
                         {
-                            changeManifestClasspath( module, destinationFile );
+                            changeManifestClasspath( module, destinationFile, javaEEVersion );
                         }
                     }
                     else
@@ -702,7 +714,7 @@ public class EarMojo
         return filterWrappers;
     }
 
-    private void changeManifestClasspath( EarModule module, File original )
+    private void changeManifestClasspath( EarModule module, File original, JavaEEVersion javaEEVersion )
         throws MojoFailureException
     {
         try
@@ -792,7 +804,17 @@ public class EarMojo
                     }
                     else
                     {
-                        classPathElements.add( jm.getUri() );
+                        if ( skipClassPathModification )
+                        {
+                            classPathElements.add( jm.getUri() );
+                        }
+                        else
+                        {
+                            if ( javaEEVersion.lt( JavaEEVersion.FIVE ) || defaultLibBundleDir == null )
+                            {
+                                classPathElements.add( jm.getUri() );
+                            }
+                        }
                     }
                 }
             }
