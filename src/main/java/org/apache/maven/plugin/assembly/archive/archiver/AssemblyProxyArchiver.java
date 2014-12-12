@@ -736,16 +736,6 @@ public class AssemblyProxyArchiver
         }
     }
 
-    private String getMethodName()
-    {
-        final NullPointerException npe = new NullPointerException();
-        final StackTraceElement[] trace = npe.getStackTrace();
-
-        final StackTraceElement methodElement = trace[1];
-
-        return methodElement.getMethodName() + " (archiver line: " + methodElement.getLineNumber() + ")";
-    }
-
     private boolean acceptFile( final File inputFile )
     {
         if ( !Boolean.TRUE.equals( inPublicApi.get() ) )
