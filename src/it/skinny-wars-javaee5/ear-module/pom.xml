@@ -51,6 +51,7 @@ under the License.
           <version>5</version>
           <defaultLibBundleDir>lib</defaultLibBundleDir>
           <skinnyWars>true</skinnyWars>
+          <skipClassPathModification>true</skipClassPathModification>
         </configuration>
       </plugin>
     </plugins>
