@@ -323,28 +323,95 @@ public class EarMojo
         final JavaEEVersion javaEEVersion = JavaEEVersion.getJavaEEVersion( version );
 
         // Initializes unpack types
-        List<String> unpackTypesList = new ArrayList<String>();
-        if ( unpackTypes != null )
-        {
-            unpackTypesList = Arrays.asList( unpackTypes.split( "," ) );
-            for ( String type : unpackTypesList )
-            {
-                if ( !EarModuleFactory.STANDARD_ARTIFACT_TYPE.contains( type ) )
-                {
-                    throw new MojoExecutionException( "Invalid type [" + type + "] supported types are "
-                        + EarModuleFactory.STANDARD_ARTIFACT_TYPE );
-                }
-            }
-            getLog().debug( "Initialized unpack types " + unpackTypesList );
-        }
+        List<String> unpackTypesList = createUnpackList();
 
         // Copy modules
+        copyModules( javaEEVersion, unpackTypesList );
+
+        // Copy source files
+        try
+        {
+            File earSourceDir = earSourceDirectory;
+            if ( earSourceDir.exists() )
+            {
+                getLog().info( "Copy ear sources to " + getWorkDirectory().getAbsolutePath() );
+                String[] fileNames = getEarFiles( earSourceDir );
+                for ( String fileName : fileNames )
+                {
+                    copyFile( new File( earSourceDir, fileName ), new File( getWorkDirectory(), fileName ) );
+                }
+            }
+
+            if ( applicationXml != null && !"".equals( applicationXml ) )
+            {
+                // rename to application.xml
+                getLog().info( "Including custom application.xml[" + applicationXml + "]" );
+                File metaInfDir = new File( getWorkDirectory(), META_INF );
+                copyFile( new File( applicationXml ), new File( metaInfDir, "/application.xml" ) );
+            }
+
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error copying EAR sources", e );
+        }
+        catch ( MavenFilteringException e )
+        {
+            throw new MojoExecutionException( "Error filtering EAR sources", e );
+        }
+
+        // Check if deployment descriptor is there
+        File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
+        if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.FIVE ) ) )
+        {
+            // CHECKSTYLE_OFF: LineLength
+            throw new MojoExecutionException( "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
+            // CHECKSTYLE_ON: LineLength
+        }
+
+        try
+        {
+            File earFile = getEarFile( outputDirectory, finalName, classifier );
+            final MavenArchiver archiver = new EarMavenArchiver( getModules() );
+            final JarArchiver jarArchiver = getJarArchiver();
+            getLog().debug( "Jar archiver implementation [" + jarArchiver.getClass().getName() + "]" );
+            archiver.setArchiver( jarArchiver );
+            archiver.setOutputFile( earFile );
+
+            // Include custom manifest if necessary
+            includeCustomManifestFile();
+
+            getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated EAR." );
+            getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
+
+            archiver.getArchiver().addDirectory( getWorkDirectory(), getPackagingIncludes(), getPackagingExcludes() );
+            archiver.createArchive( session, getProject(), archive );
+
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( getProject(), "ear", classifier, earFile );
+            }
+            else
+            {
+                getProject().getArtifact().setFile( earFile );
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Error assembling EAR", e );
+        }
+    }
+
+    private void copyModules( final JavaEEVersion javaEEVersion, List<String> unpackTypesList )
+        throws MojoExecutionException, MojoFailureException
+    {
         try
         {
             // TODO: With the next major release the modules
             // should be identified by a unique id instead of the
             // the artifactId's only which means this
             // check can be removed.
+            // http://jira.codehaus.org/browse/MEAR-209
             checkModuleUniqueness();
 
             for ( EarModule module : getModules() )
@@ -421,79 +488,26 @@ public class EarMojo
         {
             throw new MojoExecutionException( "No Archiver found for EAR modules", e );
         }
+    }
 
-        // Copy source files
-        try
+    private List<String> createUnpackList()
+        throws MojoExecutionException
+    {
+        List<String> unpackTypesList = new ArrayList<String>();
+        if ( unpackTypes != null )
         {
-            File earSourceDir = earSourceDirectory;
-            if ( earSourceDir.exists() )
+            unpackTypesList = Arrays.asList( unpackTypes.split( "," ) );
+            for ( String type : unpackTypesList )
             {
-                getLog().info( "Copy ear sources to " + getWorkDirectory().getAbsolutePath() );
-                String[] fileNames = getEarFiles( earSourceDir );
-                for ( String fileName : fileNames )
+                if ( !EarModuleFactory.STANDARD_ARTIFACT_TYPE.contains( type ) )
                 {
-                    copyFile( new File( earSourceDir, fileName ), new File( getWorkDirectory(), fileName ) );
+                    throw new MojoExecutionException( "Invalid type [" + type + "] supported types are "
+                        + EarModuleFactory.STANDARD_ARTIFACT_TYPE );
                 }
             }
-
-            if ( applicationXml != null && !"".equals( applicationXml ) )
-            {
-                // rename to application.xml
-                getLog().info( "Including custom application.xml[" + applicationXml + "]" );
-                File metaInfDir = new File( getWorkDirectory(), META_INF );
-                copyFile( new File( applicationXml ), new File( metaInfDir, "/application.xml" ) );
-            }
-
+            getLog().debug( "Initialized unpack types " + unpackTypesList );
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error copying EAR sources", e );
-        }
-        catch ( MavenFilteringException e )
-        {
-            throw new MojoExecutionException( "Error filtering EAR sources", e );
-        }
-
-        // Check if deployment descriptor is there
-        File ddFile = new File( getWorkDirectory(), APPLICATION_XML_URI );
-        if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.FIVE ) ) )
-        {
-            // CHECKSTYLE_OFF: LineLength
-            throw new MojoExecutionException( "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
-            // CHECKSTYLE_ON: LineLength
-        }
-
-        try
-        {
-            File earFile = getEarFile( outputDirectory, finalName, classifier );
-            final MavenArchiver archiver = new EarMavenArchiver( getModules() );
-            final JarArchiver jarArchiver = getJarArchiver();
-            getLog().debug( "Jar archiver implementation [" + jarArchiver.getClass().getName() + "]" );
-            archiver.setArchiver( jarArchiver );
-            archiver.setOutputFile( earFile );
-
-            // Include custom manifest if necessary
-            includeCustomManifestFile();
-
-            getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated EAR." );
-            getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
-
-            archiver.getArchiver().addDirectory( getWorkDirectory(), getPackagingIncludes(), getPackagingExcludes() );
-            archiver.createArchive( session, getProject(), archive );
-
-            if ( classifier != null )
-            {
-                projectHelper.attachArtifact( getProject(), "ear", classifier, earFile );
-            }
-            else
-            {
-                getProject().getArtifact().setFile( earFile );
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error assembling EAR", e );
-        }
+        return unpackTypesList;
     }
 
     public String getApplicationXml()
