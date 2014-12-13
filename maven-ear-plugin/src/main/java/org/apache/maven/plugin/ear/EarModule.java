@@ -104,10 +104,19 @@ public interface EarModule
     void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException;
 
+    /**
+     * @param earExecutionContext The execution context.
+     */
     void setEarExecutionContext( EarExecutionContext earExecutionContext );
 
+    /**
+     * @return the state if manifest classpath will be changed or not.
+     */
     boolean changeManifestClasspath();
 
+    /**
+     * @return The libDir.
+     */
     String getLibDir();
 
 }

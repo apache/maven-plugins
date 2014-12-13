@@ -30,6 +30,9 @@ public class NoVersionFileNameMapping
     extends AbstractFileNameMapping
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public String mapFileName( Artifact a )
     {
         return generateFileName( a, false );

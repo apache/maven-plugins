@@ -34,10 +34,16 @@ public class UnknownArtifactTypeException
      */
     private static final long serialVersionUID = 2738931967722457793L;
 
+    /**
+     * Create an instance.
+     */
     public UnknownArtifactTypeException()
     {
     }
 
+    /**
+     * @param message The message of the problem.
+     */
     public UnknownArtifactTypeException( String message )
     {
         super( message );

@@ -31,16 +31,26 @@ public class EjbClientModule
     extends JarModule
 {
 
+    /**
+     * Create an instance.
+     */
     public EjbClientModule()
     {
         super();
     }
 
+    /**
+     * @param a {@link Artifact}
+     * @param defaultLibBundleDir The default lib bundle directory.
+     */
     public EjbClientModule( Artifact a, String defaultLibBundleDir )
     {
         super( a, defaultLibBundleDir, Boolean.FALSE );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "ejb-client";

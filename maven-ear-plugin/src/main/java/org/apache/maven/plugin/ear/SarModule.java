@@ -29,21 +29,34 @@ import org.codehaus.plexus.util.xml.XMLWriter;
  * @author $Author$ (last edit)
  * @version $Revision$
  */
+/**
+ * @author kama
+ *
+ */
 public class SarModule
     extends AbstractEarModule
     implements JbossEarModule
 {
-    protected static final String SAR_MODULE = "connector";
+    private static final String SAR_MODULE = "connector";
 
+    /**
+     * Create an instance.
+     */
     public SarModule()
     {
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public SarModule( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         // If JBoss is not configured, add the module as a connector element
@@ -57,6 +70,9 @@ public class SarModule
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendJbossModule( XMLWriter writer, String version )
     {
         writer.startElement( MODULE_ELEMENT );
@@ -66,6 +82,9 @@ public class SarModule
         writer.endElement();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "sar";

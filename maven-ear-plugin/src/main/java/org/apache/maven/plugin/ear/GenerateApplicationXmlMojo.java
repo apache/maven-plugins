@@ -42,17 +42,26 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo(
-    name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, 
-    threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+//CHECKSTYLE_ON: LineLength
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
 
+    /**
+     * The DEFAULT library folder.
+     */
     public static final String DEFAULT = "DEFAULT";
 
+    /**
+     * The empty folder.
+     */
     public static final String EMPTY = "EMPTY";
 
+    /**
+     * The NONE not existent folder.
+     */
     public static final String NONE = "NONE";
 
     /**
@@ -132,6 +141,9 @@ public class GenerateApplicationXmlMojo
     @Parameter( alias = "env-entries" )
     private PlexusConfiguration envEntries;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -201,6 +213,9 @@ public class GenerateApplicationXmlMojo
 
     /**
      * Generates the deployment descriptor.
+     * 
+     * @param javaEEVersion {@link JavaEEVersion}
+     * @throws EarPluginException if the configuration is invalid
      */
     protected void generateStandardDeploymentDescriptor( JavaEEVersion javaEEVersion )
         throws EarPluginException
@@ -223,6 +238,8 @@ public class GenerateApplicationXmlMojo
 
     /**
      * Generates the jboss deployment descriptor.
+     * 
+     * @throws EarPluginException if the configuration is invalid
      */
     protected void generateJbossDeploymentDescriptor()
         throws EarPluginException
@@ -260,20 +277,21 @@ public class GenerateApplicationXmlMojo
             for ( PlexusConfiguration securityRole : securityRoles )
             {
                 final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
-                final String roleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
-                final String roleNameId =
+                final String childRoleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
+                final String childRoleNameId =
                     securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
-                final String description = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
-                final String descriptionId =
+                final String childDescription = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
+                final String childDescriptionId =
                     securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
 
-                if ( roleName == null )
+                if ( childRoleName == null )
                 {
                     throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
                 }
                 else
                 {
-                    result.add( new SecurityRole( roleName, roleNameId, id, description, descriptionId ) );
+                    result.add( new SecurityRole( childRoleName, childRoleNameId, id, childDescription,
+                                                  childDescriptionId ) );
                 }
             }
             return result;
@@ -305,14 +323,15 @@ public class GenerateApplicationXmlMojo
 
             for ( PlexusConfiguration envEntry : allEnvEntries )
             {
-                final String description = envEntry.getChild( EnvEntry.DESCRIPTION ).getValue();
-                final String envEntryName = envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue();
-                final String envEntryType = envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue();
-                final String envEntryValue = envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue();
+                final String childDescription = envEntry.getChild( EnvEntry.DESCRIPTION ).getValue();
+                final String childEnvEntryName = envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue();
+                final String childEnvEntryType = envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue();
+                final String childEnvEntryValue = envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue();
 
                 try
                 {
-                    result.add( new EnvEntry( description, envEntryName, envEntryType, envEntryValue ) );
+                    result.add( new EnvEntry( childDescription, childEnvEntryName, childEnvEntryType,
+                                              childEnvEntryValue ) );
                 }
                 catch ( IllegalArgumentException e )
                 {

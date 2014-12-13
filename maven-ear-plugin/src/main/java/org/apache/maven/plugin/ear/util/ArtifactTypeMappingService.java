@@ -50,6 +50,9 @@ public class ArtifactTypeMappingService
     // The user-defined mapping for direct access
     private final Map<String, String> customMappings;
 
+    /**
+     * Create an instance.
+     */
     public ArtifactTypeMappingService()
     {
         this.typeMappings = new HashMap<String, List<String>>();
@@ -57,6 +60,11 @@ public class ArtifactTypeMappingService
         init();
     }
 
+    /**
+     * @param plexusConfiguration {@link PlexusConfiguration}
+     * @throws EarPluginException {@link EarPluginException}
+     * @throws PlexusConfigurationException {@link PlexusConfigurationException}
+     */
     public void configure( final PlexusConfiguration plexusConfiguration )
         throws EarPluginException, PlexusConfigurationException
     {
@@ -119,8 +127,7 @@ public class ArtifactTypeMappingService
             throw new IllegalStateException( "Artifact type[" + standardType + "] is not a standard Ear artifact type["
                 + EarModuleFactory.getStandardArtifactTypes() + "]" );
         }
-        final List<String> typeMappings = this.typeMappings.get( standardType );
-        return typeMappings.contains( customType );
+        return this.typeMappings.get( standardType ).contains( customType );
 
     }
 
@@ -130,6 +137,7 @@ public class ArtifactTypeMappingService
      * 
      * @param type a type
      * @return the standard type (ejb, jar, war, ...) for this type
+     * @throws UnknownArtifactTypeException In case of missing mappings types.
      */
     public String getStandardType( final String type )
         throws UnknownArtifactTypeException

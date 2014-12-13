@@ -32,16 +32,27 @@ import org.apache.maven.artifact.Artifact;
 public class Ejb3Module
     extends EjbModule
 {
+    /**
+     * Create an instance.
+     */
     public Ejb3Module()
     {
         super();
     }
 
+    /**
+     * Create an instance with artifact.
+     * 
+     * @param a {@link Artifact}
+     */
     public Ejb3Module( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "ejb3";

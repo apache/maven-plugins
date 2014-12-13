@@ -45,6 +45,9 @@ public class FileNameMappingFactory
     {
     }
 
+    /**
+     * @return {@link StandardFileNameMapping}
+     */
     public static FileNameMapping getDefaultFileNameMapping()
     {
         return new StandardFileNameMapping();
@@ -55,10 +58,8 @@ public class FileNameMappingFactory
      * 
      * @param nameOrClass a name of the fqn of the implementation
      * @return the file name mapping implementation
-     * @throws IllegalStateException if the implementation is not found
      */
     public static FileNameMapping getFileNameMapping( final String nameOrClass )
-        throws IllegalStateException
     {
         if ( STANDARD_FILE_NAME_MAPPING.equals( nameOrClass ) )
         {

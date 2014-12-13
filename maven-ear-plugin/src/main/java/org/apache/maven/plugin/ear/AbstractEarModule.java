@@ -37,10 +37,19 @@ public abstract class AbstractEarModule
     implements EarModule
 {
 
+    /**
+     * The module element.
+     */
     protected static final String MODULE_ELEMENT = "module";
 
+    /**
+     * The java module.
+     */
     protected static final String JAVA_MODULE = "java";
 
+    /**
+     * The alt-dd module.
+     */
     protected static final String ALT_DD = "alt-dd";
 
     private Artifact artifact;
@@ -53,22 +62,40 @@ public abstract class AbstractEarModule
 
     private String classifier;
 
+    /**
+     * The bundleDir.
+     */
     protected String bundleDir;
 
+    /**
+     * The bundleFileName.
+     */
     protected String bundleFileName;
 
+    /**
+     * excluded by default {@code false}.
+     */
     protected Boolean excluded = Boolean.FALSE;
 
     private String uri;
 
+    /**
+     * unpack
+     */
     protected Boolean unpack = null;
 
+    /**
+     * The alternate deployment descriptor.
+     */
     protected String altDeploymentDescriptor;
 
     private String moduleId;
 
     // This is injected once the module has been built.
 
+    /**
+     * The {@link EarExecutionContext}
+     */
     protected EarExecutionContext earExecutionContext;
 
     /**
@@ -92,6 +119,9 @@ public abstract class AbstractEarModule
         this.bundleDir = null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setEarExecutionContext( EarExecutionContext earExecutionContext )
     {
         this.earExecutionContext = earExecutionContext;
@@ -129,16 +159,25 @@ public abstract class AbstractEarModule
         }
     }
 
+    /**
+     * @return {@link #artifact}
+     */
     public Artifact getArtifact()
     {
         return artifact;
     }
 
+    /**
+     * @return {@link #moduleId}
+     */
     public String getModuleId()
     {
         return moduleId;
     }
 
+    /**
+     * @return Return the URI.
+     */
     public String getUri()
     {
         if ( uri == null )
@@ -158,7 +197,7 @@ public abstract class AbstractEarModule
     /**
      * Returns the artifact's groupId.
      * 
-     * @return the group Id
+     * @return {@link #groupId}
      */
     public String getGroupId()
     {
@@ -168,7 +207,7 @@ public abstract class AbstractEarModule
     /**
      * Returns the artifact's Id.
      * 
-     * @return the artifact Id
+     * @return {@link #artifactId}
      */
     public String getArtifactId()
     {
@@ -215,7 +254,8 @@ public abstract class AbstractEarModule
 
     /**
      * Based on MEAR-189 we need to get back
-     * the original file name under any circumstances. 
+     * the original file name under any circumstances.
+     * 
      * @return The original file name.
      */
     public String getOriginalBundleFileName()
@@ -245,6 +285,9 @@ public abstract class AbstractEarModule
         return excluded;
     }
 
+    /**
+     * @return {@link #unpack}
+     */
     public Boolean shouldUnpack()
     {
         return unpack;
@@ -284,17 +327,21 @@ public abstract class AbstractEarModule
         else if ( generateId )
         {
             // No module id was specified but one should be generated.
-            Artifact artifact = getArtifact();
+            Artifact theArtifact = getArtifact();
             String generatedId =
-                artifact.getType().toUpperCase() + "_" + artifact.getGroupId() + "." + artifact.getArtifactId();
-            if ( null != artifact.getClassifier() && artifact.getClassifier().trim().length() > 0 )
+                theArtifact.getType().toUpperCase() + "_" + theArtifact.getGroupId() + "."
+                    + theArtifact.getArtifactId();
+            if ( null != theArtifact.getClassifier() && theArtifact.getClassifier().trim().length() > 0 )
             {
-                generatedId += "-" + artifact.getClassifier().trim();
+                generatedId += "-" + theArtifact.getClassifier().trim();
             }
             writer.addAttribute( "id", generatedId );
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -371,11 +418,17 @@ public abstract class AbstractEarModule
 
     }
 
+    /**
+     * @return always {@code true}
+     */
     public boolean changeManifestClasspath()
     {
         return true;
     }
 
+    /**
+     * @return always {@code null}
+     */
     public String getLibDir()
     {
         return null;
