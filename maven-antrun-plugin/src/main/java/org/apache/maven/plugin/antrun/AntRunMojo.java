@@ -214,9 +214,7 @@ public class AntRunMojo
     @Parameter( defaultValue = "true" )
     private boolean failOnError;
 
-    /**
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -363,10 +361,10 @@ public class AntRunMojo
     }
 
     /**
-     * @param artifacts
-     * @param antProject
-     * @return a path
-     * @throws DependencyResolutionRequiredException
+     * @param artifacts {@link Artifact} collection.
+     * @param antProject {@link Project}
+     * @return {@link Path}
+     * @throws DependencyResolutionRequiredException In case of a failure.
      *
      */
     public Path getPathFromArtifacts( Collection<Artifact> artifacts, Project antProject )
@@ -397,8 +395,8 @@ public class AntRunMojo
     /**
      * Copy properties from the Maven project to the Ant project.
      *
-     * @param mavenProject
-     * @param antProject
+     * @param mavenProject {@link MavenProject}
+     * @param antProject {@link Project}
      */
     public void copyProperties( MavenProject mavenProject, Project antProject )
     {
@@ -506,7 +504,7 @@ public class AntRunMojo
      * Returns a property name for a dependency artifact. The name is in the format
      * maven.dependency.groupId.artifactId[.classifier].type.path
      *
-     * @param artifact
+     * @param artifact {@link Artifact}
      * @return property name
      * @deprecated The dependency conflict ID should be used as the property name.
      */
@@ -527,6 +525,9 @@ public class AntRunMojo
         return this.project;
     }
 
+    /**
+     * @param antProject {@link Project}
+     */
     public void initMavenTasks( Project antProject )
     {
         getLog().debug( "Initialize Maven Ant Tasks" );
@@ -609,6 +610,11 @@ public class AntRunMojo
         }
     }
 
+    /**
+     * @param antTargetConfig {@link PlexusConfiguration}
+     * @return The target name.
+     * @throws PlexusConfigurationException in case of not existing attribute.
+     */
     public String checkTargetName( PlexusConfiguration antTargetConfig )
         throws PlexusConfigurationException
     {

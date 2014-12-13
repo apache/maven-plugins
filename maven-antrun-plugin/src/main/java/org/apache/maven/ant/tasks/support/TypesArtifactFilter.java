@@ -36,7 +36,7 @@ public class TypesArtifactFilter
     /**
      * Accepts a comma separated list of types
      *
-     * @param types
+     * @param types The types.
      */
     public TypesArtifactFilter( String types )
     {
@@ -49,6 +49,7 @@ public class TypesArtifactFilter
         }
     }
 
+    /** {@inheritDoc} */
     public boolean include( Artifact artifact )
     {
         String artifactType = artifact.getType();

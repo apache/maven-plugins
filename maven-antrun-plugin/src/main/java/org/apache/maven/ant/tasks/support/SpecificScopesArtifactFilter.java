@@ -76,6 +76,7 @@ public class SpecificScopesArtifactFilter
         }
     }
 
+    /** {@inheritDoc} */
     public boolean include( Artifact artifact )
     {
         if ( Artifact.SCOPE_COMPILE.equals( artifact.getScope() ) )
