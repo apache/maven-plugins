@@ -79,14 +79,19 @@ public class JavaEEVersion
         VERSION_MAP.put( version, this );
     }
 
-    public static JavaEEVersion getJavaEEVersion( String version )
+    /**
+     * @param paramVersion The version.
+     * @return {@link JavaEEVersion}
+     * @throws InvalidJavaEEVersion in case of a wrong version.
+     */
+    public static JavaEEVersion getJavaEEVersion( String paramVersion )
         throws InvalidJavaEEVersion
     {
-        if ( !isValid( version ) )
+        if ( !isValid( paramVersion ) )
         {
-            throw new InvalidJavaEEVersion( "Invalid version [" + version + "]", version );
+            throw new InvalidJavaEEVersion( "Invalid version [" + paramVersion + "]", paramVersion );
         }
-        return VERSION_MAP.get( version );
+        return VERSION_MAP.get( paramVersion );
     }
 
     /**
@@ -102,74 +107,80 @@ public class JavaEEVersion
     /**
      * Specifies if this version is greater or equal to the specified version.
      * 
-     * @param version the version to check
+     * @param parmVersion the version to check
      * @return true if this version is greater or equal to <tt>version</tt>
      */
-    public boolean ge( JavaEEVersion version )
+    public boolean ge( JavaEEVersion parmVersion )
     {
-        return this.compareTo( version ) >= 0;
+        return this.compareTo( parmVersion ) >= 0;
     }
 
     /**
      * Specifies if this version is greater than the specified version.
      * 
-     * @param version the version to check
+     * @param paramVersion the version to check
      * @return true if this version is greater to <tt>version</tt>
      */
-    public boolean gt( JavaEEVersion version )
+    public boolean gt( JavaEEVersion paramVersion )
     {
-        return this.compareTo( version ) > 0;
+        return this.compareTo( paramVersion ) > 0;
     }
 
     /**
      * Specifies if this version is equal to the specified version.
      * 
-     * @param version the version to check
+     * @param paramVersion the version to check
      * @return true if this version is equal to <tt>version</tt>
      */
-    public boolean eq( JavaEEVersion version )
+    public boolean eq( JavaEEVersion paramVersion )
     {
-        return this.compareTo( version ) == 0;
+        return this.compareTo( paramVersion ) == 0;
     }
 
     /**
      * Specifies if this version is less or equal to the specified version.
      * 
-     * @param version the version to check
+     * @param paramVersion the version to check
      * @return true if this version is less or equal to <tt>version</tt>
      */
-    public boolean le( JavaEEVersion version )
+    public boolean le( JavaEEVersion paramVersion )
     {
-        return this.compareTo( version ) <= 0;
+        return this.compareTo( paramVersion ) <= 0;
     }
 
     /**
      * Specifies if this version is less than the specified version.
      * 
-     * @param version the version to check
+     * @param paramVersion the version to check
      * @return true if this version is less or equal to <tt>version</tt>
      */
-    public boolean lt( JavaEEVersion version )
+    public boolean lt( JavaEEVersion paramVersion )
     {
-        return this.compareTo( version ) < 0;
+        return this.compareTo( paramVersion ) < 0;
     }
 
     /**
      * Checks if the specified version string is valid.
      * 
-     * @param version the version string to check
+     * @param paramVersion the version string to check
      * @return <tt>true</tt> if the version is valid
      */
-    private static boolean isValid( String version )
+    private static boolean isValid( String paramVersion )
     {
-        if ( version == null )
+        if ( paramVersion == null )
         {
             throw new IllegalArgumentException( "version could not be null." );
         }
-        return VERSION_1_3.equals( version ) || VERSION_1_4.equals( version ) || VERSION_5.equals( version )
-            || VERSION_6.equals( version ) || VERSION_7.equals( version );
+        // @formatter:off
+        return VERSION_1_3.equals( paramVersion ) 
+            || VERSION_1_4.equals( paramVersion )
+            || VERSION_5.equals( paramVersion ) 
+            || VERSION_6.equals( paramVersion ) 
+            || VERSION_7.equals( paramVersion );
+        // @formatter:on
     }
 
+    /** {@inheritDoc} */
     public int compareTo( JavaEEVersion otherVersion )
     {
         if ( otherVersion == null )

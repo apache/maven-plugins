@@ -35,12 +35,19 @@ public class InvalidJavaEEVersion
 
     private final String invalidVersion;
 
+    /**
+     * @param message The message for the error
+     * @param invalidVersion The invalid version.
+     */
     public InvalidJavaEEVersion( String message, String invalidVersion )
     {
         super( message );
         this.invalidVersion = invalidVersion;
     }
 
+    /**
+     * @return The invalid version.
+     */
     public String getInvalidVersion()
     {
         return invalidVersion;

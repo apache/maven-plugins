@@ -40,6 +40,9 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
 public class EarMavenArchiver
     extends MavenArchiver
 {
+    /**
+     * {@code Class-Path}.
+     */
     public static final String CLASS_PATH_KEY = "Class-Path";
 
     private final List<EarModule> earModules;
@@ -54,13 +57,21 @@ public class EarMavenArchiver
         this.earModules = earModules;
     }
 
-    /** @deprecated */
+    /**
+     * @param project {@link MavenProject}
+     * @param config {@link MavenArchiveConfiguration}
+     * @throws ManifestException in case of an error
+     * @throws DependencyResolutionRequiredException in case of an resolution error.
+     * @return Manifest
+     * @deprecated
+     */
     public Manifest getManifest( MavenProject project, MavenArchiveConfiguration config )
         throws ManifestException, DependencyResolutionRequiredException
     {
         return this.getManifest( null, project, config );
     }
 
+    /** {@inheritDoc} */
     public Manifest getManifest( MavenSession session, MavenProject project, MavenArchiveConfiguration config )
         throws ManifestException, DependencyResolutionRequiredException
     {
@@ -110,6 +121,10 @@ public class EarMavenArchiver
         return classpath.toString().trim();
     }
 
+    /**
+     * @param config {@link MavenArchiveConfiguration}
+     * @return The class path entry.
+     */
     protected String getUserSuppliedClassPathEntry( MavenArchiveConfiguration config )
     {
         if ( config.getManifestEntries() != null )

@@ -41,6 +41,14 @@ public class EarExecutionContext
 
     private ArtifactRepository artifactRepository;
 
+    /**
+     * @param project {@link MavenProject}
+     * @param mainArtifactId The artifactId.
+     * @param defaultLibBundleDir The defaultLibBundleDir.
+     * @param jbossConfiguration {@link JbossConfiguration}
+     * @param fileNameMappingName file name mapping.
+     * @param typeMappingService {@link ArtifactTypeMappingService}
+     */
     public EarExecutionContext( MavenProject project, String mainArtifactId, String defaultLibBundleDir,
                                 JbossConfiguration jbossConfiguration, String fileNameMappingName,
                                 ArtifactTypeMappingService typeMappingService )
@@ -50,21 +58,33 @@ public class EarExecutionContext
 
     }
 
+    /**
+     * @return {@link #defaultLibBundleDir}
+     */
     public String getDefaultLibBundleDir()
     {
         return defaultLibBundleDir;
     }
 
+    /**
+     * @return {@link #jbossConfiguration}
+     */
     public boolean isJbossConfigured()
     {
         return jbossConfiguration != null;
     }
 
+    /**
+     * @return {@link #fileNameMapping}
+     */
     public FileNameMapping getFileNameMapping()
     {
         return fileNameMapping;
     }
 
+    /**
+     * @return {@link #artifactRepository}
+     */
     public ArtifactRepository getArtifactRepository()
     {
         return artifactRepository;

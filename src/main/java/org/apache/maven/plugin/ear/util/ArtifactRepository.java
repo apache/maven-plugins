@@ -43,7 +43,7 @@ public class ArtifactRepository
      * 
      * @param artifacts the artifacts
      * @param mainArtifactId the id to use for the main artifact (no classifier)
-     * @param artifactTypeMappingService
+     * @param artifactTypeMappingService {@link ArtifactTypeMappingService}
      */
     public ArtifactRepository( Set<Artifact> artifacts, String mainArtifactId,
                                ArtifactTypeMappingService artifactTypeMappingService )

@@ -311,6 +311,7 @@ public class EarMojo
 
     }
 
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -373,9 +374,9 @@ public class EarMojo
         {
             File earFile = getEarFile( outputDirectory, finalName, classifier );
             final MavenArchiver archiver = new EarMavenArchiver( getModules() );
-            final JarArchiver jarArchiver = getJarArchiver();
-            getLog().debug( "Jar archiver implementation [" + jarArchiver.getClass().getName() + "]" );
-            archiver.setArchiver( jarArchiver );
+            final JarArchiver theJarArchiver = getJarArchiver();
+            getLog().debug( "Jar archiver implementation [" + theJarArchiver.getClass().getName() + "]" );
+            archiver.setArchiver( theJarArchiver );
             archiver.setOutputFile( earFile );
 
             // Include custom manifest if necessary
@@ -510,11 +511,17 @@ public class EarMojo
         return unpackTypesList;
     }
 
+    /**
+     * @return {@link #applicationXml}
+     */
     public String getApplicationXml()
     {
         return applicationXml;
     }
 
+    /**
+     * @param applicationXml {@link #applicationXml}
+     */
     public void setApplicationXml( String applicationXml )
     {
         this.applicationXml = applicationXml;
@@ -552,6 +559,9 @@ public class EarMojo
         return StringUtils.split( StringUtils.defaultString( earSourceIncludes ), "," );
     }
 
+    /**
+     * @return The array with the packaging excludes.
+     */
     public String[] getPackagingExcludes()
     {
         if ( StringUtils.isEmpty( packagingExcludes ) )
@@ -564,11 +574,17 @@ public class EarMojo
         }
     }
 
+    /**
+     * @param packagingExcludes {@link #packagingExcludes}
+     */
     public void setPackagingExcludes( String packagingExcludes )
     {
         this.packagingExcludes = packagingExcludes;
     }
 
+    /**
+     * @return The arrays with the includes.
+     */
     public String[] getPackagingIncludes()
     {
         if ( StringUtils.isEmpty( packagingIncludes ) )
@@ -581,6 +597,9 @@ public class EarMojo
         }
     }
 
+    /**
+     * @param packagingIncludes {@link #packagingIncludes}
+     */
     public void setPackagingIncludes( String packagingIncludes )
     {
         this.packagingIncludes = packagingIncludes;
@@ -656,6 +675,8 @@ public class EarMojo
      * 
      * @param source File to be unpacked.
      * @param destDir Location where to put the unpacked files.
+     * @throws NoSuchArchiverException In case of we don't have an appropriate archiver.
+     * @throws IOException In case of a general IOException.
      */
     public void unpack( File source, File destDir )
         throws NoSuchArchiverException, IOException
@@ -699,6 +720,10 @@ public class EarMojo
         }
     }
 
+    /**
+     * @param fileName The name of the file which should be checked.
+     * @return {@code true} if the name is part of the non filtered extensions {@code false} otherwise.
+     */
     public boolean isNonFilteredExtension( String fileName )
     {
         return !mavenResourcesFiltering.filteredFileExtension( fileName, nonFilteredFileExtensions );
@@ -763,8 +788,8 @@ public class EarMojo
                 getLog().debug( "This project did not have a META-INF directory before, so a new directory was created." );
                 // CHECKSTYLE_ON: LineLength
             }
-            File manifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
-            boolean newManifestCreated = manifestFile.createNewFile();
+            File newCreatedManifestFile = new File( metaInfDirectory, "MANIFEST.MF" );
+            boolean newManifestCreated = newCreatedManifestFile.createNewFile();
             if ( newManifestCreated )
             {
                 // CHECKSTYLE_OFF: LineLength
@@ -773,7 +798,7 @@ public class EarMojo
             }
 
             // Read the manifest from disk
-            Manifest mf = new Manifest( new FileReader( manifestFile ) );
+            Manifest mf = new Manifest( new FileReader( newCreatedManifestFile ) );
             Attribute classPath = mf.getMainSection().getAttribute( "Class-Path" );
             List<String> classPathElements = new ArrayList<String>();
 
@@ -836,7 +861,7 @@ public class EarMojo
             mf.getMainSection().addConfiguredAttribute( classPath );
 
             // Write the manifest to disk
-            PrintWriter pw = new PrintWriter( manifestFile );
+            PrintWriter pw = new PrintWriter( newCreatedManifestFile );
             mf.write( pw );
             pw.close();
 

@@ -31,6 +31,9 @@ public class FullFileNameMapping
     extends AbstractFileNameMapping
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public String mapFileName( final Artifact a )
     {
         final String dashedGroupId = a.getGroupId().replace( '.', '-' );

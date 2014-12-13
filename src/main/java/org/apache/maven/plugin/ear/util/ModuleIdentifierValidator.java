@@ -42,6 +42,9 @@ public class ModuleIdentifierValidator
 
     private Map<String, List<EarModule>> result;
 
+    /**
+     * @param earModules The list of {@link EarModule} which will be checked.
+     */
     public ModuleIdentifierValidator( List<EarModule> earModules )
     {
         if ( earModules == null )
@@ -104,23 +107,33 @@ public class ModuleIdentifierValidator
 
     }
 
+    /**
+     * @return A map of duplicate artifacts.
+     */
     public Map<String, List<EarModule>> getDuplicateArtifacts()
     {
         return result;
     }
 
+    /**
+     * @return The list of {@link EarModule}
+     */
     public List<EarModule> getEarModules()
     {
         return earModules;
     }
 
-    public ModuleIdentifierValidator setEarModules( List<EarModule> earModules )
+    /**
+     * @param paramEarModules {@link EarModule}
+     * @return {@link ModuleIdentifierValidator}
+     */
+    public ModuleIdentifierValidator setEarModules( List<EarModule> paramEarModules )
     {
-        if ( earModules == null )
+        if ( paramEarModules == null )
         {
             throw new IllegalArgumentException( "Not allowed to give null for earModules." );
         }
-        this.earModules = earModules;
+        this.earModules = paramEarModules;
         return this;
     }
 }

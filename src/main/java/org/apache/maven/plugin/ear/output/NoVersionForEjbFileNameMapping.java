@@ -31,6 +31,9 @@ public class NoVersionForEjbFileNameMapping
     extends AbstractFileNameMapping
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public String mapFileName( Artifact a )
     {
         boolean isEjb = "ejb".equals( a.getType() );
