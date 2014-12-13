@@ -1031,10 +1031,18 @@ public class DependenciesRenderer
                 sink.bold_();
                 if ( !licenses.isEmpty() )
                 {
-                    for ( License element : licenses )
+
+                    for ( Iterator<License> it = licenses.iterator(); it.hasNext(); )
                     {
-                        String licenseName = element.getName();
-                        String licenseUrl = element.getUrl();
+                        License license = it.next();
+
+                        String licenseName = license.getName();
+                        if ( StringUtils.isEmpty( licenseName ) )
+                        {
+                            licenseName = getI18nString( "unnamed" );
+                        }
+
+                        String licenseUrl = license.getUrl();
 
                         if ( licenseUrl != null )
                         {
@@ -1045,6 +1053,11 @@ public class DependenciesRenderer
                         if ( licenseUrl != null )
                         {
                             sink.link_();
+                        }
+
+                        if ( it.hasNext() )
+                        {
+                            sink.text( ", " );
                         }
 
                         licenseMap.put( licenseName, artifactName );
@@ -1105,12 +1118,13 @@ public class DependenciesRenderer
         for ( Map.Entry<String, Object> entry : licenseMap.entrySet() )
         {
             String licenseName = entry.getKey();
-            sink.paragraph();
-            sink.bold();
             if ( StringUtils.isEmpty( licenseName ) )
             {
                 licenseName = getI18nString( "unnamed" );
             }
+
+            sink.paragraph();
+            sink.bold();
             sink.text( licenseName );
             sink.text( ": " );
             sink.bold_();
