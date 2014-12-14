@@ -559,7 +559,7 @@ public class DependenciesRenderer
                 continue;
             }
 
-            File artifactFile = artifact.getFile();
+            File artifactFile = dependencies.getFile( artifact );
 
             totaldeps.incrementTotal( artifact.getScope() );
             totaldepsize.addTotal( artifactFile.length(), artifact.getScope() );
