@@ -202,6 +202,30 @@ public abstract class AbstractDependencyMojo
     }
 
     /**
+     * Purges a folder.
+     *
+     * @param location a {@link File} object representing the folder to be purged.
+     * @throws MojoExecutionException if the input <code>location</code> is not a folder or an error occurred
+     * during the purge operation.
+     */
+    protected void purge(File location) throws MojoExecutionException {
+        if (!location.isDirectory()) {
+            throw new MojoExecutionException("Purge cannot be performed over a file.");
+        }
+
+        try {
+            if (getLog().isInfoEnabled()) {
+                getLog().info("Purging folder " + location);
+            }
+
+            FileUtils.cleanDirectory(location);
+        } catch (IOException e) {
+            throw new MojoExecutionException(
+                    String.format("Error occurred while purging directory %s.", location.getAbsolutePath()));
+        }
+    }
+
+    /**
      * Does the actual copy of the file and logging.
      *
      * @param artifact represents the file to copy.

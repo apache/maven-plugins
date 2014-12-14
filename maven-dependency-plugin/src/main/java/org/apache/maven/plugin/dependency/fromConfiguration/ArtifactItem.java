@@ -88,6 +88,11 @@ public class ArtifactItem
     private File outputDirectory;
 
     /**
+     * A flag indicating if a the output directory for the artifact should be purged before writing to it.
+     */
+    private Boolean purgeOutputDirectory;
+
+    /**
      * Provides ability to change destination file name
      *
      * @parameter
@@ -276,6 +281,20 @@ public class ArtifactItem
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
+    }
+
+    /**
+     * Returns if the output directory for the artifact should be purged before writing to it.
+     */
+    public Boolean shouldPurgeOutputDirectory() {
+        return purgeOutputDirectory;
+    }
+
+    /**
+     * Sets if the output directory for the artifact should be purged before writing to it.
+     */
+    public void setPurgeOutputDirectory(boolean purgeOutputDirectory) {
+        this.purgeOutputDirectory = purgeOutputDirectory;
     }
 
     /**
