@@ -40,7 +40,7 @@
   </organization>
   <licenses>
     <license>
-      <name>The Apache Software License, Version 2.0</name>
+      <name>Apache License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
@@ -173,7 +173,7 @@
         <artifactId>maven-site-plugin</artifactId>
         <version>@sitePluginVersion@</version>
         <configuration>
-          <locales>cs,de,en,es,fr,gl,hu,it,ja,ko,lt,nl,no,pl,pt,pt_BR,ru,sk,sv,tr,zh_CN,zh_TW</locales>
+          <locales>en,cs,de,en,es,fr,gl,hu,it,ja,ko,lt,nl,no,pl,pt,pt_BR,ru,sk,sv,tr,zh_CN,zh_TW</locales>
         </configuration>
       </plugin>
     </plugins>
