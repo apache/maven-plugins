@@ -19,6 +19,37 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.apache.maven.ProjectDependenciesResolver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -34,7 +65,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.plugins.annotations.Component;
@@ -74,37 +104,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * <p>
@@ -436,7 +435,7 @@ public class ProcessRemoteResourcesMojo
                                + ", i.e. build is platform dependent!" );
         }
 
-        if ( runOnlyAtExecutionRoot && !isExecutionRoot() )
+        if ( runOnlyAtExecutionRoot && !project.isExecutionRoot() )
         {
             getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
             return;
@@ -550,30 +549,6 @@ public class ProcessRemoteResourcesMojo
         {
             Thread.currentThread().setContextClassLoader( origLoader );
         }
-    }
-
-    private boolean isExecutionRoot()
-    {
-        Log log = this.getLog();
-
-        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir.toString() );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
-            log.debug( "Current Folder:" + basedir );
-
-            if ( result )
-            {
-                log.debug( "This is the execution root." );
-            }
-            else
-            {
-                log.debug( "This is NOT the execution root." );
-            }
-        }
-
-        return result;
     }
 
     private void addSupplementalModelArtifacts()
