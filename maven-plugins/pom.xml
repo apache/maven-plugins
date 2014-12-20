@@ -218,6 +218,11 @@ under the License.
     </profile>
     <profile>
       <id>run-its</id>
+      <properties>
+        <!-- when testing with JDK9, change these values to 1.6 from cmdline -->
+        <invoker.maven.compiler.source>${maven.compiler.source}</invoker.maven.compiler.source>
+        <invoker.maven.compiler.target>${maven.compiler.target}</invoker.maven.compiler.target>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -234,6 +239,10 @@ under the License.
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
+              <properties>
+                <maven.compiler.source>${invoker.maven.compiler.source}</maven.compiler.source>
+                <maven.compiler.target>${invoker.maven.compiler.target}</maven.compiler.target>
+              </properties>
             </configuration>
             <executions>
               <execution>
