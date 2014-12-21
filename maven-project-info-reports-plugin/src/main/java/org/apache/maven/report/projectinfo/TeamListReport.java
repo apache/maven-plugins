@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TimeZone;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -38,8 +36,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
-
-import org.joda.time.DateTimeZone;
 
 /**
  * Generates the Project Team report.
@@ -162,24 +158,8 @@ public class TeamListReport
         {
             startSection( getI18nString( "intro.title" ) );
 
-            // CHECKSTYLE_OFF: LineLength
-
             // To handle JS
-            StringBuilder javascript =
-                new StringBuilder( "function offsetDate(id, offset) {" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var now = new Date();" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var nowTime = now.getTime();" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var localOffset = now.getTimezoneOffset();" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var developerTime = nowTime + ( offset * 60 * 60 * 1000 )"
-                                   + "+ ( localOffset * 60 * 1000 );" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    var developerDate = new Date(developerTime);" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "    document.getElementById(id).innerHTML = developerDate;" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "}" ).append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "function init(){" ).append( SystemUtils.LINE_SEPARATOR );
-
-            // CHECKSTYLE_ON: LineLength
+            StringBuilder javascript = new StringBuilder();
 
             // Introduction
             paragraph( getI18nString( "intro.description1" ) );
@@ -251,14 +231,6 @@ public class TeamListReport
 
                 endTable();
             }
-
-            // To handle JS
-            javascript.append( "}" );
-            javascript.append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( SystemUtils.LINE_SEPARATOR );
-            javascript.append( "window.onLoad = init();" );
-            javascript.append( SystemUtils.LINE_SEPARATOR );
-            javaScript( javascript.toString() );
 
             endSection();
 
@@ -341,75 +313,6 @@ public class TeamListReport
             if ( headersMap.get( TIME_ZONE ) == Boolean.TRUE )
             {
                 tableCell( member.getTimezone() );
-
-                if ( StringUtils.isNotEmpty( member.getTimezone() )
-                    && ( !ProjectInfoReportUtils.isNumber( member.getTimezone().trim() ) ) )
-                {
-                    String tz = member.getTimezone().trim();
-                    try
-                    {
-                        // check if it is a valid timeZone
-                        DateTimeZone.forID( tz );
-
-                        sink.tableCell();
-                        sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
-                        text( tz );
-                        final long oneHoursInMilliSeconds = 3600000;
-                        String offSet =
-                            String.valueOf( TimeZone.getTimeZone( tz ).getRawOffset() / oneHoursInMilliSeconds );
-                        // CHECKSTYLE_OFF: LineLength
-                        javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
-                        javascript.append( offSet ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
-                        // CHECKSTYLE_ON: LineLength
-                        sink.rawText( "</span>" );
-                        sink.tableCell_();
-                    }
-                    catch ( IllegalArgumentException e )
-                    {
-                        log.warn( "The time zone '" + tz + "' for the " + type + " '" + member.getName()
-                            + "' is not a recognised time zone, use a number in the range -12 and +14 instead of." );
-
-                        sink.tableCell();
-                        sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
-                        text( null );
-                        sink.rawText( "</span>" );
-                        sink.tableCell_();
-                    }
-                }
-                else
-                {
-                    // To handle JS
-                    sink.tableCell();
-                    sink.rawText( "<span id=\"" + type + "-" + rowId + "\">" );
-                    if ( StringUtils.isEmpty( member.getTimezone() ) )
-                    {
-                        text( null );
-                    }
-                    else
-                    {
-                        // check if number is between -12 and +14
-                        final int lowerLimit = -12;
-                        final int upperLimit = 14;
-                        float tz = ProjectInfoReportUtils.toFloat( member.getTimezone().trim(), Integer.MIN_VALUE );
-                        if ( tz == Integer.MIN_VALUE || !( tz >= lowerLimit && tz <= upperLimit ) )
-                        {
-                            text( null );
-                            log.warn( "The time zone '" + member.getTimezone().trim() + "' for the " + type + " '"
-                                + member.getName()
-                                + "' is not a recognised time zone, use a number in the range -12 to +14 instead of." );
-                        }
-                        else
-                        {
-                            // CHECKSTYLE_OFF: LineLength
-                            text( member.getTimezone().trim() );
-                            javascript.append( "    offsetDate('" ).append( type ).append( "-" ).append( rowId ).append( "', '" );
-                            javascript.append( member.getTimezone() ).append( "');" ).append( SystemUtils.LINE_SEPARATOR );
-                            // CHECKSTYLE_ON: LineLength
-                        }
-                    }
-                    sink.rawText( "</span>" );
-                    sink.tableCell_();
-                }
             }
 
             if ( headersMap.get( PROPERTIES ) == Boolean.TRUE )
@@ -571,7 +474,6 @@ public class TeamListReport
             if ( requiredHeaders.get( TIME_ZONE ) == Boolean.TRUE )
             {
                 requiredArray.add( timeZone );
-                requiredArray.add( actualTime );
             }
 
             if ( requiredHeaders.get( PROPERTIES ) == Boolean.TRUE )
