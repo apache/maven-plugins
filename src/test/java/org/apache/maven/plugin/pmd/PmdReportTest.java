@@ -19,15 +19,19 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+
+import org.apache.commons.io.IOUtils;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -129,10 +133,38 @@ public class PmdReportTest
                                  "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
+        // Additional test case for MPMD-174 (http://jira.codehaus.org/browse/MPMD-174).
+        WireMockServer mockServer = new WireMockServer( 3456 );
+        mockServer.start();
+
+        String sonarRuleset = IOUtils.toString(
+            getClass().getClassLoader().getResourceAsStream(
+                "unit/default-configuration/rulesets/sonar-way-ruleset.xml" ) );
+
+        String sonarMainPageHtml = IOUtils.toString(
+            getClass().getClassLoader().getResourceAsStream(
+                "unit/default-configuration/rulesets/sonar-main-page.html" ) );
+
+        final String sonarBaseUrl = "/profiles";
+        final String sonarProfileUrl = sonarBaseUrl + "/export?format=pmd&language=java&name=Sonar%2520way";
+        final String sonarExportRulesetUrl = "http://localhost:" + mockServer.port() + sonarProfileUrl;
+
+        mockServer.stubFor(WireMock.get( WireMock.urlEqualTo( sonarBaseUrl ) )
+            .willReturn( WireMock.aResponse()
+                .withStatus( 200 )
+                .withHeader( "Content-Type", "text/html" )
+                .withBody( sonarMainPageHtml ) ) );
+
+        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) )
+            .willReturn( WireMock.aResponse()
+                .withStatus( 200 )
+                .withHeader( "Content-Type", "text/xml" )
+                .withBody( sonarRuleset ) ) );
+
         URL url = getClass().getClassLoader().getResource( "rulesets/java/basic.xml" );
         URL url2 = getClass().getClassLoader().getResource( "rulesets/java/unusedcode.xml" );
         URL url3 = getClass().getClassLoader().getResource( "rulesets/java/imports.xml" );
-        mojo.setRulesets( new String[]{ url.toString(), url2.toString(), url3.toString() } );
+        mojo.setRulesets( new String[]{ url.toString(), url2.toString(), url3.toString(), sonarExportRulesetUrl } );
 
         mojo.execute();
 
@@ -149,6 +181,10 @@ public class PmdReportTest
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/unusedcode.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
+        generatedFile = new File( getBasedir(),
+            "target/test/unit/default-configuration/target/export_format_pmd_language_java_name_Sonar_2520way.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
         renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
@@ -160,6 +196,8 @@ public class PmdReportTest
         assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
 
         assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
+
+        mockServer.stop();
     }
 
     /**
