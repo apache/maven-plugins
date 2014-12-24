@@ -43,4 +43,15 @@
     <module>pluginManagement</module>
     <module>property</module>
   </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
