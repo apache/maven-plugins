@@ -23,7 +23,6 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Organization;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
@@ -180,8 +179,10 @@ public class ProjectSummaryReport
             }
             else
             {
-                // no source, target, compilerVersion: toolchain? default target attribute of current
-                // maven-compiler-plugin's version? analyze packaged jar (like dependencies)?
+                // ${maven.compiler.target} default value
+                minimumJavaVersion = project.getProperties().getProperty( "maven.compiler.target" );
+
+                // default to 1.5 if not set?
             }
 
             return minimumJavaVersion;
