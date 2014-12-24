@@ -49,14 +49,6 @@ public class ProjectSummaryReport
     // Mojo parameters
     // ----------------------------------------------------------------------
 
-    /**
-     * The target Java version the artifact is built for. Should match the target used in the compiler plugin.
-     *
-     * @since 2.8
-     */
-    @Parameter( defaultValue = "${maven.compiler.target}" )
-    private String targetJavaVersion;
-
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -143,7 +135,7 @@ public class ProjectSummaryReport
             tableRow( new String[] { getI18nString( "build.type" ), project.getPackaging() } );
             if ( isJavaProject( project ) )
             {
-                tableRow( new String[] { getI18nString( "build.javaVersion" ), targetJavaVersion } );
+                tableRow( new String[] { getI18nString( "build.javaVersion" ), getMinimumJavaVersion() } );
             }
             endTable();
             endSection();
@@ -161,6 +153,38 @@ public class ProjectSummaryReport
             }
 
             endSection();
+        }
+
+        private String getMinimumJavaVersion()
+        {
+
+            final String pluginId = "org.apache.maven.plugins:maven-compiler-plugin";
+            String sourceConfigured = getPluginParameter( pluginId, "source" );
+            String targetConfigured = getPluginParameter( pluginId, "target" );
+
+            String forkFlag = getPluginParameter( pluginId, "fork" );
+            String compilerVersionConfigured = null;
+            if ( "true".equalsIgnoreCase( forkFlag ) )
+            {
+                compilerVersionConfigured = getPluginParameter( pluginId, "compilerVersion" );
+            }
+
+            String minimumJavaVersion = compilerVersionConfigured;
+            if ( targetConfigured != null )
+            {
+                minimumJavaVersion = targetConfigured;
+            }
+            else if ( sourceConfigured != null )
+            {
+                minimumJavaVersion = sourceConfigured;
+            }
+            else
+            {
+                // no source, target, compilerVersion: toolchain? default target attribute of current
+                // maven-compiler-plugin's version? analyze packaged jar (like dependencies)?
+            }
+
+            return minimumJavaVersion;
         }
 
         private void tableRowWithLink( String[] content )
