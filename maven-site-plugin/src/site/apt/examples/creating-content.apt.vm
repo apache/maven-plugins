@@ -166,7 +166,7 @@ Creating Content
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
 
   <<Note:>> {{{http://velocity.apache.org/}Apache Velocity}} is used to apply the
-  filtering. Because Velocity uses a dot-notation to traverse beans you can <<not>>
+  filtering. Because Velocity uses a dot-notation to traverse beans you <<cannot>>
   use dots in your properties defined in <<<\<properties\>>>>.
 
   If you declare these properties in your POM
