@@ -96,6 +96,11 @@ under the License.
       <artifactId>plexus-utils</artifactId>
       <version>3.0.20</version>
     </dependency>
+    <dependency>
+      <groupId>org.sonatype.plexus</groupId>
+      <artifactId>plexus-sec-dispatcher</artifactId>
+      <version>1.4</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -106,9 +111,7 @@ under the License.
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes combine.children="append">
-              <!--
-                rat check errors seen on ASF Jenkins instance, but not on local machine...
-              -->
+              <!-- rat check errors seen on ASF Jenkins instance, but not on local machine... -->
               <exclude>src/test/resources/gnupg/*</exclude>
             </excludes>
           </configuration>
@@ -131,6 +134,7 @@ under the License.
                   <pomInclude>*/pom.xml</pomInclude>
                   <pomInclude>sign-and-deploy*</pomInclude>
                 </pomIncludes>
+                <settingsFile>src/main/it/settings.xml</settingsFile>
                 <goals>
                   <goal>clean</goal>
                   <goal>install</goal>

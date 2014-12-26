@@ -77,3 +77,22 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
 
   This accounts for the fact, that the Release Plugin forks Maven and system properties of the current Maven session are
   unfortunately not automatically propagated to the forked Maven session (see also {{{http://jira.codehaus.org/browse/MGPG-9}MGPG-9}}).
+
+
+* Configure passphase under settings.xml
+
+  Instead of specifying the passphase at command line, you can place it under your local settings.xml
+  either in clear or {{{http://maven.apache.org/guides/mini/guide-encryption.html}encrypted}} text.
+
++----------+
+<settings>
+  [...]
+  <servers>
+    [...]
+    <server>
+      <id>gpg.passphase</id>
+      <passphase>clear or encrypted text</passphase>
+    </server>
+  </servers>
+</settings>
++----------+

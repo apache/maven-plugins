@@ -26,8 +26,14 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 /**
  * @author Benjamin Bentmann
@@ -46,10 +52,17 @@ public abstract class AbstractGpgMojo
     private File homedir;
 
     /**
-     * The passphrase to use when signing.
-     */
+     * The passphrase to use when signing. If not given, look up the value under Maven
+     * settings using server id at 'passphaseServerKey' configuration.
+     **/
     @Parameter( property = "gpg.passphrase" )
     private String passphrase;
+
+    /**
+     * Server id to lookup the passphase under Maven settings.
+     */
+    @Parameter( property = "gpg.passphaseServerKey", defaultValue = "gpg.passphase" )
+    private String passphaseServerKey;
 
     /**
      * The "name" of the key to sign with. Passed to gpg as <code>--local-user</code>.
@@ -59,8 +72,8 @@ public abstract class AbstractGpgMojo
 
     /**
      * Passes <code>--use-agent</code> or <code>--no-use-agent</code> to gpg. If using an agent, the passphrase is
-     * optional as the agent will provide it.
-     * For gpg2, specify true as --no-use-agent was removed in gpg2 and doesn't ask for a passphrase anymore.
+     * optional as the agent will provide it. For gpg2, specify true as --no-use-agent was removed in gpg2 and doesn't
+     * ask for a passphrase anymore.
      */
     @Parameter( property = "gpg.useagent", defaultValue = "true" )
     private boolean useAgent;
@@ -122,18 +135,34 @@ public abstract class AbstractGpgMojo
 
     /**
      * Sets the arguments to be passed to gpg. Example:
-     * 
+     *
      * <pre>
      * &lt;gpgArguments&gt;
      *   &lt;arg&gt;--no-random-seed-file&lt;/arg&gt;
      *   &lt;arg&gt;--no-permission-warning&lt;/arg&gt;
      * &lt;/gpgArguments&gt;
      * </pre>
-     * 
+     *
      * @since 1.5
      */
     @Parameter
     private List<String> gpgArguments;
+
+    /**
+     * Current user system settings for use in Maven.
+     *
+     * @since 1.6
+     */
+    @Parameter( defaultValue = "${settings}", readonly = true )
+    private Settings settings;
+
+    /**
+     * Maven Security Dispatcher
+     *
+     * @since 1.6
+     */
+    @Component( hint = "mng-4384" )
+    private SecDispatcher securityDispatcher;
 
     AbstractGpgSigner newSigner( MavenProject project )
         throws MojoExecutionException, MojoFailureException
@@ -150,6 +179,8 @@ public abstract class AbstractGpgMojo
         signer.setPublicKeyring( publicKeyring );
         signer.setLockMode( lockMode );
         signer.setArgs( gpgArguments );
+
+        loadGpgPassphase();
 
         signer.setPassPhrase( passphrase );
         if ( null == passphrase && !useAgent )
@@ -171,4 +202,32 @@ public abstract class AbstractGpgMojo
         return signer;
     }
 
+    /**
+     * Load and decrypt gpg passphase from maven settings if not given from plugin configuration
+     *
+     * @throws MojoFailureException
+     */
+    private void loadGpgPassphase()
+        throws MojoFailureException
+    {
+        if ( StringUtils.isEmpty( this.passphrase ) )
+        {
+            Server server = this.settings.getServer( passphaseServerKey );
+
+            if ( server != null )
+            {
+                if ( server.getPassphrase() != null )
+                {
+                    try
+                    {
+                        this.passphrase = securityDispatcher.decrypt( server.getPassphrase() );
+                    }
+                    catch ( SecDispatcherException e )
+                    {
+                        throw new MojoFailureException( "Unable to decrypt gpg password", e );
+                    }
+                }
+            }
+        }
+    }
 }
