@@ -80,6 +80,15 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>@pom.version@</version>
+        <configuration>
+          <tagletArtifacts>
+            <tagletArtifact>
+              <groupId>org.apache.maven.plugin-tools</groupId>
+              <artifactId>maven-plugin-tools-javadoc</artifactId>
+              <version>3.3</version>
+            </tagletArtifact>
+          </tagletArtifacts>
+        </configuration>
         <reportSets>
           <reportSet>
             <id>aggregate</id>
