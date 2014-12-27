@@ -60,6 +60,7 @@ public abstract class AbstractGpgMojo
 
     /**
      * Server id to lookup the passphase under Maven settings.
+     * @since 1.6
      */
     @Parameter( property = "gpg.passphaseServerKey", defaultValue = "gpg.passphase" )
     private String passphaseServerKey;
