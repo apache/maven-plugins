@@ -94,7 +94,7 @@ public class EjbMojo
      * You can define the location of <code>ejb-jar.xml</code> file.
      */
     @Parameter( property = "ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
-    // The initalization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
+    // The initialization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
     private String ejbJar = "META-INF/ejb-jar.xml";
 
     /**
@@ -277,7 +277,7 @@ public class EjbMojo
         File deploymentDescriptor = new File( outputDirectory, ejbJar );
 
         /* test EJB version compliance */
-        ejbVersionCompliance( deploymentDescriptor );
+        checEJBVersionCompliance( deploymentDescriptor );
 
         try
         {
@@ -415,7 +415,7 @@ public class EjbMojo
         }
     }
 
-    private void ejbVersionCompliance( File deploymentDescriptor )
+    private void checEJBVersionCompliance( File deploymentDescriptor )
         throws MojoExecutionException
     {
         if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
