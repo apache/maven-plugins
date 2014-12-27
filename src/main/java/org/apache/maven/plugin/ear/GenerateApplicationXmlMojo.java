@@ -19,6 +19,12 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
@@ -28,13 +34,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.Interpolator;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
+import org.codehaus.plexus.interpolation.ValueSource;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Generates the EAR deployment descriptor file(s).
@@ -44,7 +49,7 @@ import java.util.List;
  */
 // CHECKSTYLE_OFF: LineLength
 @Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
-//CHECKSTYLE_ON: LineLength
+// CHECKSTYLE_ON: LineLength
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
@@ -304,6 +309,28 @@ public class GenerateApplicationXmlMojo
     }
 
     /**
+     * This help method was needed otherwise the interpolate method of interpolator will make an empty string of a
+     * {@code null} element which results in supplemental elements for env-entry.
+     * 
+     * @param interpolator The interpolator
+     * @param element The element
+     * @return The interpolated elements.
+     * @throws InterpolationException in case of an error.
+     */
+    private String interpolate( Interpolator interpolator, String element )
+        throws InterpolationException
+    {
+        if ( element == null )
+        {
+            return element;
+        }
+        else
+        {
+            return interpolator.interpolate( element );
+        }
+    }
+
+    /**
      * Builds the env-entries based on the configuration.
      * 
      * @return a list of EnvEntry object(s)
@@ -319,14 +346,23 @@ public class GenerateApplicationXmlMojo
         }
         try
         {
+            StringSearchInterpolator ssi = new StringSearchInterpolator();
+            ValueSource vs = new MapBasedValueSource( project.getProperties() );
+            ssi.addValueSource( vs );
+
             final PlexusConfiguration[] allEnvEntries = envEntries.getChildren( EnvEntry.ENV_ENTRY );
 
             for ( PlexusConfiguration envEntry : allEnvEntries )
             {
-                final String childDescription = envEntry.getChild( EnvEntry.DESCRIPTION ).getValue();
-                final String childEnvEntryName = envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue();
-                final String childEnvEntryType = envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue();
-                final String childEnvEntryValue = envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue();
+                // CHECKSTYLE_OFF: LineLength
+                final String childDescription = interpolate( ssi, envEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
+                final String childEnvEntryName =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue() );
+                final String childEnvEntryType =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue() );
+                final String childEnvEntryValue =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue() );
+                // CHECKSTYLE_ON: LineLength
 
                 try
                 {
@@ -343,6 +379,10 @@ public class GenerateApplicationXmlMojo
         catch ( PlexusConfigurationException e )
         {
             throw new EarPluginException( "Invalid env-entry configuration", e );
+        }
+        catch ( InterpolationException e )
+        {
+            throw new EarPluginException( "Interpolation exception:", e );
         }
 
     }

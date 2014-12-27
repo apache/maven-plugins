@@ -31,8 +31,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
@@ -159,6 +161,9 @@ public abstract class AbstractEarMojo
     @Parameter( defaultValue = "${project.build.directory}", required = true )
     private File tempFolder;
 
+    @Component
+    private MavenResourcesFiltering mavenResourcesFiltering;
+    
     private List<EarModule> earModules;
 
     private List<EarModule> allModules;
