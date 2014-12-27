@@ -62,8 +62,8 @@ public abstract class AbstractGpgMojo
      * Server id to lookup the passphase under Maven settings.
      * @since 1.6
      */
-    @Parameter( property = "gpg.passphaseServerKey", defaultValue = "gpg.passphase" )
-    private String passphaseServerKey;
+    @Parameter( property = "gpg.passphraseServerKey", defaultValue = "gpg.passphrase" )
+    private String passphraseServerKey;
 
     /**
      * The "name" of the key to sign with. Passed to gpg as <code>--local-user</code>.
@@ -213,7 +213,7 @@ public abstract class AbstractGpgMojo
     {
         if ( StringUtils.isEmpty( this.passphrase ) )
         {
-            Server server = this.settings.getServer( passphaseServerKey );
+            Server server = this.settings.getServer( passphraseServerKey );
 
             if ( server != null )
             {

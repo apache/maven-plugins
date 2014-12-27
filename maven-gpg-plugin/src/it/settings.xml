@@ -58,7 +58,7 @@ under the License.
 
   <servers>
     <server>
-      <id>gpg.passphase</id>
+      <id>gpg.passphrase</id>
       <passphrase>TEST</passphrase>
     </server>
   </servers>
