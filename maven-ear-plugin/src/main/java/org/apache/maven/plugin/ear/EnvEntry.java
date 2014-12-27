@@ -95,6 +95,7 @@ class EnvEntry
      */
     public void appendEnvEntry( XMLWriter writer )
     {
+        System.out.println( "appendEnvEntry()" );
         writer.startElement( ENV_ENTRY );
 
         // description

@@ -130,6 +130,10 @@ final class ApplicationXmlWriter
             {
                 envEntry.appendEnvEntry( writer );
             }
+            for ( EjbRef ejbEntry : context.getEjbEntries() )
+            {
+                ejbEntry.appendEjbRefEntry( writer );
+            }
         }
 
         writer.endElement();

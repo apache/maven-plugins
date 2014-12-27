@@ -873,4 +873,15 @@ public class EarMojoIT
     {
         doTestProject( "project-084", new String[] { "ejb-sample-one-1.0.jar" } );
     }
+    
+    /**
+     * Builds an EAR with custom ejbRef entries settings and JavaEE 6.
+     */
+    public void testProject085()
+        throws Exception
+    {
+        doTestProject( "project-085", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+    }
+
+
 }
