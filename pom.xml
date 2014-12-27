@@ -120,18 +120,6 @@ under the License.
       <scope>provided</scope>
     </dependency>
 
-    <!-- shared -->
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.3</version>
-    </dependency>
-
     <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -169,6 +157,18 @@ under the License.
           <groupId>xml-apis</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- shared -->
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>2.3</version>
     </dependency>
 
     <!-- plexus -->
@@ -224,12 +224,18 @@ under the License.
       <version>1.52</version>
       <scope>test</scope>
       <exclusions>
-          <!-- wiremock brings slf4j 1.7.6, but maven-plugin-testing-harness brings 1.5.6 -->
-          <exclusion>
-              <artifactId>slf4j-api</artifactId>
-              <groupId>org.slf4j</groupId>
-          </exclusion>
+        <!-- wiremock brings slf4j 1.7.6, but maven-plugin-testing-harness brings 1.5.6 -->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency><!-- wiremock requires 4.3.5 but Doxia brings 4.0.2 and httpcore 4.0.1 -->
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.3.5</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
