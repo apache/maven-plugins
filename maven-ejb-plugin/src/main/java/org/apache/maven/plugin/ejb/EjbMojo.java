@@ -277,7 +277,7 @@ public class EjbMojo
         File deploymentDescriptor = new File( outputDirectory, ejbJar );
 
         /* test EJB version compliance */
-        checEJBVersionCompliance( deploymentDescriptor );
+        checkEJBVersionCompliance( deploymentDescriptor );
 
         try
         {
@@ -328,6 +328,7 @@ public class EjbMojo
         }
 
         // Handle the classifier if necessary
+        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
         if ( classifier != null )
         {
             projectHelper.attachArtifact( project, "ejb", classifier, jarFile );
@@ -352,7 +353,8 @@ public class EjbMojo
             clientJarName += "-" + classifier;
         }
 
-        getLog().info( "Building EJB client " + clientJarName + "-client" );
+        String resultingClientJarNameWithClassifier = clientJarName + "-client";
+        getLog().info( "Building EJB client " + resultingClientJarNameWithClassifier );
 
         String[] excludes = DEFAULT_CLIENT_EXCLUDES;
         String[] includes = DEFAULT_INCLUDES;
@@ -367,7 +369,7 @@ public class EjbMojo
             excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
         }
 
-        File clientJarFile = new File( basedir, clientJarName + "-client.jar" );
+        File clientJarFile = new File( basedir, resultingClientJarNameWithClassifier + ".jar" );
 
         MavenArchiver clientArchiver = new MavenArchiver();
 
@@ -405,6 +407,7 @@ public class EjbMojo
         }
 
         // TODO: shouldn't need classifer
+        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
         if ( classifier != null )
         {
             projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
@@ -415,7 +418,7 @@ public class EjbMojo
         }
     }
 
-    private void checEJBVersionCompliance( File deploymentDescriptor )
+    private void checkEJBVersionCompliance( File deploymentDescriptor )
         throws MojoExecutionException
     {
         if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
