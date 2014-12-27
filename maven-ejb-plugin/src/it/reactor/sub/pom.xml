@@ -44,7 +44,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <!-- Note the relative path here -->
-          <outputDirectory>target/classes</outputDirectory>
+          <sourceDirectory>target/classes</sourceDirectory>
         </configuration>
       </plugin>
     </plugins>
