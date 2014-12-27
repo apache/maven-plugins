@@ -231,7 +231,7 @@ public class EjbMojo
      * @since 2.3
      */
     @Parameter
-    private List filters;
+    private List<String> filters;
 
     /**
      * @since 2.3
