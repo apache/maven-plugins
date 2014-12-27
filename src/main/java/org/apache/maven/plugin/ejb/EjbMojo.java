@@ -67,16 +67,17 @@ public class EjbMojo
         "**/*Session.class", "**/package.html" };
 
     /**
-     * The directory for the generated EJB.
+     * The directory location for the generated EJB.
      */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
-    private File basedir;
+    private File outputDirectory;
 
     /**
-     * Directory that resources are copied to during the build.
+     * Directory that contains the resources which are packaged into
+     * the created archive {@code target/classes}.
      */
-    @Parameter( property = "outputDirectory", defaultValue = "${project.build.outputDirectory}" )
-    private File outputDirectory;
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
+    private File sourceDirectory;
 
     /**
      * The name of the EJB file to generate.
@@ -254,11 +255,11 @@ public class EjbMojo
         throws MojoExecutionException
     {
 
-        if ( !outputDirectory.exists() )
+        if ( !sourceDirectory.exists() )
         {
-            getLog().warn( "The created EJB jar will be empty cause the " + outputDirectory.getPath()
+            getLog().warn( "The created EJB jar will be empty cause the " + sourceDirectory.getPath()
                                + " did not exist." );
-            outputDirectory.mkdirs();
+            sourceDirectory.mkdirs();
         }
 
         if ( getLog().isInfoEnabled() )
@@ -266,7 +267,7 @@ public class EjbMojo
             getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
         }
 
-        File jarFile = getEJBJarFile( basedir, jarName, classifier );
+        File jarFile = getEJBJarFile( outputDirectory, jarName, classifier );
 
         MavenArchiver archiver = new MavenArchiver();
 
@@ -274,7 +275,7 @@ public class EjbMojo
 
         archiver.setOutputFile( jarFile );
 
-        File deploymentDescriptor = new File( outputDirectory, ejbJar );
+        File deploymentDescriptor = new File( sourceDirectory, ejbJar );
 
         /* test EJB version compliance */
         checkEJBVersionCompliance( deploymentDescriptor );
@@ -290,7 +291,7 @@ public class EjbMojo
                 mainJarExcludes = (String[]) excludes.toArray( new String[excludes.size()] );
             }
 
-            archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
+            archiver.getArchiver().addDirectory( sourceDirectory, DEFAULT_INCLUDES, mainJarExcludes );
 
             if ( deploymentDescriptor.exists() )
             {
@@ -369,7 +370,7 @@ public class EjbMojo
             excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
         }
 
-        File clientJarFile = new File( basedir, resultingClientJarNameWithClassifier + ".jar" );
+        File clientJarFile = new File( outputDirectory, resultingClientJarNameWithClassifier + ".jar" );
 
         MavenArchiver clientArchiver = new MavenArchiver();
 
@@ -379,7 +380,7 @@ public class EjbMojo
 
         try
         {
-            clientArchiver.getArchiver().addDirectory( outputDirectory, includes, excludes );
+            clientArchiver.getArchiver().addDirectory( sourceDirectory, includes, excludes );
 
             // create archive
             clientArchiver.createArchive( session, project, archive );
@@ -444,7 +445,7 @@ public class EjbMojo
                                                       this.session, mavenResourcesExecution );
 
         // Create a temporary file that we can copy-and-filter
-        File unfilteredDeploymentDescriptor = new File( outputDirectory, ejbJar + ".unfiltered" );
+        File unfilteredDeploymentDescriptor = new File( sourceDirectory, ejbJar + ".unfiltered" );
         FileUtils.copyFile( deploymentDescriptor, unfilteredDeploymentDescriptor );
         mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true,
                                   filterWrappers, getEncoding( unfilteredDeploymentDescriptor ) );
