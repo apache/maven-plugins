@@ -147,6 +147,12 @@ public class GenerateApplicationXmlMojo
     private PlexusConfiguration envEntries;
 
     /**
+     * The {@code ejb-ref} entries.
+     */
+    @Parameter( alias = "ejb-refs" )
+    private PlexusConfiguration ejbRefs;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -236,8 +242,8 @@ public class GenerateApplicationXmlMojo
         final ApplicationXmlWriter writer = new ApplicationXmlWriter( javaEEVersion, encoding, generateModuleId );
         final ApplicationXmlWriterContext context =
             new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), buildEnvEntries(),
-                                             displayName, description, getActualLibraryDirectory(), applicationName,
-                                             initializeInOrder ).setApplicationId( applicationId );
+                                             buildEjbEntries(), displayName, description, getActualLibraryDirectory(),
+                                             applicationName, initializeInOrder ).setApplicationId( applicationId );
         writer.write( context );
     }
 
@@ -379,6 +385,61 @@ public class GenerateApplicationXmlMojo
         catch ( PlexusConfigurationException e )
         {
             throw new EarPluginException( "Invalid env-entry configuration", e );
+        }
+        catch ( InterpolationException e )
+        {
+            throw new EarPluginException( "Interpolation exception:", e );
+        }
+
+    }
+
+    /**
+     * Builds the ejb-ref based on the configuration.
+     * 
+     * @return a list of EjbRef object(s)
+     * @throws EarPluginException if the configuration is invalid
+     */
+    private List<EjbRef> buildEjbEntries()
+        throws EarPluginException
+    {
+        final List<EjbRef> result = new ArrayList<EjbRef>();
+        if ( ejbRefs == null )
+        {
+            return result;
+        }
+        try
+        {
+            StringSearchInterpolator ssi = new StringSearchInterpolator();
+            ValueSource vs = new MapBasedValueSource( project.getProperties() );
+            ssi.addValueSource( vs );
+
+            final PlexusConfiguration[] allEjbEntries = ejbRefs.getChildren( EjbRef.EJB_REF );
+
+            for ( PlexusConfiguration ejbEntry : allEjbEntries )
+            {
+                // CHECKSTYLE_OFF: LineLength
+                final String childDescription = interpolate( ssi, ejbEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
+                final String childEjbEntryName = interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_NAME ).getValue() );
+                final String childEjbEntryType = interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_TYPE ).getValue() );
+                final String childEjbLookupNameValue =
+                    interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_LOOKUP_NAME ).getValue() );
+                // CHECKSTYLE_ON: LineLength
+
+                try
+                {
+                    result.add( new EjbRef( childDescription, childEjbEntryName, childEjbEntryType,
+                                            childEjbLookupNameValue ) );
+                }
+                catch ( IllegalArgumentException e )
+                {
+                    throw new EarPluginException( "Invalid ejb-ref [" + ejbEntry + "]", e );
+                }
+            }
+            return result;
+        }
+        catch ( PlexusConfigurationException e )
+        {
+            throw new EarPluginException( "Invalid ejb-ref configuration", e );
         }
         catch ( InterpolationException e )
         {
