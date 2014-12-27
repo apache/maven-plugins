@@ -37,9 +37,6 @@ import java.util.Set;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-/**
- * @author kama
- */
 public class JarModule
     extends AbstractEarModule
 {
