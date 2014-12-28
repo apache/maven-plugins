@@ -1,10 +1,10 @@
 package org.apache.maven.plugin.ear;
 
-import junit.framework.TestCase;
-import org.apache.maven.artifact.Artifact;
-
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.ear.stub.ArtifactTestStub;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,8 +28,7 @@ import java.util.TreeSet;
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
-public abstract class AbstractEarTest
-    extends TestCase
+public abstract class AbstractEarTestBase
 {
 
     public static final String DEFAULT_GROUPID = "eartest";

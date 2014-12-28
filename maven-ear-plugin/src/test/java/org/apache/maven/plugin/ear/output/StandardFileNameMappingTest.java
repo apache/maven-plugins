@@ -1,5 +1,9 @@
 package org.apache.maven.plugin.ear.output;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,16 +27,18 @@ package org.apache.maven.plugin.ear.output;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
 public class StandardFileNameMappingTest
-    extends AbstractFileNameMappingTest
+    extends AbstractFileNameMappingTestBase
 {
 
     private final StandardFileNameMapping instance = new StandardFileNameMapping();
 
+    @Test
     public void testSimpleArtifact()
     {
         assertEquals( "foo-1.0-SNAPSHOT.jar", instance.mapFileName( createArtifact( "foo", "1.0-SNAPSHOT", "jar" ) ) );
     }
 
+    @Test
     public void testArtifactWithClassifier()
     {
         assertEquals( "foo-1.0-SNAPSHOT-sources.jar",

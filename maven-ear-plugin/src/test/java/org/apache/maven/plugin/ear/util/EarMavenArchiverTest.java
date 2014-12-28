@@ -1,11 +1,14 @@
 package org.apache.maven.plugin.ear.util;
 
-import org.apache.maven.plugin.ear.AbstractEarTest;
-import org.apache.maven.plugin.ear.EarModule;
-import org.apache.maven.plugin.ear.EjbModule;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.maven.plugin.ear.AbstractEarTestBase;
+import org.apache.maven.plugin.ear.EarModule;
+import org.apache.maven.plugin.ear.EjbModule;
+import org.junit.Test;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,9 +33,10 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
 public class EarMavenArchiverTest
-    extends AbstractEarTest
+    extends AbstractEarTestBase
 {
 
+    @Test
     public void testSimpleEjbModule()
     {
         final List<EarModule> modules = new ArrayList<EarModule>();
@@ -45,6 +49,7 @@ public class EarMavenArchiverTest
 
     }
 
+    @Test
     public void testSimpleJarModuleWithCustomBundleDir()
     {
         final List<EarModule> modules = new ArrayList<EarModule>();
@@ -57,6 +62,7 @@ public class EarMavenArchiverTest
 
     }
 
+    @Test
     public void testTwoModules()
     {
         final List<EarModule> modules = new ArrayList<EarModule>();

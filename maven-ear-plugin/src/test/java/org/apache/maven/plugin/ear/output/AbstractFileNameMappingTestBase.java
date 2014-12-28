@@ -20,14 +20,14 @@ package org.apache.maven.plugin.ear.output;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.ear.AbstractEarTest;
-import org.apache.maven.plugin.ear.ArtifactTestStub;
+import org.apache.maven.plugin.ear.AbstractEarTestBase;
+import org.apache.maven.plugin.ear.stub.ArtifactTestStub;
 
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  */
-public abstract class AbstractFileNameMappingTest
-    extends AbstractEarTest
+public abstract class AbstractFileNameMappingTestBase
+    extends AbstractEarTestBase
 {
 
     protected Artifact createArtifactWithGroupId( String groupId, String artifactId, String version, String type,

@@ -19,7 +19,9 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Ear module test case.
@@ -28,9 +30,9 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class EarModuleTest
-    extends TestCase
 {
 
+    @Test
     public void testCleanBuildDir()
     {
         assertEquals( "APP-INF/lib/", AbstractEarModule.cleanBundleDir( "APP-INF/lib" ) );

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.ear;
+package org.apache.maven.plugin.ear.stub;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
