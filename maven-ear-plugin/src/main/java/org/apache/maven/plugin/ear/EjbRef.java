@@ -48,6 +48,12 @@ public class EjbRef
 
     private String lookupName;
 
+    /**
+     * @param description The ejb-ref description.
+     * @param name The ejb-ref-name.
+     * @param type The ejb-ref-type
+     * @param lookupName The lookupname.
+     */
     public EjbRef( String description, String name, String type, String lookupName )
     {
         if ( StringUtils.isEmpty( name ) )
@@ -110,36 +116,57 @@ public class EjbRef
         writer.endElement();
     }
 
+    /**
+     * @return {@link #name}
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * @param name {@link #name}
+     */
     public void setName( String name )
     {
         this.name = name;
     }
 
+    /**
+     * @return {@link #type}
+     */
     public String getType()
     {
         return type;
     }
 
+    /**
+     * @param type {@link #type}
+     */
     public void setType( String type )
     {
         this.type = type;
     }
 
+    /**
+     * @return {@link #lookupName}
+     */
     public String getLookupName()
     {
         return lookupName;
     }
 
+    /**
+     * @param lookupName {@link #lookupName}
+     */
     public void setLookupName( String lookupName )
     {
         this.lookupName = lookupName;
     }
 
+    /**
+     * @return {@link #description}
+     */
     public String getDescription()
     {
         return description;
