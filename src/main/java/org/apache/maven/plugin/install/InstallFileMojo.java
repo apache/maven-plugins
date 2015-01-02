@@ -279,7 +279,7 @@ public class InstallFileMojo
             }
             finally
             {
-                if( jarFile != null )
+                if ( jarFile != null )
                 {
                     try
                     {
