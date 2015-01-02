@@ -21,8 +21,10 @@ package org.apache.maven.plugin.install;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -51,10 +53,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.project.validation.ModelValidationResult;
 import org.apache.maven.project.validation.ModelValidator;
-import org.apache.maven.shared.utils.io.IOUtil;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.WriterFactory;
+import org.apache.maven.shared.utils.io.IOUtil;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Installs a file in the local repository.
@@ -217,11 +219,12 @@ public class InstallFileMojo
         {
             boolean foundPom = false;
 
+            JarFile jarFile = null;
             try
             {
                 Pattern pomEntry = Pattern.compile( "META-INF/maven/.*/pom\\.xml" );
 
-                JarFile jarFile = new JarFile( file );
+                jarFile = new JarFile( file );
 
                 Enumeration<JarEntry> jarEntries = jarFile.entries();
 
@@ -231,28 +234,36 @@ public class InstallFileMojo
 
                     if ( pomEntry.matcher( entry.getName() ).matches() )
                     {
-                        // CHECKSTYLE_OFF: LineLength
-                        getLog().debug( "Using " + entry.getName() + " for groupId, artifactId, packaging and version" );
-                        // CHECKSTYLE_ON: LineLength
+                        getLog().debug( "Using " + entry.getName() + " as pomFile" );
 
                         foundPom = true;
 
                         InputStream pomInputStream = null;
+                        OutputStream pomOutputStream = null;
 
                         try
                         {
                             pomInputStream = jarFile.getInputStream( entry );
+                            
+                            String base = file.getName();
+                            if ( base.indexOf( '.' ) > 0 )
+                            {
+                                base = base.substring( 0, base.lastIndexOf( '.' ) );
+                            }
+                            pomFile = new File( file.getParentFile(), base + ".pom" );
+                            
+                            pomOutputStream = new FileOutputStream( pomFile );
+                            
+                            IOUtil.copy( pomInputStream, pomOutputStream );
 
-                            processModel( readModel( pomInputStream ) );
+                            processModel( readModel( pomFile ) );
 
                             break;
                         }
                         finally
                         {
-                            if ( pomInputStream != null )
-                            {
-                                pomInputStream.close();
-                            }
+                            IOUtil.close( pomInputStream );
+                            IOUtil.close( pomOutputStream );
                         }
                     }
                 }
@@ -266,7 +277,20 @@ public class InstallFileMojo
             {
                 // ignore, artifact not packaged by Maven
             }
-
+            finally
+            {
+                if( jarFile != null )
+                {
+                    try
+                    {
+                        jarFile.close();
+                    }
+                    catch ( IOException e )
+                    {
+                        // we did our best
+                    }
+                }
+            }
         }
 
         validateArtifactInformation();
@@ -379,40 +403,6 @@ public class InstallFileMojo
      * @throws MojoExecutionException If the POM could not be parsed.
      */
     private Model readModel( File pomFile )
-        throws MojoExecutionException
-    {
-        Reader reader = null;
-        try
-        {
-            reader = ReaderFactory.newXmlReader( pomFile );
-            return new MavenXpp3Reader().read( reader );
-        }
-        catch ( FileNotFoundException e )
-        {
-            throw new MojoExecutionException( "File not found " + pomFile, e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error reading POM " + pomFile, e );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new MojoExecutionException( "Error parsing POM " + pomFile, e );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-        }
-    }
-
-    /**
-     * Parses a POM.
-     * 
-     * @param pomFile The path of the POM file to parse, must not be <code>null</code>.
-     * @return The model from the POM file, never <code>null</code>.
-     * @throws MojoExecutionException If the POM could not be parsed.
-     */
-    private Model readModel( InputStream pomFile )
         throws MojoExecutionException
     {
         Reader reader = null;
