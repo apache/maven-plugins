@@ -22,4 +22,4 @@ assert new File( basedir, "../../local-repo/org/apache/maven/plugins/install/its
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert buildLog.text.contains( "[DEBUG] Using META-INF/maven/org.apache.maven.plugins.install.its/minstall52/pom.xml for groupId, artifactId, packaging and version" )
+assert buildLog.text.contains( "[DEBUG] Using META-INF/maven/org.apache.maven.plugins.install.its/minstall52/pom.xml as pomFile" )
