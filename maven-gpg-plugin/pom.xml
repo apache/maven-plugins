@@ -134,7 +134,7 @@ under the License.
                   <pomInclude>*/pom.xml</pomInclude>
                   <pomInclude>sign-and-deploy*</pomInclude>
                 </pomIncludes>
-                <settingsFile>src/main/it/settings.xml</settingsFile>
+                <settingsFile>src/it/settings.xml</settingsFile>
                 <goals>
                   <goal>clean</goal>
                   <goal>install</goal>
