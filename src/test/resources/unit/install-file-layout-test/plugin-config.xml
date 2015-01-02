@@ -27,7 +27,7 @@ under the License.
           <version>1.0-SNAPSHOT</version>
           <packaging>jar</packaging>
           <repositoryLayout>legacy</repositoryLayout>
-          <file>${basedir}/src/test/resources/unit/install-file-basic-test/target/maven-install-test-1.0-SNAPSHOT.jar
+          <file>${basedir}/src/test/resources/unit/install-file-layout-test/target/maven-install-test-1.0-SNAPSHOT.jar
           </file>
           <localRepository>${localRepository}</localRepository>
         </configuration>
