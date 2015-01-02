@@ -233,7 +233,7 @@ public class DependencyManagementRenderer
 
                 List<ArtifactVersion> versions =
                     artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
-    
+
                 // only use versions from range
                 for ( Iterator<ArtifactVersion> iter = versions.iterator(); iter.hasNext(); )
                 {
@@ -246,8 +246,26 @@ public class DependencyManagementRenderer
                 // select latest, assuming pom information will be the most accurate
                 if ( versions.size() > 0 )
                 {
-                    Collections.sort( versions );
-                    
+                    try
+                    {
+                        Collections.sort( versions );
+                    }
+                    catch ( IllegalArgumentException e )
+                    {
+                        if ( e.getMessage().equals( "Comparison method violates its general contract!" ) )
+                        {
+                            // Handle MPIR-247/MNG-5568
+                            throw new IllegalStateException( String.format( "Versions %s of dependency '%s' "
+                                + "could not be sorted due to MPIR-247/MNG-5568, "
+                                + "please upgrade to Maven 3.2.5 to resolve this issue",
+                                versions, artifact.getId() ) );
+                        }
+                        else
+                        {
+                            throw e;
+                        }
+                    }
+
                     artifact.setVersion( versions.get( versions.size() - 1 ).toString() );
                     log.debug( "DependencyManagement resolved: " + artifact.getId() );
                 }
