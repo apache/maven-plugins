@@ -220,7 +220,7 @@ under the License.
       <scope>runtime</scope>
     </dependency>
 
-    <!-- scm -->
+    <!-- SCM -->
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
@@ -299,7 +299,7 @@ under the License.
       <version>${doxiaVersion}</version>
     </dependency>
 
-    <!-- Doxia-sitetools -->
+    <!-- Doxia Sitetools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
@@ -445,7 +445,7 @@ under the License.
           </excludes>
         </configuration>
       </plugin>
-      <!-- To use jetty ssl in tests -->
+      <!-- To use Jetty SSL in tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jarsigner-plugin</artifactId>
@@ -521,7 +521,7 @@ under the License.
             <artifactId>maven-changes-plugin</artifactId>
             <version>2.11</version>
             <configuration>
-              <!-- For JIRA-report -->
+              <!-- For JIRA report -->
               <columnNames>Type,Key,Summary,Assignee,Status,Resolution,Fix Version</columnNames>
               <maxEntries>200</maxEntries>
               <onlyCurrentVersion>true</onlyCurrentVersion>
