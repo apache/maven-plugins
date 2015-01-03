@@ -31,7 +31,7 @@
 Run Selective Reports
 
  To run the reports selectively, you can configure it to include only the reports that you prefer.
- Use "mvn site:site" to generate the selected reports.
+ Use <<<mvn site>>> to generate the selected reports.
 
 +-----------------+
 <project>

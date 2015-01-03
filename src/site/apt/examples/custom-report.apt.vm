@@ -28,9 +28,7 @@
 
 Customize the Text Reports
 
-  Actually, all reports have a static renderer, only texts could be changed.
-
-  <<Note:>> This feature is only available in version 2.3+ of this plugin.
+  Currently, all reports have a static renderer, only texts could be changed.
 
 +-----------------+
 <project>
@@ -55,7 +53,7 @@ Customize the Text Reports
 
   To change texts in the reports, you should import the default Project Info report bundles from
   {{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/}}
-  and edit them. For example, if you want to modify the Mailing List introduction, you should edit the report.mailing-lists.intro property.
+  and edit them. For example, if you want to modify the Mailing List introduction, you should edit the <<<report.mailing-lists.intro>>> property.
 
   Extract of the default bundle {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report.properties}project-info-report.properties}}:
 
@@ -63,7 +61,7 @@ Customize the Text Reports
 report.mailing-lists.intro = These are the mailing lists that have been established for this project. For each list, there is a subscribe, unsubscribe, and an archive link.
 +-----------------+
 
-  Extract of a custom bundle $\{project.basedir\}/src/site/custom/project-info-report.properties for the Apache Commons project:
+  Extract of a custom bundle <<<$\{project.basedir\}/src/site/custom/project-info-report.properties>>> for the Apache Commons project:
 
 +-----------------+
 
@@ -98,7 +96,7 @@ report.mailing-lists.intro = These are the mailing lists that have been establis
 
   <<Notes:>>
 
-  [[1]] You could also use Maven properties (i.e. $\{project.artifactId\}) in the messages.
+  [[1]] You could also use Maven properties (i.e. <<<$\{project.artifactId\}>>>) in the messages.
 
   [[2]] If a bundle property is not defined in your custom bundle, the default will be displayed.
 
