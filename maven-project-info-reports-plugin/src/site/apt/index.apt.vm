@@ -31,8 +31,6 @@ ${project.name}
 
  The Maven Project Info Reports plugin is used to generate reports information about the project.
 
- <Note:> This plugin requires Maven Site Plugin 2.1 or higher to work properly.
-
 * Goals Overview
 
  The Project Info Reports Plugin has the following goals:
@@ -46,11 +44,11 @@ ${project.name}
    * {{{./dependency-convergence-mojo.html}project-info-reports:dependency-convergence}} is used to generate the
    Project Dependency Convergence report for reactor builds.
 
-   * {{{./dependency-info-mojo.html}project-info-reports:dependency-info}} (<<new in 2.5>>) is used to generate code snippets to
+   * {{{./dependency-info-mojo.html}project-info-reports:dependency-info}} is used to generate code snippets to
    be added to build tools.
 
    * {{{./dependency-management-mojo.html}project-info-reports:dependency-management}} is used to generate the
-   Project DependencyManagement report.
+   Project Dependency Management report.
 
    * {{{./distribution-management-mojo.html}project-info-reports:distribution-management}} is used to generate
    the Project Distribution Management report.
@@ -71,7 +69,7 @@ ${project.name}
    * {{{./modules-mojo.html}project-info-reports:modules}} is used to generate the Project Modules report.
 
    * {{{./plugin-management-mojo.html}project-info-reports:plugin-management}} is used to generate the
-   Project PluginManagement report.
+   Project Plugin Management report.
 
    * {{{./plugins-mojo.html}project-info-reports:plugins}} is used to generate the Project Plugins report.
 
