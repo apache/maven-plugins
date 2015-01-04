@@ -32,12 +32,6 @@ Usage
  no need to configure anything in your <<<pom.xml>>> to generate the project
  information reports.
 
- Simply running
-
-+------------+
-mvn site
-+------------+
-
- would generate the project information documentation. For more information on
- how to customize the Project Information Reports Plugin, check the examples on the
- {{{./index.html}Introduction}} page.
+ Simply running <<<mvn site>> would generate the project information documentation.
+ For more information on how to customize the Project Information Reports Plugin,
+ check the examples on the {{{./index.html}Introduction}} page.
