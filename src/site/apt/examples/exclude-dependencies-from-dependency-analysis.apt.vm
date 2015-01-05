@@ -1,0 +1,93 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Exclude dependencies from dependency analysis
+  ------
+  Henning Schmiedehausen
+  ------
+  Jan 2015
+  ------
+
+Exclude dependencies from dependency analysis
+
+  A project's dependencies can be analyzed as part of the build process by binding the <<<dependency:analyze-only>>>
+  goal to the lifecycle.  By default, the analysis will be performed during the <<<verify>>> lifecycle phase.  
+
+  In rare cases it is possible to have dependencies that are
+  legitimate on the classpath but cause either "Declared but unused"
+  or "Undeclared but used" warnings. The most common case is with jars
+  that contain annotations and the byte code analysis is unable to
+  determine whether a jar is actually required or not.
+
+  The plugin can then be configured to ignore these dependencies in
+  either "declared but unused" or "undeclared but used" case or in
+  both simultaneously.  See the following POM configuration for an
+  example:
+
++---+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>analyze</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <configuration>
+              <failOnWarning>true</failOnWarning>
+
+              <!-- ignore jsr305 for both "used but undeclared" and "declared but unused" -->
+              <ignoredDependencies>
+                <ignoredDependency>com.google.code.findbugs:jsr305</ignoredDependency>
+              </ignoredDependencies>
+
+              <!-- ignore annotations for "used but undeclared" warnings -->
+              <ignoredUsedUndeclaredDependencies>
+                <ignoredUsedUndeclaredDependency>com.google.code.findbugs:annotations</ignoredUsedUndeclaredDependency>
+              </ignoredUsedUndeclaredDependencies>
+
+              <!-- ignore annotations for "unused but declared" warnings -->
+              <ignoredUnusedDeclaredDependencies>
+                <ignoredUnusedDeclaredDependency>com.google.code.findbugs:annotations</ignoredUnusedDeclaredDependency>
+              </ignoredUnusedDeclaredDependencies>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++---+
+
+  Note that the <<<dependency:analyze-only>>> goal is used in preference to <<<dependency:analyze>>> since it doesn't
+  force a further compilation of the project, but uses the compiled classes produced from the earlier
+  <<<test-compile>>> phase in the lifecycle.
+
+  The project's dependencies will then be automatically analyzed during the <<<verify>>> lifecycle phase, which can be
+  executed explicitly as follows:
+	
++---+
+mvn verify
++---+
