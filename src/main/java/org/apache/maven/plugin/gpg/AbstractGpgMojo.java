@@ -181,7 +181,7 @@ public abstract class AbstractGpgMojo
         signer.setLockMode( lockMode );
         signer.setArgs( gpgArguments );
 
-        loadGpgPassphase();
+        loadGpgPassphrase();
 
         signer.setPassPhrase( passphrase );
         if ( null == passphrase && !useAgent )
@@ -208,7 +208,7 @@ public abstract class AbstractGpgMojo
      *
      * @throws MojoFailureException
      */
-    private void loadGpgPassphase()
+    private void loadGpgPassphrase()
         throws MojoFailureException
     {
         if ( StringUtils.isEmpty( this.passphrase ) )
@@ -225,7 +225,7 @@ public abstract class AbstractGpgMojo
                     }
                     catch ( SecDispatcherException e )
                     {
-                        throw new MojoFailureException( "Unable to decrypt gpg password", e );
+                        throw new MojoFailureException( "Unable to decrypt gpg passphrase", e );
                     }
                 }
             }
