@@ -79,7 +79,8 @@ public class PmdReport
 {
     /**
      * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
-     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code> and <code>1.7</code>.
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>
+     * and <code>1.7</code>.
      */
     @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.target}" )
     private String targetJdk;
@@ -116,8 +117,7 @@ public class PmdReport
 
     /**
      * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
-     * list of some included. Since version 2.5, the ruleset "rulesets/maven.xml" is also available. Defaults to the
-     * java-basic, java-imports and java-unusedcode rulesets.
+     * list of some included. Defaults to the java-basic, java-imports and java-unusedcode rulesets.
      */
     @Parameter
     private String[] rulesets = new String[]{ "java-basic", "java-unusedcode", "java-imports" };

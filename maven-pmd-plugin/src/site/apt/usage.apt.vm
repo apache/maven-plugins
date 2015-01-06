@@ -81,7 +81,7 @@ Configuration
   You can configure the minimum code size which trips the CPD.  The default of <<<100>>> tokens corresponds
   to approximately 5-10 lines of code.
 
-  Since PMD parses the Java source, it needs to know which Java version to use.  The default is <<<1.4>>>.
+  Since PMD parses the Java source, it needs to know which Java version to use. CPD's default is <<<1.8>>>.
   The following is a possible configuration:
 
 +-----+
