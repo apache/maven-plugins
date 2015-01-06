@@ -88,7 +88,6 @@ under the License.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <pmdVersion>5.2.3</pmdVersion>
     <sitePluginVersion>3.4</sitePluginVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
   </properties>
 
@@ -243,19 +242,6 @@ under the License.
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginVersion}</version>
-          <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <!-- Override the Java version inherited from maven-parent -->
       <plugin>
@@ -295,17 +281,6 @@ under the License.
             <goals>
               <goal>java</goal>
               <goal>xpp3-reader</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
             </goals>
           </execution>
         </executions>
