@@ -53,7 +53,7 @@ public abstract class AbstractGpgMojo
 
     /**
      * The passphrase to use when signing. If not given, look up the value under Maven
-     * settings using server id at 'passphaseServerKey' configuration.
+     * settings using server id at 'passphraseServerKey' configuration.
      **/
     @Parameter( property = "gpg.passphrase" )
     private String passphrase;
