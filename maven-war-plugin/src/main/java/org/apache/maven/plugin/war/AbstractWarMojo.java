@@ -35,6 +35,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.war.overlay.OverlayManager;
+import org.apache.maven.plugin.war.packaging.CopyUserManifestTask;
 import org.apache.maven.plugin.war.packaging.DependenciesAnalysisPackagingTask;
 import org.apache.maven.plugin.war.packaging.OverlayPackagingTask;
 import org.apache.maven.plugin.war.packaging.SaveWebappStructurePostPackagingTask;
@@ -457,7 +458,8 @@ public abstract class AbstractWarMojo
         getLog().info( "Assembling webapp [" + mavenProject.getArtifactId() + "] in [" + webapplicationDirectory + "]" );
 
         final OverlayManager overlayManager =
-            new OverlayManager( overlays, mavenProject, dependentWarIncludes, dependentWarExcludes, currentProjectOverlay );
+            new OverlayManager( overlays, mavenProject, dependentWarIncludes, dependentWarExcludes,
+                                currentProjectOverlay );
         final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
         // CHECKSTYLE_ON: LineLength
         List<FileUtils.FilterWrapper> defaultFilterWrappers;
@@ -517,9 +519,13 @@ public abstract class AbstractWarMojo
         throws MojoExecutionException
     {
         final List<WarPackagingTask> packagingTasks = new ArrayList<WarPackagingTask>();
+
+        packagingTasks.add( new CopyUserManifestTask() );
+
         if ( useCache )
         {
             packagingTasks.add( new DependenciesAnalysisPackagingTask() );
+
         }
 
         final List<Overlay> resolvedOverlays = overlayManager.getOverlays();
