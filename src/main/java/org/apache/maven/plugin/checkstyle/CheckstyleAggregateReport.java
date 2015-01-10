@@ -34,7 +34,6 @@ import java.util.List;
  * build.
  *
  * @version $Id$
- * @since 2.8
  */
 @Mojo( name = "checkstyle-aggregate", aggregator = true, requiresDependencyResolution = ResolutionScope.COMPILE,
        threadSafe = true )
