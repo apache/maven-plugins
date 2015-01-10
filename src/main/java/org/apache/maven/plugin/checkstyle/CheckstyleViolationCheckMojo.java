@@ -609,6 +609,7 @@ public class CheckstyleViolationCheckMojo
         RuleUtil.Matcher[] ignores =
             ( violationIgnore == null ) ? null : RuleUtil.parseMatchers( violationIgnore.split( "," ) );
 
+        int basedir = new File( "" ).getAbsolutePath().length() + 1;
         String file = "";
         for ( int eventType = xpp.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xpp.next() )
         {
@@ -619,7 +620,8 @@ public class CheckstyleViolationCheckMojo
             else if ( "file".equals( xpp.getName() ) )
             {
                 file = xpp.getAttributeValue( "", "name" );
-                file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
+                //file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
+                file = file.substring( basedir );
             }
             else if ( "error".equals( xpp.getName() ) )
             {
