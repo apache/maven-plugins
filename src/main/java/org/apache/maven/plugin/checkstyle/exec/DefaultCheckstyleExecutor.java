@@ -80,8 +80,6 @@ public class DefaultCheckstyleExecutor
     @Requirement( hint = "license" )
     private ResourceManager licenseLocator;
 
-    private static final File[] EMPTY_FILE_ARRAY = new File[0];
-
     public CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException
     {
@@ -272,19 +270,29 @@ public class DefaultCheckstyleExecutor
 
         if ( request.getStringOutputStream() != null )
         {
-            request.getLog().info( request.getStringOutputStream().toString() );
+            String message = request.getStringOutputStream().toString().trim();
+
+            if ( message.length() > 0 )
+            {
+                request.getLog().info( message );
+            }
         }
 
-        if ( request.isFailsOnError() && nbErrors > 0 )
+        if ( nbErrors > 0 )
         {
-            // TODO: should be a failure, not an error. Report is not meant to
-            // throw an exception here (so site would
-            // work regardless of config), but should record this information
-            throw new CheckstyleExecutorException( "There are " + nbErrors + " checkstyle errors." );
-        }
-        else if ( nbErrors > 0 )
-        {
-            request.getLog().info( "There are " + nbErrors + " checkstyle errors." );
+            String message = "There are " + nbErrors + " checkstyle errors.";
+
+            if ( request.isFailsOnError() )
+            {
+                // TODO: should be a failure, not an error. Report is not meant to
+                // throw an exception here (so site would
+                // work regardless of config), but should record this information
+                throw new CheckstyleExecutorException( message );
+            }
+            else
+            {
+                request.getLog().info( message );
+            }
         }
 
         return checkerListener.getResults();

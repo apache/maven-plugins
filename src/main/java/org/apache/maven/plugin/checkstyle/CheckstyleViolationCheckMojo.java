@@ -605,60 +605,79 @@ public class CheckstyleViolationCheckMojo
         throws XmlPullParserException, IOException
     {
         int count = 0;
+        int ignoreCount = 0;
         RuleUtil.Matcher[] ignores =
             ( violationIgnore == null ) ? null : RuleUtil.parseMatchers( violationIgnore.split( "," ) );
 
-        int eventType = xpp.getEventType();
         String file = "";
-        while ( eventType != XmlPullParser.END_DOCUMENT )
+        for ( int eventType = xpp.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xpp.next() )
         {
-            if ( eventType == XmlPullParser.START_TAG )
+            if ( eventType != XmlPullParser.START_TAG )
             {
-                if ( "file".equals( xpp.getName() ) )
+                continue;
+            }
+            else if ( "file".equals( xpp.getName() ) )
+            {
+                file = xpp.getAttributeValue( "", "name" );
+                file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
+            }
+            else if ( "error".equals( xpp.getName() ) )
+            {
+                String severity = xpp.getAttributeValue( "", "severity" );
+
+                if ( !isViolation( severity ) )
                 {
-                    file = xpp.getAttributeValue( "", "name" );
-                    file = file.substring( file.lastIndexOf( File.separatorChar ) + 1 );
+                    continue;
                 }
-                else if ( "error".equals( xpp.getName() ) )
+
+                String source = xpp.getAttributeValue( "", "source" );
+
+                if ( ignore( ignores, source ) )
                 {
-                    String severity = xpp.getAttributeValue( "", "severity" );
-                    String source = xpp.getAttributeValue( "", "source" );
+                    ignoreCount++;
+                }
+                else
+                {
+                    count++;
 
-                    if ( isViolation( severity ) && !ignore( ignores, source ) )
+                    if ( logViolationsToConsole )
                     {
-                        count++;
+                        String line = xpp.getAttributeValue( "", "line" );
+                        String column = xpp.getAttributeValue( "", "column" );
+                        String message = xpp.getAttributeValue( "", "message" );
+                        String rule = RuleUtil.getName( source );
+                        String category = RuleUtil.getCategory( source );
 
-                        if ( logViolationsToConsole )
-                        {
-                            String line = xpp.getAttributeValue( "", "line" );
-                            String column = xpp.getAttributeValue( "", "column" );
-                            String message = xpp.getAttributeValue( "", "message" );
-                            String rule = RuleUtil.getName( source );
-                            String category = RuleUtil.getCategory( source );
-
-                            String logMessage =
-                                file + '[' + line + ( ( column == null ) ? "" : ( ':' + column ) ) + "] (" + category
-                                    + ") " + rule + ": " + message;
-                            if ( "info".equals( severity ) )
-                            {
-                                getLog().info( logMessage );
-                            }
-                            else if ( "warning".equals( severity ) )
-                            {
-                                getLog().warn( logMessage );
-                            }
-                            else
-                            {
-                                getLog().error( logMessage );
-                            }
-                        }
+                        log( severity, file + '[' + line + ( ( column == null ) ? "" : ( ':' + column ) ) + "] ("
+                            + category + ") " + rule + ": " + message );
                     }
                 }
             }
-            eventType = xpp.next();
+        }
+
+        if ( ignoreCount > 0 )
+        {
+            getLog().info( "Ignored " + ignoreCount + " error" + ( ( ignoreCount > 1 ) ? "s" : "" ) + ", " + count
+                               + " violation" + ( ( count > 1 ) ? "s" : "" ) + " remaining." );
         }
 
         return count;
+    }
+
+    private void log( String severity, String message )
+    {
+        if ( "info".equals( severity ) )
+        {
+            getLog().info( message );
+        }
+        else if ( "warning".equals( severity ) )
+        {
+            getLog().warn( message );
+        }
+        else
+        {
+            getLog().error( message );
+        }
     }
 
     /**
