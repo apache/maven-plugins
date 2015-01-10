@@ -67,7 +67,6 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
  * Base abstract class for Checkstyle reports.
  *
  * @version $Id$
- * @since 2.8
  */
 public abstract class AbstractCheckstyleReport
     extends AbstractMavenReport
@@ -105,7 +104,6 @@ public abstract class AbstractCheckstyleReport
      * <p>
      * There are 3 predefined rulesets included in Maven Checkstyle Plugin:
      * </p>
-     * <p/>
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
