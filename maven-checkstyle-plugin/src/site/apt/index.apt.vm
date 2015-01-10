@@ -31,10 +31,10 @@ ${project.name}
 
   The Checkstyle Plugin generates a report regarding the code style used by the developers. For more information about Checkstyle,
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}.
-  This version of the plugin uses Checkstyle ${checkstyleVersion}.
+  This version of the plugin uses Checkstyle ${checkstyleVersion} by default.
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
-  <<<sun_checks.xml>>>, <<<turbine_checks.xml>>>, <<<avalon_checks.xml>>> and <<<maven_checks.xml>>>. You can also use a custom ruleset by
+  <<<sun_checks.xml>>>, <<<turbine_checks.xml>>> and <<<maven_checks.xml>>>. You can also use a custom ruleset by
   specifying it in the plugin configuration.
 
 * Goals Overview

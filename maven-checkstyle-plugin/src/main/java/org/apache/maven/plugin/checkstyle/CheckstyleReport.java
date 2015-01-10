@@ -60,7 +60,6 @@ public class CheckstyleReport
 
         fmt2Cfg.put( "sun", "config/sun_checks.xml" );
         fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
-        fmt2Cfg.put( "avalon", "config/avalon_checks.xml" );
         fmt2Cfg.put( "maven", "config/maven_checks.xml" );
 
         FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
