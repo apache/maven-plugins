@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-gpg-plugin</artifactId>
-  <version>1.7-SNAPSHOT</version>
+  <version>1.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven GPG Plugin</name>
