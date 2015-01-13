@@ -59,7 +59,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <wagonVersion>2.4</wagonVersion>
+    <wagonVersion>2.8</wagonVersion>
     <mavenVersion>2.2.1</mavenVersion>
   </properties>
 
