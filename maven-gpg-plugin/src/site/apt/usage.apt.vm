@@ -99,7 +99,7 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
 
 * Configure passphase under settings.xml with a  keyname
 
-  To allow discovery of keyname and passphrase at build time, configure this plugin to map both <keyname> and <passphraseServerKey> to
+  To allow discovery of keyname and passphrase at build time, configure this plugin to map both <keyname> and <passphraseServerId> to
   a fixed property
 
 
@@ -121,7 +121,7 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
             </goals>
             <configuration>
               <keyname>${gpg.keyname}</keyname>
-              <passphraseServerKey>${gpg.keyname}</passphraseServerKey>
+              <passphraseServerId>${gpg.keyname}</passphraseServerId>
             </configuration>
           </execution>
         </executions>
