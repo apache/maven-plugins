@@ -47,7 +47,7 @@ under the License.
         <artifactId>maven-gpg-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <!-- load passphase from settings.xml -->
+          <!-- load passphrase from settings.xml -->
         </configuration>
         <executions>
           <execution>

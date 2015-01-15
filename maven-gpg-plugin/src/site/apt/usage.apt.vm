@@ -79,9 +79,9 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
   unfortunately not automatically propagated to the forked Maven session (see also {{{http://jira.codehaus.org/browse/MGPG-9}MGPG-9}}).
 
 
-* Configure passphase under settings.xml
+* Configure passphrase in settings.xml
 
-  Instead of specifying the passphrase at command line, you can place it under your local settings.xml
+  Instead of specifying the passphrase on the command line, you can place it in your local <<<settings.xml>>>
   either in clear or {{{http://maven.apache.org/guides/mini/guide-encryption.html}encrypted}} text.
 
 +----------+
@@ -97,10 +97,10 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
 </settings>
 +----------+
 
-* Configure passphase under settings.xml with a  keyname
+* Configure passphrase in settings.xml with a keyname
 
   To allow discovery of keyname and passphrase at build time, configure this plugin to map both <keyname> and <passphraseServerId> to
-  a fixed property
+  a fixed property.
 
 
 +----------+
@@ -133,7 +133,7 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
 +----------+
 
 
-  and use local settings.xml to discover the passphrase via the key name
+  and use local <<<settings.xml>>> to discover the passphrase via the keyname
 
 +----------+
 <settings>
@@ -157,6 +157,5 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
       </properties>
     </profile>
   <profiles>
-
 </settings>
 +----------+

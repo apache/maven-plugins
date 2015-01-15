@@ -59,7 +59,7 @@ public abstract class AbstractGpgMojo
     private String passphrase;
 
     /**
-     * Server id to lookup the passphase under Maven settings.
+     * Server id to lookup the passphrase under Maven settings.
      * @since 1.6
      */
     @Parameter( property = "gpg.passphraseServerId", defaultValue = "gpg.passphrase" )
@@ -204,7 +204,7 @@ public abstract class AbstractGpgMojo
     }
 
     /**
-     * Load and decrypt gpg passphase from maven settings if not given from plugin configuration
+     * Load and decrypt gpg passphrase from Maven settings if not given from plugin configuration
      *
      * @throws MojoFailureException
      */
