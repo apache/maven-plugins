@@ -139,14 +139,6 @@ under the License.
               <exclude>src/test/target-repository/**/*</exclude>
             </excludes>
           </configuration>
-          <executions>
-            <execution>
-              <id>check-rat</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
