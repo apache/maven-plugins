@@ -59,11 +59,11 @@ public abstract class AbstractGpgMojo
     private String passphrase;
 
     /**
-     * Server id to lookup the passphase under Maven settings.
+     * Server id to lookup the passphrase under Maven settings.
      * @since 1.6
      */
-    @Parameter( property = "gpg.passphraseServerKey", defaultValue = "gpg.passphrase" )
-    private String passphraseServerKey;
+    @Parameter( property = "gpg.passphraseServerId", defaultValue = "gpg.passphrase" )
+    private String passphraseServerId;
 
     /**
      * The "name" of the key to sign with. Passed to gpg as <code>--local-user</code>.
@@ -204,7 +204,7 @@ public abstract class AbstractGpgMojo
     }
 
     /**
-     * Load and decrypt gpg passphase from maven settings if not given from plugin configuration
+     * Load and decrypt gpg passphrase from Maven settings if not given from plugin configuration
      *
      * @throws MojoFailureException
      */
@@ -213,7 +213,7 @@ public abstract class AbstractGpgMojo
     {
         if ( StringUtils.isEmpty( this.passphrase ) )
         {
-            Server server = this.settings.getServer( passphraseServerKey );
+            Server server = this.settings.getServer( passphraseServerId );
 
             if ( server != null )
             {
