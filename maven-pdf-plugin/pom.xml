@@ -248,11 +248,6 @@ under the License.
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>1.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pdf-plugin</artifactId>
           <version>1.1</version>
         </plugin>
@@ -279,40 +274,6 @@ under the License.
         </executions>
       </plugin>
 <!-- END SNIPPET: configuration -->
-      <!-- Backward compatibility with Maven 2.0.x, see MNG-3402 -->
-      <plugin>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <finalName>${project.build.finalName}</finalName>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
-              </transformers>
-              <artifactSet>
-                <includes>
-                  <include>org.apache.maven.doxia:doxia-sink-api</include>
-                  <include>org.apache.maven.doxia:doxia-logging-api</include>
-                </includes>
-              </artifactSet>
-              <filters>
-                <filter>
-                  <artifact>org.apache.maven.doxia:doxia-sink-api</artifact>
-                  <excludes>
-                    <exclude>org/codehaus/doxia/sink/Sink.class</exclude>
-                  </excludes>
-                </filter>
-              </filters>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
