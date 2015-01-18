@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
@@ -62,8 +61,6 @@ public class CheckstyleExecutorRequest
     private String resourceExcludes;
 
     private MavenProject project;
-
-    private Log log;
 
     private String suppressionsLocation;
 
@@ -192,17 +189,6 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setProject( MavenProject project )
     {
         this.project = project;
-        return this;
-    }
-
-    public Log getLog()
-    {
-        return log;
-    }
-
-    public CheckstyleExecutorRequest setLog( Log log )
-    {
-        this.log = log;
         return this;
     }
 

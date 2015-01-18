@@ -70,7 +70,7 @@ public class CheckstyleAggregateReport
             .setResourceIncludes( resourceIncludes )
             .setResourceExcludes( resourceExcludes )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-            .setLog( getLog() ).setProject( project ).setSourceDirectories( getSourceDirectories() )
+            .setProject( project ).setSourceDirectories( getSourceDirectories() )
             .setResources( resources ).setTestResources( testResources )
             .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
             .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )

@@ -187,9 +187,8 @@ public class DefaultCheckstyleExecutor
                     if ( outputDirectoryFile.exists() )
                     {
                         URL outputDirectoryUrl = outputDirectoryFile.toURL();
-                        request.getLog().debug(
-                                                "Adding the outputDirectory " + outputDirectoryUrl.toString()
-                                                    + " to the Checkstyle class path" );
+                        getLogger().debug( "Adding the outputDirectory " + outputDirectoryUrl.toString()
+                                               + " to the Checkstyle class path" );
                         urls.add( outputDirectoryUrl );
                     }
                 }
@@ -274,7 +273,7 @@ public class DefaultCheckstyleExecutor
 
             if ( message.length() > 0 )
             {
-                request.getLog().info( message );
+                getLogger().info( message );
             }
         }
 
@@ -291,7 +290,7 @@ public class DefaultCheckstyleExecutor
             }
             else
             {
-                request.getLog().info( message );
+                getLogger().info( message );
             }
         }
 
@@ -361,9 +360,8 @@ public class DefaultCheckstyleExecutor
             
             if ( StringUtils.isEmpty( request.getEncoding() ) )
             {
-                request.getLog().warn(
-                                       "File encoding has not been set, using platform encoding " + effectiveEncoding
-                                           + ", i.e. build is platform dependent!" );
+                getLogger().warn( "File encoding has not been set, using platform encoding " + effectiveEncoding
+                                      + ", i.e. build is platform dependent!" );
             }
 
             if ( "Checker".equals( config.getName() )
@@ -387,7 +385,7 @@ public class DefaultCheckstyleExecutor
                 }
                 else
                 {
-                    request.getLog().warn( "Failed to configure file encoding on module " + config );
+                    getLogger().warn( "Failed to configure file encoding on module " + config );
                 }
             }
             Configuration[] modules = config.getChildren();
@@ -416,7 +414,7 @@ public class DefaultCheckstyleExecutor
                     }
                     else
                     {
-                        request.getLog().warn( "Failed to configure cache file on module " + module );
+                        getLogger().warn( "Failed to configure cache file on module " + module );
                     }
                 }
             }

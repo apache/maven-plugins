@@ -520,7 +520,7 @@ public class CheckstyleViolationCheckMojo
                     .setIncludeResources( includeResources )
                     .setIncludeTestResources( includeTestResources )
                     .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-                    .setLog( getLog() ).setProject( project ).setSourceDirectories( getSourceDirectories() )
+                    .setProject( project ).setSourceDirectories( getSourceDirectories() )
                     .setResources( resources )
                     .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
                     .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )
