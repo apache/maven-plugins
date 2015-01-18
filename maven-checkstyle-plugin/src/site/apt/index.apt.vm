@@ -31,7 +31,9 @@ ${project.name}
 
   The Checkstyle Plugin generates a report regarding the code style used by the developers. For more information about Checkstyle,
   see {{{http://checkstyle.sourceforge.net/}http://checkstyle.sourceforge.net/}}.
-  This version of the plugin uses Checkstyle ${checkstyleVersion} and requires Java ${javaVersion}.
+
+  This version of the plugin uses Checkstyle ${checkstyleVersion} by default and requires Java ${javaVersion}. But you can
+  {{{./examples/upgrading-checkstyle.html}upgrade the version used at runtime}}.
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
   {{{./config/sun_checks.html}<<<sun_checks.xml>>>}},
