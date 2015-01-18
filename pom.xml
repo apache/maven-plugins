@@ -264,10 +264,6 @@ under the License.
             </excludes>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>${sitePluginVersion}</version>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -303,18 +299,6 @@ under the License.
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>check</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>      
     </plugins>
   </build>
 
@@ -325,8 +309,6 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <!-- Cannot remove this version yet. maven-plugins:24 uses 1.7, which breaks the ITs -->
-            <version>1.8</version>
             <configuration>
               <goals>
                 <goal>clean</goal>

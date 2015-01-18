@@ -75,6 +75,8 @@ ${project.name}
 
    The following examples show how to use the Checkstyle Plugin in more advanced usecases:
 
+   * {{{./examples/upgrading-checkstyle.html}Upgrading Checkstyle at Runtime}}
+
    * {{{./examples/inline-checker-config.html}Using an 'Inline' Checkstyle Checker Configuration}}
 
    * {{{./examples/custom-checker-config.html}Using a Custom Checkstyle Checker Configuration}}
