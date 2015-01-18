@@ -20,6 +20,7 @@ package org.apache.maven.plugin.checkstyle.exec;
  */
 
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 
 /**
  * @author Olivier Lamy
@@ -37,4 +38,7 @@ public interface CheckstyleExecutor
      */
     CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException;
+
+    Configuration getConfiguration( CheckstyleExecutorRequest request )
+        throws CheckstyleExecutorException;
 }
