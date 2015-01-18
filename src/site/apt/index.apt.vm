@@ -34,9 +34,9 @@ ${project.name}
   This version of the plugin uses Checkstyle ${checkstyleVersion} and requires Java ${javaVersion}.
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
-  {{{./config/sun_checks.xml}<<<sun_checks.xml>>>}},
-  {{{./config/turbine_checks.xml}<<<turbine_checks.xml>>>}} and
-  {{{./config/maven_checks.xml}<<<maven_checks.xml>>>}}. You can also use a custom ruleset by
+  {{{./config/sun_checks.html}<<<sun_checks.xml>>>}},
+  {{{./config/turbine_checks.html}<<<turbine_checks.xml>>>}} and
+  {{{./config/maven_checks.html}<<<maven_checks.xml>>>}}. You can also use a custom ruleset by
   specifying it in the plugin configuration.
 
 * Goals Overview
