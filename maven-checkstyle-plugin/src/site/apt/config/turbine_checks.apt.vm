@@ -29,6 +29,7 @@
 
 <<<config/turbine_checks.xml>>> Predefined Ruleset
 
-  Maven Checkstyle plugin contains <<<config/turbine_checks.xml>>> predefined ruleset for Turbine coding conventions: 
+  Maven Checkstyle plugin contains <<<config/turbine_checks.xml>>> predefined ruleset for
+  {{{http://turbine.apache.org/common/code-standards.html}Turbine coding conventions}}: 
 
 %{snippet|file=${project.basedir}/src/main/resources/config/turbine_checks.xml}
