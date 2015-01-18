@@ -58,7 +58,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <scmVersion>1.9.1</scmVersion>
+    <scmVersion>1.9.2</scmVersion>
   </properties>
 
   <dependencies>
