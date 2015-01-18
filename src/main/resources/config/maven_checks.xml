@@ -24,6 +24,7 @@ under the License.
 
 <!--
   Checkstyle configuration that checks the Maven coding conventions from:
+  http://maven.apache.org/developers/conventions/code.html
 -->
 
 <module name="Checker">
