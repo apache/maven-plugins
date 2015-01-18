@@ -63,5 +63,3 @@ Using a Custom Checkstyle Checker Configuration
   * <<config/maven_checks.xml>> - Maven Development Definitions.
 
   * <<config/turbine_checks.xml>> - Turbine Development Definitions.
-
-  * <<config/avalon_checks.xml>> - Avalon Development Definitions.

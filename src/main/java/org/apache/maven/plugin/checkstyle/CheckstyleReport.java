@@ -67,7 +67,7 @@ public class CheckstyleReport
 
     /**
      * Specifies what predefined check set to use. Available sets are "sun" (for
-     * the Sun coding conventions), "turbine", and "avalon".
+     * the Sun coding conventions), and "turbine".
      *
      * @deprecated Use configLocation instead.
      */
