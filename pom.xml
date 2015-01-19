@@ -269,18 +269,40 @@ under the License.
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.9.1</version>
+        <executions>
+          <!--
+            Make the version parts of the maven.compiler.target property
+            available as separate properties, so that they can be used to define
+            the java signature artifactId used by animal-sniffer
+          -->
+          <execution>
+            <id>parse-version</id>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+            <configuration>
+              <propertyPrefix>javaSignature</propertyPrefix>
+              <versionString>${maven.compiler.target}</versionString>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <version>1.13</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java15</artifactId>
+            <artifactId>java${javaSignature.majorVersion}${javaSignature.minorVersion}</artifactId>
             <version>1.0</version>
           </signature>
         </configuration>
         <executions>
           <execution>
-            <id>check-java-1.5-compat</id>
+            <id>check-java-compatibility</id>
             <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
