@@ -19,6 +19,11 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,15 +32,10 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Base class for mojos that check if there were any PMD violations.
- * @param <D> type of the check, e.g. {@link Violation} or {@link Duplication}.
  *
+ * @param <D> type of the check, e.g. {@link Violation} or {@link Duplication}.
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
@@ -83,9 +83,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     private boolean printFailingErrors;
 
     /**
-     * File that lists classes and rules to be excluded from failures
-     * For PMD, this is a properties file
-     * For CPD, this is a text file that contains comma-separated lists of classes that are allowed to duplicate
+     * File that lists classes and rules to be excluded from failures For PMD, this is a properties file For CPD, this
+     * is a text file that contains comma-separated lists of classes that are allowed to duplicate
      *
      * @since 3.0
      */
@@ -145,12 +144,14 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 }
                 catch ( final IOException e )
                 {
-                    throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                    throw new MojoExecutionException(
+                                                      "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
                 }
                 catch ( final XmlPullParserException e )
                 {
-                    throw new MojoExecutionException( "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                    throw new MojoExecutionException(
+                                                      "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
                                                       e );
                 }
             }
@@ -245,8 +246,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         {
             if ( failureCount > 0 )
             {
-                message.append( "You have " ).append( failureCount ).append( " " ).append( key )
-                        .append( failureCount > 1 ? "s" : "" );
+                message.append( "You have " ).append( failureCount ).append( " " ).append( key ).
+                  append( failureCount > 1 ? "s" : "" );
             }
 
             if ( warningCount > 0 )
@@ -275,8 +276,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     protected abstract void printError( D item, String severity );
 
     /**
-     * Gets the attributes and text for the violation tag and puts them in a
-     * HashMap
+     * Gets the attributes and text for the violation tag and puts them in a HashMap
      *
      * @param analisysFile
      * @throws XmlPullParserException

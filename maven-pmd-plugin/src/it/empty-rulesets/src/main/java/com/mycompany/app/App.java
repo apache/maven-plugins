@@ -19,8 +19,7 @@ package com.mycompany.app;
  * under the License.
  */
 
-public class App 
+public class App
 {
 
-    
 }

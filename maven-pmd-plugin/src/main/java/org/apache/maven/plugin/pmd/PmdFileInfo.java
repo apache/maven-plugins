@@ -19,10 +19,10 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.maven.project.MavenProject;
 
 /**
  * @version $Id$

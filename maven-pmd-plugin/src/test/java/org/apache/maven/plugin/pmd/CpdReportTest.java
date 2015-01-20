@@ -19,16 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import net.sourceforge.pmd.cpd.CPD;
-import net.sourceforge.pmd.cpd.CPDConfiguration;
-import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.Match;
-import net.sourceforge.pmd.cpd.TokenEntry;
-import org.codehaus.plexus.util.FileUtils;
-import org.w3c.dom.Document;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -36,6 +26,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CPDConfiguration;
+import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.cpd.TokenEntry;
+
+import org.codehaus.plexus.util.FileUtils;
+import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -63,8 +65,9 @@ public class CpdReportTest
     public void testDefaultConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
@@ -77,18 +80,17 @@ public class CpdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check the contents of cpd.html
-        String str =
-            readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("AppSample.java".toLowerCase()));
+        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
+        assertTrue( str.toLowerCase().contains( "AppSample.java".toLowerCase() ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("App.java".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "App.java".toLowerCase() ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("public String dup( String str )".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "public String dup( String str )".toLowerCase() ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("tmp = tmp + str.substring( i, i + 1);".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "tmp = tmp + str.substring( i, i + 1);".toLowerCase() ) );
 
     }
 
@@ -100,8 +102,9 @@ public class CpdReportTest
     public void testCustomConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
@@ -115,20 +118,20 @@ public class CpdReportTest
 
         // Contents that should NOT be in the report
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue(!str.toLowerCase().contains("/Sample.java".toLowerCase()));
+        assertTrue( !str.toLowerCase().contains( "/Sample.java".toLowerCase() ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue(!str.toLowerCase().contains("public void duplicateMethod( int i )".toLowerCase()));
+        assertTrue( !str.toLowerCase().contains( "public void duplicateMethod( int i )".toLowerCase() ) );
 
         // Contents that should be in the report
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("AnotherSample.java".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "AnotherSample.java".toLowerCase() ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("public static void main( String[] args )".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "public static void main( String[] args )".toLowerCase() ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue(str.toLowerCase().contains("private String unusedMethod(".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "private String unusedMethod(".toLowerCase() ) );
 
     }
 
@@ -184,8 +187,9 @@ public class CpdReportTest
     public void testWriteNonHtml()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         assertNotNull( mojo );
 
@@ -214,9 +218,10 @@ public class CpdReportTest
     }
 
     public void testSkipEmptyReportConfiguration()
-            throws Exception
+        throws Exception
     {
-        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/cpd-skip-empty-report-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(), "src/test/resources/unit/empty-report/cpd-skip-empty-report-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
@@ -226,9 +231,10 @@ public class CpdReportTest
     }
 
     public void testEmptyReportConfiguration()
-            throws Exception
+        throws Exception
     {
-        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/cpd-empty-report-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(), "src/test/resources/unit/empty-report/cpd-empty-report-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
@@ -236,19 +242,20 @@ public class CpdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" ) );
-        assertTrue(!str.toLowerCase().contains("Hello.java".toLowerCase()));
+        assertTrue( !str.toLowerCase().contains( "Hello.java".toLowerCase() ) );
     }
 
     public void testCpdEncodingConfiguration()
-            throws Exception
+        throws Exception
     {
         String originalEncoding = System.getProperty( "file.encoding" );
         try
         {
             System.setProperty( "file.encoding", "UTF-16" );
 
-            File testPom = new File( getBasedir(),
-                    "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+            File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
             CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
             mojo.execute();
 
@@ -256,7 +263,7 @@ public class CpdReportTest
             File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
             assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
             String str = readFile( generatedFile );
-            assertTrue(str.toLowerCase().contains("AppSample.java".toLowerCase()));
+            assertTrue( str.toLowerCase().contains( "AppSample.java".toLowerCase() ) );
         }
         finally
         {

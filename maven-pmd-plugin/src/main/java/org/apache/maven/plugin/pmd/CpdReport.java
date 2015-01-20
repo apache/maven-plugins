@@ -19,21 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import net.sourceforge.pmd.cpd.CPD;
-import net.sourceforge.pmd.cpd.CPDConfiguration;
-import net.sourceforge.pmd.cpd.CSVRenderer;
-import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.JavaTokenizer;
-import net.sourceforge.pmd.cpd.Renderer;
-import net.sourceforge.pmd.cpd.XMLRenderer;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,10 +30,25 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import net.sourceforge.pmd.cpd.CPD;
+import net.sourceforge.pmd.cpd.CPDConfiguration;
+import net.sourceforge.pmd.cpd.CSVRenderer;
+import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.JavaTokenizer;
+import net.sourceforge.pmd.cpd.Renderer;
+import net.sourceforge.pmd.cpd.XMLRenderer;
+
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+
 /**
- * Creates a report for PMD's CPD tool.  See
- * <a href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a>
- * for more detail.
+ * Creates a report for PMD's CPD tool. See <a
+ * href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a> for more detail.
  *
  * @author Mike Perham
  * @version $Id$
@@ -65,8 +65,7 @@ public class CpdReport
     private int minimumTokens;
 
     /**
-     * Skip the CPD report generation.  Most useful on the command line
-     * via "-Dcpd.skip=true".
+     * Skip the CPD report generation. Most useful on the command line via "-Dcpd.skip=true".
      *
      * @since 2.1
      */
@@ -74,9 +73,9 @@ public class CpdReport
     private boolean skip;
 
     /**
-     * If true, CPD ignores literal value differences when evaluating a duplicate block.
-     * This means that <code>foo=42;</code> and <code>foo=43;</code> will be seen as equivalent.
-     * You may want to run PMD with this option off to start with and then switch it on to see what it turns up.
+     * If true, CPD ignores literal value differences when evaluating a duplicate block. This means that
+     * <code>foo=42;</code> and <code>foo=43;</code> will be seen as equivalent. You may want to run PMD with this
+     * option off to start with and then switch it on to see what it turns up.
      *
      * @since 2.5
      */
@@ -346,8 +345,7 @@ public class CpdReport
      * Create and return the correct renderer for the output type.
      *
      * @return the renderer based on the configured output
-     * @throws org.apache.maven.reporting.MavenReportException
-     *          if no renderer found for the output type
+     * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
      */
     public Renderer createRenderer()
         throws MavenReportException
@@ -369,8 +367,8 @@ public class CpdReport
             }
             catch ( Exception e )
             {
-                throw new MavenReportException(
-                    "Can't find CPD custom format " + format + ": " + e.getClass().getName(), e );
+                throw new MavenReportException( "Can't find CPD custom format " + format + ": "
+                    + e.getClass().getName(), e );
             }
         }
 

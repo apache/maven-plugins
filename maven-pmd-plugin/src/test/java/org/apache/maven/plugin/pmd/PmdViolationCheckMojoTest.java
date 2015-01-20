@@ -19,10 +19,10 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-
-import java.io.File;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -46,8 +46,9 @@ public class PmdViolationCheckMojoTest
     {
         try
         {
-            final File testPom = new File( getBasedir(),
-                                     "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
+            final File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
             final PmdViolationCheckMojo mojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
             mojo.execute();
 
@@ -62,13 +63,15 @@ public class PmdViolationCheckMojoTest
     public void testNotFailOnViolation()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         pmdViolationMojo.execute();
 
@@ -78,18 +81,21 @@ public class PmdViolationCheckMojoTest
     public void testFailurePriority()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
         PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         pmdViolationMojo.execute();
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml" );
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml" );
         pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         try
         {
@@ -99,13 +105,15 @@ public class PmdViolationCheckMojoTest
         catch ( final MojoFailureException e )
         {
             String message = e.getMessage();
-            if ( message.contains( "You have 5 PMD violations and 3 warnings." ) ) {
+            if ( message.contains( "You have 5 PMD violations and 3 warnings." ) )
+            {
                 System.out.println( "Caught expected message: " + e.getMessage() );// expected
-            } 
+            }
             else
             {
-                throw new AssertionError( "Expected: '" + message + "' to contain 'You have 5 PMD violations and 3 warnings.'" );
-            }                        
+                throw new AssertionError( "Expected: '" + message
+                    + "' to contain 'You have 5 PMD violations and 3 warnings.'" );
+            }
         }
 
     }
@@ -115,8 +123,9 @@ public class PmdViolationCheckMojoTest
     {
         try
         {
-            final File testPom = new File( getBasedir(),
-                                           "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
+            final File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
             final PmdViolationCheckMojo mojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
             mojo.execute();
 
@@ -132,13 +141,15 @@ public class PmdViolationCheckMojoTest
     public void testViolationExclusion()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml" );
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml" );
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
         pmdViolationMojo.execute();
 
