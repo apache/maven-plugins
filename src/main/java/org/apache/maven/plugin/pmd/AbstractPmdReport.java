@@ -19,18 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import net.sourceforge.pmd.PMD;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.reporting.AbstractMavenReport;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +29,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import net.sourceforge.pmd.PMD;
+
+import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base class for the PMD reports.
@@ -78,17 +79,16 @@ public abstract class AbstractPmdReport
     protected MavenProject project;
 
     /**
-     * Set the output format type, in addition to the HTML report.  Must be one of: "none",
-     * "csv", "xml", "txt" or the full class name of the PMD renderer to use.
-     * See the net.sourceforge.pmd.renderers package javadoc for available renderers.
-     * XML is required if the pmd:check goal is being used.
+     * Set the output format type, in addition to the HTML report. Must be one of: "none", "csv", "xml", "txt" or the
+     * full class name of the PMD renderer to use. See the net.sourceforge.pmd.renderers package javadoc for available
+     * renderers. XML is required if the pmd:check goal is being used.
      */
     @Parameter( property = "format", defaultValue = "xml" )
     protected String format = "xml";
 
     /**
-     * Link the violation line numbers to the source xref. Links will be created
-     * automatically if the jxr plugin is being used.
+     * Link the violation line numbers to the source xref. Links will be created automatically if the jxr plugin is
+     * being used.
      */
     @Parameter( property = "linkXRef", defaultValue = "true" )
     private boolean linkXRef;
@@ -117,8 +117,8 @@ public abstract class AbstractPmdReport
     private List<String> excludes;
 
     /**
-     * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.
-     * Defaults to **\/*.java.
+     * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards. Defaults to
+     * **\/*.java.
      *
      * @since 2.2
      */
@@ -192,8 +192,8 @@ public abstract class AbstractPmdReport
     protected boolean includeXmlInSite;
 
     /**
-     * Skip the PMD/CPD report generation if there are no violations or duplications found.
-     * Defaults to <code>true</code>.
+     * Skip the PMD/CPD report generation if there are no violations or duplications found. Defaults to
+     * <code>true</code>.
      *
      * @since 3.1
      */
@@ -243,7 +243,8 @@ public abstract class AbstractPmdReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                @SuppressWarnings( "unchecked" ) List<ReportPlugin> reportPlugins = project.getReportPlugins();
+                @SuppressWarnings( "unchecked" )
+                List<ReportPlugin> reportPlugins = project.getReportPlugins();
                 for ( ReportPlugin plugin : reportPlugins )
                 {
                     String artifactId = plugin.getArtifactId();
@@ -325,8 +326,8 @@ public abstract class AbstractPmdReport
         {
             for ( MavenProject localProject : reactorProjects )
             {
-                @SuppressWarnings( "unchecked" ) List<String> localCompileSourceRoots =
-                    localProject.getCompileSourceRoots();
+                @SuppressWarnings( "unchecked" )
+                List<String> localCompileSourceRoots = localProject.getCompileSourceRoots();
                 for ( String root : localCompileSourceRoots )
                 {
                     File sroot = new File( root );
@@ -338,16 +339,16 @@ public abstract class AbstractPmdReport
                 }
                 if ( includeTests )
                 {
-                    @SuppressWarnings( "unchecked" ) List<String> localTestCompileSourceRoots =
-                        localProject.getTestCompileSourceRoots();
+                    @SuppressWarnings( "unchecked" )
+                    List<String> localTestCompileSourceRoots = localProject.getTestCompileSourceRoots();
                     for ( String root : localTestCompileSourceRoots )
                     {
                         File sroot = new File( root );
-                      if ( sroot.exists() )
-                      {
-                          String testXref = constructXRefLocation( true );
-                          directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
-                      }
+                        if ( sroot.exists() )
+                        {
+                            String testXref = constructXRefLocation( true );
+                            directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
+                        }
                     }
                 }
             }
@@ -367,8 +368,7 @@ public abstract class AbstractPmdReport
             File sourceDirectory = finfo.getSourceDirectory();
             if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
             {
-                List<File> newfiles =
-                    FileUtils.getFiles( sourceDirectory, including, excluding );
+                List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
                 for ( File newfile : newfiles )
                 {
                     files.put( newfile.getCanonicalFile(), finfo );
@@ -405,8 +405,7 @@ public abstract class AbstractPmdReport
      */
     private String getExcludes()
     {
-        Collection<String> patterns =
-            new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
+        Collection<String> patterns = new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
         if ( excludes != null )
         {
             patterns.addAll( excludes );
@@ -418,6 +417,7 @@ public abstract class AbstractPmdReport
     {
         return "html".equals( format );
     }
+
     protected boolean isXml()
     {
         return "xml".equals( format );

@@ -62,8 +62,7 @@ public abstract class AbstractPmdReportTest
             outputHtml.getParentFile().mkdirs();
             writer = WriterFactory.newXmlWriter( outputHtml );
 
-            mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(),
-                                                           context );
+            mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(), context );
         }
         finally
         {

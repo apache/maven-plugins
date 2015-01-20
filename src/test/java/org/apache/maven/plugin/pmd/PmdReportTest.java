@@ -54,16 +54,17 @@ public class PmdReportTest
     public void testDefaultConfiguration()
         throws Exception
     {
-        FileUtils.copyDirectoryStructure(
-            new File( getBasedir(), "src/test/resources/unit/default-configuration/jxr-files" ),
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/default-configuration/jxr-files" ),
+                                          new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
-        //check if the PMD files were generated
+        // check if the PMD files were generated
         File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
@@ -81,21 +82,20 @@ public class PmdReportTest
         renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        //check if there's a link to the JXR files
-        String str =
-            readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
+        // check if there's a link to the JXR files
+        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-        assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
+        assertTrue( str.contains( "/xref/def/configuration/App.html#L31" ) );
 
-        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
+        assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L45" ) );
     }
-
 
     public void testJavascriptConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/javascript-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/javascript-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
@@ -119,56 +119,49 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         String str = readFile( generatedFile );
-        assertTrue(str.contains("Avoid using global variables"));
+        assertTrue( str.contains( "Avoid using global variables" ) );
     }
 
     public void testFileURL()
         throws Exception
     {
-        FileUtils.copyDirectoryStructure(
-            new File( getBasedir(), "src/test/resources/unit/default-configuration/jxr-files" ),
-            new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/default-configuration/jxr-files" ),
+                                          new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
         // Additional test case for MPMD-174 (http://jira.codehaus.org/browse/MPMD-174).
         WireMockServer mockServer = new WireMockServer( 3456 );
         mockServer.start();
 
-        String sonarRuleset = IOUtils.toString(
-            getClass().getClassLoader().getResourceAsStream(
-                "unit/default-configuration/rulesets/sonar-way-ruleset.xml" ) );
+        String sonarRuleset =
+            IOUtils.toString( getClass().getClassLoader().getResourceAsStream( "unit/default-configuration/rulesets/sonar-way-ruleset.xml" ) );
 
-        String sonarMainPageHtml = IOUtils.toString(
-            getClass().getClassLoader().getResourceAsStream(
-                "unit/default-configuration/rulesets/sonar-main-page.html" ) );
+        String sonarMainPageHtml =
+            IOUtils.toString( getClass().getClassLoader().getResourceAsStream( "unit/default-configuration/rulesets/sonar-main-page.html" ) );
 
         final String sonarBaseUrl = "/profiles";
         final String sonarProfileUrl = sonarBaseUrl + "/export?format=pmd&language=java&name=Sonar%2520way";
         final String sonarExportRulesetUrl = "http://localhost:" + mockServer.port() + sonarProfileUrl;
 
-        mockServer.stubFor(WireMock.get( WireMock.urlEqualTo( sonarBaseUrl ) )
-            .willReturn( WireMock.aResponse()
-                .withStatus( 200 )
-                .withHeader( "Content-Type", "text/html" )
-                .withBody( sonarMainPageHtml ) ) );
+        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarBaseUrl ) ).willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+                                                                                                                                               "text/html" ).withBody( sonarMainPageHtml ) ) );
 
-        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) )
-            .willReturn( WireMock.aResponse()
-                .withStatus( 200 )
-                .withHeader( "Content-Type", "text/xml" )
-                .withBody( sonarRuleset ) ) );
+        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) ).willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+                                                                                                                                                  "text/xml" ).withBody( sonarRuleset ) ) );
 
         URL url = getClass().getClassLoader().getResource( "rulesets/java/basic.xml" );
         URL url2 = getClass().getClassLoader().getResource( "rulesets/java/unusedcode.xml" );
         URL url3 = getClass().getClassLoader().getResource( "rulesets/java/imports.xml" );
-        mojo.setRulesets( new String[]{ url.toString(), url2.toString(), url3.toString(), sonarExportRulesetUrl } );
+        mojo.setRulesets( new String[] { url.toString(), url2.toString(), url3.toString(), sonarExportRulesetUrl } );
 
         mojo.execute();
 
-        //check if the PMD files were generated
+        // check if the PMD files were generated
         File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
@@ -181,21 +174,21 @@ public class PmdReportTest
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/unusedcode.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(),
-            "target/test/unit/default-configuration/target/export_format_pmd_language_java_name_Sonar_2520way.xml" );
+        generatedFile =
+            new File( getBasedir(),
+                      "target/test/unit/default-configuration/target/export_format_pmd_language_java_name_Sonar_2520way.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
         renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        //check if there's a link to the JXR files
-        String str =
-            readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
+        // check if there's a link to the JXR files
+        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
 
-        assertTrue(str.contains("/xref/def/configuration/App.html#L31"));
+        assertTrue( str.contains( "/xref/def/configuration/App.html#L31" ) );
 
-        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L45"));
+        assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L45" ) );
 
         mockServer.stop();
     }
@@ -208,13 +201,14 @@ public class PmdReportTest
     public void testCustomConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml" );
 
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
-        //check the generated files
+        // check the generated files
         File generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/pmd.csv" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
@@ -226,16 +220,15 @@ public class PmdReportTest
         renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        //check if custom ruleset was applied
+        // check if custom ruleset was applied
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
-        assertTrue(str.toLowerCase().contains("Avoid using if statements without curly braces".toLowerCase()));
+        assertTrue( str.toLowerCase().contains( "Avoid using if statements without curly braces".toLowerCase() ) );
 
         // Must be false as IfElseStmtsMustUseBraces is excluded!
-        assertFalse(
-                str.toLowerCase().contains("Avoid using if...else statements without curly braces".toLowerCase()));
+        assertFalse( str.toLowerCase().contains( "Avoid using if...else statements without curly braces".toLowerCase() ) );
 
         assertTrue( "unnecessary constructor should not be triggered because of low priority",
-                !str.toLowerCase().contains("Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase()));
+                    !str.toLowerCase().contains( "Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase() ) );
 
         // veryLongVariableNameWithViolation is really too long
         assertTrue( str.toLowerCase().contains( "veryLongVariableNameWithViolation".toLowerCase() ) );
@@ -269,7 +262,8 @@ public class PmdReportTest
     public void testSkipEmptyReportConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/skip-empty-report-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(), "src/test/resources/unit/empty-report/skip-empty-report-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.execute();
 
@@ -279,7 +273,7 @@ public class PmdReportTest
     }
 
     public void testEmptyReportConfiguration()
-            throws Exception
+        throws Exception
     {
         File testPom = new File( getBasedir(), "src/test/resources/unit/empty-report/empty-report-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
@@ -289,7 +283,7 @@ public class PmdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" ) );
-        assertTrue(!str.toLowerCase().contains("Hello.java".toLowerCase()));
+        assertTrue( !str.toLowerCase().contains( "Hello.java".toLowerCase() ) );
     }
 
     public void testInvalidFormat()
@@ -328,7 +322,6 @@ public class PmdReportTest
             assertTrue( true );
         }
     }
-
 
     /**
      * Read the contents of the specified file object into a string
@@ -374,13 +367,14 @@ public class PmdReportTest
         throws Exception
     {
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
         assertEquals( "locationTemp is not correctly encoding filename",
-                      "export_format_pmd_language_java_name_some_2520name.xml", mojo.getLocationTemp(
-            "http://nemo.sonarsource.org/sonar/profiles/export?format=pmd&language=java&name=some%2520name" ) );
+                      "export_format_pmd_language_java_name_some_2520name.xml",
+                      mojo.getLocationTemp( "http://nemo.sonarsource.org/sonar/profiles/export?format=pmd&language=java&name=some%2520name" ) );
 
     }
 
@@ -390,22 +384,22 @@ public class PmdReportTest
      * @throws Exception
      */
     public void testSuppressMarkerConfiguration()
-            throws Exception
-        {
-            File testPom = new File( getBasedir(),
-                                     "src/test/resources/unit/default-configuration/pmd-with-suppressMarker-plugin-config.xml" );
-            PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-            mojo.execute();
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-with-suppressMarker-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
 
-            //check if the PMD files were generated
-            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
-            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        // check if the PMD files were generated
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-            String str =
-                readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" ) );
+        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" ) );
 
-            //check that there is no violation reported for "unusedVar2" - as it is suppressed
-            assertFalse(str.contains("Avoid unused private fields such as 'unusedVar2'."));
-        }
+        // check that there is no violation reported for "unusedVar2" - as it is suppressed
+        assertFalse( str.contains( "Avoid unused private fields such as 'unusedVar2'." ) );
+    }
 
 }

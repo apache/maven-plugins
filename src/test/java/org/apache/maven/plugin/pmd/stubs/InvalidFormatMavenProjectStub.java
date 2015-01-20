@@ -19,17 +19,17 @@ package org.apache.maven.plugin.pmd.stubs;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -47,8 +47,9 @@ public class InvalidFormatMavenProjectStub
 
         try
         {
-            model = pomReader.read( new FileReader( new File(
-                getBasedir() + "/src/test/resources/unit/invalid-format/invalid-format-plugin-config.xml" ) ) );
+            model =
+                pomReader.read( new FileReader( new File( getBasedir()
+                    + "/src/test/resources/unit/invalid-format/invalid-format-plugin-config.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
@@ -82,7 +83,7 @@ public class InvalidFormatMavenProjectStub
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
-        setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
+        setFile( new File( getBasedir().getAbsolutePath() + "/pom.xml" ) );
 
     }
 
@@ -99,5 +100,5 @@ public class InvalidFormatMavenProjectStub
     {
         return build;
     }
-    
+
 }

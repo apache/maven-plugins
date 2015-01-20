@@ -19,16 +19,17 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import net.sourceforge.pmd.cpd.Match;
-import net.sourceforge.pmd.cpd.TokenEntry;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.cpd.TokenEntry;
+
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Class that generated the CPD report.
@@ -131,8 +132,8 @@ public class CpdReportGenerator
 
         if ( xrefLocation != null )
         {
-            sink.link(
-                xrefLocation + "/" + filename.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#L" + line );
+            sink.link( xrefLocation + "/" + filename.replaceAll( "\\.java$", ".html" ).replace( '\\', '/' ) + "#L"
+                + line );
         }
         sink.text( String.valueOf( line ) );
         if ( xrefLocation != null )

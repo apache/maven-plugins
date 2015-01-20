@@ -19,6 +19,20 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
@@ -37,6 +51,7 @@ import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
+
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -52,20 +67,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 /**
  * Creates a PMD report.
  *
@@ -79,15 +80,15 @@ public class PmdReport
 {
     /**
      * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
-     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>
-     * and <code>1.7</code>.
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code> and
+     * <code>1.7</code>.
      */
     @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.target}" )
     private String targetJdk;
 
     /**
-     * The programming language to be analyzed by PMD. Valid values are currently <code>java</code>
-     * and <code>ecmascript</code> or <code>javascript</code>.
+     * The programming language to be analyzed by PMD. Valid values are currently <code>java</code> and
+     * <code>ecmascript</code> or <code>javascript</code>.
      * <p>
      * <b>Note:</b> if the parameter targetJdk is given, then this language parameter will be ignored.
      * </p>
@@ -98,8 +99,7 @@ public class PmdReport
     private String language;
 
     /**
-     * The rule priority threshold; rules with lower priority
-     * than this will not be evaluated.
+     * The rule priority threshold; rules with lower priority than this will not be evaluated.
      *
      * @since 2.1
      */
@@ -107,8 +107,7 @@ public class PmdReport
     private int minimumPriority = 5;
 
     /**
-     * Skip the PMD report generation.  Most useful on the command line
-     * via "-Dpmd.skip=true".
+     * Skip the PMD report generation. Most useful on the command line via "-Dpmd.skip=true".
      *
      * @since 2.1
      */
@@ -120,7 +119,7 @@ public class PmdReport
      * list of some included. Defaults to the java-basic, java-imports and java-unusedcode rulesets.
      */
     @Parameter
-    private String[] rulesets = new String[]{ "java-basic", "java-unusedcode", "java-imports" };
+    private String[] rulesets = new String[] { "java-basic", "java-unusedcode", "java-imports" };
 
     /**
      * Controls whether the project's compile/test classpath should be passed to PMD to enable its type resolution
@@ -145,13 +144,13 @@ public class PmdReport
      * @since 3.1
      */
     @Parameter( property = "pmd.benchmarkOutputFilename",
-        defaultValue = "${project.build.directory}/pmd-benchmark.txt" )
+                    defaultValue = "${project.build.directory}/pmd-benchmark.txt" )
     private String benchmarkOutputFilename;
 
     /**
-     * Source level marker used to indicate whether a RuleViolation should be suppressed.
-     * If it is not set, PMD's default will be used, which is <code>NOPMD</code>.
-     * See also <a href="http://pmd.sourceforge.net/usage/suppressing.html">PMD - Suppressing warnings</a>.
+     * Source level marker used to indicate whether a RuleViolation should be suppressed. If it is not set, PMD's
+     * default will be used, which is <code>NOPMD</code>. See also <a
+     * href="http://pmd.sourceforge.net/usage/suppressing.html">PMD - Suppressing warnings</a>.
      *
      * @since 3.4
      */
@@ -168,6 +167,7 @@ public class PmdReport
 
     /**
      * per default pmd executions error are ignored to not break the whole
+     *
      * @since 3.1
      */
     @Parameter( property = "pmd.skipPmdError", defaultValue = "true" )
@@ -258,7 +258,7 @@ public class PmdReport
                     if ( result )
                     {
                         getLog().debug( "Skipping report since skipEmptyReport is true and"
-                                        + "there are no PMD violations." );
+                                            + "there are no PMD violations." );
                     }
                 }
             }
@@ -295,7 +295,7 @@ public class PmdReport
             return;
         }
 
-        //configure ResourceManager
+        // configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
         locator.setOutputDirectory( targetDirectory );
@@ -309,7 +309,7 @@ public class PmdReport
         ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
 
         // Workaround for https://sourceforge.net/p/pmd/bugs/1155/: add a dummy ruleset.
-        String[] presentRulesets = rulesets.length > 0 ? rulesets : new String [] { "/rulesets/dummy.xml" };
+        String[] presentRulesets = rulesets.length > 0 ? rulesets : new String[] { "/rulesets/dummy.xml" };
 
         String[] sets = new String[presentRulesets.length];
         try
@@ -346,9 +346,8 @@ public class PmdReport
 
             if ( filesToProcess.isEmpty() && !"java".equals( language ) )
             {
-                getLog().warn(
-                        "No files found to process. Did you add your additional source folders like javascript?"
-                        + " (see also build-helper-maven-plugin)" );
+                getLog().warn( "No files found to process. Did you add your additional source folders like javascript?"
+                                   + " (see also build-helper-maven-plugin)" );
             }
         }
         catch ( IOException e )
@@ -465,7 +464,7 @@ public class PmdReport
         // MPMD-127 in the case that the rules are defined externally on a url
         // we need to replace some special url characters that cannot be
         // used in filenames on disk or produce ackward filenames.
-        // replace all occurrences of the following characters:  ? : & = %
+        // replace all occurrences of the following characters: ? : & = %
         loc = loc.replaceAll( "[\\?\\:\\&\\=\\%]", "_" );
 
         if ( !loc.endsWith( ".xml" ) )
@@ -527,12 +526,10 @@ public class PmdReport
     }
 
     /**
-     * Constructs the PMD configuration class, passing it an argument
-     * that configures the target JDK.
+     * Constructs the PMD configuration class, passing it an argument that configures the target JDK.
      *
      * @return the resulting PMD
-     * @throws org.apache.maven.reporting.MavenReportException
-     *          if targetJdk is not supported
+     * @throws org.apache.maven.reporting.MavenReportException if targetJdk is not supported
      */
     public PMDConfiguration getPMDConfiguration()
         throws MavenReportException
@@ -601,8 +598,7 @@ public class PmdReport
      * Create and return the correct renderer for the output type.
      *
      * @return the renderer based on the configured output
-     * @throws org.apache.maven.reporting.MavenReportException
-     *          if no renderer found for the output type
+     * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
      */
     public final Renderer createRenderer()
         throws MavenReportException
@@ -614,27 +610,27 @@ public class PmdReport
         }
         else if ( "txt".equals( format ) )
         {
-            renderer = new TextRenderer( );
+            renderer = new TextRenderer();
         }
         else if ( "csv".equals( format ) )
         {
-            renderer = new CSVRenderer( );
+            renderer = new CSVRenderer();
         }
         else if ( "html".equals( format ) )
         {
-            renderer = new HTMLRenderer( );
+            renderer = new HTMLRenderer();
         }
         else if ( !"".equals( format ) && !"none".equals( format ) )
         {
             try
             {
-                renderer = (Renderer) Class.forName( format ).getConstructor( Properties.class ).newInstance(
-                    new Properties() );
+                renderer = (Renderer) Class.forName( format ).getConstructor( Properties.class ).
+                                newInstance( new Properties() );
             }
             catch ( Exception e )
             {
-                throw new MavenReportException(
-                    "Can't find PMD custom format " + format + ": " + e.getClass().getName(), e );
+                throw new MavenReportException( "Can't find PMD custom format " + format + ": "
+                    + e.getClass().getName(), e );
             }
         }
 

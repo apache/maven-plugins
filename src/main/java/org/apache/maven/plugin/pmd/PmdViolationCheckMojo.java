@@ -19,6 +19,19 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.pmd.model.PmdErrorDetail;
@@ -33,19 +46,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
 /**
  * Fail the build if there were any PMD violations in the source code.
  *
@@ -58,17 +58,15 @@ public class PmdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Violation>
 {
     /**
-     * What priority level to fail the build on. Failures at or above this level
-     * will stop the build. Anything below will be warnings and will be
-     * displayed in the build output if verbose=true. Note: Minimum Priority = 5
-     * Maximum Priority = 0
+     * What priority level to fail the build on. Failures at or above this level will stop the build. Anything below
+     * will be warnings and will be displayed in the build output if verbose=true. Note: Minimum Priority = 5 Maximum
+     * Priority = 0
      */
     @Parameter( property = "pmd.failurePriority", defaultValue = "5", required = true )
     private int failurePriority;
 
     /**
-     * Skip the PMD checks.  Most useful on the command line
-     * via "-Dpmd.skip=true".
+     * Skip the PMD checks. Most useful on the command line via "-Dpmd.skip=true".
      */
     @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
@@ -134,7 +132,7 @@ public class PmdViolationCheckMojo
 
     private String extractClassName( final Violation errorDetail )
     {
-        //for some reason, some violations don't contain the package name, so we have to guess the full class name
+        // for some reason, some violations don't contain the package name, so we have to guess the full class name
         if ( errorDetail.getViolationPackage() != null && errorDetail.getViolationClass() != null )
         {
             return errorDetail.getViolationPackage() + "." + errorDetail.getViolationClass();

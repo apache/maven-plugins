@@ -21,7 +21,7 @@ under the License.
 
 <project>
   <modelVersion>4.0.0</modelVersion>
-  
+
   <groupId>org.apache.maven.plugin.pmd.it</groupId>
   <artifactId>mpmd-89</artifactId>
   <version>1.0-SNAPSHOT</version>
