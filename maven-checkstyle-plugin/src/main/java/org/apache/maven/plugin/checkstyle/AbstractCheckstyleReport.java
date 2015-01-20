@@ -670,7 +670,7 @@ public abstract class AbstractCheckstyleReport
     private void generateMainReport( CheckstyleResults results, ResourceBundle bundle )
     {
         CheckstyleReportGenerator generator =
-            new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
+            new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool, configLocation );
 
         generator.setLog( getLog() );
         generator.setEnableRulesSummary( enableRulesSummary );

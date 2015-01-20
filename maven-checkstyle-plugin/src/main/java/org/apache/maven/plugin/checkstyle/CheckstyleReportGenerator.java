@@ -75,7 +75,10 @@ public class CheckstyleReportGenerator
 
     private final IconTool iconTool;
 
-    public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool )
+    private final String ruleset;
+
+    public CheckstyleReportGenerator( Sink sink, ResourceBundle bundle, File basedir, SiteTool siteTool,
+                                      String ruleset )
     {
         this.bundle = bundle;
 
@@ -84,6 +87,8 @@ public class CheckstyleReportGenerator
         this.basedir = basedir;
 
         this.siteTool = siteTool;
+
+        this.ruleset = ruleset;
 
         this.enableRulesSummary = true;
         this.enableSeveritySummary = true;
@@ -176,6 +181,8 @@ public class CheckstyleReportGenerator
             sink.text( " " );
             sink.text( version );
         }
+        sink.text( " " );
+        sink.text( String.format( bundle.getString( "report.checkstyle.ruleset" ), ruleset ) );
         sink.text( "." );
 
         if ( enableRSS )
