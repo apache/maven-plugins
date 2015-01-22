@@ -29,12 +29,14 @@
 
 Predefined Rulesets
 
-  Maven Checkstyle plugin contains predefined rulesets: 
+  Maven Checkstyle Plugin contains these predefined rulesets:
 
    * {{{./sun_checks.html}<<<config/sun_checks.xml>>>}},
-
-   * {{{./maven_checks.html}<<<config/maven_checks.xml>>>}},
 
    * {{{./turbine_checks.html}<<<config/turbine_checks.xml>>>}}.
 
    []
+
+  In versions up to and including 2.13 the plugin also included the
+  <<<config/maven_checks.xml>>> predefined ruleset. In version 2.14 this was
+  moved to {{{/shared/maven-shared-resources/}maven-shared-resources}}.
