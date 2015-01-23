@@ -454,6 +454,14 @@ public class AnnouncementMojo
     @Parameter( defaultValue = "80", property = "changes.githubAPIPort" )
     private int githubAPIPort;
 
+    /**
+     * The settings.xml server id to be used to authenticate into github api domain. Only use if using github enterprise.
+     * 
+     * @since 2.12
+     */
+    @Parameter ( defaultValue = "github" )
+    private String githubAPIServerId;
+    
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     private ChangesXML xml;
@@ -849,6 +857,9 @@ public class AnnouncementMojo
         {
             GitHubDownloader issueDownloader =
                 new GitHubDownloader( project, githubAPIScheme, githubAPIPort, false, true );
+            
+            issueDownloader.configureAuthentication( githubAPIServerId, settings, getLog() );
+            
             return getReleases( issueDownloader.getIssueList(), new GitHubIssueManagementSystem() );
         }
         catch ( Exception e )

@@ -28,6 +28,7 @@ import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.settings.Settings;
 
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -92,6 +93,18 @@ public class GitHubMojo
      */
     @Parameter ( defaultValue = "80" )
     private int githubAPIPort;
+
+    /**
+     * The settings.xml server id to be used to authenticate into github api domain. Only use if using github enterprise.
+     */
+    @Parameter ( defaultValue = "github" )
+    private String githubAPIServerId;
+
+    /**
+     * Settings XML configuration.
+     */
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
+    private Settings settings;
 
     /**
      * Boolean which says if we should include open issues in the report.
@@ -165,6 +178,8 @@ public class GitHubMojo
             // Download issues
             GitHubDownloader issueDownloader =
                 new GitHubDownloader( project, githubAPIScheme, githubAPIPort, includeOpenIssues, onlyMilestoneIssues );
+
+            issueDownloader.configureAuthentication( githubAPIServerId, settings, getLog() );
 
             List<Issue> issueList = issueDownloader.getIssueList();
 

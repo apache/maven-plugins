@@ -20,7 +20,11 @@ package org.apache.maven.plugin.github;
  */
 
 import org.apache.maven.plugin.issues.Issue;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+
 import org.eclipse.egit.github.core.Label;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.IssueService;
@@ -205,6 +209,31 @@ public class GitHubDownloader
         }
 
         return issueList;
+    }
+
+    public void configureAuthentication( String githubAPIServerId, Settings settings, Log log )
+    {
+        boolean configured = false;
+
+        List<Server> servers = settings.getServers();
+
+        for ( Server server : servers )
+        {
+            if ( server.getId().equals( githubAPIServerId ) )
+            {
+                String user = server.getUsername();
+                String password = server.getPassword();
+                this.client.setCredentials( user, password );
+
+                configured = true;
+                break;
+}
+        }
+        
+        if ( !configured )
+        {
+            log.warn( "Can't find server id [" + githubAPIServerId + "] configured in githubAPIServerId." );
+        }
     }
 
 }
