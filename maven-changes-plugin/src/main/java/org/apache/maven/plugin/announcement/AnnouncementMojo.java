@@ -456,10 +456,10 @@ public class AnnouncementMojo
 
     /**
      * The settings.xml server id to be used to authenticate into github api domain. Only use if using github enterprise.
-     * 
+     *
      * @since 2.12
      */
-    @Parameter ( defaultValue = "github" )
+    @Parameter( defaultValue = "github" )
     private String githubAPIServerId;
     
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );

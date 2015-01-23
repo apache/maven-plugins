@@ -44,7 +44,7 @@ import java.util.ResourceBundle;
  * @author Bryan Baugher
  * @since 2.8
  */
-@Mojo ( name = "github-report", threadSafe = true )
+@Mojo( name = "github-report", threadSafe = true )
 public class GitHubMojo
     extends AbstractChangesReport
 {
@@ -79,25 +79,25 @@ public class GitHubMojo
      * <code>Updated</code>.
      * </p>
      */
-    @Parameter ( defaultValue = "Id,Type,Summary,Assignee,Reporter,Status,Created,Updated,Fix Version" )
+    @Parameter( defaultValue = "Id,Type,Summary,Assignee,Reporter,Status,Created,Updated,Fix Version" )
     private String columnNames;
 
     /**
      * The scheme of your github api domain. Only use if using github enterprise.
      */
-    @Parameter ( defaultValue = "http" )
+    @Parameter( defaultValue = "http" )
     private String githubAPIScheme;
 
     /**
      * The port of your github api domain. Only use if using github enterprise.
      */
-    @Parameter ( defaultValue = "80" )
+    @Parameter( defaultValue = "80" )
     private int githubAPIPort;
 
     /**
      * The settings.xml server id to be used to authenticate into github api domain. Only use if using github enterprise.
      */
-    @Parameter ( defaultValue = "github" )
+    @Parameter( defaultValue = "github" )
     private String githubAPIServerId;
 
     /**
@@ -109,13 +109,13 @@ public class GitHubMojo
     /**
      * Boolean which says if we should include open issues in the report.
      */
-    @Parameter ( defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     private boolean includeOpenIssues;
 
     /**
      * Boolean which says if we should include only issues with milestones.
      */
-    @Parameter ( defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     private boolean onlyMilestoneIssues;
 
     /**
@@ -123,7 +123,7 @@ public class GitHubMojo
      * The current version being used is <code>${project.version}</code> minus
      * any "-SNAPSHOT" suffix.
      */
-    @Parameter ( defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean onlyCurrentVersion;
 
     public String getOutputName()
