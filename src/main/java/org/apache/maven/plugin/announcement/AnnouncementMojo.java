@@ -455,7 +455,8 @@ public class AnnouncementMojo
     private int githubAPIPort;
 
     /**
-     * The settings.xml server id to be used to authenticate into github api domain. Only use if using github enterprise.
+     * The settings.xml server id to be used to authenticate into github api domain. Only use if using github
+     * enterprise.
      *
      * @since 2.12
      */
