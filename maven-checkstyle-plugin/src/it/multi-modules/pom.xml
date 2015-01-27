@@ -29,6 +29,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <checkstyle.violation.ignore>JavadocPackage</checkstyle.violation.ignore>
   </properties>
 
   <build>
@@ -38,10 +39,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>@pom.version@</version>
-          <configuration>
-            <configLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven_checks.xml</configLocation>
-            <headerLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven-header.txt</headerLocation>
-          </configuration>            
         </plugin>      
       </plugins>
     </pluginManagement>
@@ -51,26 +48,9 @@
         <artifactId>maven-site-plugin</artifactId>
         <version>@sitePluginVersion@</version>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>@pom.version@</version>
-      </plugin>      
     </plugins>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>@pom.version@</version>
-        <configuration>
-          <configLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven_checks.xml</configLocation>
-        </configuration>        
-      </plugin>
-    </plugins>
-  </reporting>
   <modules>
     <module>multi-modules-child</module>
     <module>multi-modules-child-nosource</module>

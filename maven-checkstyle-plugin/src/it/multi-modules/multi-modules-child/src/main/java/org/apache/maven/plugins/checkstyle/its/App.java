@@ -21,12 +21,20 @@ package org.apache.maven.plugins.checkstyle.its;
 
 /**
  * Hello world!
- *
  */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+public final class App {
+
+    /**
+     * Hide constructor.
+     */
+    private App() {
+    }
+
+    /**
+     * Main.
+     * @param args args
+     */
+    public static void main(final String[] args) {
+        System.out.println("Hello World!");
     }
 }
