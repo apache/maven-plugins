@@ -102,12 +102,11 @@ public abstract class AbstractCheckstyleReport
      * </p>
      * <p/>
      * <p>
-     * There are 3 predefined rulesets included in Maven Checkstyle Plugin:
+     * There are 2 predefined rulesets included in Maven Checkstyle Plugin:
      * </p>
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
-     * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
      */
     @Parameter( property = "checkstyle.config.location", defaultValue = "config/sun_checks.xml" )
