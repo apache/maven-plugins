@@ -88,7 +88,7 @@ under the License.
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <pmdVersion>5.2.3</pmdVersion>
     <sitePluginVersion>3.4</sitePluginVersion>
-    <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
+    <projectInfoReportsPluginVersion>2.8</projectInfoReportsPluginVersion>
   </properties>
 
   <dependencies>
