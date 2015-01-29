@@ -36,8 +36,9 @@ ${project.name}
   {{{./examples/upgrading-checkstyle.html}upgrade the version used at runtime}}.
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
-  {{{./config/sun_checks.html}<<<sun_checks.xml>>>}} and
-  {{{./config/turbine_checks.html}<<<turbine_checks.xml>>>}}. You can also use a custom ruleset by
+  {{{./config/sun_checks.html}<<<sun_checks.xml>>>}},
+  {{{./config/turbine_checks.html}<<<turbine_checks.xml>>>}} and
+  {{{./config/maven_checks.html}<<<maven_checks.xml>>>}}. You can also use a custom ruleset by
   specifying it in the plugin configuration.
 
 * Goals Overview
