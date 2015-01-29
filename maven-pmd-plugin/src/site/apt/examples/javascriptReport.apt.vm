@@ -28,13 +28,13 @@
 
 Analyzing JavaScript Code
 
- The PMD plugin analyzes by default java. You can configure it to analyze JavaScript files instead as shown below.
+ The PMD plugin analyzes Java by default. You can configure it to analyze JavaScript files instead as shown below.
 
- The example assumes that the javascript source code is stored in the subfolder <<<src/main/javascript>>> and
+ The example assumes that the JavaScript source code is stored in the subdirectory <<<src/main/javascript>>> and
  enables three built-in rulesets (<basic>, <braces>, <unnecessary>).
 
- Note that you have to make sure that the build-helper-maven-plugin is executed, so that the additional source folder
- is actually added. To generate the site report, you can include e.g. the <generate-sources> phase:
+ Note that you have to make sure that the build-helper-maven-plugin is executed, so that the additional source
+ directory is actually added. To generate the site report, you can include e.g. the <generate-sources> phase:
 
  <<<mvn generate-sources site>>>
 
@@ -49,7 +49,7 @@ Analyzing JavaScript Code
         <version>1.7</version>
         <configuration>
           <sources>
-            <source>${basedir}/src/main/javascript/</source>
+            <source>${basedir}/src/main/javascript</source>
           </sources>
         </configuration>
         <executions>
