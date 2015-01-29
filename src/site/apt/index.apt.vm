@@ -85,4 +85,6 @@ ${project.name}
 
   * {{{./examples/javascriptReport.html}Analyzing JavaScript Code}}
 
+  * {{{./examples/jspReport.html}Analyzing Java Server Pages Code}}
+
   []

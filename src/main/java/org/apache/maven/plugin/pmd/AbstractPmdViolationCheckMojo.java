@@ -106,7 +106,9 @@ public abstract class AbstractPmdViolationCheckMojo<D>
             return;
         }
 
-        if ( "java".equals( language ) || aggregate )
+       if ( "java".equals( language )
+                || "jsp".equals( language )
+                || aggregate )
         {
             if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
             {
