@@ -44,30 +44,14 @@ under the License.
             <ruleset>ecmascript-braces</ruleset>
             <ruleset>ecmascript-unnecessary</ruleset>
           </rulesets>
-          
-        <includes>
+          <includes>
             <include>**/*.js</include>
-        </includes>
+          </includes>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/js/</compileSourceRoot>
+            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/js</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>pmd</groupId>
-            <artifactId>pmd</artifactId>
-            <version>3.6</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
