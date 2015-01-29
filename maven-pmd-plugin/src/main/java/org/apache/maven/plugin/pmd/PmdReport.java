@@ -549,6 +549,11 @@ public class PmdReport
         {
             languageVersion = LanguageRegistry.findLanguageVersionByTerseName( "ecmascript" );
         }
+        else if ( "jsp".equals( language ) )
+        {
+            languageVersion = LanguageRegistry.findLanguageVersionByTerseName( "jsp" );
+        }
+
         if ( languageVersion != null )
         {
             getLog().debug( "Using language " + languageVersion );

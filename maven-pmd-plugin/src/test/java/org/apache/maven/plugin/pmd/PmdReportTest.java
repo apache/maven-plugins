@@ -402,4 +402,31 @@ public class PmdReportTest
         assertFalse( str.contains( "Avoid unused private fields such as 'unusedVar2'." ) );
     }
 
+    public void testJspConfiguration()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                "src/test/resources/unit/default-configuration/jsp-configuration-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // check if the PMD files were generated
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // these are the rulesets, that have been applied...
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/jsp-basic.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        String str = readFile( generatedFile );
+        assertTrue(str.contains("JSP file should use UTF-8 encoding"));
+        assertTrue(str.contains("Using unsanitized JSP expression can lead to Cross Site Scripting (XSS) attacks"));
+        assertTrue(str.contains("Avoid having style information in JSP files."));
+    }
+
+
 }
