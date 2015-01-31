@@ -81,7 +81,7 @@ public class PmdReport
     /**
      * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code> and
-     * <code>1.7</code>.
+     * <code>1.8</code>.
      */
     @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.target}" )
     private String targetJdk;
@@ -150,7 +150,7 @@ public class PmdReport
     /**
      * Source level marker used to indicate whether a RuleViolation should be suppressed. If it is not set, PMD's
      * default will be used, which is <code>NOPMD</code>. See also <a
-     * href="http://pmd.sourceforge.net/usage/suppressing.html">PMD - Suppressing warnings</a>.
+     * href="http://pmd.sourceforge.net/usage/suppressing.html">PMD &#x2013; Suppressing warnings</a>.
      *
      * @since 3.4
      */
