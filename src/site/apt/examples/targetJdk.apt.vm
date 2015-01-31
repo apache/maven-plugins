@@ -28,26 +28,14 @@
 
 Target JDK
 
- There is a configuration element in the PMD plugin that let you set which
- target JDK to use. Often you want this to be in sync with the configuration
- for maven-compiler-plugin. The best practice for this is to set up a property
- and use that in the configuration section for each of the plugins. Here is
- an example on how to set that up:
+ There is a configuration element in the PMD plugin that lets you set which
+ {{{../pmd-mojo.html#targetJdk}target JDK}} your Java code will be compiled for.
+ Often you want this to be in sync with the configuration for maven-compiler-plugin.
+ The best practice for this is to set up the wellknown property <<<maven.compiler.target>>>
+ and the rest will work automatically. Alternatively, you can set it manually:
 
 +--------------------+
 <project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>${compileSource}</source>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   ...
   <reporting>
     <plugins>
@@ -55,15 +43,11 @@ Target JDK
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <targetJdk>${compileSource}</targetJdk>
+          <targetJdk>1.6</targetJdk>
         </configuration>
       </plugin>
     </plugins>
   </reporting>
-  ...
-  <properties>
-    <compileSource>1.5</compileSource>
-  </properties>
   ...
 </project>
 +--------------------+
