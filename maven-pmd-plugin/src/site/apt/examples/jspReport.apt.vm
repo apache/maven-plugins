@@ -28,7 +28,7 @@
 
 Analyzing JSP Code
 
-  The PMD plugin analyzes by Java default. You can configure it to analyze Java Server Pages files instead as shown below.
+  The PMD plugin analyzes Java by default. You can configure it to analyze Java Server Pages files instead as shown below.
 
   The example assumes that the JSP source code is stored in various subdirectories under the source directory
   <<<src/main/webapp>>> and enables the built-in JSP ruleset (<basic>).
