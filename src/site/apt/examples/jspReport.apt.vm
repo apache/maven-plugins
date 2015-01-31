@@ -1,10 +1,10 @@
-------
-Analyzing JSP Code
-------
-Thomas Williamson
-------
-2015-01-19
-------
+ ------
+ Analyzing JSP Code
+ ------
+ Thomas Williamson
+ ------
+ 2015-01-19
+ ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -28,20 +28,13 @@ Thomas Williamson
 
 Analyzing JSP Code
 
-  The PMD plugin analyzes by default Java. You can configure it to analyze Java Server Pages files instead
-  as shown below.
+  The PMD plugin analyzes by Java default. You can configure it to analyze Java Server Pages files instead as shown below.
 
   The example assumes that the JSP source code is stored in various subdirectories under the source directory
-  <<<src/main/webapp>>> and enables the built-in JSP ruleset(<basic>).
+  <<<src/main/webapp>>> and enables the built-in JSP ruleset (<basic>).
 
-  Note that this example runs two plugins: build-helper-maven-plugin and maven-pmd-plugin. Because the JSP files are
-  not in the original source directory (typically <<<src/main/java>>>) the build-helper plugin is used to add the
-  additional directory to the list of source directories which PMD will search.
-
-  Here is a section of a sample pom.xml file. This POM sets up a profile called "pmd" which will run the two plugins
-  when activated. The result should be a file in <<<target/site>>> called pmd.html, which will contain a report of
-  the problems detected by PMD.
-
+ Note that you have to make sure that the build-helper-maven-plugin is executed, so that the additional source
+ directory is actually added. To generate the site report, you can include e.g. the <generate-sources> phase:
 
  <<<mvn generate-sources site>>>
 
@@ -85,13 +78,6 @@ Analyzing JSP Code
             <include>**/*.jsp</include>
           </includes>
         </configuration>
-        <depdendencies>
-          <dependency>
-            <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd-jsp</artifactId>
-            <version>${pmdVersion}</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </reporting>
