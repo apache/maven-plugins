@@ -134,7 +134,7 @@ under the License.
           <configuration>
             <excludes combine.children="append">
               <!--
-                The manifest specification does not describe any method for writing comments into the manifest.
+                ! The manifest specification does not describe any method for writing comments into the manifest.
               -->
               <exclude>src/it/mjar-71-01/src/main/resources/META-INF/MANIFEST.MF</exclude>
               <exclude>src/it/mjar-71-02/src/main/resources/META-INF/MANIFEST.MF</exclude>
