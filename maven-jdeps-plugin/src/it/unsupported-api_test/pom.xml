@@ -36,7 +36,7 @@ under the License.
         <executions>
           <execution>
             <goals>
-              <goal>jdkinternal</goal>
+              <goal>test-jdkinternals</goal>
             </goals>
           </execution>
         </executions>

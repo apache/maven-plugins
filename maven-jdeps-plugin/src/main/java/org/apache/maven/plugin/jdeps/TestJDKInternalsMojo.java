@@ -28,12 +28,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Check if test sources depends on internal JDK classes
+ * Check if test classes depend on internal JDK classes
  * 
  * @author Robert Scholte
  *
  */
-@Mojo( name = "test-jdkinternal", 
+@Mojo( name = "test-jdkinternals", 
        requiresDependencyResolution = ResolutionScope.TEST,
        defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES )
 public class TestJDKInternalsMojo
