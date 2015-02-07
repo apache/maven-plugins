@@ -447,7 +447,8 @@ public abstract class AbstractJDepsMojo
 
                     if ( tcs != null && tcs.size() > 0 )
                     {
-                        tc = tcs.get( 0 );
+                        // pick up latest, jdeps of JDK9 has more options compared to JDK8
+                        tc = tcs.get( tcs.size() - 1 );
                     }
                 }
                 catch ( NoSuchMethodException e )
