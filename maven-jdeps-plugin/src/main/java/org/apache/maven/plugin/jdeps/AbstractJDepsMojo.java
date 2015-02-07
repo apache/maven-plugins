@@ -432,10 +432,9 @@ public abstract class AbstractJDepsMojo
         {
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
 
-            getLog().debug( "no toolchains from build context" );
             if ( tc == null )
             {
-                // Maven 3.2.6 supports plugin execution scoped Toolchain Support
+                // Maven 3.2.6 has plugin execution scoped Toolchain Support
                 try
                 {
                     Method getToolchainsMethod =
