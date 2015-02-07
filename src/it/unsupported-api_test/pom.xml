@@ -41,6 +41,7 @@ under the License.
         <executions>
           <execution>
             <goals>
+              <goal>jdkinternals</goal>
               <goal>test-jdkinternals</goal>
             </goals>
           </execution>

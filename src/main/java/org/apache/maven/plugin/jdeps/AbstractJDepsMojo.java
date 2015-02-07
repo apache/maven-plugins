@@ -21,6 +21,7 @@ package org.apache.maven.plugin.jdeps;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -30,6 +31,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.jdeps.consumers.JDepsConsumer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -127,6 +129,12 @@ public abstract class AbstractJDepsMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( !new File( getClassesDirectory() ).exists() )
+        {
+            getLog().debug( "No classes to analyze" );
+            return;
+        }
+
         String jExecutable;
         try
         {
@@ -144,7 +152,23 @@ public abstract class AbstractJDepsMojo
         addJDepsOptions( cmd );
         addJDepsClasses( cmd );
         
-        executeJavadocCommandLine( cmd, outputDirectory );
+        JDepsConsumer consumer = new JDepsConsumer();
+        executeJavadocCommandLine( cmd, outputDirectory, consumer );
+        
+        // @ TODO if there will be more goals, this should be pushed down to AbstractJDKInternals
+        if ( consumer.getOffendingPackages().size() > 0 )
+        {
+            final String ls = System.getProperty( "line.separator" );
+            
+            StringBuilder msg = new StringBuilder();
+            msg.append( "Found offending packages:" ).append( ls );
+            for ( Map.Entry<String, String> offendingPackage : consumer.getOffendingPackages().entrySet() )
+            {
+                msg.append( ' ' ).append( offendingPackage.getKey() )
+                   .append( " -> " ).append( offendingPackage.getValue() ).append( ls );
+            }
+            throw new MojoExecutionException( msg.toString() );
+        }
     }
 
     protected void addJDepsOptions( Commandline cmd )
@@ -223,7 +247,7 @@ public abstract class AbstractJDepsMojo
             cmd.createArg().setValue( "-R" );
         }
         
-        cmd.createArg().setValue( "-version" );
+        // cmd.createArg().setValue( "-version" );
     }
     
     protected void addJDepsClasses( Commandline cmd )
@@ -322,7 +346,9 @@ public abstract class AbstractJDepsMojo
         return jdepsExe.getAbsolutePath();
     }
     
-    private void executeJavadocCommandLine( Commandline cmd, File javadocOutputDirectory ) throws MojoExecutionException
+    private void executeJavadocCommandLine( Commandline cmd, File jOutputDirectory,
+                                            CommandLineUtils.StringStreamConsumer consumer )
+        throws MojoExecutionException
     {
         if ( getLog().isDebugEnabled() )
         {
@@ -330,8 +356,18 @@ public abstract class AbstractJDepsMojo
             getLog().debug( CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
         }
 
+        
         CommandLineUtils.StringStreamConsumer err = new CommandLineUtils.StringStreamConsumer();
-        CommandLineUtils.StringStreamConsumer out = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.StringStreamConsumer out;
+        if ( consumer != null )
+        {
+            out = consumer;
+        }
+        else
+        {
+            out = new CommandLineUtils.StringStreamConsumer();
+        }
+                        
         try
         {
             int exitCode = CommandLineUtils.executeCommandLine( cmd, out, err );
