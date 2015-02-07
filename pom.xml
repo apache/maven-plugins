@@ -58,7 +58,10 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <javaVersion>1.5</javaVersion>
+    <!-- Because Checkstyle 5.9+ requires Java 6 -->
+    <javaVersion>1.6</javaVersion>
+    <maven.compiler.source>${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <mavenVersion>2.2.1</mavenVersion>
     <checkstyleVersion>5.8</checkstyleVersion>
     <doxiaVersion>1.4</doxiaVersion>
@@ -364,7 +367,7 @@ under the License.
             <artifactId>maven-plugin-plugin</artifactId>
             <configuration>
               <requirements>
-                <jdk>1.5</jdk>
+                <jdk>${javaVersion}</jdk>
               </requirements>
             </configuration>
           </plugin>
