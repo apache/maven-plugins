@@ -21,4 +21,5 @@
 def LS = System.getProperty("line.separator")
  
 def buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( "Found offending packages:${LS} sun.misc -> JDK internal API (java.base)" );
+assert buildLog.text.contains( "Found offending packages:${LS} sun.misc -> JDK internal API (java.base)" ) || 
+	buildLog.text.contains( "Found offending packages:${LS} sun.misc -> JDK internal API (rt.jar)" )
