@@ -33,6 +33,10 @@ ${project.name}
  {{{https://wiki.openjdk.java.net/display/JDK8/Java+Dependency+Analysis+Tool}Java+Dependency+Analysis+Tool}}.
  
  <<NOTE:>> The jdeps tool is available since JDK8.
+ 
+ <<NOTE:>> The plugin is has {{{http://maven.apache.org/guides/mini/guide-using-toolchains.html}toolchains support}}. 
+ When using Apache Maven 3.2.6 you don't need to include the <<<maven-toolchain-plugin>>>; the <<<maven-jdeps-plugin>>>
+ can pick up the latest <<<jdk>>> toolchain, as long as it is version <<<1.8>>> or above.
 
 * Goals Overview
 
