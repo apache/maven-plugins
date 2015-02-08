@@ -441,6 +441,7 @@ public abstract class AbstractJDepsMojo
                         toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class, String.class,
                                                                Map.class );
 
+                    @SuppressWarnings( "unchecked" )
                     List<Toolchain> tcs =
                         (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
                                                                       Collections.singletonMap( "version", "[1.8,)" ) );

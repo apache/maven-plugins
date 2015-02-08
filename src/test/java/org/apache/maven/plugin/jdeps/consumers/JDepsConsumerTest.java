@@ -42,6 +42,25 @@ public class JDepsConsumerTest
         
         assertEquals( 1, consumer.getOffendingPackages().size() );
         assertEquals( "JDK internal API (java.base)", consumer.getOffendingPackages().get( "sun.misc" ) );
+        assertEquals( 0, consumer.getProfiles().size() );
+    }
+
+    @Test
+    public void testProfile()
+    {
+        consumer = new JDepsConsumer();
+        consumer.consumeLine( "E:\\java-workspace\\apache-maven-plugins\\maven-jdeps-plugin\\target\\classes -> "
+            + "C:\\Program Files\\Java\\jdk1.8.0\\jre\\lib\\rt.jar (compact1)" );
+        consumer.consumeLine( "   <unnamed> (classes)" );
+        consumer.consumeLine( "      -> java.io                                            compact1" );
+        consumer.consumeLine( "      -> java.lang                                          compact1" );
+        consumer.consumeLine( "      -> sun.misc                                           JDK internal API (rt.jar)" );
+        
+        assertEquals( 1, consumer.getOffendingPackages().size() );
+        assertEquals( "JDK internal API (rt.jar)", consumer.getOffendingPackages().get( "sun.misc" ) );
+        assertEquals( 2, consumer.getProfiles().size() );
+        assertEquals( "compact1", consumer.getProfiles().get( "java.io" ) );
+        assertEquals( "compact1", consumer.getProfiles().get( "java.lang" ) );
     }
 
 }
