@@ -38,18 +38,48 @@ public class JDepsConsumer
     implements StreamConsumer
 {
 
-    private static final Pattern JDKINTERNALAPI = Pattern.compile( "\\s+->\\s([a-z\\.]+)\\s+(\\S.*)" );
+    /**
+     * JDK8: JDK internal API (rt.jar)
+     * JDK9: JDK internal API (java.base)
+     */
+    private static final Pattern JDKINTERNALAPI = Pattern.compile( "\\s+->\\s([a-z\\.]+)\\s+(JDK internal API .+)" );
 
+    /**
+     * <dl>
+     *  <dt>key</dt><dd>The offending package</dd>
+     *  <dt>value</dt><dd>Offending details</dd>
+     * </dl>
+     */
     private Map<String, String> offendingPackages = new HashMap<String, String>();
 
+    private static final Pattern PROFILE = Pattern.compile( "\\s+->\\s([a-z\\.]+)\\s+(\\S+)" );
+
+    /**
+     * <dl>
+     *  <dt>key</dt><dd>The package</dd>
+     *  <dt>value</dt><dd>The profile</dd>
+     * </dl>
+     */
+    private Map<String, String> profiles = new HashMap<String, String>();
+
+    
     public void consumeLine( String line )
     {
         super.consumeLine( line );
+        Matcher matcher;
         
-        Matcher matcher = JDKINTERNALAPI.matcher( line );
+        matcher = JDKINTERNALAPI.matcher( line );
         if ( matcher.matches() )
         {
             offendingPackages.put( matcher.group( 1 ), matcher.group( 2 ) );
+            return;
+        }
+        
+        matcher = PROFILE.matcher( line );
+        if ( matcher.matches() )
+        {
+            profiles.put( matcher.group( 1 ), matcher.group( 2 ) );
+            return;
         }
     }
 
@@ -57,4 +87,10 @@ public class JDepsConsumer
     {
         return offendingPackages;
     }
+    
+    public Map<String, String> getProfiles()
+    {
+        return profiles;
+    }
+
 }
