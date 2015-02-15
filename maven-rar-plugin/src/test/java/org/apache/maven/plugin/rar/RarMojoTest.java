@@ -88,16 +88,20 @@ public class RarMojoTest
 
         assertEquals( "Files in working directory", expectedFiles.size(), fileNames.length );
 
-        for (File fileName1 : fileNames) {
+        for ( File fileName1 : fileNames )
+        {
             String fileName = fileName1.getName();
 
-            assertTrue(expectedFiles.contains(fileName));
+            assertTrue( expectedFiles.contains( fileName ) );
 
-            if (expectedFiles.contains(fileName)) {
-                expectedFiles.remove(fileName);
-                assertFalse(expectedFiles.contains(fileName));
-            } else {
-                fail(fileName + " is not included in expected files.");
+            if ( expectedFiles.contains( fileName ) )
+            {
+                expectedFiles.remove( fileName );
+                assertFalse( expectedFiles.contains( fileName ) );
+            }
+            else
+            {
+                fail( fileName + " is not included in expected files." );
             }
         }
 
@@ -163,8 +167,9 @@ public class RarMojoTest
         List<String> expectedFiles = new ArrayList<String>();
         List<String> fileList = new ArrayList<String>();
 
-        for (File fileName : fileNames) {
-            addFileToList(fileName, fileList);
+        for ( File fileName : fileNames )
+        {
+            addFileToList( fileName, fileList );
         }
 
         expectedFiles.add( "ra.xml" );
@@ -302,14 +307,18 @@ public class RarMojoTest
 
     private int getSizeOfExpectedFiles( List<String> fileList, List<String> expectedFiles )
     {
-        for (Object aFileList : fileList) {
+        for ( Object aFileList : fileList )
+        {
             String fileName = (String) aFileList;
 
-            if (expectedFiles.contains(fileName)) {
-                expectedFiles.remove(fileName);
-                assertFalse(expectedFiles.contains(fileName));
-            } else {
-                fail(fileName + " is not included in the expected files");
+            if ( expectedFiles.contains( fileName ) )
+            {
+                expectedFiles.remove( fileName );
+                assertFalse( expectedFiles.contains( fileName ) );
+            }
+            else
+            {
+                fail( fileName + " is not included in the expected files" );
             }
         }
         return expectedFiles.size();
