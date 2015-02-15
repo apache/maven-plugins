@@ -19,6 +19,15 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.pmd.model.CpdErrorDetail;
@@ -30,15 +39,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Fail the build if there were any CPD violations in the source code.
@@ -53,8 +53,7 @@ public class CpdViolationCheckMojo
 {
 
     /**
-     * Skip the CPD violation checks.  Most useful on the command line
-     * via "-Dcpd.skip=true".
+     * Skip the CPD violation checks. Most useful on the command line via "-Dcpd.skip=true".
      */
     @Parameter( property = "cpd.skip", defaultValue = "false" )
     private boolean skip;
@@ -68,7 +67,6 @@ public class CpdViolationCheckMojo
      */
     @Parameter( property = "cpd.failOnViolation", defaultValue = "true", required = true )
     protected boolean failOnViolation;
-
 
     /**
      * {@inheritDoc}

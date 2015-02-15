@@ -61,7 +61,7 @@ public class PmdReportGenerator
 
     private Map<File, PmdFileInfo> files;
 
-//    private List<Metric> metrics = new ArrayList<Metric>();
+    // private List<Metric> metrics = new ArrayList<Metric>();
 
     public PmdReportGenerator( Log log, Sink sink, ResourceBundle bundle, boolean aggregate )
     {
@@ -86,15 +86,15 @@ public class PmdReportGenerator
         return new ArrayList<RuleViolation>( violations );
     }
 
-//    public List<Metric> getMetrics()
-//    {
-//        return metrics;
-//    }
-//
-//    public void setMetrics( List<Metric> metrics )
-//    {
-//        this.metrics = metrics;
-//    }
+    // public List<Metric> getMetrics()
+    // {
+    // return metrics;
+    // }
+    //
+    // public void setMetrics( List<Metric> metrics )
+    // {
+    // this.metrics = metrics;
+    // }
 
     private void startFileSection( String currentFilename, PmdFileInfo fileInfo )
     {
@@ -191,7 +191,7 @@ public class PmdReportGenerator
             if ( fileInfo == null )
             {
                 log.warn( "Couldn't determine PmdFileInfo for file " + currentFn + " (canonical: " + canonicalFilename
-                              + "). XRef links won't be available." );
+                    + "). XRef links won't be available." );
             }
 
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
@@ -270,62 +270,19 @@ public class PmdReportGenerator
         // TODO files summary
     }
 
-/*
-    private void processMetrics()
-    {
-        if ( metrics.size() == 0 )
-        {
-            return;
-        }
-
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text( "Metrics" );
-        sink.sectionTitle1_();
-
-        sink.table();
-        sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text( "Name" );
-        sink.tableHeaderCell_();
-        sink.tableHeaderCell();
-        sink.text( "Count" );
-        sink.tableHeaderCell_();
-        sink.tableHeaderCell();
-        sink.text( "High" );
-        sink.tableHeaderCell_();
-        sink.tableHeaderCell();
-        sink.text( "Low" );
-        sink.tableHeaderCell_();
-        sink.tableHeaderCell();
-        sink.text( "Average" );
-        sink.tableHeaderCell_();
-        sink.tableRow_();
-
-        for ( Metric met : metrics )
-        {
-            sink.tableRow();
-            sink.tableCell();
-            sink.text( met.getMetricName() );
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text( String.valueOf( met.getCount() ) );
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text( String.valueOf( met.getHighValue() ) );
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text( String.valueOf( met.getLowValue() ) );
-            sink.tableCell_();
-            sink.tableCell();
-            sink.text( String.valueOf( met.getAverage() ) );
-            sink.tableCell_();
-            sink.tableRow_();
-        }
-        sink.table_();
-        sink.section1_();
-    }
-*/
+    /*
+     * private void processMetrics() { if ( metrics.size() == 0 ) { return; } sink.section1(); sink.sectionTitle1();
+     * sink.text( "Metrics" ); sink.sectionTitle1_(); sink.table(); sink.tableRow(); sink.tableHeaderCell(); sink.text(
+     * "Name" ); sink.tableHeaderCell_(); sink.tableHeaderCell(); sink.text( "Count" ); sink.tableHeaderCell_();
+     * sink.tableHeaderCell(); sink.text( "High" ); sink.tableHeaderCell_(); sink.tableHeaderCell(); sink.text( "Low" );
+     * sink.tableHeaderCell_(); sink.tableHeaderCell(); sink.text( "Average" ); sink.tableHeaderCell_();
+     * sink.tableRow_(); for ( Metric met : metrics ) { sink.tableRow(); sink.tableCell(); sink.text(
+     * met.getMetricName() ); sink.tableCell_(); sink.tableCell(); sink.text( String.valueOf( met.getCount() ) );
+     * sink.tableCell_(); sink.tableCell(); sink.text( String.valueOf( met.getHighValue() ) ); sink.tableCell_();
+     * sink.tableCell(); sink.text( String.valueOf( met.getLowValue() ) ); sink.tableCell_(); sink.tableCell();
+     * sink.text( String.valueOf( met.getAverage() ) ); sink.tableCell_(); sink.tableRow_(); } sink.table_();
+     * sink.section1_(); }
+     */
 
     public void render()
         throws IOException
@@ -350,7 +307,7 @@ public class PmdReportGenerator
         // of excessive imports metrics, none of which is really any use.
         // TODO Determine if we are going to just ignore metrics.
 
-//        processMetrics();
+        // processMetrics();
 
         sink.body_();
 

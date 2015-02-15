@@ -66,7 +66,8 @@ under the License.
     <module>maven-assembly-plugin</module>
     <module>maven-changelog-plugin</module>
     <module>maven-changes-plugin</module>
-    <module>maven-checkstyle-plugin</module>
+    <!-- Moved to java-6 profile because it requires Java 6
+    <module>maven-checkstyle-plugin</module> -->
     <module>maven-clean-plugin</module>
     <module>maven-compiler-plugin</module>
     <module>maven-dependency-plugin</module>
@@ -109,6 +110,7 @@ under the License.
       <!-- For plugins that require at least Java 6 to build -->
       <id>java-6</id>
       <modules>
+        <module>maven-checkstyle-plugin</module>
         <module>maven-pmd-plugin</module>
       </modules>
       <activation>

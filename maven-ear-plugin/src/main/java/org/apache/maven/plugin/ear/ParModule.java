@@ -32,16 +32,25 @@ public class ParModule
     extends EjbModule
 {
 
+    /**
+     * Create an instance.
+     */
     public ParModule()
     {
         super();
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public ParModule( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "par";

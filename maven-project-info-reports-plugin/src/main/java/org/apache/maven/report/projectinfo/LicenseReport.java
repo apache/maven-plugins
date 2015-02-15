@@ -83,19 +83,15 @@ public class LicenseReport
     // ----------------------------------------------------------------------
 
     @Override
-    public void executeReport( Locale locale )
-    {
-        LicenseRenderer r =
-            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
-                                 linkOnly, licenseFileEncoding );
-
-        r.render();
-    }
-
-    @Override
     public boolean canGenerateReport()
     {
-        if ( !super.canGenerateReport() )
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = !isEmpty( getProject().getModel().getLicenses() ) ;
+        }
+
+        if ( !result )
         {
             return false;
         }
@@ -137,6 +133,16 @@ public class LicenseReport
         }
 
         return false;
+    }
+
+    @Override
+    public void executeReport( Locale locale )
+    {
+        LicenseRenderer r =
+            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
+                                 linkOnly, licenseFileEncoding );
+
+        r.render();
     }
 
     /**
@@ -283,6 +289,10 @@ public class LicenseReport
                     for ( License license : licenses )
                     {
                         String name = license.getName();
+                        if ( StringUtils.isEmpty( name ) )
+                        {
+                            name = getI18nString( "unnamed" );
+                        }
 
                         sink.listItem();
                         link( "#" + HtmlTools.encodeId( name ), name );
@@ -295,6 +305,11 @@ public class LicenseReport
             for ( License license : licenses )
             {
                 String name = license.getName();
+                if ( StringUtils.isEmpty( name ) )
+                {
+                    name = getI18nString( "unnamed" );
+                }
+
                 String url = license.getUrl();
                 String comments = license.getComments();
 
@@ -347,11 +362,10 @@ public class LicenseReport
         {
             try
             {
-                // All licenses are supposed in English...
+                // All licenses are supposed to be in English...
                 String licenseContent = ProjectInfoReportUtils.getContent( licenseUrl, settings, licenseFileEncoding );
 
                 // TODO: we should check for a text/html mime type instead, and possibly use a html parser to do this a bit more cleanly/reliably.
-                // TODO Use Locale.ROOT as soon as we migrate to Java 6
                 String licenseContentLC = licenseContent.toLowerCase( Locale.ENGLISH );
                 int bodyStart = licenseContentLC.indexOf( "<body" );
                 int bodyEnd = licenseContentLC.indexOf( "</body>" );
@@ -362,8 +376,8 @@ public class LicenseReport
                     bodyStart = licenseContentLC.indexOf( ">", bodyStart ) + 1;
                     String body = licenseContent.substring( bodyStart, bodyEnd );
 
-                    link( licenseUrl.toExternalForm(), "[Original text]" );
-                    paragraph( "Copy of the license follows." );
+                    link( licenseUrl.toExternalForm(), getI18nString( "originalText" ) );
+                    paragraph( getI18nString( "copy" ) );
 
                     body = replaceRelativeLinks( body, baseURL( licenseUrl ).toExternalForm() );
                     sink.rawText( body );

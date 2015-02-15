@@ -21,5 +21,7 @@ def logFile = new File( basedir, 'build.log' )
 assert logFile.exists()
 content = logFile.text
 
-assert content.contains( '1 warning' )
+// messages differ per vendor 
+assert content.contains( '[WARNING] COMPILATION WARNING :' )
+assert content =~ /\d+ warnings?/
 assert content.contains( '1 error' )

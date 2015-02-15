@@ -44,6 +44,9 @@ public class DependencyFilesetsTask
     extends Task
 {
 
+    /**
+     * The default project dependencies id.
+     */
     public static final String DEFAULT_PROJECT_DEPENDENCIES_ID = "maven.project.dependencies";
 
     /**
@@ -56,11 +59,17 @@ public class DependencyFilesetsTask
      */
     private String projectDependenciesId = DEFAULT_PROJECT_DEPENDENCIES_ID;
 
+    /**
+     * @return {@link #projectDependenciesId}
+     */
     public String getProjectDependenciesId()
     {
         return projectDependenciesId;
     }
 
+    /**
+     * @param projectDependenciesId {@link #projectDependenciesId}
+     */
     public void setProjectDependenciesId( String projectDependenciesId )
     {
         this.projectDependenciesId = projectDependenciesId;
@@ -81,11 +90,15 @@ public class DependencyFilesetsTask
      */
     private String scopes = "";
 
+    /**
+     * Create instance.
+     */
     public DependencyFilesetsTask()
     {
 
     }
 
+    /** {@inheritDoc} */
     public void execute()
     {
         if ( this.getProject().getReference( mavenProjectId ) == null )
@@ -119,16 +132,25 @@ public class DependencyFilesetsTask
         getProject().addReference( ( getPrefix() + projectDependenciesId ), dependenciesFileSet );
     }
 
+    /**
+     * @return {@link #mavenProjectId}
+     */
     public String getMavenProjectId()
     {
         return mavenProjectId;
     }
 
+    /**
+     * @param mavenProjectId {@link #mavenProjectId}
+     */
     public void setMavenProjectId( String mavenProjectId )
     {
         this.mavenProjectId = mavenProjectId;
     }
 
+    /**
+     * @return {@link #prefix}
+     */
     public String getPrefix()
     {
         if ( prefix == null )
@@ -140,27 +162,40 @@ public class DependencyFilesetsTask
 
     /**
      * Prefix to be added to each of the dependency filesets. Default is empty string.
+     * @param prefix {@link #prefix}
      */
     public void setPrefix( String prefix )
     {
         this.prefix = prefix;
     }
 
+    /**
+     * @return {@link #types}
+     */
     public String getTypes()
     {
         return types;
     }
 
+    /**
+     * @param types {@link #types}
+     */
     public void setTypes( String types )
     {
         this.types = types;
     }
 
+    /**
+     * @return {@link #scopes}
+     */
     public String getScopes()
     {
         return scopes;
     }
 
+    /**
+     * @param scopes {@link #scopes}
+     */
     public void setScopes( String scopes )
     {
         this.scopes = scopes;
@@ -169,8 +204,8 @@ public class DependencyFilesetsTask
     /**
      * Filter a set of artifacts using the scopes and type filters.
      *
-     * @param artifacts
-     * @return
+     * @param artifacts {@link Artifact} set.
+     * @return The set of filtered artifacts.
      */
     public Set<Artifact> filterArtifacts( Set<Artifact> artifacts )
     {

@@ -19,6 +19,12 @@ package org.apache.maven.plugin.ear;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
@@ -28,13 +34,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.Interpolator;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
+import org.codehaus.plexus.interpolation.ValueSource;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Generates the EAR deployment descriptor file(s).
@@ -42,17 +47,26 @@ import java.util.List;
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
-@Mojo(
-    name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, 
-    threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "generate-application-xml", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_ON: LineLength
 public class GenerateApplicationXmlMojo
     extends AbstractEarMojo
 {
 
+    /**
+     * The DEFAULT library folder.
+     */
     public static final String DEFAULT = "DEFAULT";
 
+    /**
+     * The empty folder.
+     */
     public static final String EMPTY = "EMPTY";
 
+    /**
+     * The NONE not existent folder.
+     */
     public static final String NONE = "NONE";
 
     /**
@@ -132,6 +146,15 @@ public class GenerateApplicationXmlMojo
     @Parameter( alias = "env-entries" )
     private PlexusConfiguration envEntries;
 
+    /**
+     * The {@code ejb-ref} entries.
+     */
+    @Parameter( alias = "ejb-refs" )
+    private PlexusConfiguration ejbRefs;
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -201,6 +224,9 @@ public class GenerateApplicationXmlMojo
 
     /**
      * Generates the deployment descriptor.
+     * 
+     * @param javaEEVersion {@link JavaEEVersion}
+     * @throws EarPluginException if the configuration is invalid
      */
     protected void generateStandardDeploymentDescriptor( JavaEEVersion javaEEVersion )
         throws EarPluginException
@@ -216,13 +242,15 @@ public class GenerateApplicationXmlMojo
         final ApplicationXmlWriter writer = new ApplicationXmlWriter( javaEEVersion, encoding, generateModuleId );
         final ApplicationXmlWriterContext context =
             new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), buildEnvEntries(),
-                                             displayName, description, getActualLibraryDirectory(), applicationName,
-                                             initializeInOrder ).setApplicationId( applicationId );
+                                             buildEjbEntries(), displayName, description, getActualLibraryDirectory(),
+                                             applicationName, initializeInOrder ).setApplicationId( applicationId );
         writer.write( context );
     }
 
     /**
      * Generates the jboss deployment descriptor.
+     * 
+     * @throws EarPluginException if the configuration is invalid
      */
     protected void generateJbossDeploymentDescriptor()
         throws EarPluginException
@@ -260,20 +288,21 @@ public class GenerateApplicationXmlMojo
             for ( PlexusConfiguration securityRole : securityRoles )
             {
                 final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
-                final String roleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
-                final String roleNameId =
+                final String childRoleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
+                final String childRoleNameId =
                     securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
-                final String description = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
-                final String descriptionId =
+                final String childDescription = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
+                final String childDescriptionId =
                     securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
 
-                if ( roleName == null )
+                if ( childRoleName == null )
                 {
                     throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
                 }
                 else
                 {
-                    result.add( new SecurityRole( roleName, roleNameId, id, description, descriptionId ) );
+                    result.add( new SecurityRole( childRoleName, childRoleNameId, id, childDescription,
+                                                  childDescriptionId ) );
                 }
             }
             return result;
@@ -283,6 +312,28 @@ public class GenerateApplicationXmlMojo
             throw new EarPluginException( "Invalid security-role configuration", e );
         }
 
+    }
+
+    /**
+     * This help method was needed otherwise the interpolate method of interpolator will make an empty string of a
+     * {@code null} element which results in supplemental elements for env-entry.
+     * 
+     * @param interpolator The interpolator
+     * @param element The element
+     * @return The interpolated elements.
+     * @throws InterpolationException in case of an error.
+     */
+    private String interpolate( Interpolator interpolator, String element )
+        throws InterpolationException
+    {
+        if ( element == null )
+        {
+            return element;
+        }
+        else
+        {
+            return interpolator.interpolate( element );
+        }
     }
 
     /**
@@ -301,18 +352,28 @@ public class GenerateApplicationXmlMojo
         }
         try
         {
+            StringSearchInterpolator ssi = new StringSearchInterpolator();
+            ValueSource vs = new MapBasedValueSource( project.getProperties() );
+            ssi.addValueSource( vs );
+
             final PlexusConfiguration[] allEnvEntries = envEntries.getChildren( EnvEntry.ENV_ENTRY );
 
             for ( PlexusConfiguration envEntry : allEnvEntries )
             {
-                final String description = envEntry.getChild( EnvEntry.DESCRIPTION ).getValue();
-                final String envEntryName = envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue();
-                final String envEntryType = envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue();
-                final String envEntryValue = envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue();
+                // CHECKSTYLE_OFF: LineLength
+                final String childDescription = interpolate( ssi, envEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
+                final String childEnvEntryName =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue() );
+                final String childEnvEntryType =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue() );
+                final String childEnvEntryValue =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue() );
+                // CHECKSTYLE_ON: LineLength
 
                 try
                 {
-                    result.add( new EnvEntry( description, envEntryName, envEntryType, envEntryValue ) );
+                    result.add( new EnvEntry( childDescription, childEnvEntryName, childEnvEntryType,
+                                              childEnvEntryValue ) );
                 }
                 catch ( IllegalArgumentException e )
                 {
@@ -324,6 +385,65 @@ public class GenerateApplicationXmlMojo
         catch ( PlexusConfigurationException e )
         {
             throw new EarPluginException( "Invalid env-entry configuration", e );
+        }
+        catch ( InterpolationException e )
+        {
+            throw new EarPluginException( "Interpolation exception:", e );
+        }
+
+    }
+
+    /**
+     * Builds the ejb-ref based on the configuration.
+     * 
+     * @return a list of EjbRef object(s)
+     * @throws EarPluginException if the configuration is invalid
+     */
+    private List<EjbRef> buildEjbEntries()
+        throws EarPluginException
+    {
+        final List<EjbRef> result = new ArrayList<EjbRef>();
+        if ( ejbRefs == null )
+        {
+            return result;
+        }
+        try
+        {
+            StringSearchInterpolator ssi = new StringSearchInterpolator();
+            ValueSource vs = new MapBasedValueSource( project.getProperties() );
+            ssi.addValueSource( vs );
+
+            final PlexusConfiguration[] allEjbEntries = ejbRefs.getChildren( EjbRef.EJB_REF );
+
+            for ( PlexusConfiguration ejbEntry : allEjbEntries )
+            {
+                // CHECKSTYLE_OFF: LineLength
+                final String childDescription = interpolate( ssi, ejbEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
+                final String childEjbEntryName = interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_NAME ).getValue() );
+                final String childEjbEntryType = interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_TYPE ).getValue() );
+                final String childEjbLookupNameValue =
+                    interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_LOOKUP_NAME ).getValue() );
+                // CHECKSTYLE_ON: LineLength
+
+                try
+                {
+                    result.add( new EjbRef( childDescription, childEjbEntryName, childEjbEntryType,
+                                            childEjbLookupNameValue ) );
+                }
+                catch ( IllegalArgumentException e )
+                {
+                    throw new EarPluginException( "Invalid ejb-ref [" + ejbEntry + "]", e );
+                }
+            }
+            return result;
+        }
+        catch ( PlexusConfigurationException e )
+        {
+            throw new EarPluginException( "Invalid ejb-ref configuration", e );
+        }
+        catch ( InterpolationException e )
+        {
+            throw new EarPluginException( "Interpolation exception:", e );
         }
 
     }

@@ -233,7 +233,7 @@ public class DependencyManagementRenderer
 
                 List<ArtifactVersion> versions =
                     artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
-    
+
                 // only use versions from range
                 for ( Iterator<ArtifactVersion> iter = versions.iterator(); iter.hasNext(); )
                 {
@@ -246,9 +246,9 @@ public class DependencyManagementRenderer
                 // select latest, assuming pom information will be the most accurate
                 if ( versions.size() > 0 )
                 {
-                    Collections.sort( versions );
-                    
-                    artifact.setVersion( versions.get( versions.size() - 1 ).toString() );
+                    ArtifactVersion maxArtifactVersion = Collections.max( versions );
+
+                    artifact.setVersion( maxArtifactVersion.toString() );
                     log.debug( "DependencyManagement resolved: " + artifact.getId() );
                 }
             }

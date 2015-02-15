@@ -31,15 +31,24 @@ import org.apache.maven.artifact.Artifact;
 public class WsrModule
     extends RarModule
 {
+    /**
+     * Create an instance.
+     */
     public WsrModule()
     {
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public WsrModule( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "wsr";

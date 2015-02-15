@@ -67,16 +67,17 @@ public class EjbMojo
         "**/*Session.class", "**/package.html" };
 
     /**
-     * The directory for the generated EJB.
+     * The directory location for the generated EJB.
      */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
-    private File basedir;
+    private File outputDirectory;
 
     /**
-     * Directory that resources are copied to during the build.
+     * Directory that contains the resources which are packaged into
+     * the created archive {@code target/classes}.
      */
-    @Parameter( property = "outputDirectory", defaultValue = "${project.build.outputDirectory}" )
-    private File outputDirectory;
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
+    private File sourceDirectory;
 
     /**
      * The name of the EJB file to generate.
@@ -94,7 +95,7 @@ public class EjbMojo
      * You can define the location of <code>ejb-jar.xml</code> file.
      */
     @Parameter( property = "ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
-    // The initalization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
+    // The initialization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
     private String ejbJar = "META-INF/ejb-jar.xml";
 
     /**
@@ -231,7 +232,7 @@ public class EjbMojo
      * @since 2.3
      */
     @Parameter
-    private List filters;
+    private List<String> filters;
 
     /**
      * @since 2.3
@@ -254,11 +255,11 @@ public class EjbMojo
         throws MojoExecutionException
     {
 
-        if ( !outputDirectory.exists() )
+        if ( !sourceDirectory.exists() )
         {
-            getLog().warn( "The created EJB jar will be empty cause the " + outputDirectory.getPath()
+            getLog().warn( "The created EJB jar will be empty cause the " + sourceDirectory.getPath()
                                + " did not exist." );
-            outputDirectory.mkdirs();
+            sourceDirectory.mkdirs();
         }
 
         if ( getLog().isInfoEnabled() )
@@ -266,7 +267,7 @@ public class EjbMojo
             getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
         }
 
-        File jarFile = getEJBJarFile( basedir, jarName, classifier );
+        File jarFile = getEJBJarFile( outputDirectory, jarName, classifier );
 
         MavenArchiver archiver = new MavenArchiver();
 
@@ -274,19 +275,10 @@ public class EjbMojo
 
         archiver.setOutputFile( jarFile );
 
-        File deploymentDescriptor = new File( outputDirectory, ejbJar );
+        File deploymentDescriptor = new File( sourceDirectory, ejbJar );
 
         /* test EJB version compliance */
-        if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
-        {
-            throw new MojoExecutionException( "ejbVersion is not valid: " + ejbVersion
-                + ". Must be 2.x or 3.x (where x is a digit)" );
-        }
-
-        if ( ejbVersion.matches( "\\A2\\.[0-9]\\z" ) && !deploymentDescriptor.exists() )
-        {
-            throw new MojoExecutionException( "Error assembling EJB: " + ejbJar + " is required for ejbVersion 2.x" );
-        }
+        checkEJBVersionCompliance( deploymentDescriptor );
 
         try
         {
@@ -299,27 +291,14 @@ public class EjbMojo
                 mainJarExcludes = (String[]) excludes.toArray( new String[excludes.size()] );
             }
 
-            archiver.getArchiver().addDirectory( outputDirectory, DEFAULT_INCLUDES, mainJarExcludes );
+            archiver.getArchiver().addDirectory( sourceDirectory, DEFAULT_INCLUDES, mainJarExcludes );
 
             if ( deploymentDescriptor.exists() )
             {
                 // EJB-34 Filter ejb-jar.xml
                 if ( filterDeploymentDescriptor )
                 {
-                    getLog().debug( "Filtering deployment descriptor." );
-                    MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
-                    mavenResourcesExecution.setEscapeString( escapeString );
-                    List<FilterWrapper> filterWrappers =
-                        mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
-                                                                  this.session, mavenResourcesExecution );
-
-                    // Create a temporary file that we can copy-and-filter
-                    File unfilteredDeploymentDescriptor = new File( outputDirectory, ejbJar + ".unfiltered" );
-                    FileUtils.copyFile( deploymentDescriptor, unfilteredDeploymentDescriptor );
-                    mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true,
-                                              filterWrappers, getEncoding( unfilteredDeploymentDescriptor ) );
-                    // Remove the temporary file
-                    FileUtils.forceDelete( unfilteredDeploymentDescriptor );
+                    filterDeploymentDescriptor( deploymentDescriptor );
                 }
                 archiver.getArchiver().addFile( deploymentDescriptor, ejbJar );
             }
@@ -350,6 +329,7 @@ public class EjbMojo
         }
 
         // Handle the classifier if necessary
+        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
         if ( classifier != null )
         {
             projectHelper.attachArtifact( project, "ejb", classifier, jarFile );
@@ -361,74 +341,116 @@ public class EjbMojo
 
         if ( generateClient )
         {
-            String clientJarName = jarName;
-            if ( classifier != null )
-            {
-                clientJarName += "-" + classifier;
-            }
-
-            getLog().info( "Building EJB client " + clientJarName + "-client" );
-
-            String[] excludes = DEFAULT_CLIENT_EXCLUDES;
-            String[] includes = DEFAULT_INCLUDES;
-
-            if ( clientIncludes != null && !clientIncludes.isEmpty() )
-            {
-                includes = (String[]) clientIncludes.toArray( new String[clientIncludes.size()] );
-            }
-
-            if ( clientExcludes != null && !clientExcludes.isEmpty() )
-            {
-                excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
-            }
-
-            File clientJarFile = new File( basedir, clientJarName + "-client.jar" );
-
-            MavenArchiver clientArchiver = new MavenArchiver();
-
-            clientArchiver.setArchiver( clientJarArchiver );
-
-            clientArchiver.setOutputFile( clientJarFile );
-
-            try
-            {
-                clientArchiver.getArchiver().addDirectory( outputDirectory, includes, excludes );
-
-                // create archive
-                clientArchiver.createArchive( session, project, archive );
-
-            }
-            catch ( ArchiverException e )
-            {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                    + e.getMessage(), e );
-            }
-            catch ( ManifestException e )
-            {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                    + e.getMessage(), e );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                    + e.getMessage(), e );
-            }
-            catch ( DependencyResolutionRequiredException e )
-            {
-                throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                    + e.getMessage(), e );
-            }
-
-            // TODO: shouldn't need classifer
-            if ( classifier != null )
-            {
-                projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
-            }
-            else
-            {
-                projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
-            }
+            generateEjbClient();
         }
+    }
+
+    private void generateEjbClient()
+        throws MojoExecutionException
+    {
+        String clientJarName = jarName;
+        if ( classifier != null )
+        {
+            clientJarName += "-" + classifier;
+        }
+
+        String resultingClientJarNameWithClassifier = clientJarName + "-client";
+        getLog().info( "Building EJB client " + resultingClientJarNameWithClassifier );
+
+        String[] excludes = DEFAULT_CLIENT_EXCLUDES;
+        String[] includes = DEFAULT_INCLUDES;
+
+        if ( clientIncludes != null && !clientIncludes.isEmpty() )
+        {
+            includes = (String[]) clientIncludes.toArray( new String[clientIncludes.size()] );
+        }
+
+        if ( clientExcludes != null && !clientExcludes.isEmpty() )
+        {
+            excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
+        }
+
+        File clientJarFile = new File( outputDirectory, resultingClientJarNameWithClassifier + ".jar" );
+
+        MavenArchiver clientArchiver = new MavenArchiver();
+
+        clientArchiver.setArchiver( clientJarArchiver );
+
+        clientArchiver.setOutputFile( clientJarFile );
+
+        try
+        {
+            clientArchiver.getArchiver().addDirectory( sourceDirectory, includes, excludes );
+
+            // create archive
+            clientArchiver.createArchive( session, project, archive );
+
+        }
+        catch ( ArchiverException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                + e.getMessage(), e );
+        }
+        catch ( ManifestException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                + e.getMessage(), e );
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
+                + e.getMessage(), e );
+        }
+
+        // TODO: shouldn't need classifer
+        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
+        if ( classifier != null )
+        {
+            projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
+        }
+        else
+        {
+            projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
+        }
+    }
+
+    private void checkEJBVersionCompliance( File deploymentDescriptor )
+        throws MojoExecutionException
+    {
+        if ( !ejbVersion.matches( "\\A[2-3]\\.[0-9]\\z" ) )
+        {
+            throw new MojoExecutionException( "ejbVersion is not valid: " + ejbVersion
+                + ". Must be 2.x or 3.x (where x is a digit)" );
+        }
+
+        if ( ejbVersion.matches( "\\A2\\.[0-9]\\z" ) && !deploymentDescriptor.exists() )
+        {
+            throw new MojoExecutionException( "Error assembling EJB: " + ejbJar + " is required for ejbVersion 2.x" );
+        }
+    }
+
+    private void filterDeploymentDescriptor( File deploymentDescriptor )
+        throws MavenFilteringException, IOException
+    {
+        getLog().debug( "Filtering deployment descriptor." );
+        MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
+        mavenResourcesExecution.setEscapeString( escapeString );
+        List<FilterWrapper> filterWrappers =
+            mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
+                                                      this.session, mavenResourcesExecution );
+
+        // Create a temporary file that we can copy-and-filter
+        File unfilteredDeploymentDescriptor = new File( sourceDirectory, ejbJar + ".unfiltered" );
+        FileUtils.copyFile( deploymentDescriptor, unfilteredDeploymentDescriptor );
+        mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true,
+                                  filterWrappers, getEncoding( unfilteredDeploymentDescriptor ) );
+        // Remove the temporary file
+        FileUtils.forceDelete( unfilteredDeploymentDescriptor );
     }
 
     /**

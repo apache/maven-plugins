@@ -1,9 +1,7 @@
  ------
  Usage
  ------
- Johnny R. Ruiz III
- <jruiz@exist.com>
- Pete Marvin King
+ Johnny R. Ruiz III, Pete Marvin King
  ------
  2009-07-14
  ------
@@ -34,14 +32,6 @@ Usage
  no need to configure anything in your <<<pom.xml>>> to generate the project
  information reports.
 
- Simply running
-
-+------------+
-mvn site
-+------------+
-
- would generate the project information documentation. For more information on
- how to customize the Project Information Reports Plugin, check the examples on the
- {{{./index.html}Introduction}} page.
-
- <Note:> This plugin requires Maven Site Plugin 2.1 or higher to work properly.
+ Simply running <<<mvn site>>> would generate the project information documentation.
+ For more information on how to customize the Project Information Reports Plugin,
+ check the examples on the {{{./index.html}Introduction}} page.

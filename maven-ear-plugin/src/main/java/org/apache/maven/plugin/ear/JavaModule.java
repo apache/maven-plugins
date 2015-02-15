@@ -34,7 +34,7 @@ public class JavaModule
 {
 
     /**
-     * @deprecated use {@link org.apache.maven.plugin.ear.JavaModule#JarModule()} instead
+     * @deprecated use {@link #JarModule} instead
      */
     public JavaModule()
     {
@@ -42,6 +42,9 @@ public class JavaModule
     }
 
     /**
+     * @param a {@link Artifact}
+     * @param defaultLibBundleDir The default library bundle directory.
+     * @param includeInApplicationXml Include the application xml or not.
      * @deprecated use {@link JarModule} instead
      */
     public JavaModule( Artifact a, String defaultLibBundleDir, Boolean includeInApplicationXml )

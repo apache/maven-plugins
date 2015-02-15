@@ -60,7 +60,6 @@ public class CheckstyleReport
 
         fmt2Cfg.put( "sun", "config/sun_checks.xml" );
         fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
-        fmt2Cfg.put( "avalon", "config/avalon_checks.xml" );
         fmt2Cfg.put( "maven", "config/maven_checks.xml" );
 
         FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
@@ -68,7 +67,7 @@ public class CheckstyleReport
 
     /**
      * Specifies what predefined check set to use. Available sets are "sun" (for
-     * the Sun coding conventions), "turbine", and "avalon".
+     * the Sun coding conventions), and "turbine".
      *
      * @deprecated Use configLocation instead.
      */
@@ -171,7 +170,7 @@ public class CheckstyleReport
             .setIncludeResources( includeResources )
             .setIncludeTestResources( includeTestResources )
             .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
-            .setLog( getLog() ).setProject( project ).setSourceDirectories( getSourceDirectories() )
+            .setProject( project ).setSourceDirectories( getSourceDirectories() )
             .setResources( resources )
             .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
             .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )
@@ -240,14 +239,19 @@ public class CheckstyleReport
     /**
      * Merge in the deprecated parameters to the new ones, unless the new
      * parameters have values.
+     * @throws MavenReportException 
      *
      * @deprecated Remove when deprecated params are removed.
      */
     private void mergeDeprecatedInfo()
+        throws MavenReportException
     {
         if ( "config/sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
         {
             configLocation = FORMAT_TO_CONFIG_LOCATION.get( format );
+
+            throw new MavenReportException( "'format' parameter is deprecated: please replace with <configLocation>"
+                + configLocation + "</configLocation>." );
         }
 
         if ( StringUtils.isEmpty( propertiesLocation ) )
@@ -255,10 +259,16 @@ public class CheckstyleReport
             if ( propertiesFile != null )
             {
                 propertiesLocation = propertiesFile.getPath();
+
+                throw new MavenReportException( "'propertiesFile' parameter is deprecated: please replace with "
+                    + "<propertiesLocation>" + propertiesLocation + "</propertiesLocation>." );
             }
             else if ( propertiesURL != null )
             {
                 propertiesLocation = propertiesURL.toExternalForm();
+
+                throw new MavenReportException( "'propertiesURL' parameter is deprecated: please replace with "
+                                + "<propertiesLocation>" + propertiesLocation + "</propertiesLocation>." );
             }
         }
 
@@ -274,11 +284,23 @@ public class CheckstyleReport
         if ( StringUtils.isEmpty( suppressionsLocation ) )
         {
             suppressionsLocation = suppressionsFile;
+
+            if ( StringUtils.isNotEmpty( suppressionsFile ) )
+            {
+                throw new MavenReportException( "'suppressionsFile' parameter is deprecated: please replace with "
+                    + "<suppressionsLocation>" + suppressionsLocation + "</suppressionsLocation>." );
+            }
         }
 
         if ( StringUtils.isEmpty( packageNamesLocation ) )
         {
             packageNamesLocation = packageNamesFile;
+
+            if ( StringUtils.isNotEmpty( packageNamesFile ) )
+            {
+                throw new MavenReportException( "'packageNamesFile' parameter is deprecated: please replace with "
+                    + "<packageNamesFile>" + suppressionsLocation + "</packageNamesFile>." );
+            }
         }
     }
 

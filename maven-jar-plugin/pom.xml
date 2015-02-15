@@ -72,7 +72,6 @@ under the License.
   <properties>
     <mavenArchiverVersion>2.6</mavenArchiverVersion>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
@@ -111,7 +110,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -136,7 +134,7 @@ under the License.
           <configuration>
             <excludes combine.children="append">
               <!--
-                The manifest specification does not describe any method for writing comments into the manifest.
+                ! The manifest specification does not describe any method for writing comments into the manifest.
               -->
               <exclude>src/it/mjar-71-01/src/main/resources/META-INF/MANIFEST.MF</exclude>
               <exclude>src/it/mjar-71-02/src/main/resources/META-INF/MANIFEST.MF</exclude>
@@ -156,19 +154,10 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
-              <projectsDirectory>src/it</projectsDirectory>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <pomIncludes>
-                <pomInclude>*/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>
                 <goal>clean</goal>
                 <goal>package</goal>
               </goals>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <debug>true</debug>
             </configuration>
             <executions>
               <execution>

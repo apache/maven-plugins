@@ -25,7 +25,12 @@ FileWriter writer = null;
 
 try
 {
-    File file = new File( basedir, "target/file-mode-set-1.0-SNAPSHOT-src.dir/src/main/java/test/App.java" );
+	File file = new File( basedir, "target/file-set-fileMode-1.0-SNAPSHOT-src/src/main/java/test/App.java" );
+	if (!file.exists()) {
+	    System.out.println( "File: " + file + " expected." );
+	    return false;
+	}
+	
     writer = new FileWriter( file );
     writer.write( "This is a test." );
 

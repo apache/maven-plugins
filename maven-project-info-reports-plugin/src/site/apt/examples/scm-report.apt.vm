@@ -37,8 +37,6 @@ Customize the SCM Report
   a separate module, and you want the SCM report to give instructions for
   checking out the project trunk.
 
-  <<Note:>> This feature is available in version 2.1+ of this plugin.
-
 +-----------------+
 <project>
   ...

@@ -148,27 +148,8 @@ under the License.
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
-
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.12</version>
-          <configuration>
-            <includes>
-              <include>**/*Test.java</include>
-            </includes>
-            <excludes>
-              <exclude>**/testutil/**</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
@@ -198,24 +179,24 @@ under the License.
             <directory>src/it</directory>
             <filtering>true</filtering>
           </testResource>
+          <testResource>
+            <directory>src/test/resources</directory>
+          </testResource>
         </testResources>
 
         <pluginManagement>
           <plugins>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
+              <artifactId>maven-failsafe-plugin</artifactId>
               <executions>
                 <execution>
                   <id>integration-tests</id>
-                  <phase>integration-test</phase>
                   <goals>
-                    <goal>test</goal>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
                   </goals>
                   <configuration>
-                    <includes>
-                      <include>**/*IT.java</include>
-                    </includes>
                     <systemPropertyVariables>
                       <maven.repo.local>${project.build.directory}/it-repo</maven.repo.local>
                     </systemPropertyVariables>

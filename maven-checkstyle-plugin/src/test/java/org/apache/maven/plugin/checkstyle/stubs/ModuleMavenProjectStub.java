@@ -32,7 +32,7 @@ import java.io.File;
 
 /**
  * @author Edwin Punzalan
- * @version $Id: MinMavenProjectStub.java 942969 2010-05-11 00:32:30Z hboutemy $
+ * @version $Id$
  */
 public class ModuleMavenProjectStub
     extends org.apache.maven.plugin.testing.stubs.MavenProjectStub

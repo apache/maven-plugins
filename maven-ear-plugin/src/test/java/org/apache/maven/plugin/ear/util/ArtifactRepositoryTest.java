@@ -19,26 +19,25 @@ package org.apache.maven.plugin.ear.util;
  * under the License.
  */
 
-import org.apache.maven.plugin.ear.AbstractEarTest;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import org.apache.maven.plugin.ear.AbstractEarTestBase;
 import org.apache.maven.plugin.ear.EarPluginException;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
+import org.junit.Test;
 
 /**
  * @author <a href="snicoll@apache.org">Stephane Nicoll</a>
  * @version $Id$
  */
 public class ArtifactRepositoryTest
-    extends AbstractEarTest
+    extends AbstractEarTestBase
 {
-
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     public static final String MAIN_ARTIFACT_ID = "none";
 
+    @Test
     public void testEmptyRepository()
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
@@ -49,6 +48,7 @@ public class ArtifactRepositoryTest
         assertNull( repo.getUniqueArtifact( "ear", "ar", "jar", "class" ) );
     }
 
+    @Test
     public void testRepositoryWithOneUnclassifiedArtifact()
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
@@ -59,6 +59,7 @@ public class ArtifactRepositoryTest
         assertNotNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", null ) );
     }
 
+    @Test
     public void testRepositoryWithOneClassifiedArtifact()
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
@@ -71,6 +72,7 @@ public class ArtifactRepositoryTest
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
     }
 
+    @Test
     public void testRepositoryWithMultipleClassifiedArtifacts()
     {
         ArtifactTypeMappingService artifactTypeMappingService = new ArtifactTypeMappingService();
@@ -86,6 +88,7 @@ public class ArtifactRepositoryTest
         assertNull( repo.getUniqueArtifact( DEFAULT_GROUPID, "myartifact", "jar", "wrong" ) );
     }
 
+    @Test
     public void testRepositoryWithMultipleClassifiedArtifactsAndMainArtifact()
         throws PlexusConfigurationException, EarPluginException
     {

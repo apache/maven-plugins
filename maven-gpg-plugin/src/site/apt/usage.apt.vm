@@ -77,3 +77,85 @@ mvn release:perform -Darguments=-Dgpg.passphrase=thephrase
 
   This accounts for the fact, that the Release Plugin forks Maven and system properties of the current Maven session are
   unfortunately not automatically propagated to the forked Maven session (see also {{{http://jira.codehaus.org/browse/MGPG-9}MGPG-9}}).
+
+
+* Configure passphrase in settings.xml
+
+  Instead of specifying the passphrase on the command line, you can place it in your local <<<settings.xml>>>
+  either in clear or {{{http://maven.apache.org/guides/mini/guide-encryption.html}encrypted}} text.
+
++----------+
+<settings>
+  [...]
+  <servers>
+    [...]
+    <server>
+      <id>gpg.passphrase</id>
+      <passphrase>clear or encrypted text</passphrase>
+    </server>
+  </servers>
+</settings>
++----------+
+
+* Configure passphrase in settings.xml with a keyname
+
+  To allow discovery of keyname and passphrase at build time, configure this plugin to map both <keyname> and <passphraseServerId> to
+  a fixed property.
+
+
++----------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <configuration>
+              <keyname>${gpg.keyname}</keyname>
+              <passphraseServerId>${gpg.keyname}</passphraseServerId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----------+
+
+
+  and use local <<<settings.xml>>> to discover the passphrase via the keyname
+
++----------+
+<settings>
+  [...]
+  <servers>
+    [...]
+    <server>
+      <id>your.keyname</id>
+      <passphrase>clear or encrypted text</passphrase>
+    </server>
+  </servers>
+
+  [...]
+  <profiles>
+    <profile>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.keyname>your.keyname</gpg.keyname>
+      </properties>
+    </profile>
+  <profiles>
+</settings>
++----------+

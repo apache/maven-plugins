@@ -80,8 +80,6 @@ public class DefaultCheckstyleExecutor
     @Requirement( hint = "license" )
     private ResourceManager licenseLocator;
 
-    private static final File[] EMPTY_FILE_ARRAY = new File[0];
-
     public CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException
     {
@@ -189,9 +187,8 @@ public class DefaultCheckstyleExecutor
                     if ( outputDirectoryFile.exists() )
                     {
                         URL outputDirectoryUrl = outputDirectoryFile.toURL();
-                        request.getLog().debug(
-                                                "Adding the outputDirectory " + outputDirectoryUrl.toString()
-                                                    + " to the Checkstyle class path" );
+                        getLogger().debug( "Adding the outputDirectory " + outputDirectoryUrl.toString()
+                                               + " to the Checkstyle class path" );
                         urls.add( outputDirectoryUrl );
                     }
                 }
@@ -272,19 +269,29 @@ public class DefaultCheckstyleExecutor
 
         if ( request.getStringOutputStream() != null )
         {
-            request.getLog().info( request.getStringOutputStream().toString() );
+            String message = request.getStringOutputStream().toString().trim();
+
+            if ( message.length() > 0 )
+            {
+                getLogger().info( message );
+            }
         }
 
-        if ( request.isFailsOnError() && nbErrors > 0 )
+        if ( nbErrors > 0 )
         {
-            // TODO: should be a failure, not an error. Report is not meant to
-            // throw an exception here (so site would
-            // work regardless of config), but should record this information
-            throw new CheckstyleExecutorException( "There are " + nbErrors + " checkstyle errors." );
-        }
-        else if ( nbErrors > 0 )
-        {
-            request.getLog().info( "There are " + nbErrors + " checkstyle errors." );
+            String message = "There are " + nbErrors + " checkstyle errors.";
+
+            if ( request.isFailsOnError() )
+            {
+                // TODO: should be a failure, not an error. Report is not meant to
+                // throw an exception here (so site would
+                // work regardless of config), but should record this information
+                throw new CheckstyleExecutorException( message );
+            }
+            else
+            {
+                getLogger().info( message );
+            }
         }
 
         return checkerListener.getResults();
@@ -353,9 +360,8 @@ public class DefaultCheckstyleExecutor
             
             if ( StringUtils.isEmpty( request.getEncoding() ) )
             {
-                request.getLog().warn(
-                                       "File encoding has not been set, using platform encoding " + effectiveEncoding
-                                           + ", i.e. build is platform dependent!" );
+                getLogger().warn( "File encoding has not been set, using platform encoding " + effectiveEncoding
+                                      + ", i.e. build is platform dependent!" );
             }
 
             if ( "Checker".equals( config.getName() )
@@ -379,7 +385,7 @@ public class DefaultCheckstyleExecutor
                 }
                 else
                 {
-                    request.getLog().warn( "Failed to configure file encoding on module " + config );
+                    getLogger().warn( "Failed to configure file encoding on module " + config );
                 }
             }
             Configuration[] modules = config.getChildren();
@@ -408,7 +414,7 @@ public class DefaultCheckstyleExecutor
                     }
                     else
                     {
-                        request.getLog().warn( "Failed to configure cache file on module " + module );
+                        getLogger().warn( "Failed to configure cache file on module " + module );
                     }
                 }
             }

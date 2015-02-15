@@ -31,8 +31,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.plugin.ear.util.JavaEEVersion;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
@@ -45,10 +47,19 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 public abstract class AbstractEarMojo
     extends AbstractMojo
 {
+    /**
+     * The application XML URI {@code META-INF/application.xml}
+     */
     public static final String APPLICATION_XML_URI = "META-INF/application.xml";
 
+    /**
+     * The {@code META-INF} folder.
+     */
     public static final String META_INF = "META-INF";
 
+    /**
+     * UTF-8 encoding constant.
+     */
     public static final String UTF_8 = "UTF-8";
 
     /**
@@ -105,8 +116,8 @@ public abstract class AbstractEarMojo
      * The {@code standard} means the filename is the artifactId incl. the version of the artifact.
      * The {@code no-version} means the files is only the artifactId without the version.
      * The {@code full} means the filename is the groupId+artifactId+version of the artifact.
-     * The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of 
-     * {@code EJB} type.
+     * The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of {@code EJB}
+     * type.
      */
     @Parameter
     private String fileNameMapping;
@@ -149,6 +160,9 @@ public abstract class AbstractEarMojo
      */
     @Parameter( defaultValue = "${project.build.directory}", required = true )
     private File tempFolder;
+
+    @Component
+    private MavenResourcesFiltering mavenResourcesFiltering;
     
     private List<EarModule> earModules;
 
@@ -156,7 +170,7 @@ public abstract class AbstractEarMojo
 
     private JbossConfiguration jbossConfiguration;
 
-    @SuppressWarnings( "unchecked" )
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -262,6 +276,9 @@ public abstract class AbstractEarMojo
 
     }
 
+    /**
+     * @return The list of {@link #earModules}.
+     */
     protected List<EarModule> getModules()
     {
         if ( earModules == null )
@@ -271,21 +288,33 @@ public abstract class AbstractEarMojo
         return earModules;
     }
 
+    /**
+     * @return {@link MavenProject}
+     */
     protected MavenProject getProject()
     {
         return project;
     }
 
+    /**
+     * @return {@link #workDirectory}
+     */
     protected File getWorkDirectory()
     {
         return workDirectory;
     }
 
+    /**
+     * @return {@link #jbossConfiguration}
+     */
     protected JbossConfiguration getJbossConfiguration()
     {
         return jbossConfiguration;
     }
 
+    /**
+     * @return {@link #tempFolder}
+     */
     public File getTempFolder()
     {
         return tempFolder;
@@ -319,11 +348,11 @@ public abstract class AbstractEarMojo
         {
             try
             {
-                String version = jboss.getChild( JbossConfiguration.VERSION ).getValue();
-                if ( version == null )
+                String childVersion = jboss.getChild( JbossConfiguration.VERSION ).getValue();
+                if ( childVersion == null )
                 {
                     getLog().info( "JBoss version not set, using JBoss 4 by default" );
-                    version = JbossConfiguration.VERSION_4;
+                    childVersion = JbossConfiguration.VERSION_4;
                 }
                 final String securityDomain = jboss.getChild( JbossConfiguration.SECURITY_DOMAIN ).getValue();
                 final String unauthenticatedPrincipal =
@@ -357,7 +386,7 @@ public abstract class AbstractEarMojo
                 }
                 final String libraryDirectory = jboss.getChild( JbossConfiguration.LIBRARY_DIRECTORY ).getValue();
                 jbossConfiguration =
-                    new JbossConfiguration( version, securityDomain, unauthenticatedPrincipal, jmxName,
+                    new JbossConfiguration( childVersion, securityDomain, unauthenticatedPrincipal, jmxName,
                                             loaderRepository, moduleOrder, dataSources, libraryDirectory,
                                             loaderRepositoryConfig, loaderRepositoryClass, configParserClass );
             }

@@ -77,7 +77,7 @@ public class MyEclipsePluginIT
      * 
      * @throws Exception
      */
-    public void testProject05()
+    public void xxignorexxCerificateProblemtestProject05()
         throws Exception
     {
         doMyEclipseProjectTest( "project-myeclipse-05" );

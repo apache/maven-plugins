@@ -29,9 +29,9 @@ under the License.
   </parent>
 
   <artifactId>mpmd-138-mod-4</artifactId>
-  
+
   <name>Module 4</name>
-  
+
   <description>Test 3 classes with copy-paste block</description>
 
 </project>

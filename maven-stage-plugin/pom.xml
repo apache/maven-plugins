@@ -59,7 +59,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <wagonVersion>2.4</wagonVersion>
+    <wagonVersion>2.8</wagonVersion>
     <mavenVersion>2.2.1</mavenVersion>
   </properties>
 
@@ -139,14 +139,6 @@ under the License.
               <exclude>src/test/target-repository/**/*</exclude>
             </excludes>
           </configuration>
-          <executions>
-            <execution>
-              <id>check-rat</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

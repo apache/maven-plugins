@@ -23,7 +23,6 @@ import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Organization;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
@@ -48,14 +47,6 @@ public class ProjectSummaryReport
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
-
-    /**
-     * The target Java version the artifact is built for. Should match the target used in the compiler plugin.
-     *
-     * @since 2.8
-     */
-    @Parameter( defaultValue = "${maven.compiler.target}" )
-    private String targetJavaVersion;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -143,7 +134,7 @@ public class ProjectSummaryReport
             tableRow( new String[] { getI18nString( "build.type" ), project.getPackaging() } );
             if ( isJavaProject( project ) )
             {
-                tableRow( new String[] { getI18nString( "build.javaVersion" ), targetJavaVersion } );
+                tableRow( new String[] { getI18nString( "build.javaVersion" ), getMinimumJavaVersion() } );
             }
             endTable();
             endSection();
@@ -161,6 +152,40 @@ public class ProjectSummaryReport
             }
 
             endSection();
+        }
+
+        private String getMinimumJavaVersion()
+        {
+
+            final String pluginId = "org.apache.maven.plugins:maven-compiler-plugin";
+            String sourceConfigured = getPluginParameter( pluginId, "source" );
+            String targetConfigured = getPluginParameter( pluginId, "target" );
+
+            String forkFlag = getPluginParameter( pluginId, "fork" );
+            String compilerVersionConfigured = null;
+            if ( "true".equalsIgnoreCase( forkFlag ) )
+            {
+                compilerVersionConfigured = getPluginParameter( pluginId, "compilerVersion" );
+            }
+
+            String minimumJavaVersion = compilerVersionConfigured;
+            if ( targetConfigured != null )
+            {
+                minimumJavaVersion = targetConfigured;
+            }
+            else if ( sourceConfigured != null )
+            {
+                minimumJavaVersion = sourceConfigured;
+            }
+            else
+            {
+                // ${maven.compiler.target} default value
+                minimumJavaVersion = project.getProperties().getProperty( "maven.compiler.target" );
+
+                // default to 1.5 if not set?
+            }
+
+            return minimumJavaVersion;
         }
 
         private void tableRowWithLink( String[] content )

@@ -40,6 +40,7 @@ public class VersionMapper
 
     private String to;
 
+    /** {@inheritDoc} */
     public String[] mapFileName( String sourceFileName )
     {
         String originalFileName = new File( sourceFileName ).getName();
@@ -65,6 +66,7 @@ public class VersionMapper
     /**
      * Set the versions identifiers that this mapper can remove from filenames. The separator value used is path
      * separator, as used by dependencies task when setting <code>versionsId</code> property value.
+     * @param from The string from which we set.
      */
     public void setFrom( String from )
     {
@@ -76,12 +78,14 @@ public class VersionMapper
 
     /**
      * By default, only filename is changed, but if this attribute is set to <code>flatten</code>, directory is removed.
+     * @param to {@link #to}
      */
     public void setTo( String to )
     {
         this.to = to;
     }
 
+    /** {@inheritDoc} */
     public int compare( String s1, String s2 )
     {
         int lengthDiff = s2.length() - s1.length();

@@ -26,7 +26,7 @@
 
 Violation Exclusions
 
-  Since version 3.0 it is possible to excluse some sources from pmd/cpd check to prevent failure.
+  It is possible to exclude some sources from PMD/CPD check to prevent failures.
 
 +-----+
 <project>

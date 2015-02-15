@@ -31,15 +31,24 @@ public class AppClientModule
     extends AbstractEarModule
 {
 
+    /**
+     * Create an instance.
+     */
     public AppClientModule()
     {
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public AppClientModule( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         startModuleElement( writer, generateId );
@@ -52,6 +61,9 @@ public class AppClientModule
         writer.endElement();
     }
 
+    /**
+     * @return The type of the module.
+     */
     public String getType()
     {
         return "app-client";

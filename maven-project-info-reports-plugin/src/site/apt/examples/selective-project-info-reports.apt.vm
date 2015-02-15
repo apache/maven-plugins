@@ -1,9 +1,7 @@
  ------
  Run Selective Reports
  ------
- Johnny R. Ruiz III
- <jruiz@exist.com>
- Pete Marvin King
+ Johnny R. Ruiz III, Pete Marvin King
  ------
  2009-07-14
  ------
@@ -31,7 +29,7 @@
 Run Selective Reports
 
  To run the reports selectively, you can configure it to include only the reports that you prefer.
- Use "mvn site:site" to generate the selected reports.
+ Use <<<mvn site>>> to generate the selected reports.
 
 +-----------------+
 <project>

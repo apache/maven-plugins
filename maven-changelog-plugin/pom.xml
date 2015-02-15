@@ -141,7 +141,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <maven-scm.version>1.8</maven-scm.version>
+    <maven-scm.version>1.9.2</maven-scm.version>
     <doxiaVersion>1.1.4</doxiaVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <sitePluginVersion>3.3</sitePluginVersion><!-- used in ITs -->

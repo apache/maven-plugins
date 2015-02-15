@@ -73,6 +73,19 @@ public class PluginsReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = !isEmpty( getProject().getPluginArtifacts() )
+                    || !isEmpty( getProject().getReportArtifacts() );
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         @SuppressWarnings( "unchecked" )
@@ -93,13 +106,6 @@ public class PluginsReport
     protected String getI18Nsection()
     {
         return "plugins";
-    }
-
-    @Override
-    public boolean canGenerateReport()
-    {
-        return super.canGenerateReport()
-            && !( isEmpty( project.getPluginArtifacts() ) && isEmpty( project.getReportArtifacts() ) );
     }
 
     // ----------------------------------------------------------------------
@@ -137,7 +143,7 @@ public class PluginsReport
          * @param mavenProjectBuilder {@link MavenProjectBuilder}
          * @param artifactFactory {@link ArtifactFactory}
          * @param localRepository {@link ArtifactRepository}
-         * 
+         *
          */
         public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set<Artifact> plugins,
                                 Set<Artifact> reports, MavenProject project, MavenProjectBuilder mavenProjectBuilder,

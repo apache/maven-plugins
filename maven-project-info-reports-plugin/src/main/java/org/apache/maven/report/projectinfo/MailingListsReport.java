@@ -60,6 +60,18 @@ public class MailingListsReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = !isEmpty( getProject().getModel().getMailingLists() );
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         MailingListsRenderer r =
@@ -127,7 +139,6 @@ public class MailingListsReport
             {
                 startSection( getTitle() );
 
-                // TODO: should the report just be excluded?
                 paragraph( getI18nString( "nolist" ) );
 
                 endSection();

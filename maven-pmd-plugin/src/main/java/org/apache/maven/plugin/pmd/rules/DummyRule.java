@@ -26,10 +26,10 @@ import net.sourceforge.pmd.lang.ast.Node;
 import net.sourceforge.pmd.lang.rule.AbstractRule;
 
 /**
- * A dummy rule that does nothing. Referenced from the Dummy ruleset
- * to work around pmd bug #1155.
+ * A dummy rule that does nothing. Referenced from the Dummy ruleset to work around pmd bug #1155.
  */
-public class DummyRule extends AbstractRule
+public class DummyRule
+    extends AbstractRule
 {
     public void apply( List<? extends Node> nodes, RuleContext ctx )
     {

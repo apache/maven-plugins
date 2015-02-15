@@ -31,17 +31,26 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 public class EjbModule
     extends AbstractEarModule
 {
-    protected static final String EJB_MODULE = "ejb";
+    private static final String EJB_MODULE = "ejb";
 
+    /**
+     * Create an instance.
+     */
     public EjbModule()
     {
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public EjbModule( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         startModuleElement( writer, generateId );
@@ -54,8 +63,11 @@ public class EjbModule
         writer.endElement();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
-        return "ejb";
+        return EJB_MODULE;
     }
 }

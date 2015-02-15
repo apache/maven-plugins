@@ -31,17 +31,26 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 public class RarModule
     extends AbstractEarModule
 {
-    protected static final String RAR_MODULE = "connector";
+    private static final String RAR_MODULE = "connector";
 
+    /**
+     * Create an instance.
+     */
     public RarModule()
     {
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public RarModule( Artifact a )
     {
         super( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         startModuleElement( writer, generateId );
@@ -54,8 +63,11 @@ public class RarModule
         writer.endElement();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
-        return "rar";
+        return RAR_MODULE;
     }
 }

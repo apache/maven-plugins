@@ -19,6 +19,19 @@ package org.apache.maven.plugin.ant;
  * under the License.
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
@@ -32,29 +45,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * Utility class for the <code>AntBuildWriter</code> class.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-@SuppressWarnings( "JavaDoc" )
 public class AntBuildWriterUtil
 {
     /**
-     * @param compileSourceRoots
+     * @param compileSourceRoots {@link List}
      * @return not null list
      */
     public static List removeEmptyCompileSourceRoots( List compileSourceRoots )
@@ -80,8 +80,8 @@ public class AntBuildWriterUtil
      * Convenience method to write <code>&lt;include/&gt;</code> and <code>&lt;exclude/&gt;</code>
      *
      * @param writer   not null
-     * @param includes
-     * @param excludes
+     * @param includes {@link List}
+     * @param excludes {@link List}
      */
     public static void writeIncludesExcludes( XMLWriter writer, List includes, List excludes )
     {
@@ -110,7 +110,7 @@ public class AntBuildWriterUtil
     /**
      * Write comments in the Ant build file header
      *
-     * @param writer
+     * @param writer {@link XMLWriter}
      */
     public static void writeHeader( XMLWriter writer )
     {
@@ -569,7 +569,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject
+     * @param mavenProject {@link MavenProject}
      * @return true if project packaging equals one of several packaging types
      *         including  <code>jar</code>, <code>maven-plugin</code>, <code>ejb</code>, or
      *         <code>bundle</code>
@@ -581,7 +581,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject
+     * @param mavenProject {@link MavenProject}
      * @return true if project packaging equals <code>bundle</code>
      */
     public static boolean isBundlePackaging( MavenProject mavenProject )
@@ -590,7 +590,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject
+     * @param mavenProject {@link MavenProject}
      * @return true if project packaging equals <code>ejb</code>
      */
     public static boolean isEjbPackaging( MavenProject mavenProject )
@@ -599,7 +599,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject
+     * @param mavenProject {@link MavenProject}
      * @return true if project packaging equals <code>maven-plugin</code>
      */
     public static boolean isMavenPluginPackaging( MavenProject mavenProject )
@@ -608,7 +608,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject
+     * @param mavenProject {@link MavenProject}
      * @return true if project packaging equals <code>ear</code>
      */
     public static boolean isEarPackaging( MavenProject mavenProject )
@@ -617,7 +617,7 @@ public class AntBuildWriterUtil
     }
 
     /**
-     * @param mavenProject not null
+     * @param mavenProject {@link MavenProject}
      * @return true if project packaging equals <code>war</code>
      */
     public static boolean isWarPackaging( MavenProject mavenProject )
@@ -628,7 +628,7 @@ public class AntBuildWriterUtil
     /**
      * Return the <code>optionName</code> value defined in a project for the "maven-compiler-plugin" plugin.
      *
-     * @param project      not null
+     * @param project      {@link MavenProject} not null.
      * @param optionName   the option name wanted
      * @param defaultValue a default value
      * @return the value for the option name or the default value. Could be null if not found.
@@ -644,7 +644,7 @@ public class AntBuildWriterUtil
     /**
      * Return the map of <code>optionName</code> value defined in a project for the "maven-compiler-plugin" plugin.
      *
-     * @param project      not null
+     * @param project      {@link MavenProject} not null.
      * @param optionName   the option name wanted
      * @param defaultValue a default value
      * @return the map for the option name or the default value. Could be null if not found.

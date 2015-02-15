@@ -21,14 +21,15 @@ import java.io.*;
 
 try
 {
-  String javaVersion = System.getProperty( "java.version" );
+  String osVersion = System.getProperty( "os.version" );
   File a = new File( basedir, "target/parent-1.0-bin/child/a/filtered.txt");
   
   BufferedReader r = new BufferedReader(new FileReader(a));
   String line = r.readLine();
-  if ( ! line.endsWith( javaVersion ) )
+  if ( ! line.endsWith( osVersion ) )
   {
-    System.out.println( "Expected java version: " + javaVersion + "\nLine was: " + line );
+    System.out.println( "Expected OS version: " + osVersion );
+    System.out.println( "Line was: " + line );
     return false;
   }
 }

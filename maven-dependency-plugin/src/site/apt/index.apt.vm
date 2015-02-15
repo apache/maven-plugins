@@ -134,6 +134,8 @@ ${project.name}
 
   * {{{./examples/failing-the-build-on-dependency-analysis-warnings.html}Failing the Build on Dependency Analysis Warnings}}
 
+  * {{{./examples/exclude-dependencies-from-dependency-analysis.html}Exclude Dependencies from Dependency Analysis}}
+
   * {{{./examples/filtering-the-dependency-tree.html}Filtering the Dependency Tree}}
 
   * {{{./examples/resolving-conflicts-using-the-dependency-tree.html}Resolving Conflicts Using the Dependency Tree}}

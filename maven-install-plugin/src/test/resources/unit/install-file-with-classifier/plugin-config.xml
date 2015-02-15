@@ -27,8 +27,7 @@ under the License.
           <version>1.0-SNAPSHOT</version>
           <packaging>jar</packaging>
           <classifier>sources</classifier>
-          <file>
-            ${basedir}/src/test/resources/unit/install-file-with-classifier/target/maven-install-test-1.0-SNAPSHOT.jar
+          <file>${basedir}/target/test-classes/unit/install-file-with-classifier/target/maven-install-test-1.0-SNAPSHOT.jar
           </file>
           <localRepository>${localRepository}</localRepository>
         </configuration>

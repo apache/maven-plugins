@@ -34,24 +34,33 @@ import java.util.Set;
 public class WebModule
     extends AbstractEarModule
 {
-    protected static final String WEB_MODULE = "web";
+    private static final String WEB_MODULE = "web";
 
-    protected static final String WEB_URI_FIELD = "web-uri";
+    private static final String WEB_URI_FIELD = "web-uri";
 
-    protected static final String CONTEXT_ROOT_FIELD = "context-root";
+    private static final String CONTEXT_ROOT_FIELD = "context-root";
 
     private String contextRoot;
 
+    /**
+     * Create an instance.
+     */
     public WebModule()
     {
     }
 
+    /**
+     * @param a {@link Artifact}
+     */
     public WebModule( Artifact a )
     {
         super( a );
         this.contextRoot = getDefaultContextRoot( a );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         startModuleElement( writer, generateId );
@@ -71,6 +80,9 @@ public class WebModule
         writer.endElement(); // module
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException
     {
@@ -96,6 +108,9 @@ public class WebModule
         return contextRoot;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "war";
@@ -116,6 +131,9 @@ public class WebModule
         return "/" + a.getArtifactId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getLibDir()
     {
         return "WEB-INF/lib";

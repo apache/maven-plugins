@@ -31,6 +31,9 @@ public class StandardFileNameMapping
     extends AbstractFileNameMapping
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public String mapFileName( final Artifact a )
     {
         return generateFileName( a, true );

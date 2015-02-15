@@ -34,6 +34,11 @@ import java.io.Writer;
 public class AntrunXmlPlexusConfigurationWriter
 {
 
+    /**
+     * @param configuration {@link PlexusConfiguration}
+     * @param writer {@link Writer}
+     * @throws IOException In case of problems.
+     */
     public void write( PlexusConfiguration configuration, Writer writer )
         throws IOException
     {

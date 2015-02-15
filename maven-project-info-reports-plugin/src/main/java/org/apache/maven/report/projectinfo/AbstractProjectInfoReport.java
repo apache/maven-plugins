@@ -177,6 +177,15 @@ public abstract class AbstractProjectInfoReport
     @Parameter( property = "mpir.skip", defaultValue = "false" )
     private boolean skip;
 
+    /**
+     * Skip the project info report generation if a report-specific section of the POM is empty.
+     * Defaults to <code>true</code>.
+     *
+     * @since 2.8
+     */
+    @Parameter( defaultValue = "true" )
+    protected boolean skipEmptyReport;
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------

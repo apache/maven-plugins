@@ -19,10 +19,9 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-
 import java.io.File;
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -44,8 +43,9 @@ public class CpdViolationCheckMojoTest
     {
         try
         {
-            final File testPom = new File( getBasedir(),
-                                     "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
+            final File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
             final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
             mojo.execute();
 
@@ -61,13 +61,15 @@ public class CpdViolationCheckMojoTest
         throws Exception
     {
 
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
         final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
         cpdViolationMojo.execute();
 
@@ -79,8 +81,9 @@ public class CpdViolationCheckMojoTest
     {
         try
         {
-            final File testPom = new File( getBasedir(),
-                                           "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
+            final File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
             final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
             mojo.execute();
 
@@ -95,16 +98,18 @@ public class CpdViolationCheckMojoTest
     public void testExclusionsConfiguration()
         throws Exception
     {
-        File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         mojo.execute();
 
-        testPom = new File( getBasedir(),
-                            "src/test/resources/unit/default-configuration/pmd-check-cpd-exclusions-configuration-plugin-config.xml" );
+        testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-check-cpd-exclusions-configuration-plugin-config.xml" );
         final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
         cpdViolationMojo.execute();
 
         assertTrue( true );
-    }       
+    }
 }

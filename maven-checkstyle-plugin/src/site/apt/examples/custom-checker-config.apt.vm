@@ -1,7 +1,7 @@
  ------
  Using a Custom Checkstyle Checker Configuration
  ------
- July 2006
+ 2006-07-21
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -63,5 +63,3 @@ Using a Custom Checkstyle Checker Configuration
   * <<config/maven_checks.xml>> - Maven Development Definitions.
 
   * <<config/turbine_checks.xml>> - Turbine Development Definitions.
-
-  * <<config/avalon_checks.xml>> - Avalon Development Definitions.

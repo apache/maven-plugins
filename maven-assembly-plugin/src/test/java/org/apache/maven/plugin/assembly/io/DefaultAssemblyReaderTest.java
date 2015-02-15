@@ -26,6 +26,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
+import org.apache.maven.plugin.assembly.interpolation.AssemblyInterpolator;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.Component;
 import org.apache.maven.plugin.assembly.model.ContainerDescriptorHandlerConfig;
@@ -34,9 +35,14 @@ import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.model.io.xpp3.AssemblyXpp3Writer;
+import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Reader;
 import org.apache.maven.plugin.assembly.model.io.xpp3.ComponentXpp3Writer;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
+import org.codehaus.plexus.interpolation.fixed.InterpolationState;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.IOUtil;
 import org.easymock.classextension.EasyMockSupport;
 
@@ -66,8 +72,6 @@ public class DefaultAssemblyReaderTest
 
     private AssemblerConfigurationSource configSource;
 
-    private ArtifactRepository localRepo;
-
 
     @Override
     public void setUp()
@@ -77,9 +81,9 @@ public class DefaultAssemblyReaderTest
 
         configSource = mockManager.createMock(AssemblerConfigurationSource.class);
 
-        localRepo = mockManager.createMock( ArtifactRepository.class );
+        ArtifactRepository localRepo = mockManager.createMock( ArtifactRepository.class );
 
-        expect(localRepo.getBasedir()).andReturn("/path/to/local/repo").anyTimes();
+        expect( localRepo.getBasedir()).andReturn("/path/to/local/repo").anyTimes();
         expect(configSource.getLocalRepository()).andReturn( localRepo ).anyTimes();
         expect( configSource.getRemoteRepositories()).andReturn( Collections.<ArtifactRepository>emptyList()).anyTimes();
         expect(configSource.getMavenSession()).andReturn( null).anyTimes();
@@ -494,10 +498,14 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getProject()).andReturn( project ).anyTimes();
         expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );
+        InterpolationState is = new InterpolationState();
+        ComponentXpp3Reader.ContentTransformer componentIp = AssemblyInterpolator.componentInterpolator(
+            FixedStringSearchInterpolator.create(), is, new ConsoleLogger( Logger.LEVEL_DEBUG, "console" ) );
+
 
         mockManager.replayAll();
 
-        new DefaultAssemblyReader().mergeComponentsWithMainAssembly( assembly, null, configSource );
+        new DefaultAssemblyReader().mergeComponentsWithMainAssembly( assembly, null, configSource, componentIp );
 
         final List<FileSet> fileSets = assembly.getFileSets();
 
@@ -517,12 +525,7 @@ public class DefaultAssemblyReaderTest
         final Assembly assembly = new Assembly();
         assembly.setId( "test" );
 
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        final StringReader sr = new StringReader( sw.toString() );
+        final StringReader sr = writeToStringReader( assembly );
 
         final File basedir = fileManager.createTempDir();
 
@@ -557,12 +560,7 @@ public class DefaultAssemblyReaderTest
 
         assembly.setIncludeSiteDirectory( true );
 
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        final StringReader sr = new StringReader( sw.toString() );
+        final StringReader sr = writeToStringReader( assembly );
 
         final File siteDir = fileManager.createTempDir();
 
@@ -606,12 +604,7 @@ public class DefaultAssemblyReaderTest
         final Assembly assembly = new Assembly();
         assembly.setId( "test" );
 
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        final StringReader sr = new StringReader( sw.toString() );
+        final StringReader sr = writeToStringReader( assembly );
 
         final File siteDir = fileManager.createTempDir();
 
@@ -681,12 +674,7 @@ public class DefaultAssemblyReaderTest
 
         assembly.addComponentDescriptor( componentsFilename );
 
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        final StringReader sr = new StringReader( sw.toString() );
+        final StringReader sr = writeToStringReader( assembly );
 
         expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
 
@@ -749,12 +737,7 @@ public class DefaultAssemblyReaderTest
 
         assembly.addComponentDescriptor( componentsFilename );
 
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        final StringReader sr = new StringReader( sw.toString() );
+        final StringReader sr = writeToStringReader( assembly );
 
         expect( configSource.getBasedir()).andReturn( basedir ).atLeastOnce();
 
@@ -786,18 +769,24 @@ public class DefaultAssemblyReaderTest
         mockManager.verifyAll();
     }
 
+    public static StringReader writeToStringReader( Assembly assembly )
+        throws IOException
+    {
+        final StringWriter sw = new StringWriter();
+        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
+
+        assemblyWriter.write( sw, assembly );
+
+        return new StringReader( sw.toString() );
+    }
+
     public void testReadAssembly_ShouldReadAssemblyWithInterpolationWithoutComponentsOrSiteDirInclusion()
         throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
     {
         final Assembly assembly = new Assembly();
         assembly.setId( "${groupId}-assembly" );
 
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        final StringReader sr = new StringReader( sw.toString() );
+        final StringReader sr = writeToStringReader( assembly );
 
         final File basedir = fileManager.createTempDir();
 

@@ -23,7 +23,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>26</version>
+    <version>27-SNAPSHOT</version>
     <relativePath>../../pom/maven/pom.xml</relativePath>
   </parent>
 
@@ -130,13 +130,10 @@ under the License.
               <phase>process-classes</phase>
             </execution>
             <execution>
-              <id>generated-helpmojo</id>
+              <id>generate-helpmojo</id>
               <goals>
                 <goal>helpmojo</goal>
               </goals>
-              <configuration><!-- TODO: remove when upgrading plugin-tools to 3.4: see MPLUGIN-238 -->
-                <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -218,6 +215,11 @@ under the License.
     </profile>
     <profile>
       <id>run-its</id>
+      <properties>
+        <!-- when testing with JDK9, change these values to 1.6 from cmdline -->
+        <invoker.maven.compiler.source>${maven.compiler.source}</invoker.maven.compiler.source>
+        <invoker.maven.compiler.target>${maven.compiler.target}</invoker.maven.compiler.target>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -234,6 +236,10 @@ under the License.
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
               </pomIncludes>
+              <properties>
+                <maven.compiler.source>${invoker.maven.compiler.source}</maven.compiler.source>
+                <maven.compiler.target>${invoker.maven.compiler.target}</maven.compiler.target>
+              </properties>
             </configuration>
             <executions>
               <execution>

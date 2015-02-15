@@ -58,7 +58,7 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <scmVersion>1.9.1</scmVersion>
+    <scmVersion>1.9.2</scmVersion>
   </properties>
 
   <dependencies>
@@ -120,7 +120,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.18</version>
+      <version>3.0.20</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -130,7 +130,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
-      <version>1.0-beta-7</version>
+      <version>1.0-beta-10</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>

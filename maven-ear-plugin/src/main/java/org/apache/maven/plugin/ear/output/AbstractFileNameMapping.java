@@ -33,6 +33,7 @@ public abstract class AbstractFileNameMapping
 
     private boolean useBaseVersion = false;
 
+    /** {@inheritDoc} */
     public final void setUseBaseVersion( boolean useBaseVersion )
     {
         this.useBaseVersion = useBaseVersion;

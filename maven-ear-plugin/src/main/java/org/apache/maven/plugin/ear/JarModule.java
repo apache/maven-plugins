@@ -42,11 +42,19 @@ public class JarModule
 {
     private Boolean includeInApplicationXml = Boolean.FALSE;
 
+    /**
+     * Create an instance.
+     */
     public JarModule()
     {
         super();
     }
 
+    /**
+     * @param a {@link Artifact}
+     * @param defaultLibBundleDir The default library bundle directory.
+     * @param includeInApplicationXml Include the application xml or not.
+     */
     public JarModule( Artifact a, String defaultLibBundleDir, Boolean includeInApplicationXml )
     {
         super( a );
@@ -55,6 +63,9 @@ public class JarModule
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void appendModule( XMLWriter writer, String version, Boolean generateId )
     {
         // Generates an entry in the application.xml only if
@@ -72,6 +83,9 @@ public class JarModule
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void resolveArtifact( Set<Artifact> artifacts )
         throws EarPluginException, MojoFailureException
     {
@@ -83,6 +97,9 @@ public class JarModule
         setLibBundleDir( earExecutionContext.getDefaultLibBundleDir() );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getType()
     {
         return "jar";
@@ -96,6 +113,9 @@ public class JarModule
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean changeManifestClasspath()
     {
         return false;

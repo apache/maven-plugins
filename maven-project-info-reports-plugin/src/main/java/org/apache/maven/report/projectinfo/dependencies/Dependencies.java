@@ -19,6 +19,7 @@ package org.apache.maven.report.projectinfo.dependencies;
  * under the License.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.apache.maven.shared.jar.JarAnalyzer;
 import org.apache.maven.shared.jar.JarData;
 import org.apache.maven.shared.jar.classes.JarClasses;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @version $Id$
@@ -240,7 +242,9 @@ public class Dependencies
             return jarData;
         }
 
-        if ( artifact.getFile().isDirectory() )
+        File file = getFile( artifact );
+
+        if ( file.isDirectory() )
         {
             jarData = new JarData( artifact.getFile(), null, new ArrayList<JarEntry>() );
 
@@ -248,7 +252,7 @@ public class Dependencies
         }
         else
         {
-            JarAnalyzer jarAnalyzer = new JarAnalyzer( artifact.getFile() );
+            JarAnalyzer jarAnalyzer = new JarAnalyzer( file );
 
             try
             {
@@ -296,5 +300,36 @@ public class Dependencies
 
             addAllChildrenDependencies( subdependencyNode );
         }
+    }
+
+    /**
+     * get the artifact's file, with detection of target/classes directory with already packaged jar available.
+     *
+     * @param artifact
+     * @return
+     */
+    public File getFile( Artifact artifact )
+    {
+        File file = artifact.getFile();
+
+        if ( file.isDirectory() )
+        {
+            // MPIR-322: if target/classes directory, try target/artifactId-version[-classifier].jar
+            String filename = artifact.getArtifactId() + '-' + artifact.getVersion();
+            if ( StringUtils.isNotEmpty( artifact.getClassifier() ) )
+            {
+                filename += '-' + artifact.getClassifier();
+            }
+            filename += '.' + artifact.getType();
+            
+            File jar = new File( file, "../" + filename );
+
+            if ( jar.exists() )
+            {
+                return jar;
+            }
+        }
+
+        return file;
     }
 }

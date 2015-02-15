@@ -36,7 +36,7 @@ public class PmdReportListener
 {
     private HashSet<RuleViolation> violations = new HashSet<RuleViolation>();
 
-//    private List<Metric> metrics = new ArrayList<Metric>();
+    // private List<Metric> metrics = new ArrayList<Metric>();
 
     /**
      * {@inheritDoc}
@@ -74,10 +74,10 @@ public class PmdReportListener
      */
     public void metricAdded( Metric metric )
     {
-//        if ( metric.getCount() != 0 )
-//        {
-//            // Skip metrics which have no data
-//            metrics.add( metric );
-//        }
+        // if ( metric.getCount() != 0 )
+        // {
+        // // Skip metrics which have no data
+        // metrics.add( metric );
+        // }
     }
 }

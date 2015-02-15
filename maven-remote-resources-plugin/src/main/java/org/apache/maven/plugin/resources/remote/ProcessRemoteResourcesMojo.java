@@ -19,6 +19,39 @@ package org.apache.maven.plugin.resources.remote;
  * under the License.
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.apache.commons.io.output.DeferredFileOutputStream;
 import org.apache.maven.ProjectDependenciesResolver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -34,7 +67,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.resources.remote.io.xpp3.RemoteResourcesBundleXpp3Reader;
 import org.apache.maven.plugin.resources.remote.io.xpp3.SupplementalDataModelXpp3Reader;
 import org.apache.maven.plugins.annotations.Component;
@@ -74,37 +106,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * <p>
@@ -264,16 +265,6 @@ public class ProcessRemoteResourcesMojo
     private boolean skip;
 
     /**
-     * Attaches the resources to the project as a resource directory.
-     *
-     * @since 1.0-beta-1
-     * @deprecated Please use {@link #attachToMain} and {@link #attachToTest} instead.
-     */
-    @Deprecated
-    @Parameter( defaultValue = "true" )
-    private boolean attached = true;
-
-    /**
      * Attaches the resources to the main build of the project as a resource
      * directory.
      *
@@ -314,6 +305,16 @@ public class ProcessRemoteResourcesMojo
      */
     @Parameter( defaultValue = "false" )
     protected boolean includeProjectProperties = false;
+
+    /**
+     * When the result of velocity transformation fits in memory, it is compared with the actual contents on disk
+     * to eliminate unnecessary destination file overwrite. This improves build times since further build steps
+     * typically rely on the modification date.
+     *
+     * @since 1.6
+     */
+    @Parameter( defaultValue = "5242880" )
+    protected int velocityFilterInMemoryThreshold = 5 * 1024 * 1024;
 
     /**
      * The list of resources defined for the project.
@@ -446,7 +447,7 @@ public class ProcessRemoteResourcesMojo
                                + ", i.e. build is platform dependent!" );
         }
 
-        if ( runOnlyAtExecutionRoot && !isExecutionRoot() )
+        if ( runOnlyAtExecutionRoot && !project.isExecutionRoot() )
         {
             getLog().info( "Skipping remote-resource generation in this project because it's not the Execution Root" );
             return;
@@ -534,11 +535,11 @@ public class ProcessRemoteResourcesMojo
                     Resource resource = new Resource();
                     resource.setDirectory( outputDirectory.getAbsolutePath() );
                     // MRRESOURCES-61 handle main and test resources separately
-                    if ( attached && attachToMain )
+                    if ( attachToMain )
                     {
                         project.getResources().add( resource );
                     }
-                    if ( attached && attachToTest )
+                    if ( attachToTest )
                     {
                         project.getTestResources().add( resource );
                     }
@@ -560,30 +561,6 @@ public class ProcessRemoteResourcesMojo
         {
             Thread.currentThread().setContextClassLoader( origLoader );
         }
-    }
-
-    private boolean isExecutionRoot()
-    {
-        Log log = this.getLog();
-
-        boolean result = mavenSession.getExecutionRootDirectory().equalsIgnoreCase( basedir.toString() );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Root Folder:" + mavenSession.getExecutionRootDirectory() );
-            log.debug( "Current Folder:" + basedir );
-
-            if ( result )
-            {
-                log.debug( "This is the execution root." );
-            }
-            else
-            {
-                log.debug( "This is NOT the execution root." );
-            }
-        }
-
-        return result;
     }
 
     private void addSupplementalModelArtifacts()
@@ -843,39 +820,41 @@ public class ProcessRemoteResourcesMojo
                 {
                     Reader reader = null;
                     Writer writer = null;
+                    DeferredFileOutputStream os = new DeferredFileOutputStream( velocityFilterInMemoryThreshold, file );
                     try
                     {
+
                         if ( encoding != null )
                         {
                             reader = new InputStreamReader( new FileInputStream( source ), encoding );
-                            writer = new OutputStreamWriter( new FileOutputStream( file ), encoding );
+                            writer = new OutputStreamWriter( os, encoding );
                         }
                         else
                         {
                             reader = ReaderFactory.newPlatformReader( source );
-                            writer = WriterFactory.newPlatformWriter( file );
+                            writer = WriterFactory.newPlatformWriter( os );
                         }
 
-                        velocity.evaluate( context, writer, "", reader );
                         velocity.evaluate( context, writer, "", reader );
                     }
                     catch ( ParseErrorException e )
                     {
-                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                        throw new MojoExecutionException( "Error rendering velocity resource: " + source, e );
                     }
                     catch ( MethodInvocationException e )
                     {
-                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                        throw new MojoExecutionException( "Error rendering velocity resource: " + source, e );
                     }
                     catch ( ResourceNotFoundException e )
                     {
-                        throw new MojoExecutionException( "Error rendering velocity resource.", e );
+                        throw new MojoExecutionException( "Error rendering velocity resource: " + source, e );
                     }
                     finally
                     {
                         IOUtil.close( writer );
                         IOUtil.close( reader );
                     }
+                    fileWriteIfDiffers( os );
                 }
                 else if ( resource.isFiltering() )
                 {
@@ -904,6 +883,64 @@ public class ProcessRemoteResourcesMojo
 
         }
         return false;
+    }
+
+    /**
+     * If the transformation result fits in memory and the destination file already exists
+     * then both are compared.
+     * <p>If destination file is byte-by-byte equal, then it is not overwritten.
+     * This improves subsequent compilation times since upstream plugins property see that
+     * the resource was not modified.
+     * <p>Note: the method should be called after {@link org.apache.commons.io.output.DeferredFileOutputStream#close}
+     *
+     * @param outStream Deferred stream
+     * @throws IOException
+     */
+    private void fileWriteIfDiffers( DeferredFileOutputStream outStream ) throws IOException
+    {
+        File file = outStream.getFile();
+        if ( outStream.isThresholdExceeded() )
+        {
+            getLog().info( "File " + file + " was overwritten due to content limit threshold "
+                    + outStream.getThreshold() + " reached" );
+            return;
+        }
+        boolean needOverwrite = true;
+
+        if ( file.exists() )
+        {
+            InputStream is = new FileInputStream( file );
+            InputStream newContents = new ByteArrayInputStream( outStream.getData() );
+            try
+            {
+                needOverwrite = !IOUtil.contentEquals( is, newContents );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "File " + file + " contents "
+                            + ( needOverwrite ? "differs" : "does not differ" ) );
+                }
+            }
+            finally
+            {
+                IOUtil.close( is );
+            }
+        }
+
+        if ( !needOverwrite )
+        {
+            getLog().info( "File " + file + " is up to date" );
+            return;
+        }
+        getLog().info( "Writing " + file );
+        OutputStream os = new FileOutputStream( file );
+        try
+        {
+            outStream.writeTo( os );
+        }
+        finally
+        {
+            IOUtil.close( os );
+        }
     }
 
     private MavenFileFilterRequest setupRequest( Resource resource, File source, File file )
@@ -1142,17 +1179,18 @@ public class ProcessRemoteResourcesMojo
                         {
                             if ( doVelocity )
                             {
-                                PrintWriter writer;
+                                DeferredFileOutputStream os =
+                                        new DeferredFileOutputStream( velocityFilterInMemoryThreshold, f );
+                                Writer writer;
                                 if ( bundle.getSourceEncoding() == null )
                                 {
-                                    writer = new PrintWriter( new FileWriter( f ) );
+                                    writer = new OutputStreamWriter( os );
                                 }
                                 else
                                 {
                                     writer =
-                                        new PrintWriter( new OutputStreamWriter( new FileOutputStream( f ),
-                                                                                 bundle.getSourceEncoding() ) );
-
+                                        new OutputStreamWriter( os,
+                                                                bundle.getSourceEncoding() );
                                 }
 
                                 try
@@ -1174,6 +1212,7 @@ public class ProcessRemoteResourcesMojo
                                 {
                                     IOUtil.close( writer );
                                 }
+                                fileWriteIfDiffers( os );
                             }
                             else
                             {

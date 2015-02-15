@@ -34,20 +34,33 @@ public class EarPluginException
      */
     private static final long serialVersionUID = -5540929953103327928L;
 
+    /**
+     * Create an instance.
+     */
     public EarPluginException()
     {
     }
 
+    /**
+     * @param message The message for the exception.
+     */
     public EarPluginException( String message )
     {
         super( message );
     }
 
+    /**
+     * @param cause {@link Throwable}
+     */
     public EarPluginException( Throwable cause )
     {
         super( cause );
     }
 
+    /**
+     * @param message The message to emit.
+     * @param cause {@link Throwable}
+     */
     public EarPluginException( String message, Throwable cause )
     {
         super( message, cause );

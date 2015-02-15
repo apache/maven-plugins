@@ -19,18 +19,18 @@ package org.apache.maven.plugin.ejb;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.jar.JarFile;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.ejb.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.ejb.utils.JarContentChecker;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.jar.JarFile;
-
 
 /**
  * EJB plugin Test Case
@@ -183,10 +183,10 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, false );
-        assertJarContent( project, new String[]{"META-INF/MANIFEST.MF", "META-INF/ejb-jar.xml",
+        assertJarContent( project, new String[] { "META-INF/MANIFEST.MF", "META-INF/ejb-jar.xml",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
             "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppBean.class",
-            "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class"}, null );
+            "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class" }, null );
     }
 
     /**
@@ -220,11 +220,12 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppStub.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppBean.class",
-                                             "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class"} );
+        assertClientJarContent( project, new String[] { "META-INF/MANIFEST.MF",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+                                    "org/sample/ejb/AppStub.class" },
+                                new String[] { "META-INF/ejb-jar.xml", "org/sample/ejb/AppBean.class",
+                                    "org/sample/ejb/AppCMP.class", "org/sample/ejb/AppSession.class" } );
     }
 
     /**
@@ -235,11 +236,11 @@ public class EjbMojoTest
     public void testClientJarInclusions()
         throws Exception
     {
-        final LinkedList inclusions = new LinkedList();
+        final List<String> inclusions = new LinkedList<String>();
         inclusions.add( "**/*Include.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-includes" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList(), null );
+        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList<String>(), null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -258,10 +259,12 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+        assertClientJarContent( project,
+                                new String[] { "META-INF/MANIFEST.MF",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+                                    "org/sample/ejb/AppInclude.class" }, new String[] { "META-INF/ejb-jar.xml",
+                                    "org/sample/ejb/AppExclude.class" } );
     }
 
     /**
@@ -273,11 +276,11 @@ public class EjbMojoTest
         throws Exception
     {
 
-        final LinkedList exclusions = new LinkedList();
+        final List<String> exclusions = new LinkedList<String>();
         exclusions.add( "**/*Exclude.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-excludes" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions, null );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList<String>(), exclusions, null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -296,13 +299,14 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+        assertClientJarContent( project,
+                                new String[] { "META-INF/MANIFEST.MF",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+                                    "org/sample/ejb/AppInclude.class" }, new String[] { "META-INF/ejb-jar.xml",
+                                    "org/sample/ejb/AppExclude.class" } );
 
     }
-
 
     /**
      * Main jar exclusions test.
@@ -312,11 +316,12 @@ public class EjbMojoTest
     public void testMainJarExclusions()
         throws Exception
     {
-        final LinkedList exclusions = new LinkedList();
+        final List<String> exclusions = new LinkedList<String>();
         exclusions.add( "**/*Exclude.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "main-excludes" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), new LinkedList(), exclusions );
+        final EjbMojo mojo =
+            lookupMojoWithSettings( project, new LinkedList<String>(), new LinkedList<String>(), exclusions );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -335,13 +340,14 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertJarContent( project, new String[]{"META-INF/MANIFEST.MF",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/AppInclude.class"},
-                          new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppExclude.class"} );
+        assertJarContent( project,
+                          new String[] { "META-INF/MANIFEST.MF",
+                              "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                              "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+                              "org/sample/ejb/AppInclude.class" }, new String[] { "META-INF/ejb-jar.xml",
+                              "org/sample/ejb/AppExclude.class" } );
 
     }
-
 
     /**
      * Client jar inclusion test with a sub-package.
@@ -351,11 +357,12 @@ public class EjbMojoTest
     public void testClientJarInclusionsWithSubPackage()
         throws Exception
     {
-        final LinkedList inclusions = new LinkedList();
+        final List<String> inclusions = new LinkedList<String>();
         inclusions.add( "org/sample/ejb/*.class" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-includes-subpackage" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList(), null );
+
+        final EjbMojo mojo = lookupMojoWithSettings( project, inclusions, new LinkedList<String>(), null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -374,13 +381,13 @@ public class EjbMojoTest
         mojo.execute();
 
         assertJarCreation( project, true, true );
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb/App.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/impl/AppImpl.class",
-                                             "org/sample/ejb/impl"} );
+        assertClientJarContent( project, new String[] { "META-INF/MANIFEST.MF",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+                                    "org/sample/ejb/App.class" },
+                                new String[] { "META-INF/ejb-jar.xml", "org/sample/ejb/impl/AppImpl.class",
+                                    "org/sample/ejb/impl" } );
     }
-
 
     /**
      * Client jar exclusions test that leaves an empty package.
@@ -391,11 +398,11 @@ public class EjbMojoTest
         throws Exception
     {
 
-        final LinkedList exclusions = new LinkedList();
+        final LinkedList<String> exclusions = new LinkedList<String>();
         exclusions.add( "org/sample/ejb/**" );
 
         final MavenProjectResourcesStub project = createTestProject( "client-excludes-emptypackage" );
-        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList(), exclusions, null );
+        final EjbMojo mojo = lookupMojoWithSettings( project, new LinkedList<String>(), exclusions, null );
 
         // put this on the target output dir
         project.addFile( "META-INF/ejb-jar.xml", MavenProjectResourcesStub.OUTPUT_FILE );
@@ -416,18 +423,18 @@ public class EjbMojoTest
         assertJarCreation( project, true, true );
 
         // We check that the created jar does not contain the org/sample/ejb package empty
-        assertClientJarContent( project, new String[]{"META-INF/MANIFEST.MF",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
-            "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties", "org/sample/ejb2/AppTwo.class"},
-                                         new String[]{"META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class",
-                                             "org/sample/ejb"} );
+        assertClientJarContent( project,
+                                new String[] { "META-INF/MANIFEST.MF",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.xml",
+                                    "META-INF/maven/org.apache.maven.test/maven-test-plugin/pom.properties",
+                                    "org/sample/ejb2/AppTwo.class" },
+                                new String[] { "META-INF/ejb-jar.xml", "org/sample/ejb/AppOne.class", "org/sample/ejb" } );
 
     }
 
     /**
-     * Tests if the mojo throws an exception when the EJB version is < 3.0
-     * and no deployment descriptor is present. The case with deployment descriptor
-     * present is covered by previous tests.
+     * Tests if the mojo throws an exception when the EJB version is < 3.0 and no deployment descriptor is present. The
+     * case with deployment descriptor present is covered by previous tests.
      *
      * @throws Exception if any exception occurs
      */
@@ -458,8 +465,7 @@ public class EjbMojoTest
     }
 
     /**
-     * Tests if the jar is created under EJB version 3.0 with
-     * deployment descriptor present.
+     * Tests if the jar is created under EJB version 3.0 with deployment descriptor present.
      *
      * @throws Exception if any exception occurs
      */
@@ -489,8 +495,7 @@ public class EjbMojoTest
     }
 
     /**
-     * Tests if the jar is created under EJB version 3.0 without
-     * deployment descriptor present.
+     * Tests if the jar is created under EJB version 3.0 without deployment descriptor present.
      *
      * @throws Exception if any exception occurs
      */
@@ -513,7 +518,6 @@ public class EjbMojoTest
 
         assertJarCreation( project, true, false );
     }
-
 
     protected EjbMojo lookupMojo()
         throws Exception
@@ -546,14 +550,14 @@ public class EjbMojoTest
 
     }
 
-    protected EjbMojo lookupMojoWithSettings( final MavenProject project, LinkedList clientIncludes,
-                                              LinkedList clientExcludes, LinkedList excludes )
+    protected EjbMojo lookupMojoWithSettings( final MavenProject project, List<String> clientIncludes,
+                                              List<String> clientExcludes, List<String> excludes )
         throws Exception
     {
         final EjbMojo mojo = lookupMojo();
         setVariableValueToObject( mojo, "project", project );
-        setVariableValueToObject( mojo, "basedir", new File( project.getBuild().getDirectory() ) );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getDirectory() ) );
+        setVariableValueToObject( mojo, "sourceDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "jarName", DEFAULT_JAR_NAME );
         setVariableValueToObject( mojo, "clientExcludes", clientExcludes );
         setVariableValueToObject( mojo, "clientIncludes", clientIncludes );
@@ -565,9 +569,8 @@ public class EjbMojoTest
     protected EjbMojo lookupMojoWithDefaultSettings( final MavenProject project )
         throws Exception
     {
-        return lookupMojoWithSettings( project, new LinkedList(), new LinkedList(), null );
+        return lookupMojoWithSettings( project, new LinkedList<String>(), new LinkedList<String>(), null );
     }
-
 
     protected void assertJarCreation( final MavenProject project, boolean ejbJarCreated, boolean ejbClientJarCreated,
                                       String classifier )
@@ -583,7 +586,8 @@ public class EjbMojoTest
         else
         {
             checkedJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + ".jar";
-            checkedClientJarFile = project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + "-client.jar";
+            checkedClientJarFile =
+                project.getBuild().getDirectory() + "/" + DEFAULT_JAR_NAME + "-" + classifier + "-client.jar";
         }
 
         assertEquals( "Invalid value for ejb-jar creation", ejbJarCreated, FileUtils.fileExists( checkedJarFile ) );
@@ -608,20 +612,21 @@ public class EjbMojoTest
             final JarContentChecker inclusionChecker = new JarContentChecker();
 
             // set expected jar contents
-            for (String expectedFile : expectedFiles) {
-                inclusionChecker.addFile(new File(expectedFile));
+            for ( String expectedFile : expectedFiles )
+            {
+                inclusionChecker.addFile( new File( expectedFile ) );
             }
             assertTrue( inclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         }
         if ( unexpectedFiles != null )
         {
             final JarContentChecker exclusionChecker = new JarContentChecker();
-            for (String unexpectedFile : unexpectedFiles) {
-                exclusionChecker.addFile(new File(unexpectedFile));
+            for ( String unexpectedFile : unexpectedFiles )
+            {
+                exclusionChecker.addFile( new File( unexpectedFile ) );
             }
             assertFalse( exclusionChecker.isOK( new JarFile( checkedJarFile ) ) );
         }
-
 
     }
 

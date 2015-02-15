@@ -44,6 +44,18 @@ public class IssueTrackingReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = getProject().getModel().getIssueManagement() != null;
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         IssueTrackingRenderer r =

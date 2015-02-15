@@ -67,7 +67,6 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
  * Base abstract class for Checkstyle reports.
  *
  * @version $Id$
- * @since 2.8
  */
 public abstract class AbstractCheckstyleReport
     extends AbstractMavenReport
@@ -103,13 +102,11 @@ public abstract class AbstractCheckstyleReport
      * </p>
      * <p/>
      * <p>
-     * There are 4 predefined rulesets.
+     * There are 3 predefined rulesets included in Maven Checkstyle Plugin:
      * </p>
-     * <p/>
      * <ul>
      * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/turbine_checks.xml</code>: Turbine Checks.</li>
-     * <li><code>config/avalon_checks.xml</code>: Avalon Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
      */
@@ -673,7 +670,7 @@ public abstract class AbstractCheckstyleReport
     private void generateMainReport( CheckstyleResults results, ResourceBundle bundle )
     {
         CheckstyleReportGenerator generator =
-            new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool );
+            new CheckstyleReportGenerator( getSink(), bundle, project.getBasedir(), siteTool, configLocation );
 
         generator.setLog( getLog() );
         generator.setEnableRulesSummary( enableRulesSummary );

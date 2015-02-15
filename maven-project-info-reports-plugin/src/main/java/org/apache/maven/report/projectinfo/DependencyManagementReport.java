@@ -98,6 +98,18 @@ public class DependencyManagementReport
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean canGenerateReport()
+    {
+        boolean result = super.canGenerateReport();
+        if ( result && skipEmptyReport )
+        {
+            result = getManagementDependencies().hasDependencies();
+        }
+
+        return result;
+    }
+
+    @Override
     public void executeReport( Locale locale )
     {
         @SuppressWarnings( "unchecked" ) RepositoryUtils repoUtils =
@@ -124,12 +136,6 @@ public class DependencyManagementReport
     protected String getI18Nsection()
     {
         return "dependencyManagement";
-    }
-
-    @Override
-    public boolean canGenerateReport()
-    {
-        return super.canGenerateReport() && getManagementDependencies().hasDependencies();
     }
 
     // ----------------------------------------------------------------------

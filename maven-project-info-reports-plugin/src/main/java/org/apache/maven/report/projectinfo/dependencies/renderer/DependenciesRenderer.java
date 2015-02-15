@@ -233,7 +233,6 @@ public class DependenciesRenderer
         {
             startSection( getTitle() );
 
-            // TODO: should the report just be excluded?
             paragraph( getI18nString( "nolist" ) );
 
             endSection();
@@ -272,7 +271,7 @@ public class DependenciesRenderer
 
     /** {@inheritDoc} */
     // workaround for MPIR-140
-    // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
+    // TODO Remove me when MSHARED-390 has been resolved
     protected void startSection( String name )
     {
         startSection( name, name );
@@ -284,6 +283,7 @@ public class DependenciesRenderer
      * @param anchor not null
      * @param name not null
      */
+    // TODO Remove me when MSHARED-390 has been resolved
     protected void startSection( String anchor, String name )
     {
         section = section + 1;
@@ -347,7 +347,7 @@ public class DependenciesRenderer
 
     /** {@inheritDoc} */
     // workaround for MPIR-140
-    // TODO Remove me when maven-reporting-impl:2.1-SNAPSHOT is out
+    // TODO Remove me when MSHARED-390 has been resolved
     protected void endSection()
     {
         switch ( section )
@@ -559,7 +559,7 @@ public class DependenciesRenderer
                 continue;
             }
 
-            File artifactFile = artifact.getFile();
+            File artifactFile = dependencies.getFile( artifact );
 
             totaldeps.incrementTotal( artifact.getScope() );
             totaldepsize.addTotal( artifactFile.length(), artifact.getScope() );
@@ -1031,10 +1031,18 @@ public class DependenciesRenderer
                 sink.bold_();
                 if ( !licenses.isEmpty() )
                 {
-                    for ( License element : licenses )
+
+                    for ( Iterator<License> it = licenses.iterator(); it.hasNext(); )
                     {
-                        String licenseName = element.getName();
-                        String licenseUrl = element.getUrl();
+                        License license = it.next();
+
+                        String licenseName = license.getName();
+                        if ( StringUtils.isEmpty( licenseName ) )
+                        {
+                            licenseName = getI18nString( "unnamed" );
+                        }
+
+                        String licenseUrl = license.getUrl();
 
                         if ( licenseUrl != null )
                         {
@@ -1045,6 +1053,11 @@ public class DependenciesRenderer
                         if ( licenseUrl != null )
                         {
                             sink.link_();
+                        }
+
+                        if ( it.hasNext() )
+                        {
+                            sink.text( ", " );
                         }
 
                         licenseMap.put( licenseName, artifactName );
@@ -1105,16 +1118,14 @@ public class DependenciesRenderer
         for ( Map.Entry<String, Object> entry : licenseMap.entrySet() )
         {
             String licenseName = entry.getKey();
-            sink.paragraph();
-            sink.bold();
             if ( StringUtils.isEmpty( licenseName ) )
             {
-                sink.text( getI18nString( "unamed" ) );
+                licenseName = getI18nString( "unnamed" );
             }
-            else
-            {
-                sink.text( licenseName );
-            }
+
+            sink.paragraph();
+            sink.bold();
+            sink.text( licenseName );
             sink.text( ": " );
             sink.bold_();
 

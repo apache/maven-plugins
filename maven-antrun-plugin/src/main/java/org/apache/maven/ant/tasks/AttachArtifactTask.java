@@ -61,6 +61,7 @@ public class AttachArtifactTask
      */
     private String type;
 
+    /** {@inheritDoc} */
     public void execute()
     {
         if ( file == null )
@@ -95,41 +96,65 @@ public class AttachArtifactTask
         projectHelper.attachArtifact( mavenProject, type, classifier, file );
     }
 
+    /**
+     * @return {@link #file}
+     */
     public File getFile()
     {
         return file;
     }
 
+    /**
+     * @param file {@link #file}
+     */
     public void setFile( File file )
     {
         this.file = file;
     }
 
+    /**
+     * @return {@link #mavenProjectRefId}
+     */
     public String getMavenProjectRefId()
     {
         return mavenProjectRefId;
     }
 
+    /**
+     * @param mavenProjectRefId {@link #mavenProjectRefId}
+     */
     public void setMavenProjectRefId( String mavenProjectRefId )
     {
         this.mavenProjectRefId = mavenProjectRefId;
     }
 
+    /**
+     * @return {@link #classifier}
+     */
     public String getClassifier()
     {
         return classifier;
     }
 
+    /**
+     * @param classifier {@link #classifier}
+     */
     public void setClassifier( String classifier )
     {
         this.classifier = classifier;
     }
 
+    /**
+     * @return {@link #type}
+     */
     public String getType()
     {
         return type;
     }
 
+    /**
+     * @param type {@link #type}
+     */
     public void setType( String type )
     {
         this.type = type;

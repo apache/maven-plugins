@@ -33,7 +33,7 @@ public interface FileNameMapping
 {
 
     /**
-     * @param useBaseVersion
+     * @param useBaseVersion true if the base version will be use false otherwise.
      */
     void setUseBaseVersion( boolean useBaseVersion );
 
