@@ -66,6 +66,12 @@ public abstract class AbstractJDepsMojo
     private File outputDirectory;
 
     /**
+     * Indicates whether the build will continue even if there are jdeps warnings.
+     */
+    @Parameter( defaultValue = "true" )
+    private boolean failOnWarning;
+    
+    /**
      * Destination directory for DOT file output
      */
     @Parameter( property = "jdeps.dotOutput" )
@@ -117,11 +123,20 @@ public abstract class AbstractJDepsMojo
     private boolean profile;
     
     /**
-     * Recursively traverse all dependencies
+     * Recursively traverse all dependencies. The {@code -R} option implies {@code -filter:none}.  If {@code -p},
+     * {@code -e}, {@code -f} option is specified, only the matching dependences are analyzed.
      */
     @Parameter( defaultValue = "false", property = "jdeps.recursive" )
     private boolean recursive;
 
+    /**
+     * Show module containing the package
+     * 
+     * @since JDK 1.9.0
+     */
+    @Parameter( defaultValue = "false", property = "jdeps.module" )
+    private boolean module;
+    
     @Component
     private ToolchainManager toolchainManager;
     
@@ -157,7 +172,7 @@ public abstract class AbstractJDepsMojo
         addJDepsClasses( cmd );
         
         JDepsConsumer consumer = new JDepsConsumer();
-        executeJavadocCommandLine( cmd, outputDirectory, consumer );
+        executeJDepsCommandLine( cmd, outputDirectory, consumer );
         
         // @ TODO if there will be more goals, this should be pushed down to AbstractJDKInternals
         if ( consumer.getOffendingPackages().size() > 0 )
@@ -171,7 +186,11 @@ public abstract class AbstractJDepsMojo
                 msg.append( ' ' ).append( offendingPackage.getKey() )
                    .append( " -> " ).append( offendingPackage.getValue() ).append( ls );
             }
-            throw new MojoExecutionException( msg.toString() );
+            
+            if ( failOnWarning )
+            {
+                throw new MojoExecutionException( msg.toString() );
+            }
         }
     }
 
@@ -240,6 +259,11 @@ public abstract class AbstractJDepsMojo
         {
             cmd.createArg().setValue( "-P" );
         }
+        
+        if ( module )
+        {
+            cmd.createArg().setValue( "-M" );
+        }
 
         if ( apiOnly )
         {
@@ -297,7 +321,7 @@ public abstract class AbstractJDepsMojo
         }
 
         // ----------------------------------------------------------------------
-        // Try to find javadocExe from System.getProperty( "java.home" )
+        // Try to find jdepsExe from System.getProperty( "java.home" )
         // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
         // should be in the JDK_HOME
         // ----------------------------------------------------------------------
@@ -321,7 +345,7 @@ public abstract class AbstractJDepsMojo
         }
 
         // ----------------------------------------------------------------------
-        // Try to find javadocExe from JAVA_HOME environment variable
+        // Try to find jdepsExe from JAVA_HOME environment variable
         // ----------------------------------------------------------------------
         if ( !jdepsExe.exists() || !jdepsExe.isFile() )
         {
@@ -350,7 +374,7 @@ public abstract class AbstractJDepsMojo
         return jdepsExe.getAbsolutePath();
     }
     
-    private void executeJavadocCommandLine( Commandline cmd, File jOutputDirectory,
+    private void executeJDepsCommandLine( Commandline cmd, File jOutputDirectory,
                                             CommandLineUtils.StringStreamConsumer consumer )
         throws MojoExecutionException
     {
@@ -408,7 +432,7 @@ public abstract class AbstractJDepsMojo
         }
 
         // ----------------------------------------------------------------------
-        // Handle Javadoc warnings
+        // Handle JDeps warnings
         // ----------------------------------------------------------------------
 
         if ( StringUtils.isNotEmpty( err.getOutput() ) && getLog().isWarnEnabled() )
