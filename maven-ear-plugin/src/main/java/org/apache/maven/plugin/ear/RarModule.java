@@ -68,6 +68,6 @@ public class RarModule
      */
     public String getType()
     {
-        return RAR_MODULE;
+        return "rar";
     }
 }
