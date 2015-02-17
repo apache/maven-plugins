@@ -88,8 +88,10 @@ public class ScmPublishPublishScmMojo
     private void update( File checkout, File dir, List<String> doNotDeleteDirs )
         throws IOException
     {
-        String[] files =
-            checkout.list( new NotFileFilter( new NameFileFilter( scmProvider.getScmSpecificFilename() ) ) );
+        String scmSpecificFilename = scmProvider.getScmSpecificFilename();
+        String[] files = scmSpecificFilename != null
+                ? checkout.list( new NotFileFilter( new NameFileFilter( scmSpecificFilename ) ) )
+                : checkout.list();
 
         Set<String> checkoutContent = new HashSet<String>( Arrays.asList( files ) );
         List<String> dirContent = ( dir != null ) ? Arrays.asList( dir.list() ) : Collections.<String>emptyList();
