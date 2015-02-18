@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>25</version>
+    <version>27</version>
     <relativePath>../maven-plugins/pom.xml</relativePath>
   </parent>
 
@@ -58,7 +58,6 @@ under the License.
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <mavenPluginVersion>3.2</mavenPluginVersion>
   </properties>
 
   <dependencyManagement>
@@ -111,7 +110,6 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>${mavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -123,7 +121,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>2.6.3</version>
+      <version>2.9</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -139,7 +137,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.0.18</version>
+      <version>3.0.20</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -150,62 +148,23 @@ under the License.
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
-
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${mavenPluginVersion}</version>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.12</version>
-          <configuration>
-            <includes>
-              <include>**/*Test.java</include>
-            </includes>
-            <excludes>
-              <exclude>**/testutil/**</exclude>
+            <excludes combine.children="append">
+              <exclude>src/it/bootstrap/**</exclude>
+              <exclude>src/it/bundle-pack/placeholder.txt</exclude>
+              <exclude>src/test/resources/repo/testgroup/testartifact/1.0/testartifact-1.0.pom</exclude>
+              <exclude>src/test/resources/repo/testgroup/testparent/1.0/testparent-1.0.pom</exclude>
             </excludes>
           </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
-
-   <plugins>
-     <plugin>
-       <artifactId>maven-plugin-plugin</artifactId>
-       <executions>
-         <execution>
-           <id>generate-descriptor</id>
-           <goals>
-             <goal>descriptor</goal>
-           </goals>
-         </execution>
-       </executions>
-     </plugin>
-   </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>${mavenPluginVersion}</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
     <profile>
@@ -220,24 +179,24 @@ under the License.
             <directory>src/it</directory>
             <filtering>true</filtering>
           </testResource>
+          <testResource>
+            <directory>src/test/resources</directory>
+          </testResource>
         </testResources>
 
         <pluginManagement>
           <plugins>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
+              <artifactId>maven-failsafe-plugin</artifactId>
               <executions>
                 <execution>
                   <id>integration-tests</id>
-                  <phase>integration-test</phase>
                   <goals>
-                    <goal>test</goal>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
                   </goals>
                   <configuration>
-                    <includes>
-                      <include>**/*IT.java</include>
-                    </includes>
                     <systemPropertyVariables>
                       <maven.repo.local>${project.build.directory}/it-repo</maven.repo.local>
                     </systemPropertyVariables>
@@ -264,7 +223,6 @@ under the License.
                   <extraArtifacts>
                     <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:2.5:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-source-plugin:2.3:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.6:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.5:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:3.1:maven-plugin</extraArtifact>
