@@ -30,6 +30,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -41,6 +43,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.util.MatchPatterns;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -71,6 +74,39 @@ public abstract class AbstractJDepsMojo
     @Parameter( defaultValue = "true" )
     private boolean failOnWarning;
     
+    /**
+     * Additional dependencies which should be analyzed besides the classes.
+     * Specify as {@code groupId:artifactId}, allowing ant-pattern.
+     * 
+     * E.g.
+     * <pre>
+     *   &lt;dependenciesToAnalyzeIncludes&gt;
+     *     &lt;include&gt;*:*&lt;/include&gt;
+     *     &lt;include&gt;org.foo.*:*&lt;/include&gt;
+     *     &lt;include&gt;com.foo.bar:*&lt;/include&gt;
+     *     &lt;include&gt;dot.foo.bar:utilities&lt;/include&gt;
+     *   &lt;/dependenciesToAnalyzeIncludes&gt;  
+     * </pre>
+     */
+    @Parameter
+    private List<String> dependenciesToAnalyzeIncludes;
+
+    /**
+     * Subset of {@link AbstractJDepsMojo#dependenciesToAnalyzeIncludes} which should be not analyzed.
+     * Specify as {@code groupId:artifactId}, allowing ant-pattern.
+     * 
+     * E.g.
+     * <pre>
+     *   &lt;dependenciesToAnalyzeExcludes&gt;
+     *     &lt;exclude&gt;org.foo.*:*&lt;/exclude&gt;
+     *     &lt;exclude&gt;com.foo.bar:*&lt;/exclude&gt;
+     *     &lt;exclude&gt;dot.foo.bar:utilities&lt;/exclude&gt;
+     *   &lt;/dependenciesToAnalyzeExcludes&gt;  
+     * </pre>
+     */
+    @Parameter
+    private List<String> dependenciesToAnalyzeExcludes;
+
     /**
      * Destination directory for DOT file output
      */
@@ -282,6 +318,32 @@ public abstract class AbstractJDepsMojo
     {
         // <classes> can be a pathname to a .class file, a directory, a JAR file, or a fully-qualified class name.
         cmd.createArg().setFile( new File( getClassesDirectory() ) );
+
+        if ( dependenciesToAnalyzeIncludes != null )
+        {
+            MatchPatterns includes = MatchPatterns.from( dependenciesToAnalyzeIncludes );
+            
+            MatchPatterns excludes;
+            if ( dependenciesToAnalyzeExcludes != null )
+            {
+                excludes = MatchPatterns.from( dependenciesToAnalyzeExcludes );
+            }
+            else
+            {
+                excludes = MatchPatterns.from( Collections.<String>emptyList() );
+            }
+
+            for ( Artifact artifact : project.getArtifacts() )
+            {
+                String versionlessKey = ArtifactUtils.versionlessKey( artifact );
+
+                if ( includes.matchesPatternStart( versionlessKey, true ) 
+                    && !excludes.matchesPatternStart( versionlessKey, true ) )
+                {
+                    cmd.createArg().setFile( artifact.getFile() );
+                }
+            }
+        }
     }
 
     private String getJDepsExecutable() throws IOException
