@@ -44,6 +44,8 @@ under the License.
   
   <properties>
     <mavenVersion>3.0</mavenVersion>
+    <maven.compiler.source>1.6</maven.compiler.source><!-- JDK 9: Source option 1.5 is no longer supported. Use 1.6 or later. -->
+    <maven.compiler.target>1.6</maven.compiler.target><!-- JDK 9: Target option 1.5 is no longer supported. Use 1.6 or later. -->
   </properties>
   
   <dependencies>
