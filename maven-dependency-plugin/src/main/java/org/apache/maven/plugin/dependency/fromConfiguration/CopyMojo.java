@@ -138,7 +138,8 @@ public class CopyMojo
     {
         ArtifactItemFilter destinationNameOverrideFilter =
             new DestFileFilter( this.isOverWriteReleases(), this.isOverWriteSnapshots(), this.isOverWriteIfNewer(),
-                                false, false, false, false, this.stripVersion, item.getOutputDirectory() );
+                                false, false, false, false, this.stripVersion, prependGroupId, useBaseVersion,
+                                item.getOutputDirectory() );
         return destinationNameOverrideFilter;
     }
 

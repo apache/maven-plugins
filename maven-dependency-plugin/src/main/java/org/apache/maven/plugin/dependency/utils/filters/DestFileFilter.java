@@ -56,25 +56,21 @@ public class DestFileFilter
     
     private boolean removeClassifier;
 
+    private boolean prependGroupId;
+
+    private boolean useBaseVersion;
+
     private File outputFileDirectory;
 
     public DestFileFilter( File outputFileDirectory )
     {
-        this.outputFileDirectory = outputFileDirectory;
-        overWriteReleases = false;
-        overWriteIfNewer = false;
-        overWriteSnapshots = false;
-        useSubDirectoryPerArtifact = false;
-        useSubDirectoryPerType = false;
-        useSubDirectoryPerScope = false;
-        removeVersion = false;
-        removeClassifier = false;
+        this( false, false, false, false, false, false, false, false, false, false, outputFileDirectory );
     }
 
     public DestFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
                            boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
                            boolean useSubDirectoryPerScope, boolean useRepositoryLayout, boolean removeVersion,
-                           File outputFileDirectory )
+                           boolean prependGroupId, boolean useBaseVersion, File outputFileDirectory )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
@@ -84,6 +80,8 @@ public class DestFileFilter
         this.useSubDirectoryPerScope = useSubDirectoryPerScope;
         this.useRepositoryLayout = useRepositoryLayout;
         this.removeVersion = removeVersion;
+        this.prependGroupId = prependGroupId;
+        this.useBaseVersion = useBaseVersion;
         this.outputFileDirectory = outputFileDirectory;
     }
 
@@ -283,7 +281,10 @@ public class DestFileFilter
         File destFile;
         if ( StringUtils.isEmpty( item.getDestFileName() ) )
         {
-            destFile = new File( destFolder, DependencyUtil.getFormattedFileName( artifact, this.removeVersion ) );
+            String formattedFileName =
+                    DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId,
+                                                         useBaseVersion, removeClassifier );
+            destFile = new File( destFolder, formattedFileName );
         }
         else
         {
