@@ -323,7 +323,7 @@ public class CopyDependenciesMojo
         return new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
                                    this.useSubDirectoryPerArtifact, this.useSubDirectoryPerType,
                                    this.useSubDirectoryPerScope, this.useRepositoryLayout, this.stripVersion,
-                                   this.outputDirectory );
+                                   this.prependGroupId, this.useBaseVersion, this.outputDirectory );
     }
 
     /**
