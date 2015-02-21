@@ -712,7 +712,7 @@ public class EarMojo
                 target.getParentFile().mkdirs();
             }
 
-            mavenFileFilter.copyFile( source, target, true, getFilterWrappers(), null );
+            mavenFileFilter.copyFile( source, target, true, getFilterWrappers(), encoding );
         }
         else
         {
