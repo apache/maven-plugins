@@ -144,17 +144,6 @@ under the License.
     </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-component-metadata</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate-metadata</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -175,16 +164,17 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
             <executions>
               <execution>
                 <id>integration-test</id>
                 <phase>integration-test</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo/><echo/><echo/><echo/><echo/>
                     <echo level='warning'>NO INTEGRATION TESTS DEFINED</echo>
                     <echo/><echo/><echo/><echo/><echo/>
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
