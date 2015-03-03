@@ -1,3 +1,6 @@
+/**
+ * Nothing very important here, only a file for checkstyle rule PackageInfo.
+ */
 package org;
 
 /*
@@ -18,10 +21,3 @@ package org;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-/**
- * My class.
- */
-public class MyClass
-{
-}
