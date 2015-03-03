@@ -19,4 +19,4 @@
  */
 def buildLog = new File( basedir, 'build.log' )
 
-assert buildLog.text.contains( "[INFO] There are 3 checkstyle errors." )
+assert buildLog.text.contains( "[INFO] There is 1 error reported by Checkstyle" )

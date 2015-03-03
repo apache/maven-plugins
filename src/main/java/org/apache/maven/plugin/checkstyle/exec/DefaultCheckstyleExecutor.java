@@ -279,18 +279,43 @@ public class DefaultCheckstyleExecutor
 
         if ( nbErrors > 0 )
         {
-            String message = "There are " + nbErrors + " checkstyle errors.";
+            StringBuffer message = new StringBuffer( "There " );
+            if ( nbErrors == 1 )
+            {
+                message.append( "is" );
+            }
+            else
+            {
+                message.append( "are" );
+            }
+            message.append( " " );
+            message.append( nbErrors );
+            message.append( " error" );
+            if ( nbErrors != 1 )
+            {
+                message.append( "s" );
+            }
+            message.append( " reported by Checkstyle" );
+            String version = getCheckstyleVersion();
+            if ( version != null )
+            {
+                message.append( " " );
+                message.append( version );
+            }
+            message.append( " with " );
+            message.append( request.getConfigLocation() );
+            message.append( " ruleset." );
 
             if ( request.isFailsOnError() )
             {
                 // TODO: should be a failure, not an error. Report is not meant to
                 // throw an exception here (so site would
                 // work regardless of config), but should record this information
-                throw new CheckstyleExecutorException( message );
+                throw new CheckstyleExecutorException( message.toString() );
             }
             else
             {
-                getLogger().info( message );
+                getLogger().info( message.toString() );
             }
         }
 
@@ -462,6 +487,19 @@ public class DefaultCheckstyleExecutor
             }
         }
         return false;
+    }
+
+    /**
+     * Get the effective Checkstyle version at runtime.
+     * @return the MANIFEST implementation version of Checkstyle API package (can be <code>null</code>)
+     *
+     *@todo Copied from CheckstyleReportGenerator - move to a utility class
+     */
+    private String getCheckstyleVersion()
+    {
+        Package checkstyleApiPackage = Configuration.class.getPackage();
+
+        return ( checkstyleApiPackage == null ) ? null : checkstyleApiPackage.getImplementationVersion();
     }
 
     private Properties getOverridingProperties( CheckstyleExecutorRequest request )
