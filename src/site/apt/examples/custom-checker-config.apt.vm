@@ -55,7 +55,7 @@ Using a Custom Checkstyle Checker Configuration
   resource named <<<checkstyle.xml>>> within the compile scope of the dependencies or build extensions
   classpath.
 
-  There are 4 predefined Checkstyle configuration definitions that ship with the Checkstyle Plugin,
+  There are 3 predefined Checkstyle configuration definitions that ship with the Checkstyle Plugin,
   the Sun Microsystems Definition is selected by default.
 
   * <<config/sun_checks.xml>> - Sun Microsystems Definition (default).
