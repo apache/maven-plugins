@@ -3,7 +3,7 @@
  ------
  Hervé Boutemy
  ------
- 2015-01-18
+ 2015-03-04
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,14 +29,22 @@
 
 Predefined Rulesets
 
-  Maven Checkstyle Plugin contains these predefined rulesets:
+  Maven Checkstyle Plugin contains this predefined ruleset:
 
    * {{{./sun_checks.html}<<<config/sun_checks.xml>>>}},
-
-   * {{{./turbine_checks.html}<<<config/turbine_checks.xml>>>}}.
 
    []
 
   In versions up to and including 2.13 the plugin also included the
   <<<config/maven_checks.xml>>> predefined ruleset. In version 2.14 this was
-  moved to {{{/shared/maven-shared-resources/}maven-shared-resources}}.
+  moved to {{{/shared/maven-shared-resources/}maven-shared-resources}}. It is
+  still available to use, because maven-shared-resources has been added as a
+  dependency to Maven Checkstyle Plugin
+
+  In versions up to and including 2.13 the plugin also included the
+  <<<config/avalon_checks.xml>>> predefined ruleset. This was removed in
+  version 2.14.
+
+  In versions up to and including 2.14 the plugin also included the
+  <<<config/turbine_checks.xml>>> predefined ruleset. This was removed in
+  version 2.15.
