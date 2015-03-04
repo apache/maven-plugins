@@ -47,9 +47,9 @@ under the License.
           <includes>
             <include>**/*.js</include>
           </includes>
-          <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/js</compileSourceRoot>
-          </compileSourceRoots>
+          <sourceDirectories>
+            <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration/js</sourceDirectory>
+          </sourceDirectories>
         </configuration>
       </plugin>
     </plugins>

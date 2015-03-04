@@ -36,9 +36,9 @@ under the License.
           <project implementation="org.apache.maven.plugin.pmd.stubs.CustomConfigurationMavenProjectStub"/>
           <outputDirectory>${basedir}/target/test/unit/empty-report/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/empty-report/target</targetDirectory>
-          <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/empty-report/java/</compileSourceRoot>
-          </compileSourceRoots>
+          <sourceDirectories>
+            <sourceDirectory>${basedir}/src/test/resources/unit/empty-report/java/</sourceDirectory>
+          </sourceDirectories>
           <sourceEncoding>UTF-8</sourceEncoding>
           <skipEmptyReport>true</skipEmptyReport>
         </configuration>

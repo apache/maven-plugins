@@ -43,9 +43,9 @@ under the License.
 
           <suppressMarker>SUPPRESSME</suppressMarker>
 
-          <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
-          </compileSourceRoots>
+          <sourceDirectories>
+            <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration/</sourceDirectory>
+          </sourceDirectories>
         </configuration>
         <dependencies>
           <dependency>

@@ -41,9 +41,9 @@ under the License.
           <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
           <minimumTokens>100</minimumTokens>
 
-          <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
-          </compileSourceRoots>
+          <sourceDirectories>
+            <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration/</sourceDirectory>
+          </sourceDirectories>
 
           <sourceEncoding>UTF-8</sourceEncoding>
         </configuration>
