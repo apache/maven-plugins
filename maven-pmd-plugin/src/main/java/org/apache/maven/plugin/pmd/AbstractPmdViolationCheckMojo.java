@@ -106,61 +106,61 @@ public abstract class AbstractPmdViolationCheckMojo<D>
             return;
         }
 
-       if ( "java".equals( language )
-                || "jsp".equals( language )
-                || aggregate )
+        if ( "pom".equals( project.getPackaging() ) && !aggregate )
         {
-            if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
+            return;
+        }
+
+        if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
+        {
+            loadExcludeFromFailuresData( excludeFromFailureFile );
+        }
+        final File outputFile = new File( targetDirectory, filename );
+
+        if ( outputFile.exists() )
+        {
+            try
             {
-                loadExcludeFromFailuresData( excludeFromFailureFile );
-            }
-            final File outputFile = new File( targetDirectory, filename );
+                final ViolationDetails<D> violations = getViolations( outputFile, failurePriority );
 
-            if ( outputFile.exists() )
+                final List<D> failures = violations.getFailureDetails();
+                final List<D> warnings = violations.getWarningDetails();
+
+                if ( verbose )
+                {
+                    printErrors( failures, warnings );
+                }
+
+                final int failureCount = failures.size();
+                final int warningCount = warnings.size();
+
+                final String message = getMessage( failureCount, warningCount, key, outputFile );
+
+                getLog().debug( "PMD failureCount: " + failureCount + ", warningCount: " + warningCount );
+
+                if ( failureCount > 0 && isFailOnViolation() )
+                {
+                    throw new MojoFailureException( message );
+                }
+
+                this.getLog().info( message );
+            }
+            catch ( final IOException e )
             {
-                try
-                {
-                    final ViolationDetails<D> violations = getViolations( outputFile, failurePriority );
-
-                    final List<D> failures = violations.getFailureDetails();
-                    final List<D> warnings = violations.getWarningDetails();
-
-                    if ( verbose )
-                    {
-                        printErrors( failures, warnings );
-                    }
-
-                    final int failureCount = failures.size();
-                    final int warningCount = warnings.size();
-
-                    final String message = getMessage( failureCount, warningCount, key, outputFile );
-
-                    getLog().debug( "PMD failureCount: " + failureCount + ", warningCount: " + warningCount );
-
-                    if ( failureCount > 0 && isFailOnViolation() )
-                    {
-                        throw new MojoFailureException( message );
-                    }
-
-                    this.getLog().info( message );
-                }
-                catch ( final IOException e )
-                {
-                    throw new MojoExecutionException(
-                                                      "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
-                                                      e );
-                }
-                catch ( final XmlPullParserException e )
-                {
-                    throw new MojoExecutionException(
-                                                      "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
-                                                      e );
-                }
+                throw new MojoExecutionException(
+                                                  "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                                                  e );
             }
-            else
+            catch ( final XmlPullParserException e )
             {
-                throw new MojoFailureException( "Unable to perform check, " + "unable to find " + outputFile );
+                throw new MojoExecutionException(
+                                                  "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
+                                                  e );
             }
+        }
+        else
+        {
+            throw new MojoFailureException( "Unable to perform check, " + "unable to find " + outputFile );
         }
     }
 
