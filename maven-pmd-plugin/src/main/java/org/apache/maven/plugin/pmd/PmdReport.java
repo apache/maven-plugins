@@ -82,16 +82,16 @@ public class PmdReport
      * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code> and
      * <code>1.8</code>.
+     * <p>
+     *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
+     * </p>
      */
     @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.target}" )
     private String targetJdk;
 
     /**
-     * The programming language to be analyzed by PMD. Valid values are currently <code>java</code> and
-     * <code>ecmascript</code> or <code>javascript</code>.
-     * <p>
-     * <b>Note:</b> if the parameter targetJdk is given, then this language parameter will be ignored.
-     * </p>
+     * The programming language to be analyzed by PMD. Valid values are currently <code>java</code>,
+     * <code>javascript</code> and <code>jsp</code>.
      *
      * @since 3.0
      */
@@ -537,7 +537,7 @@ public class PmdReport
         PMDConfiguration configuration = new PMDConfiguration();
         LanguageVersion languageVersion = null;
 
-        if ( null != targetJdk )
+        if ( ( "java".equals( language ) || null == language ) && null != targetJdk )
         {
             languageVersion = LanguageRegistry.findLanguageVersionByTerseName( "java " + targetJdk );
             if ( languageVersion == null )
