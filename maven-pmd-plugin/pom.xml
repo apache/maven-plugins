@@ -198,13 +198,11 @@ under the License.
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-javascript</artifactId>
       <version>${pmdVersion}</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-jsp</artifactId>
       <version>${pmdVersion}</version>
-      <scope>runtime</scope>
     </dependency>
 
     <!-- test -->
