@@ -619,16 +619,6 @@ public abstract class AbstractInvokerMojo
     private String actualMavenVersion;
 
     /**
-     * The version of the JRE which is used to run the builds
-     */
-    private String actualJreVersion;
-
-    private void setActualJreVersion( String actualJreVersion )
-    {
-        this.actualJreVersion = actualJreVersion;
-    }
-
-    /**
      * Invokes Maven on the configured test projects.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException If the goal encountered severe errors.
@@ -1157,9 +1147,11 @@ public abstract class AbstractInvokerMojo
         }
         scriptRunner.setGlobalVariable( "mavenVersion", actualMavenVersion );
 
+        final CharSequence actualJreVersion;
+        // @todo if ( javaVersions ) ... to be picked up from toolchains
         if ( javaHome != null )
         {
-            resolveExternalJreVersion();
+            actualJreVersion = resolveExternalJreVersion();
         }
         else
         {
@@ -1181,7 +1173,7 @@ public abstract class AbstractInvokerMojo
                         {
                             try
                             {
-                                runBuild( projectsDir, job, finalSettingsFile );
+                                runBuild( projectsDir, job, finalSettingsFile, javaHome, actualJreVersion );
                             }
                             catch ( MojoExecutionException e )
                             {
@@ -1206,7 +1198,7 @@ public abstract class AbstractInvokerMojo
             {
                 for ( BuildJob job : buildJobs )
                 {
-                    runBuild( projectsDir, job, finalSettingsFile );
+                    runBuild( projectsDir, job, finalSettingsFile, javaHome, actualJreVersion );
                 }
             }
         }
@@ -1263,7 +1255,7 @@ public abstract class AbstractInvokerMojo
         }
     }
 
-    private void resolveExternalJreVersion()
+    private CharSequence resolveExternalJreVersion()
     {
         Artifact pluginArtifact = mojoExecution.getMojoDescriptor().getPluginDescriptor().getPluginArtifact();
         pluginArtifact.getFile();
@@ -1275,11 +1267,12 @@ public abstract class AbstractInvokerMojo
         commandLine.createArg().setValue( SystemPropertyPrinter.class.getName() );
         commandLine.createArg().setValue( "java.version" );
 
+        final StringBuilder actualJreVersion = new StringBuilder();
         StreamConsumer consumer = new StreamConsumer()
         {
             public void consumeLine( String line )
             {
-                setActualJreVersion( line );
+                actualJreVersion.append( line );
             }
         };
         try
@@ -1290,6 +1283,7 @@ public abstract class AbstractInvokerMojo
         {
             getLog().warn( e.getMessage() );
         }
+        return actualJreVersion;
     }
 
     /**
@@ -1301,7 +1295,8 @@ public abstract class AbstractInvokerMojo
      *            the current user settings.
      * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
      */
-    private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile )
+    private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile, File actualJavaHome,
+                           CharSequence actualJreVersion )
         throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, buildJob.getProject() );
@@ -1348,14 +1343,15 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            int selection = getSelection( invokerProperties );
+            int selection = getSelection( invokerProperties, actualJreVersion );
             if ( selection == 0 )
             {
                 long milliseconds = System.currentTimeMillis();
                 boolean executed;
                 try
                 {
-                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
+                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome,
+                                         invokerProperties );
                 }
                 finally
                 {
@@ -1457,7 +1453,7 @@ public abstract class AbstractInvokerMojo
      * @return <code>0</code> if the job corresponding to the properties should be run, otherwise a bitwise value
      *         representing the reason why it should be skipped.
      */
-    private int getSelection( InvokerProperties invokerProperties )
+    private int getSelection( InvokerProperties invokerProperties, CharSequence actualJreVersion )
     {
         int selection = 0;
         if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion(), actualMavenVersion ) )
@@ -1465,7 +1461,7 @@ public abstract class AbstractInvokerMojo
             selection |= SELECTOR_MAVENVERSION;
         }
 
-        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion ) )
+        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion.toString() ) )
         {
             selection |= SELECTOR_JREVERSION;
         }
@@ -1545,7 +1541,8 @@ public abstract class AbstractInvokerMojo
      * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException If either a hook script or the build itself
      *             failed.
      */
-    private boolean runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
+    private boolean runBuild( File basedir, File pomFile, File settingsFile, File actualJavaHome,
+                              InvokerProperties invokerProperties )
         throws MojoExecutionException, RunFailureException
     {
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
@@ -1615,9 +1612,9 @@ public abstract class AbstractInvokerMojo
                 invoker.setMavenExecutable( new File( mavenExecutable ) );
             }
 
-            if ( javaHome != null )
+            if ( actualJavaHome != null )
             {
-                request.setJavaHome( javaHome );
+                request.setJavaHome( actualJavaHome );
             }
 
             if ( environmentVariables != null )
