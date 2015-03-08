@@ -136,9 +136,20 @@ under the License.
       <version>2.2</version>
     </dependency>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.2</version>
+    </dependency>
+    <dependency>
       <groupId>org.vafer</groupId>
       <artifactId>jdependency</artifactId>
       <version>1.0</version>
+      <exclusions>
+        <exclusion> <!-- Brings in 2.4 so we ditch it until we finally switch to 1.6 -->
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
