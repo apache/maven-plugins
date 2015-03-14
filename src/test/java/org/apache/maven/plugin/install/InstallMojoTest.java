@@ -19,24 +19,26 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.LegacySupport;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
-import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.utils.io.FileUtils;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.util.DefaultRepositorySystemSession;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
+import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.utils.io.FileUtils;
+import org.sonatype.aether.impl.internal.EnhancedLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -59,10 +61,10 @@ public class InstallMojoTest
 
         FileUtils.deleteDirectory( new File( getBasedir() + "/" + LOCAL_REPO ) );
         
-        LegacySupport legacySupport = lookup( LegacySupport.class );
-        RepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
-        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
-        legacySupport.setSession( new MavenSession( getContainer(), repositorySession, executionRequest, null ) );
+//        LegacySupport legacySupport = lookup( LegacySupport.class );
+//        RepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
+//        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+//        legacySupport.setSession( new MavenSession( getContainer(), repositorySession, executionRequest, null ) );
     }
 
     public void testInstallTestEnvironment()
@@ -88,9 +90,11 @@ public class InstallMojoTest
             + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        updateMavenProject( project );
         
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
-        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
+
         artifact = (InstallArtifactStub) project.getArtifact();
 
         artifact.setFile( file );
@@ -120,8 +124,10 @@ public class InstallMojoTest
         assertNotNull( mojo );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        updateMavenProject( project );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         List attachedArtifacts = project.getAttachedArtifacts();
 
@@ -160,8 +166,10 @@ public class InstallMojoTest
             + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
-        
+        updateMavenProject( project );
+
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -184,8 +192,10 @@ public class InstallMojoTest
         assertNotNull( mojo );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        updateMavenProject( project );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -218,8 +228,10 @@ public class InstallMojoTest
         assertNotNull( mojo );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        updateMavenProject( project );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         String packaging = project.getPackaging();
 
@@ -232,7 +244,7 @@ public class InstallMojoTest
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 
         File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
-            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + "jar" );
+            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + "pom" );
 
         assertTrue( installedArtifact.exists() );
         
@@ -251,8 +263,10 @@ public class InstallMojoTest
         File file = new File( getBasedir(), "target/test-classes/unit/basic-install-checksum/" + "maven-test-jar.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        updateMavenProject( project );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -338,8 +352,10 @@ public class InstallMojoTest
             + "maven-install-test-1.0-SNAPSHOT.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        updateMavenProject( project );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -365,5 +381,23 @@ public class InstallMojoTest
     private String dotToSlashReplacer( String parameter )
     {
         return parameter.replace( '.', '/' );
+    }
+    
+    private MavenSession createMavenSession()
+    {
+        MavenSession session = mock( MavenSession.class );
+        DefaultRepositorySystemSession repositorySession  = new DefaultRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new EnhancedLocalRepositoryManager( new File( LOCAL_REPO )     ) );
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession( repositorySession );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        return session;
+    }
+    
+    private void updateMavenProject( MavenProject project )
+    {
+       project.setGroupId( project.getArtifact().getGroupId() );
+       project.setArtifactId( project.getArtifact().getArtifactId() );
+       project.setVersion( project.getArtifact().getVersion() );
     }
 }

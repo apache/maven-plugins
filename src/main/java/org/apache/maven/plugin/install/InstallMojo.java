@@ -28,14 +28,16 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.ProjectArtifact;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.apache.maven.shared.artifact.install.ArtifactInstallerException;
 
 /**
  * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle, to the
@@ -65,6 +67,9 @@ public class InstallMojo
 
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
+    
+    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    private MavenSession session;
 
     /**
      * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
@@ -182,7 +187,9 @@ public class InstallMojo
 
             if ( isPomArtifact )
             {
-                installer.install( pomFile, artifact, localRepository );
+//                installer.install( pomFile, artifact, localRepository );
+                installer.install( session.getProjectBuildingRequest(),
+                                   Collections.<Artifact> singletonList( new ProjectArtifact( project ) ) );
                 installChecksums( artifact, createChecksum );
                 addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
             }
@@ -197,7 +204,8 @@ public class InstallMojo
                 // but not package). We are designing in a proper solution for Maven 2.1
                 if ( file != null && file.isFile() )
                 {
-                    installer.install( file, artifact, localRepository );
+//                    installer.install( file, artifact, localRepository );
+                    installer.install( session.getProjectBuildingRequest(), Collections.singletonList( artifact ) );
                     installChecksums( artifact, createChecksum );
                     addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
                 }
@@ -214,7 +222,8 @@ public class InstallMojo
                         pomArtifact.setRelease( true );
                     }
 
-                    installer.install( pomFile, pomArtifact, localRepository );
+//                    installer.install( pomFile, pomArtifact, localRepository );
+                    installer.install( session.getProjectBuildingRequest(), Collections.singletonList( pomArtifact ) );
                     installChecksums( pomArtifact, createChecksum );
                     addMetaDataFilesForArtifact( pomArtifact, metadataFiles, createChecksum );
                 }
@@ -229,14 +238,15 @@ public class InstallMojo
 
             for ( Artifact attached : attachedArtifacts )
             {
-                installer.install( attached.getFile(), attached, localRepository );
+//                installer.install( attached.getFile(), attached, localRepository );
+                installer.install( session.getProjectBuildingRequest(), Collections.singletonList( attached ) );
                 installChecksums( attached, createChecksum );
                 addMetaDataFilesForArtifact( attached, metadataFiles, createChecksum );
             }
 
             installChecksums( metadataFiles );
         }
-        catch ( ArtifactInstallationException e )
+        catch ( ArtifactInstallerException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
