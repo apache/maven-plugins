@@ -31,14 +31,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -46,7 +44,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -144,23 +141,6 @@ public class InstallFileMojo
      */
     @Parameter( property = "generatePom" )
     private Boolean generatePom;
-
-    /**
-     * The type of remote repository layout to install to. Try <code>legacy</code> for a Maven 1.x-style repository
-     * layout.
-     * 
-     * @since 2.2
-     * @deprecated Maven 3.0 doesn't support legacy layout anymore 
-     */
-    @Deprecated
-    @Parameter( property = "repositoryLayout", defaultValue = "default", required = true )
-    private String repositoryLayout;
-
-    /**
-     * Map that contains the repository layouts.
-     */
-    @Component( role = ArtifactRepositoryLayout.class )
-    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * The path for a specific local repository directory. If not specified the local repository path configured in the

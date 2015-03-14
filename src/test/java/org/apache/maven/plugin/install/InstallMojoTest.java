@@ -103,10 +103,8 @@ public class InstallMojoTest
 
         String groupId = dotToSlashReplacer( artifact.getGroupId() );
 
-        String packaging = getVariableValueFromObject( mojo, "packaging" ).toString();
-
         File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
-            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
+            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getArtifactHandler().getExtension() );
 
         assertTrue( installedArtifact.exists() );
         

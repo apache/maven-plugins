@@ -82,18 +82,6 @@ public class InstallMojo
     private boolean installAtEnd;
 
     /**
-     * @deprecated either use project.getPackaging() or reactorProjects.get(i).getPackaging()
-     */
-    @Parameter( defaultValue = "${project.packaging}", required = true, readonly = true )
-    protected String packaging;
-
-    /**
-     * @deprecated either use project.getFile() or reactorProjects.get(i).getFile()
-     */
-    @Parameter( defaultValue = "${project.file}", required = true, readonly = true )
-    private File pomFile;
-
-    /**
      * Set this to <code>true</code> to bypass artifact installation. Use this for artifacts that does not need to be
      * installed in the local repository.
      * 
@@ -101,18 +89,6 @@ public class InstallMojo
      */
     @Parameter( property = "maven.install.skip", defaultValue = "false" )
     private boolean skip;
-
-    /**
-     * @deprecated either use project.getArtifact() or reactorProjects.get(i).getArtifact()
-     */
-    @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
-    private Artifact artifact;
-
-    /**
-     * @deprecated either use project.getAttachedArtifacts() or reactorProjects.get(i).getAttachedArtifacts()
-     */
-    @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
-    private List<Artifact> attachedArtifacts;
 
     public void execute()
         throws MojoExecutionException
