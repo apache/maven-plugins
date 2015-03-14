@@ -100,6 +100,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithClassifier()
@@ -125,6 +127,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "-" + classifier + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithGeneratePom()
@@ -171,6 +175,8 @@ public class InstallFileMojoTest
         assertEquals( artifactId, model.getArtifactId() );
 
         assertEquals( version, model.getVersion() );
+
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithPomFile()
@@ -200,6 +206,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "." + "pom" );
 
         assertTrue( installedPom.exists() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithPomAsPackaging()
@@ -224,6 +232,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "." + "pom" );
 
         assertTrue( installedPom.exists() );
+
+        assertEquals( 4, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithChecksum()
@@ -267,6 +277,8 @@ public class InstallFileMojoTest
         assertEquals( actualSha1Sum, generatedSha1 );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 9, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     private void assignValuesForParameter( Object obj )

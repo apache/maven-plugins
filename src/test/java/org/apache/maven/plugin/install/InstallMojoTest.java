@@ -105,6 +105,8 @@ public class InstallMojoTest
             artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testBasicInstallWithAttachedArtifacts()
@@ -141,6 +143,8 @@ public class InstallMojoTest
 
             assertTrue( installedArtifact.exists() );
         }
+        
+        assertEquals( 12, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testUpdateReleaseParamSetToTrue()
@@ -166,6 +170,8 @@ public class InstallMojoTest
         mojo.execute();
 
         assertTrue( artifact.isRelease() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallIfArtifactFileIsNull()
@@ -197,6 +203,8 @@ public class InstallMojoTest
         {
             //expected
         }
+        
+        assertFalse( new File( LOCAL_REPO ).exists() );
     }
 
     public void testInstallIfPackagingIsPom()
@@ -227,6 +235,8 @@ public class InstallMojoTest
             artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + "jar" );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 4, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testBasicInstallAndCreateChecksumIsTrue()
@@ -311,6 +321,8 @@ public class InstallMojoTest
         assertEquals( actualPomSha1Sum, generatedPomSha1 );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 9, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testSkip()
@@ -345,6 +357,8 @@ public class InstallMojoTest
             artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion() + "." + packaging );
 
         assertFalse( installedArtifact.exists() );
+        
+        assertFalse( new File( LOCAL_REPO ).exists() );
     }
 
 
