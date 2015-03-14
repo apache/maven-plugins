@@ -21,12 +21,18 @@ package org.apache.maven.plugin.install;
 
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
 import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.FileUtils;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 import java.io.File;
 import java.util.Collections;
@@ -52,6 +58,11 @@ public class InstallMojoTest
         System.out.println( ">>>Cleaning local repo " + getBasedir() + "/" + LOCAL_REPO + "..." );
 
         FileUtils.deleteDirectory( new File( getBasedir() + "/" + LOCAL_REPO ) );
+        
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        RepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
+        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+        legacySupport.setSession( new MavenSession( getContainer(), repositorySession, executionRequest, null ) );
     }
 
     public void testInstallTestEnvironment()

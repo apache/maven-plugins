@@ -19,12 +19,18 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 import java.io.File;
 import java.io.Reader;
@@ -57,6 +63,11 @@ public class InstallFileMojoTest
         super.setUp();
 
         FileUtils.deleteDirectory( new File( getBasedir() + "/" + LOCAL_REPO ) );
+        
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        RepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
+        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+        legacySupport.setSession( new MavenSession( getContainer(), repositorySession, executionRequest, null ) );
     }
 
     public void testInstallFileTestEnvironment()
@@ -87,31 +98,6 @@ public class InstallFileMojoTest
 
         File installedArtifact = new File( getBasedir(), LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
             artifactId + "-" + version + "." + packaging );
-
-        assertTrue( installedArtifact.exists() );
-    }
-
-    public void testLayoutInstallFile()
-        throws Exception
-    {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/install-file-layout-test/plugin-config.xml" );
-
-        InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
-
-        assertNotNull( mojo );
-
-        assignValuesForParameter( mojo );
-
-        mojo.setLocalRepositoryPath( new File( getBasedir(), LOCAL_REPO ) );
-
-        mojo.execute();
-        
-        File pomFile = (File) getVariableValueFromObject( mojo, "pomFile" );
-        org.codehaus.plexus.util.FileUtils.forceDelete( pomFile );
-
-        File installedArtifact = new File( getBasedir(),
-                                           LOCAL_REPO + legacyGroupId + "/" + "jars" + "/" + artifactId + "-" + version
-                                               + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
     }
