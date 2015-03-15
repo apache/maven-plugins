@@ -354,4 +354,10 @@ public class TestJavadocReport
     {
         return super.configureDependencySourceResolution( config ).withoutCompileSources().withTestSources();
     }
+
+    @Override
+    protected boolean isTest()
+    {
+        return true;
+    }
 }
