@@ -1752,6 +1752,16 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * Indicates whether this goal generates documentation for the <code>Java Test code</code>.
+     *
+     * @return <code>true</code> if the goal generates Test Javadocs, <code>false</code> otherwise.
+     */
+    protected boolean isTest()
+    {
+        return false;
+    }
+
+    /**
      * @return the output directory
      */
     protected String getOutputDirectory()
@@ -2498,6 +2508,11 @@ public abstract class AbstractJavadocMojo
     {
         List<String> classpathElements = new ArrayList<String>();
         Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
+
+        if ( isTest() )
+        {
+            classpathElements.addAll( getProjectBuildOutputDirs( project ) );
+        }
 
         populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
