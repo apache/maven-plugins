@@ -983,7 +983,7 @@ public abstract class AbstractInvokerMojo
     }
 
     /**
-     * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
+     * Copied a directory structure with default exclusions (.svn, CVS, etc)
      *
      * @param sourceDir The source directory to copy, must not be <code>null</code>.
      * @param destDir The target directory to copy to, must not be <code>null</code>.
