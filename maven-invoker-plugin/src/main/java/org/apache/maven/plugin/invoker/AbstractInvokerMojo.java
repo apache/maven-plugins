@@ -488,6 +488,9 @@ public abstract class AbstractInvokerMojo
      * # specify an empty list to execute the default goal of the IT project
      * invoker.goals = clean install
      * 
+     * # Or you can give things like this if you need.
+     * invoker.goals = -T2 clean verify
+     * 
      * # Optionally, a list of goals to run during further invocations of Maven
      * invoker.goals.2 = ${project.groupId}:${project.artifactId}:${project.version}:run
      * 
