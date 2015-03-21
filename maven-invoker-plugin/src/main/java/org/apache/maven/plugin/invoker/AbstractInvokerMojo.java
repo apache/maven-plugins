@@ -741,13 +741,12 @@ public abstract class AbstractInvokerMojo
     private void writeSummaryFile( BuildJob[] buildJobs )
         throws MojoExecutionException
     {
+        
         File summaryReportFile = new File( reportsDirectory, "invoker-summary.txt" );
 
         try
         {
-            FileOutputStream fos = new FileOutputStream( summaryReportFile );
-            OutputStreamWriter osw = new OutputStreamWriter( fos, "UTF-8" );
-            Writer writer = new BufferedWriter( osw );
+            Writer writer = new BufferedWriter(new FileWriter( summaryReportFile ));
 
             for ( int i = 0; i < buildJobs.length; i++ )
             {
@@ -765,8 +764,6 @@ public abstract class AbstractInvokerMojo
             }
 
             writer.close();
-            osw.close();
-            fos.close();
         }
         catch ( IOException e )
         {
