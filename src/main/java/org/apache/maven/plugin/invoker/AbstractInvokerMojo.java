@@ -744,12 +744,12 @@ public abstract class AbstractInvokerMojo
     private void writeSummaryFile( BuildJob[] buildJobs )
         throws MojoExecutionException
     {
-        
+
         File summaryReportFile = new File( reportsDirectory, "invoker-summary.txt" );
 
         try
         {
-            Writer writer = new BufferedWriter(new FileWriter( summaryReportFile ));
+            Writer writer = new BufferedWriter( new FileWriter( summaryReportFile ) );
 
             for ( int i = 0; i < buildJobs.length; i++ )
             {
@@ -1389,9 +1389,9 @@ public abstract class AbstractInvokerMojo
                 boolean executed;
                 try
                 {
-                    //CHECKSTYLE_OFF: LineLength
+                    // CHECKSTYLE_OFF: LineLength
                     executed = runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome, invokerProperties );
-                    //CHECKSTYLE_ON: LineLength
+                    // CHECKSTYLE_ON: LineLength
                 }
                 finally
                 {
