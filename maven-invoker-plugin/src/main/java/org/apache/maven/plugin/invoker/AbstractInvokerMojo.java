@@ -20,6 +20,7 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -733,6 +734,44 @@ public abstract class AbstractInvokerMojo
         runBuilds( projectsDir, buildJobs );
 
         processResults( new InvokerSession( buildJobs ) );
+
+        writeSummaryFile( buildJobs );
+    }
+
+    private void writeSummaryFile( BuildJob[] buildJobs )
+        throws MojoExecutionException
+    {
+        File summaryReportFile = new File( reportsDirectory, "invoker-summary.txt" );
+
+        try
+        {
+            FileOutputStream fos = new FileOutputStream( summaryReportFile );
+            OutputStreamWriter osw = new OutputStreamWriter( fos, "UTF-8" );
+            Writer writer = new BufferedWriter( osw );
+
+            for ( int i = 0; i < buildJobs.length; i++ )
+            {
+                BuildJob buildJob = buildJobs[i];
+                writer.append( buildJob.getResult() );
+                writer.append( " [" );
+                writer.append( buildJob.getProject() );
+                writer.append( "] " );
+                if ( buildJob.getFailureMessage() != null )
+                {
+                    writer.append( " " );
+                    writer.append( buildJob.getFailureMessage() );
+                }
+                writer.append( "\n" );
+            }
+
+            writer.close();
+            osw.close();
+            fos.close();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to write summary report " + summaryReportFile, e );
+        }
     }
 
     protected void doFailIfNoProjects()
@@ -1350,8 +1389,9 @@ public abstract class AbstractInvokerMojo
                 boolean executed;
                 try
                 {
-                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome,
-                                         invokerProperties );
+                    //CHECKSTYLE_OFF: LineLength
+                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome, invokerProperties );
+                    //CHECKSTYLE_ON: LineLength
                 }
                 finally
                 {
