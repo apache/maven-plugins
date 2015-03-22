@@ -36,7 +36,7 @@ class ReportUtils
 
         public boolean accept( File dir, String name )
         {
-            return name.endsWith( ".xml" );
+            return name.startsWith( "BUILD-" ) && name.endsWith( ".xml" );
         }
 
     }
