@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.logging.Log;
@@ -33,16 +34,18 @@ public class ReadWorkspaceLocationsTest
     extends TestCase
 {
 
-    private static final File PROJECTS_DIRECTORY = new File( "target/test-classes/eclipse" );
-
-    private static final File DYNAMIC_WORKSPACE_DIRECTORY = new File( PROJECTS_DIRECTORY, "dynamicWorkspace" );
-
-    private static final File WORKSPACE_DIRECTORY = new File( DYNAMIC_WORKSPACE_DIRECTORY, "workspace" );
-
-    private static final File WORKSPACE_PROJECT_METADATA_DIRECTORY =
-        new File( WORKSPACE_DIRECTORY, ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
+//    private final File PROJECTS_DIRECTORY = new File( "target/tmp-workspace/eclipse" );
+//
+//    private final File DYNAMIC_WORKSPACE_DIRECTORY = TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace().workspaceLocation;
+//
+//    private static final File WORKSPACE_DIRECTORY = new File( DYNAMIC_WORKSPACE_DIRECTORY, "workspace" );
+//
+//    private static final File WORKSPACE_PROJECT_METADATA_DIRECTORY =
+//        new File( WORKSPACE_DIRECTORY, ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
 
     private MockManager mm = new MockManager();
+private File workspaceLocation;
+private File metaDataDirectory;
 
     /**
      * {@inheritDoc}
@@ -51,6 +54,10 @@ public class ReadWorkspaceLocationsTest
         throws Exception
     {
         super.setUp();
+        
+        workspaceLocation = TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace().workspaceLocation;
+        metaDataDirectory = new File( workspaceLocation, ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );;
+
     }
 
     /**
@@ -65,11 +72,11 @@ public class ReadWorkspaceLocationsTest
     {
         ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
 
-        File metadataProjectDirectory = new File( WORKSPACE_PROJECT_METADATA_DIRECTORY, "project-A" );
+        File metadataProjectDirectory = new File( metaDataDirectory , "project-A" );
 
-        File projectLocation = objectUnderTest.getProjectLocation( WORKSPACE_DIRECTORY, metadataProjectDirectory );
+        File projectLocation = objectUnderTest.getProjectLocation( workspaceLocation, metadataProjectDirectory );
 
-        File expectedProjectDirectory = new File( WORKSPACE_DIRECTORY, "project-A" );
+        File expectedProjectDirectory = new File( workspaceLocation, "project-A" );
         assertFileEquals( expectedProjectDirectory, projectLocation );
     }
 
@@ -86,11 +93,11 @@ public class ReadWorkspaceLocationsTest
     {
         ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
 
-        File metadataProjectDirectory = new File( WORKSPACE_PROJECT_METADATA_DIRECTORY, "module-A1" );
+        File metadataProjectDirectory = new File( metaDataDirectory, "module-A1" );
         File expectedProjectDirectory =
-            new File( TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace().workspaceLocation, "project-A/module-A1" );
+            new File( workspaceLocation, "project-A/module-A1" );
 
-        File projectLocation = objectUnderTest.getProjectLocation( WORKSPACE_DIRECTORY, metadataProjectDirectory );
+        File projectLocation = objectUnderTest.getProjectLocation( workspaceLocation, metadataProjectDirectory );
 
         assertFileEquals( expectedProjectDirectory, projectLocation );
     }
@@ -108,10 +115,10 @@ public class ReadWorkspaceLocationsTest
     {
         ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
 
-        File metadataProjectDirectory = new File( WORKSPACE_PROJECT_METADATA_DIRECTORY, "project-O" );
-        File expectedProjectDirectory = new File( DYNAMIC_WORKSPACE_DIRECTORY, "project-O" );
+        File metadataProjectDirectory = new File( metaDataDirectory, "project-O" );
+        File expectedProjectDirectory = new File( workspaceLocation, "../project-O" );
 
-        File projectLocation = objectUnderTest.getProjectLocation( WORKSPACE_DIRECTORY, metadataProjectDirectory );
+        File projectLocation = objectUnderTest.getProjectLocation( workspaceLocation, metadataProjectDirectory );
 
         assertFileEquals( expectedProjectDirectory, projectLocation );
     }

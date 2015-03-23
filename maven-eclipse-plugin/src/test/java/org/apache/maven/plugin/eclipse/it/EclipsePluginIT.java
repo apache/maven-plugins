@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 
@@ -34,10 +35,20 @@ import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 public class EclipsePluginIT
     extends AbstractEclipsePluginIT
 {
+    private static boolean initialized = false;
+
     protected void setUp()
         throws Exception
     {
         super.setUp();
+
+        if ( !initialized )
+        {
+            File tempWorkspace = new File( "target/test-classes/eclipse" );
+            FileUtils.deleteDirectory( tempWorkspace );
+            FileUtils.copyDirectoryToDirectory( new File( "src/test/resources/eclipse" ), tempWorkspace );
+            initialized = true;
+        }
     }
 
     /**

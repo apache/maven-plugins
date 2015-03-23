@@ -940,7 +940,7 @@ public abstract class AbstractIdeSupportMojo
                 if (artifact.isResolved()) {
                     if ("sources".equals(inClassifier)) {
                         dependency.setSourceAttachment(artifact.getFile());
-                    } else if ("javadoc".equals(inClassifier)) {
+                    } else if ("javadoc".equals(inClassifier) && includeRemoteRepositories ) {
                         dependency.setJavadocAttachment(artifact.getFile());
                     }
                 } else {
