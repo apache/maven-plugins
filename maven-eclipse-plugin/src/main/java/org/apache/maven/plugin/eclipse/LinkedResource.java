@@ -128,7 +128,15 @@ public class LinkedResource
             throw new IllegalArgumentException( "Both location and locationURI nodes are set." );
         }
 
-        location = locationNode.getValue();
+        if (locationNode != null)
+        {
+            location = locationNode.getValue();
+        }
+
+        if (locationURINode != null)
+        {
+            locationURI = locationURINode.getValue();
+        }
     }
 
     public void print( XMLWriter writer )
