@@ -736,9 +736,10 @@ public abstract class AbstractInvokerMojo
 
         runBuilds( projectsDir, buildJobs );
 
+        writeSummaryFile( buildJobs );
+
         processResults( new InvokerSession( buildJobs ) );
 
-        writeSummaryFile( buildJobs );
     }
 
     private void writeSummaryFile( BuildJob[] buildJobs )
@@ -754,16 +755,19 @@ public abstract class AbstractInvokerMojo
             for ( int i = 0; i < buildJobs.length; i++ )
             {
                 BuildJob buildJob = buildJobs[i];
-                writer.append( buildJob.getResult() );
-                writer.append( " [" );
-                writer.append( buildJob.getProject() );
-                writer.append( "] " );
-                if ( buildJob.getFailureMessage() != null )
+                if ( !buildJob.getResult().equals( BuildJob.Result.SUCCESS ) )
                 {
-                    writer.append( " " );
-                    writer.append( buildJob.getFailureMessage() );
+                    writer.append( buildJob.getResult() );
+                    writer.append( " [" );
+                    writer.append( buildJob.getProject() );
+                    writer.append( "] " );
+                    if ( buildJob.getFailureMessage() != null )
+                    {
+                        writer.append( " " );
+                        writer.append( buildJob.getFailureMessage() );
+                    }
+                    writer.append( "\n" );
                 }
-                writer.append( "\n" );
             }
 
             writer.close();
