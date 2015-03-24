@@ -26,7 +26,10 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -123,6 +126,8 @@ public abstract class AbstractEclipsePluginIT
      * .classpath file name
      */
     private static final String CLASSPATH_FILENAME = ".classpath";
+    
+    private static final Collection<String> IGNORED_DIRS = new HashSet<String>( Arrays.asList( ".svn" ) );
     
     private File mavenHome;
 
@@ -530,7 +535,7 @@ public abstract class AbstractEclipsePluginIT
     protected void compareDirectoryContent( File basedir, File projectOutputDir )
         throws MojoExecutionException
     {
-        File[] expectedDirectories = getExpectedDirectories( basedir );
+        Collection<File> expectedDirectories = getExpectedDirectories( basedir );
 
         for (File expectedDirectory : expectedDirectories) {
             File[] expectedFilesToCompare = getExpectedFilesToCompare(expectedDirectory);
@@ -783,10 +788,14 @@ public abstract class AbstractEclipsePluginIT
      * @param basedir base directory to search for directories named "expected"
      * @return an array of directories that match "expected"
      */
-    private File[] getExpectedDirectories( File basedir )
+    private Collection<File> getExpectedDirectories( File basedir )
     {
-        List expectedDirectories = new ArrayList();
-        List subdirectories = new ArrayList();
+        if (IGNORED_DIRS.contains( basedir.getName() ) ) {
+            return Collections.emptyList();
+        }
+        
+        List<File> expectedDirectories = new ArrayList<File>();
+        List<File> subdirectories = new ArrayList<File>();
 
         File[] allFiles = basedir.listFiles();
         if ( allFiles != null )
@@ -803,13 +812,12 @@ public abstract class AbstractEclipsePluginIT
         }
         if ( !subdirectories.isEmpty() )
         {
-            for (Object subdirectory1 : subdirectories) {
-                File subdirectory = (File) subdirectory1;
-                File[] subdirectoryFiles = getExpectedDirectories(subdirectory);
-                expectedDirectories.addAll(Arrays.asList(subdirectoryFiles));
+            for (File subdirectory : subdirectories) {
+                Collection<File> subdirectoryFiles = getExpectedDirectories(subdirectory);
+                expectedDirectories.addAll(subdirectoryFiles);
             }
         }
-        return (File[]) expectedDirectories.toArray( new File[expectedDirectories.size()] );
+        return expectedDirectories;
     }
 
     /**
