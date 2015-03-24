@@ -50,7 +50,7 @@ under the License.
         <configuration>
           <workspace>${basedir}/../../eclipse/workspaceDoesNotExist</workspace>
           <wtpversion>R7</wtpversion>
-          <downloadJavadoc>true</downloadJavadoc>
+          <downloadJavadocs>true</downloadJavadocs>
           <projectnatures>
             <projectnature>org.eclipse.jdt.core.javanature</projectnature>
           </projectnatures>
