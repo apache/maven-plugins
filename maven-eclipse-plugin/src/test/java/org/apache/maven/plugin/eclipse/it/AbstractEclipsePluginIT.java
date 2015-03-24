@@ -538,7 +538,7 @@ public abstract class AbstractEclipsePluginIT
         Collection<File> expectedDirectories = getExpectedDirectories( basedir );
 
         for (File expectedDirectory : expectedDirectories) {
-            File[] expectedFilesToCompare = getExpectedFilesToCompare(expectedDirectory);
+            Collection<File> expectedFilesToCompare = getExpectedFilesToCompare(expectedDirectory);
 
             for (File expectedFile : expectedFilesToCompare) {
                 File actualFile = getActualFile(projectOutputDir, basedir, expectedFile);
@@ -790,31 +790,38 @@ public abstract class AbstractEclipsePluginIT
      */
     private Collection<File> getExpectedDirectories( File basedir )
     {
-        if (IGNORED_DIRS.contains( basedir.getName() ) ) {
+        if ( IGNORED_DIRS.contains( basedir.getName() ) )
+        {
             return Collections.emptyList();
         }
-        
+
         List<File> expectedDirectories = new ArrayList<File>();
         List<File> subdirectories = new ArrayList<File>();
 
         File[] allFiles = basedir.listFiles();
         if ( allFiles != null )
         {
-            for (File currentFile : allFiles) {
-                if (currentFile.isDirectory()) {
-                    if (currentFile.getName().equals(EXPECTED_DIRECTORY_NAME)) {
-                        expectedDirectories.add(currentFile);
-                    } else {
-                        subdirectories.add(currentFile);
+            for ( File currentFile : allFiles )
+            {
+                if ( currentFile.isDirectory() )
+                {
+                    if ( currentFile.getName().equals( EXPECTED_DIRECTORY_NAME ) )
+                    {
+                        expectedDirectories.add( currentFile );
+                    }
+                    else
+                    {
+                        subdirectories.add( currentFile );
                     }
                 }
             }
         }
         if ( !subdirectories.isEmpty() )
         {
-            for (File subdirectory : subdirectories) {
-                Collection<File> subdirectoryFiles = getExpectedDirectories(subdirectory);
-                expectedDirectories.addAll(subdirectoryFiles);
+            for ( File subdirectory : subdirectories )
+            {
+                Collection<File> subdirectoryFiles = getExpectedDirectories( subdirectory );
+                expectedDirectories.addAll( subdirectoryFiles );
             }
         }
         return expectedDirectories;
@@ -824,32 +831,41 @@ public abstract class AbstractEclipsePluginIT
      * @param expectedDirectory the expected directory to locate expected Files
      * @return an array of Files found under the expectedDirectory - will recurse through the directory structure.
      */
-    private File[] getExpectedFilesToCompare( File expectedDirectory )
+    private Collection<File> getExpectedFilesToCompare( File expectedDirectory )
     {
-        List expectedFiles = new ArrayList();
-        List subdirectories = new ArrayList();
+        if ( IGNORED_DIRS.contains( expectedDirectory.getName() ) )
+        {
+            return Collections.emptyList();
+        }
+
+        List<File> expectedFiles = new ArrayList<File>();
+        List<File> subdirectories = new ArrayList<File>();
 
         File[] allFiles = expectedDirectory.listFiles();
         if ( allFiles != null )
         {
-            for (File currentFile : allFiles) {
-                if (currentFile.isDirectory()) {
-                    subdirectories.add(currentFile);
-                } else {
-                    expectedFiles.add(currentFile);
+            for ( File currentFile : allFiles )
+            {
+                if ( currentFile.isDirectory() )
+                {
+                    subdirectories.add( currentFile );
+                }
+                else
+                {
+                    expectedFiles.add( currentFile );
                 }
             }
         }
         if ( !subdirectories.isEmpty() )
         {
-            for (Object subdirectory1 : subdirectories) {
-                File subdirectory = (File) subdirectory1;
-                File[] subdirectoryFiles = getExpectedFilesToCompare(subdirectory);
-                expectedFiles.addAll(Arrays.asList(subdirectoryFiles));
+            for ( File subdirectory : subdirectories )
+            {
+                Collection<File> subdirectoryFiles = getExpectedFilesToCompare( subdirectory );
+                expectedFiles.addAll( subdirectoryFiles );
             }
         }
 
-        return (File[]) expectedFiles.toArray( new File[expectedFiles.size()] );
+        return expectedFiles;
     }
 
     /**
