@@ -1008,6 +1008,21 @@ public abstract class AbstractInvokerMojo
                 {
                     buildInterpolatedFile( pomFile, pomFile );
                 }
+
+                //MINVOKER-186
+                //The following is a temporary solution to support Maven 3.3.1 (.mvn/extensions.xml) filtering
+                //Will be replaced by MINVOKER-117 with general filtering mechanism
+                File baseDir = pomFile.getParentFile();
+                File mvnDir = new File( baseDir, ".mvn" );
+                if ( mvnDir.isDirectory() )
+                {
+                    File extensionsFile = new File( mvnDir, "extensions.xml" );
+                    if ( extensionsFile.isFile() )
+                    {
+                        buildInterpolatedFile( extensionsFile, extensionsFile );
+                    }
+                }
+                //END MINVOKER-186
             }
             filteredPomPrefix = null;
         }
