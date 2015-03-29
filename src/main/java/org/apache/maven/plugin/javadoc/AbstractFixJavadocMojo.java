@@ -2652,7 +2652,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws MojoExecutionException if any
      */
     private boolean isInherited( JavaMethod javaMethod )
-        throws MojoExecutionException, SecurityException
+        throws MojoExecutionException
     {
         if ( javaMethod.getAnnotations() != null )
         {
