@@ -121,4 +121,17 @@ public class JavadocJarTest
                                        "target/test/unit/javadocjar-invalid-destdir/target/javadocjar-invalid-destdir-javadoc.jar" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
+
+    public void testContinueIfFailOnErrorIsFalse() throws Exception
+    {
+        File testPom =
+                new File( getBasedir(), "src/test/resources/unit/javadocjar-failonerror/javadocjar-failonerror-plugin-config.xml" );
+        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        mojo.execute();
+
+        //check if the javadoc jar file was generated
+        File generatedFile =
+                new File( getBasedir(), "target/test/unit/javadocjar-failonerror/target/javadocjar-failonerror-javadoc.jar" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
 }

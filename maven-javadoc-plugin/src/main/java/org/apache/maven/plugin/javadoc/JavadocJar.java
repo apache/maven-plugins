@@ -186,8 +186,19 @@ public class JavadocJar
         try
         {
             executeReport( Locale.getDefault() );
+        }
+        catch ( MavenReportException e )
+        {
+            failOnError( "MavenReportException: Error while generating Javadoc", e );
+        }
+        catch ( RuntimeException e )
+        {
+            failOnError( "RuntimeException: Error while generating Javadoc", e );
+        }
 
-            if ( innerDestDir.exists() )
+        if ( innerDestDir.exists() )
+        {
+            try
             {
                 File outputFile = generateArchive( innerDestDir, finalName + "-" + getClassifier() + ".jar" );
 
@@ -202,22 +213,18 @@ public class JavadocJar
                     projectHelper.attachArtifact( project, "javadoc", getClassifier(), outputFile );
                 }
             }
-        }
-        catch ( ArchiverException e )
-        {
-            failOnError( "ArchiverException: Error while creating archive", e );
-        }
-        catch ( IOException e )
-        {
-            failOnError( "IOException: Error while creating archive", e );
-        }
-        catch ( MavenReportException e )
-        {
-            failOnError( "MavenReportException: Error while creating archive", e );
-        }
-        catch ( RuntimeException e )
-        {
-            failOnError( "RuntimeException: Error while creating archive", e );
+            catch ( ArchiverException e )
+            {
+                failOnError( "ArchiverException: Error while creating archive", e );
+            }
+            catch ( IOException e )
+            {
+                failOnError( "IOException: Error while creating archive", e );
+            }
+            catch ( RuntimeException e )
+            {
+                failOnError( "RuntimeException: Error while creating archive", e );
+            }
         }
     }
 
