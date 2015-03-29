@@ -2156,6 +2156,7 @@ public abstract class AbstractJavadocMojo
      * of the project will be used.
      *
      * @return a List of the project absolute source paths as <code>String</code>
+     * @throws MavenReportException
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
     protected List<String> getSourcePaths()
@@ -2258,6 +2259,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Resolve dependency sources so they can be included directly in the javadoc process. To customize this,
      * override {@link AbstractJavadocMojo#configureDependencySourceResolution(SourceResolverConfig)}.
+     * @return List of source paths.
+     * @throws MavenReportException
      */
     protected final List<String> getDependencySourcePaths()
         throws MavenReportException
@@ -5902,6 +5905,7 @@ public abstract class AbstractJavadocMojo
      * Construct the output file for the generated javadoc-options XML file, after creating the
      * javadocOptionsDir if necessary. This method does NOT write to the file in question.
      *
+     * @return The options {@link File} file.
      * @since 2.7
      */
     protected final File getJavadocOptionsFile()
@@ -5919,6 +5923,8 @@ public abstract class AbstractJavadocMojo
      * supplying to a distro module in a includeDependencySources configuration, so the javadoc options
      * from this execution can be reconstructed and merged in the distro build.
      *
+     * @return {@link JavadocOptions}
+     * @throws {@link IOException}
      * @since 2.7
      */
     protected final JavadocOptions buildJavadocOptions()
@@ -5963,6 +5969,7 @@ public abstract class AbstractJavadocMojo
     /**
      * Override this if you need to provide a bundle attachment classifier, as in the case of test
      * javadocs.
+     * @return The attachment classifier.
      */
     protected String getAttachmentClassifier()
     {
@@ -5972,8 +5979,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Logs an error with throwable content only if in debug.
      *
-     * @param message
-     * @param t
+     * @param message The message which should be announced.
+     * @param t The throwable part of the message.
      */
     protected void logError( String message, Throwable t )
     {
@@ -5987,6 +5994,11 @@ public abstract class AbstractJavadocMojo
         }
     }
 
+    /**
+     * @param prefix The prefix of the exception.
+     * @param e The exception.
+     * @throws MojoExecutionException
+     */
     protected void failOnError( String prefix, Exception e )
         throws MojoExecutionException
     {
