@@ -33,6 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CPDConfiguration;
 import net.sourceforge.pmd.cpd.JavaLanguage;
+import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.TokenEntry;
 
@@ -196,8 +197,10 @@ public class CpdReportTest
         TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 34 );
         TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 55 );
         List<Match> tList = new ArrayList<Match>();
-        Match tMatch = new Match( 2, tFirstEntry, tSecondEntry );
-        tMatch.setSourceCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
+        Mark tFirstMark = new Mark( tFirstEntry );
+        Mark tSecondMark = new Mark( tSecondEntry );
+        tFirstMark.setSoureCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
+        Match tMatch = new Match( 2, tFirstMark, tSecondMark );
         tList.add( tMatch );
 
         CPDConfiguration cpdConfiguration = new CPDConfiguration();
