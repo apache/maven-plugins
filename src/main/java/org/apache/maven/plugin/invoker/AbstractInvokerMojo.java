@@ -1070,6 +1070,9 @@ public abstract class AbstractInvokerMojo
             File sourceFile = new File( sourceDir, includedFile );
             File destFile = new File( destDir, includedFile );
             FileUtils.copyFile( sourceFile, destFile );
+
+            //ensure clone project must be writable for additional changes
+            destFile.setWritable( true );
         }
     }
 
