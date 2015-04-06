@@ -47,7 +47,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MANTRUN</url>
+    <url>https://issues.apache.org/jira/browse/MANTRUN</url>
   </issueManagement>
   <distributionManagement>
     <site>

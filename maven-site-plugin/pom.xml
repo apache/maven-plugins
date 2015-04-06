@@ -180,7 +180,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MSITE</url>
+    <url>https://issues.apache.org/jira/browse/MSITE</url>
   </issueManagement>
   <distributionManagement>
     <site>

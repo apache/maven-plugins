@@ -49,7 +49,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MSTAGE</url>
+    <url>https://issues.apache.org/jira/browse/MSTAGE</url>
   </issueManagement>
   <distributionManagement>
     <site>

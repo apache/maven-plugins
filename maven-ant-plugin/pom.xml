@@ -48,7 +48,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MANT</url>
+    <url>https://issues.apache.org/jira/browse/MANT</url>
   </issueManagement>
   <distributionManagement>
     <site>
@@ -136,7 +136,7 @@ under the License.
     <!--
       ! Unfortunately there is no version 2.2.1 for maven-embedder. 
       ! So we have to stuck until we go for Maven 3. only. 
-      ! see http://jira.codehaus.org/browse/MANT-85
+      ! see https://issues.apache.org/jira/browse/MANT-85
     -->
     <dependency>
       <groupId>org.apache.maven</groupId>
