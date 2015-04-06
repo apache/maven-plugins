@@ -36,7 +36,7 @@ class FileLogger
 
     /**
      * Creates a new logger that writes to the specified file.
-     * 
+     *
      * @param outputFile The path to the output file, must not be <code>null</code>.
      * @throws IOException If the output file could not be created.
      */
@@ -48,7 +48,7 @@ class FileLogger
 
     /**
      * Creates a new logger that writes to the specified file and optionally mirrors messages to the given mojo logger.
-     * 
+     *
      * @param outputFile The path to the output file, must not be <code>null</code>.
      * @param log The mojo logger to additionally output messages to, may be <code>null</code> if not used.
      * @throws IOException If the output file could not be created.

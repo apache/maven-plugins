@@ -29,7 +29,7 @@ import org.apache.maven.plugin.logging.Log;
 
 /**
  * Tracks a set of build jobs and their results.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class InvokerSession
@@ -55,7 +55,7 @@ class InvokerSession
 
     /**
      * Creates a session that initially contains the specified build jobs.
-     * 
+     *
      * @param buildJobs The build jobs to set, must not be <code>null</code>.
      */
     public InvokerSession( BuildJob[] buildJobs )
@@ -65,7 +65,7 @@ class InvokerSession
 
     /**
      * Adds the specified build job to this session.
-     * 
+     *
      * @param buildJob The build job to add, must not be <code>null</code>.
      */
     public void addJob( BuildJob buildJob )
@@ -77,7 +77,7 @@ class InvokerSession
 
     /**
      * Sets the build jobs of this session.
-     * 
+     *
      * @param buildJobs The build jobs to set, must not be <code>null</code>.
      */
     public void setJobs( List<? extends BuildJob> buildJobs )
@@ -89,7 +89,7 @@ class InvokerSession
 
     /**
      * Gets the build jobs in this session.
-     * 
+     *
      * @return The build jobs in this session, can be empty but never <code>null</code>.
      */
     public List<BuildJob> getJobs()
@@ -99,7 +99,7 @@ class InvokerSession
 
     /**
      * Gets the successful build jobs in this session.
-     * 
+     *
      * @return The successful build jobs in this session, can be empty but never <code>null</code>.
      */
     public List<BuildJob> getSuccessfulJobs()
@@ -111,7 +111,7 @@ class InvokerSession
 
     /**
      * Gets the failed build jobs in this session.
-     * 
+     *
      * @return The failed build jobs in this session, can be empty but never <code>null</code>.
      */
     public List<BuildJob> getFailedJobs()
@@ -135,7 +135,7 @@ class InvokerSession
 
     /**
      * Gets the skipped build jobs in this session.
-     * 
+     *
      * @return The skipped build jobs in this session, can be empty but never <code>null</code>.
      */
     public List<BuildJob> getSkippedJobs()
@@ -188,7 +188,7 @@ class InvokerSession
 
     /**
      * Prints a summary of this session to the specified logger.
-     * 
+     *
      * @param logger The mojo logger to output messages to, must not be <code>null</code>.
      * @param ignoreFailures A flag whether failures should be ignored or whether a build failure should be signaled.
      */
@@ -235,7 +235,7 @@ class InvokerSession
 
     /**
      * Handles the build failures in this session.
-     * 
+     *
      * @param logger The mojo logger to output messages to, must not be <code>null</code>.
      * @param ignoreFailures A flag whether failures should be ignored or whether a build failure should be signaled.
      * @throws MojoFailureException If failures are present and not ignored.

@@ -24,7 +24,7 @@ import java.io.FilenameFilter;
 
 /**
  * Provides utility methods for invoker report processing.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class ReportUtils
@@ -43,7 +43,7 @@ class ReportUtils
 
     /**
      * Gets the paths to the invoker reports available in the specified directory.
-     * 
+     *
      * @param reportsDirectory The base directory where the invoker reports are located in, may be <code>null</code>.
      * @return The paths to the invoker reports, can be empty but never <code>null</code>.
      */

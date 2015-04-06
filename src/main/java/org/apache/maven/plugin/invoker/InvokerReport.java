@@ -47,7 +47,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Generate a report based on the results of the Maven invocations. <strong>Note:</strong> This mojo doesn't fork any
  * lifecycle, if you have a clean working copy, you have to use a command like
  * <code>mvn clean integration-test site</code> to ensure the build results are present when this goal is invoked.
- * 
+ *
  * @author Olivier Lamy
  * @since 1.4
  */
