@@ -60,7 +60,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MJAR</url>
+    <url>https://issues.apache.org/jira/browse/MJAR</url>
   </issueManagement>
   <distributionManagement>
     <site>
