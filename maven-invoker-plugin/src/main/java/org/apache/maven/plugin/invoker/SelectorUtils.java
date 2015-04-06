@@ -92,7 +92,7 @@ class SelectorUtils
 
     /**
      * Retrieves the current Maven version.
-     * 
+     *
      * @return The current Maven version.
      */
     static String getMavenVersion()

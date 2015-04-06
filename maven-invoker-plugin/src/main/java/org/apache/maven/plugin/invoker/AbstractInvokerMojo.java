@@ -425,7 +425,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * mavenExecutable can either be a file relative to <code>${maven.home}/bin/</code> or an absolute file.
-     * 
+     *
      * @since 1.8
      * @see Invoker#setMavenExecutable(File)
      */
@@ -482,67 +482,67 @@ public abstract class AbstractInvokerMojo
      * <code>${project.version}</code> to reference project properties or values from the parameter
      * {@link #filterProperties}. The snippet below describes the supported properties:
      * <p/>
-     * 
+     *
      * <pre>
      * # A comma or space separated list of goals/phases to execute, may
      * # specify an empty list to execute the default goal of the IT project
      * invoker.goals = clean install
-     * 
+     *
      * # Or you can give things like this if you need.
      * invoker.goals = -T2 clean verify
-     * 
+     *
      * # Optionally, a list of goals to run during further invocations of Maven
      * invoker.goals.2 = ${project.groupId}:${project.artifactId}:${project.version}:run
-     * 
+     *
      * # A comma or space separated list of profiles to activate
      * invoker.profiles = its,jdk15
-     * 
+     *
      * # The path to an alternative POM or base directory to invoke Maven on, defaults to the
      * # project that was originally specified in the plugin configuration
      * # Since plugin version 1.4
      * invoker.project = sub-module
-     * 
+     *
      * # The value for the environment variable MAVEN_OPTS
      * invoker.mavenOpts = -Dfile.encoding=UTF-16 -Xms32m -Xmx256m
-     * 
+     *
      * # Possible values are &quot;fail-fast&quot; (default), &quot;fail-at-end&quot; and &quot;fail-never&quot;
      * invoker.failureBehavior = fail-never
-     * 
+     *
      * # The expected result of the build, possible values are &quot;success&quot; (default) and &quot;failure&quot;
      * invoker.buildResult = failure
-     * 
+     *
      * # A boolean value controlling the aggregator mode of Maven, defaults to &quot;false&quot;
      * invoker.nonRecursive = true
-     * 
+     *
      * # A boolean value controlling the network behavior of Maven, defaults to &quot;false&quot;
      * # Since plugin version 1.4
      * invoker.offline = true
-     * 
+     *
      * # The path to the properties file from which to load system properties, defaults to the
      * # filename given by the plugin parameter testPropertiesFile
      * # Since plugin version 1.4
      * invoker.systemPropertiesFile = test.properties
-     * 
+     *
      * # An optional human friendly name for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.name = Test Build 01
-     * 
+     *
      * # An optional description for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.description = Checks the support for build reports.
-     * 
+     *
      * # A comma separated list of JRE versions on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.java.version = 1.4+, !1.4.1, 1.7-
-     * 
+     *
      * # A comma separated list of OS families on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.os.family = !windows, unix, mac
-     * 
+     *
      * # A comma separated list of Maven versions on which this build should be run.
      * # Since plugin version 1.5
      * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
-     * 
+     *
      * # A boolean value controlling the debug logging level of Maven, , defaults to &quot;false&quot;
      * # Since plugin version 1.8
      * invoker.debug = true
@@ -586,7 +586,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Additional environment variables to set on the command line.
-     * 
+     *
      * @since 1.8
      */
     @Parameter
@@ -594,7 +594,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Additional variables for use in the hook scripts.
-     * 
+     *
      * @since 1.9
      */
     @Parameter
