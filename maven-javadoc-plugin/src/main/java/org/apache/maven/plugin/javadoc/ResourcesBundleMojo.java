@@ -49,8 +49,14 @@ public class ResourcesBundleMojo
 extends AbstractJavadocMojo
 {
 
+    /**
+     * Bundle options path.
+     */
     public static final String BUNDLE_OPTIONS_PATH = "META-INF/maven/javadoc-options.xml";
 
+    /**
+     * Resources directory path.
+     */
     public static final String RESOURCES_DIR_PATH = "resources";
 
     /**

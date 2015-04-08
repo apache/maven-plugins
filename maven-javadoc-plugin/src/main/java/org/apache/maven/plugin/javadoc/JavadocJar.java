@@ -250,8 +250,8 @@ public class JavadocJar
      * @param javadocFiles the directory where the generated jar file will be put
      * @param jarFileName the filename of the generated jar file
      * @return a File object that contains the generated jar file
-     * @throws ArchiverException if any
-     * @throws IOException if any
+     * @throws ArchiverException {@link ArchiverException}
+     * @throws IOException {@link IOException}
      */
     private File generateArchive( File javadocFiles, String jarFileName )
         throws ArchiverException, IOException

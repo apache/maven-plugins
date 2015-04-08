@@ -19,6 +19,40 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import static org.apache.maven.plugin.javadoc.JavadocUtil.isEmpty;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.isNotEmpty;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.toList;
+import static org.apache.maven.plugin.javadoc.JavadocUtil.toRelative;
+import static org.codehaus.plexus.util.IOUtil.close;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
@@ -86,40 +120,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import static org.apache.maven.plugin.javadoc.JavadocUtil.isEmpty;
-import static org.apache.maven.plugin.javadoc.JavadocUtil.isNotEmpty;
-import static org.apache.maven.plugin.javadoc.JavadocUtil.toList;
-import static org.apache.maven.plugin.javadoc.JavadocUtil.toRelative;
-import static org.codehaus.plexus.util.IOUtil.close;
 
 /**
  * Base class with majority of Javadoc functionalities.
@@ -2130,7 +2130,7 @@ public abstract class AbstractJavadocMojo
      *
      * @param sourcePaths a List that contains the paths to the source files
      * @return a List that contains the specific path for every source file
-     * @throws MavenReportException
+     * @throws MavenReportException {@link MavenReportException}
      */
     protected List<String> getFiles( List<String> sourcePaths )
         throws MavenReportException
@@ -2156,7 +2156,7 @@ public abstract class AbstractJavadocMojo
      * of the project will be used.
      *
      * @return a List of the project absolute source paths as <code>String</code>
-     * @throws MavenReportException
+     * @throws MavenReportException {@link MavenReportException}
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
     protected List<String> getSourcePaths()
@@ -2250,6 +2250,8 @@ public abstract class AbstractJavadocMojo
     /**
      * Override this method to customize the configuration for resolving dependency sources. The default
      * behavior enables the resolution of -sources jar files.
+     * @param config {@linke SourceResolverConfig}
+     * @return {@link SourceResolverConfig}
      */
     protected SourceResolverConfig configureDependencySourceResolution( final SourceResolverConfig config )
     {
@@ -2260,7 +2262,7 @@ public abstract class AbstractJavadocMojo
      * Resolve dependency sources so they can be included directly in the javadoc process. To customize this,
      * override {@link AbstractJavadocMojo#configureDependencySourceResolution(SourceResolverConfig)}.
      * @return List of source paths.
-     * @throws MavenReportException
+     * @throws MavenReportException {@link MavenReportException}
      */
     protected final List<String> getDependencySourcePaths()
         throws MavenReportException
@@ -2613,6 +2615,11 @@ public abstract class AbstractJavadocMojo
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
 
+    /**
+     * @param dependency {@link Dependency}
+     * @return {@link Artifact}
+     * @throws MavenReportException
+     */
     public Artifact resolveDependency( Dependency dependency )
         throws MavenReportException
     {
@@ -5924,7 +5931,7 @@ public abstract class AbstractJavadocMojo
      * from this execution can be reconstructed and merged in the distro build.
      *
      * @return {@link JavadocOptions}
-     * @throws {@link IOException}
+     * @throws IOException {@link IOException}
      * @since 2.7
      */
     protected final JavadocOptions buildJavadocOptions()
@@ -5997,7 +6004,7 @@ public abstract class AbstractJavadocMojo
     /**
      * @param prefix The prefix of the exception.
      * @param e The exception.
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException {@link MojoExecutionException}
      */
     protected void failOnError( String prefix, Exception e )
         throws MojoExecutionException

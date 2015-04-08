@@ -33,17 +33,27 @@ public class JavadocBundle
 
     private final JavadocOptions options;
 
+    /**
+     * @param options {@link JavadocOptions}
+     * @param resourcesDirectory The resources directory.
+     */
     public JavadocBundle( final JavadocOptions options, final File resourcesDirectory )
     {
         this.options = options;
         this.resourcesDirectory = resourcesDirectory;
     }
 
+    /**
+     * @return {@link #resourcesDirectory}
+     */
     public File getResourcesDirectory()
     {
         return resourcesDirectory;
     }
 
+    /**
+     * @return {@link #options}
+     */
     public JavadocOptions getOptions()
     {
         return options;
