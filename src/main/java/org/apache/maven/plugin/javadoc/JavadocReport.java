@@ -278,10 +278,13 @@ public class JavadocReport
         updateReportOutputDirectory( reportOutputDirectory, destDir );
     }
 
-    public void setDestDir( String destDir )
+    /**
+     * @param theDestDir The destiation directory.
+     */
+    public void setDestDir( String theDestDir )
     {
-        this.destDir = destDir;
-        updateReportOutputDirectory( reportOutputDirectory, destDir );
+        this.destDir = theDestDir;
+        updateReportOutputDirectory( reportOutputDirectory, theDestDir );
     }
 
     private void updateReportOutputDirectory( File reportOutputDirectory, String destDir )
