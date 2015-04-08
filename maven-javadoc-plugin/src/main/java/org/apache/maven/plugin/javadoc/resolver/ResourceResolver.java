@@ -59,8 +59,14 @@ import java.util.Set;
 public final class ResourceResolver
 {
 
+    /**
+     * The classifier for sources.
+     */
     public static final String SOURCES_CLASSIFIER = "sources";
 
+    /**
+     * The classifier for test sources 
+     */
     public static final String TEST_SOURCES_CLASSIFIER = "test-sources";
 
     private static final List<String> SOURCE_VALID_CLASSIFIERS = Arrays.asList( SOURCES_CLASSIFIER,
@@ -74,6 +80,11 @@ public final class ResourceResolver
     {
     }
 
+    /**
+     * @param config {@link SourceResolverConfig}
+     * @return list of {@link JavadocBundle}.
+     * @throws IOException {@link IOException}
+     */
     @SuppressWarnings( "unchecked" )
     public static List<JavadocBundle> resolveDependencyJavadocBundles( final SourceResolverConfig config )
         throws IOException
@@ -111,6 +122,12 @@ public final class ResourceResolver
         return bundles;
     }
 
+    /**
+     * @param config {@link SourceResolverConfig}
+     * @return The list of resolved dependencies.
+     * @throws ArtifactResolutionException {@link ArtifactResolutionException}
+     * @throws ArtifactNotFoundException {@link ArtifactNotFoundException}
+     */
     @SuppressWarnings( "unchecked" )
     public static List<String> resolveDependencySourcePaths( final SourceResolverConfig config )
         throws ArtifactResolutionException, ArtifactNotFoundException
