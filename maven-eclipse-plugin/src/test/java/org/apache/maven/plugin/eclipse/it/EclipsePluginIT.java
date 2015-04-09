@@ -251,50 +251,6 @@ public class EclipsePluginIT
     }
 
     /**
-     * PDE support.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject21()
-        throws Exception
-    {
-        testProject( "project-21" );
-    }
-
-    /**
-     * PDE support using eclipse-plugin packaging.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject22()
-        throws Exception
-    {
-        testProject( "project-22" );
-    }
-
-    /**
-     * Additional config files using "additionalConfig" property.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject23()
-        throws Exception
-    {
-        testProject( "project-23" );
-    }
-
-    /**
-     * Test rewriting of OSGI manifest files.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject24()
-        throws Exception
-    {
-        testProject( "project-24" );
-    }
-
-    /**
      * Test source exclude/include.
      * 
      * @throws Exception any exception thrown during test

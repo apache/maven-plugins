@@ -202,20 +202,16 @@ public class EclipseProjectWriter
         writer.startElement( "projects" ); //$NON-NLS-1$
 
         IdeDependency[] dependencies = config.getDeps();
-        
-        // referenced projects should not be added for plugins
-        if ( !config.isPde() )
-        {
-            List duplicates = new ArrayList();
-            for (IdeDependency dep : dependencies) {
-                // Avoid duplicates entries when same project is refered using multiple types
-                // (ejb, test-jar ...)
-                if (dep.isReferencedProject() && !duplicates.contains(dep.getEclipseProjectName())) {
-                    writer.startElement("project"); //$NON-NLS-1$
-                    writer.writeText(dep.getEclipseProjectName());
-                    writer.endElement();
-                    duplicates.add(dep.getEclipseProjectName());
-                }
+
+        List duplicates = new ArrayList();
+        for (IdeDependency dep : dependencies) {
+            // Avoid duplicates entries when same project is refered using multiple types
+            // (ejb, test-jar ...)
+            if (dep.isReferencedProject() && !duplicates.contains(dep.getEclipseProjectName())) {
+                writer.startElement("project"); //$NON-NLS-1$
+                writer.writeText(dep.getEclipseProjectName());
+                writer.endElement();
+                duplicates.add(dep.getEclipseProjectName());
             }
         }
 
@@ -241,7 +237,7 @@ public class EclipseProjectWriter
 
         boolean addLinks = !config.getProjectBaseDir().equals( config.getEclipseProjectDirectory() );
 
-        if ( addLinks || ( config.isPde() && dependencies.length > 0 ) || linkedResources.size() > 0 )
+        if ( addLinks || linkedResources.size() > 0 )
         {
             writer.startElement( "linkedResources" ); //$NON-NLS-1$
             // preserve the symbolic links
@@ -268,18 +264,6 @@ public class EclipseProjectWriter
                 addResourceLinks( writer, config.getProjectBaseDir(), config.getEclipseProjectDirectory(),
                                   config.getProject().getBuild().getTestResources() );
 
-            }
-
-            if ( config.isPde() )
-            {
-                for (IdeDependency dep : dependencies) {
-                    if (dep.isAddedToClasspath() && !dep.isProvided() && !dep.isReferencedProject()
-                            && !dep.isTestDependency() && !dep.isOsgiBundle()) {
-                        String name = dep.getFile().getName();
-                        addLink(writer, name, IdeUtils.fixSeparator(IdeUtils.getCanonicalPath(dep.getFile())),
-                                LINK_TYPE_FILE);
-                    }
-                }
             }
 
             writer.endElement(); // linkedResources
