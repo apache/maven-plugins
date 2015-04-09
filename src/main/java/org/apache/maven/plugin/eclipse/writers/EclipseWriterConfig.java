@@ -86,11 +86,6 @@ public class EclipseWriterConfig
     private File osgiManifestFile;
 
     /**
-     * PDE mode.
-     */
-    private boolean pde;
-
-    /**
      * Project natures.
      */
     private List projectnatures;
@@ -109,13 +104,6 @@ public class EclipseWriterConfig
      * Classpath containers.
      */
     private List classpathContainers;
-
-    /**
-     * Appends the version number to the project name if <tt>true</tt>.
-     * 
-     * @deprecated use {@link #projectNameTemplate}
-     */
-    private boolean addVersionToProjectName;
 
     /**
      * @see EclipsePlugin#getProjectNameTemplate()
@@ -345,28 +333,8 @@ public class EclipseWriterConfig
     }
 
     /**
-     * Getter for <code>pde</code>.
-     * 
-     * @return Returns the pde.
-     */
-    public boolean isPde()
-    {
-        return pde;
-    }
-
-    /**
-     * Setter for <code>pde</code>.
-     * 
-     * @param pde The pde to set.
-     */
-    public void setPde( boolean pde )
-    {
-        this.pde = pde;
-    }
-
-    /**
      * Getter for <code>buildCommands</code>.
-     * 
+     *
      * @return Returns the buildCommands.
      */
     public List getBuildCommands()
@@ -442,26 +410,6 @@ public class EclipseWriterConfig
     public void setProjectBaseDir( File projectBaseDir )
     {
         this.projectBaseDir = projectBaseDir;
-    }
-
-    /**
-     * Getter for <code>addVersionToProjectName</code>.
-     * 
-     * @deprecated use {@link #getProjectNameTemplate()}
-     */
-    public boolean isAddVersionToProjectName()
-    {
-        return addVersionToProjectName;
-    }
-
-    /**
-     * Setter for <code>addVersionToProjectName</code>.
-     * 
-     * @deprecated use {@link #setProjectNameTemplate(String)}
-     */
-    public void setAddVersionToProjectName( boolean addVersionToProjectName )
-    {
-        this.addVersionToProjectName = addVersionToProjectName;
     }
 
     public void setProjectNameTemplate( String projectNameTemplate )

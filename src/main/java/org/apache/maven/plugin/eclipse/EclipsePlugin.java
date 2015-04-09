@@ -44,7 +44,6 @@ import org.apache.maven.plugin.eclipse.reader.ReadWorkspaceLocations;
 import org.apache.maven.plugin.eclipse.writers.EclipseAjdtWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseManifestWriter;
-import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseSettingsWriter;
@@ -129,10 +128,6 @@ public class EclipsePlugin
 
     private static final String BUILDER_WST_FACET = "org.eclipse.wst.common.project.facet.core.builder"; //$NON-NLS-1$
 
-    private static final String BUILDER_PDE_MANIFEST = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
-
-    private static final String BUILDER_PDE_SCHEMA = "org.eclipse.pde.SchemaBuilder"; //$NON-NLS-1$
-
     private static final String BUILDER_AJDT_CORE_JAVA = "org.eclipse.ajdt.core.ajbuilder"; //$NON-NLS-1$
 
     private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature"; //$NON-NLS-1$
@@ -141,15 +136,11 @@ public class EclipsePlugin
 
     private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature"; //$NON-NLS-1$
 
-    private static final String NATURE_PDE_PLUGIN = "org.eclipse.pde.PluginNature"; //$NON-NLS-1$
-
     private static final String NATURE_AJDT_CORE_JAVA = "org.eclipse.ajdt.ui.ajnature"; //$NON-NLS-1$
 
     protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 
     protected static final String ASPECTJ_RT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"; //$NON-NLS-1$
-
-    protected static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$
 
     // warning, order is important for binary search
     public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
@@ -333,16 +324,6 @@ public class EclipsePlugin
      * @parameter expression="${wtpContextName}"
      */
     private String wtpContextName;
-
-    /**
-     * Is it an PDE project? If yes, the plugin adds the necessary natures and build commands to the .project file.
-     * Additionally it copies all libraries to a project local directory and references them instead of referencing the
-     * files in the local Maven repository. It also ensured that the "Bundle-Classpath" in META-INF/MANIFEST.MF is
-     * synchronized.
-     * 
-     * @parameter expression="${eclipse.pde}" default-value="false"
-     */
-    private boolean pde;
 
     /**
      * Is it an AJDT project? If yes, the plugin adds the necessary natures and build commands to the .project file.
@@ -647,11 +628,6 @@ public class EclipsePlugin
         return isJavaProject;
     }
 
-    protected final boolean isPdeProject()
-    {
-        return pde;
-    }
-
     /**
      * Getter for <code>buildcommands</code>.
      * 
@@ -921,8 +897,7 @@ public class EclipsePlugin
         // ear projects don't contain java sources
         // pde projects are always java projects
         isJavaProject =
-            pde
-                || ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
+            ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
 
         if ( sourceIncludes == null )
         {
@@ -1100,7 +1075,8 @@ public class EclipsePlugin
 
         if ( "eclipse-plugin".equals( packaging ) )
         {
-            pde = true;
+            getLog().info( Messages.getString( "EclipsePlugin.pdepackaging" ) ); //$NON-NLS-1$
+            return false;
         }
 
         if ( eclipseProjectDir == null )
@@ -1213,12 +1189,6 @@ public class EclipsePlugin
         if ( wtpapplicationxml )
         {
             new EclipseWtpApplicationXMLWriter().init( getLog(), config ).write();
-        }
-
-        if ( pde )
-        {
-            this.getLog().info( "The Maven Eclipse plugin runs in 'pde'-mode." );
-            new EclipseOSGiManifestWriter().init( getLog(), config ).write();
         }
 
         // NOTE: This one MUST be after EclipseClasspathwriter, and possibly others,
@@ -1382,7 +1352,6 @@ public class EclipsePlugin
         config.setEclipseProjectDirectory( eclipseProjectDir );
         config.setLocalRepository( localRepository );
         config.setOSGIManifestFile( manifest );
-        config.setPde( pde );
         config.setProject( project );
         config.setProjectBaseDir( projectBaseDir );
         config.setProjectnatures( projectnatures );
@@ -1516,11 +1485,6 @@ public class EclipsePlugin
             }
         }
 
-        if ( pde )
-        {
-            projectnatures.add( NATURE_PDE_PLUGIN );
-        }
-
     }
 
     /**
@@ -1541,10 +1505,6 @@ public class EclipsePlugin
                            "Adding default classpath container: "
                                + getWorkspaceConfiguration().getDefaultClasspathContainer() );
             classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
-        }
-        if ( pde )
-        {
-            classpathContainers.add( REQUIRED_PLUGINS_CONTAINER );
         }
 
         if ( ajdt )
@@ -1596,12 +1556,6 @@ public class EclipsePlugin
         {
             // WTP 0.7 builder
             buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) );
-        }
-
-        if ( pde )
-        {
-            buildcommands.add( new BuildCommand( BUILDER_PDE_MANIFEST ) );
-            buildcommands.add( new BuildCommand( BUILDER_PDE_SCHEMA ) );
         }
     }
 
