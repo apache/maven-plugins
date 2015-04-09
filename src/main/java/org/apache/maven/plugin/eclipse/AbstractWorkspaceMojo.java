@@ -20,27 +20,19 @@ package org.apache.maven.plugin.eclipse;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
-/**
- * @requiresProject true
- */
 public abstract class AbstractWorkspaceMojo
     extends AbstractMojo
 {
 
     /**
      * Directory location of the <code>Eclipse</code> workspace.
-     * 
-     * @parameter expression="${eclipse.workspace}"
-     * @required
      */
+    @Parameter( property = "eclipse.workspace", required = true )
     private String workspace;
 
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     public ArtifactRepository getLocalRepository()

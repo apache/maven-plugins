@@ -20,6 +20,8 @@ import java.net.URL;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Configures The following Eclipse Workspace features:
@@ -27,26 +29,22 @@ import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
  * <li>Adds the classpath variable MAVEN_REPO to Eclipse.</li>
  * <li>Optionally load Eclipse code style file via a URL.</li>
  * </ul>
- * 
- * @goal configure-workspace
- * @requiresProject false
  */
+@Mojo( name = "configure-workspace", requiresProject = false )
 public class ConfigureWorkspaceMojo
     extends AbstractWorkspaceMojo
 {
     /**
      * Point to a URL containing code styles content.
-     * 
-     * @parameter expression="${eclipse.workspaceCodeStylesURL}"
      */
+    @Parameter( property = "eclipse.workspaceCodeStylesURL" )
     private String workspaceCodeStylesURL;
 
     /**
      * Name of a profile in <code>workspaceCodeStylesURL</code> to activate. Default is the first profile name in the
      * code style file in <code>workspaceCodeStylesURL</code>
-     * 
-     * @parameter expression="${eclipse.workspaceActiveCodeStyleProfileName}"
      */
+    @Parameter( property = "eclipse.workspaceActiveCodeStyleProfileName" )
     private String workspaceActiveCodeStyleProfileName;
 
     public void execute()

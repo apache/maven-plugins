@@ -39,6 +39,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.eclipse.osgiplugin.EclipseOsgiPlugin;
 import org.apache.maven.plugin.eclipse.osgiplugin.ExplodedPlugin;
 import org.apache.maven.plugin.eclipse.osgiplugin.PackagedPlugin;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
@@ -72,9 +75,8 @@ import java.util.regex.Pattern;
  * @author Fabrizio Giustina
  * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
  * @version $Id$
- * @goal to-maven
- * @requiresProject false
  */
+@Mojo( name = "to-maven", requiresProject = false )
 public class EclipseToMavenMojo
     extends AbstractMojo
     implements Contextualizable
@@ -97,53 +99,44 @@ public class EclipseToMavenMojo
 
     /**
      * Local maven repository.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * ArtifactRepositoryFactory component.
-     *
-     * @component
      */
+    @Component
     private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
      * ArtifactFactory component.
-     *
-     * @component
      */
+    @Component
     private ArtifactFactory artifactFactory;
 
     /**
      * ArtifactInstaller component.
-     *
-     * @component
      */
+    @Component
     protected ArtifactInstaller installer;
 
     /**
      * ArtifactDeployer component.
-     *
-     * @component
      */
+    @Component
     private ArtifactDeployer deployer;
 
     /**
      * Eclipse installation dir. If not set, a value for this parameter will be asked on the command line.
-     *
-     * @parameter expression="${eclipseDir}"
      */
+    @Parameter( property = "eclipseDir" )
     private File eclipseDir;
 
     /**
      * Input handler, needed for comand line handling.
-     *
-     * @component
      */
+    @Component
     protected InputHandler inputHandler;
 
     /**
@@ -152,17 +145,15 @@ public class EclipseToMavenMojo
      * release <code>3.2</code> can be named <code>org.eclipse.core.filesystem_1.0.0.v20060603.jar</code>. It's usually
      * handy to not to include this qualifier when generating maven artifacts for major releases, while it's needed when
      * working with eclipse integration/nightly builds.
-     *
-     * @parameter expression="${stripQualifier}" default-value="false"
      */
+    @Parameter( property = "stripQualifier", defaultValue = "false" )
     private boolean stripQualifier;
 
     /**
      * Specifies a remote repository to which generated artifacts should be deployed to. If this property is specified,
      * artifacts are also deployed to the remote repo. The format for this parameter is <code>id::layout::url</code>
-     *
-     * @parameter expression="${deployTo}"
      */
+    @Parameter( property = "deployTo" )
     private String deployTo;
 
     /**

@@ -23,15 +23,16 @@ package org.apache.maven.plugin.eclipse;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Deletes configuration files used by MyEclipse
- * 
+ *
  * @author Olivier Jacob
- * @goal myeclipse-clean
  * @since 2.5
- * @phase
  */
+@Mojo( name = "myeclipse-clean", defaultPhase = LifecyclePhase.NONE )
 public class MyEclipseCleanMojo
     extends EclipseCleanMojo
 {
