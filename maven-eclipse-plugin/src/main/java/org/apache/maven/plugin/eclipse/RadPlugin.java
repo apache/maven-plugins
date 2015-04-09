@@ -35,16 +35,20 @@ import org.apache.maven.plugin.eclipse.writers.rad.RadWebsiteConfigWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Generates the rad-6 configuration files.
- * 
+ *
  * @author Richard van Nieuwenhoven (patch submission)
  * @author jdcasey
- * @goal rad
- * @execute phase="generate-resources"
  */
+@Mojo( name = "rad" )
+@Execute( phase = LifecyclePhase.GENERATE_RESOURCES )
 public class RadPlugin
     extends EclipsePlugin
 {
@@ -94,17 +98,17 @@ public class RadPlugin
     /**
      * The context root of the webapplication. This parameter is only used when the current project is a war project,
      * else it will be ignored.
-     * 
-     * @parameter
      */
+    @Parameter
     private String warContextRoot;
 
     /**
      * Use this to specify a different generated resources folder than target/generated-resources/rad6. Set to "none" to
      * skip this folder generation.
-     * 
-     * @parameter expression="${generatedResourceDirName}" default-value="target/generated-resources/rad6" since="2.4"
+     *
+     * @since 2.4
      */
+    @Parameter( property = "generatedResourceDirName", defaultValue = "target/generated-resources/rad6" )
     private String generatedResourceDirName;
 
     /**

@@ -59,6 +59,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
@@ -87,99 +89,71 @@ public abstract class AbstractIdeSupportMojo
 
     /**
      * The project whose project files to create.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project", required = true, readonly = true )
     protected MavenProject project;
 
     /**
      * The currently executed project (can be a reactor project).
-     * 
-     * @parameter expression="${executedProject}"
-     * @readonly
      */
+    @Parameter( property = "executedProject", readonly = true )
     protected MavenProject executedProject;
 
     /**
      * The project packaging.
-     * 
-     * @parameter expression="${project.packaging}"
      */
+    @Parameter( property = "project.packaging" )
     protected String packaging;
 
     /**
      * Artifact factory, needed to download source jars for inclusion in classpath.
-     * 
-     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
-     * @required
-     * @readonly
      */
+    @Component( role = ArtifactFactory.class )
     protected ArtifactFactory artifactFactory;
 
     /**
      * Artifact resolver, needed to download source jars for inclusion in classpath.
-     * 
-     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
-     * @required
-     * @readonly
      */
+    @Component( role = ArtifactResolver.class )
     protected ArtifactResolver artifactResolver;
 
     /**
      * Artifact collector, needed to resolve dependencies.
-     * 
-     * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
-     * @required
-     * @readonly
      */
+    @Component( role = ArtifactCollector.class )
     protected ArtifactCollector artifactCollector;
 
-    /**
-     * @component role="org.apache.maven.artifact.metadata.ArtifactMetadataSource" hint="maven"
-     */
+    @Component( role = ArtifactMetadataSource.class, hint = "maven" )
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * The runtime information for Maven, used to retrieve Maven's version number.
-     * 
-     * @component
      */
+    @Component
     private RuntimeInformation runtimeInformation;
 
     /**
      * Remote repositories which will be searched for source attachments.
-     * 
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.remoteArtifactRepositories", required = true, readonly = true )
     protected List remoteArtifactRepositories;
 
     /**
      * Local maven repository.
-     * 
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     protected ArtifactRepository localRepository;
 
     /**
      * If the executed project is a reactor project, this will contains the full list of projects in the reactor.
-     * 
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "reactorProjects", required = true, readonly = true )
     protected List reactorProjects;
 
     /**
      * Skip the operation when true.
-     * 
-     * @parameter expression="${eclipse.skip}" default-value="false"
      */
+    @Parameter( property = "eclipse.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
@@ -188,9 +162,8 @@ public abstract class AbstractIdeSupportMojo
      * status cache is mantained. With versions 2.6+ of the plugin to reset this cache run
      * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions. With older
      * versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
-     * 
-     * @parameter expression="${downloadSources}"
      */
+    @Parameter( property = "downloadSources" )
     protected boolean downloadSources;
 
     /**
@@ -199,9 +172,8 @@ public abstract class AbstractIdeSupportMojo
      * a status cache is mantained. With versions 2.6+ of the plugin to reset this cache run
      * <code>mvn eclipse:remove-cache</code>, or use the <code>forceRecheck</code> option with versions. With older
      * versions delete the file <code>mvn-eclipse-cache.properties</code> in the target directory.
-     * 
-     * @parameter expression="${downloadJavadocs}"
      */
+    @Parameter( property = "downloadJavadocs" )
     protected boolean downloadJavadocs;
 
     /**
@@ -209,9 +181,8 @@ public abstract class AbstractIdeSupportMojo
      * false. When this flag is <code>true</code> and the source or javadoc attachment has a status cache to indicate
      * that it is not available, then the remote repository will be rechecked for a source or javadoc attachment and the
      * status cache updated to reflect the new state.
-     * 
-     * @parameter expression="${forceRecheck}"
      */
+    @Parameter( property = "forceRecheck" )
     protected boolean forceRecheck;
 
     /**

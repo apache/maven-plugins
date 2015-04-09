@@ -23,25 +23,24 @@ import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Deletes the config files used by Rad-6. the files .j2ee and the file .websettings
- * 
+ *
  * @author <a href="mailto:nir@cfc.at">Richard van Nieuwenhoven</a>
- * @goal rad-clean
  */
+@Mojo( name = "rad-clean" )
 public class RadCleanMojo
     extends EclipseCleanMojo
 {
     /**
      * The project whose project files to clean.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project", required = true, readonly = true )
     private MavenProject project;
 
     protected void cleanExtras()

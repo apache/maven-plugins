@@ -31,24 +31,23 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Removes the not-available marker files from the repository.
- * 
+ *
  * @author <a href="mailto:baerrach@apache.org">Barrie Treloar</a>
  * @version $Id$
- * @goal remove-cache
  */
+@Mojo( name = "remove-cache" )
 public class RemoveCacheMojo
     extends AbstractMojo
 {
     /**
      * Local maven repository.
-     * 
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     public void execute()
