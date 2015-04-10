@@ -29,11 +29,17 @@ public class ConsoleVerificationResultPrinter
 {
     private Log log;
 
+    /**
+     * @param log {@link Log}
+     */
     public ConsoleVerificationResultPrinter( Log log )
     {
         this.log = log;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void print( VerificationResult results )
     {
         printExistenceFailures( results );
