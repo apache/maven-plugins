@@ -19,21 +19,21 @@ package org.apache.maven.plugin.verifier;
  * under the License.
  */
 
-import org.apache.maven.plugin.verifier.model.File;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.maven.plugin.verifier.model.File;
 
 /**
  * 
  */
 public class VerificationResult
 {
-    private List existenceFailures = new ArrayList();
+    private List<File> existenceFailures = new ArrayList<File>();
 
-    private List nonExistenceFailures = new ArrayList();
+    private List<File> nonExistenceFailures = new ArrayList<File>();
 
-    private List contentFailures = new ArrayList();
+    private List<File> contentFailures = new ArrayList<File>();
 
     /**
      * @param file {@link File}
@@ -66,7 +66,7 @@ public class VerificationResult
     /**
      * @return {@link #existenceFailures}
      */
-    public List getExistenceFailures()
+    public List<File> getExistenceFailures()
     {
         return existenceFailures;
     }
@@ -74,7 +74,7 @@ public class VerificationResult
     /**
      * @return {@link #nonExistenceFailures}
      */
-    public List getNonExistenceFailures()
+    public List<File> getNonExistenceFailures()
     {
         return nonExistenceFailures;
     }
@@ -82,7 +82,7 @@ public class VerificationResult
     /**
      * @return {@link #contentFailures}
      */
-    public List getContentFailures()
+    public List<File> getContentFailures()
     {
         return contentFailures;
     }
