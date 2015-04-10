@@ -24,5 +24,8 @@ package org.apache.maven.plugin.verifier;
  */
 public interface VerificationResultPrinter
 {
+    /**
+     * @param result {@link VerificationResult}
+     */
     void print( VerificationResult result );
 }

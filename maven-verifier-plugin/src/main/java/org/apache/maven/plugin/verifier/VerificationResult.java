@@ -35,36 +35,61 @@ public class VerificationResult
 
     private List contentFailures = new ArrayList();
 
+    /**
+     * @param file {@link File}
+     */
     public void addExistenceFailure( File file )
     {
         existenceFailures.add( file );
     }
 
+    /**
+     * Added non existence failure.
+     * 
+     * @param file {@linke File}
+     */
     public void addNonExistenceFailure( File file )
     {
         nonExistenceFailures.add( file );
     }
 
+    /**
+     * Add content failure.
+     * 
+     * @param file {@link File}
+     */
     public void addContentFailure( File file )
     {
         contentFailures.add( file );
     }
 
+    /**
+     * @return {@link #existenceFailures}
+     */
     public List getExistenceFailures()
     {
         return existenceFailures;
     }
 
+    /**
+     * @return {@link #nonExistenceFailures}
+     */
     public List getNonExistenceFailures()
     {
         return nonExistenceFailures;
     }
 
+    /**
+     * @return {@link #contentFailures}
+     */
     public List getContentFailures()
     {
         return contentFailures;
     }
 
+    /**
+     * @return true if a failures exists false otherwise.
+     */
     public boolean hasFailures()
     {
         return !getExistenceFailures().isEmpty() || !getNonExistenceFailures().isEmpty()

@@ -56,9 +56,10 @@ public class VerifierMojo
     /**
      * The file containing the verifications to perform.
      */
-    @Parameter( property = "verifier.verificationFile", defaultValue = "${basedir}/src/test/verifier/verifications.xml",
-                required = true )
+    // CHECKSTYLE_OFF: LineLength
+    @Parameter( property = "verifier.verificationFile", defaultValue = "${basedir}/src/test/verifier/verifications.xml", required = true )
     private File verificationFile;
+    // CHECKSTYLE_ON: LineLength
 
     /**
      * Whether the build will fail on verification errors.
@@ -68,6 +69,9 @@ public class VerifierMojo
 
     private VerificationResultPrinter resultPrinter = new ConsoleVerificationResultPrinter( getLog() );
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {
@@ -83,7 +87,7 @@ public class VerifierMojo
 
     /**
      * @param file the file path of the file to check (can be relative or absolute). If relative
-     *             the project's basedir will be prefixed.
+     *            the project's basedir will be prefixed.
      * @return the absolute file path of the file to check
      */
     protected File getAbsoluteFileToCheck( File file )
@@ -154,8 +158,8 @@ public class VerifierMojo
         return result;
     }
 
-    private boolean verifyFileContent( org.apache.maven.plugin.verifier.model.File fileCheck,
-                                       VerificationResult results )
+    // CHECKSTYLE_OFF: LineLength
+    private boolean verifyFileContent( org.apache.maven.plugin.verifier.model.File fileCheck, VerificationResult results )
         throws IOException
     {
         boolean result = false;
@@ -179,6 +183,7 @@ public class VerifierMojo
 
         return result;
     }
+    // CHECKSTYLE_ON: LineLength
 
     private boolean verifyFileExistence( org.apache.maven.plugin.verifier.model.File fileCheck,
                                          VerificationResult results )
@@ -208,21 +213,34 @@ public class VerifierMojo
         return result;
     }
 
-    public void setBaseDir( File basedir )
+    /**
+     * @param theBasedir Set the base directory.
+     */
+    public void setBaseDir( File theBasedir )
     {
-        this.basedir = basedir;
+        this.basedir = theBasedir;
     }
 
+    /**
+     * @param file Set the file for verification.
+     */
     public void setVerificationFile( File file )
     {
         this.verificationFile = file;
     }
 
+    /**
+     * @param printer The verification result printer.
+     * @see {@link VerificationResultPrinter}
+     */
     public void setVerificationResultPrinter( VerificationResultPrinter printer )
     {
         this.resultPrinter = printer;
     }
 
+    /**
+     * @param failOnError true to fail on error false otherwise.
+     */
     public void setFailOnError( boolean failOnError )
     {
         this.failOnError = failOnError;
