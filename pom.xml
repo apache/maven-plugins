@@ -59,9 +59,9 @@ under the License.
 
   <properties>
     <!-- Because Checkstyle 5.9+ requires Java 6 -->
-    <javaVersion>1.6</javaVersion>
-    <maven.compiler.source>${javaVersion}</maven.compiler.source>
-    <maven.compiler.target>${javaVersion}</maven.compiler.target>
+    <javaVersion>6</javaVersion>
+    <maven.compiler.source>1.${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>1.${javaVersion}</maven.compiler.target>
     <mavenVersion>2.2.1</mavenVersion>
     <checkstyleVersion>6.1.1</checkstyleVersion>
     <doxiaVersion>1.4</doxiaVersion>
@@ -361,15 +361,6 @@ under the License.
               It implies that the current version is already deployed to generate the site.
             -->
             <version>${project.version}</version>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <configuration>
-              <requirements>
-                <jdk>${javaVersion}</jdk>
-              </requirements>
-            </configuration>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
