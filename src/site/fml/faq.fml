@@ -24,6 +24,16 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
+    <faq id="Whare is maven_checks.xml predefined ruleset">
+      <question>Where is <code>config/maven_checks.xml</code> predefined ruleset?</question>
+      <answer>
+        <p>
+          Starting with maven-checkstyle-plugin version 2.15, <code>config/maven_checks.xml</code> predefined ruleset
+          is not part of the plugin any more but has moved to
+          <a href="/shared/maven-shared-resources/">Apache Maven Shared Resources</a>.
+        </p>
+      </answer>
+    </faq>
     <faq id="How are the Checkstyle properties set">
       <question>How are the Checkstyle properties set?</question>
       <answer>
