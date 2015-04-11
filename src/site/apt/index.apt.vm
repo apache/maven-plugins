@@ -37,7 +37,7 @@ ${project.name}
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
   {{{./config/sun_checks.html}<<<sun_checks.xml>>>}} and
-  {{{./config/maven_checks.html}<<<maven_checks.xml>>>}}. You can also use a custom ruleset by
+  {{{/shared/maven-shared-resources/maven_checks.html}<<<maven_checks.xml>>>}}. You can also use a custom ruleset by
   specifying it in the plugin configuration.
 
 * Goals Overview
