@@ -20,9 +20,12 @@ package org.apache.maven.plugin.assembly.utils;
  */
 
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class LinuxLineFeedInputStreamTest
     extends TestCase
@@ -40,6 +43,17 @@ public class LinuxLineFeedInputStreamTest
         assertEquals( "a\nbc\n", roundtrip( "a\r\nbc" ) );
     }
 
+    public void testCrOnly()
+        throws Exception
+    {
+        assertEquals( "a\nb\n", roundtrip( "a\rb" ) );
+    }
+
+    public void testCrAtEnd() throws Exception {
+        assertEquals( "a\n", roundtrip( "a\r" ) );
+    }
+
+
     public void testMultipleBlankLines()
         throws Exception
     {
@@ -50,12 +64,6 @@ public class LinuxLineFeedInputStreamTest
         throws Exception
     {
         assertEquals( "a\n\n", roundtrip( "a\r\n\r\n" ) );
-    }
-
-    public void testMalformed()
-        throws Exception
-    {
-        assertEquals( "abc", roundtrip( "a\rbc", false ) );
     }
 
     public void testRetainLineFeed()
