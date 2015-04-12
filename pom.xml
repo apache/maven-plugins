@@ -69,9 +69,9 @@ under the License.
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy-all</groovy-artifactId>
     <groovy-version>2.0.1</groovy-version>
-    <javaVersion>1.6</javaVersion>
-    <maven.compiler.source>${javaVersion}</maven.compiler.source>
-    <maven.compiler.target>${javaVersion}</maven.compiler.target>
+    <javaVersion>6</javaVersion>
+    <maven.compiler.source>1.${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>1.${javaVersion}</maven.compiler.target>
   </properties>
 
   <dependencies>
