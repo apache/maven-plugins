@@ -30,6 +30,7 @@ class LinuxLineFeedInputStream
 {
 
     private boolean slashNSeen = false;
+    private boolean slashRSeen = false;
 
     private boolean eofSeen = false;
 
@@ -53,6 +54,7 @@ class LinuxLineFeedInputStream
             return target;
         }
         slashNSeen = target == '\n';
+        slashRSeen = target == '\r';
         return target;
     }
 
@@ -60,28 +62,33 @@ class LinuxLineFeedInputStream
     public int read()
         throws IOException
     {
+        boolean prevWasSlashR = slashRSeen;
         if ( eofSeen )
         {
-            return eofGame();
+            return eofGame(prevWasSlashR);
         }
         else
         {
             int target = readWithUpdate();
             if ( eofSeen )
             {
-                return eofGame();
+                return eofGame(prevWasSlashR);
             }
-            if ( target == '\r' )
+            if (slashRSeen)
             {
-                target = readWithUpdate();
+                return '\n';
+            }
+
+            if ( prevWasSlashR && slashNSeen){ // Lone /r
+                return read();
             }
             return target;
         }
     }
 
-    private int eofGame()
+    private int eofGame(boolean previousWasSlashR)
     {
-        if ( !ensureLineFeedAtEndOfFile )
+        if ( previousWasSlashR || !ensureLineFeedAtEndOfFile )
         {
             return -1;
         }
