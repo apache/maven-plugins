@@ -134,12 +134,7 @@ public class AddDependencySetsTask
 
         final Set<Artifact> dependencyArtifacts = resolveDependencyArtifacts( dependencySet );
 
-        final UnpackOptions opts = dependencySet.getUnpackOptions();
-        if ( dependencySet.isUnpack() && opts != null && ( opts.isFiltered() || opts.getLineEnding() != null ) )
-        {
-            // find out if we can just ditch this empty block
-        }
-        else if ( dependencyArtifacts.size() > 1 )
+        if ( !unpackTransformsContent( dependencySet ) && dependencyArtifacts.size() > 1 )
         {
             checkMultiArtifactOutputConfig( dependencySet );
         }
@@ -147,7 +142,7 @@ public class AddDependencySetsTask
         logger.debug( "Adding " + dependencyArtifacts.size() + " dependency artifacts." );
 
         InputStreamTransformer fileSetTransformers =
-            dependencySet.isUnpack() && dependencySet.getUnpackOptions() != null
+            isUnpackWithOptions( dependencySet )
                 ? ReaderFormatter.getFileSetTransformers( configSource, dependencySet.getUnpackOptions().isFiltered(),
                                                           dependencySet.getUnpackOptions().getLineEnding() )
                 : null;
@@ -181,6 +176,21 @@ public class AddDependencySetsTask
         }
     }
 
+    private boolean isUnpackWithOptions( DependencySet dependencySet )
+    {
+        return dependencySet.isUnpack() && dependencySet.getUnpackOptions() != null;
+    }
+
+    private boolean unpackTransformsContent( DependencySet dependencySet )
+    {
+        return isUnpackWithOptions( dependencySet ) && isConentModifyingOption( dependencySet.getUnpackOptions() );
+    }
+
+    private boolean isConentModifyingOption( UnpackOptions opts )
+    {
+        return ( opts.isFiltered() || opts.getLineEnding() != null );
+    }
+
     private void checkMultiArtifactOutputConfig( final DependencySet dependencySet )
     {
         String dir = dependencySet.getOutputDirectory();
@@ -198,8 +208,9 @@ public class AddDependencySetsTask
         if ( ( dir == null || !dir.contains( "${" ) ) && ( mapping == null || !mapping.contains( "${" ) ) )
         {
             logger.warn( "NOTE: Your assembly specifies a dependencySet that matches multiple artifacts, but "
-                + "specifies a concrete output format. THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING OBSCURED!\n\n"
-                + "Output directory: '" + dir + "'\nOutput filename mapping: '" + mapping + "'" );
+                             + "specifies a concrete output format. THIS MAY RESULT IN ONE OR MORE ARTIFACTS BEING "
+                             + "OBSCURED!\n\n" + "Output directory: '" + dir + "'\nOutput filename mapping: '" + mapping
+                             + "'" );
         }
     }
 
@@ -234,7 +245,7 @@ public class AddDependencySetsTask
         task.setUnpack( dependencySet.isUnpack() );
 
         final UnpackOptions opts = dependencySet.getUnpackOptions();
-        if ( dependencySet.isUnpack() && ( opts != null ) )
+        if ( isUnpackWithOptions( dependencySet ) )
         {
             task.setIncludes( opts.getIncludes() );
             task.setExcludes( opts.getExcludes() );
