@@ -203,7 +203,7 @@ public class AddFileSetsTask
             else if ( isLinuxRootReference( destDirectory ) )
             {
                 logger.warn( "The assembly descriptor contains a filesystem-root relative reference,"
-                                 + "which is not cross platform compatible " + destDirectory );
+                                 + " which is not cross platform compatible " + destDirectory );
             }
         }
     }
