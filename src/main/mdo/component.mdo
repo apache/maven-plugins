@@ -1255,7 +1255,19 @@
             metadata files, should be used when calculating the files affected by this set.
             For backward compatibility, the default value is true. (Since 2.2)
           </description>
-        </field>
+         </field>
+         <field>
+            <name>encoding</name>
+            <version>1.1.3+</version>
+            <type>String</type>
+            <description>
+              <![CDATA[
+              Allows to specify the encoding to use when unpacking archives, for unarchivers
+              that support specifying encoding. If unspecified, archiver default will be used.
+              Archiver defaults generally represent sane (modern) values.
+              ]]>
+            </description>
+         </field>
       </fields>
     </class>
     <class>

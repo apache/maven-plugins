@@ -37,6 +37,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.artifactProjectInterpolator;
@@ -76,16 +77,20 @@ public class AddArtifactTask
 
     private final InputStreamTransformer transformer;
 
-    public AddArtifactTask( final Artifact artifact, final Logger logger, InputStreamTransformer transformer )
+    private final Charset encoding;
+
+    public AddArtifactTask( final Artifact artifact, final Logger logger, InputStreamTransformer transformer,
+                            Charset encoding )
     {
         this.artifact = artifact;
         this.logger = logger;
         this.transformer = transformer;
+        this.encoding = encoding;
     }
 
-    public AddArtifactTask( final Artifact artifact, final Logger logger )
+    public AddArtifactTask( final Artifact artifact, final Logger logger, Charset encoding )
     {
-        this( artifact, logger, null );
+        this( artifact, logger, null, encoding );
     }
 
     public void execute( final Archiver archiver, final AssemblerConfigurationSource configSource )
@@ -229,7 +234,7 @@ public class AddArtifactTask
                 afs.setExcludes( excludesArray );
                 afs.setPrefix( outputLocation );
                 afs.setStreamTransformer( transformer );
-                archiver.addArchivedFileSet( afs );
+                archiver.addArchivedFileSet( afs, encoding );
             }
         }
         catch ( final ArchiverException e )
@@ -246,7 +251,7 @@ public class AddArtifactTask
         final File tempArtifactFile = new File( tempRoot, artifact.getFile().getName() );
 
         logger.warn( "Artifact: " + artifact.getId() + " references the same file as the assembly destination file. "
-            + "Moving it to a temporary location for inclusion." );
+                         + "Moving it to a temporary location for inclusion." );
         try
         {
             FileUtils.copyFile( artifact.getFile(), tempArtifactFile );

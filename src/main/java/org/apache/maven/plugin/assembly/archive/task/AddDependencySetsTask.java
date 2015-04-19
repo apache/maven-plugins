@@ -43,6 +43,7 @@ import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -222,7 +223,9 @@ public class AddDependencySetsTask
     {
         logger.debug( "Adding dependency artifact " + depArtifact.getId() + "." );
 
-        final AddArtifactTask task = new AddArtifactTask( depArtifact, logger, fileSetTransformers );
+        String encoding = isUnpackWithOptions( dependencySet ) ? dependencySet.getUnpackOptions().getEncoding() : null;
+        Charset charset = encoding != null ? Charset.forName( encoding ) : null;
+        final AddArtifactTask task = new AddArtifactTask( depArtifact, logger, fileSetTransformers, charset );
 
         task.setProject( depProject );
         task.setModuleProject( moduleProject );
