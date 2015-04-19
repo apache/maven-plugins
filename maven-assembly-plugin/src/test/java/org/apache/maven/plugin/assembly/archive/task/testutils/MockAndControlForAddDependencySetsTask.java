@@ -20,6 +20,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  */
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -99,7 +100,7 @@ public class MockAndControlForAddDependencySetsTask
             archiver.addArchivedFileSet( (File) anyObject(), (String) anyObject(), (String[]) anyObject(),
                                              (String[]) anyObject() );
             EasyMock.expectLastCall().anyTimes();
-            archiver.addArchivedFileSet( (ArchivedFileSet)anyObject() );
+            archiver.addArchivedFileSet( (ArchivedFileSet)anyObject(), (Charset) anyObject()  );
             EasyMock.expectLastCall().anyTimes();
 
         }
