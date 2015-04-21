@@ -231,13 +231,6 @@ public class AddFileSetsTaskTest
         mockManager.verifyAll();
     }
 
-    public void testWindowsPath(){
-        assertTrue(AddFileSetsTask.isWindowsPath( "C:\foobar" ));
-    }
-    public void testLinuxRootReferencePath(){
-        assertTrue( AddFileSetsTask.isLinuxRootReference( "/etc/home" ) );
-    }
-
     public void testExecute_ShouldThrowExceptionIfArchiveBasedirProvidedIsNonExistent()
         throws AssemblyFormattingException
     {

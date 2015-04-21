@@ -27,7 +27,6 @@ import org.apache.maven.plugin.assembly.model.FileSet;
 import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.utils.Os;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.logging.Logger;
@@ -113,7 +112,7 @@ public class AddFileSetsTask
             destDirectory = fileSet.getDirectory();
         }
 
-        warnForPlatformSpecifics( destDirectory );
+        AssemblyFormatUtils.warnForPlatformSpecifics( logger,  destDirectory );
 
         destDirectory =
             AssemblyFormatUtils.getOutputDirectory( destDirectory, configSource.getFinalName(), configSource,
@@ -174,48 +173,6 @@ public class AddFileSetsTask
 
             task.execute( archiver );
         }
-    }
-
-    private void warnForPlatformSpecifics( String destDirectory )
-    {
-        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
-        {
-            if ( isLinuxRootReference( destDirectory ) )
-            {
-                logger.error( "OS=Windows and the assembly descriptor contains a *nix-specific root-relative-reference"
-                                  + " (starting with slash) " + destDirectory );
-            }
-            else if ( isWindowsPath( destDirectory ) )
-            {
-                logger.warn( "The assembly descriptor contains a *nix-specific root-relative-reference"
-                                 + " (starting with slash). This is non-portable and will fail on windows "
-                                 + destDirectory );
-            }
-        }
-        else
-        {
-            if ( isWindowsPath( destDirectory ) )
-            {
-                logger.error(
-                    "OS=Non-Windows and the assembly descriptor contains a windows-specific directory reference"
-                        + " (with a drive letter) " + destDirectory );
-            }
-            else if ( isLinuxRootReference( destDirectory ) )
-            {
-                logger.warn( "The assembly descriptor contains a filesystem-root relative reference,"
-                                 + " which is not cross platform compatible " + destDirectory );
-            }
-        }
-    }
-
-    static boolean isWindowsPath( String destDirectory )
-    {
-        return ( destDirectory != null && destDirectory.length() >= 2 && destDirectory.charAt( 1 ) == ':' );
-    }
-
-    static boolean isLinuxRootReference( String destDirectory )
-    {
-        return ( destDirectory != null && destDirectory.startsWith( "/" ) );
     }
 
     File getFileSetDirectory( final FileSet fileSet, final File basedir, final File archiveBaseDir )
