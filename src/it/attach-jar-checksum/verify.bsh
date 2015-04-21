@@ -34,11 +34,11 @@ String[] paths =
     "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT-sources.jar.md5",
     "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT-sources.jar.sha1",
     "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/maven-metadata-local.xml",
-    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/maven-metadata-local.xml.md5",
-    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/maven-metadata-local.xml.sha1",
+//    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/maven-metadata-local.xml.md5",
+//    "org/apache/maven/its/install/ajc/test/1.0-SNAPSHOT/maven-metadata-local.xml.sha1",
     "org/apache/maven/its/install/ajc/test/maven-metadata-local.xml",
-    "org/apache/maven/its/install/ajc/test/maven-metadata-local.xml.md5",
-    "org/apache/maven/its/install/ajc/test/maven-metadata-local.xml.sha1",
+//    "org/apache/maven/its/install/ajc/test/maven-metadata-local.xml.md5",
+//    "org/apache/maven/its/install/ajc/test/maven-metadata-local.xml.sha1",
 };
 
 for ( String path : paths )

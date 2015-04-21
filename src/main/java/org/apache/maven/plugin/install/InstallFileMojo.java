@@ -27,10 +27,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -38,12 +40,19 @@ import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.building.DefaultModelBuildingRequest;
+import org.apache.maven.model.building.ModelBuildingRequest;
+import org.apache.maven.model.building.ModelProblem.Severity;
+import org.apache.maven.model.building.ModelProblemCollector;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.model.validation.ModelValidator;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -153,6 +162,13 @@ public class InstallFileMojo
 
     @Parameter( defaultValue = "${session}", required = true, readonly = true )
     private MavenSession session;
+    
+    
+    /**
+    * The component used to validate the user-supplied artifact coordinates.
+    */
+    @Component
+    private ModelValidator modelValidator;
     
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -268,6 +284,8 @@ public class InstallFileMojo
                 }
             }
         }
+
+        validateArtifactInformation();
 
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
@@ -445,6 +463,29 @@ public class InstallFileMojo
     }
 
     /**
+     * Validates the user-supplied artifact information.
+     * 
+     * @throws MojoExecutionException If any artifact coordinate is invalid.
+     */
+    private void validateArtifactInformation()
+        throws MojoExecutionException
+    {
+        Model model = generateModel();
+
+        ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
+        
+        InstallModelProblemCollector problemCollector = new InstallModelProblemCollector();
+        
+        modelValidator.validateEffectiveModel( model, buildingRequest , problemCollector );
+
+        if ( problemCollector.getMessageCount() > 0 )
+        {
+            throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
+                + problemCollector.render( "  " ) );
+        }
+    }
+    
+    /**
      * Generates a minimal model from the user-supplied artifact information.
      * 
      * @return The generated model, never <code>null</code>.
@@ -514,4 +555,41 @@ public class InstallFileMojo
         this.localRepositoryPath = theLocalRepositoryPath;
     }
 
+    
+    private static class InstallModelProblemCollector implements ModelProblemCollector
+    {
+        /** */
+        private static final String NEWLINE = System.getProperty( "line.separator" );
+
+        /** */
+        private List<String> messages = new ArrayList<String>();
+        
+        @Override
+        public void add( Severity severity, String message, InputLocation location, Exception cause )
+        {
+            messages.add( message );
+        }
+
+        public int getMessageCount()
+        {
+            return messages.size();
+        }
+
+        public String render( String indentation )
+        {
+            if ( messages.size() == 0 )
+            {
+                return indentation + "There were no validation errors.";
+            }
+
+            StringBuilder message = new StringBuilder();
+
+            for ( int i = 0; i < messages.size(); i++ )
+            {
+                message.append( indentation + "[" + i + "]  " + messages.get( i ).toString() + NEWLINE );
+            }
+
+            return message.toString();
+        }
+    };
 }
