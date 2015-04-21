@@ -28,6 +28,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
+import org.apache.maven.plugin.assembly.archive.task.AddFileSetsTask;
 import org.apache.maven.plugin.assembly.archive.task.testutils.ArtifactMock;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -787,6 +788,14 @@ public class AssemblyFormatUtilsTest
         mockManager.resetAll();
     }
 
+    public void testWindowsPath(){
+        assertTrue( AssemblyFormatUtils.isWindowsPath( "C:\foobar" ));
+    }
+    public void testLinuxRootReferencePath(){
+        assertTrue( AssemblyFormatUtils.isLinuxRootReference( "/etc/home" ) );
+    }
+
+
     private final class MockAndControlForGetDistroName
     {
         final AssemblerConfigurationSource configSource;
@@ -817,6 +826,8 @@ public class AssemblyFormatUtilsTest
 
             expect( configSource.getFinalName()).andReturn( finalName ).atLeastOnce();
         }
+
+
 
     }
 

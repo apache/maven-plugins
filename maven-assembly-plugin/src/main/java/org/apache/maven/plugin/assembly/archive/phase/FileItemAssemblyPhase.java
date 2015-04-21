@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils.warnForPlatformSpecifics;
 import static org.codehaus.plexus.components.io.resources.ResourceFactory.createResource;
 
 /**
@@ -85,6 +86,8 @@ public class FileItemAssemblyPhase
             }
 
             final String outputDirectory1 = fileItem.getOutputDirectory();
+
+            warnForPlatformSpecifics( getLogger(), outputDirectory1 );
 
             final String outputDirectory =
                 AssemblyFormatUtils.getOutputDirectory( outputDirectory1, configSource.getFinalName(), configSource,
