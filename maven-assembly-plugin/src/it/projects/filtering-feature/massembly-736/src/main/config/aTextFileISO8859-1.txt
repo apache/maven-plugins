@@ -1,1 +1,0 @@
-Bjørn is cool ${anExpr}

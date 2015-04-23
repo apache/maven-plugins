@@ -1,2 +1,0 @@
-${test.properties}
-\${project.artifactId}
