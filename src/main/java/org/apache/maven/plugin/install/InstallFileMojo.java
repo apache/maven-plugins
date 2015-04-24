@@ -195,7 +195,7 @@ public class InstallFileMojo
             {
                 buildingRequest = installer.setLocalRepositoryBasedir( buildingRequest, localRepositoryPath );
                 
-                getLog().debug( "localRepoPath: " + buildingRequest.getRepositorySession().getLocalRepository().getBasedir() );
+                getLog().debug( "localRepoPath: " + installer.getLocalRepositoryBasedir( buildingRequest ) );
             }
             catch ( ArtifactInstallerException e )
             {

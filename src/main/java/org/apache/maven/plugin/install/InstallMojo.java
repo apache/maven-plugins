@@ -165,7 +165,7 @@ public class InstallMojo
             {
 //                installer.install( pomFile, artifact, localRepository );
                 installer.install( session.getProjectBuildingRequest(),
-                                   Collections.<Artifact> singletonList( new ProjectArtifact( project ) ) );
+                                   Collections.<Artifact>singletonList( new ProjectArtifact( project ) ) );
                 installChecksums( artifact, createChecksum );
                 addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
             }
