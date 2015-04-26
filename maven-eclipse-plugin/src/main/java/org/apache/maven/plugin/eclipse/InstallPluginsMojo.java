@@ -34,6 +34,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -47,11 +51,10 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Install plugins resolved from the Maven repository system into an Eclipse instance.
- * 
- * @goal install-plugins
+ *
  * @author jdcasey
- * @requiresDependencyResolution compile
  */
+@Mojo( name = "install-plugins", requiresDependencyResolution = ResolutionScope.COMPILE )
 public class InstallPluginsMojo
     extends AbstractMojo
 {
@@ -64,75 +67,61 @@ public class InstallPluginsMojo
 
     /**
      * This is the installed base directory of the Eclipse instance you want to modify.
-     * 
-     * @parameter expression="${eclipseDir}"
      */
+    @Parameter( property = "eclipseDir" )
     private File eclipseDir;
 
     /**
      * Determines whether this mojo leaves existing installed plugins as-is, or overwrites them.
-     * 
-     * @parameter expression="${overwrite}" default-value="false"
      */
+    @Parameter( property = "overwrite", defaultValue = "false" )
     private boolean overwrite;
 
     /**
      * The list of resolved dependencies from the current project. Since we're not resolving the dependencies by hand
      * here, the build will fail if some of these dependencies do not resolve.
-     * 
-     * @parameter default-value="${project.artifacts}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "project.artifacts", required = true, readonly = true )
     private Collection artifacts;
 
     /**
      * Comma-delimited list of dependency &lt;type/&gt; values which will be installed in the eclipse instance's plugins
      * directory.
-     * 
-     * @parameter expression="${pluginDependencyTypes}" default-value="jar"
      */
+    @Parameter( property = "pluginDependencyTypes", defaultValue = "jar" )
     private String pluginDependencyTypes;
 
     /**
      * The location of the Maven local repository, from which to install resolved dependency plugins.
-     * 
-     * @parameter default-value="${localRepository}"
-     * @required
-     * @readonly
      */
+    @Parameter( property = "localRepository", required = true, readonly = true )
     private ArtifactRepository localRepository;
 
     /**
      * Used to retrieve the project metadata (POM) associated with each plugin dependency, to help determine whether
      * that plugin should be installed as a jar, or expanded into a directory.
-     * 
-     * @component
      */
+    @Component
     private MavenProjectBuilder projectBuilder;
 
     /**
      * Used to configure and retrieve an appropriate tool for extracting each resolved plugin dependency. It is
      * conceivable that some resolved dependencies could be zip files, jar files, or other types, so the manager
      * approach is a convenient way to provide extensibility here.
-     * 
-     * @component
      */
+    @Component
     private ArchiverManager archiverManager;
 
     /**
      * Input handler, needed for comand line handling.
-     * 
-     * @component
      */
+    @Component
     private InputHandler inputHandler;
 
     // calculated below. Value will be ${eclipseDir}/plugins.
     private File pluginsDir;
 
-    /**
-     * @component
-     */
+    @Component
     private Maven2OsgiConverter maven2OsgiConverter;
 
     public InstallPluginsMojo()

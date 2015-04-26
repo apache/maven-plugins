@@ -112,6 +112,7 @@ under the License.
       <modules>
         <module>maven-checkstyle-plugin</module>
         <module>maven-pmd-plugin</module>
+        <module>maven-invoker-plugin</module>
       </modules>
       <activation>
         <jdk>[1.6,)</jdk>

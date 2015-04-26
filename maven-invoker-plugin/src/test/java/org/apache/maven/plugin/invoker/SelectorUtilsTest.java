@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 
 /**
  * Tests {@link SelectorUtils}.
- * 
+ *
  * @author Benjamin Bentmann
  */
 public class SelectorUtilsTest

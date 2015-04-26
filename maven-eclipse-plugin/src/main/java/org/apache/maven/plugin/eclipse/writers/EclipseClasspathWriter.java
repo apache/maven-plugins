@@ -430,15 +430,10 @@ public class EclipseClasspathWriter
         String sourcepath = null;
         String javadocpath = null;
 
-        if ( dep.isReferencedProject() && !config.isPde() )
+        if ( dep.isReferencedProject() )
         {
             path = "/" + dep.getEclipseProjectName(); //$NON-NLS-1$
             kind = ATTR_SRC;
-        }
-        else if ( dep.isReferencedProject() && config.isPde() )
-        {
-            // don't do anything, referenced projects are automatically handled by eclipse in PDE builds
-            return;
         }
         else
         {
@@ -466,38 +461,20 @@ public class EclipseClasspathWriter
             {
                 File localRepositoryFile = new File( config.getLocalRepository().getBasedir() );
 
-                // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
-                // added to the Bundle-Classpath:
-                if ( config.isPde() && ( dep.isProvided() || dep.isOsgiBundle() ) )
-                {
-                    return;
-                }
-                else if ( config.isPde() && !dep.isProvided() && !dep.isTestDependency() )
-                {
-                    // path for link created in .project, not to the actual file
-                    path = dep.getFile().getName();
+                String fullPath = artifactPath.getPath();
+                String relativePath =
+                    IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
 
-                    kind = ATTR_LIB;
+                if ( !new File( relativePath ).isAbsolute() )
+                {
+                    path = M2_REPO + "/" //$NON-NLS-1$
+                        + relativePath;
+                    kind = ATTR_VAR; //$NON-NLS-1$
                 }
-                // running in PDE mode and the dependency is provided means, that it is provided by
-                // the target platform. This case is covered by adding the plugin container
                 else
                 {
-                    String fullPath = artifactPath.getPath();
-                    String relativePath =
-                        IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
-
-                    if ( !new File( relativePath ).isAbsolute() )
-                    {
-                        path = M2_REPO + "/" //$NON-NLS-1$
-                            + relativePath;
-                        kind = ATTR_VAR; //$NON-NLS-1$
-                    }
-                    else
-                    {
-                        path = relativePath;
-                        kind = ATTR_LIB;
-                    }
+                    path = relativePath;
+                    kind = ATTR_LIB;
                 }
 
                 if ( dep.getSourceAttachment() != null )

@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -654,6 +655,25 @@ public class AssemblyProxyArchiver
             debug( "Adding archived file-set in: " + fileSet.getArchive() + " to archive location: " + fs.getPrefix() );
 
             delegate.addArchivedFileSet( fs );
+        }
+        finally
+        {
+            inPublicApi.set( null );
+        }
+    }
+
+    public void addArchivedFileSet( ArchivedFileSet archivedFileSet, Charset charset )
+        throws ArchiverException
+    {
+        inPublicApi.set( Boolean.TRUE );
+        try
+        {
+            final PrefixedArchivedFileSet fs = new PrefixedArchivedFileSet( archivedFileSet, rootPrefix, selectors );
+
+            debug( "Adding archived file-set in: " + archivedFileSet.getArchive() + " to archive location: "
+                       + fs.getPrefix() );
+
+            delegate.addArchivedFileSet( fs, charset );
         }
         finally
         {

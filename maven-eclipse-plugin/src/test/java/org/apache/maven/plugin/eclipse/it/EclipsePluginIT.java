@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 
@@ -34,10 +35,20 @@ import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 public class EclipsePluginIT
     extends AbstractEclipsePluginIT
 {
+    private static boolean initialized = false;
+
     protected void setUp()
         throws Exception
     {
         super.setUp();
+
+        if ( !initialized )
+        {
+            File tempWorkspace = new File( "target/test-classes/eclipse" );
+            FileUtils.deleteDirectory( tempWorkspace );
+            FileUtils.copyDirectoryToDirectory( new File( "src/test/resources/eclipse" ), tempWorkspace );
+            initialized = true;
+        }
     }
 
     /**
@@ -240,50 +251,6 @@ public class EclipsePluginIT
     }
 
     /**
-     * PDE support.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject21()
-        throws Exception
-    {
-        testProject( "project-21" );
-    }
-
-    /**
-     * PDE support using eclipse-plugin packaging.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject22()
-        throws Exception
-    {
-        testProject( "project-22" );
-    }
-
-    /**
-     * Additional config files using "additionalConfig" property.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject23()
-        throws Exception
-    {
-        testProject( "project-23" );
-    }
-
-    /**
-     * Test rewriting of OSGI manifest files.
-     * 
-     * @throws Exception any exception thrown during test
-     */
-    public void testProject24()
-        throws Exception
-    {
-        testProject( "project-24" );
-    }
-
-    /**
      * Test source exclude/include.
      * 
      * @throws Exception any exception thrown during test
@@ -463,26 +430,25 @@ public class EclipsePluginIT
     public void testProject40_a()
         throws Exception
     {
-        String jre131 = new java.io.File( "target/test-classes/eclipse/dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
-        checkJRESettingsWithEclipseWorkspace( "project-40-a", TempEclipseWorkspace.getFixtureEclipseWithDefault13(),
-                                              jre131 );
+        TempEclipseWorkspace eclipseWorkspace = TempEclipseWorkspace.getFixtureEclipseWithDefault13();
+        String jre131 = new File( eclipseWorkspace.workspaceLocation, "../../dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
+        checkJRESettingsWithEclipseWorkspace( "project-40-a", eclipseWorkspace, jre131 );
     }
 
     public void testProject40_b()
         throws Exception
     {
-        String jre131 = new java.io.File( "target/test-classes/eclipse/dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
-        checkJRESettingsWithEclipseWorkspace( "project-40-b", TempEclipseWorkspace.getFixtureEclipseWithDefault15(),
-                                              jre131 );
+        TempEclipseWorkspace eclipseWorkspace = TempEclipseWorkspace.getFixtureEclipseWithDefault15();
+        String jre131 = new File( eclipseWorkspace.workspaceLocation, "../../dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
+        checkJRESettingsWithEclipseWorkspace( "project-40-b", eclipseWorkspace, jre131 );
     }
 
     public void testProject40_c()
         throws Exception
     {
-        String jre131 = new java.io.File( "target/test-classes/eclipse/dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
-        checkJRESettingsWithEclipseWorkspace( "project-40-c",
-                                              TempEclipseWorkspace.getFixtureEclipseWorkspaceWithRad7Default14(),
-                                              jre131 );
+        TempEclipseWorkspace eclipseWorkspace = TempEclipseWorkspace.getFixtureEclipseWorkspaceWithRad7Default14();
+        String jre131 = new File( eclipseWorkspace.workspaceLocation, "../../dummyJDK/1.3.1/bin/javac" ).getCanonicalPath();
+        checkJRESettingsWithEclipseWorkspace( "project-40-c", eclipseWorkspace, jre131 );
     }
 
     public void testProject41()
@@ -598,7 +564,10 @@ public class EclipsePluginIT
     public void testProject50MECLIPSE415()
         throws Exception
     {
-        testProject( "project-50-MECLIPSE-415" );
+        TempEclipseWorkspace dynamicWorkspace = TempEclipseWorkspace.getFixtureEclipseDynamicWorkspace();
+        Properties props = new Properties();
+        props.setProperty( "eclipse.workspace", dynamicWorkspace.workspaceLocation.getCanonicalPath() );
+        testProject( "project-50-MECLIPSE-415", props, "clean", "eclipse" );
     }
 
     /**

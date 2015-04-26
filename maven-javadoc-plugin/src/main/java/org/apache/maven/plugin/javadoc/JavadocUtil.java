@@ -166,6 +166,9 @@ public class JavadocUtil
     /**
      * Determine whether a file should be excluded from the provided list of paths, based on whether
      * it exists and is already present in the list.
+     * @param f The files.
+     * @param pruned The list of pruned files..
+     * @return true if the file could be pruned false otherwise.
      */
     public static boolean shouldPruneFile( String f, List<String> pruned )
     {
@@ -525,6 +528,8 @@ public class JavadocUtil
      * @param sourceDirectory the directory where the source files are located
      * @param files the variable that contains the appended filenames of the files to be included in the javadoc
      * @param excludePackages the packages to be excluded in the javadocs
+     * @param sourceFileIncludes files to include.
+     * @param sourceFileExcludes files to exclude.
      */
     protected static void addFilesFromSource( List<String> files, File sourceDirectory,
                                               List<String> sourceFileIncludes,

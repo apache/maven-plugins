@@ -180,18 +180,18 @@ under the License.
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MSITE</url>
+    <url>https://issues.apache.org/jira/browse/MSITE</url>
   </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.6</doxiaVersion>
-    <doxiaSitetoolsVersion>1.6</doxiaSitetoolsVersion>
+    <doxiaVersion>1.7-SNAPSHOT</doxiaVersion>
+    <doxiaSitetoolsVersion>1.7-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
     <wagonVersion>1.0</wagonVersion>

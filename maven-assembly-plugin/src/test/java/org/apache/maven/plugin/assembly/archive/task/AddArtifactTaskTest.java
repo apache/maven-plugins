@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
+import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -32,13 +33,12 @@ import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMockSupport;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
-import org.easymock.classextension.EasyMockSupport;
 
 import static org.easymock.EasyMock.anyObject;
 
@@ -78,7 +78,7 @@ public class AddArtifactTaskTest
         mac.expectGetDestFile( new File( "junk" ) );
         mac.expectAddFile( artifactFile, outputLocation );
         mac.expectInterpolators();
-        
+
         mockManager.replayAll();
 
         AddArtifactTask task = createTask( artifactMock.getArtifact() );
@@ -108,7 +108,8 @@ public class AddArtifactTaskTest
         mac.expectInterpolators();
         mockManager.replayAll();
 
-        AddArtifactTask task = new AddArtifactTask( mock.getArtifact(), new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        AddArtifactTask task =
+            new AddArtifactTask( mock.getArtifact(), new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
         task.setOutputDirectory( outputDir );
         task.setFileNameMapping( new DependencySet().getOutputFileNameMapping() );
 
@@ -126,7 +127,7 @@ public class AddArtifactTaskTest
 
     private AddArtifactTask createTask( Artifact artifact )
     {
-        AddArtifactTask task = new AddArtifactTask( artifact, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
+        AddArtifactTask task = new AddArtifactTask( artifact, new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ), null );
 
         task.setFileNameMapping( "artifact" );
 
@@ -139,8 +140,6 @@ public class AddArtifactTaskTest
         mac.expectModeChange( -1, -1, -1, -1, 1 );
         mac.expectInterpolators();
 
-
-
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
         File artifactFile = artifactMock.setNewFile();
 
@@ -149,8 +148,9 @@ public class AddArtifactTaskTest
         mac.expectGetDestFile( new File( "junk" ) );
         try
         {
-//            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY, null );
-            mac.archiver.addArchivedFileSet((ArchivedFileSet) anyObject());
+//            mac.archiver.addArchivedFileSet( artifactFile, outputLocation, AddArtifactTask.DEFAULT_INCLUDES_ARRAY,
+// null );
+            mac.archiver.addArchivedFileSet( (ArchivedFileSet) anyObject(), (Charset) anyObject() );
         }
         catch ( ArchiverException e )
         {
@@ -177,8 +177,6 @@ public class AddArtifactTaskTest
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
         mac.expectInterpolators();
 
-
-
 //        mac.expectIsSnapshot( false );
 
         String outputLocation = "";
@@ -189,7 +187,7 @@ public class AddArtifactTaskTest
         mac.expectGetDestFile( new File( "junk" ) );
         try
         {
-            mac.archiver.addArchivedFileSet((ArchivedFileSet) anyObject());
+            mac.archiver.addArchivedFileSet( (ArchivedFileSet) anyObject(), (Charset) anyObject()  );
         }
         catch ( ArchiverException e )
         {
@@ -201,7 +199,7 @@ public class AddArtifactTaskTest
         AddArtifactTask task = createTask( artifactMock.getArtifact() );
 
         task.setUnpack( true );
-        
+
         task.setDirectoryMode( directoryMode );
         task.setFileMode( fileMode );
 

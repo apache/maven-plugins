@@ -20,24 +20,37 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 /**
  * Provides utility methods for invoker report processing.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class ReportUtils
 {
 
+    private static class FileFilterOnlyXmlFile
+        implements FilenameFilter
+    {
+
+        public boolean accept( File dir, String name )
+        {
+            return name.startsWith( "BUILD-" ) && name.endsWith( ".xml" );
+        }
+
+    }
+
     /**
      * Gets the paths to the invoker reports available in the specified directory.
-     * 
+     *
      * @param reportsDirectory The base directory where the invoker reports are located in, may be <code>null</code>.
      * @return The paths to the invoker reports, can be empty but never <code>null</code>.
      */
     public static File[] getReportFiles( File reportsDirectory )
     {
-        File[] reportFiles = ( reportsDirectory != null ) ? reportsDirectory.listFiles() : null;
+        File[] reportFiles =
+            ( reportsDirectory != null ) ? reportsDirectory.listFiles( new FileFilterOnlyXmlFile() ) : null;
 
         if ( reportFiles == null )
         {

@@ -200,8 +200,14 @@ public abstract class AbstractFixJavadocMojo
      */
     private static final String CLIRR_MAVEN_PLUGIN_GOAL = "check";
 
+    /**
+     * Java Files Pattern.
+     */
     public static final String JAVA_FILES = "**\\/*.java";
 
+    /**
+     * Default version value.
+     */
     public static final String DEFAULT_VERSION_VALUE = "\u0024Id: \u0024Id";
 
     // ----------------------------------------------------------------------
@@ -2652,7 +2658,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws MojoExecutionException if any
      */
     private boolean isInherited( JavaMethod javaMethod )
-        throws MojoExecutionException, SecurityException
+        throws MojoExecutionException
     {
         if ( javaMethod.getAnnotations() != null )
         {

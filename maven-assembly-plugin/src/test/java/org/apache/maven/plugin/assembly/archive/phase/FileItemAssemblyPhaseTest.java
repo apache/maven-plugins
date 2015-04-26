@@ -198,6 +198,7 @@ public class FileItemAssemblyPhaseTest
         macCS.expectInterpolators();
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        macLogger.logger.warn( (String)anyObject() );
 
         final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
@@ -273,6 +274,8 @@ public class FileItemAssemblyPhaseTest
 
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
+        macLogger.logger.warn( (String)anyObject() );
+
 
         final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 

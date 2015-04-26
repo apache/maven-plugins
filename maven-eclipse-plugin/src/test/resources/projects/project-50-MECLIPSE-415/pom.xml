@@ -47,7 +47,6 @@ under the License.
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>test</version>
         <configuration>
-          <workspace>${basedir}/../../eclipse/dynamicWorkspace/workspace</workspace>
           <downloadSources>true</downloadSources>
         </configuration>
       </plugin>

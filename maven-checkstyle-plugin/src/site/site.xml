@@ -29,6 +29,7 @@ under the License.
       <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
       <item name="License" href="http://www.apache.org/licenses/"/>
       <item name="Download" href="download.html"/>
+      <item name="Releases History" href="history.html"/>
     </menu>
     <menu name="Examples">
       <item name="Upgrading Checkstyle at Runtime" href="/examples/upgrading-checkstyle.html"/>

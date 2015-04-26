@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-invoker-plugin</artifactId>
-  <version>1.10-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Invoker Plugin</name>
@@ -50,12 +50,12 @@ under the License.
   </scm>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MINVOKER</url>
+    <url>https://issues.apache.org/jira/browse/MINVOKER</url>
   </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
@@ -69,13 +69,16 @@ under the License.
     <groovy-groupId>org.codehaus.groovy</groovy-groupId>
     <groovy-artifactId>groovy-all</groovy-artifactId>
     <groovy-version>2.0.1</groovy-version>
+    <javaVersion>6</javaVersion>
+    <maven.compiler.source>1.${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>1.${javaVersion}</maven.compiler.target>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-invoker</artifactId>
-      <version>2.1.1</version>
+      <version>2.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -309,6 +312,13 @@ under the License.
                   <goal>initialize</goal>
                 </goals>
               </configuration>
+              <dependencies>
+                <dependency> <!-- remove when using maven-invoker-plugin 1.10 -->
+                  <groupId>org.apache.maven.shared</groupId>
+                  <artifactId>maven-invoker</artifactId>
+                  <version>2.2</version>
+                </dependency>
+              </dependencies>
             </plugin>
           </plugins>
         </pluginManagement>

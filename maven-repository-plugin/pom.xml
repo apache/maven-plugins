@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-repository-plugin</artifactId>
-  <version>2.3.2-SNAPSHOT</version>
+  <version>2.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Repository Plugin</name>
@@ -47,12 +47,12 @@ under the License.
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MREPOSITORY</url>
+    <url>https://issues.apache.org/jira/browse/MREPOSITORY</url>
   </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
@@ -223,7 +223,6 @@ under the License.
                   <extraArtifacts>
                     <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:2.5:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-source-plugin:2.3:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.6:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.5:maven-plugin</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:3.1:maven-plugin</extraArtifact>

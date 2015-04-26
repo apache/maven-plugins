@@ -32,15 +32,19 @@ import org.apache.maven.plugin.eclipse.writers.myeclipse.MyEclipseSpringBeansWri
 import org.apache.maven.plugin.eclipse.writers.myeclipse.MyEclipseStrutsDataWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Generates MyEclipse configuration files
- * 
+ *
  * @author <a href="mailto:olivier.jacob@gmail.com">Olivier Jacob</a>
- * @goal myeclipse
  * @since 2.5
- * @execute phase="generate-resources"
  */
+@Mojo( name = "myeclipse" )
+@Execute( phase = LifecyclePhase.GENERATE_RESOURCES )
 public class MyEclipsePlugin
     extends EclipsePlugin
 {
@@ -89,9 +93,8 @@ public class MyEclipsePlugin
      *     &lt;basedir&gt;src/main/resources&lt;/basedir&gt;
      *   &lt;/spring&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private Map spring;
 
     /**
@@ -104,9 +107,8 @@ public class MyEclipsePlugin
      *     &lt;session-factory-id&gt;mySessionFactory&lt;/session-factory-id&gt;
      *   &lt;/hibernate&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private Map hibernate;
 
     /**
@@ -121,9 +123,8 @@ public class MyEclipsePlugin
      *     &lt;base-package&gt;1.2.9&lt;/base-package&gt;
      *   &lt;/struts&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private Map struts;
 
     /**

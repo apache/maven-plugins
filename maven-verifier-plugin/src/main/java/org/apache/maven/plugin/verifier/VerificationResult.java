@@ -19,52 +19,77 @@ package org.apache.maven.plugin.verifier;
  * under the License.
  */
 
-import org.apache.maven.plugin.verifier.model.File;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.maven.plugin.verifier.model.File;
 
 /**
  * 
  */
 public class VerificationResult
 {
-    private List existenceFailures = new ArrayList();
+    private List<File> existenceFailures = new ArrayList<File>();
 
-    private List nonExistenceFailures = new ArrayList();
+    private List<File> nonExistenceFailures = new ArrayList<File>();
 
-    private List contentFailures = new ArrayList();
+    private List<File> contentFailures = new ArrayList<File>();
 
+    /**
+     * @param file {@link File}
+     */
     public void addExistenceFailure( File file )
     {
         existenceFailures.add( file );
     }
 
+    /**
+     * Added non existence failure.
+     * 
+     * @param file {@linke File}
+     */
     public void addNonExistenceFailure( File file )
     {
         nonExistenceFailures.add( file );
     }
 
+    /**
+     * Add content failure.
+     * 
+     * @param file {@link File}
+     */
     public void addContentFailure( File file )
     {
         contentFailures.add( file );
     }
 
-    public List getExistenceFailures()
+    /**
+     * @return {@link #existenceFailures}
+     */
+    public List<File> getExistenceFailures()
     {
         return existenceFailures;
     }
 
-    public List getNonExistenceFailures()
+    /**
+     * @return {@link #nonExistenceFailures}
+     */
+    public List<File> getNonExistenceFailures()
     {
         return nonExistenceFailures;
     }
 
-    public List getContentFailures()
+    /**
+     * @return {@link #contentFailures}
+     */
+    public List<File> getContentFailures()
     {
         return contentFailures;
     }
 
+    /**
+     * @return true if a failures exists false otherwise.
+     */
     public boolean hasFailures()
     {
         return !getExistenceFailures().isEmpty() || !getNonExistenceFailures().isEmpty()

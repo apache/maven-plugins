@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-verifier-plugin</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Verifier Plugin</name>
@@ -47,12 +47,12 @@ under the License.
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MVERIFIER</url>
+    <url>https://issues.apache.org/jira/browse/MVERIFIER</url>
   </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
@@ -136,17 +136,18 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.10</version>
             <configuration>
               <goals>
-                <goal>verify</goal>
+                <goal>install</goal>
               </goals>
             </configuration>
             <executions>
               <execution>
                 <id>integration-test</id>
                 <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
                 </goals>
               </execution>
             </executions>

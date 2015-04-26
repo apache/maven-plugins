@@ -22,14 +22,15 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseWorkspaceWriter;
 import org.apache.maven.plugin.ide.IdeUtils;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
 /**
  * Deletes the .project, .classpath, .wtpmodules files and .settings folder used by Eclipse.
- *
- * @goal clean
  */
+@Mojo( name = "clean" )
 public class EclipseCleanMojo
     extends AbstractMojo
 {
@@ -51,30 +52,26 @@ public class EclipseCleanMojo
 
     /**
      * Packaging for the current project.
-     *
-     * @parameter expression="${project.packaging}"
      */
+    @Parameter( property = "project.packaging" )
     private String packaging;
 
     /**
      * The root directory of the project
-     *
-     * @parameter expression="${basedir}"
      */
+    @Parameter( property = "basedir" )
     private File basedir;
 
     /**
      * Skip the operation when true.
-     *
-     * @parameter expression="${eclipse.skip}" default-value="false"
      */
+    @Parameter( property = "eclipse.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
      * additional generic configuration files for eclipse
-     *
-     * @parameter
      */
+    @Parameter
     private EclipseConfigFile[] additionalConfig;
 
     /**

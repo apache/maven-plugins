@@ -44,7 +44,6 @@ import org.apache.maven.plugin.eclipse.reader.ReadWorkspaceLocations;
 import org.apache.maven.plugin.eclipse.writers.EclipseAjdtWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseClasspathWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseManifestWriter;
-import org.apache.maven.plugin.eclipse.writers.EclipseOSGiManifestWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseProjectWriter;
 import org.apache.maven.plugin.eclipse.writers.EclipseWriterConfig;
 import org.apache.maven.plugin.eclipse.writers.workspace.EclipseSettingsWriter;
@@ -57,6 +56,11 @@ import org.apache.maven.plugin.ide.AbstractIdeSupportMojo;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.maven.plugin.ide.JeeUtils;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.MavenSettingsBuilder;
 import org.apache.maven.settings.Proxy;
@@ -85,13 +89,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * </ul>
  * If this goal is run on a multiproject root, dependencies between modules will be configured as direct project
  * dependencies in Eclipse (unless <code>useProjectReferences</code> is set to <code>false</code>).
- * 
+ *
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  * @author <a href="mailto:fgiust@apache.org">Fabrizio Giustina</a>
  * @version $Id$
- * @goal eclipse
- * @execute phase="generate-resources"
  */
+@Mojo( name = "eclipse" )
+@Execute( phase = LifecyclePhase.GENERATE_RESOURCES )
 public class EclipsePlugin
     extends AbstractIdeSupportMojo
 {
@@ -129,10 +133,6 @@ public class EclipsePlugin
 
     private static final String BUILDER_WST_FACET = "org.eclipse.wst.common.project.facet.core.builder"; //$NON-NLS-1$
 
-    private static final String BUILDER_PDE_MANIFEST = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
-
-    private static final String BUILDER_PDE_SCHEMA = "org.eclipse.pde.SchemaBuilder"; //$NON-NLS-1$
-
     private static final String BUILDER_AJDT_CORE_JAVA = "org.eclipse.ajdt.core.ajbuilder"; //$NON-NLS-1$
 
     private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature"; //$NON-NLS-1$
@@ -141,15 +141,11 @@ public class EclipsePlugin
 
     private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature"; //$NON-NLS-1$
 
-    private static final String NATURE_PDE_PLUGIN = "org.eclipse.pde.PluginNature"; //$NON-NLS-1$
-
     private static final String NATURE_AJDT_CORE_JAVA = "org.eclipse.ajdt.ui.ajnature"; //$NON-NLS-1$
 
     protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
 
     protected static final String ASPECTJ_RT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"; //$NON-NLS-1$
-
-    protected static final String REQUIRED_PLUGINS_CONTAINER = "org.eclipse.pde.core.requiredPlugins"; //$NON-NLS-1$
 
     // warning, order is important for binary search
     public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
@@ -171,52 +167,49 @@ public class EclipsePlugin
     /**
      * List of eclipse project natures. By default the <code>org.eclipse.jdt.core.javanature</code> nature plus the
      * needed WTP natures are added. Natures added using this property <strong>replace</strong> the default list.
-     * 
+     *
      * <pre>
      * &lt;projectnatures&gt;
      *    &lt;projectnature&gt;org.eclipse.jdt.core.javanature&lt;/projectnature&gt;
      *    &lt;projectnature&gt;org.eclipse.wst.common.modulecore.ModuleCoreNature&lt;/projectnature&gt;
      * &lt;/projectnatures&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private List projectnatures;
 
     /**
-     * List of artifacts, represented as <code>groupId:artifactId</code>, to exclude from the eclipse classpath, 
+     * List of artifacts, represented as <code>groupId:artifactId</code>, to exclude from the eclipse classpath,
      * being provided by some eclipse classPathContainer.
      *
      * @see http://jira.codehaus.org/browse/MECLIPSE-79
      * @since 2.5
-     * @parameter
      */
+    @Parameter
     private List excludes;
 
     /**
      * List of eclipse project natures to be added to the default ones.
-     * 
+     *
      * <pre>
      * &lt;additionalProjectnatures&gt;
      *    &lt;projectnature&gt;org.springframework.ide.eclipse.core.springnature&lt;/projectnature&gt;
      * &lt;/additionalProjectnatures&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private List additionalProjectnatures;
 
     /**
      * List of eclipse project facets to be added to the default ones.
-     * 
+     *
      * <pre>
      * &lt;additionalProjectFacets&gt;
      *    &lt;jst.jsf&gt;1.1&lt;jst.jsf/&gt;
      * &lt;/additionalProjectFacets&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private Map additionalProjectFacets;
 
     /**
@@ -234,9 +227,8 @@ public class EclipsePlugin
      * </pre>
      * 
      * For new style, see <code>additionalBuildCommands</code>.
-     * 
-     * @parameter
      */
+    @Parameter
     private List buildcommands;
 
     /**
@@ -264,9 +256,8 @@ public class EclipsePlugin
      * 
      * Note the difference between <code>build<strong>c</strong>ommand</code> and
      * <code>build<strong>C</strong>ommand</code>. You can mix and match old and new-style configuration entries.
-     * 
-     * @parameter
      */
+    @Parameter
     private List additionalBuildcommands;
 
     /**
@@ -280,69 +271,50 @@ public class EclipsePlugin
      *    &lt;classpathContainer&gt;org.eclipse.jst.j2ee.internal.web.container/artifact&lt;/classpathContainer&gt;
      * &lt;/classpathContainers&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private List classpathContainers;
 
     /**
      * Enables/disables the downloading of source attachments. Defaults to false. DEPRECATED - use downloadSources
-     * 
-     * @parameter expression="${eclipse.downloadSources}"
+     *
      * @deprecated use downloadSources
      */
+    @Parameter( property = "eclipse.downloadSources" )
     private boolean eclipseDownloadSources;
 
     /**
      * Eclipse workspace directory.
-     * 
-     * @parameter expression="${eclipse.projectDir}" alias="outputDir"
      */
+    @Parameter( property = "eclipse.projectDir", alias = "outputDir" )
     private File eclipseProjectDir;
 
     /**
      * When set to false, the plugin will not create sub-projects and instead reference those sub-projects using the
      * installed package in the local repository
-     * 
-     * @parameter expression="${eclipse.useProjectReferences}" default-value="true"
-     * @required
      */
+    @Parameter( property = "eclipse.useProjectReferences", defaultValue = "true", required = true )
     private boolean useProjectReferences;
 
     /**
      * The default output directory
-     * 
-     * @parameter expression="${outputDirectory}" alias="outputDirectory"
-     *            default-value="${project.build.outputDirectory}"
-     * @required
      */
+    @Parameter( property = "outputDirectory", alias = "outputDirectory", defaultValue = "${project.build.outputDirectory}", required = true )
     private File buildOutputDirectory;
 
     /**
      * The version of WTP for which configuration files will be generated. The default value is "none" (don't generate
      * WTP configuration), supported versions are "R7", "1.0", "1.5" and "2.0"
-     * 
-     * @parameter expression="${wtpversion}" default-value="none"
      */
+    @Parameter( property = "wtpversion", defaultValue = "none" )
     private String wtpversion;
 
     /**
      * JEE context name of the WTP module. ( ex. WEB context name ). You can use "ROOT" if you want to map the webapp
      * to the root context.
-     * 
-     * @parameter expression="${wtpContextName}"
      */
+    @Parameter( property = "wtpContextName" )
     private String wtpContextName;
-
-    /**
-     * Is it an PDE project? If yes, the plugin adds the necessary natures and build commands to the .project file.
-     * Additionally it copies all libraries to a project local directory and references them instead of referencing the
-     * files in the local Maven repository. It also ensured that the "Bundle-Classpath" in META-INF/MANIFEST.MF is
-     * synchronized.
-     * 
-     * @parameter expression="${eclipse.pde}" default-value="false"
-     */
-    private boolean pde;
 
     /**
      * Is it an AJDT project? If yes, the plugin adds the necessary natures and build commands to the .project file.
@@ -351,9 +323,8 @@ public class EclipsePlugin
 
     /**
      * The relative path of the manifest file
-     * 
-     * @parameter expression="${eclipse.manifest}" default-value="${basedir}/META-INF/MANIFEST.MF"
      */
+    @Parameter( property = "eclipse.manifest", defaultValue = "${basedir}/META-INF/MANIFEST.MF" )
     private File manifest;
 
     /**
@@ -422,34 +393,30 @@ public class EclipsePlugin
      *  &lt;/dependencies&gt;
      * &lt;/plugin&gt;
      * </pre>
-     * 
-     * @parameter
      */
+    @Parameter
     private EclipseConfigFile[] additionalConfig;
 
     /**
      * If set to <code>true</code>, the version number of the artifact is appended to the name of the generated Eclipse
      * project. See projectNameTemplate for other options.
-     * 
-     * @parameter expression="${eclipse.addVersionToProjectName}" default-value="false"
      */
+    @Parameter( property = "eclipse.addVersionToProjectName", defaultValue = "false" )
     private boolean addVersionToProjectName;
 
     /**
      * If set to <code>true</code>, the groupId of the artifact is appended to the name of the generated Eclipse
      * project. See projectNameTemplate for other options.
-     * 
-     * @parameter expression="${eclipse.addGroupIdToProjectName}" default-value="false"
      */
+    @Parameter( property = "eclipse.addGroupIdToProjectName", defaultValue = "false" )
     private boolean addGroupIdToProjectName;
 
     /**
      * Allows configuring the name of the eclipse projects. This property if set wins over addVersionToProjectName and
      * addGroupIdToProjectName You can use <code>[groupId]</code>, <code>[artifactId]</code> and <code>[version]</code>
      * variables. eg. <code>[groupId].[artifactId]-[version]</code>
-     * 
-     * @parameter expression="${eclipse.projectNameTemplate}"
      */
+    @Parameter( property = "eclipse.projectNameTemplate" )
     private String projectNameTemplate;
 
     /**
@@ -464,52 +431,40 @@ public class EclipsePlugin
 
     /**
      * Must the manifest files be written for java projects so that that the jee classpath for wtp is correct.
-     * 
-     * @parameter expression="${eclipse.wtpmanifest}" default-value="false"
      */
+    @Parameter( property = "eclipse.wtpmanifest", defaultValue = "false" )
     private boolean wtpmanifest;
 
     /**
      * Must the application files be written for ear projects in a separate directory.
-     * 
-     * @parameter expression="${eclipse.wtpapplicationxml}" default-value="false"
      */
+    @Parameter( property = "eclipse.wtpapplicationxml", defaultValue = "false" )
     private boolean wtpapplicationxml;
 
     /**
      * What WTP defined server to use for deployment informations.
-     * 
-     * @parameter expression="${eclipse.wtpdefaultserver}"
      */
+    @Parameter( property = "eclipse.wtpdefaultserver" )
     private String wtpdefaultserver;
 
     private WorkspaceConfiguration workspaceConfiguration;
 
     /**
      * ResourceManager for getting additonalConfig files from resources
-     * 
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private ResourceManager locator;
 
     /**
      * WagonManager for accessing internet resources.
-     *  
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private WagonManager wagonManager;
-    
+
     /**
      * MavenSettingsBuilder for accessing settings.xml.
-     *  
-     * @component
-     * @required
-     * @readonly
      */
+    @Component
     private MavenSettingsBuilder mavenSettingsBuilder;
 
     /**
@@ -518,35 +473,33 @@ public class EclipsePlugin
      * settings as the reactor projects, but the project name template my differ. The pom's in the workspace projects
      * may not contain variables in the artefactId, groupId and version tags. If workspace is not defined, then an
      * attempt to locate it by checking up the directory hierarchy will be made.
-     * 
+     *
      * @since 2.5
-     * @parameter expression="${eclipse.workspace}"
      */
+    @Parameter( property = "eclipse.workspace" )
     protected File workspace;
 
     /**
      * Limit the use of project references to the current workspace. No project references will be created to projects
      * in the reactor when they are not available in the workspace.
-     * 
-     * @parameter expression="${eclipse.limitProjectReferencesToWorkspace}" default-value="false"
      */
+    @Parameter( property = "eclipse.limitProjectReferencesToWorkspace", defaultValue = "false" )
     protected boolean limitProjectReferencesToWorkspace;
 
     /**
      * The version of AJDT for which configuration files will be generated. The default value is "1.5", supported
      * versions are "none" (AJDT support disabled), "1.4", and "1.5".
-     * 
-     * @parameter expression="${eclipse.ajdtVersion}" default-value="none"
      */
+    @Parameter( property = "eclipse.ajdtVersion", defaultValue = "none" )
     private String ajdtVersion;
 
     /**
      * List of exclusions to add to the source directories on the classpath. Adds excluding="" to the classpathentry of
      * the eclipse .classpath file. [MECLIPSE-104]
-     * 
+     *
      * @since 2.6.1
-     * @parameter
      */
+    @Parameter
     private List sourceExcludes;
 
     /**
@@ -560,8 +513,8 @@ public class EclipsePlugin
      * [MECLIPSE-104]
      * 
      * @since 2.6.1
-     * @parameter
      */
+    @Parameter
     private List sourceIncludes;
 
     /**
@@ -593,8 +546,8 @@ public class EclipsePlugin
      * </pre>
      * 
      * @since 2.8
-     * @parameter
      */
+    @Parameter
     private List linkedResources;
     
     /**
@@ -603,8 +556,8 @@ public class EclipsePlugin
      * loaded after 3rd party jars, so enabling it is not suggested.
      * 
      * @since 2.9
-     * @parameter expression="${eclipse.classpathContainersLast}" default-value="false"
      */
+    @Parameter( property = "eclipse.classpathContainersLast", defaultValue = "false" )
     protected boolean classpathContainersLast;
     
     /**
@@ -616,8 +569,8 @@ public class EclipsePlugin
      * is no concept in eclipse of "phases" with different set of source dirs and dependencies like we have in maven.
      * 
      * @since 2.9
-     * @parameter expression="${eclipse.testSourcesLast}" default-value="false"
      */
+    @Parameter( property = "eclipse.testSourcesLast", defaultValue = "false" )
     protected boolean testSourcesLast;
     
     /**
@@ -638,18 +591,13 @@ public class EclipsePlugin
      * </table>
      * 
      * @since 2.9
-     * @parameter expression="${eclipse.jeeversion}"
      */
+    @Parameter( property = "eclipse.jeeversion" )
     protected String jeeversion;
 
     protected final boolean isJavaProject()
     {
         return isJavaProject;
-    }
-
-    protected final boolean isPdeProject()
-    {
-        return pde;
     }
 
     /**
@@ -921,8 +869,7 @@ public class EclipsePlugin
         // ear projects don't contain java sources
         // pde projects are always java projects
         isJavaProject =
-            pde
-                || ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
+            ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
 
         if ( sourceIncludes == null )
         {
@@ -1100,7 +1047,8 @@ public class EclipsePlugin
 
         if ( "eclipse-plugin".equals( packaging ) )
         {
-            pde = true;
+            getLog().info( Messages.getString( "EclipsePlugin.pdepackaging" ) ); //$NON-NLS-1$
+            return false;
         }
 
         if ( eclipseProjectDir == null )
@@ -1213,12 +1161,6 @@ public class EclipsePlugin
         if ( wtpapplicationxml )
         {
             new EclipseWtpApplicationXMLWriter().init( getLog(), config ).write();
-        }
-
-        if ( pde )
-        {
-            this.getLog().info( "The Maven Eclipse plugin runs in 'pde'-mode." );
-            new EclipseOSGiManifestWriter().init( getLog(), config ).write();
         }
 
         // NOTE: This one MUST be after EclipseClasspathwriter, and possibly others,
@@ -1382,7 +1324,6 @@ public class EclipsePlugin
         config.setEclipseProjectDirectory( eclipseProjectDir );
         config.setLocalRepository( localRepository );
         config.setOSGIManifestFile( manifest );
-        config.setPde( pde );
         config.setProject( project );
         config.setProjectBaseDir( projectBaseDir );
         config.setProjectnatures( projectnatures );
@@ -1516,11 +1457,6 @@ public class EclipsePlugin
             }
         }
 
-        if ( pde )
-        {
-            projectnatures.add( NATURE_PDE_PLUGIN );
-        }
-
     }
 
     /**
@@ -1541,10 +1477,6 @@ public class EclipsePlugin
                            "Adding default classpath container: "
                                + getWorkspaceConfiguration().getDefaultClasspathContainer() );
             classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
-        }
-        if ( pde )
-        {
-            classpathContainers.add( REQUIRED_PLUGINS_CONTAINER );
         }
 
         if ( ajdt )
@@ -1596,12 +1528,6 @@ public class EclipsePlugin
         {
             // WTP 0.7 builder
             buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) );
-        }
-
-        if ( pde )
-        {
-            buildcommands.add( new BuildCommand( BUILDER_PDE_MANIFEST ) );
-            buildcommands.add( new BuildCommand( BUILDER_PDE_SCHEMA ) );
         }
     }
 

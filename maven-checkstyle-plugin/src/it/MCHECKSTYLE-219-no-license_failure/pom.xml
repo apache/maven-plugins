@@ -31,6 +31,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <description>
+    Uses a custom Checkstyle configuration that checks for headers, so it matters if the LICENSE.txt couldn't be found.
+  </description>
+
   <build>
     <plugins>
       <plugin>
@@ -46,7 +50,7 @@
           </execution>
         </executions>
         <configuration>
-          <configLocation>config/turbine_checks.xml</configLocation>
+          <configLocation>checkstyle.xml</configLocation>
         </configuration>
       </plugin>
     </plugins>

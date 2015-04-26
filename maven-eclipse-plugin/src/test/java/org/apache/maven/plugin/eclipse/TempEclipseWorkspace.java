@@ -29,20 +29,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.eclipse.reader.ReadWorkspaceLocations;
 import org.codehaus.plexus.util.IOUtil;
 import org.eclipse.core.internal.localstore.ILocalStoreConstants;
 
 public class TempEclipseWorkspace
 {
-    private static TempEclipseWorkspace rad7WithDefault14;
-
-    private static TempEclipseWorkspace eclipseWithDefault15;
-
-    private static TempEclipseWorkspace eclipseWithDefault13;
-
-    private static TempEclipseWorkspace dynamicWorkspace;
-
+    private static int workspaceNumber = 0;
+    
     /**
      * @return RAD 7 workspace, JDK 14, includes projects: "direct-compile"
      * @throws Exception
@@ -50,11 +45,7 @@ public class TempEclipseWorkspace
     public static TempEclipseWorkspace getFixtureEclipseWorkspaceWithRad7Default14()
         throws Exception
     {
-        if ( rad7WithDefault14 == null )
-        {
-            rad7WithDefault14 = new TempEclipseWorkspace( "rad7WithDefault14", new String[] { "direct-compile" } );
-        }
-        return rad7WithDefault14;
+        return new TempEclipseWorkspace( "rad7WithDefault14", new String[] { "direct-compile" } );
     }
 
     /**
@@ -64,11 +55,7 @@ public class TempEclipseWorkspace
     public static TempEclipseWorkspace getFixtureEclipseWithDefault15()
         throws Exception
     {
-        if ( eclipseWithDefault15 == null )
-        {
-            eclipseWithDefault15 = new TempEclipseWorkspace( "eclipseWithDefault15", new String[] { "direct-compile" } );
-        }
-        return eclipseWithDefault15;
+        return new TempEclipseWorkspace( "eclipseWithDefault15", new String[] { "direct-compile" } );
     }
 
     /**
@@ -78,11 +65,7 @@ public class TempEclipseWorkspace
     public static TempEclipseWorkspace getFixtureEclipseWithDefault13()
         throws Exception
     {
-        if ( eclipseWithDefault13 == null )
-        {
-            eclipseWithDefault13 = new TempEclipseWorkspace( "eclipseWithDefault13", new String[] { "direct-compile" } );
-        }
-        return eclipseWithDefault13;
+        return new TempEclipseWorkspace( "eclipseWithDefault13", new String[] { "direct-compile" } );
     }
 
     /**
@@ -92,12 +75,7 @@ public class TempEclipseWorkspace
     public static TempEclipseWorkspace getFixtureEclipseDynamicWorkspace()
         throws Exception
     {
-        if ( dynamicWorkspace == null )
-        {
-            dynamicWorkspace =
-                new TempEclipseWorkspace( "dynamicWorkspace", new String[] { "project-A/module-A1", "../project-O" } );
-        }
-        return dynamicWorkspace;
+        return new TempEclipseWorkspace( "dynamicWorkspace", new String[] { "project-A/module-A1", "../project-O" } );
     }
 
     public File workspaceLocation;
@@ -106,7 +84,11 @@ public class TempEclipseWorkspace
         throws Exception
     {
 
-        File eclipseLocation = new java.io.File( "target/test-classes/eclipse" ).getCanonicalFile();
+        File tempWorkspace = new File( "target/tmp-workspace" + workspaceNumber++ );
+        FileUtils.deleteDirectory( tempWorkspace );
+        FileUtils.copyDirectoryToDirectory( new File( "src/test/resources/eclipse" ), tempWorkspace );
+
+        File eclipseLocation = new File( tempWorkspace, "eclipse" ).getCanonicalFile();
 
         File jdkLocation = new File( eclipseLocation, "dummyJDK" );
 

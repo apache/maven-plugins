@@ -59,7 +59,6 @@ public class CheckstyleReport
         Map<String, String> fmt2Cfg = new HashMap<String, String>();
 
         fmt2Cfg.put( "sun", "config/sun_checks.xml" );
-        fmt2Cfg.put( "turbine", "config/turbine_checks.xml" );
         fmt2Cfg.put( "maven", "config/maven_checks.xml" );
 
         FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
@@ -67,7 +66,7 @@ public class CheckstyleReport
 
     /**
      * Specifies what predefined check set to use. Available sets are "sun" (for
-     * the Sun coding conventions), and "turbine".
+     * the Sun coding conventions), and "maven".
      *
      * @deprecated Use configLocation instead.
      */

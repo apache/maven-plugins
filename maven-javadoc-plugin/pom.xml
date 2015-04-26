@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-javadoc-plugin</artifactId>
-  <version>2.10.2-SNAPSHOT</version>
+  <version>2.10.4-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Javadoc Plugin</name>
@@ -51,19 +51,19 @@ under the License.
   </scm>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MJAVADOC</url>
+    <url>https://issues.apache.org/jira/browse/MJAVADOC</url>
   </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
-    <doxiaVersion>1.0</doxiaVersion>
-    <doxia-sitetoolsVersion>1.0</doxia-sitetoolsVersion>
+    <doxiaVersion>1.4</doxiaVersion>
+    <doxia-sitetoolsVersion>1.4</doxia-sitetoolsVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
     <!-- for ITs -->
     <sitePluginVersion>3.3</sitePluginVersion>
@@ -295,6 +295,8 @@ under the License.
               <exclude>src/main/resources/org/apache/maven/plugin/javadoc/frame-injection-fix.txt</exclude>
               <!-- Original POM file that is used in a repository -->
               <exclude>src/test/resources/unit/test-javadoc-test/junit/junit/3.8.1/junit-3.8.1.pom</exclude>
+              <!-- temporary file that sometimes stays after a failure then completely blocks build -->
+              <exclude>javadoc-options-javadoc-resources.xml</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -402,6 +404,7 @@ under the License.
                 <pomInclude>MJAVADOC-365/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-369/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-407/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-414/pom.xml</pomInclude>
               </pomIncludes>
             </configuration>
           </plugin>

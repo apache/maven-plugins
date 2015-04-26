@@ -44,21 +44,6 @@ public class EclipseWorkspaceIT
         super.setUp();
     }
 
-    public void testWorkspace01()
-        throws Exception
-    {
-        String projectName = "workspace-01";
-
-        FileUtils.deleteDirectory( this.getTestWorkspaceWorkDirectory( "add-maven-repo" ) );
-        testWorkspace( projectName, "add-maven-repo" );
-
-        this.validateM2REPOVar( projectName );
-
-        File eclipseJDTUIPrefsFile = new File( this.getOutputDirectory( projectName ), ECLIPSE_JDT_UI_PREFS_PATH );
-
-        assertFalse( eclipseJDTUIPrefsFile.exists() );
-    }
-
     public void testWorkspace02()
         throws Exception
     {

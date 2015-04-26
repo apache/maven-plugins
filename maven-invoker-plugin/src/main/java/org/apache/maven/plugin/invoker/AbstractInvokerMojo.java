@@ -20,6 +20,7 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -424,7 +425,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * mavenExecutable can either be a file relative to <code>${maven.home}/bin/</code> or an absolute file.
-     * 
+     *
      * @since 1.8
      * @see Invoker#setMavenExecutable(File)
      */
@@ -481,64 +482,67 @@ public abstract class AbstractInvokerMojo
      * <code>${project.version}</code> to reference project properties or values from the parameter
      * {@link #filterProperties}. The snippet below describes the supported properties:
      * <p/>
-     * 
+     *
      * <pre>
      * # A comma or space separated list of goals/phases to execute, may
      * # specify an empty list to execute the default goal of the IT project
      * invoker.goals = clean install
-     * 
+     *
+     * # Or you can give things like this if you need.
+     * invoker.goals = -T2 clean verify
+     *
      * # Optionally, a list of goals to run during further invocations of Maven
      * invoker.goals.2 = ${project.groupId}:${project.artifactId}:${project.version}:run
-     * 
+     *
      * # A comma or space separated list of profiles to activate
      * invoker.profiles = its,jdk15
-     * 
+     *
      * # The path to an alternative POM or base directory to invoke Maven on, defaults to the
      * # project that was originally specified in the plugin configuration
      * # Since plugin version 1.4
      * invoker.project = sub-module
-     * 
+     *
      * # The value for the environment variable MAVEN_OPTS
      * invoker.mavenOpts = -Dfile.encoding=UTF-16 -Xms32m -Xmx256m
-     * 
+     *
      * # Possible values are &quot;fail-fast&quot; (default), &quot;fail-at-end&quot; and &quot;fail-never&quot;
      * invoker.failureBehavior = fail-never
-     * 
+     *
      * # The expected result of the build, possible values are &quot;success&quot; (default) and &quot;failure&quot;
      * invoker.buildResult = failure
-     * 
+     *
      * # A boolean value controlling the aggregator mode of Maven, defaults to &quot;false&quot;
      * invoker.nonRecursive = true
-     * 
+     *
      * # A boolean value controlling the network behavior of Maven, defaults to &quot;false&quot;
      * # Since plugin version 1.4
      * invoker.offline = true
-     * 
+     *
      * # The path to the properties file from which to load system properties, defaults to the
      * # filename given by the plugin parameter testPropertiesFile
      * # Since plugin version 1.4
      * invoker.systemPropertiesFile = test.properties
-     * 
+     *
      * # An optional human friendly name for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.name = Test Build 01
-     * 
+     *
      * # An optional description for this build job to be included in the build reports.
      * # Since plugin version 1.4
      * invoker.description = Checks the support for build reports.
-     * 
+     *
      * # A comma separated list of JRE versions on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.java.version = 1.4+, !1.4.1, 1.7-
-     * 
+     *
      * # A comma separated list of OS families on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.os.family = !windows, unix, mac
-     * 
+     *
      * # A comma separated list of Maven versions on which this build should be run.
      * # Since plugin version 1.5
      * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
-     * 
+     *
      * # A boolean value controlling the debug logging level of Maven, , defaults to &quot;false&quot;
      * # Since plugin version 1.8
      * invoker.debug = true
@@ -582,7 +586,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Additional environment variables to set on the command line.
-     * 
+     *
      * @since 1.8
      */
     @Parameter
@@ -590,7 +594,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Additional variables for use in the hook scripts.
-     * 
+     *
      * @since 1.9
      */
     @Parameter
@@ -617,16 +621,6 @@ public abstract class AbstractInvokerMojo
      * The version of Maven which is used to run the builds
      */
     private String actualMavenVersion;
-
-    /**
-     * The version of the JRE which is used to run the builds
-     */
-    private String actualJreVersion;
-
-    private void setActualJreVersion( String actualJreVersion )
-    {
-        this.actualJreVersion = actualJreVersion;
-    }
 
     /**
      * Invokes Maven on the configured test projects.
@@ -742,7 +736,46 @@ public abstract class AbstractInvokerMojo
 
         runBuilds( projectsDir, buildJobs );
 
+        writeSummaryFile( buildJobs );
+
         processResults( new InvokerSession( buildJobs ) );
+
+    }
+
+    private void writeSummaryFile( BuildJob[] buildJobs )
+        throws MojoExecutionException
+    {
+
+        File summaryReportFile = new File( reportsDirectory, "invoker-summary.txt" );
+
+        try
+        {
+            Writer writer = new BufferedWriter( new FileWriter( summaryReportFile ) );
+
+            for ( int i = 0; i < buildJobs.length; i++ )
+            {
+                BuildJob buildJob = buildJobs[i];
+                if ( !buildJob.getResult().equals( BuildJob.Result.SUCCESS ) )
+                {
+                    writer.append( buildJob.getResult() );
+                    writer.append( " [" );
+                    writer.append( buildJob.getProject() );
+                    writer.append( "] " );
+                    if ( buildJob.getFailureMessage() != null )
+                    {
+                        writer.append( " " );
+                        writer.append( buildJob.getFailureMessage() );
+                    }
+                    writer.append( "\n" );
+                }
+            }
+
+            writer.close();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to write summary report " + summaryReportFile, e );
+        }
     }
 
     protected void doFailIfNoProjects()
@@ -975,6 +1008,21 @@ public abstract class AbstractInvokerMojo
                 {
                     buildInterpolatedFile( pomFile, pomFile );
                 }
+
+                //MINVOKER-186
+                //The following is a temporary solution to support Maven 3.3.1 (.mvn/extensions.xml) filtering
+                //Will be replaced by MINVOKER-117 with general filtering mechanism
+                File baseDir = pomFile.getParentFile();
+                File mvnDir = new File( baseDir, ".mvn" );
+                if ( mvnDir.isDirectory() )
+                {
+                    File extensionsFile = new File( mvnDir, "extensions.xml" );
+                    if ( extensionsFile.isFile() )
+                    {
+                        buildInterpolatedFile( extensionsFile, extensionsFile );
+                    }
+                }
+                //END MINVOKER-186
             }
             filteredPomPrefix = null;
         }
@@ -993,7 +1041,7 @@ public abstract class AbstractInvokerMojo
     }
 
     /**
-     * Copied a directory structure with deafault exclusions (.svn, CVS, etc)
+     * Copied a directory structure with default exclusions (.svn, CVS, etc)
      *
      * @param sourceDir The source directory to copy, must not be <code>null</code>.
      * @param destDir The target directory to copy to, must not be <code>null</code>.
@@ -1022,6 +1070,9 @@ public abstract class AbstractInvokerMojo
             File sourceFile = new File( sourceDir, includedFile );
             File destFile = new File( destDir, includedFile );
             FileUtils.copyFile( sourceFile, destFile );
+
+            //ensure clone project must be writable for additional changes
+            destFile.setWritable( true );
         }
     }
 
@@ -1157,9 +1208,11 @@ public abstract class AbstractInvokerMojo
         }
         scriptRunner.setGlobalVariable( "mavenVersion", actualMavenVersion );
 
+        final CharSequence actualJreVersion;
+        // @todo if ( javaVersions ) ... to be picked up from toolchains
         if ( javaHome != null )
         {
-            resolveExternalJreVersion();
+            actualJreVersion = resolveExternalJreVersion();
         }
         else
         {
@@ -1181,7 +1234,7 @@ public abstract class AbstractInvokerMojo
                         {
                             try
                             {
-                                runBuild( projectsDir, job, finalSettingsFile );
+                                runBuild( projectsDir, job, finalSettingsFile, javaHome, actualJreVersion );
                             }
                             catch ( MojoExecutionException e )
                             {
@@ -1206,7 +1259,7 @@ public abstract class AbstractInvokerMojo
             {
                 for ( BuildJob job : buildJobs )
                 {
-                    runBuild( projectsDir, job, finalSettingsFile );
+                    runBuild( projectsDir, job, finalSettingsFile, javaHome, actualJreVersion );
                 }
             }
         }
@@ -1263,7 +1316,7 @@ public abstract class AbstractInvokerMojo
         }
     }
 
-    private void resolveExternalJreVersion()
+    private CharSequence resolveExternalJreVersion()
     {
         Artifact pluginArtifact = mojoExecution.getMojoDescriptor().getPluginDescriptor().getPluginArtifact();
         pluginArtifact.getFile();
@@ -1275,11 +1328,12 @@ public abstract class AbstractInvokerMojo
         commandLine.createArg().setValue( SystemPropertyPrinter.class.getName() );
         commandLine.createArg().setValue( "java.version" );
 
+        final StringBuilder actualJreVersion = new StringBuilder();
         StreamConsumer consumer = new StreamConsumer()
         {
             public void consumeLine( String line )
             {
-                setActualJreVersion( line );
+                actualJreVersion.append( line );
             }
         };
         try
@@ -1290,6 +1344,7 @@ public abstract class AbstractInvokerMojo
         {
             getLog().warn( e.getMessage() );
         }
+        return actualJreVersion;
     }
 
     /**
@@ -1301,7 +1356,8 @@ public abstract class AbstractInvokerMojo
      *            the current user settings.
      * @throws org.apache.maven.plugin.MojoExecutionException If the project could not be launched.
      */
-    private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile )
+    private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile, File actualJavaHome,
+                           CharSequence actualJreVersion )
         throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, buildJob.getProject() );
@@ -1348,14 +1404,16 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            int selection = getSelection( invokerProperties );
+            int selection = getSelection( invokerProperties, actualJreVersion );
             if ( selection == 0 )
             {
                 long milliseconds = System.currentTimeMillis();
                 boolean executed;
                 try
                 {
-                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, invokerProperties );
+                    // CHECKSTYLE_OFF: LineLength
+                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome, invokerProperties );
+                    // CHECKSTYLE_ON: LineLength
                 }
                 finally
                 {
@@ -1457,7 +1515,7 @@ public abstract class AbstractInvokerMojo
      * @return <code>0</code> if the job corresponding to the properties should be run, otherwise a bitwise value
      *         representing the reason why it should be skipped.
      */
-    private int getSelection( InvokerProperties invokerProperties )
+    private int getSelection( InvokerProperties invokerProperties, CharSequence actualJreVersion )
     {
         int selection = 0;
         if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion(), actualMavenVersion ) )
@@ -1465,7 +1523,7 @@ public abstract class AbstractInvokerMojo
             selection |= SELECTOR_MAVENVERSION;
         }
 
-        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion ) )
+        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion.toString() ) )
         {
             selection |= SELECTOR_JREVERSION;
         }
@@ -1545,7 +1603,8 @@ public abstract class AbstractInvokerMojo
      * @throws org.apache.maven.shared.scriptinterpreter.RunFailureException If either a hook script or the build itself
      *             failed.
      */
-    private boolean runBuild( File basedir, File pomFile, File settingsFile, InvokerProperties invokerProperties )
+    private boolean runBuild( File basedir, File pomFile, File settingsFile, File actualJavaHome,
+                              InvokerProperties invokerProperties )
         throws MojoExecutionException, RunFailureException
     {
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
@@ -1615,9 +1674,9 @@ public abstract class AbstractInvokerMojo
                 invoker.setMavenExecutable( new File( mavenExecutable ) );
             }
 
-            if ( javaHome != null )
+            if ( actualJavaHome != null )
             {
-                request.setJavaHome( javaHome );
+                request.setJavaHome( actualJavaHome );
             }
 
             if ( environmentVariables != null )

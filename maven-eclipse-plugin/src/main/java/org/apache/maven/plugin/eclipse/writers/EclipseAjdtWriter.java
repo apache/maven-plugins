@@ -148,14 +148,9 @@ public class EclipseAjdtWriter
 
         String path;
 
-        if ( dep.isReferencedProject() && !config.isPde() )
+        if ( dep.isReferencedProject() )
         {
             path = "/" + dep.getEclipseProjectName(); //$NON-NLS-1$
-        }
-        else if ( dep.isReferencedProject() && config.isPde() )
-        {
-            // don't do anything, referenced projects are automatically handled by eclipse in PDE builds
-            return;
         }
         else
         {
@@ -181,34 +176,18 @@ public class EclipseAjdtWriter
             {
                 File localRepositoryFile = new File( config.getLocalRepository().getBasedir() );
 
-                // if the dependency is not provided and the plugin runs in "pde mode", the dependency is
-                // added to the Bundle-Classpath:
-                if ( config.isPde() && ( dep.isProvided() || dep.isOsgiBundle() ) )
+                String fullPath = artifactPath.getPath();
+                String relativePath =
+                    IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
+
+                if ( !new File( relativePath ).isAbsolute() )
                 {
-                    return;
+                    path = EclipseClasspathWriter.M2_REPO + "/" //$NON-NLS-1$
+                        + relativePath;
                 }
-                else if ( config.isPde() && !dep.isProvided() && !dep.isTestDependency() )
-                {
-                    // path for link created in .project, not to the actual file
-                    path = dep.getFile().getName();
-                }
-                // running in PDE mode and the dependency is provided means, that it is provided by
-                // the target platform. This case is covered by adding the plugin container
                 else
                 {
-                    String fullPath = artifactPath.getPath();
-                    String relativePath =
-                        IdeUtils.toRelativeAndFixSeparator( localRepositoryFile, new File( fullPath ), false );
-
-                    if ( !new File( relativePath ).isAbsolute() )
-                    {
-                        path = EclipseClasspathWriter.M2_REPO + "/" //$NON-NLS-1$
-                            + relativePath;
-                    }
-                    else
-                    {
-                        path = relativePath;
-                    }
+                    path = relativePath;
                 }
             }
         }

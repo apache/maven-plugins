@@ -18,25 +18,28 @@
  */
 package org.apache.maven.plugin.ide;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assume.assumeTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import junit.framework.TestCase;
-
 import org.apache.maven.model.Dependency;
 import org.codehaus.plexus.util.Os;
+import org.junit.Test;
 
 /**
  * Test for {@link IdeUtils}
- * 
+ *
  * @author <a href="mailto:carlos@apache.org">Carlos Sanchez</a>
  * @version $Id$
  */
 public class IdeUtilsTest
-    extends TestCase
 {
 
+    @Test
     public void testGetProjectNameStringIdeDependency()
     {
         IdeDependency dependency = new IdeDependency();
@@ -60,16 +63,15 @@ public class IdeUtilsTest
     /**
      * When the file to add is on a different drive and an absolute path expect that the returned value is the same as
      * the file to add (but with /s)
-     * 
+     *
      * @throws Exception
      */
+    @Test
     public void testToRelativeAndFixSeparator_WhereOnDifferentDrivesAndAbsolutePaths()
         throws Exception
     {
-        if ( !Os.isFamily( Os.FAMILY_WINDOWS ) )
-        {
-            return;
-        }
+        assumeTrue(Os.isFamily( Os.FAMILY_WINDOWS ) );
+
         File basedir = new File( "C:\\TEMP\\EclipsePlugin.unitTest.1165557188766\\" );
         File fileToAdd = new File( "D:\\ide\\workspace\\maven\\maven-eclipse-plugin\\target\\main-output" );
         try
@@ -95,13 +97,11 @@ public class IdeUtilsTest
      * 
      * @throws Exception
      */
+    @Test
     public void testToRelativeAndFixSeparator_WhereOnDifferentDrivesAndFileToAddRelative()
         throws Exception
     {
-        if ( !Os.isFamily( Os.FAMILY_WINDOWS ) )
-        {
-            return;
-        }
+        assumeTrue(Os.isFamily( Os.FAMILY_WINDOWS ) );
 
         File basedir = new File( "C:\\TEMP\\EclipsePlugin.unitTest.1165557188766\\" );
         File fileToAdd = new File( "target/main-output" );
@@ -123,13 +123,11 @@ public class IdeUtilsTest
      * 
      * @throws Exception
      */
+    @Test
     public void testToRelativeAndFixSeparator_MECLIPSE_261()
         throws Exception
     {
-        if ( !Os.isFamily( Os.FAMILY_WINDOWS ) )
-        {
-            return;
-        }
+        assumeTrue(Os.isFamily( Os.FAMILY_WINDOWS ) );
 
         File basedir = new File( new File( "" ).getAbsolutePath().substring( 0, 3 ) );
         File fileToAdd = new File( "target/main-output" );
@@ -139,7 +137,8 @@ public class IdeUtilsTest
 
         assertEquals( expected, actual );
     }
-    
+
+    @Test
     public void testGetArtifactVersion()
     {
         Dependency dep = new Dependency();

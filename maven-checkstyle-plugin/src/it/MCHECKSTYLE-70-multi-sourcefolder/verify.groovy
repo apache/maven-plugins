@@ -20,4 +20,4 @@
 def buildLog = new File( basedir, 'build.log' )
 
 // 3 errors in src/additional/java and 2 errors in src/test-additional/java
-assert buildLog.text.contains( "[INFO] There are 5 checkstyle errors." )
+assert buildLog.text.contains( "[INFO] There are 5 errors reported by Checkstyle" )

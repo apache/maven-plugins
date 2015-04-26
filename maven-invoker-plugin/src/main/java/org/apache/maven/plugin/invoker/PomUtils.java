@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Provides utility methods for POM processing.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class PomUtils
@@ -40,7 +40,7 @@ class PomUtils
 
     /**
      * Loads the (raw) model from the specified POM file.
-     * 
+     *
      * @param pomFile The path to the POM file to load, must not be <code>null</code>.
      * @return The raw model, never <code>null</code>.
      * @throws MojoExecutionException If the POM file could not be loaded.

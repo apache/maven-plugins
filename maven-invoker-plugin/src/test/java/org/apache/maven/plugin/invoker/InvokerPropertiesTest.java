@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 /**
  * Tests the invoker properties facade.
- * 
+ *
  * @author Benjamin Bentmann
  * @version $Id$
  */

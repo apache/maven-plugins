@@ -59,4 +59,9 @@ public class TestResourcesBundleMojo
         return testJavadocDirectory;
     }
 
+    @Override
+    protected boolean isTest()
+    {
+        return true;
+    }
 }
