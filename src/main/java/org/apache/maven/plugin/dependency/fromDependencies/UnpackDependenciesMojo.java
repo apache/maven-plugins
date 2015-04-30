@@ -95,7 +95,7 @@ public class UnpackDependenciesMojo
 
         for ( Artifact artifact : dss.getSkippedDependencies() )
         {
-            getLog().info( artifact.getFile().getName() + " already exists in destination." );
+            getLog().info( artifact.getId() + " already exists in destination." );
         }
     }
 
