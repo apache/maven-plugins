@@ -146,7 +146,7 @@ public class CheckstyleViolationCheckMojoTest
 
         } );
 
-        setVariableValueToObject( mojo, "configLocation", "config/sun_checks.xml" );
+        setVariableValueToObject( mojo, "configLocation", "sun_checks.xml" );
         setVariableValueToObject( mojo, "cacheFile", getBasedir() + "/target/classes/checkstyle-cachefile" );
         setVariableValueToObject( mojo, "sourceDirectory", new File( getBasedir(), "src/test/plugin-configs/src" ));// new File( getBasedir() + "/target" ) );
         setVariableValueToObject( mojo, "encoding", "UTF-8" );

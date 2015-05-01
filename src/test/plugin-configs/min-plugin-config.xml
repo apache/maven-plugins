@@ -29,7 +29,7 @@ under the License.
           <enableFilesSummary>true</enableFilesSummary>
           <enableRSS>true</enableRSS>
           <includes>**/*.java</includes>
-          <configLocation>config/sun_checks.xml</configLocation>
+          <configLocation>sun_checks.xml</configLocation>
           <format>sun</format>
           <headerLocation>${basedir}/src/test/test-sources/LICENSE.txt</headerLocation>
           <cacheFile>${basedir}/target/test-harness/checkstyle/min/checkstyle-cachefile</cacheFile>

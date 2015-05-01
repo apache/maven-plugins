@@ -58,7 +58,7 @@ public class CheckstyleReport
     {
         Map<String, String> fmt2Cfg = new HashMap<String, String>();
 
-        fmt2Cfg.put( "sun", "config/sun_checks.xml" );
+        fmt2Cfg.put( "sun", "sun_checks.xml" );
         fmt2Cfg.put( "maven", "config/maven_checks.xml" );
 
         FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
@@ -245,7 +245,7 @@ public class CheckstyleReport
     private void mergeDeprecatedInfo()
         throws MavenReportException
     {
-        if ( "config/sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
+        if ( "sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
         {
             configLocation = FORMAT_TO_CONFIG_LOCATION.get( format );
 

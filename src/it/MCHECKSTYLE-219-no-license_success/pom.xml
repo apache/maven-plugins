@@ -32,7 +32,7 @@
   </properties>
 
   <description>
-    The default configLocation (i.e. config/sun_checks.xml ) doesn't check for headers, so it doesn't matter if the LICENSE.txt couldn't be found.
+    The default configLocation (i.e. sun_checks.xml ) doesn't check for headers, so it doesn't matter if the LICENSE.txt couldn't be found.
   </description>
 
   <build>

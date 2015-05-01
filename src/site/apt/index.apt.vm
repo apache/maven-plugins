@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2015-03-04
+ 2015-05-01
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -36,8 +36,8 @@ ${project.name}
   {{{./examples/upgrading-checkstyle.html}upgrade the version used at runtime}}.
 
   The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
-  {{{./config/sun_checks.html}<<<sun_checks.xml>>>}} and
-  {{{/shared/maven-shared-resources/maven_checks.html}<<<maven_checks.xml>>>}}. You can also use a custom ruleset by
+  {{{http://checkstyle.sourceforge.net/sun_style.html}<<<sun_checks.xml>>>}} and
+  {{{/shared/maven-shared-resources/maven_checks.html}<<<config/maven_checks.xml>>>}}. You can also use a custom ruleset by
   specifying it in the plugin configuration.
 
 * Goals Overview
