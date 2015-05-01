@@ -63,6 +63,12 @@ public abstract class AbstractFromConfigurationMojo
     private File outputDirectory;
 
     /**
+     * Indicates if the output directory should be purged before writing to it for the first time.
+     */
+    @Parameter( property = "purgeOutputDirectory", defaultValue = "false" )
+    private boolean purgeOutputDirectory;
+
+    /**
      * Overwrite release artifacts
      *
      * @since 1.0
@@ -160,6 +166,11 @@ public abstract class AbstractFromConfigurationMojo
             {
                 artifactItem.setOutputDirectory( this.outputDirectory );
             }
+
+            if (artifactItem.shouldPurgeOutputDirectory() == null) {
+                artifactItem.setPurgeOutputDirectory(purgeOutputDirectory);
+            }
+
             artifactItem.getOutputDirectory().mkdirs();
 
             // make sure we have a version.
@@ -466,6 +477,22 @@ public abstract class AbstractFromConfigurationMojo
     public void setOutputDirectory( File theOutputDirectory )
     {
         this.outputDirectory = theOutputDirectory;
+    }
+
+    /**
+     * Returns if the output directory should be purged before writing to it.
+     */
+    public boolean shouldPurgeOutputDirectory() {
+        return purgeOutputDirectory;
+    }
+
+    /**
+     * Sets if the output directory should be purged before writing to it.
+     *
+     * @param purgeOutputDirectory true to purge before writing
+     */
+    public void setPurgeOutputDirectory(boolean purgeOutputDirectory) {
+        this.purgeOutputDirectory = purgeOutputDirectory;
     }
 
     /**

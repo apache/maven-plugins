@@ -19,6 +19,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * under the License.
  */
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
@@ -31,7 +32,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Goal that retrieves a list of artifacts from the repository and unpacks them in a defined location.
@@ -99,9 +104,12 @@ public class UnpackMojo
         verifyRequirements();
 
         List<ArtifactItem> processedItems = getProcessedArtifactItems( false );
+        Set<String> purgedOutputDirectories = purgeOutputDirectories(processedItems);
+
         for ( ArtifactItem artifactItem : processedItems )
         {
-            if ( artifactItem.isNeedsProcessing() )
+            if ( artifactItem.isNeedsProcessing()
+                    || purgedOutputDirectories.contains(artifactItem.getOutputDirectory().getAbsolutePath()) )
             {
                 unpackArtifact( artifactItem );
             }
@@ -110,6 +118,67 @@ public class UnpackMojo
                 this.getLog().info( artifactItem.getArtifact().getFile().getName() + " already unpacked." );
             }
         }
+    }
+
+    /**
+     * Processes a list of artifacts and gets a map indicating for each output folder if it should be purged or not.
+     *
+     * @param artifactItems all the artifact items to be processed
+     * @return a {@link Map} where the key is the output folder and the value is true of false depending on whether
+     * the output folder should be purged or not
+     * @throws MojoExecutionException if conflicting settings for purging the output folders are found in the
+     * artifacts
+     */
+    private Map<String, Boolean> getPurgeFlagsByOutputDirectory(List<ArtifactItem> artifactItems)
+            throws MojoExecutionException {
+        HashMap<String, Boolean> purgeFlagsByOutputDirectory = new HashMap<String, Boolean>();
+
+        for (ArtifactItem artifactItem : artifactItems) {
+            String outputDirectoryPath = artifactItem.getOutputDirectory().getAbsolutePath();
+
+            Boolean purgeFlag = purgeFlagsByOutputDirectory.get(outputDirectoryPath);
+
+            if (purgeFlag == null) {
+                purgeFlagsByOutputDirectory.put(outputDirectoryPath, artifactItem.shouldPurgeOutputDirectory());
+            } else if (purgeFlag && !artifactItem.shouldPurgeOutputDirectory()) {
+                throw new MojoExecutionException(
+                        "Conflicting settings for purgeOutputDirectory set for the artifacts. "
+                                + "purgeOutputDirectory for the same outputFolder should have the same "
+                                + "value in all artifacts.");
+            }
+        }
+
+        return purgeFlagsByOutputDirectory;
+    }
+
+    /**
+     * Purges the output directories of the input artifact items which require purging.
+     *
+     * @param artifactItems the artifact items whose output directories should be purged
+     * @return a {@link Set} with the paths of all purged output directories
+     * @throws MojoExecutionException in case of an error while purging the required output directories
+     */
+    private Set<String> purgeOutputDirectories(
+            List<ArtifactItem> artifactItems)
+            throws MojoExecutionException {
+        Map<String, Boolean> purgeFlagsByOutputDirectory = getPurgeFlagsByOutputDirectory(artifactItems);
+        HashSet<String> purgedOutputDirectories = new HashSet<String>();
+
+        for (ArtifactItem artifactItem : artifactItems) {
+            if (!artifactItem.isNeedsProcessing()) {
+                continue;
+            }
+
+            String outputDirectoryPath = artifactItem.getOutputDirectory().getAbsolutePath();
+
+            if (!purgedOutputDirectories.contains(outputDirectoryPath)
+                    && purgeFlagsByOutputDirectory.get(outputDirectoryPath)) {
+                purge(artifactItem.getOutputDirectory());
+                purgedOutputDirectories.add(outputDirectoryPath);
+            }
+        }
+
+        return purgedOutputDirectories;
     }
 
     /**

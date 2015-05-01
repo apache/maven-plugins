@@ -20,11 +20,15 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
@@ -33,6 +37,7 @@ import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
+import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactCollector;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
@@ -538,6 +543,236 @@ public class TestUnpackMojo
         System.out.println( "unpackedFile.lastModified() = " + unpackedFile.lastModified() );
         assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + marker.lastModified() + ": should be different",
                     marker.lastModified() != unpackedFile.lastModified() );
+    }
+
+    public void testPurgeOutputDirectory()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        ArtifactItem item = new ArtifactItem(artifact);
+
+        FileUtils.deleteDirectory(mojo.getOutputDirectory());
+        mojo.getOutputDirectory().mkdirs();
+
+        File file = new File(mojo.getOutputDirectory(), "file.txt");
+        file.createNewFile();
+
+        List<ArtifactItem> list = Collections.singletonList(item);
+        mojo.setArtifactItems(list);
+        mojo.setOverWriteIfNewer(true);
+        mojo.setPurgeOutputDirectory(true);
+        mojo.execute();
+
+        assertFalse(
+                "Output directory is not purged when purging is configured on global level.",
+                file.exists());
+    }
+
+    public void testPurgeOutputDirectoryConfiguredInArtifact()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        ArtifactItem item = new ArtifactItem(artifact);
+        item.setPurgeOutputDirectory(true);
+
+        FileUtils.deleteDirectory(mojo.getOutputDirectory());
+        mojo.getOutputDirectory().mkdirs();
+
+        File file = new File(mojo.getOutputDirectory(), "file.txt");
+        file.createNewFile();
+
+        List<ArtifactItem> list = Collections.singletonList(item);
+        mojo.setArtifactItems(list);
+        mojo.setOverWriteIfNewer(true);
+        mojo.execute();
+
+        assertFalse(
+                "Output directory is not purged when purging is configured on artifact level.",
+                file.exists());
+    }
+
+    public void testPurgeOutputDirectoryNotConfigured()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        ArtifactItem item = new ArtifactItem(artifact);
+
+        FileUtils.deleteDirectory(mojo.getOutputDirectory());
+        mojo.getOutputDirectory().mkdirs();
+
+        File file = new File(mojo.getOutputDirectory(), "file.txt");
+        file.createNewFile();
+
+        List<ArtifactItem> list = Collections.singletonList(item);
+        mojo.setArtifactItems(list);
+        mojo.setOverWriteIfNewer(true);
+        mojo.execute();
+
+        assertTrue(
+                "Output directory is purged incorrectly when output directory purging is not configured.",
+                file.exists());
+    }
+
+    public void testPurgeOutputDirectoryNoProcessing()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+        Artifact artifact = stubFactory.getSnapshotArtifact();
+        ArtifactItem item = new ArtifactItem(artifact);
+
+        // manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
+        File marker = new File( mojo.getMarkersDirectory(), artifact.getId().replace( ':', '-' ) + ".marker" );
+        marker.mkdirs();
+        marker.createNewFile();
+
+        FileUtils.deleteDirectory(mojo.getOutputDirectory());
+        mojo.getOutputDirectory().mkdirs();
+
+        File file = new File(mojo.getOutputDirectory(), "file.txt");
+        file.createNewFile();
+
+        List<ArtifactItem> list = Collections.singletonList(item);
+        mojo.setArtifactItems(list);
+        mojo.setPurgeOutputDirectory(true);
+        mojo.setOverWriteIfNewer(false);
+        mojo.execute();
+
+        assertTrue(
+                "Output directory is purged incorrectly when artifact does not have to unpack.",
+                file.exists());
+    }
+
+    /**
+     * Tests if artifact will be unpacked when no processing is required but the output folder is purged
+     * for another artifact.
+     */
+    public void testUnpackWhenNoProcessingRequiredButOutputIsPurged()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+
+        Artifact artifact1 =  stubFactory.createArtifact("group1", "artifact1", "version1", "scope1", "jar", "dev");
+        ArtifactItem artifactItem1 = new ArtifactItem(artifact1);
+        Artifact artifact2 =  stubFactory.createArtifact("group2", "artifact2", "version2", "scope2", "jar", "dev");
+        ArtifactItem artifactItem2 = new ArtifactItem(artifact2);
+
+        List<ArtifactItem> artifactItems = java.util.Arrays.asList(artifactItem1, artifactItem2);
+
+        // manually set markerfile (must match getMarkerFile in DefaultMarkerFileHandler)
+        File marker = new File( mojo.getMarkersDirectory(), artifact1.getId().replace( ':', '-' ) + ".marker" );
+        marker.mkdirs();
+        marker.createNewFile();
+
+        FileUtils.deleteDirectory(mojo.getOutputDirectory());
+        mojo.getOutputDirectory().mkdirs();
+
+        mojo.setArtifactItems(artifactItems);
+        mojo.setPurgeOutputDirectory(true);
+        mojo.setOverWriteIfNewer(false);
+        mojo.execute();
+
+        File artifact1UnpackedFile = new File(
+                artifactItem1.getOutputDirectory(), ArtifactStubFactory.getUnpackableFileName(artifact1));
+
+        assertTrue(
+                "Artifact not unpacked if output folder is purged because of a different artifact.",
+                artifact1UnpackedFile.exists());
+
+        File artifact2UnpackedFile = new File(
+                artifactItem2.getOutputDirectory(), ArtifactStubFactory.getUnpackableFileName(artifact2));
+
+        assertTrue(
+                "Artifact not unpacked if output folder is purged.",
+                artifact2UnpackedFile.exists());
+    }
+
+    public void testPurgeOutputDirectoryMultipleOutputFolders()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+        Artifact artifact1 = stubFactory.getSnapshotArtifact();
+        Artifact artifact2 = stubFactory.getReleaseArtifact();
+
+        ArtifactItem artifactItem1 = new ArtifactItem(artifact1);
+        artifactItem1.setOutputDirectory(new File(mojo.getOutputDirectory(), "output1"));
+        artifactItem1.getOutputDirectory().mkdirs();
+        artifactItem1.setPurgeOutputDirectory(true);
+
+        ArtifactItem artifactItem2 = new ArtifactItem(artifact2);
+        artifactItem2.setOutputDirectory(new File(mojo.getOutputDirectory(), "output2"));
+        artifactItem2.getOutputDirectory().mkdirs();
+        artifactItem2.setPurgeOutputDirectory(true);
+
+        ArtifactItem artifactItem3 = new ArtifactItem(artifact2);
+        artifactItem3.setOutputDirectory(new File(mojo.getOutputDirectory(), "output3"));
+        artifactItem3.getOutputDirectory().mkdirs();
+        artifactItem3.setPurgeOutputDirectory(false);
+
+        List<ArtifactItem> list = java.util.Arrays.asList(artifactItem1, artifactItem2, artifactItem3);
+
+        File file1 = new File(artifactItem1.getOutputDirectory(), "file.txt");
+        file1.createNewFile();
+
+        File file2 = new File(artifactItem2.getOutputDirectory(), "file.txt");
+        file2.createNewFile();
+
+        File file3 = new File(artifactItem3.getOutputDirectory(), "file.txt");
+        file3.createNewFile();
+
+        mojo.setArtifactItems(list);
+        mojo.setPurgeOutputDirectory(true);
+        mojo.setOverWriteIfNewer(false);
+        mojo.execute();
+
+        assertFalse(
+                "Output directory for artifact 1 is not purged in case of multiple artifacts.",
+                file1.exists());
+
+        assertFalse(
+                "Output directory for artifact 2 is not purged in case of multiple artifacts.",
+                file2.exists());
+
+        assertTrue(
+                "Output directory for artifact 3 is purged incorrectly in case of multiple artifacts.",
+                file3.exists());
+    }
+
+    public void testPurgeOutputDirectoryConflictingSettings()
+            throws Exception {
+        setSilent(mojo, false);
+        stubFactory.setCreateFiles(true);
+        Artifact artifact1 = stubFactory.getSnapshotArtifact();
+        Artifact artifact2 = stubFactory.getReleaseArtifact();
+
+        ArtifactItem artifactItem1 = new ArtifactItem(artifact1);
+        artifactItem1.setOutputDirectory(new File(mojo.getOutputDirectory(), "output1"));
+        artifactItem1.setPurgeOutputDirectory(true);
+
+        ArtifactItem artifactItem2 = new ArtifactItem(artifact2);
+        artifactItem2.setOutputDirectory(new File(mojo.getOutputDirectory(), "output2"));
+        artifactItem2.setPurgeOutputDirectory(true);
+
+        ArtifactItem artifactItem3 = new ArtifactItem(artifact2);
+        artifactItem3.setOutputDirectory(new File(mojo.getOutputDirectory(), "output2"));
+        artifactItem3.setPurgeOutputDirectory(false);
+
+        List<ArtifactItem> list = java.util.Arrays.asList(artifactItem1, artifactItem2, artifactItem3);
+
+        mojo.setArtifactItems(list);
+        mojo.setPurgeOutputDirectory(true);
+        mojo.setOverWriteIfNewer(false);
+
+        try {
+            mojo.execute();
+            fail("No exception is thrown when purging output directories with conflicting settings.");
+        } catch (MojoExecutionException ex) {
+            if (!ex.getMessage().contains("Conflicting settings for purgeOutputDirectory set for the artifacts")) {
+                fail("Incorrect exception is thrown when purging output directories with conflicting settings.");
+            }
+        }
     }
 
     private void displayFile( String description, File file )
