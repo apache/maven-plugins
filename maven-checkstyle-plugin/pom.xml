@@ -265,10 +265,6 @@ under the License.
               <exclude>src/it/MCHECKSTYLE-225-customHeader/build-tools/src/main/resources/test/custom-header.txt</exclude>
               <exclude>src/it/MCHECKSTYLE-225-pluginManagement/build-tools/src/main/resources/test/custom-header.txt</exclude>
               <exclude>src/it/MCHECKSTYLE-225-LICENSE.txt/build-tools/src/main/resources/LICENSE.txt</exclude>
-              <!--
-                File from the Checkstyle distribution - do not add our own license header.
-              -->
-              <exclude>src/main/resources/config/sun_checks.xml</exclude>
             </excludes>
           </configuration>
         </plugin>

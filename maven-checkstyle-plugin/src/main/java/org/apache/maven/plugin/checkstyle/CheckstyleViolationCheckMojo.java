@@ -193,13 +193,13 @@ public class CheckstyleViolationCheckMojo
      * There are 2 predefined rulesets.
      * </p>
      * <ul>
-     * <li><code>config/sun_checks.xml</code>: Sun Checks.</li>
+     * <li><code>sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
      *
      * @since 2.5
      */
-    @Parameter( property = "checkstyle.config.location", defaultValue = "config/sun_checks.xml" )
+    @Parameter( property = "checkstyle.config.location", defaultValue = "sun_checks.xml" )
     private String configLocation;
 
     /**
@@ -482,7 +482,7 @@ public class CheckstyleViolationCheckMojo
         {
             if ( checkstyleRules != null )
             {
-                if ( !"config/sun_checks.xml".equals( configLocation ) )
+                if ( !"sun_checks.xml".equals( configLocation ) )
                 {
                     throw new MojoExecutionException( "If you use inline configuration for rules, don't specify "
                         + "a configLocation" );
