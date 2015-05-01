@@ -190,10 +190,11 @@ public class CheckstyleViolationCheckMojo
      * </p>
      * <p/>
      * <p>
-     * There are 2 predefined rulesets.
+     * There are 3 predefined rulesets.
      * </p>
      * <ul>
      * <li><code>sun_checks.xml</code>: Sun Checks.</li>
+     * <li><code>google_checks.xml</code>: Google Checks.</li>
      * <li><code>config/maven_checks.xml</code>: Maven Source Checks.</li>
      * </ul>
      *

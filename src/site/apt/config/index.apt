@@ -34,6 +34,8 @@ Predefined Rulesets
 
    * {{{http://checkstyle.sourceforge.net/sun_style.html}<<<sun_checks.xml>>>}}
 
+   * {{{http://checkstyle.sourceforge.net/google_style.html}<<<google_checks.xml>>>}}
+
    * {{{/shared/maven-shared-resources/maven_checks.html}<<<config/maven_checks.xml>>>}}
 
    []
@@ -56,3 +58,7 @@ Predefined Rulesets
   <<<config/sun_checks.xml>>> predefined ruleset. This was removed in
   version 2.16 and the plugin instead references the original configuration
   provided by the Checkstyle project.
+
+  In versions 2.16 and later the plugin references the <<<google_checks.xml>>>
+  predefined ruleset. This is a configuration provided by the Checkstyle
+  project.
