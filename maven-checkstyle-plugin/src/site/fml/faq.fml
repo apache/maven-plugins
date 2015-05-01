@@ -24,7 +24,7 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="Whare is maven_checks.xml predefined ruleset">
+    <faq id="Where is maven_checks.xml predefined ruleset">
       <question>Where is <code>config/maven_checks.xml</code> predefined ruleset?</question>
       <answer>
         <p>
