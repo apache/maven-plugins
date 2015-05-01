@@ -113,7 +113,6 @@ Checkstyle rules for Basis Technology.
             <property name="illegalClassNames" value="java.lang.Error,java.lang.RuntimeException"/>
         </module>
         <module name="PackageDeclaration"/>
-        <module name="JUnitTestCase"/>
         <module name="DeclarationOrder"/>
         <module name="ExplicitInitialization"/>
         <module name="DefaultComesLast"/>
