@@ -179,8 +179,8 @@ public class EclipsePlugin
     private List projectnatures;
 
     /**
-     * List of artifacts, represented as <code>groupId:artifactId</code>, to exclude from the eclipse classpath,
-     * being provided by some eclipse classPathContainer.
+     * List of artifacts, represented as <code>groupId:artifactId</code>, to exclude from the eclipse classpath, being
+     * provided by some eclipse classPathContainer.
      *
      * @see http://jira.codehaus.org/browse/MECLIPSE-79
      * @since 2.5
@@ -310,8 +310,8 @@ public class EclipsePlugin
     private String wtpversion;
 
     /**
-     * JEE context name of the WTP module. ( ex. WEB context name ). You can use "ROOT" if you want to map the webapp
-     * to the root context.
+     * JEE context name of the WTP module. ( ex. WEB context name ). You can use "ROOT" if you want to map the webapp to
+     * the root context.
      */
     @Parameter( property = "wtpContextName" )
     private String wtpContextName;
@@ -447,6 +447,14 @@ public class EclipsePlugin
     @Parameter( property = "eclipse.wtpdefaultserver" )
     private String wtpdefaultserver;
 
+    /**
+     * If set to <code>true</code>, the standard execution environment matching the compiler settings is set as JRE. If
+     * set to <code>false</code>, the JRE matching the configured compiler-plugin executable or JAVA_HOME is selected by
+     * name, if it is configured in the workspace.
+     */
+    @Parameter( property = "eclipse.preferStandardClasspathContainer", defaultValue = "false" )
+    private boolean preferStandardClasspathContainer;
+
     private WorkspaceConfiguration workspaceConfiguration;
 
     /**
@@ -518,7 +526,8 @@ public class EclipsePlugin
     private List sourceIncludes;
 
     /**
-     * A list of links to local files in the system. A configuration like this one in the pom : 
+     * A list of links to local files in the system. A configuration like this one in the pom :
+     * 
      * <pre>
      * &lt;plugin&gt;
      *   &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
@@ -534,7 +543,9 @@ public class EclipsePlugin
      *   &lt;/configuration&gt; 
      * &lt;/plugin&gt;
      * </pre>
+     * 
      * will produce in the .project :
+     * 
      * <pre>
      * &lt;linkedResources&gt;
      *   &lt;link&gt;
@@ -549,7 +560,7 @@ public class EclipsePlugin
      */
     @Parameter
     private List linkedResources;
-    
+
     /**
      * Put classpath container entries last in eclipse classpath configuration. Note that this behaviour, although
      * useful in situations were you want to override resources found in classpath containers, will made JRE classes
@@ -559,35 +570,63 @@ public class EclipsePlugin
      */
     @Parameter( property = "eclipse.classpathContainersLast", defaultValue = "false" )
     protected boolean classpathContainersLast;
-    
+
     /**
-     * Whether to place test resources after main resources. Note that the default behavior of Maven version 2.0.8 or 
+     * Whether to place test resources after main resources. Note that the default behavior of Maven version 2.0.8 or
      * later is to have test dirs before main dirs in classpath so this is discouraged if you need to reproduce the
      * maven behavior during tests. The default behavior is also changed in eclipse plugin version 2.6 in order to
-     * better match the maven one.
-     * Switching to "test source last" can anyway be useful if you need to run your application in eclipse, since there
-     * is no concept in eclipse of "phases" with different set of source dirs and dependencies like we have in maven.
+     * better match the maven one. Switching to "test source last" can anyway be useful if you need to run your
+     * application in eclipse, since there is no concept in eclipse of "phases" with different set of source dirs and
+     * dependencies like we have in maven.
      * 
      * @since 2.9
      */
     @Parameter( property = "eclipse.testSourcesLast", defaultValue = "false" )
     protected boolean testSourcesLast;
-    
+
     /**
-     * The plugin is often capable in predicting the required jee version based on the dependencies of the project.
-     * By setting this parameter to one of the {@code jeeversion} options the version will be locked. 
-     *  
+     * The plugin is often capable in predicting the required jee version based on the dependencies of the project. By
+     * setting this parameter to one of the {@code jeeversion} options the version will be locked.
      * <table>
-     *  <thead>
-     *    <tr><th>jeeversion</th><th>EJB version</th><th>Servlet version</th><th>JSP version</th></tr>
-     *  </thead>
-     *  <tbody>
-     *    <tr><td>6.0</td><td>3.1</td><td>3.0</td><td>2.2</td></tr>
-     *    <tr><td>5.0</td><td>3.0</td><td>2.5</td><td>2.1</td></tr>
-     *    <tr><td>1.4</td><td>2.1</td><td>2.4</td><td>2.0</td></tr>
-     *    <tr><td>1.3</td><td>2.0</td><td>2.3</td><td>1.2</td></tr>
-     *    <tr><td>1.2</td><td>1.1</td><td>2.2</td><td>1.1</td></tr>
-     *  </tbody>
+     * <thead>
+     * <tr>
+     * <th>jeeversion</th>
+     * <th>EJB version</th>
+     * <th>Servlet version</th>
+     * <th>JSP version</th>
+     * </tr>
+     * </thead> <tbody>
+     * <tr>
+     * <td>6.0</td>
+     * <td>3.1</td>
+     * <td>3.0</td>
+     * <td>2.2</td>
+     * </tr>
+     * <tr>
+     * <td>5.0</td>
+     * <td>3.0</td>
+     * <td>2.5</td>
+     * <td>2.1</td>
+     * </tr>
+     * <tr>
+     * <td>1.4</td>
+     * <td>2.1</td>
+     * <td>2.4</td>
+     * <td>2.0</td>
+     * </tr>
+     * <tr>
+     * <td>1.3</td>
+     * <td>2.0</td>
+     * <td>2.3</td>
+     * <td>1.2</td>
+     * </tr>
+     * <tr>
+     * <td>1.2</td>
+     * <td>1.1</td>
+     * <td>2.2</td>
+     * <td>1.1</td>
+     * </tr>
+     * </tbody>
      * </table>
      * 
      * @since 2.9
@@ -1005,9 +1044,11 @@ public class EclipsePlugin
         boolean containsJREContainer = false;
         // Check if classpathContainer contains a JRE (default, alternate or
         // Execution Environment)
-        for (Object classPathContainer : classpathContainers) {
-            if (classPathContainer != null
-                    && classPathContainer.toString().startsWith(COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER)) {
+        for ( Object classPathContainer : classpathContainers )
+        {
+            if ( classPathContainer != null
+                && classPathContainer.toString().startsWith( COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER ) )
+            {
                 containsJREContainer = true;
                 break;
             }
@@ -1180,76 +1221,102 @@ public class EclipsePlugin
     {
         if ( additionalConfig != null )
         {
-            for (EclipseConfigFile file : additionalConfig) {
-                File projectRelativeFile = new File(eclipseProjectDir, file.getName());
-                if (projectRelativeFile.isDirectory()) {
+            for ( EclipseConfigFile file : additionalConfig )
+            {
+                File projectRelativeFile = new File( eclipseProjectDir, file.getName() );
+                if ( projectRelativeFile.isDirectory() )
+                {
                     // just ignore?
-                    getLog().warn(Messages.getString("EclipsePlugin.foundadir", //$NON-NLS-1$
-                            projectRelativeFile.getAbsolutePath()));
+                    getLog().warn( Messages.getString( "EclipsePlugin.foundadir", //$NON-NLS-1$
+                                                       projectRelativeFile.getAbsolutePath() ) );
                 }
 
-                try {
+                try
+                {
                     projectRelativeFile.getParentFile().mkdirs();
-                    if (file.getContent() == null) {
-                        if (file.getLocation() != null) {
-                            InputStream inStream = locator.getResourceAsInputStream(file.getLocation());
-                            OutputStream outStream = new FileOutputStream(projectRelativeFile);
-                            try {
-                                IOUtil.copy(inStream, outStream);
-                            } finally {
-                                IOUtil.close(inStream);
-                                IOUtil.close(outStream);
+                    if ( file.getContent() == null )
+                    {
+                        if ( file.getLocation() != null )
+                        {
+                            InputStream inStream = locator.getResourceAsInputStream( file.getLocation() );
+                            OutputStream outStream = new FileOutputStream( projectRelativeFile );
+                            try
+                            {
+                                IOUtil.copy( inStream, outStream );
                             }
-                        } else {
+                            finally
+                            {
+                                IOUtil.close( inStream );
+                                IOUtil.close( outStream );
+                            }
+                        }
+                        else
+                        {
                             URL url = file.getURL();
                             String endPointUrl = url.getProtocol() + "://" + url.getAuthority();
                             // Repository Id should be ignored by Wagon ...
-                            Repository repository = new Repository("additonal-configs", endPointUrl);
-                            Wagon wagon = wagonManager.getWagon(repository);
-                            if (logger.isDebugEnabled()) {
+                            Repository repository = new Repository( "additonal-configs", endPointUrl );
+                            Wagon wagon = wagonManager.getWagon( repository );
+                            if ( logger.isDebugEnabled() )
+                            {
                                 Debug debug = new Debug();
-                                wagon.addSessionListener(debug);
-                                wagon.addTransferListener(debug);
+                                wagon.addSessionListener( debug );
+                                wagon.addTransferListener( debug );
                             }
-                            wagon.setTimeout(1000);
+                            wagon.setTimeout( 1000 );
                             Settings settings = mavenSettingsBuilder.buildSettings();
                             ProxyInfo proxyInfo = null;
-                            if (settings != null && settings.getActiveProxy() != null) {
+                            if ( settings != null && settings.getActiveProxy() != null )
+                            {
                                 Proxy settingsProxy = settings.getActiveProxy();
 
                                 proxyInfo = new ProxyInfo();
-                                proxyInfo.setHost(settingsProxy.getHost());
-                                proxyInfo.setType(settingsProxy.getProtocol());
-                                proxyInfo.setPort(settingsProxy.getPort());
-                                proxyInfo.setNonProxyHosts(settingsProxy.getNonProxyHosts());
-                                proxyInfo.setUserName(settingsProxy.getUsername());
-                                proxyInfo.setPassword(settingsProxy.getPassword());
+                                proxyInfo.setHost( settingsProxy.getHost() );
+                                proxyInfo.setType( settingsProxy.getProtocol() );
+                                proxyInfo.setPort( settingsProxy.getPort() );
+                                proxyInfo.setNonProxyHosts( settingsProxy.getNonProxyHosts() );
+                                proxyInfo.setUserName( settingsProxy.getUsername() );
+                                proxyInfo.setPassword( settingsProxy.getPassword() );
                             }
 
-                            if (proxyInfo != null) {
-                                wagon.connect(repository, wagonManager.getAuthenticationInfo(repository.getId()), proxyInfo);
-                            } else {
-                                wagon.connect(repository, wagonManager.getAuthenticationInfo(repository.getId()));
+                            if ( proxyInfo != null )
+                            {
+                                wagon.connect( repository, wagonManager.getAuthenticationInfo( repository.getId() ),
+                                               proxyInfo );
+                            }
+                            else
+                            {
+                                wagon.connect( repository, wagonManager.getAuthenticationInfo( repository.getId() ) );
                             }
 
-                            wagon.get(url.getPath(), projectRelativeFile);
+                            wagon.get( url.getPath(), projectRelativeFile );
                         }
-                    } else {
-                        FileUtils.fileWrite(projectRelativeFile.getAbsolutePath(), file.getContent());
                     }
-                } catch (WagonException e) {
-                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.remoteexception", //$NON-NLS-1$
-                            new Object[]{file.getURL(),
-                                    e.getMessage()}));
-                } catch (IOException e) {
-                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.cantwritetofile", //$NON-NLS-1$
-                            projectRelativeFile.getAbsolutePath()));
-                } catch (ResourceNotFoundException e) {
-                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.cantfindresource", //$NON-NLS-1$
-                            file.getLocation()));
-                } catch (XmlPullParserException e) {
-                    throw new MojoExecutionException(Messages.getString("EclipsePlugin.settingsxmlfailure", //$NON-NLS-1$
-                            e.getMessage()));
+                    else
+                    {
+                        FileUtils.fileWrite( projectRelativeFile.getAbsolutePath(), file.getContent() );
+                    }
+                }
+                catch ( WagonException e )
+                {
+                    throw new MojoExecutionException(
+                                                      Messages.getString( "EclipsePlugin.remoteexception", //$NON-NLS-1$
+                                                                          new Object[] { file.getURL(), e.getMessage() } ) );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile", //$NON-NLS-1$
+                                                                          projectRelativeFile.getAbsolutePath() ) );
+                }
+                catch ( ResourceNotFoundException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantfindresource", //$NON-NLS-1$
+                                                                          file.getLocation() ) );
+                }
+                catch ( XmlPullParserException e )
+                {
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.settingsxmlfailure", //$NON-NLS-1$
+                                                                          e.getMessage() ) );
                 }
             }
         }
@@ -1301,11 +1368,15 @@ public class EclipsePlugin
 
         if ( buildcommands != null )
         {
-            for (Object cmd : buildcommands) {
-                if (cmd instanceof BuildCommand) {
-                    convertedBuildCommands.add(cmd);
-                } else {
-                    convertedBuildCommands.add(new BuildCommand((String) cmd));
+            for ( Object cmd : buildcommands )
+            {
+                if ( cmd instanceof BuildCommand )
+                {
+                    convertedBuildCommands.add( cmd );
+                }
+                else
+                {
+                    convertedBuildCommands.add( new BuildCommand( (String) cmd ) );
                 }
             }
         }
@@ -1350,31 +1421,35 @@ public class EclipsePlugin
         if ( reactorProjects != null && wtpContextName == null
             && Constants.PROJECT_PACKAGING_WAR.equals( project.getPackaging() ) )
         {
-            for (Object reactorProject1 : reactorProjects) {
+            for ( Object reactorProject1 : reactorProjects )
+            {
                 MavenProject reactorProject = (MavenProject) reactorProject1;
 
-                if (Constants.PROJECT_PACKAGING_EAR.equals(reactorProject.getPackaging())) {
+                if ( Constants.PROJECT_PACKAGING_EAR.equals( reactorProject.getPackaging() ) )
+                {
                     Xpp3Dom[] warDefinitions =
-                            IdeUtils.getPluginConfigurationDom(reactorProject, JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
-                                    new String[]{"modules", "webModule"});
-                    for (Xpp3Dom warDefinition : warDefinitions) {
-                        Xpp3Dom groupId = warDefinition.getChild("groupId");
-                        Xpp3Dom artifactId = warDefinition.getChild("artifactId");
-                        Xpp3Dom contextRoot = warDefinition.getChild("contextRoot");
-                        if (groupId != null && artifactId != null && contextRoot != null && groupId.getValue() != null
-                                && artifactId.getValue() != null && contextRoot.getValue() != null) {
-                            getLog().info(
-                                    "Found context root definition for " + groupId.getValue() + ":"
-                                            + artifactId.getValue() + " " + contextRoot.getValue());
-                            if (project.getArtifactId().equals(artifactId.getValue())
-                                    && project.getGroupId().equals(groupId.getValue())) {
-                                config.setContextName(contextRoot.getValue());
+                        IdeUtils.getPluginConfigurationDom( reactorProject, JeeUtils.ARTIFACT_MAVEN_EAR_PLUGIN,
+                                                            new String[] { "modules", "webModule" } );
+                    for ( Xpp3Dom warDefinition : warDefinitions )
+                    {
+                        Xpp3Dom groupId = warDefinition.getChild( "groupId" );
+                        Xpp3Dom artifactId = warDefinition.getChild( "artifactId" );
+                        Xpp3Dom contextRoot = warDefinition.getChild( "contextRoot" );
+                        if ( groupId != null && artifactId != null && contextRoot != null && groupId.getValue() != null
+                            && artifactId.getValue() != null && contextRoot.getValue() != null )
+                        {
+                            getLog().info( "Found context root definition for " + groupId.getValue() + ":"
+                                               + artifactId.getValue() + " " + contextRoot.getValue() );
+                            if ( project.getArtifactId().equals( artifactId.getValue() )
+                                && project.getGroupId().equals( groupId.getValue() ) )
+                            {
+                                config.setContextName( contextRoot.getValue() );
                             }
-                        } else {
-                            getLog().info(
-                                    "Found incomplete ear configuration in " + reactorProject.getGroupId() + ":"
-                                            + reactorProject.getGroupId() + " found "
-                                            + warDefinition.toString());
+                        }
+                        else
+                        {
+                            getLog().info( "Found incomplete ear configuration in " + reactorProject.getGroupId() + ":"
+                                               + reactorProject.getGroupId() + " found " + warDefinition.toString() );
                         }
                     }
                 }
@@ -1386,7 +1461,7 @@ public class EclipsePlugin
             {
                 config.setContextName( project.getArtifactId() );
             }
-            else if ( "ROOT".equals(wtpContextName) )
+            else if ( "ROOT".equals( wtpContextName ) )
             {
                 config.setContextName( "" );
             }
@@ -1473,8 +1548,7 @@ public class EclipsePlugin
 
         if ( getWorkspaceConfiguration().getDefaultClasspathContainer() != null )
         {
-            getLog().info(
-                           "Adding default classpath container: "
+            getLog().info( "Adding default classpath container: "
                                + getWorkspaceConfiguration().getDefaultClasspathContainer() );
             classpathContainers.add( getWorkspaceConfiguration().getDefaultClasspathContainer() );
         }
@@ -1544,8 +1618,7 @@ public class EclipsePlugin
             buildOutputDirectory.equals( new File( project.getBuild().getOutputDirectory() ) );
         if ( useStandardOutputDir )
         {
-            getLog().debug(
-                            "testOutput toRelativeAndFixSeparator " + projectBaseDir + " , "
+            getLog().debug( "testOutput toRelativeAndFixSeparator " + projectBaseDir + " , "
                                 + project.getBuild().getTestOutputDirectory() );
             testOutput =
                 IdeUtils.toRelativeAndFixSeparator( projectBaseDir,
@@ -1573,9 +1646,9 @@ public class EclipsePlugin
 
         // NOTE: Since MNG-3118, test classes come before main classes
         boolean testBeforeMain = isMavenVersion( "[2.0.8,)" );
-        
+
         // let users override this if needed, they need to simulate more than the test phase in eclipse
-        if (testSourcesLast)
+        if ( testSourcesLast )
         {
             testBeforeMain = false;
         }
@@ -1600,17 +1673,19 @@ public class EclipsePlugin
                                     String output )
         throws MojoExecutionException
     {
-        for (Object sourceRoot1 : sourceRoots) {
+        for ( Object sourceRoot1 : sourceRoots )
+        {
 
-            File sourceRootFile = new File((String) sourceRoot1);
+            File sourceRootFile = new File( (String) sourceRoot1 );
 
-            if (sourceRootFile.isDirectory()) {
+            if ( sourceRootFile.isDirectory() )
+            {
                 String sourceRoot =
-                        IdeUtils.toRelativeAndFixSeparator(projectBaseDir, sourceRootFile,
-                                !projectBaseDir.equals(basedir));
+                    IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRootFile,
+                                                        !projectBaseDir.equals( basedir ) );
 
-                directories.add(new EclipseSourceDir(sourceRoot, output, false, test, sourceIncludes, sourceExcludes,
-                        false));
+                directories.add( new EclipseSourceDir( sourceRoot, output, false, test, sourceIncludes, sourceExcludes,
+                                                       false ) );
             }
         }
     }
@@ -1619,69 +1694,74 @@ public class EclipsePlugin
                                     boolean test, final String output )
         throws MojoExecutionException
     {
-        for (Object resource1 : resources) {
+        for ( Object resource1 : resources )
+        {
             Resource resource = (Resource) resource1;
 
-            getLog().debug("Processing resource dir: " + resource.getDirectory());
+            getLog().debug( "Processing resource dir: " + resource.getDirectory() );
 
-            List excludes = new ArrayList(resource.getExcludes());
+            List excludes = new ArrayList( resource.getExcludes() );
             // automatically exclude java files: eclipse doesn't have the concept of resource directory so it will
             // try to compile any java file found in maven resource dirs
-            excludes.add(JAVA_FILE_PATTERN);
+            excludes.add( JAVA_FILE_PATTERN );
 
             // TODO: figure out how to merge if the same dir is specified twice
             // with different in/exclude patterns.
 
-            File resourceDirectory = new File( /* basedir, */resource.getDirectory());
+            File resourceDirectory = new File( /* basedir, */resource.getDirectory() );
 
-            if (!resourceDirectory.exists() || !resourceDirectory.isDirectory()) {
-                getLog().debug("Resource dir: " + resourceDirectory + " either missing or not a directory.");
+            if ( !resourceDirectory.exists() || !resourceDirectory.isDirectory() )
+            {
+                getLog().debug( "Resource dir: " + resourceDirectory + " either missing or not a directory." );
                 continue;
             }
 
             String resourcePath =
-                    IdeUtils.toRelativeAndFixSeparator(workspaceProjectBaseDir, resourceDirectory,
-                            !workspaceProjectBaseDir.equals(basedir));
+                IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, resourceDirectory,
+                                                    !workspaceProjectBaseDir.equals( basedir ) );
             String thisOutput = output;
-            if (thisOutput != null) {
+            if ( thisOutput != null )
+            {
                 // sometimes thisOutput is already an absolute path
-                File outputFile = new File(thisOutput);
-                if (!outputFile.isAbsolute()) {
-                    outputFile = new File(workspaceProjectBaseDir, thisOutput);
+                File outputFile = new File( thisOutput );
+                if ( !outputFile.isAbsolute() )
+                {
+                    outputFile = new File( workspaceProjectBaseDir, thisOutput );
                 }
                 // create output dir if it doesn't exist
                 outputFile.mkdirs();
 
-                if (!StringUtils.isEmpty(resource.getTargetPath())) {
-                    outputFile = new File(outputFile, resource.getTargetPath());
+                if ( !StringUtils.isEmpty( resource.getTargetPath() ) )
+                {
+                    outputFile = new File( outputFile, resource.getTargetPath() );
                     // create output dir if it doesn't exist
                     outputFile.mkdirs();
                 }
 
-                getLog().debug(
-                        "Making relative and fixing separator: { " + workspaceProjectBaseDir + ", "
-                                + outputFile + ", false }.");
-                thisOutput = IdeUtils.toRelativeAndFixSeparator(workspaceProjectBaseDir, outputFile, false);
+                getLog().debug( "Making relative and fixing separator: { " + workspaceProjectBaseDir + ", "
+                                    + outputFile + ", false }." );
+                thisOutput = IdeUtils.toRelativeAndFixSeparator( workspaceProjectBaseDir, outputFile, false );
             }
 
             EclipseSourceDir resourceDir =
-                    new EclipseSourceDir(resourcePath, thisOutput, true, test, resource.getIncludes(), excludes,
-                            resource.isFiltering());
+                new EclipseSourceDir( resourcePath, thisOutput, true, test, resource.getIncludes(), excludes,
+                                      resource.isFiltering() );
 
-            if (!directories.add(resourceDir)) {
-                EclipseSourceDir originalDir = (EclipseSourceDir) get(directories, resourceDir);
+            if ( !directories.add( resourceDir ) )
+            {
+                EclipseSourceDir originalDir = (EclipseSourceDir) get( directories, resourceDir );
 
-                boolean merged = originalDir.merge(resourceDir);
-                if (merged) {
-                    getLog().info(
-                            "Resource directory's path matches an existing source directory. Resources have been merged with the source directory "
-                                    + originalDir.getPath());
-                } else {
-                    getLog()
-                            .info(
-                                    "Resource directory's path matches an existing source directory but \"test\", \"filtering\" or \"output\" were different."
-                                            + "The resulting eclipse configuration may not accurately reflect the project configuration for "
-                                            + originalDir.getPath());
+                boolean merged = originalDir.merge( resourceDir );
+                if ( merged )
+                {
+                    getLog().info( "Resource directory's path matches an existing source directory. Resources have been merged with the source directory "
+                                       + originalDir.getPath() );
+                }
+                else
+                {
+                    getLog().info( "Resource directory's path matches an existing source directory but \"test\", \"filtering\" or \"output\" were different."
+                                       + "The resulting eclipse configuration may not accurately reflect the project configuration for "
+                                       + originalDir.getPath() );
                 }
 
             }
@@ -1698,8 +1778,10 @@ public class EclipsePlugin
      */
     private Object get( Set set, Object o )
     {
-        for (Object item : set) {
-            if (o.equals(item)) {
+        for ( Object item : set )
+        {
+            if ( o.equals( item ) )
+            {
                 return item;
             }
         }
@@ -1755,10 +1837,12 @@ public class EclipsePlugin
     {
         boolean enable = false;
         List buildPlugins = project.getBuildPlugins();
-        for (Object buildPlugin : buildPlugins) {
+        for ( Object buildPlugin : buildPlugins )
+        {
             Plugin plugin = (Plugin) buildPlugin;
-            if (plugin.getGroupId().equals(ORG_CODEHAUS_MOJO)
-                    && plugin.getArtifactId().equals(ASPECTJ_MAVEN_PLUGIN)) {
+            if ( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO )
+                && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
+            {
                 enable = true;
                 break;
             }
@@ -1771,10 +1855,12 @@ public class EclipsePlugin
     {
         Xpp3Dom configuration = null;
         List buildPlugins = project.getBuildPlugins();
-        for (Object buildPlugin : buildPlugins) {
+        for ( Object buildPlugin : buildPlugins )
+        {
             Plugin plugin = (Plugin) buildPlugin;
-            if (plugin.getGroupId().equals(ORG_CODEHAUS_MOJO)
-                    && plugin.getArtifactId().equals(ASPECTJ_MAVEN_PLUGIN)) {
+            if ( plugin.getGroupId().equals( ORG_CODEHAUS_MOJO )
+                && plugin.getArtifactId().equals( ASPECTJ_MAVEN_PLUGIN ) )
+            {
                 configuration = (Xpp3Dom) plugin.getConfiguration();
                 break;
             }
@@ -1793,18 +1879,20 @@ public class EclipsePlugin
             if ( aspectLibrariesParent != null )
             {
                 Xpp3Dom[] aspectLibraries = aspectLibrariesParent.getChildren( ASPECT_LIBRARY );
-                outerLoop:
-                for (Xpp3Dom aspectLibrary : aspectLibraries) {
-                    String artifactId = aspectLibrary.getChild(POM_ELT_ARTIFACT_ID).getValue();
-                    String groupId = aspectLibrary.getChild(POM_ELT_GROUP_ID).getValue();
-                    for (IdeDependency dep : deps) {
-                        if (dep.getArtifactId().equals(artifactId) && dep.getGroupId().equals(groupId)) {
-                            dep.setAjdtDependency(true);
+                outerLoop: for ( Xpp3Dom aspectLibrary : aspectLibraries )
+                {
+                    String artifactId = aspectLibrary.getChild( POM_ELT_ARTIFACT_ID ).getValue();
+                    String groupId = aspectLibrary.getChild( POM_ELT_GROUP_ID ).getValue();
+                    for ( IdeDependency dep : deps )
+                    {
+                        if ( dep.getArtifactId().equals( artifactId ) && dep.getGroupId().equals( groupId ) )
+                        {
+                            dep.setAjdtDependency( true );
                             continue outerLoop;
                         }
                     }
 
-                    throw new MojoExecutionException("AspectLibrary is not a dependency of project");
+                    throw new MojoExecutionException( "AspectLibrary is not a dependency of project" );
                 }
             }
         }
@@ -1820,18 +1908,20 @@ public class EclipsePlugin
             if ( weaveDependenciesParent != null )
             {
                 Xpp3Dom[] weaveDependencies = weaveDependenciesParent.getChildren( WEAVE_DEPENDENCY );
-                outerLoop:
-                for (Xpp3Dom weaveDependency : weaveDependencies) {
-                    String artifactId = weaveDependency.getChild(POM_ELT_ARTIFACT_ID).getValue();
-                    String groupId = weaveDependency.getChild(POM_ELT_GROUP_ID).getValue();
-                    for (IdeDependency dep : deps) {
-                        if (dep.getArtifactId().equals(artifactId) && dep.getGroupId().equals(groupId)) {
-                            dep.setAjdtWeaveDependency(true);
+                outerLoop: for ( Xpp3Dom weaveDependency : weaveDependencies )
+                {
+                    String artifactId = weaveDependency.getChild( POM_ELT_ARTIFACT_ID ).getValue();
+                    String groupId = weaveDependency.getChild( POM_ELT_GROUP_ID ).getValue();
+                    for ( IdeDependency dep : deps )
+                    {
+                        if ( dep.getArtifactId().equals( artifactId ) && dep.getGroupId().equals( groupId ) )
+                        {
+                            dep.setAjdtWeaveDependency( true );
                             continue outerLoop;
                         }
                     }
 
-                    throw new MojoExecutionException("WeaveDependency is not a dependency of project");
+                    throw new MojoExecutionException( "WeaveDependency is not a dependency of project" );
                 }
             }
         }
@@ -1921,7 +2011,8 @@ public class EclipsePlugin
             getLog().info( Messages.getString( "EclipsePlugin.workspace", workspace ) );
             workspaceConfiguration.setWorkspaceDirectory( workspace );
 
-            new ReadWorkspaceLocations().init( getLog(), workspaceConfiguration, project, wtpdefaultserver );
+            new ReadWorkspaceLocations().init( getLog(), workspaceConfiguration, project, wtpdefaultserver,
+                                               preferStandardClasspathContainer );
         }
         return workspaceConfiguration;
     }
@@ -1955,8 +2046,7 @@ public class EclipsePlugin
     }
 
     /**
-     * Utility method that locates a project producing the given artifact 
-     * and verifies if it's a valid Eclipse project.
+     * Utility method that locates a project producing the given artifact and verifies if it's a valid Eclipse project.
      * 
      * @param artifact the artifact a project should produce.
      * @return <code>true</code> if the artifact is produced by a reactor projectart.
@@ -1964,9 +2054,9 @@ public class EclipsePlugin
     protected boolean isAvailableAsAReactorProject( Artifact artifact )
     {
         MavenProject project = getReactorProject( artifact );
-        return ( project != null && new File( project.getBasedir(), ".project" ).exists() ) ;
+        return ( project != null && new File( project.getBasedir(), ".project" ).exists() );
     }
-    
+
     /**
      * Utility method that locates a project in the workspace for the given artifact.
      * 
@@ -1990,8 +2080,7 @@ public class EclipsePlugin
                 }
                 else
                 {
-                    getLog().info(
-                                   "Artifact "
+                    getLog().info( "Artifact "
                                        + artifact.getId()
                                        + " already available as a workspace project, but with different version. Expected: "
                                        + artifact.getBaseVersion() + ", found: " + workspaceArtefact.getVersion() );

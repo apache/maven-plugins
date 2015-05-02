@@ -82,15 +82,18 @@ public class ReadWorkspaceLocations
 
     private static final String CLASSPATHENTRY_DEFAULT = "org.eclipse.jdt.launching.JRE_CONTAINER";
 
-    private static final String CLASSPATHENTRY_STANDARD =
-        CLASSPATHENTRY_DEFAULT + "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/";
+    private static final String CLASSPATHENTRY_STANDARD = CLASSPATHENTRY_DEFAULT
+        + "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/";
 
     private static final String CLASSPATHENTRY_FORMAT = ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT + "/{0}/{1}";
 
     public void init( Log log, WorkspaceConfiguration workspaceConfiguration, MavenProject project,
-                      String wtpDefaultServer )
+                      String wtpDefaultServer, boolean preferStandardClasspathContainer )
     {
-        detectDefaultJREContainer( workspaceConfiguration, project, log );
+        workspaceConfiguration.setDefaultClasspathContainer( detectDefaultJREContainer( workspaceConfiguration,
+                                                                                        project,
+                                                                                        preferStandardClasspathContainer,
+                                                                                        log ) );
         readWorkspace( workspaceConfiguration, log );
         detectWTPDefaultServer( workspaceConfiguration, wtpDefaultServer, log );
     }
@@ -104,20 +107,20 @@ public class ReadWorkspaceLocations
      */
     private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer, Log log )
     {
-        HashMap servers = readDefinedServers( workspaceConfiguration, log );
+        Map<String, String> servers = readDefinedServers( workspaceConfiguration, log );
         if ( servers == null || servers.isEmpty() )
         {
             return;
         }
         if ( wtpDefaultServer != null )
         {
-            Set ids = servers.keySet();
+            Set<String> ids = servers.keySet();
             // first we try the exact match
-            Iterator idIterator = ids.iterator();
+            Iterator<String> idIterator = ids.iterator();
             while ( workspaceConfiguration.getDefaultDeployServerId() == null && idIterator.hasNext() )
             {
-                String id = (String) idIterator.next();
-                String name = (String) servers.get( id );
+                String id = idIterator.next();
+                String name = servers.get( id );
                 if ( wtpDefaultServer.equals( id ) || wtpDefaultServer.equals( name ) )
                 {
                     workspaceConfiguration.setDefaultDeployServerId( id );
@@ -131,9 +134,9 @@ public class ReadWorkspaceLocations
                 idIterator = ids.iterator();
                 while ( workspaceConfiguration.getDefaultDeployServerId() == null && idIterator.hasNext() )
                 {
-                    String id = (String) idIterator.next();
-                    String name = (String) servers.get( id );
-                    if (id.contains(wtpDefaultServer) || name.contains(wtpDefaultServer))
+                    String id = idIterator.next();
+                    String name = servers.get( id );
+                    if ( id.contains( wtpDefaultServer ) || name.contains( wtpDefaultServer ) )
                     {
                         workspaceConfiguration.setDefaultDeployServerId( id );
                         workspaceConfiguration.setDefaultDeployServerName( name );
@@ -145,8 +148,8 @@ public class ReadWorkspaceLocations
         {
             // now take the default server
             log.info( "no substring wtp server match." );
-            workspaceConfiguration.setDefaultDeployServerId( (String) servers.get( "" ) );
-            workspaceConfiguration.setDefaultDeployServerName( (String) servers.get( workspaceConfiguration.getDefaultDeployServerId() ) );
+            workspaceConfiguration.setDefaultDeployServerId( servers.get( "" ) );
+            workspaceConfiguration.setDefaultDeployServerName( servers.get( workspaceConfiguration.getDefaultDeployServerId() ) );
         }
         log.info( "Using as WTP server : " + workspaceConfiguration.getDefaultDeployServerName() );
     }
@@ -159,7 +162,7 @@ public class ReadWorkspaceLocations
      * @param logger the logger to log the error's
      * @return the found container or null if non found.
      */
-    private String getContainerFromExecutable( String rawExecutable, Map jreMap, Log logger )
+    private String getContainerFromExecutable( String rawExecutable, Map<String, String> jreMap, Log logger )
     {
         String foundContainer;
         if ( rawExecutable != null )
@@ -177,7 +180,7 @@ public class ReadWorkspaceLocations
             File executableFile = new File( executable );
             while ( executableFile != null )
             {
-                foundContainer = (String) jreMap.get( executableFile.getPath() );
+                foundContainer = jreMap.get( executableFile.getPath() );
                 if ( foundContainer != null )
                 {
                     logger.debug( "detected classpathContainer from executable: " + foundContainer );
@@ -195,47 +198,70 @@ public class ReadWorkspaceLocations
      * 
      * @param workspaceConfiguration the location of the workspace.
      * @param project the maven project the get the configuration
+     * @param preferStandardClasspathContainer prefer using the standard classpath container name
      * @param logger the logger for errors
      */
-    private void detectDefaultJREContainer( WorkspaceConfiguration workspaceConfiguration, MavenProject project,
-                                            Log logger )
+    private String detectDefaultJREContainer( WorkspaceConfiguration workspaceConfiguration, MavenProject project,
+                                              boolean preferStandardClasspathContainer, Log logger )
     {
-        String defaultJREContainer = ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT;
-        if ( workspaceConfiguration.getWorkspaceDirectory() != null )
+        File workspaceDirectory = workspaceConfiguration.getWorkspaceDirectory();
+
+        Map<String, String> jreMap =
+            readAvailableJREs( preferStandardClasspathContainer ? null : workspaceDirectory, logger );
+        if ( jreMap != null )
         {
-            Map jreMap = readAvailableJREs( workspaceConfiguration.getWorkspaceDirectory(), logger );
-            if ( jreMap != null )
+            String foundContainer = null;
+            if ( preferStandardClasspathContainer )
             {
-                String foundContainer =
-                    getContainerFromExecutable( System.getProperty( "maven.compiler.executable" ), jreMap, logger );
-                if ( foundContainer == null )
-                {
-                    foundContainer =
-                        getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ), jreMap,
-                                                    logger );
-                }
-                if ( foundContainer == null )
-                {
-                    String sourceVersion = IdeUtils.getCompilerSourceVersion( project );
-                    foundContainer = (String) jreMap.get( sourceVersion );
-                    if ( foundContainer != null )
-                    {
-                        logger.debug( "detected classpathContainer from sourceVersion(" + sourceVersion + "): "
-                            + foundContainer );
-                    }
-                }
-                if ( foundContainer == null )
-                {
-                    foundContainer = getContainerFromExecutable( System.getProperty( "java.home" ), jreMap, logger );
-                }
+                foundContainer = getContainerFromSourceVersion( project, jreMap, logger );
                 if ( foundContainer != null )
                 {
-                    defaultJREContainer = foundContainer;
+                    return foundContainer;
                 }
+            }
 
+            foundContainer =
+                getContainerFromExecutable( System.getProperty( "maven.compiler.executable" ), jreMap, logger );
+            if ( foundContainer != null )
+            {
+                return foundContainer;
+            }
+
+            foundContainer =
+                getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ), jreMap, logger );
+            if ( foundContainer != null )
+            {
+                return foundContainer;
+            }
+
+            if ( !preferStandardClasspathContainer )
+            {
+                foundContainer = getContainerFromSourceVersion( project, jreMap, logger );
+                if ( foundContainer != null )
+                {
+                    return foundContainer;
+                }
+            }
+
+            foundContainer = getContainerFromExecutable( System.getProperty( "java.home" ), jreMap, logger );
+            if ( foundContainer != null )
+            {
+                return foundContainer;
             }
         }
-        workspaceConfiguration.setDefaultClasspathContainer( defaultJREContainer );
+        return ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT;
+    }
+
+    private String getContainerFromSourceVersion( MavenProject project, Map<String, String> jreMap, Log logger )
+    {
+        String foundContainer;
+        String sourceVersion = IdeUtils.getCompilerSourceVersion( project );
+        foundContainer = (String) jreMap.get( sourceVersion );
+        if ( foundContainer != null )
+        {
+            logger.debug( "detected classpathContainer from sourceVersion(" + sourceVersion + "): " + foundContainer );
+        }
+        return foundContainer;
     }
 
     /**
@@ -254,10 +280,11 @@ public class ReadWorkspaceLocations
         if ( location.exists() )
         {
             SafeChunkyInputStream fileInputStream = null;
+            DataInputStream dataInputStream = null;
             try
             {
                 fileInputStream = new SafeChunkyInputStream( location );
-                DataInputStream dataInputStream = new DataInputStream( fileInputStream );
+                dataInputStream = new DataInputStream( fileInputStream );
                 String file = dataInputStream.readUTF().trim();
 
                 if ( file.length() > 0 )
@@ -273,6 +300,7 @@ public class ReadWorkspaceLocations
             finally
             {
                 IOUtil.close( fileInputStream );
+                IOUtil.close( dataInputStream );
             }
         }
         File projectBase = new File( workspaceLocation, project.getName() );
@@ -342,11 +370,11 @@ public class ReadWorkspaceLocations
 
             String artifact = getValue( pom, ReadWorkspaceLocations.ARTEFACT_ID, null );
             String group =
-                getValue( pom, ReadWorkspaceLocations.GROUP_ID, getValue( pom, ReadWorkspaceLocations.PARENT_GROUP_ID,
-                                                                          null ) );
+                getValue( pom, ReadWorkspaceLocations.GROUP_ID,
+                          getValue( pom, ReadWorkspaceLocations.PARENT_GROUP_ID, null ) );
             String version =
-                getValue( pom, ReadWorkspaceLocations.VERSION, getValue( pom, ReadWorkspaceLocations.PARENT_VERSION,
-                                                                         null ) );
+                getValue( pom, ReadWorkspaceLocations.VERSION,
+                          getValue( pom, ReadWorkspaceLocations.PARENT_VERSION, null ) );
             String packaging = getValue( pom, ReadWorkspaceLocations.PACKAGING, "jar" );
 
             logger.debug( "found workspace artefact " + group + ":" + artifact + ":" + version + " " + packaging + " ("
@@ -361,9 +389,9 @@ public class ReadWorkspaceLocations
         }
     }
 
-    /* package */HashMap<String,String> readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    /* package */Map<String, String> readDefinedServers( WorkspaceConfiguration workspaceConfiguration, Log logger )
     {
-        HashMap<String,String> detectedRuntimes = new HashMap<String,String>();
+        Map<String, String> detectedRuntimes = new HashMap<String, String>();
         if ( workspaceConfiguration.getWorkspaceDirectory() != null )
         {
             Xpp3Dom runtimesElement = null;
@@ -417,8 +445,26 @@ public class ReadWorkspaceLocations
      * @param logger the logger to error messages
      * @return the map with found jre's
      */
-    private HashMap<String,String> readAvailableJREs( File workspaceLocation, Log logger )
+    private Map<String, String> readAvailableJREs( File workspaceLocation, Log logger )
     {
+        Map<String, String> jreMap = new HashMap<String, String>();
+        jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
+        jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
+        jreMap.put( "1.4", CLASSPATHENTRY_STANDARD + "J2SE-1.4" );
+        jreMap.put( "1.5", CLASSPATHENTRY_STANDARD + "J2SE-1.5" );
+        jreMap.put( "5", jreMap.get( "1.5" ) );
+        jreMap.put( "1.6", CLASSPATHENTRY_STANDARD + "JavaSE-1.6" );
+        jreMap.put( "6", jreMap.get( "1.6" ) );
+        jreMap.put( "1.7", CLASSPATHENTRY_STANDARD + "JavaSE-1.7" );
+        jreMap.put( "7", jreMap.get( "1.7" ) );
+        jreMap.put( "1.8", CLASSPATHENTRY_STANDARD + "JavaSE-1.8" );
+        jreMap.put( "8", jreMap.get( "1.8" ) );
+
+        if ( workspaceLocation == null )
+        {
+            return jreMap;
+        }
+
         Xpp3Dom vms;
         try
         {
@@ -440,53 +486,55 @@ public class ReadWorkspaceLocations
             logger.error( "Could not read workspace JRE preferences", e );
             return null;
         }
-
-        HashMap<String,String> jreMap = new HashMap<String,String>();
-        jreMap.put( "1.2", CLASSPATHENTRY_STANDARD + "J2SE-1.2" );
-        jreMap.put( "1.3", CLASSPATHENTRY_STANDARD + "J2SE-1.3" );
-        jreMap.put( "1.4", CLASSPATHENTRY_STANDARD + "J2SE-1.4" );
-        jreMap.put( "1.5", CLASSPATHENTRY_STANDARD + "J2SE-1.5" );
-        jreMap.put( "5", jreMap.get( "1.5" ) );
-        jreMap.put( "1.6", CLASSPATHENTRY_STANDARD + "JavaSE-1.6" );
-        jreMap.put( "6", jreMap.get( "1.6" ) );
         String defaultJRE = vms.getAttribute( "defaultVM" ).trim();
         Xpp3Dom[] vmTypes = vms.getChildren( "vmType" );
-        for (Xpp3Dom vmType : vmTypes) {
-            String typeId = vmType.getAttribute("id");
-            Xpp3Dom[] vm = vmType.getChildren("vm");
-            for (Xpp3Dom aVm : vm) {
-                try {
-                    String path = aVm.getAttribute("path");
-                    String name = aVm.getAttribute("name");
-                    String vmId = aVm.getAttribute("id").trim();
+        for ( Xpp3Dom vmType : vmTypes )
+        {
+            String typeId = vmType.getAttribute( "id" );
+            Xpp3Dom[] vm = vmType.getChildren( "vm" );
+            for ( Xpp3Dom aVm : vm )
+            {
+                try
+                {
+                    String path = aVm.getAttribute( "path" );
+                    String name = aVm.getAttribute( "name" );
+                    String vmId = aVm.getAttribute( "id" ).trim();
                     String classpathEntry =
-                            MessageFormat.format(ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT,
-                                    typeId, name);
-                    String jrePath = new File(path).getCanonicalPath();
-                    File rtJarFile = new File(new File(jrePath), "jre/lib/rt.jar");
-                    if (!rtJarFile.exists()) {
-                        logger.warn(Messages.getString("EclipsePlugin.invalidvminworkspace", jrePath));
+                        MessageFormat.format( ReadWorkspaceLocations.CLASSPATHENTRY_FORMAT, typeId, name );
+                    String jrePath = new File( path ).getCanonicalPath();
+                    File rtJarFile = new File( new File( jrePath ), "jre/lib/rt.jar" );
+                    if ( !rtJarFile.exists() )
+                    {
+                        logger.warn( Messages.getString( "EclipsePlugin.invalidvminworkspace", jrePath ) );
                         continue;
                     }
-                    JarFile rtJar = new JarFile(rtJarFile);
-                    String version = rtJar.getManifest().getMainAttributes().getValue("Specification-Version");
-                    if (defaultJRE.endsWith("," + vmId)) {
-                        jreMap.put(jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT);
-                        jreMap.put(version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT);
-                        logger.debug("Default Classpath Container version: " + version + "  location: " + jrePath);
-                    } else if (!jreMap.containsKey(jrePath)) {
-                        if (!jreMap.containsKey(version)) {
-                            jreMap.put(version, classpathEntry);
-                        }
-                        jreMap.put(jrePath, classpathEntry);
-                        logger.debug("Additional Classpath Container version: " + version + " " + classpathEntry
-                                + " location: " + jrePath);
-                    } else {
-                        logger.debug("Ignored (duplicated) additional Classpath Container version: " + version + " "
-                                + classpathEntry + " location: " + jrePath);
+                    JarFile rtJar = new JarFile( rtJarFile );
+                    String version = rtJar.getManifest().getMainAttributes().getValue( "Specification-Version" );
+                    if ( defaultJRE.endsWith( "," + vmId ) )
+                    {
+                        jreMap.put( jrePath, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
+                        jreMap.put( version, ReadWorkspaceLocations.CLASSPATHENTRY_DEFAULT );
+                        logger.debug( "Default Classpath Container version: " + version + "  location: " + jrePath );
                     }
-                } catch (IOException e) {
-                    logger.warn("Could not interpret entry: " + aVm.toString());
+                    else if ( !jreMap.containsKey( jrePath ) )
+                    {
+                        if ( !jreMap.containsKey( version ) )
+                        {
+                            jreMap.put( version, classpathEntry );
+                        }
+                        jreMap.put( jrePath, classpathEntry );
+                        logger.debug( "Additional Classpath Container version: " + version + " " + classpathEntry
+                            + " location: " + jrePath );
+                    }
+                    else
+                    {
+                        logger.debug( "Ignored (duplicated) additional Classpath Container version: " + version + " "
+                            + classpathEntry + " location: " + jrePath );
+                    }
+                }
+                catch ( IOException e )
+                {
+                    logger.warn( "Could not interpret entry: " + aVm.toString() );
                 }
             }
         }
@@ -520,7 +568,7 @@ public class ReadWorkspaceLocations
                             getProjectLocation( workspaceConfiguration.getWorkspaceDirectory(), project );
                         if ( projectLocation != null )
                         {
-						    logger.debug( "read workpsace project " + projectLocation );
+                            logger.debug( "read workpsace project " + projectLocation );
                             IdeDependency ideDependency = readArtefact( projectLocation, logger );
                             if ( ideDependency != null )
                             {
@@ -535,7 +583,7 @@ public class ReadWorkspaceLocations
                 }
             }
         }
-		logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
-        workspaceConfiguration.setWorkspaceArtefacts(dependencies.toArray( new IdeDependency[dependencies.size()] ));
+        logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
+        workspaceConfiguration.setWorkspaceArtefacts( dependencies.toArray( new IdeDependency[dependencies.size()] ) );
     }
 }
