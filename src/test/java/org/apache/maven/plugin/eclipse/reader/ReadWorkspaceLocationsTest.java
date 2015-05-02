@@ -15,11 +15,10 @@ package org.apache.maven.plugin.eclipse.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.eclipse.TempEclipseWorkspace;
 import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.logging.Log;
@@ -136,7 +135,7 @@ private File metaDataDirectory;
         mm.replayAll();
 
         ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
-        HashMap servers = objectUnderTest.readDefinedServers( workspaceConfiguration, logger );
+        Map<String, String> servers = objectUnderTest.readDefinedServers( workspaceConfiguration, logger );
 
         mm.verifyAll();
         assertTrue( servers.isEmpty() );
@@ -157,7 +156,7 @@ private File metaDataDirectory;
         mm.replayAll();
 
         ReadWorkspaceLocations objectUnderTest = new ReadWorkspaceLocations();
-        HashMap servers = objectUnderTest.readDefinedServers( workspaceConfiguration, logger );
+        Map<String, String> servers = objectUnderTest.readDefinedServers( workspaceConfiguration, logger );
 
         mm.verifyAll();
         assertTrue( servers.isEmpty() );
