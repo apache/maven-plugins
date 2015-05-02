@@ -28,7 +28,7 @@ under the License.
       <question>Where is <code>config/maven_checks.xml</code> predefined ruleset?</question>
       <answer>
         <p>
-          Starting with maven-checkstyle-plugin version 2.15, <code>config/maven_checks.xml</code> predefined ruleset
+          Starting with maven-checkstyle-plugin version 2.14, <code>config/maven_checks.xml</code> predefined ruleset
           is not part of the plugin any more but has moved to
           <a href="/shared/maven-shared-resources/">Apache Maven Shared Resources</a>.
         </p>
