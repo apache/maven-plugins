@@ -28,13 +28,14 @@
 
 ${project.name}
 
-  The Eclipse Plugin is used to generate Eclipse IDE files (*.classpath,
-  *.wtpmodules and the .settings folder) for use with a project.
+  The Maven Eclipse Plugin is used to generate Eclipse IDE files (*.classpath,
+  *.project, *.wtpmodules and the .settings folder) for use with a project.
 
-  Note: Starting at version 2.6, by default, the generated .classpath now includes "**/*.java" for source directories
-  and excludes "**/*.java" for resource directories. See the example on
-  {{{./examples/specifying-source-path-inclusions-and-exclusions.html}specifying source path inclusions and exclusions}}
-  for more details on how to change this behavior.
+  <<Disclaimer:>> Users are advised to use m2e, the {{{https://projects.eclipse.org/projects/technology.m2e}Eclipse Maven Integration}}
+  instead of this plugin, as it can more closely resemble the actual build and runtime classpaths as described in the
+  project pom.xml - among other advantages. However, there are project setups and workflows that still work more
+  efficiently with statically generated Eclipse metadata - for example when there is a large number of projects in
+  a reactor. That's where the Maven Eclipse Plugin can still help you.
 
 * Goals Overview
 
