@@ -47,24 +47,24 @@ Copying specific artifacts
             <goals>
               <goal>copy</goal>
             </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>junit</groupId>
-                  <artifactId>junit</artifactId>
-                  <version>3.8.1</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>\${project.build.directory}/alternateLocation</outputDirectory>
-                  <destFileName>optional-new-name.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>\${project.build.directory}/wars</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+              <version>3.8.1</version>
+              <type>jar</type>
+              <overWrite>false</overWrite>
+              <outputDirectory>\${project.build.directory}/alternateLocation</outputDirectory>
+              <destFileName>optional-new-name.jar</destFileName>
+            </artifactItem>
+          </artifactItems>
+          <outputDirectory>\${project.build.directory}/wars</outputDirectory>
+          <overWriteReleases>false</overWriteReleases>
+          <overWriteSnapshots>true</overWriteSnapshots>
+        </configuration>
       </plugin>
     </plugins>
   </build>
