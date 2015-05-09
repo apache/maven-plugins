@@ -28,6 +28,7 @@ under the License.
   <version>0.1-SNAPSHOT</version>
   <name>Maven Environment Test</name>
   <description>Maven Invoker tests for environment variable setting</description>
+  <packaging>pom</packaging>
 
   <url>http://jira.codehaus.org/browse/MINVOKER-155</url>
   
@@ -47,7 +48,6 @@ under the License.
         </configuration>
         <executions>
           <execution>
-            <phase>initialize</phase>
             <goals>
               <goal>install</goal>
               <goal>run</goal>
