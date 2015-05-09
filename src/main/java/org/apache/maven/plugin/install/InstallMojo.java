@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -68,9 +66,6 @@ public class InstallMojo
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
     
-    @Parameter( defaultValue = "${session}", required = true, readonly = true )
-    private MavenSession session;
-
     /**
      * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
      * set to {@code true} and the build fails, none of the reactor projects is installed.
@@ -144,13 +139,13 @@ public class InstallMojo
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        @SuppressWarnings( "unchecked" )
+
         List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
 
-        ArtifactMetadata metadata;
+        ProjectArtifactMetadata metadata;
 
         if ( updateReleaseInfo )
         {

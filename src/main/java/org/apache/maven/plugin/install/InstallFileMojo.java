@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -160,10 +159,6 @@ public class InstallFileMojo
     @Parameter( property = "localRepositoryPath" )
     private File localRepositoryPath;
 
-    @Parameter( defaultValue = "${session}", required = true, readonly = true )
-    private MavenSession session;
-    
-    
     /**
     * The component used to validate the user-supplied artifact coordinates.
     */
@@ -191,16 +186,9 @@ public class InstallFileMojo
         // ----------------------------------------------------------------------
         if ( localRepositoryPath != null )
         {
-            try
-            {
-                buildingRequest = installer.setLocalRepositoryBasedir( buildingRequest, localRepositoryPath );
-                
-                getLog().debug( "localRepoPath: " + installer.getLocalRepositoryBasedir( buildingRequest ) );
-            }
-            catch ( ArtifactInstallerException e )
-            {
-                throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
-            }
+            buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, localRepositoryPath );
+            
+            getLog().debug( "localRepoPath: " + repositoryManager.getLocalRepositoryBasedir( buildingRequest ) );
         }
 
         if ( pomFile != null )

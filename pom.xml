@@ -70,21 +70,11 @@ under the License.
       <artifactId>maven-plugin-api</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.apache.maven</groupId> -->
-<!--       <artifactId>maven-project</artifactId> -->
-<!--       <version>${mavenVersion}</version> -->
-<!--     </dependency> -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.apache.maven</groupId> -->
-<!--       <artifactId>maven-artifact-manager</artifactId> -->
-<!--       <version>${mavenVersion}</version> -->
-<!--     </dependency> -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
@@ -122,7 +112,7 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency> <!-- used by maven-plugin-testing-harness, don't give it compile scope -->
+    <dependency> <!-- used by maven-plugin-testing-harness, don't give it compile scope! -->
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
       <version>${mavenVersion}</version>
