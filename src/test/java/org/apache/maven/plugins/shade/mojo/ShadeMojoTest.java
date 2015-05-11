@@ -19,25 +19,10 @@ package org.apache.maven.plugins.shade.mojo;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.plugins.shade.ShadeRequest;
-import org.apache.maven.plugins.shade.Shader;
-import org.apache.maven.plugins.shade.filter.Filter;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
-import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
-import org.apache.maven.plugins.shade.resource.ResourceTransformer;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -50,6 +35,29 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.shade.ShadeRequest;
+import org.apache.maven.plugins.shade.Shader;
+import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
+import org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer;
+import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.codehaus.plexus.PlexusTestCase;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
 /**
  * @author Jason van Zyl
  * @author Mauro Talevi
@@ -57,6 +65,21 @@ import java.util.Set;
 public class ShadeMojoTest
     extends PlexusTestCase
 {
+    @Mock
+    private MavenSession session;
+    
+    @InjectMocks
+    private ShadeMojo mojo = new ShadeMojo();
+
+    @Override
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        MockitoAnnotations.initMocks( this );
+    }
+
+    
     public void testShaderWithDefaultShadedPattern()
         throws Exception
     {
@@ -114,8 +137,6 @@ public class ShadeMojoTest
     public void testShadeWithFilter()
         throws Exception
     {
-        ShadeMojo mojo = new ShadeMojo();
-
         // set createSourcesJar = true
         Field createSourcesJar = ShadeMojo.class.getDeclaredField( "createSourcesJar" );
         createSourcesJar.setAccessible( true );
@@ -128,22 +149,25 @@ public class ShadeMojoTest
         artifactFactoryField.set( mojo, artifactFactory );
 
         // configure artifactResolver (mocked) for mojo
-        ArtifactResolver mockArtifactResolver = new DefaultArtifactResolver()
+        ArtifactResolver mockArtifactResolver = mock( ArtifactResolver.class );
+        doAnswer( new Answer<Void>()
         {
-
-            public void resolve( Artifact artifact, List<ArtifactRepository> remoteRepos, ArtifactRepository repo )
-                throws ArtifactResolutionException, ArtifactNotFoundException
+            public Void answer( InvocationOnMock invocation )
             {
+                Artifact artifact = (Artifact) invocation.getArguments()[1];
+
                 // artifact is resolved
                 artifact.setResolved( true );
 
                 // set file
-                artifact.setFile( new File(
-                    artifact.getArtifactId() + "-" + artifact.getVersion() + ( artifact.getClassifier() != null ? "-"
-                        + artifact.getClassifier() : "" ) + ".jar" ) );
-            }
+                artifact.setFile( new File( artifact.getArtifactId() + "-" + artifact.getVersion()
+                    + ( artifact.getClassifier() != null ? "-" + artifact.getClassifier() : "" ) + ".jar" ) );
 
-        };
+                return null;
+            }
+        } ).when( mockArtifactResolver ).resolveArtifact( any( ProjectBuildingRequest.class ), isA( Artifact.class ),
+                                                        any( List.class ) );
+        
         Field artifactResolverField = ShadeMojo.class.getDeclaredField( "artifactResolver" );
         artifactResolverField.setAccessible( true );
         artifactResolverField.set( mojo, mockArtifactResolver );
@@ -154,7 +178,7 @@ public class ShadeMojoTest
         Artifact artifact = new DefaultArtifact( "org.apache.myfaces.core", "myfaces-impl",
                                                  VersionRange.createFromVersion( "2.0.1-SNAPSHOT" ), "compile", "jar",
                                                  null, artifactHandler );
-        mockArtifactResolver.resolve( artifact, null, null ); // setFile and setResolved
+        mockArtifactResolver.resolveArtifact( null, artifact, null ); // setFile and setResolved
         project.setArtifact( artifact );
         Field projectField = ShadeMojo.class.getDeclaredField( "project" );
         projectField.setAccessible( true );
@@ -172,7 +196,7 @@ public class ShadeMojoTest
         filtersField.set( mojo, new ArchiveFilter[]{ archiveFilter } );
 
         // invoke getFilters()
-        Method getFilters = ShadeMojo.class.getDeclaredMethod( "getFilters", new Class[0] );
+        Method getFilters = ShadeMojo.class.getDeclaredMethod( "getFilters" );
         getFilters.setAccessible( true );
         List<Filter> filters = (List<Filter>) getFilters.invoke( mojo);
 

@@ -38,9 +38,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Exclusion;
@@ -68,6 +65,8 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -695,15 +694,20 @@ public class ShadeMojo
 
         try
         {
-            artifactResolver.resolve( resolvedArtifact, remoteArtifactRepositories, localRepository );
+            artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), resolvedArtifact,
+                                              remoteArtifactRepositories );
         }
-        catch ( ArtifactNotFoundException e )
+//        catch ( ArtifactNotFoundException e )
+//        {
+//            // ignore, the jar has not been found
+//        }
+//        catch ( ArtifactResolutionException e )
+//        {
+//            getLog().warn( "Could not get sources for " + artifact );
+//        }
+        catch ( ArtifactResolverException e )
         {
-            // ignore, the jar has not been found
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            getLog().warn( "Could not get sources for " + artifact );
+            // either artifact does not exist or its sources are not available
         }
 
         if ( resolvedArtifact.isResolved() )
@@ -1025,8 +1029,10 @@ public class ShadeMojo
                 projectBuildingRequest.setRemoteRepositories( remoteArtifactRepositories );
 
                 ProjectBuildingResult result = projectBuilder.build( f, projectBuildingRequest );
+                
+                projectBuildingRequest.setProject( result.getProject() );
 
-                modified = updateExcludesInDeps( result.getProject(), dependencies, transitiveDeps );
+                modified = updateExcludesInDeps( projectBuildingRequest, dependencies, transitiveDeps );
             }
 
             project.setFile( dependencyReducedPomLocation );
@@ -1049,7 +1055,7 @@ public class ShadeMojo
         return groupId + ":" + artifactId + ":" + type + ":" + ( ( classifier != null ) ? classifier : "" );
     }
 
-    public boolean updateExcludesInDeps( MavenProject project, List<Dependency> dependencies,
+    private boolean updateExcludesInDeps( ProjectBuildingRequest project, List<Dependency> dependencies,
                                          List<Dependency> transitiveDeps )
         throws DependencyGraphBuilderException
     {
