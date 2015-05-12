@@ -32,14 +32,18 @@ under the License.
     This ruleset checks the code for discouraged programming constructs.
   </description>
 
-  <rule ref="rulesets/java/basic.xml">
+  <rule ref="rulesets/java/basic.xml"/>
+
+  <rule ref="rulesets/java/empty.xml">
     <exclude name="EmptyCatchBlock"/>
   </rule>
-  <rule ref="rulesets/java/basic.xml/EmptyCatchBlock">
+  <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
     <properties>
       <property name="allowCommentedBlocks" value="true"/>
     </properties>
   </rule>
+
+  <rule ref="rulesets/java/unnecessary.xml"/>
 
   <rule ref="rulesets/java/unusedcode.xml"/>
 
