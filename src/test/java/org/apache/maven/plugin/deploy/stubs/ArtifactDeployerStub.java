@@ -19,29 +19,20 @@ package org.apache.maven.plugin.deploy.stubs;
  * under the License.
  */
 
-import java.io.File;
+import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.deployer.ArtifactDeployer;
-import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 
 public class ArtifactDeployerStub
     implements ArtifactDeployer
 {
 
-    public void deploy( String basedir, String finalName, Artifact artifact, ArtifactRepository deploymentRepository,
-                        ArtifactRepository localRepository )
-        throws ArtifactDeploymentException
-    {
-        String extension = artifact.getArtifactHandler().getExtension();
-        File source = new File( basedir, finalName + "." + extension );
-        deploy( source, artifact, deploymentRepository, localRepository );
-    }
-
-    public void deploy( File source, Artifact artifact, ArtifactRepository deploymentRepository,
-                        ArtifactRepository localRepository )
-        throws ArtifactDeploymentException
+    @Override
+    public void deploy( ProjectBuildingRequest request, Collection<Artifact> mavenArtifacts )
+        throws ArtifactDeployerException
     {
         // does nothing
     }

@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
@@ -40,6 +39,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 
 /**
  * Deploys an artifact to remote repository.
@@ -174,11 +174,12 @@ public class DeployMojo
     private void deployProject( DeployRequest request )
         throws MojoExecutionException, MojoFailureException
     {
+        List<Artifact> deployableArtifacts = new ArrayList<Artifact>();
+        
         Artifact artifact = request.getProject().getArtifact();
         String packaging = request.getProject().getPackaging();
         File pomFile = request.getProject().getFile();
 
-        @SuppressWarnings( "unchecked" )
         List<Artifact> attachedArtifacts = request.getProject().getAttachedArtifacts();
 
         ArtifactRepository repo =
@@ -205,11 +206,17 @@ public class DeployMojo
             ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
             artifact.addMetadata( metadata );
         }
+        else
+        {
+            artifact.setFile( pomFile );
+        }
 
         if ( request.isUpdateReleaseInfo() )
         {
             artifact.setRelease( true );
         }
+
+        artifact.setRepository( repo );
 
         int retryFailedDeploymentCount = request.getRetryFailedDeploymentCount();
 
@@ -217,7 +224,7 @@ public class DeployMojo
         {
             if ( isPomArtifact )
             {
-                deploy( pomFile, artifact, repo, getLocalRepository(), retryFailedDeploymentCount );
+                deployableArtifacts.add( artifact );
             }
             else
             {
@@ -225,7 +232,7 @@ public class DeployMojo
 
                 if ( file != null && file.isFile() )
                 {
-                    deploy( file, artifact, repo, getLocalRepository(), retryFailedDeploymentCount );
+                    deployableArtifacts.add( artifact );
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
@@ -240,7 +247,7 @@ public class DeployMojo
                         pomArtifact.setRelease( true );
                     }
 
-                    deploy( pomFile, pomArtifact, repo, getLocalRepository(), retryFailedDeploymentCount );
+                    deployableArtifacts.add( pomArtifact );
 
                     // propagate the timestamped version to the main artifact for the attached artifacts to pick it up
                     artifact.setResolvedVersion( pomArtifact.getVersion() );
@@ -254,10 +261,23 @@ public class DeployMojo
 
             for ( Artifact attached : attachedArtifacts )
             {
-                deploy( attached.getFile(), attached, repo, getLocalRepository(), retryFailedDeploymentCount );
+                // This is here when AttachedArtifact is used, like m-sources-plugin:2.0.4
+                try
+                {
+                    attached.setRepository( repo );
+                }
+                catch ( UnsupportedOperationException e )
+                {
+                    getLog().warn( attached.getId() + " has been attached with deprecated code, "
+                        + "try to upgrade the responsible plugin" );
+                }
+                
+                deployableArtifacts.add( attached );
             }
+            
+            deploy( deployableArtifacts, repo, getLocalRepository(), retryFailedDeploymentCount );
         }
-        catch ( ArtifactDeploymentException e )
+        catch ( ArtifactDeployerException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
@@ -303,7 +323,7 @@ public class DeployMojo
 
                 ArtifactRepositoryLayout repoLayout = getLayout( layout );
 
-                repo = repositoryFactory.createDeploymentArtifactRepository( id, url, repoLayout, true );
+                repo = createDeploymentArtifactRepository( id, url, repoLayout, true );
             }
         }
 

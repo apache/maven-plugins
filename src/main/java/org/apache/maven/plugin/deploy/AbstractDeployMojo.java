@@ -19,21 +19,23 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
-import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.deployer.ArtifactDeployer;
-import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 
 /**
  * @version $Id$
@@ -51,12 +53,6 @@ public abstract class AbstractDeployMojo
      */
     @Component
     protected ArtifactFactory artifactFactory;
-
-    /**
-     * Component used to create a repository.
-     */
-    @Component
-    ArtifactRepositoryFactory repositoryFactory;
 
     /**
      * Map that contains the layouts.
@@ -90,6 +86,9 @@ public abstract class AbstractDeployMojo
     @Parameter( property = "retryFailedDeploymentCount", defaultValue = "1" )
     private int retryFailedDeploymentCount;
 
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    private MavenSession session;
+    
     /* Setters and Getters */
 
     public ArtifactDeployer getDeployer()
@@ -146,20 +145,21 @@ public abstract class AbstractDeployMojo
 
     /**
      * Deploy an artifact from a particular file.
-     * 
-     * @param source the file to deploy
-     * @param artifact the artifact definition
+     * @param artifacts the artifact definitions
      * @param deploymentRepository the repository to deploy to
      * @param localRepository the local repository to install into
      * @param retryFailedDeploymentCount TODO
-     * @throws ArtifactDeploymentException if an error occurred deploying the artifact
+     * 
+     * @throws ArtifactDeployerException if an error occurred deploying the artifact
      */
-    protected void deploy( File source, Artifact artifact, ArtifactRepository deploymentRepository,
+    protected void deploy( Collection<Artifact> artifacts, ArtifactRepository deploymentRepository,
                            ArtifactRepository localRepository, int retryFailedDeploymentCount )
-        throws ArtifactDeploymentException
+        throws ArtifactDeployerException
     {
+
+        // for now retry means redeploy the complete artifacts collection
         int retryFailedDeploymentCounter = Math.max( 1, Math.min( 10, retryFailedDeploymentCount ) );
-        ArtifactDeploymentException exception = null;
+        ArtifactDeployerException exception = null;
         for ( int count = 0; count < retryFailedDeploymentCounter; count++ )
         {
             try
@@ -169,11 +169,12 @@ public abstract class AbstractDeployMojo
                     getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of "
                                        + retryFailedDeploymentCounter );
                 }
-                getDeployer().deploy( source, artifact, deploymentRepository, localRepository );
+                
+                getDeployer().deploy( session.getProjectBuildingRequest(), artifacts );
                 exception = null;
                 break;
             }
-            catch ( ArtifactDeploymentException e )
+            catch ( ArtifactDeployerException e )
             {
                 if ( count + 1 < retryFailedDeploymentCounter )
                 {
@@ -190,5 +191,13 @@ public abstract class AbstractDeployMojo
         {
             throw exception;
         }
+    }
+
+    protected ArtifactRepository createDeploymentArtifactRepository( String id, String url,
+                                                                     ArtifactRepositoryLayout layout,
+                                                                     boolean uniqueVersion2 )
+    {
+        return new MavenArtifactRepository( id, url, layout, new ArtifactRepositoryPolicy(),
+                                            new ArtifactRepositoryPolicy() );
     }
 }

@@ -24,6 +24,16 @@ public class ArtifactRepositoryStub2
 {
     private String protocol;
     
+    public ArtifactRepositoryStub2()
+    {
+        super();
+    }
+    
+    public ArtifactRepositoryStub2( String dir )
+    {
+        super( dir );
+    }
+
     public String getUrl()
     {
         return "file://" + System.getProperty( "basedir" ) + "/target/remote-repo/basic-deploy-scp";

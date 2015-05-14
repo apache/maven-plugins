@@ -61,6 +61,12 @@ public class DeployArtifactStub
         return getVersion();
     }
     
+    @Override
+    public String getType()
+    {
+        return "jar";
+    }
+    
     public void setFile( File file )
     {
         this.file = file;
