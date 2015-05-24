@@ -19,7 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' xmlns='http://maven.apache.org/POM/4.0.0'>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-eclipse-plugin</artifactId>
-  <version>2.10-SNAPSHOT</version>
+  <version>2.10</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Eclipse Plugin</name>
@@ -43,10 +43,10 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-eclipse-plugin-2.10</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-eclipse-plugin-2.10
     </developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-eclipse-plugin/</url>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-eclipse-plugin-2.10</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -409,10 +409,9 @@ under the License.
                 <phase>process-resources</phase>
                 <configuration>
                   <target>
-                    <available property="it_settings_file" file="src/it/settings-${user.name}.xml"
-                               value="src/it/settings-${user.name}.xml"/>
-                    <property name="it_settings_file" location="src/it/settings-default.xml"/>
-                    <copy file="${it_settings_file}" tofile="src/it/settings.xml"/>
+                    <available property="it_settings_file" file="src/it/settings-${user.name}.xml" value="src/it/settings-${user.name}.xml" />
+                    <property name="it_settings_file" location="src/it/settings-default.xml" />
+                    <copy file="${it_settings_file}" tofile="src/it/settings.xml" />
                   </target>
                 </configuration>
                 <goals>
@@ -424,8 +423,8 @@ under the License.
                 <phase>post-integration-test</phase>
                 <configuration>
                   <target>
-                    <property name="script" location="verify-integration-tests-checks.bsh"/>
-                    <script language="beanshell" src="${script}"/>
+                    <property name="script" location="verify-integration-tests-checks.bsh" />
+                    <script language="beanshell" src="${script}" />
                   </target>
                 </configuration>
                 <goals>
