@@ -451,6 +451,8 @@ public class EclipsePlugin
      * If set to <code>true</code>, the standard execution environment matching the compiler settings is set as JRE. If
      * set to <code>false</code>, the JRE matching the configured compiler-plugin executable or JAVA_HOME is selected by
      * name, if it is configured in the workspace.
+     * 
+     * @since 2.10
      */
     @Parameter( property = "eclipse.preferStandardClasspathContainer", defaultValue = "false" )
     private boolean preferStandardClasspathContainer;
