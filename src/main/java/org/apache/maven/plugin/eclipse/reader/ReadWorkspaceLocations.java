@@ -26,6 +26,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -542,38 +543,28 @@ public class ReadWorkspaceLocations
     }
 
     /**
-     * Scan the eclipse workspace and create a array with {@link IdeDependency} for all found artifacts.
-     * 
-     * @param workspaceConfiguration the location of the eclipse workspace.
-     * @param logger the logger to report errors and debug info.
+     * @param workspaceDirectory the directory of the workspace
+     * @param logger logger
+     * @return the physical locations of all workspace projects
      */
-    private void readWorkspace( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    public List<File> readProjectLocations( File workspaceDirectory, Log logger )
     {
-        ArrayList<IdeDependency> dependencies = new ArrayList<IdeDependency>();
-        if ( workspaceConfiguration.getWorkspaceDirectory() != null )
-        {
-            File workspace =
-                new File( workspaceConfiguration.getWorkspaceDirectory(),
-                          ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
+        List<File> projectLocations = new ArrayList<File>();
+        File projectsDirectory =
+            new File( workspaceDirectory, ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RESOURCES_PROJECTS );
 
-            File[] directories = workspace.listFiles();
-            for ( int index = 0; directories != null && index < directories.length; index++ )
+        if ( projectsDirectory.exists() )
+        {
+            for ( File project : projectsDirectory.listFiles() )
             {
-                File project = directories[index];
                 if ( project.isDirectory() )
                 {
                     try
                     {
-                        File projectLocation =
-                            getProjectLocation( workspaceConfiguration.getWorkspaceDirectory(), project );
+                        File projectLocation = getProjectLocation( workspaceDirectory, project );
                         if ( projectLocation != null )
                         {
-                            logger.debug( "read workpsace project " + projectLocation );
-                            IdeDependency ideDependency = readArtefact( projectLocation, logger );
-                            if ( ideDependency != null )
-                            {
-                                dependencies.add( ideDependency );
-                            }
+                            projectLocations.add( projectLocation );
                         }
                     }
                     catch ( Exception e )
@@ -583,7 +574,40 @@ public class ReadWorkspaceLocations
                 }
             }
         }
-        logger.debug( dependencies.size() + " from workspace " + workspaceConfiguration.getWorkspaceDirectory() );
+
+        return projectLocations;
+    }
+    
+    /**
+     * Scan the eclipse workspace and create a array with {@link IdeDependency} for all found artifacts.
+     * 
+     * @param workspaceConfiguration the location of the eclipse workspace.
+     * @param logger the logger to report errors and debug info.
+     */
+    private void readWorkspace( WorkspaceConfiguration workspaceConfiguration, Log logger )
+    {
+        List<IdeDependency> dependencies = new ArrayList<IdeDependency>();
+        File workspaceDirectory = workspaceConfiguration.getWorkspaceDirectory();
+        if ( workspaceDirectory != null )
+        {
+            for ( File projectLocation : readProjectLocations( workspaceDirectory, logger ) )
+            {
+                try
+                {
+                    logger.debug( "read workpsace project " + projectLocation );
+                    IdeDependency ideDependency = readArtefact( projectLocation, logger );
+                    if ( ideDependency != null )
+                    {
+                        dependencies.add( ideDependency );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    logger.warn( "could not read workspace project from:" + projectLocation, e );
+                }
+            }
+        }
+        logger.debug( dependencies.size() + " from workspace " + workspaceDirectory );
         workspaceConfiguration.setWorkspaceArtefacts( dependencies.toArray( new IdeDependency[dependencies.size()] ) );
     }
 }

@@ -50,6 +50,11 @@ ${project.name}
   * {{{./eclipse-mojo.html}eclipse:eclipse}} generates the Eclipse configuration
   files.
 
+  * {{{./resolve-workspace-dependencies-mojo.html}eclipse:resolve-workspace-dependencies}} is used to download
+  all missing M2_REPO classpath variable elements for all projects in a workspace. Used if the Eclipse project
+  configuration files are committed to version control and other users need to resolve new artifacts after an
+  update.
+
   * {{{./clean-mojo.html}eclipse:clean}} is used to delete the files used by the
   Eclipse IDE.
 
