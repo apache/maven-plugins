@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-eclipse-plugin</artifactId>
-  <version>2.10</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Eclipse Plugin</name>
@@ -43,10 +43,10 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-eclipse-plugin-2.10</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-eclipse-plugin-2.10
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-eclipse-plugin/
     </developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-eclipse-plugin-2.10</url>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-eclipse-plugin/</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
