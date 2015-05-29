@@ -47,7 +47,7 @@ public class ManifestResourceTransformer
     // Configuration
     private String mainClass;
 
-    private Map<String, Attributes> manifestEntries;
+    private Map<String, Object> manifestEntries;
 
     // Fields
     private boolean manifestDiscovered;
@@ -101,7 +101,7 @@ public class ManifestResourceTransformer
 
         if ( manifestEntries != null )
         {
-            for ( Map.Entry<String, Attributes> entry : manifestEntries.entrySet() )
+            for ( Map.Entry<String, Object> entry : manifestEntries.entrySet() )
             {
                 attributes.put( new Attributes.Name( entry.getKey() ), entry.getValue() );
             }
