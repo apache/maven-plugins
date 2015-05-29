@@ -121,6 +121,8 @@ ${project.name}
 
 * Assembly and Component Descriptor Schemas (XSD)
 
+  * {{{http://maven.apache.org/xsd/assembly-1.1.3.xsd}http://maven.apache.org/xsd/assembly-1.1.3.xsd}},
+    {{{http://maven.apache.org/xsd/component-1.1.3.xsd}http://maven.apache.org/xsd/component-1.1.3.xsd}} (for version 2.5.4 and higher)
   * {{{http://maven.apache.org/xsd/assembly-1.1.2.xsd}http://maven.apache.org/xsd/assembly-1.1.2.xsd}},
     {{{http://maven.apache.org/xsd/component-1.1.2.xsd}http://maven.apache.org/xsd/component-1.1.2.xsd}} (for version 2.2 and higher)
 
