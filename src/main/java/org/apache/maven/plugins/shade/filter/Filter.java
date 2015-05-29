@@ -26,9 +26,20 @@ import java.io.File;
  */
 public interface Filter
 {
+    /**
+     * @param jar The jar file.
+     * @return true if we can filter false otherwise.
+     */
     boolean canFilter( File jar );
 
+    /**
+     * @param classFile
+     * @return true if the file has been filtered false otherwise.
+     */
     boolean isFiltered( String classFile );
 
+    /**
+     * If we are finished.
+     */
     void finished();
 }

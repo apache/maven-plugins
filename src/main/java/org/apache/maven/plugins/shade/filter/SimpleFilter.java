@@ -28,6 +28,10 @@ import java.util.Set;
 /**
  * @author David Blevins
  */
+/**
+ * @author kama
+ *
+ */
 public class SimpleFilter
     implements Filter
 {
@@ -38,6 +42,11 @@ public class SimpleFilter
 
     private Set<String> excludes;
 
+    /**
+     * @param jars set of {@link File}s.
+     * @param includes set of includes.
+     * @param excludes set of excludes
+     */
     public SimpleFilter( Set<File> jars, Set<String> includes, Set<String> excludes )
     {
         this.jars = ( jars != null ) ? new HashSet<File>( jars ) : new HashSet<File>();
@@ -45,11 +54,13 @@ public class SimpleFilter
         this.excludes = normalizePatterns( excludes );
     }
 
+    /** {@inheritDoc} */
     public boolean canFilter( File jar )
     {
         return jars.contains( jar );
     }
 
+    /** {@inheritDoc} */
     public boolean isFiltered( String classFile )
     {
         String path = normalizePath( classFile );
@@ -57,6 +68,10 @@ public class SimpleFilter
         return !( isIncluded( path ) && !isExcluded( path ) );
     }
 
+    /**
+     * @param classFile The class file.
+     * @return true if included false otherwise.
+     */
     public boolean isSpecificallyIncluded( String classFile )
     {
         if ( includes == null || includes.isEmpty() )
@@ -130,6 +145,7 @@ public class SimpleFilter
         return result;
     }
 
+    /** {@inheritDoc} */
     public void finished()
     {
     }

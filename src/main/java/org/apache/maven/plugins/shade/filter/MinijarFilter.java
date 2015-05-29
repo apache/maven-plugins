@@ -55,6 +55,11 @@ public class MinijarFilter
 
     private int classesRemoved;
 
+    /**
+     * @param project {@link MavenProject}
+     * @param log {@link Log}
+     * @throws IOException in case of error.
+     */
     public MinijarFilter( MavenProject project, Log log )
         throws IOException
     {
@@ -62,6 +67,10 @@ public class MinijarFilter
     }
 
     /**
+     * @param project {@link MavenProject}
+     * @param log {@link Log}
+     * @param simpleFilters {@link SimpleFilter}
+     * @throws IOException in case of errors.
      * @since 1.6
      */
     @SuppressWarnings( { "unchecked" } )
@@ -184,11 +193,13 @@ public class MinijarFilter
         }
     }
 
+    /** {@inheritDoc} */
     public boolean canFilter( File jar )
     {
         return true;
     }
 
+    /** {@inheritDoc} */
     public boolean isFiltered( String classFile )
     {
         String className = classFile.replace( '/', '.' ).replaceFirst( "\\.class$", "" );
@@ -205,6 +216,7 @@ public class MinijarFilter
         return false;
     }
 
+    /** {@inheritDoc} */
     public void finished()
     {
         int classesTotal = classesRemoved + classesKept;
