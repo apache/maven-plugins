@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -272,6 +273,38 @@ public class CpdReportTest
         {
             System.setProperty( "file.encoding", originalEncoding );
         }
+    }
+
+    public void testCpdJavascriptConfiguration()
+        throws Exception
+    {
+        File testPom =
+                new File( getBasedir(), "src/test/resources/unit/default-configuration/cpd-javascript-plugin-config.xml" );
+            CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+            mojo.execute();
+
+            // verify  the generated file to exist and violations are reported
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            String str = readFile( generatedFile );
+            assertTrue( str.toLowerCase(Locale.ROOT).contains( "Sample.js".toLowerCase(Locale.ROOT) ) );
+            assertTrue( str.toLowerCase(Locale.ROOT).contains( "SampleDup.js".toLowerCase(Locale.ROOT) ) );
+    }
+
+    public void testCpdJspConfiguration()
+            throws Exception
+    {
+        File testPom =
+                new File( getBasedir(), "src/test/resources/unit/default-configuration/cpd-jsp-plugin-config.xml" );
+            CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+            mojo.execute();
+
+            // verify  the generated file to exist and violations are reported
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            String str = readFile( generatedFile );
+            assertTrue( str.toLowerCase(Locale.ROOT).contains( "sample.jsp".toLowerCase(Locale.ROOT) ) );
+            assertTrue( str.toLowerCase(Locale.ROOT).contains( "sampleDup.jsp".toLowerCase(Locale.ROOT) ) );
     }
 
     public static class MockCpd
