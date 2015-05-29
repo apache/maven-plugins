@@ -33,8 +33,12 @@ import java.util.ResourceBundle;
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CPDConfiguration;
 import net.sourceforge.pmd.cpd.CSVRenderer;
+import net.sourceforge.pmd.cpd.EcmascriptLanguage;
+import net.sourceforge.pmd.cpd.JSPLanguage;
 import net.sourceforge.pmd.cpd.JavaLanguage;
 import net.sourceforge.pmd.cpd.JavaTokenizer;
+import net.sourceforge.pmd.cpd.Language;
+import net.sourceforge.pmd.cpd.LanguageFactory;
 import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 
@@ -58,6 +62,15 @@ import org.codehaus.plexus.util.WriterFactory;
 public class CpdReport
     extends AbstractPmdReport
 {
+    /**
+     * The programming language to be analyzed by CPD. Valid values are currently <code>java</code>,
+     * <code>javascript</code> or <code>jsp</code>.
+     *
+     * @since 3.5
+     */
+    @Parameter( defaultValue = "java" )
+    private String language;
+
     /**
      * The minimum number of tokens that need to be duplicated before it causes a violation.
      */
@@ -228,10 +241,27 @@ public class CpdReport
             }
 
             String encoding = determineEncoding( !filesToProcess.isEmpty() );
+            Language cpdLanguage;
+            if ( "java".equals ( language ) || null == language )
+            {
+                cpdLanguage = new JavaLanguage( p );
+            }
+            else if ( "javascript".equals( language ) )
+            {
+                cpdLanguage = new EcmascriptLanguage();
+            }
+            else if ( "jsp".equals( language ) )
+            {
+                cpdLanguage = new JSPLanguage();
+            }
+            else
+            {
+                cpdLanguage = LanguageFactory.createLanguage( language, p );
+            }
 
             CPDConfiguration cpdConfiguration = new CPDConfiguration();
             cpdConfiguration.setMinimumTileSize( minimumTokens );
-            cpdConfiguration.setLanguage( new JavaLanguage( p ) );
+            cpdConfiguration.setLanguage( cpdLanguage );
             cpdConfiguration.setSourceEncoding( encoding );
 
             cpd = new CPD( cpdConfiguration );
