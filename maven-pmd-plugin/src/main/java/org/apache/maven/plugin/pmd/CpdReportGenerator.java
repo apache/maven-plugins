@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.TokenEntry;
 
@@ -185,10 +186,10 @@ public class CpdReportGenerator
             sink.tableRow_();
 
             // Iterating on every token entry
-            for ( Iterator<TokenEntry> occurrences = match.iterator(); occurrences.hasNext(); )
+            for ( Iterator<Mark> occurrences = match.iterator(); occurrences.hasNext(); )
             {
 
-                TokenEntry mark = occurrences.next();
+                TokenEntry mark = occurrences.next().getToken();
                 generateFileLine( mark );
             }
 
