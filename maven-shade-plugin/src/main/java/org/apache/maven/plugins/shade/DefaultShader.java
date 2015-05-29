@@ -93,29 +93,7 @@ public class DefaultShader
         FileOutputStream fileOutputStream = new FileOutputStream( shadeRequest.getUberJar() );
         JarOutputStream jos = new JarOutputStream( new BufferedOutputStream( fileOutputStream ) );
 
-        if ( manifestTransformer != null )
-        {
-            for ( File jar : shadeRequest.getJars() )
-            {
-                JarFile jarFile = newJarFile( jar );
-                for ( Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); )
-                {
-                    JarEntry entry = en.nextElement();
-                    String resource = entry.getName();
-                    if ( manifestTransformer.canTransformResource( resource ) )
-                    {
-                        resources.add( resource );
-                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ),
-                                                             shadeRequest.getRelocators() );
-                        break;
-                    }
-                }
-            }
-            if ( manifestTransformer.hasTransformedResource() )
-            {
-                manifestTransformer.modifyOutputStream( jos );
-            }
-        }
+        goThroughAllJarEntriesForManifestTransformer( shadeRequest, resources, manifestTransformer, jos );
 
         // CHECKSTYLE_OFF: MagicNumber
         Multimap<String, File> duplicates = HashMultimap.create( 10000, 3 );
@@ -211,6 +189,72 @@ public class DefaultShader
         }
 
         // Log a summary of duplicates
+        logSummaryOfDuplicates( overlapping );
+
+        if ( overlapping.keySet().size() > 0 )
+        {
+            showOverlappingWarning();
+        }
+
+        for ( ResourceTransformer transformer : transformers )
+        {
+            if ( transformer.hasTransformedResource() )
+            {
+                transformer.modifyOutputStream( jos );
+            }
+        }
+
+        IOUtil.close( jos );
+
+        for ( Filter filter : shadeRequest.getFilters() )
+        {
+            filter.finished();
+        }
+    }
+
+    private void goThroughAllJarEntriesForManifestTransformer( ShadeRequest shadeRequest, Set<String> resources,
+                                                               ResourceTransformer manifestTransformer,
+                                                               JarOutputStream jos )
+        throws IOException
+    {
+        if ( manifestTransformer != null )
+        {
+            for ( File jar : shadeRequest.getJars() )
+            {
+                JarFile jarFile = newJarFile( jar );
+                for ( Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); )
+                {
+                    JarEntry entry = en.nextElement();
+                    String resource = entry.getName();
+                    if ( manifestTransformer.canTransformResource( resource ) )
+                    {
+                        resources.add( resource );
+                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ),
+                                                             shadeRequest.getRelocators() );
+                        break;
+                    }
+                }
+            }
+            if ( manifestTransformer.hasTransformedResource() )
+            {
+                manifestTransformer.modifyOutputStream( jos );
+            }
+        }
+    }
+
+    private void showOverlappingWarning()
+    {
+        getLogger().warn( "maven-shade-plugin has detected that some class files are" );
+        getLogger().warn( "present in two or more JARs. When this happens, only one" );
+        getLogger().warn( "single version of the class is copied to the uber jar." );
+        getLogger().warn( "Usually this is not harmful and you can skip these warnings," );
+        getLogger().warn( "otherwise try to manually exclude artifacts based on" );
+        getLogger().warn( "mvn dependency:tree -Ddetail=true and the above output." );
+        getLogger().warn( "See http://docs.codehaus.org/display/MAVENUSER/Shade+Plugin" );
+    }
+
+    private void logSummaryOfDuplicates( Multimap<Collection<File>, String> overlapping )
+    {
         for ( Collection<File> jarz : overlapping.keySet() )
         {
             List<String> jarzS = new LinkedList<String>();
@@ -227,8 +271,9 @@ public class DefaultShader
                 classes.add( clazz.replace( ".class", "" ).replace( "/", "." ) );
             }
 
-            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size()
-                              + " overlapping classes: " );
+            //CHECKSTYLE_OFF: LineLength
+            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
+            //CHECKSTYLE_ON: LineLength
 
             int max = 10;
 
@@ -242,32 +287,6 @@ public class DefaultShader
                 getLogger().warn( "  - " + ( classes.size() - max ) + " more..." );
             }
 
-        }
-
-        if ( overlapping.keySet().size() > 0 )
-        {
-            getLogger().warn( "maven-shade-plugin has detected that some class files are" );
-            getLogger().warn( "present in two or more JARs. When this happens, only one" );
-            getLogger().warn( "single version of the class is copied to the uber jar." );
-            getLogger().warn( "Usually this is not harmful and you can skip these warnings," );
-            getLogger().warn( "otherwise try to manually exclude artifacts based on" );
-            getLogger().warn( "mvn dependency:tree -Ddetail=true and the above output." );
-            getLogger().warn( "See http://docs.codehaus.org/display/MAVENUSER/Shade+Plugin" );
-        }
-
-        for ( ResourceTransformer transformer : transformers )
-        {
-            if ( transformer.hasTransformedResource() )
-            {
-                transformer.modifyOutputStream( jos );
-            }
-        }
-
-        IOUtil.close( jos );
-
-        for ( Filter filter : shadeRequest.getFilters() )
-        {
-            filter.finished();
         }
     }
 
