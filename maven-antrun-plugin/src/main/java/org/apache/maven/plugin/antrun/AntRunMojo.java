@@ -250,9 +250,7 @@ public class AntRunMojo
             ProjectHelper.configureProject( antProject, antBuildFile );
             antProject.init();
 
-            DefaultLogger antLogger = new DefaultLogger();
-            antLogger.setOutputPrintStream( System.out );
-            antLogger.setErrorPrintStream( System.err );
+            DefaultLogger antLogger = new MavenLogger( getLog() );
 
             if ( getLog().isDebugEnabled() )
             {
