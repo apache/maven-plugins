@@ -21,6 +21,7 @@ package org.apache.maven.plugin.assembly.archive.phase;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
@@ -30,6 +31,7 @@ import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.utils.Os;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -198,7 +200,15 @@ public class FileItemAssemblyPhaseTest
         macCS.expectInterpolators();
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
-        macLogger.logger.warn( (String)anyObject() );
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+        {
+            macLogger.logger.error( "OS=Windows and the assembly descriptor contains a *nix-specific "
+                + "root-relative-reference (starting with slash) /" );
+        }
+        else
+        {
+            macLogger.logger.warn( (String)anyObject() );
+        }
 
         final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
@@ -274,8 +284,15 @@ public class FileItemAssemblyPhaseTest
 
 
         final MockAndControlForLogger macLogger = new MockAndControlForLogger( mm );
-        macLogger.logger.warn( (String)anyObject() );
-
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+        {
+            macLogger.logger.error( "OS=Windows and the assembly descriptor contains a *nix-specific "
+                + "root-relative-reference (starting with slash) /" );
+        }
+        else
+        {
+            macLogger.logger.warn( (String)anyObject() );
+        }
 
         final MockAndControlForArchiver macArchiver = new MockAndControlForArchiver( mm );
 
