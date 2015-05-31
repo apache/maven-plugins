@@ -53,7 +53,6 @@ public class ReaderFormatter
             MavenReaderFilterRequest filterRequest =
                 new MavenReaderFilterRequest( source, true, configSource.getProject(), configSource.getFilters(),
                                               isPropertiesFile, null, configSource.getMavenSession(), null );
-//            filterRequest.setInjectProjectBuildFilters(true);
             filterRequest.setEscapeString( escapeString );
 
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
@@ -127,7 +126,9 @@ public class ReaderFormatter
         {
             return new InputStreamTransformer()
             {
-                @Nonnull public InputStream transform( @Nonnull PlexusIoResource plexusIoResource, @Nonnull InputStream inputStream )
+                @Nonnull
+                public InputStream transform( @Nonnull PlexusIoResource plexusIoResource,
+                                              @Nonnull InputStream inputStream )
                     throws IOException
                 {
                     InputStream result = inputStream;
