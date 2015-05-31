@@ -95,8 +95,6 @@ public class FileSetAssemblyPhaseTest
 
         macTask.expectGetArchiveBaseDirectory();
 
-        final File basedir = fileManager.createTempDir();
-
         final MavenProject project = new MavenProject( new Model() );
 
         macLogger.expectError( true, true );

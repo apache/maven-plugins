@@ -42,6 +42,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 import org.easymock.classextension.EasyMockSupport;
 
+@SuppressWarnings( "OctalInteger" )
 public class AddDependencySetsTaskTest
     extends TestCase
 {

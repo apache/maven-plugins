@@ -81,19 +81,13 @@ public class DefaultDependencyResolverTest
     public void test_getDependencySetResolutionRequirements()
         throws DependencyResolutionException
     {
-        final List<DependencySet> depSets = new ArrayList<DependencySet>();
-
         final DependencySet ds1 = new DependencySet();
         ds1.setScope( Artifact.SCOPE_COMPILE );
         ds1.setUseTransitiveDependencies( false );
 
-        depSets.add( ds1 );
-
         final DependencySet ds2 = new DependencySet();
         ds2.setScope( Artifact.SCOPE_SYSTEM );
         ds2.setUseTransitiveDependencies( false );
-
-        depSets.add( ds2 );
 
         final MavenProject project = createMavenProject( "main-group", "main-artifact", "1", null );
 

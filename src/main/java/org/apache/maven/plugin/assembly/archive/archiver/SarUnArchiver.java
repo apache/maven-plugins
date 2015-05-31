@@ -24,7 +24,7 @@ import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 /**
  * @author jdcasey
  * @version $Id$
- * @todo delete this class once the plexus maven plugin can merge a generated components.xml with an existing one.
+ * //todo delete this class once the plexus maven plugin can merge a generated components.xml with an existing one.
  */
 class SarUnArchiver
     extends ZipUnArchiver

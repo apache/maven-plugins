@@ -42,6 +42,7 @@ import java.util.Arrays;
 
 import static org.easymock.EasyMock.anyObject;
 
+@SuppressWarnings( "OctalInteger" )
 public class AddArtifactTaskTest
     extends TestCase
 {
