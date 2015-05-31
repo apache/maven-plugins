@@ -127,7 +127,7 @@ public class ReaderFormatter
         {
             return new InputStreamTransformer()
             {
-                public InputStream transform( PlexusIoResource plexusIoResource, InputStream inputStream )
+                @Nonnull public InputStream transform( @Nonnull PlexusIoResource plexusIoResource, @Nonnull InputStream inputStream )
                     throws IOException
                 {
                     InputStream result = inputStream;

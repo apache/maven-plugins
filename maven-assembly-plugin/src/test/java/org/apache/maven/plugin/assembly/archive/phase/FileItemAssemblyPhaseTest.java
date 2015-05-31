@@ -96,8 +96,6 @@ public class FileItemAssemblyPhaseTest
 
         macCS.expectGetBasedir( basedir );
 
-        final File tempRoot = fileManager.createTempDir();
-
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
         macCS.expectGetFinalName( "final-name" );
@@ -141,8 +139,6 @@ public class FileItemAssemblyPhaseTest
         final File file = fileManager.createFile( basedir, "file.txt", "This is a test file." );
 
         macCS.expectGetBasedir( basedir );
-
-        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -191,8 +187,6 @@ public class FileItemAssemblyPhaseTest
             fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
 
         macCS.expectGetBasedir( basedir );
-
-        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -274,8 +268,6 @@ public class FileItemAssemblyPhaseTest
             fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
 
         macCS.expectGetBasedir( basedir );
-
-        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 
@@ -361,8 +353,6 @@ public class FileItemAssemblyPhaseTest
             fileManager.createFile( basedir, "config/config.txt", "This is a test file for config/config.txt" );
 
         macCS.expectGetBasedir( basedir );
-
-        final File tempRoot = fileManager.createTempDir();
 
         macCS.expectGetProject( new MavenProject( new Model() ) );
 

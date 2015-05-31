@@ -58,6 +58,7 @@ import java.util.Set;
 import static java.util.Collections.singleton;
 
 
+@SuppressWarnings( "OctalInteger" )
 public class ModuleSetAssemblyPhaseTest
     extends TestCase
 {
@@ -484,8 +485,6 @@ public class ModuleSetAssemblyPhaseTest
 
         final Logger logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
 
-        Assembly assembly = new Assembly();
-
         createPhase( logger, macTask.dependencyResolver, null ).addModuleBinaries( null, null, binaries, projects, macTask.archiver, macTask.configSource );
 
         mm.verifyAll();
@@ -752,14 +751,12 @@ public class ModuleSetAssemblyPhaseTest
 
         final MockAndControlForAddDependencySetsTask macTask = new MockAndControlForAddDependencySetsTask( mm, project );
 
-        final List<ArtifactMock> macArtifacts = new ArrayList<ArtifactMock>();
-
-        macArtifacts.add( addArtifact( project, mm, false ) );
+        addArtifact( project, mm, false );
 
         final MavenProject project2 = createProject( "group", "artifact2", "version", project );
-        macArtifacts.add( addArtifact( project2, mm, false ) );
+        addArtifact( project2, mm, false );
         final MavenProject project3 = createProject( "group", "artifact3", "version", project2 );
-        macArtifacts.add( addArtifact( project3, mm, true ) );
+        addArtifact( project3, mm, true );
 
         final List<MavenProject> projects = new ArrayList<MavenProject>();
         projects.add( project );

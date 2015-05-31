@@ -959,7 +959,7 @@ public abstract class AbstractAssemblyMojo
         return delimiters;
     }
 
-    public FixedStringSearchInterpolator getCommandLinePropsInterpolator()
+    @Nonnull public FixedStringSearchInterpolator getCommandLinePropsInterpolator()
     {
         if ( commanndLinePropertiesInterpolator == null )
         {
@@ -978,7 +978,7 @@ public abstract class AbstractAssemblyMojo
         return envInterpolator;
     }
 
-    public FixedStringSearchInterpolator getRepositoryInterpolator()
+    @Nonnull public FixedStringSearchInterpolator getRepositoryInterpolator()
     {
         if ( rootInterpolator == null )
         {

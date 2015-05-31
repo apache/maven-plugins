@@ -35,8 +35,6 @@ import org.apache.maven.plugin.assembly.testutils.PojoConfigSource;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.interpolation.fixed.PropertiesBasedValueSource;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
 
 import java.io.IOException;

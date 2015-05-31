@@ -78,7 +78,6 @@ public class DependencySetAssemblyPhaseTest
             new MockAndControlForAddDependencySetsTask( mm, project );
 
         final ArtifactMock artifactMock = new ArtifactMock( mm, "group", "dep", "1", "jar", false );
-        final File artifactFile = artifactMock.setNewFile();
 
         System.out.println( "On test setup, hashcode for dependency artifact: " + artifactMock.getArtifact()
                                                                                               .hashCode() );

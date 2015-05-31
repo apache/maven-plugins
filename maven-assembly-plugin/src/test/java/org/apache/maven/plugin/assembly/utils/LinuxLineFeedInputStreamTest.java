@@ -20,12 +20,9 @@ package org.apache.maven.plugin.assembly.utils;
  */
 
 import junit.framework.TestCase;
-import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
 
 public class LinuxLineFeedInputStreamTest
     extends TestCase
