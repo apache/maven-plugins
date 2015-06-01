@@ -78,6 +78,12 @@ public class AnalyzeDepMgt
     private boolean ignoreDirect = true;
 
     /**
+     * Ignore excluded dependencies that appear in the dependency tree.
+     */
+    @Parameter( property = "mdep.analyze.ignore.exclusion.errors", defaultValue = "false" )
+    private boolean ignoreExclusionErrors = false;
+
+    /**
      * Skip plugin execution completely.
      *
      * @since 2.7
@@ -162,14 +168,17 @@ public class AnalyzeDepMgt
                 allDependencyArtifacts.removeAll( directDependencies );
             }
 
-            // log exclusion errors
-            List<Artifact> exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
-            for ( Artifact exclusion : exclusionErrors )
+            if ( !this.ignoreExclusionErrors )
             {
-                getLog().info( StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
-                                   + " was excluded in DepMgt, but version " + exclusion.getVersion()
-                                   + " has been found in the dependency tree." );
-                foundError = true;
+                // log exclusion errors
+                List<Artifact> exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
+                for ( Artifact exclusion : exclusionErrors )
+                {
+                    getLog().info( StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
+                        + " was excluded in DepMgt, but version " + exclusion.getVersion()
+                        + " has been found in the dependency tree." );
+                    foundError = true;
+                }
             }
 
             // find and log version mismatches
@@ -359,5 +368,21 @@ public class AnalyzeDepMgt
     public void setIgnoreDirect( boolean theIgnoreDirect )
     {
         this.ignoreDirect = theIgnoreDirect;
+    }
+
+    /**
+     * @return the ignoreExclusionErrors
+     */
+    protected final boolean isIgnoreExclusionErrors()
+    {
+        return this.ignoreExclusionErrors;
+    }
+
+    /**
+     * @param theIgnoreExclusionErrors the ignoreExclusionErrors to set
+     */
+    public void setIgnoreExclusionErrors( boolean theIgnoreExclusionErrors )
+    {
+        this.ignoreExclusionErrors = theIgnoreExclusionErrors;
     }
 }

@@ -47,12 +47,14 @@ public class TestAnalyzeDepMgt
     DependencyArtifactStubFactory stubFactory;
 
     Dependency exclusion;
+    Dependency exclusionMatchingVersion;
 
     Exclusion ex;
 
     Artifact exclusionArtifact;
 
     DependencyManagement depMgt;
+    DependencyManagement depMgtMatchingVersion;
     DependencyManagement depMgtNoExclusions;
     protected void setUp()
         throws Exception
@@ -87,6 +89,20 @@ public class TestAnalyzeDepMgt
         depMgt = new DependencyManagement();
         depMgt.setDependencies( list );
 
+        exclusionMatchingVersion = new Dependency();
+        exclusionMatchingVersion.setArtifactId( exclusionArtifact.getArtifactId() );
+        exclusionMatchingVersion.setGroupId( exclusionArtifact.getGroupId() );
+        exclusionMatchingVersion.setType( exclusionArtifact.getType() );
+        exclusionMatchingVersion.setClassifier( "" );
+        exclusionMatchingVersion.setVersion( exclusionArtifact.getVersion() );
+
+        exclusionMatchingVersion.addExclusion( ex );
+
+        list = new ArrayList<Dependency>();
+        list.add( exclusionMatchingVersion );
+
+        depMgtMatchingVersion = new DependencyManagement();
+        depMgtMatchingVersion.setDependencies( list );
 
         project.setArtifacts( allArtifacts );
         project.setDependencyArtifacts( directArtifacts );
@@ -239,6 +255,37 @@ public class TestAnalyzeDepMgt
             // test with exclusion
             mojo.setFailBuild( true );
             mojo.setIgnoreDirect( true );
+            mojo.execute();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            fail( "Caught Unexpected Exception:" + e.getLocalizedMessage() );
+        }
+
+        try
+        {
+            DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
+            project.setDependencyManagement( depMgtMatchingVersion );
+            // test without ignore exclusion errors
+            mojo.setFailBuild( true );
+            mojo.setIgnoreDirect( false );
+            mojo.execute();
+            fail( "Expected exception to fail the build." );
+        }
+        catch ( Exception e )
+        {
+            System.out.println("Caught Expected Exception:" + e.getLocalizedMessage());
+        }
+
+        try
+        {
+            DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
+            project.setDependencyManagement( depMgtMatchingVersion );
+            // test with ignore exclusion errors
+            mojo.setFailBuild( true );
+            mojo.setIgnoreDirect( false );
+            mojo.setIgnoreExclusionErrors(true);
             mojo.execute();
         }
         catch ( Exception e )
