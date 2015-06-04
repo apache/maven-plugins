@@ -963,6 +963,13 @@ public class ShadeMojo
         addSystemScopedDependencyFromNonInterpolatedPom( dependencies, originalDependencies );
 
         // Check to see if we have a reduction and if so rewrite the POM.
+        rewriteDependencyReducedPomIfWeHaveReduction( dependencies, modified, transitiveDeps, model );
+    }
+
+    private void rewriteDependencyReducedPomIfWeHaveReduction( List<Dependency> dependencies, boolean modified,
+                                                               List<Dependency> transitiveDeps, Model model )
+        throws IOException, ProjectBuildingException, DependencyGraphBuilderException
+    {
         if ( modified )
         {
             while ( modified )
