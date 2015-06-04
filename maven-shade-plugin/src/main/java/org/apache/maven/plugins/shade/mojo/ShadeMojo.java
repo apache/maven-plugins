@@ -957,6 +957,9 @@ public class ShadeMojo
             }
         }
 
+        // MSHADE-155
+        model.setArtifactId( shadedArtifactId );
+
         // MSHADE-185: We will add those system scoped dependencies
         // from the non interpolated original pom file. So we keep
         // things like this: <systemPath>${tools.jar}</systemPath> intact.
