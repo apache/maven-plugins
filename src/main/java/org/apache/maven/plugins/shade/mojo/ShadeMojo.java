@@ -88,9 +88,9 @@ import org.codehaus.plexus.util.WriterFactory;
  * @author David Blevins
  * @author Hiram Chirino
  */
-//CHECKSTYLE_OFF: LineLength
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "shade", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
-//CHECKSTYLE_ON: LineLength
+// CHECKSTYLE_ON: LineLength
 public class ShadeMojo
     extends AbstractMojo
     implements Contextualizable
@@ -900,13 +900,14 @@ public class ShadeMojo
     private void createDependencyReducedPom( Set<String> artifactsToRemove )
         throws IOException, DependencyGraphBuilderException, ProjectBuildingException
     {
-        Model model = project.getOriginalModel();
         List<Dependency> dependencies = new ArrayList<Dependency>();
 
         boolean modified = false;
 
         List<Dependency> transitiveDeps = new ArrayList<Dependency>();
 
+        // NOTE: By using the getArtifacts() we get the completely evaluated artifacts
+        // including the system scoped artifacts with expanded values of properties used.
         for ( Artifact artifact : project.getArtifacts() )
         {
             if ( "pom".equals( artifact.getType() ) )
@@ -919,7 +920,6 @@ public class ShadeMojo
             Dependency dep = createDependency( artifact );
 
             // we'll figure out the exclusions in a bit.
-
             transitiveDeps.add( dep );
         }
         List<Dependency> origDeps = project.getDependencies();
@@ -928,6 +928,13 @@ public class ShadeMojo
         {
             origDeps = transitiveDeps;
         }
+
+        Model model = project.getOriginalModel();
+        // MSHADE-185: We will remove all system scoped dependencies which usually
+        // have some kind of property usage. At this time the properties within
+        // such things are already evaluated.
+        List<Dependency> originalDependencies = model.getDependencies();
+        removeSystemScopedDependencies( artifactsToRemove, originalDependencies );
 
         for ( Dependency d : origDeps )
         {
@@ -949,6 +956,11 @@ public class ShadeMojo
                 }
             }
         }
+
+        // MSHADE-185: We will add those system scoped dependencies
+        // from the non interpolated original pom file. So we keep
+        // things like this: <systemPath>${tools.jar}</systemPath> intact.
+        addSystemScopedDependencyFromNonInterpolatedPom( dependencies, originalDependencies );
 
         // Check to see if we have a reduction and if so rewrite the POM.
         if ( modified )
@@ -1027,10 +1039,34 @@ public class ShadeMojo
 
                 ProjectBuildingResult result = projectBuilder.build( f, projectBuildingRequest );
 
+                getLog().debug( "updateExcludesInDeps()" );
                 modified = updateExcludesInDeps( result.getProject(), dependencies, transitiveDeps );
             }
 
             project.setFile( dependencyReducedPomLocation );
+        }
+    }
+
+    private void removeSystemScopedDependencies( Set<String> artifactsToRemove, List<Dependency> originalDependencies )
+    {
+        for ( Dependency dependency : originalDependencies )
+        {
+            if ( dependency.getScope() != null && dependency.getScope().equalsIgnoreCase( "system" ) )
+            {
+                artifactsToRemove.add( getId( dependency ) );
+            }
+        }
+    }
+
+    private void addSystemScopedDependencyFromNonInterpolatedPom( List<Dependency> dependencies,
+                                                                  List<Dependency> originalDependencies )
+    {
+        for ( Dependency dependency : originalDependencies )
+        {
+            if ( dependency.getScope() != null && dependency.getScope().equalsIgnoreCase( "system" ) )
+            {
+                dependencies.add( dependency );
+            }
         }
     }
 
