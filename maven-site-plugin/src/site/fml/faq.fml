@@ -28,10 +28,10 @@ under the License.
         <dl>
           <dt>mvn site</dt>
           <dd>
-            Calls the <i>site</i> lifecycle with the associate phases (i.e. pre-site, site, post-site, site-deploy).
-            See <a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
+            Calls the <i>site</i> lifecycle which is associated with the following life cycle phases: <code>pre-site</code> and <code>site</code>.
+            The whole site life-cycle phases can be found in the <a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
           <dt>mvn site:site</dt>
-          <dd>Calls the <i>site</i> goal from the site plugin.
+          <dd>Calls the <i>site</i> goal of the site plugin.
             See <a href="site-mojo.html">site:site</a>.</dd>
         </dl>
       </answer>
