@@ -63,7 +63,6 @@ under the License.
     <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
     <module>maven-eclipse-plugin</module>
 
-    <module>maven-assembly-plugin</module>
     <module>maven-changelog-plugin</module>
     <module>maven-changes-plugin</module>
     <!-- Moved to java-7 profile because it requires Java 7
@@ -139,6 +138,7 @@ under the License.
       </activation>
       <modules>
         <!--Moved to maven-3 profile as a workaround for MNG-3814 -->
+        <module>maven-assembly-plugin</module>
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
         <!--Moved to maven-3 profile as they require Maven 3.0 -->

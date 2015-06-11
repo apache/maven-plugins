@@ -74,8 +74,6 @@ public class DefaultAssemblyArchiverTest
         throws PlexusContainerException
     {
         container = new DefaultPlexusContainer();
-        container.initialize();
-        container.start();
     }
 
     @AfterClass
