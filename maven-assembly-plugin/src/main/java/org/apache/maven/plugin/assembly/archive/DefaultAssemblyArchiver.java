@@ -84,7 +84,7 @@ import java.util.Map;
  *
  * @version $Id$
  */
-@Component( role = AssemblyArchiver.class )
+@Component( role = AssemblyArchiver.class, instantiationStrategy = "per-lookup" )
 public class DefaultAssemblyArchiver
     extends AbstractLogEnabled
     implements AssemblyArchiver, Contextualizable
