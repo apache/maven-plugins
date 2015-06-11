@@ -581,15 +581,8 @@ public abstract class AbstractAssemblyMojo
         if ( session != null )
         {
             commandLineProperties = new Properties();
-            if ( session.getExecutionProperties() != null )
-            {
-                commandLineProperties.putAll( session.getExecutionProperties() );
-            }
-
-            if ( session.getUserProperties() != null )
-            {
-                commandLineProperties.putAll( session.getUserProperties() );
-            }
+            commandLineProperties.putAll( session.getSystemProperties() );
+            commandLineProperties.putAll( session.getUserProperties() );
         }
 
         PropertiesBasedValueSource cliProps = new PropertiesBasedValueSource( commandLineProperties );

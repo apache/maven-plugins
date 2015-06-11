@@ -152,7 +152,7 @@ public class AddDependencySetsTaskTest
     {
         final MavenProject project = new MavenProject( new Model() );
 
-        final ProjectBuildingException pbe = new ProjectBuildingException( "test", "Test error." );
+        final ProjectBuildingException pbe = new ProjectBuildingException( "test", "Test error.", new Throwable() );
 
         final MockAndControlForAddDependencySetsTask macTask =
             new MockAndControlForAddDependencySetsTask( mockManager, new MavenProject( new Model() ) );

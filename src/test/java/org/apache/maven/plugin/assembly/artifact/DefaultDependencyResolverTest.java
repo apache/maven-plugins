@@ -71,7 +71,7 @@ public class DefaultDependencyResolverTest
         super.setUp();
 
         resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
-        metadataSource = (ArtifactMetadataSource) lookup( ArtifactMetadataSource.ROLE );
+        metadataSource = (ArtifactMetadataSource) lookup( ArtifactMetadataSource.class);
         factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
         layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );

@@ -358,6 +358,8 @@ public class FilterUtilsTest
             mac = new ArtifactMockAndControl( groupId, artifactId, depTrail );
 
             setArtifact( mac.artifact );
+
+            setVersion( "1.0" );
         }
 
     }
