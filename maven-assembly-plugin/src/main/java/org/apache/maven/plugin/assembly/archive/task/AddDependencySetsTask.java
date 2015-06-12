@@ -20,6 +20,7 @@ package org.apache.maven.plugin.assembly.archive.task;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -33,8 +34,10 @@ import org.apache.maven.plugin.assembly.utils.AssemblyFormatUtils;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -78,7 +81,7 @@ public class AddDependencySetsTask
 
     private MavenProject moduleProject;
 
-    private final MavenProjectBuilder projectBuilder;
+    private final ProjectBuilder projectBuilder1;
 
     private String defaultOutputDirectory;
 
@@ -90,13 +93,12 @@ public class AddDependencySetsTask
 
 
     public AddDependencySetsTask( final List<DependencySet> dependencySets, final Set<Artifact> resolvedArtifacts,
-                                  final MavenProject project, final MavenProjectBuilder projectBuilder,
-                                  final Logger logger )
+                                  final MavenProject project, ProjectBuilder projectBuilder, final Logger logger )
     {
         this.dependencySets = dependencySets;
         this.resolvedArtifacts = resolvedArtifacts;
         this.project = project;
-        this.projectBuilder = projectBuilder;
+        this.projectBuilder1 = projectBuilder;
         this.logger = logger;
     }
 
@@ -150,11 +152,12 @@ public class AddDependencySetsTask
 
         for ( final Artifact depArtifact : dependencyArtifacts )
         {
+            ProjectBuildingRequest pbr = getProjectBuildingRequest( configSource );
             MavenProject depProject;
             try
             {
-                depProject = projectBuilder.buildFromRepository( depArtifact, configSource.getRemoteRepositories(),
-                                                                 configSource.getLocalRepository() );
+                ProjectBuildingResult build = projectBuilder1.build( depArtifact, pbr );
+                depProject = build.getProject();
             }
             catch ( final ProjectBuildingException e )
             {
@@ -175,6 +178,16 @@ public class AddDependencySetsTask
                                    fileSetTransformers );
             }
         }
+    }
+
+    private ProjectBuildingRequest getProjectBuildingRequest( AssemblerConfigurationSource configSource )
+    {
+        MavenSession session = configSource.getMavenSession();
+        ProjectBuildingRequest pbr = ProjectBuildingRequestCreator.create( session );
+        pbr.setRemoteRepositories( configSource.getRemoteRepositories() );
+        pbr.setLocalRepository( configSource.getLocalRepository() );
+        //pbr.setRepositorySession(  configSource.getR''  )
+        return pbr;
     }
 
     private boolean isUnpackWithOptions( DependencySet dependencySet )
