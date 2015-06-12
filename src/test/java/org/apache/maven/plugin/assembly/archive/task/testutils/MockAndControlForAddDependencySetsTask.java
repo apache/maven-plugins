@@ -23,6 +23,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -30,20 +31,26 @@ import junit.framework.Assert;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.building.ModelProblem;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolutionException;
 import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
+import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
+import org.sonatype.aether.RepositorySystemSession;
 
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
@@ -56,13 +63,17 @@ public class MockAndControlForAddDependencySetsTask
 
     public final AssemblerConfigurationSource configSource;
 
-    public final MavenProjectBuilder projectBuilder;
+    public final ProjectBuilder projectBuilder;
 
     public final ArchiverManager archiverManager;
 
     private final MavenProject project;
 
     public final DependencyResolver dependencyResolver;
+
+    private final MavenSession session;
+
+    private final RepositorySystemSession repositorySession;
 
 
     public MockAndControlForAddDependencySetsTask( final EasyMockSupport mockManager )
@@ -74,11 +85,13 @@ public class MockAndControlForAddDependencySetsTask
     {
         this.project = project;
 
+        this.session = mockManager.createMock( MavenSession.class );
+        this.repositorySession = mockManager.createMock( RepositorySystemSession.class );
         archiver = mockManager.createMock(Archiver.class);
         configSource = mockManager.createMock (AssemblerConfigurationSource.class);
 
 
-        projectBuilder = mockManager.createMock(MavenProjectBuilder.class);
+        projectBuilder = mockManager.createMock(ProjectBuilder.class);
 
         archiverManager = mockManager.createMock(ArchiverManager.class);
 
@@ -91,6 +104,12 @@ public class MockAndControlForAddDependencySetsTask
     private void enableDefaultExpectations()
     {
         expect(configSource.getProject()).andReturn( project ).anyTimes();
+        expect( session.getRepositorySession()).andReturn( repositorySession ).anyTimes();
+        expect( session.getSystemProperties()).andReturn( new Properties(  ) ).anyTimes();
+        expect( session.getUserProperties()).andReturn( new Properties(  ) ).anyTimes();
+        expect( session.getExecutionProperties()).andReturn( new Properties(  ) ).anyTimes();
+
+        expectGetSession( session );
     }
 
     public void expectAddArchivedFileSet()
@@ -200,8 +219,8 @@ public class MockAndControlForAddDependencySetsTask
     {
         try
         {
-            expect(projectBuilder.buildFromRepository( (Artifact) anyObject(), (List) anyObject(),
-                                                (ArtifactRepository) anyObject() )).andThrow( error );
+            expect(projectBuilder.build( (Artifact) anyObject(), (ProjectBuildingRequest) anyObject() )).andThrow(
+                error );
 //            projectBuilderCtl.setThrowable( error, MockControl.ONE_OR_MORE );
         }
         catch ( final ProjectBuildingException e )
@@ -212,9 +231,42 @@ public class MockAndControlForAddDependencySetsTask
 
     public void expectBuildFromRepository( final MavenProject project )
     {
+        ProjectBuildingResult pbr = new ProjectBuildingResult(){
+            @Override
+            public String getProjectId()
+            {
+                return null;
+            }
+
+            @Override
+            public File getPomFile()
+            {
+                return null;
+            }
+
+            @Override
+            public MavenProject getProject()
+            {
+                return project;
+            }
+
+            @Override
+            public List<ModelProblem> getProblems()
+            {
+                return null;
+            }
+
+            @Override
+            public DependencyResolutionResult getDependencyResolutionResult()
+            {
+                return null;
+            }
+        };
+
         try
         {
-            expect(projectBuilder.buildFromRepository( ( Artifact) anyObject(), (List)anyObject(), (ArtifactRepository)anyObject() )).andReturn( project ).anyTimes();
+            expect( projectBuilder.build( (Artifact) anyObject(), (ProjectBuildingRequest) anyObject() )).andReturn(
+                pbr ).anyTimes();
         }
         catch ( final ProjectBuildingException e )
         {

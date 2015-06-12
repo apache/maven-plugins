@@ -43,7 +43,7 @@ import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.plugin.assembly.utils.ProjectUtils;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.annotations.Component;
@@ -87,7 +87,7 @@ public class ModuleSetAssemblyPhase
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     @Requirement
-    private MavenProjectBuilder projectBuilder;
+    private ProjectBuilder projectBuilder;
 
     @Requirement
     private ArchiverManager archiverManager;
@@ -107,7 +107,7 @@ public class ModuleSetAssemblyPhase
      * @param projectBuilder The project builder.
      * @param logger         The logger.
      */
-    public ModuleSetAssemblyPhase( final MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver,
+    public ModuleSetAssemblyPhase( final ProjectBuilder projectBuilder, DependencyResolver dependencyResolver,
                                    final Logger logger )
     {
         this.projectBuilder = projectBuilder;

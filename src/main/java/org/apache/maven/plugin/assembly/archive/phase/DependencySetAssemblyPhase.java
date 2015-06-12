@@ -29,7 +29,7 @@ import org.apache.maven.plugin.assembly.artifact.DependencyResolver;
 import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.annotations.Component;
@@ -53,7 +53,7 @@ public class DependencySetAssemblyPhase
 {
 
     @Requirement
-    private MavenProjectBuilder projectBuilder;
+    private ProjectBuilder projectBuilder;
 
     @Requirement
     private ArchiverManager archiverManager;
@@ -74,7 +74,7 @@ public class DependencySetAssemblyPhase
      * @param projectBuilder The Maven Project Builder.
      * @param logger         The Logger.
      */
-    public DependencySetAssemblyPhase( final MavenProjectBuilder projectBuilder, DependencyResolver dependencyResolver,
+    public DependencySetAssemblyPhase( final ProjectBuilder projectBuilder, DependencyResolver dependencyResolver,
                                        final Logger logger )
     {
         this.projectBuilder = projectBuilder;

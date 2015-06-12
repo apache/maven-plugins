@@ -41,6 +41,7 @@ import org.apache.maven.plugin.assembly.testutils.TestFileManager;
 import org.apache.maven.plugin.assembly.utils.TypeConversionUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMock;
@@ -878,7 +879,7 @@ public class ModuleSetAssemblyPhaseTest
     private ModuleSetAssemblyPhase createPhase( final Logger logger,
                                                 final MockAndControlForAddDependencySetsTask macTask )
     {
-        MavenProjectBuilder projectBuilder = null;
+        ProjectBuilder projectBuilder = null;
 
         if ( macTask != null )
         {
@@ -889,7 +890,7 @@ public class ModuleSetAssemblyPhaseTest
         return new ModuleSetAssemblyPhase( projectBuilder, dr, logger );
     }
 
-    private ModuleSetAssemblyPhase createPhase( final Logger logger, DependencyResolver dr, MavenProjectBuilder projectBuilder1 )
+    private ModuleSetAssemblyPhase createPhase( final Logger logger, DependencyResolver dr, ProjectBuilder projectBuilder1 )
     {
         return new ModuleSetAssemblyPhase( projectBuilder1, dr, logger );
     }

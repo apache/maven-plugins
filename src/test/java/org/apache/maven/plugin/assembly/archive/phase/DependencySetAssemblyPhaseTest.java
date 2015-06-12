@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive.phase;
  * under the License.
  */
 
+import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
@@ -31,16 +32,14 @@ import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMockSupport;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-
-import junit.framework.TestCase;
-import org.easymock.classextension.EasyMockSupport;
 
 public class DependencySetAssemblyPhaseTest
     extends TestCase
@@ -87,7 +86,6 @@ public class DependencySetAssemblyPhaseTest
         macTask.expectGetDestFile( new File( "junk" ) );
 //        macTask.expectAddFile( artifactFile, "out/dep", 10 );
 
-        macTask.expectGetSession( null );
 
         project.setArtifacts( Collections.singleton( artifactMock.getArtifact() ) );
 
@@ -144,7 +142,7 @@ public class DependencySetAssemblyPhaseTest
     private DependencySetAssemblyPhase createPhase( final MockAndControlForAddDependencySetsTask macTask,
                                                     final Logger logger, DependencyResolver dr )
     {
-        MavenProjectBuilder projectBuilder = null;
+        ProjectBuilder projectBuilder = null;
 
         if ( macTask != null )
         {

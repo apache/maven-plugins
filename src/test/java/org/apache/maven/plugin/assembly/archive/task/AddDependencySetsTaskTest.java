@@ -19,6 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task;
  * under the License.
  */
 
+import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
@@ -32,15 +33,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.easymock.classextension.EasyMockSupport;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.TestCase;
-import org.easymock.classextension.EasyMockSupport;
 
 @SuppressWarnings( "OctalInteger" )
 public class AddDependencySetsTaskTest
@@ -103,7 +102,7 @@ public class AddDependencySetsTaskTest
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectAddFile( newFile, outDir + depAid + "-" + depVer + "." + depExt, 10 );
 
-        macTask.expectGetSession( null );
+//        macTask.expectGetSession( null );
         macTask.expectGetMode( 0222, 0222 );
 
         DefaultAssemblyArchiverTest.setupInterpolators( macTask.configSource );
@@ -177,7 +176,6 @@ public class AddDependencySetsTaskTest
         macTask.expectAddFile( file, "out/" + aid + "-" + version + "." + type );
 
         macTask.expectGetMode( 0222, 0222 );
-        macTask.expectGetSession( null );
 
         final DependencySet ds = new DependencySet();
         ds.setOutputDirectory( "/out" );
@@ -244,8 +242,6 @@ public class AddDependencySetsTaskTest
         macTask.expectGetDestFile( new File( "junk" ) );
         macTask.expectCSGetFinalName( "final-name" );
         macTask.expectCSGetRepositories( null, null );
-
-        macTask.expectGetSession( null );
 
         final MavenProject depProject = new MavenProject( new Model() );
 
