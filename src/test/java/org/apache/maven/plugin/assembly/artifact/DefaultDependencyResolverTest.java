@@ -21,7 +21,6 @@ package org.apache.maven.plugin.assembly.artifact;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
@@ -60,8 +59,6 @@ public class DefaultDependencyResolverTest
 
     private ArtifactResolver resolver;
 
-    private ArtifactMetadataSource metadataSource;
-
     private ConsoleLogger logger;
 
     @Override
@@ -71,7 +68,6 @@ public class DefaultDependencyResolverTest
         super.setUp();
 
         resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
-        metadataSource = (ArtifactMetadataSource) lookup( ArtifactMetadataSource.class);
         factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
         layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
@@ -94,10 +90,10 @@ public class DefaultDependencyResolverTest
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
         final Assembly assembly = new Assembly();
-        new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateDependencySetResolutionRequirements(
-            ds1,
-                info, AssemblyId.createAssemblyId( assembly),
-                project);
+        new DefaultDependencyResolver( resolver, factory, logger ).updateDependencySetResolutionRequirements( ds1, info,
+                                                                                                              AssemblyId.createAssemblyId(
+                                                                                                                  assembly ),
+                                                                                                              project );
 
         assertTrue( info.isResolutionRequired() );
         assertFalse( info.isResolvedTransitively() );
@@ -149,9 +145,9 @@ public class DefaultDependencyResolverTest
         allProjects.add( module2 );
         allProjects.add( module2a );
 
-        expect( cs.getReactorProjects()).andReturn( allProjects ).anyTimes();
+        expect( cs.getReactorProjects() ).andReturn( allProjects ).anyTimes();
 
-        expect( cs.getProject()).andReturn( project ).anyTimes();
+        expect( cs.getProject() ).andReturn( project ).anyTimes();
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
@@ -189,15 +185,14 @@ public class DefaultDependencyResolverTest
 
         mm.replayAll();
 
-        final DefaultDependencyResolver resolver =
-            new DefaultDependencyResolver( this.resolver, metadataSource, factory, logger );
+        final DefaultDependencyResolver resolver = new DefaultDependencyResolver( this.resolver, factory, logger );
         resolver.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         final Assembly assembly = new Assembly();
         assembly.setModuleSets( moduleSets );
 
-        resolver.updateModuleSetResolutionRequirements(AssemblyId.createAssemblyId( assembly), ms1, ds1, info, cs);
-        resolver.updateModuleSetResolutionRequirements(AssemblyId.createAssemblyId( assembly ), ms2, ds2, info, cs);
+        resolver.updateModuleSetResolutionRequirements( AssemblyId.createAssemblyId( assembly ), ms1, ds1, info, cs );
+        resolver.updateModuleSetResolutionRequirements( AssemblyId.createAssemblyId( assembly ), ms2, ds2, info, cs );
 
         assertTrue( info.isResolutionRequired() );
 
@@ -246,9 +241,8 @@ public class DefaultDependencyResolverTest
         assembly.setRepositories( repositories );
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
-        new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).updateRepositoryResolutionRequirements(assembly,
-                info
-        );
+        new DefaultDependencyResolver( resolver, factory, logger ).updateRepositoryResolutionRequirements( assembly,
+                                                                                                           info );
 
         assertTrue( info.isResolutionRequired() );
 
@@ -287,8 +281,8 @@ public class DefaultDependencyResolverTest
         project.setRemoteArtifactRepositories( projectRepos );
 
         final List<ArtifactRepository> aggregated =
-            new DefaultDependencyResolver( resolver, metadataSource, factory, logger ).aggregateRemoteArtifactRepositories( externalRepos,
-                                                                                                                                       Collections.singleton( project ) );
+            new DefaultDependencyResolver( resolver, factory, logger ).aggregateRemoteArtifactRepositories(
+                externalRepos, Collections.singleton( project ) );
 
         assertRepositoryWithId( er1.getId(), aggregated, true );
         assertRepositoryWithId( er2.getId(), aggregated, true );
@@ -582,8 +576,10 @@ public class DefaultDependencyResolverTest
         else
         {
             boolean found = false;
-            for (final ArtifactRepository repo : repos) {
-                if (repoId.equals(repo.getId())) {
+            for ( final ArtifactRepository repo : repos )
+            {
+                if ( repoId.equals( repo.getId() ) )
+                {
                     found = true;
                     break;
                 }
