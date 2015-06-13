@@ -21,10 +21,8 @@ package org.apache.maven.plugin.assembly.artifact;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
@@ -69,8 +67,6 @@ public class DefaultDependencyResolver
     @Requirement
     private ArtifactResolver resolver;
 
-    @Requirement
-    private ArtifactMetadataSource metadataSource;
 
     @Requirement
     private ArtifactFactory factory;
@@ -81,11 +77,10 @@ public class DefaultDependencyResolver
         // for plexus init
     }
 
-    protected DefaultDependencyResolver( final ArtifactResolver resolver, final ArtifactMetadataSource metadataSource,
-                                         final ArtifactFactory factory, final Logger logger )
+    protected DefaultDependencyResolver( final ArtifactResolver resolver, final ArtifactFactory factory,
+                                         final Logger logger )
     {
         this.resolver = resolver;
-        this.metadataSource = metadataSource;
         this.factory = factory;
         enableLogging( logger );
     }
@@ -195,32 +190,29 @@ public class DefaultDependencyResolver
         final Set<Artifact> resolved = new LinkedHashSet<Artifact>();
         for ( final Artifact depArtifact : dependencyArtifacts )
         {
-            try
+            ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+            req.setLocalRepository( configSource.getLocalRepository() );
+            req.setRemoteRepositories( repos );
+            req.setArtifact( depArtifact );
+
+            ArtifactResolutionResult resolve = resolver.resolve( req );
+            if ( resolve.hasExceptions() )
             {
-                resolver.resolve( depArtifact, repos, configSource.getLocalRepository() );
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug(
+                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
+                }
+                missing.add( depArtifact );
+            }
+            else
+            {
                 resolved.add( depArtifact );
-            }
-            catch ( final ArtifactResolutionException e )
-            {
-                if ( getLogger().isDebugEnabled() )
-                {
-                    getLogger().debug(
-                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
-                }
-                missing.add( depArtifact );
-            }
-            catch ( final ArtifactNotFoundException e )
-            {
-                if ( getLogger().isDebugEnabled() )
-                {
-                    getLogger().debug(
-                        "Failed to resolve: " + depArtifact.getId() + " for assembly: " + assembly.getId() );
-                }
-                missing.add( depArtifact );
             }
         }
 
         if ( !missing.isEmpty() )
+
         {
             final MavenProject project = configSource.getProject();
             final Artifact rootArtifact = project.getArtifact();
@@ -245,22 +237,31 @@ public class DefaultDependencyResolver
         final MavenProject project = configSource.getProject();
 
         final ArtifactFilter filter = info.getScopeFilter();
-        final ArtifactRepository localRepository = configSource.getLocalRepository();
+
+        ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+        req.setLocalRepository( configSource.getLocalRepository() );
+        req.setResolveRoot( false );
+        req.setRemoteRepositories( repos );
+        req.setResolveTransitively( true );
+        req.setArtifact( project.getArtifact() );
+        req.setArtifactDependencies( dependencyArtifacts );
+        req.setManagedVersionMap( project.getManagedVersionMap() );
+        req.setCollectionFilter( filter );
+        req.setOffline( configSource.getMavenSession().isOffline() );
+        req.setForceUpdate( configSource.getMavenSession().getRequest().isUpdateSnapshots() );
+        req.setServers( configSource.getMavenSession().getRequest().getServers() );
+        req.setMirrors( configSource.getMavenSession().getRequest().getMirrors() );
+        req.setProxies( configSource.getMavenSession().getRequest().getProxies() );
+
+
 
         ArtifactResolutionResult result;
-        try
+
+        result = resolver.resolve( req );
+        if ( result.hasExceptions() )
         {
-            result = resolver.resolveTransitively( dependencyArtifacts, project.getArtifact(),
-                                                   project.getManagedVersionMap(), localRepository, repos,
-                                                   metadataSource, filter );
-        }
-        catch ( final ArtifactResolutionException e )
-        {
-            throw new DependencyResolutionException( "Failed to resolve dependencies for assembly: ", e );
-        }
-        catch ( final ArtifactNotFoundException e )
-        {
-            throw new DependencyResolutionException( "Failed to resolve dependencies for assembly: ", e );
+            throw new DependencyResolutionException( "Failed to resolve dependencies for assembly: ",
+                                                     result.getExceptions().get( 0 ) );
         }
 
         getLogger().debug( "While resolving dependencies of " + project.getId() + ":" );

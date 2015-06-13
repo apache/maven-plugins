@@ -149,8 +149,7 @@ public class DependencySetAssemblyPhaseTest
             projectBuilder = macTask.projectBuilder;
         }
 
-        final DependencySetAssemblyPhase phase = new DependencySetAssemblyPhase( projectBuilder, dr, logger );
-
+        final DependencySetAssemblyPhase phase = new DependencySetAssemblyPhase( null, dr, null );
         phase.enableLogging( logger );
 
         return phase;
