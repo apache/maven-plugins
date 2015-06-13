@@ -28,6 +28,6 @@ System.out.println( "file: " + file + " exists? " + file.exists() );
 
 JarFile jarFile = new JarFile( file );
 
-JarEntry entry = jarFile.getEntry( "org/apache/maven/plugin/assembly/mojos/AbstractAssemblyMojo.class" );
+JarEntry entry = jarFile.getEntry( "org/apache/maven/plugins/assembly/mojos/AbstractAssemblyMojo.class" );
 
 return entry != null;

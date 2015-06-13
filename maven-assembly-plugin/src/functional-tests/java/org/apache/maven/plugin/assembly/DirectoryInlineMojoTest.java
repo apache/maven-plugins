@@ -1,15 +1,15 @@
 package org.apache.maven.plugin.assembly;
 
-import org.apache.maven.plugin.assembly.mojos.DirectoryInlineMojo;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.assembly.mojos.DirectoryInlineMojo;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.Artifact;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
 
 /*
  * Copyright 2001-2006 The Apache Software Foundation.
