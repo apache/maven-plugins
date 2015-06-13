@@ -17,10 +17,10 @@ package org.apache.maven.plugin.assembly;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.assembly.mojos.UnpackMojo;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.assembly.stubs.UnArchiverWithException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.assembly.mojos.UnpackMojo;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;

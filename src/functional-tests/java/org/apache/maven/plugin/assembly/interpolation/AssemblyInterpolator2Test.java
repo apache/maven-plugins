@@ -20,18 +20,17 @@ package org.apache.maven.plugin.assembly.interpolation;
  */
 
 
+import junit.framework.TestCase;
 import org.apache.maven.model.Model;
-import org.apache.maven.plugin.assembly.io.DefaultAssemblyReader;
-import org.apache.maven.plugin.assembly.utils.InterpolationConstants;
+import org.apache.maven.plugins.assembly.interpolation.AssemblyInterpolationException;
+import org.apache.maven.plugins.assembly.interpolation.AssemblyInterpolator;
+import org.apache.maven.plugins.assembly.io.DefaultAssemblyReader;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
-import junit.framework.TestCase;
-import org.codehaus.plexus.interpolation.immutable.FixedStringSearchInterpolator;
 
 public class AssemblyInterpolator2Test
     extends TestCase

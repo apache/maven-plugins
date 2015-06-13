@@ -17,21 +17,21 @@ package org.apache.maven.plugin.assembly;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.assembly.mojos.AssemblyMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.stubs.ArchiverManagerStub;
 import org.apache.maven.plugin.assembly.stubs.JarArchiverStub;
 import org.apache.maven.plugin.assembly.stubs.ReactorMavenProjectStub;
 import org.apache.maven.plugin.assembly.stubs.WarArchiverStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.assembly.mojos.AssemblyMojo;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.archiver.tar.TarLongFileMode;
-import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -54,6 +54,40 @@ public class AssemblyMojoTest
     extends AbstractMojoTestCase
 {
     private String basedir = PlexusTestCase.getBasedir();
+
+    static void generateTestFileSets( String basedir, String lineEnding )
+        throws Exception
+    {
+        String fileSetDir = basedir + "/target/test-classes/fileSet";
+
+        /* ensure that we start with a fresh dir, else we get all manner of dross from other tests */
+        FileUtils.deleteDirectory( fileSetDir );
+
+        FileUtils.mkdir( fileSetDir + "/configs" );
+
+        String fileContents = "<hibernate>" + lineEnding + "  <hibernate-mapping>" + lineEnding + "    <class/>" +
+            lineEnding + "  </hibernate-mapping>" + lineEnding + "</hibernate>";
+        FileUtils.fileWrite( fileSetDir + "/hibernate.hbm.xml", fileContents );
+
+        fileContents = "Copyright 2001-2006 The Apache Software Foundation." + lineEnding + lineEnding +
+            "Licensed under the Apache License, Version 2.0 (the \"License\");" + lineEnding +
+            "you may not use this file except in compliance with the License." + lineEnding +
+            "You may obtain a copy of the License at" + lineEnding + lineEnding +
+            "     http://www.apache.org/licenses/LICENSE-2.0" + lineEnding + lineEnding +
+            "Unless required by applicable law or agreed to in writing, software" + lineEnding +
+            "distributed under the License is distributed on an \"AS IS\" BASIS," + lineEnding +
+            "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." + lineEnding +
+            "See the License for the specific language governing permissions and" + lineEnding +
+            "limitations under the License.";
+        FileUtils.fileWrite( fileSetDir + "/LICENSE.txt", fileContents );
+
+        fileContents = "Readme file with only one line for ${project.artifactId}. ${sentence}";
+        FileUtils.fileWrite( fileSetDir + "/README.txt", fileContents );
+
+        fileContents = "sample configuration file line 1" + lineEnding + "sample configuration file line 2" +
+            lineEnding + "sample configuration file line 3" + lineEnding + "sample configuration file line 4";
+        FileUtils.fileWrite( fileSetDir + "/configs/config.txt", fileContents );
+    }
 
     public void testMinConfiguration()
         throws Exception
@@ -621,7 +655,8 @@ public class AssemblyMojoTest
 
         Map archivedFiles = ArchiverManagerStub.archiverStub.getFiles();
 
-        assertNotNull( "Test if basedir is used when <fileSet><directory> is not given", archivedFiles.remove( basedir ) );
+        assertNotNull( "Test if basedir is used when <fileSet><directory> is not given",
+                       archivedFiles.remove( basedir ) );
 
         assertTrue( "Test that there are no other files added", archivedFiles.isEmpty() );
     }
@@ -1320,7 +1355,8 @@ public class AssemblyMojoTest
 
         JarArchiverStub archiver = (JarArchiverStub) ArchiverManagerStub.archiverStub;
 
-        assertEquals( "Test if provided manifest is used", new Manifest( new FileReader( manifestFile ) ), archiver.getManifest() );
+        assertEquals( "Test if provided manifest is used", new Manifest( new FileReader( manifestFile ) ),
+                      archiver.getManifest() );
     }
 
     public void testManifest()
@@ -1519,40 +1555,6 @@ public class AssemblyMojoTest
         throws Exception
     {
         generateTestFileSets( basedir, lineEnding );
-    }
-
-    static void generateTestFileSets( String basedir, String lineEnding )
-        throws Exception
-    {
-        String fileSetDir = basedir + "/target/test-classes/fileSet";
-
-        /* ensure that we start with a fresh dir, else we get all manner of dross from other tests */
-        FileUtils.deleteDirectory(fileSetDir);
-
-        FileUtils.mkdir( fileSetDir + "/configs" );
-
-        String fileContents = "<hibernate>" + lineEnding + "  <hibernate-mapping>" + lineEnding + "    <class/>" +
-            lineEnding + "  </hibernate-mapping>" + lineEnding + "</hibernate>";
-        FileUtils.fileWrite( fileSetDir + "/hibernate.hbm.xml", fileContents );
-
-        fileContents = "Copyright 2001-2006 The Apache Software Foundation." + lineEnding + lineEnding +
-            "Licensed under the Apache License, Version 2.0 (the \"License\");" + lineEnding +
-            "you may not use this file except in compliance with the License." + lineEnding +
-            "You may obtain a copy of the License at" + lineEnding + lineEnding +
-            "     http://www.apache.org/licenses/LICENSE-2.0" + lineEnding + lineEnding +
-            "Unless required by applicable law or agreed to in writing, software" + lineEnding +
-            "distributed under the License is distributed on an \"AS IS\" BASIS," + lineEnding +
-            "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." + lineEnding +
-            "See the License for the specific language governing permissions and" + lineEnding +
-            "limitations under the License.";
-        FileUtils.fileWrite( fileSetDir + "/LICENSE.txt", fileContents );
-
-        fileContents = "Readme file with only one line for ${project.artifactId}. ${sentence}";
-        FileUtils.fileWrite( fileSetDir + "/README.txt", fileContents );
-
-        fileContents = "sample configuration file line 1" + lineEnding + "sample configuration file line 2" +
-            lineEnding + "sample configuration file line 3" + lineEnding + "sample configuration file line 4";
-        FileUtils.fileWrite( fileSetDir + "/configs/config.txt", fileContents );
     }
 
     private void testSignatureFiles( File metaInf )
