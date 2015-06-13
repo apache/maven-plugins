@@ -68,9 +68,9 @@ public class DefaultDependencyResolverTest
         super.setUp();
 
         resolver = lookup( RepositorySystem.class );
-        factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
-        layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
+        factory = lookup( ArtifactFactory.class );
+        repoFactory = lookup( ArtifactRepositoryFactory.class );
+        layout = lookup( ArtifactRepositoryLayout.class, "default" );
         logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
     }
 

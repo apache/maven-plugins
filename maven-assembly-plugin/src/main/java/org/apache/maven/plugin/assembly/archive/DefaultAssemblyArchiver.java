@@ -409,8 +409,7 @@ public class DefaultAssemblyArchiver
                                      final AssemblerConfigurationSource configSource )
         throws ComponentLookupException, ComponentConfigurationException
     {
-        final ComponentConfigurator configurator =
-            (ComponentConfigurator) container.lookup( ComponentConfigurator.ROLE, "basic" );
+        final ComponentConfigurator configurator = container.lookup( ComponentConfigurator.class, "basic" );
 
         final ConfigurationListener listener = new DebugConfigurationListener( getLogger() );
 

@@ -59,8 +59,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.anyBoolean;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class DefaultAssemblyArchiverTest
 {
@@ -69,18 +75,42 @@ public class DefaultAssemblyArchiverTest
 
     private PlexusContainer container;
 
-    @Before
-    public void setup()
-        throws PlexusContainerException
-    {
-        container = new DefaultPlexusContainer();
-    }
-
     @AfterClass
     public static void tearDown()
         throws Exception
     {
         fileManager.cleanUp();
+    }
+
+    public static void setupInterpolators( AssemblerConfigurationSource configSource )
+    {
+        expect( configSource.getRepositoryInterpolator() ).andReturn(
+            FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getCommandLinePropsInterpolator() ).andReturn(
+            FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getMainProjectInterpolator() ).andReturn(
+            FixedStringSearchInterpolator.create() ).anyTimes();
+
+    }
+
+    public static void setupInterpolators( AssemblerConfigurationSource configSource, MavenProject mavenProject )
+    {
+        expect( configSource.getRepositoryInterpolator() ).andReturn(
+            FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getCommandLinePropsInterpolator() ).andReturn(
+            FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
+        expect( configSource.getMainProjectInterpolator() ).andReturn(
+            AbstractAssemblyMojo.mainProjectInterpolator( mavenProject ) ).anyTimes();
+
+    }
+
+    @Before
+    public void setup()
+        throws PlexusContainerException
+    {
+        container = new DefaultPlexusContainer();
     }
 
     @Test( expected = InvalidAssemblerConfigurationException.class )
@@ -91,8 +121,8 @@ public class DefaultAssemblyArchiverTest
 
         final MockAndControlForAssemblyArchiver macMgr = new MockAndControlForAssemblyArchiver( mm );
 
-        final AssemblerConfigurationSource configSource = mm.createControl().createMock(
-            AssemblerConfigurationSource.class );
+        final AssemblerConfigurationSource configSource =
+            mm.createControl().createMock( AssemblerConfigurationSource.class );
 
         mm.replayAll();
 
@@ -114,9 +144,9 @@ public class DefaultAssemblyArchiverTest
         macMgr.expectGetArchiver( "zip", Archiver.class );
         macMgr.expectGetDestFile( new File( "test" ) );
 
-        final AssemblyArchiverPhase phase = mm.createControl().createMock(AssemblyArchiverPhase.class  );
+        final AssemblyArchiverPhase phase = mm.createControl().createMock( AssemblyArchiverPhase.class );
 
-        phase.execute( (Assembly)anyObject(), (Archiver)anyObject(), (AssemblerConfigurationSource)anyObject() );
+        phase.execute( (Assembly) anyObject(), (Archiver) anyObject(), (AssemblerConfigurationSource) anyObject() );
 
         final AssemblerConfigurationSource configSource =
             mm.createControl().createMock( AssemblerConfigurationSource.class );
@@ -124,9 +154,9 @@ public class DefaultAssemblyArchiverTest
         final File tempDir = fileManager.createTempDir();
         FileUtils.deleteDirectory( tempDir );
 
-        expect(configSource.getTemporaryRootDirectory()).andReturn( tempDir ).anyTimes();
-        expect( configSource.isDryRun()).andReturn( false ).anyTimes();
-        expect( configSource.isIgnoreDirFormatExtensions()).andReturn( false ).anyTimes();
+        expect( configSource.getTemporaryRootDirectory() ).andReturn( tempDir ).anyTimes();
+        expect( configSource.isDryRun() ).andReturn( false ).anyTimes();
+        expect( configSource.isIgnoreDirFormatExtensions() ).andReturn( false ).anyTimes();
 
         final File outDir = fileManager.createTempDir();
 
@@ -145,25 +175,26 @@ public class DefaultAssemblyArchiverTest
             fail( "Should never happen" );
         }
 
-        expect(configSource.getOutputDirectory()).andReturn( outDir );
+        expect( configSource.getOutputDirectory() ).andReturn( outDir );
         expect( configSource.getFinalName() ).andReturn( "finalName" );
-        expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
-        expect(    configSource.getWorkingDirectory()).andReturn( new File( "." )).anyTimes();
-        expect( configSource.isUpdateOnly()).andReturn( false ).anyTimes();
-        expect( configSource.isIgnorePermissions()).andReturn( false ).anyTimes();
+        expect( configSource.getArchiverConfig() ).andReturn( null ).anyTimes();
+        expect( configSource.getWorkingDirectory() ).andReturn( new File( "." ) ).anyTimes();
+        expect( configSource.isUpdateOnly() ).andReturn( false ).anyTimes();
+        expect( configSource.isIgnorePermissions() ).andReturn( false ).anyTimes();
 
         final Assembly assembly = new Assembly();
         assembly.setId( "id" );
 
-       // try
-       // {
-   //         expect( macMgr.dependencyResolver.resolve( (Assembly) anyObject(), (AssemblerConfigurationSource) anyObject() )).andReturn( new HashSet<Artifact>(  ) );
+        // try
+        // {
+        //         expect( macMgr.dependencyResolver.resolve( (Assembly) anyObject(), (AssemblerConfigurationSource)
+        // anyObject() )).andReturn( new HashSet<Artifact>(  ) );
 //            macMgr.dependencyResolverControl.setMatcher( MockControl.ALWAYS_MATCHER );
-   //     }
-      //  catch ( final DependencyResolutionException e )
-       // {
+        //     }
+        //  catch ( final DependencyResolutionException e )
+        // {
         //    fail( "Should never happen" );
-       // }
+        // }
 
         mm.replayAll();
 
@@ -186,33 +217,32 @@ public class DefaultAssemblyArchiverTest
 
         macArchiverManager.expectGetArchiver( "dummy", archiver );
 
-        final AssemblerConfigurationSource configSource = mm.createMock(  AssemblerConfigurationSource.class);
+        final AssemblerConfigurationSource configSource = mm.createMock( AssemblerConfigurationSource.class );
 
         final String simpleConfig = "value";
 
-        expect( configSource.getArchiverConfig()).andReturn(
-        "<configuration><simpleConfig>" + simpleConfig + "</simpleConfig></configuration>").anyTimes();
+        expect( configSource.getArchiverConfig() ).andReturn(
+            "<configuration><simpleConfig>" + simpleConfig + "</simpleConfig></configuration>" ).anyTimes();
 
         final MavenProject project = new MavenProject( new Model() );
 
-        expect(configSource.getProject()).andReturn( project ).anyTimes();
+        expect( configSource.getProject() ).andReturn( project ).anyTimes();
 
-        expect(configSource.getMavenSession()).andReturn( null ).anyTimes();
+        expect( configSource.getMavenSession() ).andReturn( null ).anyTimes();
 
-        expect(configSource.isDryRun()).andReturn( false ).anyTimes();
+        expect( configSource.isDryRun() ).andReturn( false ).anyTimes();
 
-        expect(configSource.getWorkingDirectory()).andReturn(  new File( "." )).anyTimes();
+        expect( configSource.getWorkingDirectory() ).andReturn( new File( "." ) ).anyTimes();
 
-        expect(configSource.isUpdateOnly()).andReturn( false ).anyTimes();
+        expect( configSource.isUpdateOnly() ).andReturn( false ).anyTimes();
 
         final ArtifactRepository lr = mm.createMock( ArtifactRepository.class );
 
-        expect(lr.getBasedir()).andReturn(  "/path/to/local/repo" ).anyTimes();
+        expect( lr.getBasedir() ).andReturn( "/path/to/local/repo" ).anyTimes();
 
-        expect(configSource.getLocalRepository()).andReturn( lr ).anyTimes();
+        expect( configSource.getLocalRepository() ).andReturn( lr ).anyTimes();
         expect( configSource.isIgnorePermissions() ).andReturn( true );
         setupInterpolators( configSource, project );
-
 
         mm.replayAll();
 
@@ -225,25 +255,6 @@ public class DefaultAssemblyArchiverTest
 
         mm.verifyAll();
     }
-
-    public static  void setupInterpolators( AssemblerConfigurationSource configSource )
-    {
-        expect( configSource.getRepositoryInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-        expect( configSource.getCommandLinePropsInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-        expect( configSource.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-        expect( configSource.getMainProjectInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-
-    }
-
-    public static  void setupInterpolators( AssemblerConfigurationSource configSource, MavenProject mavenProject )
-    {
-        expect( configSource.getRepositoryInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-        expect( configSource.getCommandLinePropsInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-        expect( configSource.getEnvInterpolator() ).andReturn( FixedStringSearchInterpolator.create() ).anyTimes();
-        expect( configSource.getMainProjectInterpolator() ).andReturn( AbstractAssemblyMojo.mainProjectInterpolator( mavenProject) ).anyTimes();
-
-    }
-
 
     @Test
     public void testCreateArchiver_ShouldCreateTarArchiverWithNoCompression()
@@ -264,6 +275,20 @@ public class DefaultAssemblyArchiverTest
 
         expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
 
+        final DefaultAssemblyArchiver subject = setupStdExpectations( mm, macArchiverManager, configSource );
+
+        subject.createArchiver( "tar", false, "finalName", configSource, null, false );
+
+        assertNull( ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
+
+        mm.verifyAll();
+    }
+
+    private DefaultAssemblyArchiver setupStdExpectations( EasyMockSupport mm,
+                                                          MockAndControlForAssemblyArchiver macArchiverManager,
+                                                          AssemblerConfigurationSource configSource )
+    {
         expect( configSource.getProject()).andReturn( new MavenProject( new Model() ) ).anyTimes();
 
         expect( configSource.getJarArchiveConfiguration()).andReturn( null ).anyTimes();
@@ -276,15 +301,7 @@ public class DefaultAssemblyArchiverTest
 
         mm.replayAll();
 
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
-
-        subject.createArchiver( "tar", false, "finalName", configSource, null, false );
-
-        assertNull( ttArchiver.compressionMethod );
-        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
-
-        mm.verifyAll();
+        return createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
     }
 
     @Test
@@ -304,16 +321,7 @@ public class DefaultAssemblyArchiverTest
         expect( configSource.isDryRun()).andReturn( false ).anyTimes();
         expect( configSource.getArchiverConfig()).andReturn( null ).anyTimes();
         expect( configSource.getMavenSession()).andReturn( null ).anyTimes();
-        expect( configSource.getProject()).andReturn( new MavenProject( new Model() ) ).anyTimes();
-        expect( configSource.getJarArchiveConfiguration()).andReturn( null ).anyTimes();
-        expect( configSource.getWorkingDirectory()).andReturn( new File( "." ) ).anyTimes();
-        expect( configSource.isUpdateOnly()).andReturn( false ).anyTimes();
-        expect( configSource.isIgnorePermissions()).andReturn( true ).anyTimes();
-
-        mm.replayAll();
-
-        final DefaultAssemblyArchiver subject =
-            createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
+        final DefaultAssemblyArchiver subject = setupStdExpectations( mm, macArchiverManager, configSource );
 
         subject.createArchiver( "war", false, null, configSource, null, false );
 
@@ -514,64 +522,6 @@ public class DefaultAssemblyArchiverTest
         return subject;
     }
 
-    private final class MockAndControlForAssemblyArchiver
-    {
-        final ArchiverManager archiverManager;
-
-
-        Archiver archiver;
-
-        final DependencyResolver dependencyResolver;
-
-        private final EasyMockSupport mm;
-
-        public MockAndControlForAssemblyArchiver( final EasyMockSupport mm )
-        {
-            this.mm = mm;
-            archiverManager = mm.createControl().createMock(  ArchiverManager.class );
-
-            dependencyResolver = mm.createControl().createMock( DependencyResolver.class );
-
-        }
-
-        void expectGetDestFile( final File file )
-        {
-            expect(archiver.getDestFile()).andReturn( file ).anyTimes();
-        }
-
-        void createArchiver( final Class<? extends Archiver> archiverClass )
-        {
-            archiver = mm.createControl().createMock(archiverClass);
-
-            archiver.setForced( anyBoolean() );
-            expectLastCall().anyTimes();
-
-            archiver.setIgnorePermissions( false );
-            expectLastCall().anyTimes();
-        }
-
-        void expectGetArchiver( final String format, final Class<? extends Archiver> archiverClass )
-        {
-            createArchiver( archiverClass );
-
-            try
-            {
-                expect(archiverManager.getArchiver( format )).andReturn( archiver );
-            }
-            catch ( final NoSuchArchiverException e )
-            {
-                Assert.fail( "should never happen" );
-            }
-
-        }
-
-        void expectGetArchiver( final String format, final Archiver archiver )
-            throws NoSuchArchiverException
-        {
-            expect(archiverManager.getArchiver( format )).andReturn( archiver );
-        }
-    }
-
     private static final class TestTarArchiver
         extends TarArchiver
     {
@@ -633,6 +583,63 @@ public class DefaultAssemblyArchiverTest
         public String getDuplicateBehavior()
         {
             return Archiver.DUPLICATES_ADD;
+        }
+    }
+
+    private final class MockAndControlForAssemblyArchiver
+    {
+        final ArchiverManager archiverManager;
+
+        final DependencyResolver dependencyResolver;
+
+        private final EasyMockSupport mm;
+
+        Archiver archiver;
+
+        public MockAndControlForAssemblyArchiver( final EasyMockSupport mm )
+        {
+            this.mm = mm;
+            archiverManager = mm.createControl().createMock( ArchiverManager.class );
+
+            dependencyResolver = mm.createControl().createMock( DependencyResolver.class );
+
+        }
+
+        void expectGetDestFile( final File file )
+        {
+            expect( archiver.getDestFile() ).andReturn( file ).anyTimes();
+        }
+
+        void createArchiver( final Class<? extends Archiver> archiverClass )
+        {
+            archiver = mm.createControl().createMock( archiverClass );
+
+            archiver.setForced( anyBoolean() );
+            expectLastCall().anyTimes();
+
+            archiver.setIgnorePermissions( false );
+            expectLastCall().anyTimes();
+        }
+
+        void expectGetArchiver( final String format, final Class<? extends Archiver> archiverClass )
+        {
+            createArchiver( archiverClass );
+
+            try
+            {
+                expect( archiverManager.getArchiver( format ) ).andReturn( archiver );
+            }
+            catch ( final NoSuchArchiverException e )
+            {
+                Assert.fail( "should never happen" );
+            }
+
+        }
+
+        void expectGetArchiver( final String format, final Archiver archiver )
+            throws NoSuchArchiverException
+        {
+            expect( archiverManager.getArchiver( format ) ).andReturn( archiver );
         }
     }
 

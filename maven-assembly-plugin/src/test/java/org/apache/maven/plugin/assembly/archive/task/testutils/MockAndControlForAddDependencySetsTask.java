@@ -19,15 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import junit.framework.Assert;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
@@ -39,7 +31,6 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.DependencySet;
 import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -51,6 +42,13 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
 import org.sonatype.aether.RepositorySystemSession;
+
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
@@ -67,9 +65,9 @@ public class MockAndControlForAddDependencySetsTask
 
     public final ArchiverManager archiverManager;
 
-    private final MavenProject project;
-
     public final DependencyResolver dependencyResolver;
+
+    private final MavenProject project;
 
     private final MavenSession session;
 
