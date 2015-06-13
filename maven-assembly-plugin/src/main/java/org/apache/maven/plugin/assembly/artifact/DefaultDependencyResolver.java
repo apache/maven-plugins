@@ -24,7 +24,6 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
@@ -39,6 +38,7 @@ import org.apache.maven.plugin.assembly.resolved.AssemblyId;
 import org.apache.maven.plugin.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -65,7 +65,7 @@ public class DefaultDependencyResolver
 {
 
     @Requirement
-    private ArtifactResolver resolver;
+    private RepositorySystem resolver;
 
 
     @Requirement
@@ -77,7 +77,7 @@ public class DefaultDependencyResolver
         // for plexus init
     }
 
-    protected DefaultDependencyResolver( final ArtifactResolver resolver, final ArtifactFactory factory,
+    protected DefaultDependencyResolver( final RepositorySystem resolver, final ArtifactFactory factory,
                                          final Logger logger )
     {
         this.resolver = resolver;
@@ -252,8 +252,6 @@ public class DefaultDependencyResolver
         req.setServers( configSource.getMavenSession().getRequest().getServers() );
         req.setMirrors( configSource.getMavenSession().getRequest().getMirrors() );
         req.setProxies( configSource.getMavenSession().getRequest().getProxies() );
-
-
 
         ArtifactResolutionResult result;
 

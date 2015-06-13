@@ -24,7 +24,6 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.model.Assembly;
@@ -34,6 +33,7 @@ import org.apache.maven.plugin.assembly.model.ModuleSet;
 import org.apache.maven.plugin.assembly.model.Repository;
 import org.apache.maven.plugin.assembly.resolved.AssemblyId;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -57,7 +57,7 @@ public class DefaultDependencyResolverTest
 
     private ArtifactRepositoryLayout layout;
 
-    private ArtifactResolver resolver;
+    private RepositorySystem resolver;
 
     private ConsoleLogger logger;
 
@@ -67,7 +67,7 @@ public class DefaultDependencyResolverTest
     {
         super.setUp();
 
-        resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
+        resolver = lookup( RepositorySystem.class );
         factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         repoFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
         layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
