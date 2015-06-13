@@ -72,6 +72,16 @@ public class DefaultAssemblyReaderTest
 
     private AssemblerConfigurationSource configSource;
 
+    public static StringReader writeToStringReader( Assembly assembly )
+        throws IOException
+    {
+        final StringWriter sw = new StringWriter();
+        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
+
+        assemblyWriter.write( sw, assembly );
+
+        return new StringReader( sw.toString() );
+    }
 
     @Override
     public void setUp()
@@ -118,31 +128,6 @@ public class DefaultAssemblyReaderTest
         {
             // this should happen.
         }
-
-        mockManager.verifyAll();
-    }
-
-    public void testIncludeSiteInAssembly_ShouldAddSiteDirFileSetWhenDirExists()
-        throws IOException, InvalidAssemblerConfigurationException
-    {
-        final File siteDir = fileManager.createTempDir();
-
-        expect( configSource.getSiteDirectory()).andReturn( siteDir ).anyTimes();
-
-        final Assembly assembly = new Assembly();
-
-        mockManager.replayAll();
-
-        new DefaultAssemblyReader().includeSiteInAssembly( assembly, configSource );
-
-        final List<FileSet> fileSets = assembly.getFileSets();
-
-        assertNotNull( fileSets );
-        assertEquals( 1, fileSets.size() );
-
-        final FileSet fs = fileSets.get( 0 );
-
-        assertEquals( siteDir.getPath(), fs.getDirectory() );
 
         mockManager.verifyAll();
     }
@@ -223,6 +208,31 @@ public class DefaultAssemblyReaderTest
     //
     // mockManager.verifyAll();
     // }
+
+    public void testIncludeSiteInAssembly_ShouldAddSiteDirFileSetWhenDirExists()
+        throws IOException, InvalidAssemblerConfigurationException
+    {
+        final File siteDir = fileManager.createTempDir();
+
+        expect( configSource.getSiteDirectory() ).andReturn( siteDir ).anyTimes();
+
+        final Assembly assembly = new Assembly();
+
+        mockManager.replayAll();
+
+        new DefaultAssemblyReader().includeSiteInAssembly( assembly, configSource );
+
+        final List<FileSet> fileSets = assembly.getFileSets();
+
+        assertNotNull( fileSets );
+        assertEquals( 1, fileSets.size() );
+
+        final FileSet fs = fileSets.get( 0 );
+
+        assertEquals( siteDir.getPath(), fs.getDirectory() );
+
+        mockManager.verifyAll();
+    }
 
     public void testMergeComponentWithAssembly_ShouldAddOneFileSetToExistingListOfTwo()
     {
@@ -365,49 +375,9 @@ public class DefaultAssemblyReaderTest
         assertNotNull( depSets );
         assertEquals( 3, depSets.size() );
 
-        assertEquals( Artifact.SCOPE_RUNTIME, depSets.get( 0 )
-                                                     .getScope() );
-        assertEquals( Artifact.SCOPE_COMPILE, depSets.get( 1 )
-                                                     .getScope() );
-        assertEquals( Artifact.SCOPE_SYSTEM, depSets.get( 2 )
-                                                    .getScope() );
-    }
-
-    public void testMergeComponentWithAssembly_ShouldAddOneContainerDescriptorHandlerToExistingListOfTwo()
-    {
-        final Assembly assembly = new Assembly();
-
-        ContainerDescriptorHandlerConfig cfg = new ContainerDescriptorHandlerConfig();
-        cfg.setHandlerName( "one" );
-
-        assembly.addContainerDescriptorHandler( cfg );
-
-        cfg = new ContainerDescriptorHandlerConfig();
-        cfg.setHandlerName( "two" );
-
-        assembly.addContainerDescriptorHandler( cfg );
-
-        final Component component = new Component();
-
-        cfg = new ContainerDescriptorHandlerConfig();
-        cfg.setHandlerName( "three" );
-
-        component.addContainerDescriptorHandler( cfg );
-
-        new DefaultAssemblyReader().mergeComponentWithAssembly( component, assembly );
-
-        final List<ContainerDescriptorHandlerConfig> result = assembly.getContainerDescriptorHandlers();
-
-        assertNotNull( result );
-        assertEquals( 3, result.size() );
-
-        final Iterator<ContainerDescriptorHandlerConfig> it = result.iterator();
-        assertEquals( "one", it.next()
-                               .getHandlerName() );
-        assertEquals( "two", it.next()
-                               .getHandlerName() );
-        assertEquals( "three", it.next()
-                                 .getHandlerName() );
+        assertEquals( Artifact.SCOPE_RUNTIME, depSets.get( 0 ).getScope() );
+        assertEquals( Artifact.SCOPE_COMPILE, depSets.get( 1 ).getScope() );
+        assertEquals( Artifact.SCOPE_SYSTEM, depSets.get( 2 ).getScope() );
     }
 
     // FIXME: Deep merging should take place...
@@ -456,6 +426,40 @@ public class DefaultAssemblyReaderTest
     // assertEquals( "/other-dir", rfs2.getDirectory() );
     //
     // }
+
+    public void testMergeComponentWithAssembly_ShouldAddOneContainerDescriptorHandlerToExistingListOfTwo()
+    {
+        final Assembly assembly = new Assembly();
+
+        ContainerDescriptorHandlerConfig cfg = new ContainerDescriptorHandlerConfig();
+        cfg.setHandlerName( "one" );
+
+        assembly.addContainerDescriptorHandler( cfg );
+
+        cfg = new ContainerDescriptorHandlerConfig();
+        cfg.setHandlerName( "two" );
+
+        assembly.addContainerDescriptorHandler( cfg );
+
+        final Component component = new Component();
+
+        cfg = new ContainerDescriptorHandlerConfig();
+        cfg.setHandlerName( "three" );
+
+        component.addContainerDescriptorHandler( cfg );
+
+        new DefaultAssemblyReader().mergeComponentWithAssembly( component, assembly );
+
+        final List<ContainerDescriptorHandlerConfig> result = assembly.getContainerDescriptorHandlers();
+
+        assertNotNull( result );
+        assertEquals( 3, result.size() );
+
+        final Iterator<ContainerDescriptorHandlerConfig> it = result.iterator();
+        assertEquals( "one", it.next().getHandlerName() );
+        assertEquals( "two", it.next().getHandlerName() );
+        assertEquals( "three", it.next().getHandlerName() );
+    }
 
     public void testMergeComponentsWithMainAssembly_ShouldAddOneFileSetToAssembly()
         throws IOException, AssemblyReadException
@@ -525,27 +529,7 @@ public class DefaultAssemblyReaderTest
         final Assembly assembly = new Assembly();
         assembly.setId( "test" );
 
-        final StringReader sr = writeToStringReader( assembly );
-
-        final File basedir = fileManager.createTempDir();
-
-        expect( configSource.getBasedir()).andReturn( basedir ).anyTimes();
-
-        final Model model = new Model();
-        model.setGroupId( "group" );
-        model.setArtifactId( "artifact" );
-        model.setVersion( "version" );
-
-        final MavenProject project = new MavenProject( model );
-
-        expect( configSource.getProject()).andReturn( project ).anyTimes();
-
-        expect( configSource.isSiteIncluded()).andReturn( false ).anyTimes();
-        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
-
-        mockManager.replayAll();
-
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
+        final Assembly result = doReadAssembly( assembly );
 
         assertEquals( assembly.getId(), result.getId() );
 
@@ -769,23 +753,22 @@ public class DefaultAssemblyReaderTest
         mockManager.verifyAll();
     }
 
-    public static StringReader writeToStringReader( Assembly assembly )
-        throws IOException
-    {
-        final StringWriter sw = new StringWriter();
-        final AssemblyXpp3Writer assemblyWriter = new AssemblyXpp3Writer();
-
-        assemblyWriter.write( sw, assembly );
-
-        return new StringReader( sw.toString() );
-    }
-
     public void testReadAssembly_ShouldReadAssemblyWithInterpolationWithoutComponentsOrSiteDirInclusion()
         throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
     {
         final Assembly assembly = new Assembly();
         assembly.setId( "${groupId}-assembly" );
 
+        final Assembly result = doReadAssembly( assembly );
+
+        assertEquals( "group-assembly", result.getId() );
+
+        mockManager.verifyAll();
+    }
+
+    private Assembly doReadAssembly( Assembly assembly )
+        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
+    {
         final StringReader sr = writeToStringReader( assembly );
 
         final File basedir = fileManager.createTempDir();
@@ -807,11 +790,7 @@ public class DefaultAssemblyReaderTest
 
         mockManager.replayAll();
 
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
-
-        assertEquals( "group-assembly", result.getId() );
-
-        mockManager.verifyAll();
+        return new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
     }
 
     public void testGetAssemblyFromDescriptorFile_ShouldReadAssembly()

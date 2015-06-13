@@ -40,7 +40,7 @@ public class MockAndControlForAddFileSetsTask
     public final AssemblerConfigurationSource configSource;
 
 
-    public Archiver archiver;
+    public final Archiver archiver;
 
     public File archiveBaseDir;
 

@@ -103,34 +103,41 @@ public class DefaultDependencyResolver
             updateDependencySetResolutionRequirements( dependencySet, info, assemblyId, currentProject );
             updateModuleSetResolutionRequirements( assemblyId, moduleSet, dependencySet, info, configSource );
 
-            Set<Artifact> artifacts;
-            if ( info.isResolutionRequired() )
-            {
-                final List<ArtifactRepository> repos =
-                    aggregateRemoteArtifactRepositories( configSource.getRemoteRepositories(),
-                                                         info.getEnabledProjects() );
-
-                artifacts = info.getArtifacts();
-                if ( info.isResolvedTransitively() )
-                {
-                    getLogger().debug( "Resolving project dependencies transitively." );
-                    artifacts = resolveTransitively( artifacts, repos, info, configSource );
-                }
-                else
-                {
-                    getLogger().debug( "Resolving project dependencies ONLY. "
-                                           + "Transitive dependencies WILL NOT be included in the results." );
-                    artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
-                }
-            }
-            else
-            {
-                artifacts = new HashSet<Artifact>();
-            }
-            result.put( dependencySet, artifacts );
+            resolve( assembly, configSource, result, dependencySet, info );
 
         }
         return result;
+    }
+
+    private void resolve( Assembly assembly, AssemblerConfigurationSource configSource,
+                          Map<DependencySet, Set<Artifact>> result, DependencySet dependencySet,
+                          ResolutionManagementInfo info )
+        throws DependencyResolutionException
+    {
+        Set<Artifact> artifacts;
+        if ( info.isResolutionRequired() )
+        {
+            final List<ArtifactRepository> repos =
+                aggregateRemoteArtifactRepositories( configSource.getRemoteRepositories(), info.getEnabledProjects() );
+
+            artifacts = info.getArtifacts();
+            if ( info.isResolvedTransitively() )
+            {
+                getLogger().debug( "Resolving project dependencies transitively." );
+                artifacts = resolveTransitively( artifacts, repos, info, configSource );
+            }
+            else
+            {
+                getLogger().debug( "Resolving project dependencies ONLY. "
+                                       + "Transitive dependencies WILL NOT be included in the results." );
+                artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
+            }
+        }
+        else
+        {
+            artifacts = new HashSet<Artifact>();
+        }
+        result.put( dependencySet, artifacts );
     }
 
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly,
@@ -150,31 +157,7 @@ public class DefaultDependencyResolver
             final AssemblyId assemblyId = AssemblyId.createAssemblyId( assembly );
             updateDependencySetResolutionRequirements( dependencySet, info, assemblyId, currentProject );
 
-            Set<Artifact> artifacts;
-            if ( info.isResolutionRequired() )
-            {
-                final List<ArtifactRepository> repos =
-                    aggregateRemoteArtifactRepositories( configSource.getRemoteRepositories(),
-                                                         info.getEnabledProjects() );
-
-                artifacts = info.getArtifacts();
-                if ( info.isResolvedTransitively() )
-                {
-                    getLogger().debug( "Resolving project dependencies transitively." );
-                    artifacts = resolveTransitively( artifacts, repos, info, configSource );
-                }
-                else
-                {
-                    getLogger().debug( "Resolving project dependencies ONLY. "
-                                           + "Transitive dependencies WILL NOT be included in the results." );
-                    artifacts = resolveNonTransitively( assembly, artifacts, configSource, repos );
-                }
-            }
-            else
-            {
-                artifacts = new HashSet<Artifact>();
-            }
-            result.put( dependencySet, artifacts );
+            resolve( assembly, configSource, result, dependencySet, info );
 
         }
         return result;
@@ -314,7 +297,7 @@ public class DefaultDependencyResolver
                         // TODO: such a call in MavenMetadataSource too - packaging not really the intention of
                         // type
                         final Artifact artifact =
-                            factory.createBuildArtifact( p.getGroupId(), p.getArtifactId(), p.getVersion(),
+                            resolver.createArtifact( p.getGroupId(), p.getArtifactId(), p.getVersion(),
                                                          p.getPackaging() );
                         p.setArtifact( artifact );
                     }

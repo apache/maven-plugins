@@ -19,14 +19,7 @@ package org.apache.maven.plugin.assembly.archive.task.testutils;
  * under the License.
  */
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-
 import junit.framework.Assert;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugin.assembly.archive.DefaultAssemblyArchiverTest;
@@ -42,6 +35,12 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
@@ -51,11 +50,11 @@ public class MockAndControlForAddArtifactTask
 
     public final Archiver archiver;
 
-    public AssemblerConfigurationSource configSource;
-
-    private MavenProject project = null;
+    public final AssemblerConfigurationSource configSource;
 
     public final  DependencyResolver dependencyResolver;
+
+    private MavenProject project = null;
 
     public MockAndControlForAddArtifactTask( final EasyMockSupport mockManager )
     {
