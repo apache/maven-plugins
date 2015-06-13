@@ -663,7 +663,6 @@ public class AssemblyProxyArchiver
     }
 
     public void addArchivedFileSet( ArchivedFileSet archivedFileSet, Charset charset )
-        throws ArchiverException
     {
         inPublicApi.set( Boolean.TRUE );
         try
