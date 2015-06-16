@@ -27,7 +27,12 @@ package org.apache.maven.plugin.changes.schema;
 public class SchemaValidatorException
     extends Exception
 {
-    
+
+    /**
+     * Generated serial UID.
+     */
+    private static final long serialVersionUID = -8265574906534248274L;
+
     /**
      * @param message
      * @param cause

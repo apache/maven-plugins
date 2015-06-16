@@ -77,10 +77,9 @@ public class IssuesReportHelper
     }
 
     /**
-     * Get a list of id:s for the columns that are to be included in the report.
-     * This method also handles deprecated column names, which will still work.
-     * If deprecated column names are used they generate a warning, indicating
-     * the replacement column name.
+     * Get a list of id:s for the columns that are to be included in the report. This method also handles deprecated
+     * column names, which will still work. If deprecated column names are used they generate a warning, indicating the
+     * replacement column name.
      *
      * @param columnNames The names of the columns
      * @param allColumns A mapping from column name to column id
@@ -115,7 +114,7 @@ public class IssuesReportHelper
                 if ( log != null )
                 {
                     log.warn( "The columnName '" + columnName + "' has been deprecated." + " Please use "
-                            + "the columnName '" + bidiColumns.getKey( columnId ) + "' instead." );
+                        + "the columnName '" + bidiColumns.getKey( columnId ) + "' instead." );
                 }
             }
         }

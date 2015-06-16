@@ -32,9 +32,8 @@ public abstract class AbstractAnnouncementMojo
     extends AbstractChangesMojo
 {
     /**
-     * This will cause the execution to be run only at the top of a given module
-     * tree. That is, run in the project contained in the same folder where the
-     * mvn execution was launched.
+     * This will cause the execution to be run only at the top of a given module tree. That is, run in the project
+     * contained in the same folder where the mvn execution was launched.
      *
      * @since 2.3
      */

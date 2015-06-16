@@ -34,7 +34,8 @@ import java.util.ResourceBundle;
  * @version $Id$
  * @since 2.4
  */
-public class IssuesReportGenerator extends AbstractIssuesReportGenerator
+public class IssuesReportGenerator
+    extends AbstractIssuesReportGenerator
 {
     /**
      * Fallback value that is used if date field are not available.
@@ -42,8 +43,7 @@ public class IssuesReportGenerator extends AbstractIssuesReportGenerator
     private static final String NOT_AVAILABLE = "n/a";
 
     /**
-     * Holds the id:s for the columns to include in the report, in the order
-     * that they should appear in the report.
+     * Holds the id:s for the columns to include in the report, in the order that they should appear in the report.
      */
     private int[] columns;
 
@@ -68,7 +68,7 @@ public class IssuesReportGenerator extends AbstractIssuesReportGenerator
         sinkEndReport( sink );
     }
 
-    public void doGenerateReport( ResourceBundle bundle, Sink sink, List issueList )
+    public void doGenerateReport( ResourceBundle bundle, Sink sink, List<Issue> issueList )
     {
         sinkBeginReport( sink, bundle );
 
@@ -82,7 +82,7 @@ public class IssuesReportGenerator extends AbstractIssuesReportGenerator
         sinkEndReport( sink );
     }
 
-    private void constructHeaderRow( Sink sink, List issueList, ResourceBundle bundle )
+    private void constructHeaderRow( Sink sink, List<Issue> issueList, ResourceBundle bundle )
     {
         if ( issueList == null )
         {
@@ -162,19 +162,17 @@ public class IssuesReportGenerator extends AbstractIssuesReportGenerator
         sink.tableRow_();
     }
 
-    private void constructDetailRows( Sink sink, List issueList, ResourceBundle bundle, Locale locale )
+    private void constructDetailRows( Sink sink, List<Issue> issueList, ResourceBundle bundle, Locale locale )
     {
         if ( issueList == null )
         {
             return;
         }
 
-        for ( Object anIssueList : issueList )
+        for ( Issue issue : issueList )
         {
             // Use a DateFormat based on the Locale
             DateFormat df = DateFormat.getDateInstance( DateFormat.SHORT, locale );
-
-            Issue issue = (Issue) anIssueList;
 
             sink.tableRow();
 

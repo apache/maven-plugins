@@ -47,8 +47,7 @@ public class ReleaseUtils
     }
 
     /**
-     * Get the latest release by matching the supplied releases
-     * with the version from the pom.
+     * Get the latest release by matching the supplied releases with the version from the pom.
      *
      * @param releases list of releases
      * @param pomVersion Version of the artifact
@@ -94,8 +93,8 @@ public class ReleaseUtils
         {
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( "The release: " + release.getVersion()
-                    + " has " + release.getActions().size() + " actions." );
+                getLog().debug( "The release: " + release.getVersion() + " has " + release.getActions().size()
+                    + " actions." );
             }
 
             if ( release.getVersion() != null && release.getVersion().equals( version ) )
@@ -125,9 +124,8 @@ public class ReleaseUtils
     }
 
     /**
-     * Merge releases from one issue tracker with releases from another issue
-     * tracker. If a release is found in both issue trackers, i.e. they have
-     * the same version, their issues are merged into one release.
+     * Merge releases from one issue tracker with releases from another issue tracker. If a release is found in both
+     * issue trackers, i.e. they have the same version, their issues are merged into one release.
      *
      * @param firstReleases Releases from the first issue tracker
      * @param secondReleases Releases from the second issue tracker
@@ -179,14 +177,13 @@ public class ReleaseUtils
     }
 
     /**
-     * Convert an untyped List of Release objects that comes from changes.xml
-     * into a typed List of Release objects.
+     * Convert an untyped List of Release objects that comes from changes.xml into a typed List of Release objects.
      *
      * @param changesReleases An untyped List of Release objects
      * @return A type List of Release objects
      * @todo When Modello can generate typed collections this method is no longer needed
      */
-    public List<Release> convertReleaseList( List changesReleases )
+    public List<Release> convertReleaseList( List<Release> changesReleases )
     {
         List<Release> releases = new ArrayList<Release>();
 
@@ -201,28 +198,28 @@ public class ReleaseUtils
     }
 
     /**
-     * Merge releases from parent component with releases from child component.
-     * If a release is found in both components, i.e. they have the same version,
-     * their issues are merged into one (parent) release with component marker
-     * for component issues.
+     * Merge releases from parent component with releases from child component. If a release is found in both
+     * components, i.e. they have the same version, their issues are merged into one (parent) release with component
+     * marker for component issues.
      *
      * @param releases Releases from the parent component
      * @param componentName child component name (retrieved from project name)
      * @param componentReleases Releases from the child component
      * @return A list containing the merged releases
      */
-    public List mergeReleases( final List releases, final String componentName, final List componentReleases )
+    public List<Release> mergeReleases( final List<Release> releases, final String componentName,
+                                        final List<Release> componentReleases )
     {
         if ( releases == null && componentReleases == null )
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         if ( componentReleases == null )
         {
             return releases;
         }
 
-        final List mergedReleases = new ArrayList();
+        final List<Release> mergedReleases = new ArrayList<Release>();
 
         if ( releases != null )
         {
@@ -257,12 +254,9 @@ public class ReleaseUtils
 
     private static String toString( Release release )
     {
-        return release.getClass().getSimpleName()
-                + "[version='" + release.getVersion() + "'"
-                + ", date='" + release.getDateRelease() + "'"
-                + ", description='" + release.getDescription() + "'"
-                + ", actionsSize=" + release.getActions().size()
-                + "]";
+        return release.getClass().getSimpleName() + "[version='" + release.getVersion() + "'" + ", date='"
+            + release.getDateRelease() + "'" + ", description='" + release.getDescription() + "'" + ", actionsSize="
+            + release.getActions().size() + "]";
     }
 
     public static String toString( List<Release> releases )

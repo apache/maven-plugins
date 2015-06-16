@@ -44,7 +44,8 @@ import org.apache.maven.plugins.changes.model.Release;
  *
  * @version $Id$
  */
-public class ChangesReportGenerator extends AbstractIssuesReportGenerator
+public class ChangesReportGenerator
+    extends AbstractIssuesReportGenerator
 {
 
     /**
@@ -62,8 +63,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     private static final String NO_TEAMLIST = "none";
 
     /**
-     * The issue management system to use, for actions that do not specify a
-     * system.
+     * The issue management system to use, for actions that do not specify a system.
      *
      * @since 2.4
      */
@@ -73,7 +73,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
     private String url;
 
-    private Map issueLinksPerSystem;
+    private Map<String, String> issueLinksPerSystem;
 
     private boolean addActionDate;
 
@@ -87,14 +87,14 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     /**
      * @since 2.4
      */
-    private List releaseList;
+    private List<Release> releaseList;
 
     public ChangesReportGenerator()
     {
-        issueLinksPerSystem = new HashMap();
+        issueLinksPerSystem = new HashMap<String, String>();
     }
 
-    public ChangesReportGenerator( List releaseList )
+    public ChangesReportGenerator( List<Release> releaseList )
     {
         this();
         this.releaseList = releaseList;
@@ -152,12 +152,12 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         return url;
     }
 
-    public Map getIssueLinksPerSystem()
+    public Map<String, String> getIssueLinksPerSystem()
     {
         return issueLinksPerSystem;
     }
 
-    public void setIssueLinksPerSystem( Map issueLinksPerSystem )
+    public void setIssueLinksPerSystem( Map<String, String> issueLinksPerSystem )
     {
         if ( this.issueLinksPerSystem != null && issueLinksPerSystem == null )
         {
@@ -198,7 +198,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         {
             return false;
         }
-        String issueLink = (String) this.issueLinksPerSystem.get( system );
+        String issueLink = this.issueLinksPerSystem.get( system );
 
         // If the issue link entry is blank then no links are possible
         if ( StringUtils.isBlank( issueLink ) )
@@ -318,7 +318,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
      * @param bundle A resource bundle for i18n
      * @param dueTos Other people that helped with an action
      */
-    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List dueTos )
+    private void constructDueTo( Sink sink, Action action, ResourceBundle bundle, List<DueTo> dueTos )
     {
 
         // Create a Map with key : dueTo name, value : dueTo email
@@ -330,9 +330,8 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             namesEmailMap.put( action.getDueTo(), action.getDueToEmail() );
         }
 
-        for ( Object dueTo1 : dueTos )
+        for ( DueTo dueTo : dueTos )
         {
-            DueTo dueTo = (DueTo) dueTo1;
             namesEmailMap.put( dueTo.getName(), dueTo.getEmail() );
         }
 
@@ -374,7 +373,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
      * @param sink The sink
      * @param fixes The List of issues specified as fixes elements
      */
-    private void constructIssueLink( String issue, String system, Sink sink, List fixes )
+    private void constructIssueLink( String issue, String system, Sink sink, List<FixedIssue> fixes )
     {
         if ( StringUtils.isNotEmpty( issue ) )
         {
@@ -390,9 +389,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             }
         }
 
-        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
+        for ( Iterator<FixedIssue> iterator = fixes.iterator(); iterator.hasNext(); )
         {
-            FixedIssue fixedIssue = (FixedIssue) iterator.next();
+            FixedIssue fixedIssue = iterator.next();
             String currentIssueId = fixedIssue.getIssue();
             if ( StringUtils.isNotEmpty( currentIssueId ) )
             {
@@ -411,14 +410,13 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     }
 
     /**
-     * Construct a text that references (but does not link to) the issues that
-     * were solved by an action.
+     * Construct a text that references (but does not link to) the issues that were solved by an action.
      *
      * @param issue The issue specified by attributes
      * @param sink The sink
      * @param fixes The List of issues specified as fixes elements
      */
-    private void constructIssueText( String issue, Sink sink, List fixes )
+    private void constructIssueText( String issue, Sink sink, List<FixedIssue> fixes )
     {
         if ( StringUtils.isNotEmpty( issue ) )
         {
@@ -430,9 +428,9 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
             }
         }
 
-        for ( Iterator iterator = fixes.iterator(); iterator.hasNext(); )
+        for ( Iterator<FixedIssue> iterator = fixes.iterator(); iterator.hasNext(); )
         {
-            FixedIssue fixedIssue = (FixedIssue) iterator.next();
+            FixedIssue fixedIssue = iterator.next();
 
             String currentIssueId = fixedIssue.getIssue();
             if ( StringUtils.isNotEmpty( currentIssueId ) )
@@ -447,7 +445,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         }
     }
 
-    private void constructReleaseHistory( Sink sink, ResourceBundle bundle, List releaseList )
+    private void constructReleaseHistory( Sink sink, ResourceBundle bundle, List<Release> releaseList )
     {
         sink.section2();
 
@@ -467,10 +465,8 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
 
         sink.tableRow_();
 
-        for ( Object aReleaseList : releaseList )
+        for ( Release release : releaseList )
         {
-            Release release = (Release) aReleaseList;
-
             sink.tableRow();
 
             sinkCellLink( sink, release.getVersion(), "#" + HtmlTools.encodeId( release.getVersion() ) );
@@ -506,11 +502,10 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
      * @param bundle Resource bundle
      * @param releaseList Releases to create content for
      */
-    private void constructReleases( Sink sink, ResourceBundle bundle, List releaseList )
+    private void constructReleases( Sink sink, ResourceBundle bundle, List<Release> releaseList )
     {
-        for ( Object aReleaseList : releaseList )
+        for ( Release release : releaseList )
         {
-            Release release = (Release) aReleaseList;
             constructRelease( sink, bundle, release );
         }
     }
@@ -531,8 +526,7 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
         SinkEventAttributes attrs = new SinkEventAttributeSet();
         attrs.addAttribute( SinkEventAttributes.ID, HtmlTools.encodeId( release.getVersion() ) );
         sink.sectionTitle( Sink.SECTION_LEVEL_2, attrs );
-        sink.text( bundle.getString( "report.changes.label.release" ) + " "
-            + release.getVersion() + date );
+        sink.text( bundle.getString( "report.changes.label.release" ) + " " + release.getVersion() + date );
         sink.sectionTitle_( Sink.SECTION_LEVEL_2 );
 
         if ( isReleaseEmpty( release ) )
@@ -573,8 +567,8 @@ public class ChangesReportGenerator extends AbstractIssuesReportGenerator
     }
 
     /**
-     * Constructs table rows for specified release component. It will create header row for
-     * component name and action rows for all component issues.
+     * Constructs table rows for specified release component. It will create header row for component name and action
+     * rows for all component issues.
      *
      * @param sink Sink
      * @param bundle Resource bundle

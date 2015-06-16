@@ -75,7 +75,7 @@ public final class ClassicJiraDownloader
             // MCHANGES-89 Allow circular redirects
             HttpClientParams clientParams = client.getParams();
             clientParams.setBooleanParameter( HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true );
-            clientParams.setCookiePolicy( CookiePolicy.BROWSER_COMPATIBILITY ); //MCHANGES-237
+            clientParams.setCookiePolicy( CookiePolicy.BROWSER_COMPATIBILITY ); // MCHANGES-237
 
             HttpState state = new HttpState();
 
@@ -148,25 +148,19 @@ public final class ClassicJiraDownloader
         }
         else
         {
+            // CHECKSTYLE_OFF: LineLength
             // create the URL for getting the proper issues from JIRA
-            String jqlQuery = new JqlQueryBuilder( log )
-                .project( jiraProject )
-                .fixVersion( getFixFor() )
-                .fixVersionIds( fixVersionIds )
-                .statusIds( statusIds )
-                .priorityIds( priorityIds )
-                .resolutionIds( resolutionIds )
-                .components( component )
-                .typeIds( typeIds )
-                .sortColumnNames( sortColumnNames )
-                .build();
+            String jqlQuery =
+                new JqlQueryBuilder( log ).project( jiraProject ).fixVersion( getFixFor() ).fixVersionIds( fixVersionIds ).statusIds( statusIds ).priorityIds( priorityIds ).resolutionIds( resolutionIds ).components( component ).typeIds( typeIds ).sortColumnNames( sortColumnNames ).build();
 
-            String url = new UrlBuilder( jiraUrl, "sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml" )
-                .addParameter( "tempMax", nbEntriesMax )
-                .addParameter( "reset", "true" )
-                .addParameter( "jqlQuery", jqlQuery )
-                .build();
+            String url =
+                new UrlBuilder( jiraUrl,
+                                "sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml" ).addParameter( "tempMax",
+                                                                                                              nbEntriesMax ).addParameter( "reset",
+                                                                                                                                           "true" ).addParameter( "jqlQuery",
+                                                                                                                                                                  jqlQuery ).build();
 
+            // CHECKSTYLE_ON: LineLength
             return url;
         }
     }
@@ -180,14 +174,14 @@ public final class ClassicJiraDownloader
         if ( jiraId == null || jiraId.length() == 0 )
         {
             log.debug( "The JIRA URL " + project.getIssueManagement().getUrl()
-                           + " doesn't include a pid, trying to extract it from JIRA." );
+                + " doesn't include a pid, trying to extract it from JIRA." );
             jiraId = JiraHelper.getPidFromJira( log, project.getIssueManagement().getUrl(), client );
         }
 
         if ( jiraId == null )
         {
             throw new RuntimeException( "The issue management URL in the POM does not include a pid,"
-                                            + " and it was not possible to extract it from the page at that URL." );
+                + " and it was not possible to extract it from the page at that URL." );
         }
         else
         {
@@ -199,16 +193,10 @@ public final class ClassicJiraDownloader
                 fullURL += "&fixfor=" + getFixFor();
             }
 
-            String createdFilter = new ParameterQueryBuilder( log )
-                .fixVersionIds( fixVersionIds )
-                .statusIds( statusIds )
-                .priorityIds( priorityIds )
-                .resolutionIds( resolutionIds )
-                .components( component )
-                .typeIds( typeIds )
-                .sortColumnNames( sortColumnNames )
-                .filter( filter )
-                .build();
+            // CHECKSTYLE_OFF: LineLength
+            String createdFilter =
+                new ParameterQueryBuilder( log ).fixVersionIds( fixVersionIds ).statusIds( statusIds ).priorityIds( priorityIds ).resolutionIds( resolutionIds ).components( component ).typeIds( typeIds ).sortColumnNames( sortColumnNames ).filter( filter ).build();
+            // CHECKSTYLE_ON: LineLength
 
             if ( createdFilter.charAt( 0 ) != '&' )
             {
@@ -243,12 +231,11 @@ public final class ClassicJiraDownloader
     }
 
     /**
-     * Authenticate against JIRA. This method relies on jiraUser and
-     * jiraPassword being set. You can check this by calling
-     * isJiraAuthenticationConfigured().
+     * Authenticate against JIRA. This method relies on jiraUser and jiraPassword being set. You can check this by
+     * calling isJiraAuthenticationConfigured().
      *
-     * @param client    the HttpClient
-     * @param jiraUrl   the JIRA installation
+     * @param client the HttpClient
+     * @param jiraUrl the JIRA installation
      * @return <code>true</code> if the authentication was successful, otherwise <code>false</code>
      */
     private boolean doJiraAuthentication( HttpClient client, final String jiraUrl )
@@ -305,8 +292,8 @@ public final class ClassicJiraDownloader
     }
 
     /**
-     * Evaluate if the login attempt to JIRA was successful or not. We can't
-     * use the status code because JIRA returns 200 even if the login fails.
+     * Evaluate if the login attempt to JIRA was successful or not. We can't use the status code because JIRA returns
+     * 200 even if the login fails.
      *
      * @param loginGet The method that was executed
      * @return <code>false</code> if we find an error message in the response body, otherwise <code>true</code>
@@ -323,7 +310,7 @@ public final class ClassicJiraDownloader
     /**
      * Setup proxy access if we have to.
      *
-     * @param client  the HttpClient
+     * @param client the HttpClient
      */
     private void determineProxy( String jiraUrl, HttpClient client )
     {
@@ -341,10 +328,9 @@ public final class ClassicJiraDownloader
             {
                 getLog().debug( "Using proxy user: " + proxyUser );
 
-                client.getState().setProxyCredentials(
-                    new AuthScope( null, AuthScope.ANY_PORT, null,
-                                   AuthScope.ANY_SCHEME ),
-                    new UsernamePasswordCredentials( proxyUser, proxyPass ) );
+                client.getState().setProxyCredentials( new AuthScope( null, AuthScope.ANY_PORT, null,
+                                                                      AuthScope.ANY_SCHEME ),
+                                                       new UsernamePasswordCredentials( proxyUser, proxyPass ) );
             }
         }
     }
@@ -352,8 +338,8 @@ public final class ClassicJiraDownloader
     /**
      * Downloads the given link using the configured HttpClient, possibly following redirects.
      *
-     * @param cl     the HttpClient
-     * @param link   the URL to JIRA
+     * @param cl the HttpClient
+     * @param link the URL to JIRA
      */
     private void download( final HttpClient cl, final String link )
     {

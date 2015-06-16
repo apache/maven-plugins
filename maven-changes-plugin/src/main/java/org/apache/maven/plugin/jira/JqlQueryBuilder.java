@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Builder for a JIRA query using the JIRA query language.
- * Only a limited set of JQL is supported.
+ * Builder for a JIRA query using the JIRA query language. Only a limited set of JQL is supported.
  *
  * @author ton.swieb@finalist.com
  * @version $Id$
@@ -38,6 +37,7 @@ public class JqlQueryBuilder
     implements JiraQueryBuilder
 {
     private String filter = "";
+
     private boolean urlEncode = true;
 
     /**
@@ -107,8 +107,8 @@ public class JqlQueryBuilder
     }
 
     /**
-     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
-     * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
+     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably end up
+     * with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
      *
      * @param fixVersion a single fix version
      * @return
@@ -120,8 +120,8 @@ public class JqlQueryBuilder
     }
 
     /**
-     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably
-     * end up with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
+     * When both {@link #fixVersion(String)} and {@link #fixVersionIds(String)} are used then you will probably end up
+     * with a JQL query that is valid, but returns nothing. Unless they both only reference the same fixVersion
      *
      * @param fixVersionIds a comma-separated list of version ids.
      * @return
@@ -134,6 +134,7 @@ public class JqlQueryBuilder
 
     /**
      * Add a sequence of version IDs already in a list.
+     * 
      * @param fixVersionIds the version ids.
      * @return
      */
@@ -208,7 +209,6 @@ public class JqlQueryBuilder
         return this;
     }
 
-
     public JiraQueryBuilder typeIds( String typeIds )
     {
         addCommaSeparatedValues( "type", typeIds );
@@ -233,7 +233,7 @@ public class JqlQueryBuilder
     }
 
     /* --------------------------------------------------------------------- */
-    /* Private methods                                                       */
+    /* Private methods */
     /* --------------------------------------------------------------------- */
 
     private void addCommaSeparatedValues( String key, String values )
@@ -275,7 +275,7 @@ public class JqlQueryBuilder
                 trimAndQuoteValue( values.get( i ) );
                 query.append( ", " );
             }
-            trimAndQuoteValue( values.get ( values.size() - 1 ) );
+            trimAndQuoteValue( values.get( values.size() - 1 ) );
             query.append( ")" );
         }
     }

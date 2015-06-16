@@ -41,8 +41,7 @@ public class IssueUtils
      * @param issues A list of issues
      * @param prefix The prefix of the "Fix Version" that should match
      * @return A <code>List</code> of issues fixed in versions that match the supplied prefix
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If no issues could be found for the supplied prefix
+     * @throws org.apache.maven.plugin.MojoExecutionException If no issues could be found for the supplied prefix
      */
     public static List<Issue> filterIssuesWithVersionPrefix( List<Issue> issues, String prefix )
         throws MojoExecutionException
@@ -78,16 +77,14 @@ public class IssueUtils
     }
 
     /**
-     * Find the issues for only the supplied version, by matching the "Fix for"
-     * version in the supplied list of issues with the supplied version.
-     * If the supplied version is a SNAPSHOT, then that part of the version
-     * will be removed prior to the matching.
+     * Find the issues for only the supplied version, by matching the "Fix for" version in the supplied list of issues
+     * with the supplied version. If the supplied version is a SNAPSHOT, then that part of the version will be removed
+     * prior to the matching.
      *
      * @param issues A list of issues
      * @param version The version that issues should be returned for
      * @return A <code>List</code> of issues for the supplied version
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If no issues could be found for the supplied version
+     * @throws org.apache.maven.plugin.MojoExecutionException If no issues could be found for the supplied version
      */
     public static List<Issue> getIssuesForVersion( List<Issue> issues, String version )
         throws MojoExecutionException

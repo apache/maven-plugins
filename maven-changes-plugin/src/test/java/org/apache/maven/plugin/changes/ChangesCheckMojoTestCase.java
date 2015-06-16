@@ -57,55 +57,57 @@ public class ChangesCheckMojoTestCase
         assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern ) );
     }
 
-  public void testIsValidateWithLocale() throws Exception {
-    String pattern, locale = null;
+    public void testIsValidateWithLocale()
+        throws Exception
+    {
+        String pattern, locale = null;
 
-    // null locale
-    pattern = "yyyy-MM-dd";
-    assertFalse(ChangesCheckMojo.isValidDate(null, pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("", pattern, locale));
-    assertTrue(ChangesCheckMojo.isValidDate("2010-12-06", pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("pending", pattern, locale));
+        // null locale
+        pattern = "yyyy-MM-dd";
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern, locale ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "2010-12-06", pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern, locale ) );
 
-    // unknown locale specified, should use default locale
-    locale = "ab_CD";
-    assertFalse(ChangesCheckMojo.isValidDate(null, pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("", pattern, locale));
-    assertTrue(ChangesCheckMojo.isValidDate("2010-12-06", pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("pending", pattern, locale));
+        // unknown locale specified, should use default locale
+        locale = "ab_CD";
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern, locale ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "2010-12-06", pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern, locale ) );
 
-    // pattern with months as number
-    pattern = "yyyy-MM-dd";
+        // pattern with months as number
+        pattern = "yyyy-MM-dd";
 
-    // Czech locale
-    locale = "cs_CZ";
-    assertFalse(ChangesCheckMojo.isValidDate(null, pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("", pattern, locale));
-    assertTrue(ChangesCheckMojo.isValidDate("2010-12-06", pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("pending", pattern, locale));
+        // Czech locale
+        locale = "cs_CZ";
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern, locale ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "2010-12-06", pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern, locale ) );
 
-    // English locale
-    locale = "en_US";
-    assertFalse(ChangesCheckMojo.isValidDate(null, pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("", pattern, locale));
-    assertTrue(ChangesCheckMojo.isValidDate("2010-12-06", pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("pending", pattern, locale));
+        // English locale
+        locale = "en_US";
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern, locale ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "2010-12-06", pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern, locale ) );
 
-    // pattern with months as text
-    pattern = "dd MMM yyyy";
+        // pattern with months as text
+        pattern = "dd MMM yyyy";
 
-    // Czech locale
-    locale = "cs_CZ";
-    assertFalse(ChangesCheckMojo.isValidDate(null, pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("", pattern, locale));
-    assertTrue(ChangesCheckMojo.isValidDate("06 XII 2010", pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("pending", pattern, locale));
+        // Czech locale
+        locale = "cs_CZ";
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern, locale ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "06 XII 2010", pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern, locale ) );
 
-    // English locale
-    locale = "en_US";
-    assertFalse(ChangesCheckMojo.isValidDate(null, pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("", pattern, locale));
-    assertTrue(ChangesCheckMojo.isValidDate("06 Dec 2010", pattern, locale));
-    assertFalse(ChangesCheckMojo.isValidDate("pending", pattern, locale));
-  }
+        // English locale
+        locale = "en_US";
+        assertFalse( ChangesCheckMojo.isValidDate( null, pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "", pattern, locale ) );
+        assertTrue( ChangesCheckMojo.isValidDate( "06 Dec 2010", pattern, locale ) );
+        assertFalse( ChangesCheckMojo.isValidDate( "pending", pattern, locale ) );
+    }
 }

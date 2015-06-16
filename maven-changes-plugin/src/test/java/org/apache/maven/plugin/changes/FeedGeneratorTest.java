@@ -32,7 +32,6 @@ import junit.framework.TestCase;
 import org.apache.maven.plugins.changes.model.Release;
 
 /**
- *
  * @author ltheussl
  */
 public class FeedGeneratorTest
@@ -92,7 +91,7 @@ public class FeedGeneratorTest
 
         releases.add( release );
 
-        for ( String type: generator.getSupportedFeedTypes() )
+        for ( String type : generator.getSupportedFeedTypes() )
         {
             Writer writer = new StringWriter( 512 );
             generator.export( releases, type, writer );

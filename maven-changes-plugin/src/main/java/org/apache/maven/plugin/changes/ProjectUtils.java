@@ -38,8 +38,8 @@ public class ProjectUtils
      * @param issueManagementSystem The name of the issue management system that is required
      * @param mojoResult What the calling mojo produces, used in the error messages
      * @param log A log
-     * @return <code>true</code> if the &lt;issueManagement&gt; element of the POM is complete,
-     * otherwise <code>false</code>
+     * @return <code>true</code> if the &lt;issueManagement&gt; element of the POM is complete, otherwise
+     *         <code>false</code>
      */
     public static boolean validateIfIssueManagementComplete( MavenProject project, String issueManagementSystem,
                                                              String mojoResult, Log log )

@@ -25,17 +25,15 @@ import org.apache.maven.plugin.issues.Issue;
 import java.util.List;
 
 /**
- * Jira downloader that uses REST or RSS, depending.
- * This code is not very attractive. However, JIRA has
- * supported REST for a very long time, and so the
- * fallback is only relevant for people with very old
- * copies of JIRA.
+ * Jira downloader that uses REST or RSS, depending. This code is not very attractive. However, JIRA has supported REST
+ * for a very long time, and so the fallback is only relevant for people with very old copies of JIRA.
  */
-public class AdaptiveJiraDownloader extends AbstractJiraDownloader
+public class AdaptiveJiraDownloader
+    extends AbstractJiraDownloader
 {
     private AbstractJiraDownloader effectiveDownloader;
-    private boolean forceClassic;
 
+    private boolean forceClassic;
 
     public void doExecute()
         throws Exception
@@ -54,7 +52,7 @@ public class AdaptiveJiraDownloader extends AbstractJiraDownloader
             effectiveDownloader.doExecute();
         }
     }
-    
+
     private void copySettings( AbstractJiraDownloader target )
     {
         target.setLog( getLog() );
@@ -81,7 +79,6 @@ public class AdaptiveJiraDownloader extends AbstractJiraDownloader
         target.setConnectionTimeout( connectionTimeout );
         target.setReceiveTimout( receiveTimout );
     }
-
 
     public List<Issue> getIssueList()
         throws MojoExecutionException

@@ -75,7 +75,7 @@ public class GitHubDownloader
 
     public GitHubDownloader( MavenProject project, String githubScheme, int githubPort, boolean includeOpenIssues,
                              boolean onlyMilestoneIssues )
-        throws MalformedURLException
+                                 throws MalformedURLException
     {
         this.includeOpenIssues = includeOpenIssues;
         this.onlyMilestoneIssues = onlyMilestoneIssues;
@@ -114,8 +114,8 @@ public class GitHubDownloader
 
         if ( urlPathParts.length != 3 )
         {
-            throw new MalformedURLException(
-                "GitHub issue management URL must look like, [GITHUB_DOMAIN]/[OWNER]/[REPO]/issues" );
+            throw new MalformedURLException( "GitHub issue management URL must look like, "
+                + "[GITHUB_DOMAIN]/[OWNER]/[REPO]/issues" );
         }
 
         this.githubOwner = urlPathParts[0];
@@ -227,9 +227,9 @@ public class GitHubDownloader
 
                 configured = true;
                 break;
-}
+            }
         }
-        
+
         if ( !configured )
         {
             log.warn( "Can't find server id [" + githubAPIServerId + "] configured in githubAPIServerId." );

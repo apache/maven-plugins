@@ -38,8 +38,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Goal which downloads issues from GitHub and generates a
- * report.
+ * Goal which downloads issues from GitHub and generates a report.
  *
  * @author Bryan Baugher
  * @since 2.8
@@ -52,31 +51,27 @@ public class GitHubMojo
     /**
      * Valid Github columns.
      */
-    @SuppressWarnings( "checkstyle:staticvariablename" )
-    private static Map<String, Integer> GITHUB_COLUMNS = new HashMap<String, Integer>();
+    private static Map<String, Integer> githubColumns = new HashMap<String, Integer>();
 
     static
     {
-        GITHUB_COLUMNS.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE );
-        GITHUB_COLUMNS.put( "Created", IssuesReportHelper.COLUMN_CREATED );
-        GITHUB_COLUMNS.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION );
-        GITHUB_COLUMNS.put( "Id", IssuesReportHelper.COLUMN_ID );
-        GITHUB_COLUMNS.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER );
-        GITHUB_COLUMNS.put( "Status", IssuesReportHelper.COLUMN_STATUS );
-        GITHUB_COLUMNS.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY );
-        GITHUB_COLUMNS.put( "Type", IssuesReportHelper.COLUMN_TYPE );
-        GITHUB_COLUMNS.put( "Updated", IssuesReportHelper.COLUMN_UPDATED );
+        githubColumns.put( "Assignee", IssuesReportHelper.COLUMN_ASSIGNEE );
+        githubColumns.put( "Created", IssuesReportHelper.COLUMN_CREATED );
+        githubColumns.put( "Fix Version", IssuesReportHelper.COLUMN_FIX_VERSION );
+        githubColumns.put( "Id", IssuesReportHelper.COLUMN_ID );
+        githubColumns.put( "Reporter", IssuesReportHelper.COLUMN_REPORTER );
+        githubColumns.put( "Status", IssuesReportHelper.COLUMN_STATUS );
+        githubColumns.put( "Summary", IssuesReportHelper.COLUMN_SUMMARY );
+        githubColumns.put( "Type", IssuesReportHelper.COLUMN_TYPE );
+        githubColumns.put( "Updated", IssuesReportHelper.COLUMN_UPDATED );
     }
 
     /**
-     * Sets the column names that you want to show in the report. The columns
-     * will appear in the report in the same order as you specify them here.
-     * Multiple values can be separated by commas.
+     * Sets the column names that you want to show in the report. The columns will appear in the report in the same
+     * order as you specify them here. Multiple values can be separated by commas.
      * <p>
-     * Valid columns are: <code>Assignee</code>, <code>Created</code>,
-     * <code>Fix Version</code>, <code>Id</code>, <code>Reporter</code>,
-     * <code>Status</code>, <code>Summary</code>, <code>Type</code> and
-     * <code>Updated</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
+     * <code>Reporter</code>, <code>Status</code>, <code>Summary</code>, <code>Type</code> and <code>Updated</code>.
      * </p>
      */
     @Parameter( defaultValue = "Id,Type,Summary,Assignee,Reporter,Status,Created,Updated,Fix Version" )
@@ -120,9 +115,8 @@ public class GitHubMojo
     private boolean onlyMilestoneIssues;
 
     /**
-     * If you only want to show issues for the current version in the report.
-     * The current version being used is <code>${project.version}</code> minus
-     * any "-SNAPSHOT" suffix.
+     * If you only want to show issues for the current version in the report. The current version being used is
+     * <code>${project.version}</code> minus any "-SNAPSHOT" suffix.
      */
     @Parameter( defaultValue = "false" )
     private boolean onlyCurrentVersion;
@@ -143,7 +137,7 @@ public class GitHubMojo
     }
 
     /* --------------------------------------------------------------------- */
-    /* Public methods                                                        */
+    /* Public methods */
     /* --------------------------------------------------------------------- */
 
     /**
@@ -166,12 +160,12 @@ public class GitHubMojo
     {
 
         // Validate parameters
-        List<Integer> columnIds = IssuesReportHelper.getColumnIds( columnNames, GITHUB_COLUMNS );
+        List<Integer> columnIds = IssuesReportHelper.getColumnIds( columnNames, githubColumns );
         if ( columnIds.size() == 0 )
         {
             // This can happen if the user has configured column names and they are all invalid
-            throw new MavenReportException(
-                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+            throw new MavenReportException( "maven-changes-plugin: None of the configured columnNames '" + columnNames
+                + "' are valid." );
         }
 
         try
@@ -215,7 +209,7 @@ public class GitHubMojo
     }
 
     /* --------------------------------------------------------------------- */
-    /* Private methods                                                       */
+    /* Private methods */
     /* --------------------------------------------------------------------- */
 
     private ResourceBundle getBundle( Locale locale )

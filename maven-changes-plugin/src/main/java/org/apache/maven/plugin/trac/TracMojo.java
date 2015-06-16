@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
+import org.apache.maven.plugin.issues.Issue;
 import org.apache.maven.plugin.issues.IssuesReportGenerator;
 import org.apache.maven.plugin.issues.IssuesReportHelper;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -36,8 +37,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.xmlrpc.XmlRpcException;
 
 /**
- * Goal which downloads issues from the Issue Tracking System and generates a
- * report.
+ * Goal which downloads issues from the Issue Tracking System and generates a report.
  *
  * @author Noriko Kinugasa
  * @version $Id$
@@ -89,15 +89,12 @@ public class TracMojo
     }
 
     /**
-     * Sets the column names that you want to show in the report. The columns
-     * will appear in the report in the same order as you specify them here.
-     * Multiple values can be separated by commas.
+     * Sets the column names that you want to show in the report. The columns will appear in the report in the same
+     * order as you specify them here. Multiple values can be separated by commas.
      * <p>
-     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
-     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
-     * <code>Priority</code>, <code>Reporter</code>, <code>Resolution</code>,
-     * <code>Status</code>, <code>Summary</code>, <code>Type</code> and
-     * <code>Updated</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>, <code>Created</code>, <code>Fix Version</code>,
+     * <code>Id</code>, <code>Priority</code>, <code>Reporter</code>, <code>Resolution</code>, <code>Status</code>,
+     * <code>Summary</code>, <code>Type</code> and <code>Updated</code>.
      * </p>
      *
      * @since 2.2
@@ -112,21 +109,19 @@ public class TracMojo
     private String query;
 
     /**
-     * Defines the Trac password for authentication into a private Trac
-     * installation.
+     * Defines the Trac password for authentication into a private Trac installation.
      */
     @Parameter( defaultValue = "" )
     private String tracPassword;
 
     /**
-     * Defines the Trac username for authentication into a private Trac
-     * installation.
+     * Defines the Trac username for authentication into a private Trac installation.
      */
     @Parameter( defaultValue = "" )
     private String tracUser;
 
     /* --------------------------------------------------------------------- */
-    /* Public methods                                                        */
+    /* Public methods */
     /* --------------------------------------------------------------------- */
 
     /**
@@ -147,13 +142,13 @@ public class TracMojo
         throws MavenReportException
     {
         // Validate parameters
-        List<Integer> columnIds = IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS,
-                                                                   getLog() );
+        List<Integer> columnIds =
+            IssuesReportHelper.getColumnIds( columnNames, TRAC_COLUMNS, DEPRECATED_TRAC_COLUMNS, getLog() );
         if ( columnIds.size() == 0 )
         {
             // This can happen if the user has configured column names and they are all invalid
-            throw new MavenReportException(
-                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+            throw new MavenReportException( "maven-changes-plugin: None of the configured columnNames '" + columnNames
+                + "' are valid." );
         }
 
         try
@@ -162,7 +157,7 @@ public class TracMojo
             TracDownloader issueDownloader = new TracDownloader();
             configureIssueDownloader( issueDownloader );
 
-            List issueList = issueDownloader.getIssueList();
+            List<Issue> issueList = issueDownloader.getIssueList();
 
             // Generate the report
             IssuesReportGenerator report = new IssuesReportGenerator( IssuesReportHelper.toIntArray( columnIds ) );
@@ -209,7 +204,7 @@ public class TracMojo
     }
 
     /* --------------------------------------------------------------------- */
-    /* Private methods                                                       */
+    /* Private methods */
     /* --------------------------------------------------------------------- */
 
     private ResourceBundle getBundle( Locale locale )

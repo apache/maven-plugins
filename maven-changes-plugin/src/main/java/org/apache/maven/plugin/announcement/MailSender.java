@@ -20,8 +20,8 @@ package org.apache.maven.plugin.announcement;
  */
 
 /**
- * Defines the sender of the announcement if the list of developer is empty or
- * if the sender is not a member of the development team.
+ * Defines the sender of the announcement if the list of developer is empty or if the sender is not a member of the
+ * development team.
  *
  * @author Stephane Nicoll
  */
@@ -32,12 +32,10 @@ public class MailSender
 
     private String email;
 
-
     public MailSender()
     {
         super();
     }
-
 
     public MailSender( String name, String email )
     {

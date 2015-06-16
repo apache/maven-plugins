@@ -31,8 +31,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.changes.model.Release;
 
 /**
- * Goal which checks that the changes.xml file has the necessary data to
- * generate an announcement or a report for the current release.
+ * Goal which checks that the changes.xml file has the necessary data to generate an announcement or a report for the
+ * current release.
  *
  * @author Justin Edelson
  * @author Dennis Lundberg
@@ -43,15 +43,13 @@ public class ChangesCheckMojo
     extends AbstractChangesMojo
 {
     /**
-     * The format that a correct release date should have. This value will be
-     * used as a pattern to try to parse a date.
+     * The format that a correct release date should have. This value will be used as a pattern to try to parse a date.
      */
     @Parameter( property = "changes.releaseDateFormat", defaultValue = "yyyy-MM-dd" )
     private String releaseDateFormat;
 
     /**
-     * The locale that a correct release date should have. This value will be
-     * used as a locale to try to parse a date.
+     * The locale that a correct release date should have. This value will be used as a locale to try to parse a date.
      *
      * @since 2.10
      */
@@ -77,8 +75,6 @@ public class ChangesCheckMojo
      */
     @Parameter( property = "changes.skipSnapshots", defaultValue = "false" )
     private boolean skipSnapshots;
-
-    private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     /**
      * Check that the latest release contains a valid release date.
@@ -108,8 +104,8 @@ public class ChangesCheckMojo
 
                 if ( !isValidDate( release.getDateRelease(), releaseDateFormat, releaseDateLocale ) )
                 {
-                    throw new MojoExecutionException(
-                        "The file " + xmlPath.getAbsolutePath() + " has an invalid release date." );
+                    throw new MojoExecutionException( "The file " + xmlPath.getAbsolutePath()
+                        + " has an invalid release date." );
 
                 }
             }
@@ -121,8 +117,8 @@ public class ChangesCheckMojo
     }
 
     /**
-     * Use the pattern to try to parse a Date from the given string. Kept for
-     * backward compatibility with existing unit tests.
+     * Use the pattern to try to parse a Date from the given string. Kept for backward compatibility with existing unit
+     * tests.
      *
      * @param string A date as text
      * @param pattern A pattern that can be used by {@link SimpleDateFormat}
@@ -134,8 +130,7 @@ public class ChangesCheckMojo
     }
 
     /**
-     * Use the pattern to try to parse a Date from the given string using the
-     * given Locale.
+     * Use the pattern to try to parse a Date from the given string using the given Locale.
      *
      * @param string A date as text
      * @param pattern A pattern that can be used by {@link SimpleDateFormat}
@@ -168,7 +163,7 @@ public class ChangesCheckMojo
             {
                 // Try to find the specified locale on this system
                 Locale[] locales = Locale.getAvailableLocales();
-                for ( int i = 0 ; i < locales.length ; i++ )
+                for ( int i = 0; i < locales.length; i++ )
                 {
                     if ( locales[i].toString().equals( locale ) )
                     {

@@ -37,16 +37,21 @@ public class ParameterQueryBuilder
     implements JiraQueryBuilder
 {
     private String filter = "";
+
     /** Log for debug output. */
     private Log log;
+
     private StringBuilder query = new StringBuilder();
 
     /** Mapping containing all allowed JIRA priority values. */
     private final Map<String, String> priorityMap = new HashMap<String, String>( 8 );
+
     /** Mapping containing all allowed JIRA resolution values. */
     private final Map<String, String> resolutionMap = new HashMap<String, String>( 8 );
+
     /** Mapping containing all allowed JIRA status values. */
     private final Map<String, String> statusMap = new HashMap<String, String>( 8 );
+
     /** Mapping containing all allowed JIRA type values. */
     private final Map<String, String> typeMap = new HashMap<String, String>( 8 );
 
@@ -320,16 +325,15 @@ public class ParameterQueryBuilder
                 else
                 {
                     // Error in the configuration
-                    getLog().error(
-                        "maven-changes-plugin: The configured value '" + lowerColumnName
-                            + "' for sortColumnNames is not correct." );
+                    getLog().error( "maven-changes-plugin: The configured value '" + lowerColumnName
+                        + "' for sortColumnNames is not correct." );
                 }
             }
             if ( validSortColumnNames == 0 )
             {
                 // Error in the configuration
                 getLog().error( "maven-changes-plugin: None of the configured sortColumnNames '" + sortColumnNames
-                                    + "' are correct." );
+                    + "' are correct." );
             }
         }
         return this;

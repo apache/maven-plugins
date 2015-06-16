@@ -57,9 +57,9 @@ import org.codehaus.plexus.util.StringUtils;
 public class AnnouncementMailMojo
     extends AbstractAnnouncementMojo
 {
-    //=========================================
+    // =========================================
     // announcement-mail goal fields
-    //=========================================
+    // =========================================
 
     /**
      * Possible senders.
@@ -68,10 +68,9 @@ public class AnnouncementMailMojo
     private List from;
 
     /**
-     * The id of the developer sending the announcement mail. Only used if the <tt>mailSender</tt>
-     * attribute is not set. In this case, this should match the id of one of the developers in
-     * the pom. If a matching developer is not found, then the first developer in the pom will be
-     * used.
+     * The id of the developer sending the announcement mail. Only used if the <tt>mailSender</tt> attribute is not set.
+     * In this case, this should match the id of one of the developers in the pom. If a matching developer is not found,
+     * then the first developer in the pom will be used.
      */
     @Parameter( property = "changes.fromDeveloperId" )
     private String fromDeveloperId;
@@ -85,21 +84,36 @@ public class AnnouncementMailMojo
     private String mailContentType;
 
     /**
-     * Defines the sender of the announcement email. This takes precedence over the list
-     * of developers specified in the POM.
-     * if the sender is not a member of the development team. Note that since this is a bean type,
-     * you cannot specify it from command level with <pre>-D</pre>. Use
-     * <pre>-Dchanges.sender='Your Name &lt;you@domain>'</pre> instead.
+     * Defines the sender of the announcement email. This takes precedence over the list of developers specified in the
+     * POM. if the sender is not a member of the development team. Note that since this is a bean type, you cannot
+     * specify it from command level with
+     * 
+     * <pre>
+     * -D
+     * </pre>
+     * 
+     * . Use
+     * 
+     * <pre>
+     * -Dchanges.sender='Your Name &lt;you@domain>'
+     * </pre>
+     * 
+     * instead.
      */
     @Parameter( property = "changes.mailSender" )
     private MailSender mailSender;
 
     /**
-     * Defines the sender of the announcement. This takes precedence over both ${changes.mailSender}
-     * and the list of developers in the POM.
+     * Defines the sender of the announcement. This takes precedence over both ${changes.mailSender} and the list of
+     * developers in the POM.
      * <p/>
      * This parameter parses an email address in standard RFC822 format, e.g.
-     * <pre>-Dchanges.sender='Your Name &lt;you@domain>'</pre>.
+     * 
+     * <pre>
+     * -Dchanges.sender='Your Name &lt;you@domain>'
+     * </pre>
+     * 
+     * .
      *
      * @since 2.7
      */
@@ -146,9 +160,10 @@ public class AnnouncementMailMojo
     /**
      * Subject for the email.
      */
-    @Parameter( property = "changes.subject",
-                defaultValue = "[ANNOUNCEMENT] - ${project.name} ${project.version} released", required = true )
+    // CHECKSTYLE_OFF: LineLength
+    @Parameter( property = "changes.subject", defaultValue = "[ANNOUNCEMENT] - ${project.name} ${project.version} released", required = true )
     private String subject;
+    // CHECKSTYLE_ON: LineLength
 
     /**
      * The file that contains the generated announcement.
@@ -177,8 +192,8 @@ public class AnnouncementMailMojo
     /**
      * Directory which contains the template for announcement email.
      *
-     * @deprecated Starting with version 2.10 this parameter is no longer used.
-     * You must use {@link #announcementDirectory} instead.
+     * @deprecated Starting with version 2.10 this parameter is no longer used. You must use
+     *             {@link #announcementDirectory} instead.
      */
     @Parameter
     private File templateOutputDirectory;
@@ -359,7 +374,7 @@ public class AnnouncementMailMojo
             {
                 templateEncoding = ReaderFactory.FILE_ENCODING;
                 getLog().warn( "File encoding has not been set, using platform encoding '" + templateEncoding
-                                   + "', i.e. build is platform dependent!" );
+                    + "', i.e. build is platform dependent!" );
             }
 
             reader = new InputStreamReader( inputStream, templateEncoding );
@@ -417,9 +432,8 @@ public class AnnouncementMailMojo
         }
         else if ( from == null || from.isEmpty() )
         {
-            throw new MojoExecutionException(
-                "The <developers> section in your pom should not be empty. Add a <developer> entry or set the "
-                    + "mailSender parameter." );
+            throw new MojoExecutionException( "The <developers> section in your pom should not be empty. "
+                + "Add a <developer> entry or set the mailSender parameter." );
         }
         else if ( fromDeveloperId == null )
         {
@@ -437,14 +451,14 @@ public class AnnouncementMailMojo
                     return new MailSender( developer.getName(), developer.getEmail() );
                 }
             }
-            throw new MojoExecutionException(
-                "Missing developer with id '" + fromDeveloperId + "' in the <developers> section in your pom." );
+            throw new MojoExecutionException( "Missing developer with id '" + fromDeveloperId
+                + "' in the <developers> section in your pom." );
         }
     }
 
-    //================================
+    // ================================
     // announcement-mail accessors
-    //================================
+    // ================================
 
     public List getBccAddresses()
     {

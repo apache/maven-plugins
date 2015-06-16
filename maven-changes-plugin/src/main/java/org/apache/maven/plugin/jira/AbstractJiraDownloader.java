@@ -34,8 +34,8 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Abstract API, more or less, to retrieving issue information from JIRA.
- * Intended to have subclasses for the old (RSS) and new (REST) ways of doing things.
+ * Abstract API, more or less, to retrieving issue information from JIRA. Intended to have subclasses for the old (RSS)
+ * and new (REST) ways of doing things.
  *
  * @author mfranken@xebia.com
  * @author jruiz@exist.com
@@ -47,53 +47,80 @@ public abstract class AbstractJiraDownloader
 
     /** Log for debug output. */
     protected Log log;
+
     /** Output file for xml document. */
     protected File output;
+
     /** The maximum number of entries to show. */
     protected int nbEntriesMax;
+
     /** The filter to apply to query to JIRA. */
     protected String filter;
+
     /** Ids of fix versions to show, as comma separated string. */
     protected String fixVersionIds;
+
     /** Ids of status to show, as comma separated string. */
     protected String statusIds;
+
     /** Ids of resolution to show, as comma separated string. */
     protected String resolutionIds;
+
     /** Ids of priority to show, as comma separated string. */
     protected String priorityIds;
+
     /** The component to show. */
     protected String component;
+
     /** Ids of types to show, as comma separated string. */
     protected String typeIds;
+
     /** Column names to sort by, as comma separated string. */
     protected String sortColumnNames;
+
     /** The username to log into JIRA. */
     protected String jiraUser;
+
     /** The password to log into JIRA. */
     protected String jiraPassword;
+
     /** The username to log into webserver. */
     protected String webUser;
+
     /** The password to log into webserver. */
     protected String webPassword;
+
     /** The maven project. */
     protected MavenProject project;
+
     /** The maven settings. */
     protected Settings settings;
-    /** Use JQL, JIRA query language, instead of URL parameter based queries.
-     * Note that this is down here to make it easier for the mojo to deal with
-     * both new and old flavors. */
+
+    /**
+     * Use JQL, JIRA query language, instead of URL parameter based queries. Note that this is down here to make it
+     * easier for the mojo to deal with both new and old flavors.
+     */
     protected boolean useJql;
+
     /** Filter the JIRA query based on the current version */
     protected boolean onlyCurrentVersion;
+
     /** The versionPrefix to apply to the POM version */
     protected String versionPrefix;
+
     /** The pattern used to parse dates from the JIRA xml file. */
     protected String jiraDatePattern;
+
     protected String proxyHost;
+
     protected int proxyPort;
+
     protected String proxyUser;
+
     protected String proxyPass;
+
     protected int connectionTimeout;
+
     protected int receiveTimout;
 
     /**
@@ -101,8 +128,8 @@ public abstract class AbstractJiraDownloader
      *
      * @throws Exception on error
      */
-    public abstract void doExecute() throws Exception;
-
+    public abstract void doExecute()
+        throws Exception;
 
     /**
      * Check to see if we think that JIRA authentication is needed.
@@ -113,7 +140,6 @@ public abstract class AbstractJiraDownloader
     {
         return ( jiraUser != null ) && ( jiraUser.length() > 0 ) && ( jiraPassword != null );
     }
-
 
     protected void getProxyInfo( String jiraUrl )
     {
@@ -157,7 +183,7 @@ public abstract class AbstractJiraDownloader
             // Validation of proxy method copied from org.apache.maven.wagon.proxy.ProxyUtils.
             // @todo Can use original when maven-changes-plugin requires a more recent version of Maven
 
-            //if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraHost ) )
+            // if ( ProxyUtils.validateNonProxyHosts( proxyInfo, jiraHost ) )
             if ( JiraHelper.validateNonProxyHosts( proxyInfo, jiraHost ) )
             {
                 return;
@@ -200,8 +226,8 @@ public abstract class AbstractJiraDownloader
         }
     }
 
-
-    public abstract List<Issue> getIssueList() throws MojoExecutionException;
+    public abstract List<Issue> getIssueList()
+        throws MojoExecutionException;
 
     public void setJiraDatePattern( String jiraDatePattern )
     {
@@ -226,7 +252,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the project.
      *
-     * @param thisProject  The project to set
+     * @param thisProject The project to set
      */
     public void setMavenProject( Object thisProject )
     {
@@ -236,7 +262,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the maximum number of Issues to show.
      *
-     * @param nbEntries  The maximum number of Issues
+     * @param nbEntries The maximum number of Issues
      */
     public void setNbEntries( final int nbEntries )
     {
@@ -246,7 +272,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the statusIds.
      *
-     * @param thisStatusIds   The id(s) of the status to show, as comma separated string
+     * @param thisStatusIds The id(s) of the status to show, as comma separated string
      */
     public void setStatusIds( String thisStatusIds )
     {
@@ -256,7 +282,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the priorityIds.
      *
-     * @param thisPriorityIds  The id(s) of the priority to show, as comma separated string
+     * @param thisPriorityIds The id(s) of the priority to show, as comma separated string
      */
     public void setPriorityIds( String thisPriorityIds )
     {
@@ -266,7 +292,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the resolutionIds.
      *
-     * @param thisResolutionIds  The id(s) of the resolution to show, as comma separated string
+     * @param thisResolutionIds The id(s) of the resolution to show, as comma separated string
      */
     public void setResolutionIds( String thisResolutionIds )
     {
@@ -286,7 +312,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the password for authentication against the webserver.
      *
-     * @param thisWebPassword  The password of the webserver
+     * @param thisWebPassword The password of the webserver
      */
     public void setWebPassword( String thisWebPassword )
     {
@@ -296,7 +322,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the username for authentication against the webserver.
      *
-     * @param thisWebUser   The username of the webserver
+     * @param thisWebUser The username of the webserver
      */
     public void setWebUser( String thisWebUser )
     {
@@ -306,7 +332,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the password to log into a secured JIRA.
      *
-     * @param thisJiraPassword  The password for JIRA
+     * @param thisJiraPassword The password for JIRA
      */
     public void setJiraPassword( final String thisJiraPassword )
     {
@@ -316,7 +342,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the username to log into a secured JIRA.
      *
-     * @param thisJiraUser  The username for JIRA
+     * @param thisJiraUser The username for JIRA
      */
     public void setJiraUser( String thisJiraUser )
     {
@@ -326,7 +352,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the filter to apply to query to JIRA.
      *
-     * @param thisFilter  The filter to query JIRA
+     * @param thisFilter The filter to query JIRA
      */
     public void setFilter( String thisFilter )
     {
@@ -336,7 +362,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the component(s) to apply to query JIRA.
      *
-     * @param theseComponents   The id(s) of components to show, as comma separated string
+     * @param theseComponents The id(s) of components to show, as comma separated string
      */
     public void setComponent( String theseComponents )
     {
@@ -356,7 +382,7 @@ public abstract class AbstractJiraDownloader
     /**
      * Sets the typeIds.
      *
-     * @param theseTypeIds  The id(s) of the types to show, as comma separated string
+     * @param theseTypeIds The id(s) of the types to show, as comma separated string
      */
     public void setTypeIds( String theseTypeIds )
     {

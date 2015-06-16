@@ -28,7 +28,8 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
  * @since 2.8
  */
 
-public class JiraMojoTest extends AbstractMojoTestCase
+public class JiraMojoTest
+    extends AbstractMojoTestCase
 {
     private final JiraMojo mojo = new JiraMojo();
 
@@ -37,7 +38,8 @@ public class JiraMojoTest extends AbstractMojoTestCase
      * 
      * @throws Exception If any errors occur during the test run.
      */
-    public void testCanGenerateReportSkipped() throws Exception
+    public void testCanGenerateReportSkipped()
+        throws Exception
     {
         setVariableValueToObject( mojo, "skip", Boolean.TRUE );
         assertFalse( mojo.canGenerateReport() );

@@ -33,7 +33,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.xml.sax.SAXParseException;
 
 /**
- * 
  * Goal which validate the <code>changes.xml</code> file.
  * 
  * @author Olivier Lamy
@@ -68,7 +67,7 @@ public class ChangesValidatorMojo
     @Parameter( property = "changes.xmlPath", defaultValue = "src/changes/changes.xml" )
     private File xmlPath;
 
-    /** 
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -89,8 +88,8 @@ public class ChangesValidatorMojo
 
             try
             {
-                XmlValidationHandler xmlValidationHandler = changesSchemaValidator
-                    .validateXmlWithSchema( xmlPath, changesXsdVersion, failOnError );
+                XmlValidationHandler xmlValidationHandler =
+                    changesSchemaValidator.validateXmlWithSchema( xmlPath, changesXsdVersion, failOnError );
                 boolean hasErrors = !xmlValidationHandler.getErrors().isEmpty();
                 if ( hasErrors )
                 {

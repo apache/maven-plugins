@@ -52,23 +52,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Use the JIRA REST API to implement the download.
- *
- * This class assumes that the URL points to a copy of JIRA that implements the REST API.
- * A static function may be forthcoming in here to probe and see if a given URL supports it.
- *
+ * Use the JIRA REST API to implement the download. This class assumes that the URL points to a copy of JIRA that
+ * implements the REST API. A static function may be forthcoming in here to probe and see if a given URL supports it.
  */
-public class RestJiraDownloader extends AbstractJiraDownloader
+public class RestJiraDownloader
+    extends AbstractJiraDownloader
 {
     private List<Issue> issueList;
+
     private JsonFactory jsonFactory;
+
     private SimpleDateFormat dateFormat;
 
     private List<String> resolvedFixVersionIds;
+
     private List<String> resolvedStatusIds;
+
     private List<String> resolvedComponentIds;
+
     private List<String> resolvedTypeIds;
+
     private List<String> resolvedResolutionIds;
+
     private List<String> resolvedPriorityIds;
 
     private String jiraProject;
@@ -79,10 +84,11 @@ public class RestJiraDownloader extends AbstractJiraDownloader
     public static class NoRest
         extends Exception
     {
-        public NoRest( )
+        public NoRest()
         {
             // blank on purpose.
         }
+
         public NoRest( String message )
         {
             super( message );
@@ -91,15 +97,15 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     public RestJiraDownloader()
     {
-        jsonFactory = new MappingJsonFactory(  );
-        //2012-07-17T06:26:47.723-0500
+        jsonFactory = new MappingJsonFactory();
+        // 2012-07-17T06:26:47.723-0500
         dateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ" );
-        resolvedFixVersionIds = new ArrayList<String>(  );
-        resolvedStatusIds = new ArrayList<String>(  );
-        resolvedComponentIds = new ArrayList<String>(  );
-        resolvedTypeIds = new ArrayList<String>(  );
-        resolvedResolutionIds = new ArrayList<String>(  );
-        resolvedPriorityIds = new ArrayList<String>(  );
+        resolvedFixVersionIds = new ArrayList<String>();
+        resolvedStatusIds = new ArrayList<String>();
+        resolvedComponentIds = new ArrayList<String>();
+        resolvedTypeIds = new ArrayList<String>();
+        resolvedResolutionIds = new ArrayList<String>();
+        resolvedPriorityIds = new ArrayList<String>();
     }
 
     public void doExecute()
@@ -114,7 +120,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         try
         {
-            Thread.currentThread().setContextClassLoader( WebClient.class.getClassLoader( ) );
+            Thread.currentThread().setContextClassLoader( WebClient.class.getClassLoader() );
             WebClient client = setupWebClient( jiraUrl );
 
             // We use version 2 of the REST API, that first appeared in JIRA 5
@@ -134,10 +140,10 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
             resolveIds( client, jiraProject );
 
-            String jqlQuery = new JqlQueryBuilder( log ).urlEncode( false ).project( jiraProject ).fixVersion(
-                getFixFor() ).fixVersionIds( resolvedFixVersionIds ).statusIds( resolvedStatusIds ).priorityIds(
-                resolvedPriorityIds ).resolutionIds( resolvedResolutionIds ).components( resolvedComponentIds ).typeIds(
-                resolvedTypeIds ).sortColumnNames( sortColumnNames ).build();
+            // CHECKSTYLE_OFF: LineLength
+            String jqlQuery =
+                new JqlQueryBuilder( log ).urlEncode( false ).project( jiraProject ).fixVersion( getFixFor() ).fixVersionIds( resolvedFixVersionIds ).statusIds( resolvedStatusIds ).priorityIds( resolvedPriorityIds ).resolutionIds( resolvedResolutionIds ).components( resolvedComponentIds ).typeIds( resolvedTypeIds ).sortColumnNames( sortColumnNames ).build();
+            // CHECKSTYLE_ON: LineLength
 
             StringWriter searchParamStringWriter = new StringWriter();
             JsonGenerator gen = jsonFactory.createGenerator( searchParamStringWriter );
@@ -188,7 +194,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
             JsonNode messages = errorTree.get( "errorMessages" );
             if ( messages != null )
             {
-                for ( int mx = 0; mx < messages.size(); mx ++ )
+                for ( int mx = 0; mx < messages.size(); mx++ )
                 {
                     getLog().error( messages.get( mx ).asText() );
                 }
@@ -208,7 +214,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
     private void resolveIds( WebClient client, String jiraProject )
         throws IOException, MojoExecutionException, MojoFailureException
     {
-        resolveList( resolvedComponentIds, client, "components",  component, "/rest/api/2/project/{key}/components",
+        resolveList( resolvedComponentIds, client, "components", component, "/rest/api/2/project/{key}/components",
                      jiraProject );
         resolveList( resolvedFixVersionIds, client, "fixVersions", fixVersionIds, "/rest/api/2/project/{key}/versions",
                      jiraProject );
@@ -220,7 +226,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void resolveList( List<String> targetList, WebClient client, String what, String input,
                               String listRestUrlPattern, String... listUrlArgs )
-        throws IOException, MojoExecutionException, MojoFailureException
+                                  throws IOException, MojoExecutionException, MojoFailureException
     {
         if ( input == null || input.length() == 0 )
         {
@@ -254,7 +260,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
     private String resolveOneItem( JsonNode items, String what, String nameOrId )
         throws IOException, MojoExecutionException, MojoFailureException
     {
-        for ( int cx = 0; cx < items.size(); cx ++ )
+        for ( int cx = 0; cx < items.size(); cx++ )
         {
             JsonNode item = items.get( cx );
             if ( nameOrId.equals( item.get( "id" ).asText() ) )
@@ -271,13 +277,13 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private MediaType getResponseMediaType( Response response )
     {
-        String header = (String) response.getMetadata().getFirst( HttpHeaders.CONTENT_TYPE ) ;
+        String header = (String) response.getMetadata().getFirst( HttpHeaders.CONTENT_TYPE );
         return header == null ? null : MediaType.valueOf( header );
     }
 
     private void buildIssues( JsonNode issuesNode, String jiraUrl, String jiraProject )
     {
-        issueList = new ArrayList<Issue>(  );
+        issueList = new ArrayList<Issue>();
         for ( int ix = 0; ix < issuesNode.size(); ix++ )
         {
             JsonNode issueNode = issuesNode.get( ix );
@@ -355,10 +361,10 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
     private void processVersions( Issue issue, JsonNode val )
     {
-        StringBuilder sb = new StringBuilder( );
+        StringBuilder sb = new StringBuilder();
         if ( val != null )
         {
-            for ( int vx = 0; vx < val.size(); vx ++ )
+            for ( int vx = 0; vx < val.size(); vx++ )
             {
                 sb.append( val.get( vx ).get( "name" ).asText() );
                 sb.append( ", " );
@@ -527,7 +533,7 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         {
             client.replacePath( "/rest/auth/1/session" );
             client.type( MediaType.APPLICATION_JSON_TYPE );
-            StringWriter jsWriter = new StringWriter( );
+            StringWriter jsWriter = new StringWriter();
             JsonGenerator gen = jsonFactory.createGenerator( jsWriter );
             gen.writeStartObject();
             gen.writeStringField( "username", jiraUser );
@@ -560,8 +566,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
 
         if ( getLog().isDebugEnabled() )
         {
-            clientConfiguration.getInInterceptors().add( new LoggingInInterceptor(  ) );
-            clientConfiguration.getOutInterceptors().add( new LoggingOutInterceptor(  ) );
+            clientConfiguration.getInInterceptors().add( new LoggingInInterceptor() );
+            clientConfiguration.getOutInterceptors().add( new LoggingOutInterceptor() );
         }
 
         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
@@ -605,7 +611,8 @@ public class RestJiraDownloader extends AbstractJiraDownloader
         return client;
     }
 
-    public List<Issue> getIssueList() throws MojoExecutionException
+    public List<Issue> getIssueList()
+        throws MojoExecutionException
     {
         return issueList;
     }

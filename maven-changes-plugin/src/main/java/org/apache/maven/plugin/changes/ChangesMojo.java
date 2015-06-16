@@ -23,34 +23,32 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-
 import java.net.URL;
-
 import java.text.SimpleDateFormat;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFileFilterRequest;
 import org.apache.maven.shared.filtering.MavenFilteringException;
-
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.apache.commons.io.input.XmlStreamReader;
 
 /**
  * Goal which creates a nicely formatted Changes Report in html format from a changes.xml file.
@@ -63,8 +61,8 @@ public class ChangesMojo
     extends AbstractChangesReport
 {
     /**
-     * A flag whether the report should also include changes from child modules. If set to <code>false</code>, only
-     * the changes from current project will be written to the report.
+     * A flag whether the report should also include changes from child modules. If set to <code>false</code>, only the
+     * changes from current project will be written to the report.
      *
      * @since 2.5
      */
@@ -81,17 +79,14 @@ public class ChangesMojo
     private boolean addActionDate;
 
     /**
-     * Whether HTML code within an action should be escaped. By changing this to
-     * <code>false</code> you can restore the behavior that was in version 2.2
-     * of this plugin, allowing you to use HTML code to format the content of an
+     * Whether HTML code within an action should be escaped. By changing this to <code>false</code> you can restore the
+     * behavior that was in version 2.2 of this plugin, allowing you to use HTML code to format the content of an
      * action.
      * <p>
-     * <strong>Note:</strong> If you use HTML code in an action you need to
-     * place it inside a CDATA section.
+     * <strong>Note:</strong> If you use HTML code in an action you need to place it inside a CDATA section.
      * </p>
-     * <strong>Note:</strong> Putting any kind of markup inside a CDATA section
-     * might mess up the Changes Report or other generated documents, such as
-     * PDFs, that are based on your <code>changes.xml</code> file if you are not
+     * <strong>Note:</strong> Putting any kind of markup inside a CDATA section might mess up the Changes Report or
+     * other generated documents, such as PDFs, that are based on your <code>changes.xml</code> file if you are not
      * careful.
      *
      * @since 2.4
@@ -117,10 +112,10 @@ public class ChangesMojo
     private boolean filteringChanges;
 
     /**
-     * Template string that is used to discover the URL to use to display an issue report.
-     * There are 2 template tokens you can use. <code>%URL%</code>: this is computed by getting the
-     * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
-     * and everything that comes after it. <code>%ISSUE%</code>: this is the issue number.
+     * Template string that is used to discover the URL to use to display an issue report. There are 2 template tokens
+     * you can use. <code>%URL%</code>: this is computed by getting the <code>&lt;issueManagement&gt;/&lt;url&gt;</code>
+     * value from the POM, and removing the last '/' and everything that comes after it. <code>%ISSUE%</code>: this is
+     * the issue number.
      * <p>
      * <strong>Note:</strong> In versions of this plugin prior to 2.0-beta-2 this parameter was called
      * <code>link_template</code>.
@@ -137,24 +132,22 @@ public class ChangesMojo
      * map denotes the (case-insensitive) identifier of the issue tracking system and its value gives the URL template.
      * <p>
      * There are 2 template tokens you can use. <code>%URL%</code>: this is computed by getting the
-     * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/'
-     * and everything that comes after it. <code>%ISSUE%</code>: this is the issue number.
+     * <code>&lt;issueManagement&gt;/&lt;url&gt;</code> value from the POM, and removing the last '/' and everything
+     * that comes after it. <code>%ISSUE%</code>: this is the issue number.
      * </p>
      * <p>
      * <strong>Note:</strong> The deprecated issueLinkTemplate will be used for a system called "default".
      * </p>
      * <p>
-     * <strong>Note:</strong> Starting with version 2.4 you usually don't need
-     * to specify this, unless you need to link to an issue management system in
-     * your Changes report that isn't supported out of the box. See the
-     * <a href="./usage.html">Usage page</a> for more
-     * information.
+     * <strong>Note:</strong> Starting with version 2.4 you usually don't need to specify this, unless you need to link
+     * to an issue management system in your Changes report that isn't supported out of the box. See the
+     * <a href="./usage.html">Usage page</a> for more information.
      * </p>
      *
      * @since 2.1
      */
     @Parameter
-    private Map issueLinkTemplatePerSystem;
+    private Map<String, String> issueLinkTemplatePerSystem;
 
     /**
      * @since 2.2
@@ -193,8 +186,8 @@ public class ChangesMojo
     private String system;
 
     /**
-     * The URI of a file containing all the team members. If this is set to the
-     * special value "none", no links will be generated for the team members.
+     * The URI of a file containing all the team members. If this is set to the special value "none", no links will be
+     * generated for the team members.
      *
      * @since 2.4
      */
@@ -208,14 +201,13 @@ public class ChangesMojo
 
     /**
      * The type of the feed to generate.
-     *
      * <p>
-     * Supported values are:
-     * <code>"rss_0.9", "rss_0.91N" (RSS 0.91 Netscape), "rss_0.91U" (RSS 0.91 Userland),
+     * Supported values are: <code>"rss_0.9", "rss_0.91N" (RSS 0.91 Netscape), "rss_0.91U" (RSS 0.91 Userland),
      * "rss_0.92", "rss_0.93", "rss_0.94", "rss_1.0", "rss_2.0", "atom_0.3", "atom_1.0"</code>.
      * </p>
-     *
-     * <p>If not specified, no feed is generated.</p>
+     * <p>
+     * If not specified, no feed is generated.
+     * </p>
      *
      * @since 2.9
      */
@@ -233,7 +225,7 @@ public class ChangesMojo
     private CaseInsensitiveMap caseInsensitiveIssueLinkTemplatePerSystem;
 
     /* --------------------------------------------------------------------- */
-    /* Public methods                                                        */
+    /* Public methods */
     /* --------------------------------------------------------------------- */
 
     public boolean canGenerateReport()
@@ -251,8 +243,7 @@ public class ChangesMojo
         throws MavenReportException
     {
         Date now = new Date();
-        SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat( publishDateFormat, new Locale( publishDateLocale ) );
         Properties additionalProperties = new Properties();
         additionalProperties.put( "publishDate", simpleDateFormat.format( now ) );
 
@@ -273,7 +264,7 @@ public class ChangesMojo
             }
             final String relativePath = absolutePath.substring( basePath.length() );
 
-            List releaseList = changesXml.getReleaseList();
+            List<Release> releaseList = changesXml.getReleaseList();
             for ( Object o : project.getCollectedProjects() )
             {
                 final MavenProject childProject = (MavenProject) o;
@@ -281,8 +272,8 @@ public class ChangesMojo
                 final ChangesXML childXml = getChangesFromFile( changesFile, childProject, additionalProperties );
                 if ( childXml != null )
                 {
-                    releaseList = releaseUtils.mergeReleases( releaseList, childProject.getName(),
-                                                              childXml.getReleaseList() );
+                    releaseList =
+                        releaseUtils.mergeReleases( releaseList, childProject.getName(), childXml.getReleaseList() );
                 }
             }
             changesXml.setReleaseList( releaseList );
@@ -293,7 +284,7 @@ public class ChangesMojo
         report.setAuthor( changesXml.getAuthor() );
         report.setTitle( changesXml.getTitle() );
 
-        report.setEscapeHTML ( escapeHTML );
+        report.setEscapeHTML( escapeHTML );
 
         // Create a case insensitive version of issueLinkTemplatePerSystem
         // We need something case insensitive to maintain backward compatibility
@@ -333,7 +324,7 @@ public class ChangesMojo
 
         report.setSystem( system );
 
-        report.setTeamlist ( teamlist );
+        report.setTeamlist( teamlist );
 
         report.setUrl( url );
 
@@ -375,12 +366,12 @@ public class ChangesMojo
     }
 
     /* --------------------------------------------------------------------- */
-    /* Private methods                                                       */
+    /* Private methods */
     /* --------------------------------------------------------------------- */
 
     /**
-     * Parses specified changes.xml file. It also makes filtering if needed. If specified file doesn't exist
-     * it will log warning and return <code>null</code>.
+     * Parses specified changes.xml file. It also makes filtering if needed. If specified file doesn't exist it will log
+     * warning and return <code>null</code>.
      *
      * @param changesXml changes xml file to parse
      * @param project maven project to parse changes for
@@ -413,8 +404,8 @@ public class ChangesMojo
                                             project.getGroupId() + "." + project.getArtifactId() + "-changes.xml" );
 
                 final MavenFileFilterRequest mavenFileFilterRequest =
-                        new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.EMPTY_LIST,
-                                                    false, encoding, session, additionalProperties );
+                    new MavenFileFilterRequest( changesXml, resultFile, true, project, Collections.<String>emptyList(),
+                                                false, encoding, session, additionalProperties );
                 mavenFileFilter.copyFile( mavenFileFilterRequest );
                 changesXml = resultFile;
             }
@@ -439,8 +430,8 @@ public class ChangesMojo
     }
 
     /**
-     * Add the issue link template for the given issue management system,
-     * but only if it has not already been configured.
+     * Add the issue link template for the given issue management system, but only if it has not already been
+     * configured.
      *
      * @param system The issue management system
      * @param issueLinkTemplate The issue link template to use
@@ -462,13 +453,8 @@ public class ChangesMojo
         throws MavenReportException
     {
         final String pluginResourcesBase = "org/apache/maven/plugin/changes";
-        String resourceNames[] = {
-            "images/add.gif",
-            "images/fix.gif",
-            "images/icon_help_sml.gif",
-            "images/remove.gif",
-            "images/rss.png",
-            "images/update.gif" };
+        String resourceNames[] = { "images/add.gif", "images/fix.gif", "images/icon_help_sml.gif", "images/remove.gif",
+            "images/rss.png", "images/update.gif" };
         try
         {
             getLog().debug( "Copying static resources." );
@@ -494,7 +480,7 @@ public class ChangesMojo
         return teamlist;
     }
 
-    private void logIssueLinkTemplatePerSystem( Map issueLinkTemplatePerSystem )
+    private void logIssueLinkTemplatePerSystem( Map<String, String> issueLinkTemplatePerSystem )
     {
         if ( getLog().isDebugEnabled() )
         {
@@ -504,9 +490,8 @@ public class ChangesMojo
             }
             else
             {
-                for ( Object o : issueLinkTemplatePerSystem.entrySet() )
+                for ( Entry<String, String> entry : issueLinkTemplatePerSystem.entrySet() )
                 {
-                    Map.Entry entry = (Map.Entry) o;
                     getLog().debug( "issueLinkTemplatePerSystem[" + entry.getKey() + "] = " + entry.getValue() );
                 }
             }

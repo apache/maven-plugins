@@ -59,7 +59,7 @@ public class IssueAdapterTest
     public void testCustomIssueTypeMappingOveridesDefaultMapping()
     {
         IssueManagementSystem ims = new JIRAIssueManagmentSystem();
-        
+
         ims.getIssueTypeMap().clear();
         IssueAdapter adapter = new IssueAdapter( ims );
 
@@ -83,10 +83,10 @@ public class IssueAdapterTest
     public void testCustomIssueTypeMapping()
     {
         IssueManagementSystem ims = new JIRAIssueManagmentSystem();
-        ims.getIssueTypeMap().put( "Story", IssueType.ADD);
-        ims.getIssueTypeMap().put( "Epic", IssueType.ADD);
-        ims.getIssueTypeMap().put( "Defect", IssueType.FIX);
-        ims.getIssueTypeMap().put( "Error", IssueType.FIX);
+        ims.getIssueTypeMap().put( "Story", IssueType.ADD );
+        ims.getIssueTypeMap().put( "Epic", IssueType.ADD );
+        ims.getIssueTypeMap().put( "Defect", IssueType.FIX );
+        ims.getIssueTypeMap().put( "Error", IssueType.FIX );
         IssueAdapter adapter = new IssueAdapter( ims );
 
         Issue issue = createIssue( "TST-1", "Story" );

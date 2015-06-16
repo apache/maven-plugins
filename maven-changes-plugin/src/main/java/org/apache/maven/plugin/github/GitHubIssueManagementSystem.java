@@ -23,7 +23,6 @@ import org.apache.maven.plugin.changes.IssueType;
 import org.apache.maven.plugin.issues.AbstractIssueManagementSystem;
 
 /**
- *
  * @since 2.8
  */
 public class GitHubIssueManagementSystem

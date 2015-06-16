@@ -445,6 +445,7 @@ under the License.
           </execution>
         </executions>
         <configuration>
+          <useJava5>true</useJava5>
           <version>1.0.0</version>
           <models>
             <model>src/main/mdo/changes.mdo</model>

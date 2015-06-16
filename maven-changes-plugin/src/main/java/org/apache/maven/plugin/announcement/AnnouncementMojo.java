@@ -80,8 +80,8 @@ public class AnnouncementMojo
     private static final String GIT_HUB = "GitHub";
 
     /**
-     * The name of the file which will contain the generated announcement. If
-     * no value is specified the plugin will use the name of the template.
+     * The name of the file which will contain the generated announcement. If no value is specified the plugin will use
+     * the name of the template.
      *
      * @since 2.4
      */
@@ -89,8 +89,7 @@ public class AnnouncementMojo
     private String announcementFile;
 
     /**
-     * Map of custom parameters for the announcement.
-     * This Map will be passed to the template.
+     * Map of custom parameters for the announcement. This Map will be passed to the template.
      *
      * @since 2.1
      */
@@ -103,8 +102,7 @@ public class AnnouncementMojo
     private String artifactId;
 
     /**
-     * Name of the team that develops the artifact.
-     * This parameter will be passed to the template.
+     * Name of the team that develops the artifact. This parameter will be passed to the template.
      */
     @Parameter( property = "changes.developmentTeam", defaultValue = "${project.name} team", required = true )
     private String developmentTeam;
@@ -121,23 +119,20 @@ public class AnnouncementMojo
     private String groupId;
 
     /**
-     * Short description or introduction of the released artifact.
-     * This parameter will be passed to the template.
+     * Short description or introduction of the released artifact. This parameter will be passed to the template.
      */
     @Parameter( defaultValue = "${project.description}" )
     private String introduction;
 
     /**
-     * A list of issue management systems to fetch releases from. This parameter
-     * replaces the parameters <code>generateJiraAnnouncement</code> and
-     * <code>jiraMerge</code>.
+     * A list of issue management systems to fetch releases from. This parameter replaces the parameters
+     * <code>generateJiraAnnouncement</code> and <code>jiraMerge</code>.
      * <p>
      * Valid values are: <code>changes.xml</code> and <code>JIRA</code>.
      * </p>
-     * <strong>Note:</strong> Only one issue management system that is
-     * configured in &lt;project&gt;/&lt;issueManagement&gt; can be used. This
-     * currently means that you can combine a changes.xml file with one other
-     * issue management system.
+     * <strong>Note:</strong> Only one issue management system that is configured in
+     * &lt;project&gt;/&lt;issueManagement&gt; can be used. This currently means that you can combine a changes.xml file
+     * with one other issue management system.
      *
      * @since 2.4
      */
@@ -145,9 +140,8 @@ public class AnnouncementMojo
     private List<String> issueManagementSystems;
 
     /**
-     * Maps issues types to action types for grouping issues in announcements.
-     * If issue types are not defined for a action type then the default issue type
-     * will be applied.
+     * Maps issues types to action types for grouping issues in announcements. If issue types are not defined for a
+     * action type then the default issue type will be applied.
      * <p>
      * Valid action types: <code>add</code>, <code>fix</code> and <code>update</code>.
      * </p>
@@ -168,8 +162,8 @@ public class AnnouncementMojo
     /**
      * Directory where the announcement file will be generated.
      *
-     * @deprecated Starting with version 2.10 this parameter is no longer used.
-     * You must use {@link #announcementDirectory} instead.
+     * @deprecated Starting with version 2.10 this parameter is no longer used. You must use
+     *             {@link #announcementDirectory} instead.
      */
     @Parameter
     private File outputDirectory;
@@ -199,9 +193,10 @@ public class AnnouncementMojo
      * <code>/src/main/resources/ or current project base directory</code>.
      * </p>
      */
-    @Parameter( property = "changes.templateDirectory", defaultValue = "org/apache/maven/plugin/announcement",
-                required = true )
+    // CHECKSTYLE_OFF: LineLength
+    @Parameter( property = "changes.templateDirectory", defaultValue = "org/apache/maven/plugin/announcement", required = true )
     private String templateDirectory;
+    // CHECKSTYLE_ON: LineLength
 
     /**
      * The template encoding.
@@ -212,9 +207,9 @@ public class AnnouncementMojo
     private String templateEncoding;
 
     /**
-     * Use the JIRA query language instead of the JIRA query based on HTTP parameters.
-     * From JIRA 5.1 and up only JQL is supported. JIRA 4.4 supports both JQL and URL parameter based queries.
-     * From 5.1.1 this is obsolete, since REST queries only use JQL.
+     * Use the JIRA query language instead of the JIRA query based on HTTP parameters. From JIRA 5.1 and up only JQL is
+     * supported. JIRA 4.4 supports both JQL and URL parameter based queries. From 5.1.1 this is obsolete, since REST
+     * queries only use JQL.
      *
      * @since 2.10
      */
@@ -222,16 +217,14 @@ public class AnnouncementMojo
     private boolean useJql;
 
     /**
-     * Distribution URL of the artifact.
-     * This parameter will be passed to the template.
+     * Distribution URL of the artifact. This parameter will be passed to the template.
      */
     @Parameter( property = "project.url" )
     private String url;
 
     /**
-     * URL where the artifact can be downloaded. If not specified,
-     * no URL is used.
-     * This parameter will be passed to the template.
+     * URL where the artifact can be downloaded. If not specified, no URL is used. This parameter will be passed to the
+     * template.
      */
     @Parameter
     private String urlDownload;
@@ -257,14 +250,13 @@ public class AnnouncementMojo
     @Parameter( defaultValue = "${basedir}/src/changes/changes.xml" )
     private File xmlPath;
 
-    //=======================================//
-    //  JIRA-Announcement Needed Parameters  //
-    //=======================================//
+    // =======================================//
+    // JIRA-Announcement Needed Parameters //
+    // =======================================//
 
     /**
-     * Defines the filter parameters to restrict which issues are retrieved
-     * from JIRA. The filter parameter uses the same format of url
-     * parameters that is used in a JIRA search.
+     * Defines the filter parameters to restrict which issues are retrieved from JIRA. The filter parameter uses the
+     * same format of url parameters that is used in a JIRA search.
      *
      * @since 2.4
      */
@@ -274,19 +266,18 @@ public class AnnouncementMojo
     /**
      * Flag to determine if the plugin will generate a JIRA announcement.
      *
-     * @deprecated Since version 2.4 this parameter has been deprecated.
-     * Please use the issueManagementSystems parameter instead.
+     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter
+     *             instead.
      */
     @Parameter( property = "generateJiraAnnouncement", defaultValue = "false", required = true )
     private boolean generateJiraAnnouncement;
 
     /**
-     * If releases from JIRA should be merged with the releases from a
-     * changes.xml file.
+     * If releases from JIRA should be merged with the releases from a changes.xml file.
      *
      * @since 2.1
-     * @deprecated Since version 2.4 this parameter has been deprecated.
-     * Please use the issueManagementSystems parameter instead.
+     * @deprecated Since version 2.4 this parameter has been deprecated. Please use the issueManagementSystems parameter
+     *             instead.
      */
     @Parameter( property = "changes.jiraMerge", defaultValue = "false" )
     private boolean jiraMerge;
@@ -316,19 +307,17 @@ public class AnnouncementMojo
     /**
      * The maximum number of issues to fetch from JIRA.
      * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
-     * called "nbEntries".
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was called "nbEntries".
      * </p>
      */
     @Parameter( property = "changes.maxEntries", defaultValue = "25", required = true )
     private int maxEntries;
 
     /**
-     * Include issues from JIRA with these resolution ids. Multiple resolution
-     * ids can be specified as a comma separated list of ids.
+     * Include issues from JIRA with these resolution ids. Multiple resolution ids can be specified as a comma separated
+     * list of ids.
      * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
-     * called "resolutionId".
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was called "resolutionId".
      * </p>
      */
     @Parameter( property = "changes.resolutionIds", defaultValue = "Fixed" )
@@ -341,11 +330,10 @@ public class AnnouncementMojo
     private Settings settings;
 
     /**
-     * Include issues from JIRA with these status ids. Multiple status ids can
-     * be specified as a comma separated list of ids.
+     * Include issues from JIRA with these status ids. Multiple status ids can be specified as a comma separated list of
+     * ids.
      * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was
-     * called "statusId".
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter was called "statusId".
      * </p>
      */
     @Parameter( property = "changes.statusIds", defaultValue = "Closed" )
@@ -370,11 +358,9 @@ public class AnnouncementMojo
     /**
      * The prefix used when naming versions in JIRA.
      * <p>
-     * If you have a project in JIRA with several components that have different
-     * release cycles, it is an often used pattern to prefix the version with
-     * the name of the component, e.g. maven-filtering-1.0 etc. To fetch issues
-     * from JIRA for a release of the "maven-filtering" component you would need
-     * to set this parameter to "maven-filtering-".
+     * If you have a project in JIRA with several components that have different release cycles, it is an often used
+     * pattern to prefix the version with the name of the component, e.g. maven-filtering-1.0 etc. To fetch issues from
+     * JIRA for a release of the "maven-filtering" component you would need to set this parameter to "maven-filtering-".
      * </p>
      *
      * @since 2.5
@@ -404,13 +390,12 @@ public class AnnouncementMojo
     @Parameter( property = "changes.jiraReceiveTimout", defaultValue = "32000" )
     private int jiraReceiveTimout;
 
-    //=======================================//
-    //  Trac Parameters                      //
-    //=======================================//
+    // =======================================//
+    // Trac Parameters //
+    // =======================================//
 
     /**
-     * Defines the Trac password for authentication into a private Trac
-     * installation.
+     * Defines the Trac password for authentication into a private Trac installation.
      *
      * @since 2.4
      */
@@ -426,17 +411,16 @@ public class AnnouncementMojo
     private String tracQuery;
 
     /**
-     * Defines the Trac username for authentication into a private Trac
-     * installation.
+     * Defines the Trac username for authentication into a private Trac installation.
      *
      * @since 2.4
      */
     @Parameter( property = "changes.tracUser", defaultValue = "" )
     private String tracUser;
 
-    //=======================================//
-    //  Github Parameters                    //
-    //=======================================//
+    // =======================================//
+    // Github Parameters //
+    // =======================================//
 
     /**
      * The scheme of your github api domain. Only use if using github enterprise.
@@ -462,14 +446,14 @@ public class AnnouncementMojo
      */
     @Parameter( defaultValue = "github" )
     private String githubAPIServerId;
-    
+
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     private ChangesXML xml;
 
-    //=======================================//
-    //    announcement-generate execution    //
-    //=======================================//
+    // =======================================//
+    // announcement-generate execution //
+    // =======================================//
 
     /**
      * Generate the template
@@ -515,7 +499,7 @@ public class AnnouncementMojo
                     issueManagementSystems.add( CHANGES_XML );
                 }
             }
-            
+
             // Fetch releases from the configured issue management systems
             List<Release> releases = null;
             if ( issueManagementSystems.contains( CHANGES_XML ) )
@@ -543,8 +527,8 @@ public class AnnouncementMojo
                 }
                 else
                 {
-                    throw new MojoExecutionException(
-                        "Something is wrong with the Issue Management section. See previous error messages." );
+                    throw new MojoExecutionException( "Something is wrong with the Issue Management section. "
+                        + "See previous error messages." );
                 }
             }
 
@@ -558,8 +542,8 @@ public class AnnouncementMojo
                 }
                 else
                 {
-                    throw new MojoExecutionException(
-                        "Something is wrong with the Issue Management section. See previous error messages." );
+                    throw new MojoExecutionException( "Something is wrong with the Issue Management section. "
+                        + "See previous error messages." );
                 }
             }
 
@@ -591,8 +575,8 @@ public class AnnouncementMojo
             // Generate the report
             if ( releases == null || releases.isEmpty() )
             {
-                throw new MojoExecutionException(
-                    "No releases found in any of the configured issue management systems." );
+                throw new MojoExecutionException( "No releases found in any of the "
+                    + "configured issue management systems." );
             }
             else
             {
@@ -613,7 +597,7 @@ public class AnnouncementMojo
         String version = ( versionPrefix == null ? "" : versionPrefix ) + getVersion();
 
         getLog().debug( "Generating announcement for version [" + version + "]. Found these releases: "
-                        + ReleaseUtils.toString( releases ) );
+            + ReleaseUtils.toString( releases ) );
 
         doGenerate( releases, releaseUtils.getLatestRelease( releases, version ) );
     }
@@ -665,7 +649,6 @@ public class AnnouncementMojo
                 context.put( "announceParameters", announceParameters );
             }
 
-
             processTemplate( context, announcementDirectory, template, announcementFile );
         }
         catch ( ResourceNotFoundException rnfe )
@@ -713,10 +696,9 @@ public class AnnouncementMojo
 
             if ( StringUtils.isEmpty( templateEncoding ) )
             {
-                templateEncoding =  ReaderFactory.FILE_ENCODING;
-                getLog().warn(
-                               "File encoding has not been set, using platform encoding " + templateEncoding
-                                   + ", i.e. build is platform dependent!" );
+                templateEncoding = ReaderFactory.FILE_ENCODING;
+                getLog().warn( "File encoding has not been set, using platform encoding " + templateEncoding
+                    + ", i.e. build is platform dependent!" );
             }
 
             Writer writer = new OutputStreamWriter( new FileOutputStream( f ), templateEncoding );
@@ -813,7 +795,7 @@ public class AnnouncementMojo
     private List<Release> getReleases( List<Issue> issues, IssueManagementSystem ims )
         throws MojoExecutionException
     {
-        if ( issueTypes != null ) 
+        if ( issueTypes != null )
         {
             ims.applyConfiguration( issueTypes );
         }
@@ -858,9 +840,9 @@ public class AnnouncementMojo
         {
             GitHubDownloader issueDownloader =
                 new GitHubDownloader( project, githubAPIScheme, githubAPIPort, false, true );
-            
+
             issueDownloader.configureAuthentication( githubAPIServerId, settings, getLog() );
-            
+
             return getReleases( issueDownloader.getIssueList(), new GitHubIssueManagementSystem() );
         }
         catch ( Exception e )
@@ -922,7 +904,7 @@ public class AnnouncementMojo
     {
         this.introduction = introduction;
     }
-    
+
     public void setIssueTypes( Map<String, String> issueTypes )
     {
         this.issueTypes = issueTypes;
