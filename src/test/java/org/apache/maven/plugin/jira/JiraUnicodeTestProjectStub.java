@@ -38,8 +38,8 @@ public class JiraUnicodeTestProjectStub
     @Override
     public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
-        ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",
-                                                                       new DefaultRepositoryLayout() );
+        ArtifactRepository repository =
+            new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2", new DefaultRepositoryLayout() );
 
         return Collections.singletonList( repository );
     }

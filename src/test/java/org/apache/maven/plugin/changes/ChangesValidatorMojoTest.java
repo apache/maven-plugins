@@ -24,8 +24,6 @@ import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
-
-
 /**
  * @author Olivier Lamy
  * @since 29 juil. 2008
@@ -43,8 +41,8 @@ public class ChangesValidatorMojoTest
         super.setUp();
         File pom = new File( getBasedir(), "/src/test/unit/plugin-config.xml" );
         mojo = (ChangesValidatorMojo) lookupMojo( "changes-validate", pom );
-    }    
-    
+    }
+
     public void testValidationSuccess()
         throws Exception
     {
@@ -72,7 +70,7 @@ public class ChangesValidatorMojoTest
             // we except exception here
         }
     }
-    
+
     public void testValidationFailedWithNoMojoFailure()
         throws Exception
     {

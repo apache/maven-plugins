@@ -56,13 +56,10 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Base class with the things that should be in AbstractMavenReport anyway.
- *
- * Note: This file was copied from r415312 of AbstractProjectInfoReport in
- * maven-project-info-reports, as a work-around to MCHANGES-88.
+ * Base class with the things that should be in AbstractMavenReport anyway. Note: This file was copied from r415312 of
+ * AbstractProjectInfoReport in maven-project-info-reports, as a work-around to MCHANGES-88.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- *
  */
 public abstract class AbstractChangesReport
     extends AbstractMavenReport
@@ -85,8 +82,8 @@ public abstract class AbstractChangesReport
 
     /**
      * Report output encoding. Note that this parameter is only relevant if the goal is run from the command line or
-     * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output
-     * encoding configured in the Maven Site Plugin is used instead.
+     * from the default build lifecycle. If the goal is run indirectly as part of a site generation, the output encoding
+     * configured in the Maven Site Plugin is used instead.
      *
      * @since 2.4
      */
@@ -94,9 +91,8 @@ public abstract class AbstractChangesReport
     private String outputEncoding;
 
     /**
-     * This will cause the execution to be run only at the top of a given module
-     * tree. That is, run in the project contained in the same folder where the
-     * mvn execution was launched.
+     * This will cause the execution to be run only at the top of a given module tree. That is, run in the project
+     * contained in the same folder where the mvn execution was launched.
      *
      * @since 2.10
      */
@@ -209,7 +205,7 @@ public abstract class AbstractChangesReport
             outputDirectory.mkdirs();
 
             File file = new File( outputDirectory, getOutputName() + ".html" );
-            fileOutputStream = new FileOutputStream( file ) ;
+            fileOutputStream = new FileOutputStream( file );
             Writer writer = new OutputStreamWriter( fileOutputStream, getOutputEncoding() );
 
             siteRenderer.generateDocument( writer, sink, siteContext );
@@ -219,18 +215,18 @@ public abstract class AbstractChangesReport
         }
         catch ( RendererException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException(
-                "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation.", e );
+            throw new MojoExecutionException( "An error has occurred in " + getName( Locale.ENGLISH )
+                + " report generation.", e );
         }
         finally
         {
@@ -274,8 +270,8 @@ public abstract class AbstractChangesReport
     }
 
     /**
-     * Returns <code>true</code> if the current project is located at the
-     * Execution Root Directory (where mvn was launched).
+     * Returns <code>true</code> if the current project is located at the Execution Root Directory (where mvn was
+     * launched).
      *
      * @return <code>true</code> if the current project is at the Execution Root
      */

@@ -38,11 +38,10 @@ import org.apache.maven.wagon.proxy.ProxyInfo;
  */
 public class JiraHelper
 {
-    private static final String PID = "?pid="; //MCHANGES-281 addd ?
+    private static final String PID = "?pid="; // MCHANGES-281 addd ?
 
     /**
-     * Parse out the base URL for JIRA and the JIRA project id from the issue
-     * management URL.
+     * Parse out the base URL for JIRA and the JIRA project id from the issue management URL.
      *
      * @param issueManagementUrl The URL to the issue management system
      * @return A <code>Map</code> containing the URL and project id
@@ -99,9 +98,9 @@ public class JiraHelper
     /**
      * Try to get a JIRA pid from the issue management URL.
      *
-     * @param log     Used to tell the user what happened
+     * @param log Used to tell the user what happened
      * @param issueManagementUrl The URL to the issue management system
-     * @param client  The client used to connect to JIRA
+     * @param client The client used to connect to JIRA
      * @return The JIRA id for the project, or null if it can't be found
      */
     public static String getPidFromJira( Log log, String issueManagementUrl, HttpClient client )
@@ -148,10 +147,10 @@ public class JiraHelper
     /**
      * Check if the specified host is in the list of non proxy hosts.
      * <p/>
-     * Method copied from org.apache.maven.wagon.proxy.ProxyUtils. Can be deleted when maven-changes-plugin
-     * references a more recent version of maven-project
+     * Method copied from org.apache.maven.wagon.proxy.ProxyUtils. Can be deleted when maven-changes-plugin references a
+     * more recent version of maven-project
      *
-     * @param proxy      the proxy info object contains set of properties.
+     * @param proxy the proxy info object contains set of properties.
      * @param targetHost the target hostname
      * @return true if the hostname is in the list of non proxy hosts, false otherwise.
      */
@@ -192,9 +191,8 @@ public class JiraHelper
     }
 
     /**
-     * Parse out the base URL for JIRA and the JIRA project name from the issue
-     * management URL.
-     * The issue management URL is assumed to be of the format http(s)://host:port/browse/{projectname}
+     * Parse out the base URL for JIRA and the JIRA project name from the issue management URL. The issue management URL
+     * is assumed to be of the format http(s)://host:port/browse/{projectname}
      *
      * @param issueManagementUrl The URL to the issue management system
      * @return A <code>Map</code> containing the URL and project name
@@ -217,12 +215,12 @@ public class JiraHelper
 
             if ( indexProject != -1 )
             {
-                //Project name has trailing '/'
+                // Project name has trailing '/'
                 project = issueManagementUrl.substring( indexBrowseEnd, indexProject );
             }
             else
             {
-                //Project name without trailing '/'
+                // Project name without trailing '/'
                 project = issueManagementUrl.substring( indexBrowseEnd );
             }
         }
@@ -243,7 +241,7 @@ public class JiraHelper
      */
     public static String getBaseUrl( String url )
     {
-        int index = url.indexOf( "/", 8 ); //Ignore http:// or https://
+        int index = url.indexOf( "/", 8 ); // Ignore http:// or https://
         return url.substring( 0, index );
     }
 }

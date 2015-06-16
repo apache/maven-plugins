@@ -140,9 +140,11 @@ public class ChangesXMLTest
 
         List releases = changesXML.getReleaseList();
         assertEquals( 2, releases.size() );
-        for ( Object release1 : releases ) {
+        for ( Object release1 : releases )
+        {
             Release release = (Release) release1;
-            if ( "1.0".equals( release.getVersion() ) ) {
+            if ( "1.0".equals( release.getVersion() ) )
+            {
                 Action action = release.getActions().get( 0 );
                 assertEquals( 2, action.getFixedIssues().size() );
                 assertEquals( "JIRA-XXX", action.getFixedIssues().get( 0 ).getIssue() );

@@ -67,8 +67,8 @@ public class ReleaseUtilsTestCase
         firstReleases.add( release );
 
         mergedReleases = releaseUtils.mergeReleases( firstReleases, secondReleases );
-        assertEquals( "Two releases in first, one release in second with one version being the same",
-                      2, mergedReleases.size() );
+        assertEquals( "Two releases in first, one release in second with one version being the same", 2,
+                      mergedReleases.size() );
 
         release = new Release();
         release.setVersion( "1.2" );

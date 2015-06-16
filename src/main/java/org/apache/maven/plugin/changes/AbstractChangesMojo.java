@@ -49,9 +49,8 @@ public abstract class AbstractChangesMojo
     protected MavenSession mavenSession;
 
     /**
-     * This will cause the execution to be run only at the top of a given module
-     * tree. That is, run in the project contained in the same folder where the
-     * mvn execution was launched.
+     * This will cause the execution to be run only at the top of a given module tree. That is, run in the project
+     * contained in the same folder where the mvn execution was launched.
      *
      * @since 2.9
      */
@@ -59,8 +58,8 @@ public abstract class AbstractChangesMojo
     protected boolean runOnlyAtExecutionRoot;
 
     /**
-     * Returns <code>true</code> if the current project is located at the
-     * Execution Root Directory (where mvn was launched).
+     * Returns <code>true</code> if the current project is located at the Execution Root Directory (where mvn was
+     * launched).
      *
      * @return <code>true</code> if the current project is at the Execution Root
      */

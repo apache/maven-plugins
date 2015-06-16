@@ -31,7 +31,9 @@ public class TracIssueManagmentSystem
     extends AbstractIssueManagementSystem
 {
     private static final String DEFAULT_ADD_TYPE = "New Feature";
+
     private static final String DEFAULT_FIX_TYPE = "Bug";
+
     private static final String DEFAULT_UPDATE_TYPE = "Improvement";
 
     public TracIssueManagmentSystem()

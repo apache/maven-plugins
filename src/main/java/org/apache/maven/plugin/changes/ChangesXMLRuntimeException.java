@@ -21,8 +21,8 @@ package org.apache.maven.plugin.changes;
 
 /**
  * This is a runtime exception class that is thrown by the
- * {@link ChangesXML#ChangesXML(java.io.File, org.apache.maven.plugin.logging.Log)} constructor if the given
- * changes.xml file cannot be parsed, for example it is not well-formed or valid.
+ * {@link ChangesXML#ChangesXML(java.io.File, org.apache.maven.plugin.logging.Log)} constructor if the given changes.xml
+ * file cannot be parsed, for example it is not well-formed or valid.
  *
  * @author <a href="mailto:szgabsz91@gmail.com">Gabor Szabo</a>
  */

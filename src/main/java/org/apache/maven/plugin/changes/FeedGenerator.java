@@ -44,19 +44,21 @@ import org.apache.maven.doxia.util.HtmlTools;
 
 import org.apache.maven.plugins.changes.model.Release;
 
-
 /**
- *
  * @author ltheussl
  */
 public class FeedGenerator
 {
     private final ResourceBundle rbundle;
+
     private final SyndFeed feed;
 
     private String link;
+
     private String title;
+
     private String author;
+
     private DateFormat dateFormat;
 
     /**
@@ -121,8 +123,7 @@ public class FeedGenerator
     }
 
     /**
-     * Set the date format.
-     * This should match the date format used for the release dates in changes.xml.
+     * Set the date format. This should match the date format used for the release dates in changes.xml.
      *
      * @param dateFormat may be null.
      */
@@ -157,7 +158,6 @@ public class FeedGenerator
      * "rss_0.92", "rss_0.93", "rss_0.94", "rss_1.0", "rss_2.0", "atom_0.3", "atom_1.0"</code>.
      *
      * @param type the feed type to check. May be null.
-     *
      * @return true if if the given type is supported by the rome library, false otherwise.
      */
     public boolean isSupportedFeedType( final String type )
@@ -169,7 +169,6 @@ public class FeedGenerator
      * A List of supported feed types.
      *
      * @return a List of supported feed types.
-     *
      * @see #isSupportedFeedType(java.lang.String)
      */
     @SuppressWarnings( "unchecked" )
@@ -182,11 +181,9 @@ public class FeedGenerator
      * Extract a feed and export it to a Writer.
      *
      * @param releases the List of Releases. Only the last release is used in the feed.
-     * @param feedType The type of the feed to generate.
-     *      See {@link #isSupportedFeedType(java.lang.String)} for supported values.
-     *
+     * @param feedType The type of the feed to generate. See {@link #isSupportedFeedType(java.lang.String)} for
+     *            supported values.
      * @param writer a Writer. Note that this is not flushed nor closed upon exit.
-     *
      * @throws IOException if an error occurs during export.
      */
     public void export( final List<Release> releases, final String feedType, final Writer writer )
@@ -199,8 +196,8 @@ public class FeedGenerator
         feed.setLink( link );
         feed.setDescription( rbundle.getString( "report.changes.text.rssfeed.description" ) );
         feed.setLanguage( rbundle.getLocale().getLanguage() );
-        //feed.setCopyright(  );
-        //feed.setEncoding();
+        // feed.setCopyright( );
+        // feed.setEncoding();
         feed.setEntries( getEntries( releases ) );
 
         try
@@ -250,9 +247,8 @@ public class FeedGenerator
         }
 
         // TODO: localize?
-        sb.append( "<p>Version " )
-            .append( release.getVersion() ).append( " is available with " )
-            .append( release.getActions().size() ).append( " fixed issues.</p>" );
+        sb.append( "<p>Version " ).append( release.getVersion() ).append( " is available with " );
+        sb.append( release.getActions().size() ).append( " fixed issues.</p>" );
 
         syndContent.setValue( sb.toString() );
 

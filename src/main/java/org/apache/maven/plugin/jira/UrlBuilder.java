@@ -29,6 +29,7 @@ package org.apache.maven.plugin.jira;
 public class UrlBuilder
 {
     private static final String AMPERSAND = "&";
+
     private static final String QUESTION_MARK = "?";
 
     private StringBuilder query = new StringBuilder();

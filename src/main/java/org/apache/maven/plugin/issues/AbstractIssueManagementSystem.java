@@ -31,9 +31,8 @@ import org.apache.maven.plugin.changes.IssueType;
  * modularity for support of multiple systems.<br>
  * Initially, all it provides is a structure for mapping from per-IMS issue types to the three categories defined in
  * {@link org.apache.maven.plugin.changes.IssueAdapter}. <br/>
- * Note that the map in here is <strong>not</strong> immutable. It contains the default
- * configuration for an IMS. Users are expected to add entries to the map via configuration
- * to reflect their customizations.
+ * Note that the map in here is <strong>not</strong> immutable. It contains the default configuration for an IMS. Users
+ * are expected to add entries to the map via configuration to reflect their customizations.
  *
  * @version $Id$
  */
@@ -47,20 +46,23 @@ public abstract class AbstractIssueManagementSystem
         issueTypeMap = new HashMap<String, IssueType>();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.plugin.issues.IssueManagementSystem#getIssueTypeMap()
      */
     public Map<String, IssueType> getIssueTypeMap()
     {
         return issueTypeMap;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.plugin.issues.IssueManagementSystem#getName()
      */
     public abstract String getName();
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.plugin.issues.IssueManagementSystem#applyConfiguration(java.util.Map)
      */
     public void applyConfiguration( Map<String, String> issueTypes )
@@ -75,7 +77,7 @@ public abstract class AbstractIssueManagementSystem
             }
             String imsTypes = me.getValue();
             String[] imsTypeArray = imsTypes.split( "," );
-            for ( String imsType : imsTypeArray ) 
+            for ( String imsType : imsTypeArray )
             {
                 issueTypeMap.put( imsType, type );
             }

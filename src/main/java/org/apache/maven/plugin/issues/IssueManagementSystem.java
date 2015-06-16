@@ -53,7 +53,7 @@ public interface IssueManagementSystem
      * Configure this issue management system.
      *
      * @param issueTypes The mapping of issue types used in this issue management system to the ones used in a
-     *                   changes.xml file
+     *            changes.xml file
      * @throws MojoExecutionException If the configuration fails
      */
     void applyConfiguration( Map<String, String> issueTypes )

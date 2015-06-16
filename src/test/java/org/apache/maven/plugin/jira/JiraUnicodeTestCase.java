@@ -33,15 +33,15 @@ public class JiraUnicodeTestCase
     extends AbstractMojoTestCase
 {
     /*
-     * Something in Doxia escapes all non-Ascii even when the charset is UTF-8.
-     * This test will fail if that ever changes.
+     * Something in Doxia escapes all non-Ascii even when the charset is UTF-8. This test will fail if that ever
+     * changes.
      */
     private final static String TEST_TURTLES = "&#x6d77;&#x9f9f;&#x4e00;&#x8def;&#x4e0b;&#x8dcc;&#x3002;";
 
     public void testUnicodeReport()
         throws Exception
     {
-        
+
         File pom = new File( getBasedir(), "/src/test/unit/jira-plugin-config.xml" );
         assertNotNull( pom );
         assertTrue( pom.exists() );
@@ -52,14 +52,13 @@ public class JiraUnicodeTestCase
         MockJiraDownloader mockDownloader = new MockJiraDownloader();
         mockDownloader.setJiraXml( jiraXml );
         mojo.setMockDownloader( mockDownloader );
-        File outputDir = new File ( "target/jira-test-output" );
+        File outputDir = new File( "target/jira-test-output" );
         outputDir.mkdirs();
         mojo.setReportOutputDirectory( outputDir );
         mojo.execute();
-        String reportHtml = FileUtils.readFileToString( new File( outputDir, "jira-report.html" ),
-                                                        "utf-8" ); 
+        String reportHtml = FileUtils.readFileToString( new File( outputDir, "jira-report.html" ), "utf-8" );
         int turtleIndex = reportHtml.indexOf( TEST_TURTLES );
-        assertTrue ( turtleIndex >= 0 );
+        assertTrue( turtleIndex >= 0 );
     }
 
 }

@@ -40,6 +40,7 @@ import java.util.Map;
 public class IssueAdapter
 {
     private static final String UNKNOWN_ISSUE_TYPE = "";
+
     private IssueManagementSystem ims;
 
     /**

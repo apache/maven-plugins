@@ -35,7 +35,7 @@ public class JiraHelperTestCase
 {
     public void testGetJiraUrlAndProjectId()
     {
-        Map<String,String> map;
+        Map<String, String> map;
 
         map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/DOXIA" );
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
@@ -45,7 +45,8 @@ public class JiraHelperTestCase
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
 
         // MCHANGES-222
-        map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/secure/IssueNavigator.jspa?pid=11761&reset=true" );
+        map =
+            JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/secure/IssueNavigator.jspa?pid=11761&reset=true" );
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
         map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/MSHARED/component/13380" );
         assertEquals( "http://jira.codehaus.org", map.get( "url" ) );

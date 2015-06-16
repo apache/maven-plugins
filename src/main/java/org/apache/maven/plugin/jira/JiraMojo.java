@@ -72,15 +72,12 @@ public class JiraMojo
     }
 
     /**
-     * Sets the names of the columns that you want in the report. The columns
-     * will appear in the report in the same order as you specify them here.
-     * Multiple values can be separated by commas.
+     * Sets the names of the columns that you want in the report. The columns will appear in the report in the same
+     * order as you specify them here. Multiple values can be separated by commas.
      * <p>
-     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
-     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
-     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
-     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
-     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>, <code>Created</code>, <code>Fix Version</code>,
+     * <code>Id</code>, <code>Key</code>, <code>Priority</code>, <code>Reporter</code>, <code>Resolution</code>,
+     * <code>Status</code>, <code>Summary</code>, <code>Type</code>, <code>Updated</code> and <code>Version</code>.
      * </p>
      *
      * @since 2.0
@@ -89,9 +86,9 @@ public class JiraMojo
     private String columnNames;
 
     /**
-     * Use the JIRA query language instead of the JIRA query based on HTTP parameters. 
-     * From JIRA 5.1 and up only JQL is supported. JIRA 4.4 supports both JQL and URL parameter based queries.
-     * From 5.1.1 this is obsolete, since REST queries only use JQL.
+     * Use the JIRA query language instead of the JIRA query based on HTTP parameters. From JIRA 5.1 and up only JQL is
+     * supported. JIRA 4.4 supports both JQL and URL parameter based queries. From 5.1.1 this is obsolete, since REST
+     * queries only use JQL.
      *
      * @since 2.8
      */
@@ -99,36 +96,33 @@ public class JiraMojo
     private boolean useJql;
 
     /**
-     * Since JIRA 5.1.1, it is no longer possible to construct a URL that downloads RSS. Meanwhile
-     * JIRA added a REST API in 4.2. By default, this plugin uses the REST API if available.
-     * Setting this parameter to true forces it to attempt to use RSS.
+     * Since JIRA 5.1.1, it is no longer possible to construct a URL that downloads RSS. Meanwhile JIRA added a REST API
+     * in 4.2. By default, this plugin uses the REST API if available. Setting this parameter to true forces it to
+     * attempt to use RSS.
      *
      * @since 2.9
      */
     @Parameter( defaultValue = "false" )
     private boolean forceRss;
-    
+
     /**
-     * Sets the component(s) that you want to limit your report to include.
-     * Multiple values can be separated by commas (such as 10011,10012).
-     * If this is set to empty - that means all components will be included.
+     * Sets the component(s) that you want to limit your report to include. Multiple values can be separated by commas
+     * (such as 10011,10012). If this is set to empty - that means all components will be included.
      */
     @Parameter( defaultValue = "" )
     private String component;
 
     /**
-     * Defines the filter parameters to restrict which issues are retrieved
-     * from JIRA. The filter parameter uses the same format of url
-     * parameters that is used in a JIRA search.
+     * Defines the filter parameters to restrict which issues are retrieved from JIRA. The filter parameter uses the
+     * same format of url parameters that is used in a JIRA search.
      */
     @Parameter( defaultValue = "" )
     private String filter;
 
     /**
-     * Sets the fix version id(s) that you want to limit your report to include.
-     * These are JIRA's internal version ids, <b>NOT</b> the human readable display ones.
-     * Multiple fix versions can be separated by commas.
-     * If this is set to empty - that means all fix versions will be included.
+     * Sets the fix version id(s) that you want to limit your report to include. These are JIRA's internal version ids,
+     * <b>NOT</b> the human readable display ones. Multiple fix versions can be separated by commas. If this is set to
+     * empty - that means all fix versions will be included.
      *
      * @since 2.0
      */
@@ -136,8 +130,7 @@ public class JiraMojo
     private String fixVersionIds;
 
     /**
-     * The pattern used by dates in the JIRA XML-file. This is used to parse
-     * the Created and Updated fields.
+     * The pattern used by dates in the JIRA XML-file. This is used to parse the Created and Updated fields.
      *
      * @since 2.4
      */
@@ -169,9 +162,8 @@ public class JiraMojo
     private int maxEntries;
 
     /**
-     * If you only want to show issues for the current version in the report.
-     * The current version being used is <code>${project.version}</code> minus
-     * any "-SNAPSHOT" suffix.
+     * If you only want to show issues for the current version in the report. The current version being used is
+     * <code>${project.version}</code> minus any "-SNAPSHOT" suffix.
      *
      * @since 2.0
      */
@@ -179,24 +171,19 @@ public class JiraMojo
     private boolean onlyCurrentVersion;
 
     /**
-     * Sets the priority(s) that you want to limit your report to include.
-     * Valid statuses are <code>Blocker</code>, <code>Critical</code>,
-     * <code>Major</code>, <code>Minor</code> and <code>Trivial</code>.
-     * Multiple values can be separated by commas.
-     * If this is set to empty - that means all priorities will be included.
+     * Sets the priority(s) that you want to limit your report to include. Valid statuses are <code>Blocker</code>,
+     * <code>Critical</code>, <code>Major</code>, <code>Minor</code> and <code>Trivial</code>. Multiple values can be
+     * separated by commas. If this is set to empty - that means all priorities will be included.
      */
     @Parameter( defaultValue = "" )
     private String priorityIds;
 
     /**
-     * Sets the resolution(s) that you want to fetch from JIRA.
-     * Valid resolutions are: <code>Unresolved</code>, <code>Fixed</code>,
-     * <code>Won't Fix</code>, <code>Duplicate</code>, <code>Incomplete</code>
-     * and <code>Cannot Reproduce</code>.
-     * Multiple values can be separated by commas.
+     * Sets the resolution(s) that you want to fetch from JIRA. Valid resolutions are: <code>Unresolved</code>,
+     * <code>Fixed</code>, <code>Won't Fix</code>, <code>Duplicate</code>, <code>Incomplete</code> and
+     * <code>Cannot Reproduce</code>. Multiple values can be separated by commas.
      * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
-     * default value.
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no default value.
      * </p>
      */
     @Parameter( defaultValue = "Fixed" )
@@ -217,30 +204,22 @@ public class JiraMojo
     private boolean skip;
 
     /**
-     * Sets the column names that you want to sort the report by. Add
-     * <code>DESC</code> following the column name
-     * to specify <i>descending</i> sequence. For
-     * example <code>Fix Version DESC, Type</code> sorts first by
-     * the Fix Version in descending order and then by Type in
-     * ascending order. By default sorting is done in ascending order, but is
-     * possible to specify <code>ASC</code> for consistency. The previous
-     * example would then become <code>Fix Version DESC, Type ASC</code>.
+     * Sets the column names that you want to sort the report by. Add <code>DESC</code> following the column name to
+     * specify <i>descending</i> sequence. For example <code>Fix Version DESC, Type</code> sorts first by the Fix
+     * Version in descending order and then by Type in ascending order. By default sorting is done in ascending order,
+     * but is possible to specify <code>ASC</code> for consistency. The previous example would then become
+     * <code>Fix Version DESC, Type ASC</code>.
      * <p>
-     * Valid columns are: <code>Assignee</code>, <code>Component</code>,
-     * <code>Created</code>, <code>Fix Version</code>, <code>Id</code>,
-     * <code>Key</code>, <code>Priority</code>, <code>Reporter</code>,
-     * <code>Resolution</code>, <code>Status</code>, <code>Summary</code>,
-     * <code>Type</code>, <code>Updated</code> and <code>Version</code>.
+     * Valid columns are: <code>Assignee</code>, <code>Component</code>, <code>Created</code>, <code>Fix Version</code>,
+     * <code>Id</code>, <code>Key</code>, <code>Priority</code>, <code>Reporter</code>, <code>Resolution</code>,
+     * <code>Status</code>, <code>Summary</code>, <code>Type</code>, <code>Updated</code> and <code>Version</code>.
      * </p>
      * <p>
-     * <strong>Note:</strong> If you are using JIRA 4 you need to put your
-     * sort column names in the reverse order. The handling of this changed
-     * between JIRA 3 and JIRA 4. The current default value is suitable for
-     * JIRA 3. This may change in the future, so please configure your sort
-     * column names in an order that works for your own JIRA version. If you
-     * use JQL, by setting the <code>useJql</code> parameter to
-     * <code>true</code>, then the order of the fields are in normal order
-     * again. Starting with JIRA 5.1 you have to use JQL.
+     * <strong>Note:</strong> If you are using JIRA 4 you need to put your sort column names in the reverse order. The
+     * handling of this changed between JIRA 3 and JIRA 4. The current default value is suitable for JIRA 3. This may
+     * change in the future, so please configure your sort column names in an order that works for your own JIRA
+     * version. If you use JQL, by setting the <code>useJql</code> parameter to <code>true</code>, then the order of the
+     * fields are in normal order again. Starting with JIRA 5.1 you have to use JQL.
      * </p>
      *
      * @since 2.0
@@ -249,35 +228,27 @@ public class JiraMojo
     private String sortColumnNames;
 
     /**
-     * Sets the status(es) that you want to fetch from JIRA.
-     * Valid statuses are: <code>Open</code>, <code>In Progress</code>,
-     * <code>Reopened</code>, <code>Resolved</code> and <code>Closed</code>.
-     * Multiple values can be separated by commas.
+     * Sets the status(es) that you want to fetch from JIRA. Valid statuses are: <code>Open</code>,
+     * <code>In Progress</code>, <code>Reopened</code>, <code>Resolved</code> and <code>Closed</code>. Multiple values
+     * can be separated by commas.
      * <p>
-     * If your installation of JIRA uses custom status IDs, you can reference
-     * them here by their numeric values.
-     * You can obtain them on the Statuses page
-     * (in 4.0.2 it's under Administration > Issue Settings > Statuses)
-     * - just hover over the Edit link for the status you want and
-     * you'll see something like
-     * &lt;your JIRA URL&gt;/secure/admin/EditStatus!default.jspa?id=12345;
-     * in this case the value is 12345.
+     * If your installation of JIRA uses custom status IDs, you can reference them here by their numeric values. You can
+     * obtain them on the Statuses page (in 4.0.2 it's under Administration > Issue Settings > Statuses) - just hover
+     * over the Edit link for the status you want and you'll see something like &lt;your JIRA
+     * URL&gt;/secure/admin/EditStatus!default.jspa?id=12345; in this case the value is 12345.
      * </p>
      * <p>
-     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no
-     * default value.
+     * <b>Note:</b> In versions 2.0-beta-3 and earlier this parameter had no default value.
      * </p>
      */
     @Parameter( defaultValue = "Closed" )
     private String statusIds;
 
     /**
-     * Sets the types(s) that you want to limit your report to include.
-     * Valid types are: <code>Bug</code>, <code>New Feature</code>,
-     * <code>Task</code>, <code>Improvement</code>, <code>Wish</code>,
-     * <code>Test</code> and <code>Sub-task</code>.
-     * Multiple values can be separated by commas.
-     * If this is set to empty - that means all types will be included.
+     * Sets the types(s) that you want to limit your report to include. Valid types are: <code>Bug</code>,
+     * <code>New Feature</code>, <code>Task</code>, <code>Improvement</code>, <code>Wish</code>, <code>Test</code> and
+     * <code>Sub-task</code>. Multiple values can be separated by commas. If this is set to empty - that means all types
+     * will be included.
      *
      * @since 2.0
      */
@@ -287,11 +258,9 @@ public class JiraMojo
     /**
      * The prefix used when naming versions in JIRA.
      * <p>
-     * If you have a project in JIRA with several components that have different
-     * release cycles, it is an often used pattern to prefix the version with
-     * the name of the component, e.g. maven-filtering-1.0 etc. To fetch issues
-     * from JIRA for a release of the "maven-filtering" component you would need
-     * to set this parameter to "maven-filtering-".
+     * If you have a project in JIRA with several components that have different release cycles, it is an often used
+     * pattern to prefix the version with the name of the component, e.g. maven-filtering-1.0 etc. To fetch issues from
+     * JIRA for a release of the "maven-filtering" component you would need to set this parameter to "maven-filtering-".
      * </p>
      *
      * @since 2.4
@@ -310,14 +279,14 @@ public class JiraMojo
      */
     @Parameter( defaultValue = "" )
     private String webUser;
-    
+
     /*
      * Used for tests.
      */
     private AbstractJiraDownloader mockDownloader;
 
     /* --------------------------------------------------------------------- */
-    /* Public methods                                                        */
+    /* Public methods */
     /* --------------------------------------------------------------------- */
 
     /**
@@ -335,7 +304,7 @@ public class JiraMojo
         {
             return false;
         }
-        if ( mockDownloader != null ) 
+        if ( mockDownloader != null )
         {
             return true;
         }
@@ -350,8 +319,8 @@ public class JiraMojo
         if ( columnIds.isEmpty() )
         {
             // This can happen if the user has configured column names and they are all invalid
-            throw new MavenReportException(
-                "maven-changes-plugin: None of the configured columnNames '" + columnNames + "' are valid." );
+            throw new MavenReportException( "maven-changes-plugin: None of the configured columnNames '" + columnNames
+                + "' are valid." );
         }
 
         try
@@ -422,7 +391,7 @@ public class JiraMojo
     }
 
     /* --------------------------------------------------------------------- */
-    /* Private methods                                                       */
+    /* Private methods */
     /* --------------------------------------------------------------------- */
 
     private ResourceBundle getBundle( Locale locale )
@@ -469,9 +438,9 @@ public class JiraMojo
         issueDownloader.setSettings( settings );
 
         issueDownloader.setUseJql( useJql );
-        
+
         issueDownloader.setOnlyCurrentVersion( onlyCurrentVersion );
-        
+
         issueDownloader.setVersionPrefix( versionPrefix );
     }
 

@@ -49,10 +49,13 @@ public class TracDownloader
 {
     /** The Maven project. */
     private MavenProject project;
+
     /** The Trac query for searching for tickets. */
     private String query;
+
     /** The password for authentication into a private Trac installation. */
     private String tracPassword;
+
     /** The username for authentication into a private Trac installation. */
     private String tracUser;
 
@@ -93,7 +96,8 @@ public class TracDownloader
         return issue;
     }
 
-    public List<Issue> getIssueList() throws MalformedURLException, XmlRpcException
+    public List<Issue> getIssueList()
+        throws MalformedURLException, XmlRpcException
     {
         // Create and configure an XML-RPC client
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
@@ -123,7 +127,7 @@ public class TracDownloader
             qstr = query;
         }
 
-        Object[] params = new Object[] {qstr};
+        Object[] params = new Object[] { qstr };
         Object[] queryResult;
         ArrayList<Issue> issueList = new ArrayList<Issue>();
         try
@@ -132,7 +136,7 @@ public class TracDownloader
 
             for ( Object aQueryResult : queryResult )
             {
-                params = new Object[]{aQueryResult};
+                params = new Object[] { aQueryResult };
                 Object[] ticketGetResult;
                 ticketGetResult = (Object[]) client.execute( "ticket.get", params );
                 issueList.add( createIssue( ticketGetResult ) );

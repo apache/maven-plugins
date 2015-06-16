@@ -152,12 +152,11 @@ under the License.
         <codeSegment>
           <version>1.0.0</version>
           <code><![CDATA[
-            public java.util.List getActions(String type)
+            public java.util.List<Action> getActions(String type)
             {
-                java.util.List actions = new java.util.ArrayList();
-                for (java.util.Iterator iterator = getActions().iterator(); iterator.hasNext(); )
+                java.util.List<Action> actions = new java.util.ArrayList<Action>();
+                for (Action action : getActions())
                 {
-                  Action action = (Action) iterator.next();
                   if ( action.getType() != null && action.getType().equalsIgnoreCase( type ) )
                   {
                       actions.add( action );
@@ -170,7 +169,7 @@ under the License.
         <codeSegment>
           <version>1.0.0</version>
           <code><![CDATA[
-              private final java.util.List components = new java.util.ArrayList();
+              private final java.util.List<Component> components = new java.util.ArrayList<Component>();
 
               public void addComponent(String name, Release release)
               {
@@ -181,7 +180,7 @@ under the License.
                   components.add(component);
               }
 
-              public java.util.List getComponents()
+              public java.util.List<Component> getComponents()
               {
                   return components;
               }

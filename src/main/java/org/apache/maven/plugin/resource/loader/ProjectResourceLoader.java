@@ -48,9 +48,8 @@ public class ProjectResourceLoader
     private List<String> paths = null;
 
     /**
-     * Used to map the path that a template was found on
-     * so that we can properly check the modification
-     * times of the files.
+     * Used to map the path that a template was found on so that we can properly check the modification times of the
+     * files.
      */
     private Hashtable<String, String> templatePaths = new Hashtable<String, String>();
 
@@ -64,11 +63,11 @@ public class ProjectResourceLoader
             + "resources" + separator;
 
         rsvc.getLog().info( "path :" + path );
-        
+
         paths = new ArrayList<String>();
 
         paths.add( path );
-        
+
         for ( String path1 : paths )
         {
             rsvc.getLog().info( "ProjectResourceLoader : adding path '" + path1 + "'" );
@@ -77,13 +76,11 @@ public class ProjectResourceLoader
     }
 
     /**
-     * Get an InputStream so that the Runtime can build a
-     * template with it.
+     * Get an InputStream so that the Runtime can build a template with it.
      *
      * @param templateName name of template to get
      * @return InputStream containing the template
-     * @throws ResourceNotFoundException if template not found
-     *         in the file template path.
+     * @throws ResourceNotFoundException if template not found in the file template path.
      */
     public synchronized InputStream getResourceStream( String templateName )
         throws ResourceNotFoundException
@@ -94,8 +91,7 @@ public class ProjectResourceLoader
         if ( templateName == null || templateName.length() == 0 )
         {
             /*
-             * If we don't get a properly formed templateName then
-             * there's not much we can do. So we'll forget about
+             * If we don't get a properly formed templateName then there's not much we can do. So we'll forget about
              * trying to search any more paths for the template.
              */
             throw new ResourceNotFoundException( "Need to specify a file name or file path!" );
@@ -113,13 +109,13 @@ public class ProjectResourceLoader
         }
 
         /*
-         *  if a / leads off, then just nip that :)
+         * if a / leads off, then just nip that :)
          */
         if ( template.startsWith( "/" ) )
         {
             template = template.substring( 1 );
         }
-        
+
         // MCHANGES-118 adding the basedir path
         paths.add( (String) rsvc.getApplicationAttribute( "baseDirectory" ) );
 
@@ -130,9 +126,7 @@ public class ProjectResourceLoader
             if ( inputStream != null )
             {
                 /*
-                 * Store the path that this template came
-                 * from so that we can check its modification
-                 * time.
+                 * Store the path that this template came from so that we can check its modification time.
                  */
 
                 templatePaths.put( templateName, path );
@@ -141,9 +135,7 @@ public class ProjectResourceLoader
         }
 
         /*
-         * We have now searched all the paths for
-         * templates and we didn't find anything so
-         * throw an exception.
+         * We have now searched all the paths for templates and we didn't find anything so throw an exception.
          */
         String msg = "ProjectResourceLoader Error: cannot find resource " + template;
 
@@ -155,14 +147,13 @@ public class ProjectResourceLoader
      * 
      * @param path a normalized path
      * @return InputStream input stream that will be parsed
-     *
      */
     private InputStream findTemplate( String path, String template )
     {
         try
         {
             File file = new File( path, template );
-            
+
             if ( file.canRead() )
             {
                 return new BufferedInputStream( new FileInputStream( file.getAbsolutePath() ) );
@@ -175,26 +166,22 @@ public class ProjectResourceLoader
         catch ( FileNotFoundException fnfe )
         {
             /*
-             *  log and convert to a general Velocity ResourceNotFoundException
+             * log and convert to a general Velocity ResourceNotFoundException
              */
             return null;
         }
     }
 
     /**
-     * How to keep track of all the modified times
-     * across the paths.  Note that a file might have
-     * appeared in a directory which is earlier in the
-     * path; so we should search the path and see if
-     * the file we find that way is the same as the one
-     * that we have cached.
+     * How to keep track of all the modified times across the paths. Note that a file might have appeared in a directory
+     * which is earlier in the path; so we should search the path and see if the file we find that way is the same as
+     * the one that we have cached.
      */
     public boolean isSourceModified( Resource resource )
     {
         /*
-         * we assume that the file needs to be reloaded; 
-         * if we find the original file and it's unchanged,
-         * then we'll flip this.
+         * we assume that the file needs to be reloaded; if we find the original file and it's unchanged, then we'll
+         * flip this.
          */
         boolean modified = true;
 
@@ -215,21 +202,16 @@ public class ProjectResourceLoader
         if ( currentFile == null || !file.exists() )
         {
             /*
-             * noop: if the file is missing now (either the cached
-             * file is gone, or the file can no longer be found)
-             * then we leave modified alone (it's set to true); a 
-             * reload attempt will be done, which will either use
-             * a new template or fail with an appropriate message
-             * about how the file couldn't be found.
+             * noop: if the file is missing now (either the cached file is gone, or the file can no longer be found)
+             * then we leave modified alone (it's set to true); a reload attempt will be done, which will either use a
+             * new template or fail with an appropriate message about how the file couldn't be found.
              */
         }
         else if ( currentFile.equals( file ) && file.canRead() )
         {
             /*
-             * if only if currentFile is the same as file and
-             * file.lastModified() is the same as
-             * resource.getLastModified(), then we should use the
-             * cached version.
+             * if only if currentFile is the same as file and file.lastModified() is the same as
+             * resource.getLastModified(), then we should use the cached version.
              */
             modified = ( file.lastModified() != resource.getLastModified() );
         }

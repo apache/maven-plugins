@@ -19,17 +19,37 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.changes.model.Body;
-import org.apache.maven.plugins.changes.model.ChangesDocument;
-import org.apache.maven.plugins.changes.model.Properties;
-import org.apache.maven.plugins.changes.model.io.xpp3.ChangesXpp3Reader;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.changes.model.Body;
+import org.apache.maven.plugins.changes.model.ChangesDocument;
+import org.apache.maven.plugins.changes.model.Properties;
+import org.apache.maven.plugins.changes.model.Release;
+import org.apache.maven.plugins.changes.model.io.xpp3.ChangesXpp3Reader;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * A facade for a changes.xml file.
@@ -40,7 +60,7 @@ public class ChangesXML
 {
 
     /** The list of releases in the changes.xml file. */
-    private List releaseList;
+    private List<Release> releaseList;
 
     /** The author in the changes.xml file. */
     private String author;
@@ -56,11 +76,13 @@ public class ChangesXML
 
     /**
      * Constructor that sets the changes.xml file and the logger.
+     * 
      * @param xmlPath the changes.xml file
      * @param log the logger
      * @throws ChangesXMLRuntimeException if there was a fatal error while parsing the changes.xml file
      */
-    public ChangesXML( File xmlPath, Log log ) throws ChangesXMLRuntimeException
+    public ChangesXML( File xmlPath, Log log )
+        throws ChangesXMLRuntimeException
     {
 
         if ( xmlPath == null || !xmlPath.exists() )
@@ -97,9 +119,7 @@ public class ChangesXML
                 this.title = properties.getTitle();
             }
 
-
             Body body = changesDocument.getBody();
-
 
             if ( body != null )
             {
@@ -120,6 +140,7 @@ public class ChangesXML
 
     /**
      * Sets the {@link ChangesXML#author} attribute.
+     * 
      * @param author the new value of the {@link ChangesXML#author} attribute
      */
     public void setAuthor( String author )
@@ -129,6 +150,7 @@ public class ChangesXML
 
     /**
      * Returns the current value of the author attribute.
+     * 
      * @return the current value of the author attribute
      */
     public String getAuthor()
@@ -138,24 +160,27 @@ public class ChangesXML
 
     /**
      * Sets the {@link ChangesXML#releaseList} attribute.
+     * 
      * @param releaseList the new value of the {@link ChangesXML#releaseList} attribute
      */
-    public void setReleaseList( List releaseList )
+    public void setReleaseList( List<Release> releaseList )
     {
         this.releaseList = releaseList;
     }
 
     /**
      * Returns the current value of the {@link ChangesXML#releaseList} attribute.
+     * 
      * @return the current value of the {@link ChangesXML#releaseList} attribute
      */
-    public List getReleaseList()
+    public List<Release> getReleaseList()
     {
-        return releaseList == null ? Collections.EMPTY_LIST : releaseList;
+        return releaseList == null ? Collections.<Release>emptyList() : releaseList;
     }
 
     /**
      * Sets the {@link ChangesXML#title} attribute.
+     * 
      * @param title the new value of the {@link ChangesXML#title} attribute
      */
     public void setTitle( String title )
@@ -165,6 +190,7 @@ public class ChangesXML
 
     /**
      * Returns the current value of the {@link ChangesXML#title} attribute.
+     * 
      * @return the current value of the {@link ChangesXML#title} attribute
      */
     public String getTitle()
@@ -173,7 +199,8 @@ public class ChangesXML
     }
 
     /**
-     Returns the current value of the {@link ChangesXML#changesDocument} attribute.
+     * Returns the current value of the {@link ChangesXML#changesDocument} attribute.
+     * 
      * @return the current value of the {@link ChangesXML#changesDocument} attribute
      */
     public ChangesDocument getChangesDocument()
@@ -183,6 +210,7 @@ public class ChangesXML
 
     /**
      * Returns the current value of the {@link ChangesXML#authorEmail} attribute.
+     * 
      * @return the current value of the {@link ChangesXML#authorEmail} attribute
      */
     public String getAuthorEmail()
@@ -192,6 +220,7 @@ public class ChangesXML
 
     /**
      * Sets the {@link ChangesXML#authorEmail} attribute.
+     * 
      * @param authorEmail the new value of the {@link ChangesXML#authorEmail} attribute
      */
     public void setAuthorEmail( String authorEmail )

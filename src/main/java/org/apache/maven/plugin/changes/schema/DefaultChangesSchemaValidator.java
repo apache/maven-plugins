@@ -23,18 +23,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.io.input.XmlStreamReader;
 
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.codehaus.plexus.util.FastMap;
+import org.apache.commons.io.input.XmlStreamReader;
 import org.codehaus.plexus.util.IOUtil;
-
 import org.xml.sax.SAXException;
 
 /**
@@ -54,7 +52,7 @@ public class DefaultChangesSchemaValidator
 
     public static final String CHANGES_SCHEMA_PATH = "META-INF/changes/xsd/";
 
-    private Map compiledSchemas = new FastMap();
+    private Map<String, Schema> compiledSchemas = new HashMap<String, Schema>();
 
     public XmlValidationHandler validateXmlWithSchema( File file, String schemaVersion, boolean failOnValidationError )
         throws SchemaValidatorException
