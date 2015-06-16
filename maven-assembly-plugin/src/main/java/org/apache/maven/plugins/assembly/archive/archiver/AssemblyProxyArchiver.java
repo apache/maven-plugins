@@ -146,9 +146,8 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet( archiveFile );
 
-            fs.setArchive( archiveFile );
             fs.setIncludes( includes );
             fs.setExcludes( excludes );
             fs.setPrefix( rootPrefix + prefix );
@@ -180,9 +179,8 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet( archiveFile );
 
-            fs.setArchive( archiveFile );
             fs.setPrefix( rootPrefix + prefix );
             fs.setFileSelectors( selectors );
 
@@ -204,9 +202,8 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet( archiveFile );
 
-            fs.setArchive( archiveFile );
             fs.setIncludes( includes );
             fs.setExcludes( excludes );
             fs.setPrefix( rootPrefix );
@@ -230,9 +227,8 @@ public class AssemblyProxyArchiver
         inPublicApi.set( Boolean.TRUE );
         try
         {
-            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet();
+            final DefaultArchivedFileSet fs = new DefaultArchivedFileSet( archiveFile );
 
-            fs.setArchive( archiveFile );
             fs.setPrefix( rootPrefix );
             fs.setFileSelectors( selectors );
 
