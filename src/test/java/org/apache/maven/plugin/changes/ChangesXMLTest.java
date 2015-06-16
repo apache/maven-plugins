@@ -19,16 +19,15 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.changes.model.Action;
-import org.apache.maven.plugins.changes.model.FixedIssue;
 import org.apache.maven.plugins.changes.model.Release;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @author Olivier Lamy
@@ -57,13 +56,11 @@ public class ChangesXMLTest
         public void debug( Throwable error )
         {
             consoleLogger.debug( error.getMessage() );
-
         }
 
         public void debug( CharSequence content, Throwable error )
         {
             consoleLogger.debug( error.getMessage(), error );
-
         }
 
         public void error( CharSequence content )
@@ -79,7 +76,6 @@ public class ChangesXMLTest
         public void error( CharSequence content, Throwable error )
         {
             consoleLogger.error( error.getMessage(), error );
-
         }
 
         public void info( CharSequence content )
@@ -125,13 +121,11 @@ public class ChangesXMLTest
         public void warn( Throwable error )
         {
             consoleLogger.warn( error.getMessage() );
-
         }
 
         public void warn( CharSequence content, Throwable error )
         {
             consoleLogger.warn( content.toString(), error );
-
         }
 
     }
@@ -146,16 +140,35 @@ public class ChangesXMLTest
 
         List releases = changesXML.getReleaseList();
         assertEquals( 2, releases.size() );
-        for (Object release1 : releases) {
+        for ( Object release1 : releases ) {
             Release release = (Release) release1;
-            if ("1.0".equals(release.getVersion())) {
-                Action action = release.getActions().get(0);
-                assertEquals(2, action.getFixedIssues().size());
-                assertEquals("JIRA-XXX", action.getFixedIssues().get(0).getIssue());
-                assertEquals("JIRA-YYY", action.getFixedIssues().get(1).getIssue());
-                assertEquals(2, action.getDueTos().size());
+            if ( "1.0".equals( release.getVersion() ) ) {
+                Action action = release.getActions().get( 0 );
+                assertEquals( 2, action.getFixedIssues().size() );
+                assertEquals( "JIRA-XXX", action.getFixedIssues().get( 0 ).getIssue() );
+                assertEquals( "JIRA-YYY", action.getFixedIssues().get( 1 ).getIssue() );
+                assertEquals( 2, action.getDueTos().size() );
             }
         }
     }
-    
+
+    public void testParseInvalidChangesFile()
+    {
+        File changesFile = new File( getBasedir() + "/src/test/unit/invalid-changes.xml" );
+
+        try
+        {
+            ChangesXML changesXML = new ChangesXML( changesFile, new MockLog() );
+            fail( "Should have thrown a ChangesXMLRuntimeException due to the invalid changes.xml file" );
+        }
+        catch ( ChangesXMLRuntimeException e )
+        {
+            assertEquals( "An error occurred when parsing the changes.xml file", e.getMessage() );
+        }
+        catch ( Throwable e )
+        {
+            fail( "Wrong type of Throwable object was thrown, expected ChangesXMLRuntimeException" );
+        }
+    }
+
 }
