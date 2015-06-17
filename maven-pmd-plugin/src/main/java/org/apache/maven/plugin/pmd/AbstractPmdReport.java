@@ -126,16 +126,20 @@ public abstract class AbstractPmdReport
     private List<String> includes;
 
     /**
-     * The directories containing the sources to be compiled.
+     * Specifies the location of the source directories to be used for PMD.
+     * Defaults to <code>project.compileSourceRoots</code>.
+     * @since 3.5
      */
-    @Parameter( property = "project.compileSourceRoots", required = true, readonly = true )
-    private List<String> compileSourceRoots;
+    @Parameter
+    private List<String> sourceDirectories;
 
     /**
-     * The directories containing the test-sources to be compiled.
+     * The directories containing the test-sources to be used for PMD.
+     * Defaults to <code>project.testCompileSourceRoots</code>
+     * @since 3.5
      */
-    @Parameter( property = "project.testCompileSourceRoots", required = true, readonly = true )
-    private List<String> testSourceRoots;
+    @Parameter
+    private List<String> testSourceDirectories;
 
     /**
      * The project source directories that should be excluded.
@@ -294,9 +298,13 @@ public abstract class AbstractPmdReport
 
         List<PmdFileInfo> directories = new ArrayList<PmdFileInfo>();
 
-        if ( compileSourceRoots != null )
+        if ( null == sourceDirectories )
         {
-            for ( String root : compileSourceRoots )
+            sourceDirectories = project.getCompileSourceRoots();
+        }
+        if ( sourceDirectories != null )
+        {
+            for ( String root : sourceDirectories )
             {
                 File sroot = new File( root );
                 if ( sroot.exists() )
@@ -305,13 +313,17 @@ public abstract class AbstractPmdReport
                     directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
                 }
             }
+        }
 
+        if ( null == testSourceDirectories )
+        {
+            testSourceDirectories = project.getTestCompileSourceRoots();
         }
         if ( includeTests )
         {
-            if ( testSourceRoots != null )
+            if ( testSourceDirectories != null )
             {
-                for ( String root : testSourceRoots )
+                for ( String root : testSourceDirectories )
                 {
                     File sroot = new File( root );
                     if ( sroot.exists() )

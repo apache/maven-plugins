@@ -52,9 +52,9 @@ under the License.
             <exclude>**/Sample.java</exclude>
             <exclude>**/AnotherSample.java</exclude>
           </excludes>
-          <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
-          </compileSourceRoots>
+          <sourceDirectories>
+            <sourceDirectory>${basedir}/src/test/resources/unit/custom-configuration/</sourceDirectory>
+          </sourceDirectories>
           <sourceEncoding>UTF-8</sourceEncoding>
         </configuration>
         <dependencies>
