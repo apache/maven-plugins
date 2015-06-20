@@ -19,6 +19,11 @@ package org.apache.maven.plugin.dependency.fromDependencies;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -33,7 +38,7 @@ import org.apache.maven.plugin.dependency.utils.translators.ClassifierTypeTransl
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
@@ -45,11 +50,6 @@ import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFil
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Class that encapsulates the plugin parameters, and contains methods that
@@ -225,7 +225,7 @@ public abstract class AbstractDependencyFilterMojo
     protected boolean prependGroupId = false;
 
     @Component
-    MavenProjectBuilder projectBuilder;
+    private ProjectBuilder projectBuilder;
 
     /**
      * Return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
@@ -332,7 +332,7 @@ public abstract class AbstractDependencyFilterMojo
     {
         try
         {
-            return projectBuilder.buildFromRepository( artifact, remoteRepos, getLocal() );
+            return projectBuilder.build( artifact, session.getProjectBuildingRequest() ).getProject();
         }
         catch ( ProjectBuildingException e )
         {
