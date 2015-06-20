@@ -317,6 +317,14 @@ public class DependencySilentLog
     }
 
     /**
+     * By default, do nothing
+     */
+    public void setThreshold( int threshold )
+    {
+        // nop
+    }
+    
+    /**
      * @return <code>null</code>
      * @see org.codehaus.plexus.logging.Logger#getName()
      */

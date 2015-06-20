@@ -20,9 +20,9 @@ package org.apache.maven.plugin.dependency.fromDependencies;
  */
 
 import org.apache.maven.plugin.MojoFailureException;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.fromDependencies.UnpackDependenciesMojo;
@@ -517,9 +517,17 @@ public class TestUnpackDependenciesMojo
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
+        for (Artifact artifact : mojo.getProject().getArtifacts())
+        {
+            String type = testType != null ? testType: artifact.getType();   
+            this.stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                             VersionRange.createFromVersion( artifact.getBaseVersion() ),
+                                             artifact.getScope(), type, testClassifier, false );
+        }
+        
         mojo.execute();
 
-        for (Artifact artifact : (Iterable<Artifact>) mojo.getProject().getArtifacts()) {
+        for (Artifact artifact : mojo.getProject().getArtifacts()) {
             String useClassifier = artifact.getClassifier();
             String useType = artifact.getType();
 

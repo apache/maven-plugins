@@ -36,7 +36,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
@@ -137,10 +136,6 @@ public class ResolvePluginsMojo
             throw new MojoExecutionException( "Nested:", e );
         }
         catch ( final ProjectBuildingException e )
-        {
-            throw new MojoExecutionException( "Nested:", e );
-        }
-        catch ( final InvalidDependencyVersionException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
