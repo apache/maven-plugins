@@ -86,7 +86,7 @@ public class TestGetMojo
     {
         // Set properties, transitive = default value = true
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
-        setVariableValueToObject( mojo, "repositoryUrl", "http://repo1.maven.apache.org/maven2" );
+        setVariableValueToObject( mojo, "remoteRepositories", "central::default::http://repo1.maven.apache.org/maven2" );
         setVariableValueToObject( mojo, "groupId", "org.apache.maven" );
         setVariableValueToObject( mojo, "artifactId", "maven-model" );
         setVariableValueToObject( mojo, "version", "2.0.9" );
@@ -108,7 +108,7 @@ public class TestGetMojo
     {
         // Set properties, transitive = default value = true
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
-        setVariableValueToObject( mojo, "repositoryUrl", "http://repo1.maven.apache.org/maven2" );
+        setVariableValueToObject( mojo, "remoteRepositories", "central::default::http://repo1.maven.apache.org/maven2" );
         setVariableValueToObject( mojo, "groupId", "org.apache.maven" );
         setVariableValueToObject( mojo, "artifactId", "maven-model" );
         setVariableValueToObject( mojo, "version", "2.0.9" );
