@@ -81,7 +81,6 @@ public class EjbRef
      */
     public void appendEjbRefEntry( XMLWriter writer )
     {
-        System.out.println( "appendEjbRefEntry()" );
         writer.startElement( EJB_REF );
 
         // description
