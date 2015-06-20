@@ -25,10 +25,13 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.artifact.repository.layout.LegacyRepositoryLayout;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.codehaus.plexus.util.FileUtils;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestGetMojo
     extends AbstractDependencyMojoTestCase
@@ -44,7 +47,7 @@ public class TestGetMojo
         File testPom = new File( getBasedir(), "target/test-classes/unit/get-test/plugin-config.xml" );
         assert testPom.exists();
         mojo = (GetMojo) lookupMojo( "get", testPom );
-
+        
         assertNotNull( mojo );
         setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ){
             @Override
@@ -65,6 +68,12 @@ public class TestGetMojo
                 return pathOf.toString();
             }
         } );
+        
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( newMavenSession( new MavenProjectStub() ) );
+        DefaultRepositorySystemSession repoSession =
+            (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( testDir.getAbsolutePath() ) );
     }
 
     /**
@@ -154,10 +163,14 @@ public class TestGetMojo
         assertEquals( DefaultRepositoryLayout.class, repo.getLayout().getClass() );
         assertEquals( "http://repo1.maven.apache.org/maven2", repo.getUrl() );
 
-        repo = mojo.parseRepository( "central::legacy::http://repo1.maven.apache.org/maven2", policy );
-        assertEquals( "central", repo.getId() );
-        assertEquals( LegacyRepositoryLayout.class, repo.getLayout().getClass() );
-        assertEquals( "http://repo1.maven.apache.org/maven2", repo.getUrl() );
+        try
+        {
+            repo = mojo.parseRepository( "central::legacy::http://repo1.maven.apache.org/maven2", policy );
+            fail( "Exception expected: legacy repository not supported anymore" );
+        }
+        catch ( MojoFailureException e )
+        {
+        }
 
         repo = mojo.parseRepository( "central::::http://repo1.maven.apache.org/maven2", policy );
         assertEquals( "central", repo.getId() );

@@ -33,14 +33,17 @@ import org.apache.maven.artifact.repository.metadata.RepositoryMetadata;
 import org.apache.maven.artifact.repository.metadata.Snapshot;
 import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryMetadata;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.artifact.transform.SnapshotTransformation;
+import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.fromDependencies.CopyDependenciesMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestCopyDependenciesMojo2
     extends AbstractDependencyMojoTestCase
@@ -71,6 +74,11 @@ public class TestCopyDependenciesMojo2
         project.setDependencyArtifacts( directArtifacts );
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( newMavenSession( new MavenProjectStub() ) );
+        DefaultRepositorySystemSession repoSession =
+            (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( testDir.getAbsolutePath() ) );
     }
 
     public void assertNoMarkerFile( Artifact artifact )
@@ -309,11 +317,10 @@ public class TestCopyDependenciesMojo2
 			                                        String classifier ) 
 			throws IOException 
 	{
-		Artifact expandedSnapshot = this.stubFactory.createArtifact( groupId, artifactId, baseVersion, scope, type, classifier );
+		Artifact expandedSnapshot = this.stubFactory.createArtifact( groupId, artifactId, VersionRange.createFromVersion( baseVersion ), scope, type, classifier, false );
 
-    	SnapshotTransformation tr = new SnapshotTransformation();
         Snapshot snapshot = new Snapshot();
-        snapshot.setTimestamp( tr.getDeploymentTimestamp() );
+        snapshot.setTimestamp( "20130710.122148" );
         snapshot.setBuildNumber( 1 );
         RepositoryMetadata metadata = new SnapshotArtifactRepositoryMetadata( expandedSnapshot, snapshot );
         String newVersion = snapshot.getTimestamp() + "-" + snapshot.getBuildNumber();
@@ -325,7 +332,7 @@ public class TestCopyDependenciesMojo2
 	private void assertArtifactExists( Artifact artifact, ArtifactRepository targetRepository ) {
 		File file = new File( targetRepository.getBasedir(), 
 							  targetRepository.getLayout().pathOf( artifact ) );
-		assertTrue( file.exists() );
+		assertTrue( "File doesn't exist: " + file.getAbsolutePath(), file.exists() );
 
 		Collection<ArtifactMetadata> metas = artifact.getMetadataList();
 		for ( ArtifactMetadata meta : metas )

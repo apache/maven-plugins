@@ -20,6 +20,7 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
@@ -232,7 +234,7 @@ public class TestUnpackMojo
         mojo.setArtifactItems( list );
 
         MavenProject project = mojo.getProject();
-        project.setDependencies( getDependencyList( item ) );
+        project.setDependencies( createArtifacts( getDependencyList( item ) ) );
 
         mojo.execute();
         assertMarkerFile( true, item );
@@ -254,7 +256,7 @@ public class TestUnpackMojo
         mojo.setArtifactItems( list );
 
         MavenProject project = mojo.getProject();
-        project.setDependencies( getDependencyList( item ) );
+        project.setDependencies( createArtifacts( getDependencyList( item ) ) );
 
         mojo.execute();
         assertMarkerFile( true, item );
@@ -295,7 +297,7 @@ public class TestUnpackMojo
         item.setType( "jar" );
 
         MavenProject project = mojo.getProject();
-        project.setDependencies( getDependencyList( item ) );
+        project.setDependencies( createArtifacts( getDependencyList( item ) ) );
 
         item = new ArtifactItem();
 
@@ -309,7 +311,7 @@ public class TestUnpackMojo
 
         mojo.setArtifactItems( list );
 
-        project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
+        project.getDependencyManagement().setDependencies( createArtifacts( getDependencyMgtList( item ) ) );
 
         mojo.execute();
         assertMarkerFile( true, item );
@@ -325,9 +327,9 @@ public class TestUnpackMojo
         item.setClassifier( "classifier" );
         item.setGroupId( "groupId" );
         item.setType( "jar" );
-
+        
         MavenProject project = mojo.getProject();
-        project.setDependencies( getDependencyList( item ) );
+        project.setDependencies( createArtifacts( getDependencyList( item ) ) );
 
         item = new ArtifactItem();
 
@@ -336,12 +338,15 @@ public class TestUnpackMojo
         item.setGroupId( "groupId" );
         item.setType( "jar" );
 
+        stubFactory.createArtifact( "groupId", "artifactId-2", VersionRange.createFromVersion( "3.0-SNAPSHOT" ), null, "jar", "classifier", false );
+        stubFactory.createArtifact( "groupId", "artifactId-2", VersionRange.createFromVersion( "3.1" ), null, "jar", "classifier", false );
+
         List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
 
         mojo.setArtifactItems( list );
 
-        project.getDependencyManagement().setDependencies( getDependencyMgtList( item ) );
+        project.getDependencyManagement().setDependencies( createArtifacts( getDependencyMgtList( item ) ) );
 
         mojo.execute();
 
@@ -420,7 +425,7 @@ public class TestUnpackMojo
         Artifact release = stubFactory.getReleaseArtifact();
         release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
 
-        ArtifactItem item = new ArtifactItem( release );
+        ArtifactItem item = new ArtifactItem( createArtifact( release ) );
 
         List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
@@ -440,7 +445,7 @@ public class TestUnpackMojo
         Artifact artifact = stubFactory.getSnapshotArtifact();
         artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
 
-        ArtifactItem item = new ArtifactItem( artifact );
+        ArtifactItem item = new ArtifactItem( createArtifact( artifact  ) );
 
         List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
@@ -460,7 +465,7 @@ public class TestUnpackMojo
         Artifact release = stubFactory.getReleaseArtifact();
         release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
 
-        ArtifactItem item = new ArtifactItem( release );
+        ArtifactItem item = new ArtifactItem( createArtifact( release ) );
 
         List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
@@ -480,7 +485,7 @@ public class TestUnpackMojo
         Artifact artifact = stubFactory.getSnapshotArtifact();
         artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
 
-        ArtifactItem item = new ArtifactItem( artifact );
+        ArtifactItem item = new ArtifactItem( createArtifact( artifact ) );
 
         List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
@@ -504,7 +509,7 @@ public class TestUnpackMojo
         Artifact artifact = stubFactory.getSnapshotArtifact();
         assertTrue( artifact.getFile().setLastModified( now - 20000 ) );
 
-        ArtifactItem item = new ArtifactItem( artifact );
+        ArtifactItem item = new ArtifactItem( createArtifact( artifact ) );
 
         List<ArtifactItem> list = Collections.singletonList( item );
         mojo.setArtifactItems( list );
@@ -580,5 +585,26 @@ public class TestUnpackMojo
         assertTrue( unpackedFile.exists() );
         return unpackedFile;
 
+    }
+    
+    // respects the createUnpackableFile flag of the ArtifactStubFactory
+    private List<Dependency> createArtifacts( List<Dependency> items ) throws IOException {
+        for ( Dependency item : items )
+        {
+            String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier(); 
+            stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(),
+                                        VersionRange.createFromVersion( item.getVersion() ), null,
+                                        item.getType(), classifier, item.isOptional() );
+        }
+        return items;
+    }
+    
+    private Artifact createArtifact( Artifact art ) throws IOException
+    {
+        String classifier = "".equals( art.getClassifier() ) ? null : art.getClassifier(); 
+        stubFactory.createArtifact( art.getGroupId(), art.getArtifactId(),
+                                    VersionRange.createFromVersion( art.getVersion() ), null,
+                                    art.getType(), classifier, art.isOptional() );
+        return art;
     }
 }
