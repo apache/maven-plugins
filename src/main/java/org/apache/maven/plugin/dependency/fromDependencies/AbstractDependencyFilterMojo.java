@@ -289,7 +289,7 @@ public abstract class AbstractDependencyFilterMojo
                                                 DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
 
         // start with all artifacts.
-        @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         if ( includeParents )
         {
@@ -346,15 +346,6 @@ public abstract class AbstractDependencyFilterMojo
         while ( project.hasParent() )
         {
             project = project.getParent();
-
-            if ( project.getArtifact() == null )
-            {
-                // Maven 2.x bug
-                Artifact artifact =
-                    factory.createBuildArtifact( project.getGroupId(), project.getArtifactId(), project.getVersion(),
-                                                 project.getPackaging() );
-                project.setArtifact( artifact );
-            }
 
             if ( !artifacts.add( project.getArtifact() ) )
             {
