@@ -127,22 +127,6 @@ public class GetMojo
     private String packaging = "jar";
 
     /**
-     * The id of the repository from which we'll download the artifact
-     *
-     * @deprecated Use remoteRepositories
-     */
-    @Parameter( property = "repoId", defaultValue = "temp" )
-    private String repositoryId = "temp";
-
-    /**
-     * The url of the repository from which we'll download the artifact. DEPRECATED Use remoteRepositories
-     *
-     * @deprecated Use remoteRepositories
-     */
-    @Parameter( property = "repoUrl" )
-    private String repositoryUrl;
-
-    /**
      * Repositories in the format id::[layout]::url or just url, separated by comma.
      * ie. central::default::http://repo1.maven.apache.org/maven2,myrepo::::http://repo.acme.com,http://repo.acme2.com
      */
@@ -251,15 +235,6 @@ public class GetMojo
             }
         }
 
-        if ( repositoryUrl != null )
-        {
-            getLog().warn( "repositoryUrl parameter is deprecated. Use remoteRepositories instead" );
-            ArtifactRepository remoteRepo =
-                artifactRepositoryFactory.createArtifactRepository( repositoryId, repositoryUrl, getLayout( "default" ),
-                                                                    always, always );
-            repoList.add( remoteRepo );
-        }
-
         try
         {
             if ( transitive )
@@ -316,7 +291,7 @@ public class GetMojo
         throws MojoFailureException
     {
         // if it's a simple url
-        String id = repositoryId;
+        String id = "temp";
         ArtifactRepositoryLayout layout = getLayout( "default" );
         String url = repo;
 
