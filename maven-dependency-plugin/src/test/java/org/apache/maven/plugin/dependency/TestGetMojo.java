@@ -99,39 +99,6 @@ public class TestGetMojo
     }
     
     /**
-     * Test destination parameter
-     * 
-     * @throws Exception
-     */
-    public void testDestination()
-        throws Exception
-    {
-        // Set properties, transitive = default value = true
-        setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
-        setVariableValueToObject( mojo, "remoteRepositories", "central::default::http://repo1.maven.apache.org/maven2" );
-        setVariableValueToObject( mojo, "groupId", "org.apache.maven" );
-        setVariableValueToObject( mojo, "artifactId", "maven-model" );
-        setVariableValueToObject( mojo, "version", "2.0.9" );
-        File output = new File( getBasedir(), "target/unit-tests/get-test/destination-file/maven-model-2.0.9.jar" );
-        output.delete();
-        setVariableValueToObject( mojo, "destination", output.getAbsolutePath() );
-
-        mojo.execute();
-        assertTrue( output.exists() );
-
-        // Test directory
-        output = new File( getBasedir(), "target/unit-tests/get-test/destination-dir" );
-        output.mkdirs();
-        FileUtils.cleanDirectory( output );
-        setVariableValueToObject( mojo, "destination", output.getAbsolutePath() );
-
-        mojo.execute();
-        assertTrue( new File( output, "org.apache.maven_maven-model-2.0.9.jar" ).exists() );
-    }
-    
-    
-
-    /**
      * Test remote repositories parameter
      * 
      * @throws Exception
