@@ -21,7 +21,6 @@ package org.apache.maven.plugin.dependency;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -29,19 +28,19 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -54,7 +53,10 @@ public class GetMojo
     extends AbstractMojo
 {
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.*)::(.+)" );
-
+    
+    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    private MavenSession session;
+    
     /**
      *
      */
@@ -78,12 +80,6 @@ public class GetMojo
      */
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
-
-    /**
-     *
-     */
-    @Component
-    private ArtifactMetadataSource source;
 
     /**
      *
@@ -199,8 +195,6 @@ public class GetMojo
         Artifact toDownload = classifier == null
             ? artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging )
             : artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
-        Artifact dummyOriginatingArtifact =
-            artifactFactory.createBuildArtifact( "org.apache.maven.plugins", "maven-downloader-plugin", "1.0", "jar" );
 
         ArtifactRepositoryPolicy always =
             new ArtifactRepositoryPolicy( true, ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS,
@@ -228,16 +222,15 @@ public class GetMojo
             if ( transitive )
             {
                 getLog().info( "Resolving " + toDownload + " with transitive dependencies" );
-                artifactResolver.resolveTransitively( Collections.singleton( toDownload ), dummyOriginatingArtifact,
-                                                      repoList, localRepository, source );
+                artifactResolver.resolveTransitively( session.getProjectBuildingRequest(), toDownload,  repoList );
             }
             else
             {
                 getLog().info( "Resolving " + toDownload );
-                artifactResolver.resolve( toDownload, repoList, localRepository );
+                artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), toDownload,  repoList );
             }
         }
-        catch ( AbstractArtifactResolutionException e )
+        catch ( ArtifactResolverException e )
         {
             throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
         }
