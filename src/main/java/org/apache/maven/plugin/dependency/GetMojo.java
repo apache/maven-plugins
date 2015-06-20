@@ -19,7 +19,14 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
-import org.apache.commons.io.FileUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -36,16 +43,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Resolves a single artifact, eventually transitively, from the specified remote repositories.
@@ -138,15 +135,6 @@ public class GetMojo
      */
     @Parameter( property = "artifact" )
     private String artifact;
-
-    /**
-     * The destination file or directory to copy the artifact to, if other than the local repository
-     *
-     * @since 2.4
-     * @deprecated if you need to copy the resolved artifact, use dependency:copy
-     */
-    @Parameter( property = "dest" )
-    private String destination;
 
     /**
      *
@@ -252,38 +240,6 @@ public class GetMojo
         catch ( AbstractArtifactResolutionException e )
         {
             throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
-        }
-
-        if ( destination != null )
-        {
-            getLog().warn( "destination/dest parameter is deprecated: it will disappear in future version." );
-
-            File src = toDownload.getFile();
-            File dest = new File( destination );
-
-            getLog().info( "Copying " + src.getAbsolutePath() + " to " + dest.getAbsolutePath() );
-            if ( transitive )
-            {
-                getLog().warn( "Notice transitive dependencies won't be copied." );
-            }
-
-            try
-            {
-                if ( dest.isDirectory() )
-                {
-                    FileUtils.copyFileToDirectory( src, dest );
-                }
-                else
-                {
-                    FileUtils.copyFile( src, dest );
-                } 
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException(
-                    "Couldn't copy downloaded artifact from " + src.getAbsolutePath() + " to " + dest.getAbsolutePath()
-                        + " : " + e.getMessage(), e );
-            }
         }
     }
 
