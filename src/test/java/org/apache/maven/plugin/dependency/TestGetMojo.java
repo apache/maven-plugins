@@ -29,7 +29,6 @@ import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
@@ -74,6 +73,8 @@ public class TestGetMojo
         DefaultRepositorySystemSession repoSession =
             (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( testDir.getAbsolutePath() ) );
+        
+        setVariableValueToObject( mojo, "session", legacySupport.getSession() );
     }
 
     /**
