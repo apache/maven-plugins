@@ -31,7 +31,7 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
@@ -52,7 +52,7 @@ public abstract class AbstractResolveMojo
      * Project builder -- builds a model from a pom.xml
      */
     @Component
-    protected MavenProjectBuilder mavenProjectBuilder;
+    private ProjectBuilder projectBuilder;
 
     /**
      * If specified, this parameter will cause the dependencies to be written to the path specified, instead of writing
@@ -187,7 +187,7 @@ public abstract class AbstractResolveMojo
                                          "pom" );
 
         final MavenProject pomProject =
-            mavenProjectBuilder.buildFromRepository( pomArtifact, this.remoteRepos, this.getLocal() );
+            projectBuilder.build( pomArtifact, session.getProjectBuildingRequest() ).getProject();
 
         return resolveDependencyArtifacts( pomProject );
     }

@@ -19,12 +19,18 @@ package org.apache.maven.plugin.dependency;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -41,11 +47,6 @@ import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelecto
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -126,6 +127,12 @@ public abstract class AbstractDependencyMojo
     @Parameter( defaultValue = "${reactorProjects}", readonly = true )
     protected List<MavenProject> reactorProjects;
 
+    /**
+     * The Maven session
+     */
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    protected MavenSession session;
+    
     /**
      * If the plugin should be silent.
      *
