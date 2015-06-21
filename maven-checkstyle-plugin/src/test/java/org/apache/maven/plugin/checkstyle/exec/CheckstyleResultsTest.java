@@ -75,27 +75,27 @@ public class CheckstyleResultsTest
 
     public void testResults()
     {
-        Map<String, List<AuditEvent>> files = new HashMap<String, List<AuditEvent>>();
+        Map<String, List<AuditEvent>> files = new HashMap<>();
 
         LocalizedMessage message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.INFO, null, getClass(), null );
         AuditEvent event = new AuditEvent( this, "file1", message );
         files.put( "file1", Collections.singletonList( event ) );
 
         message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.WARNING, null, getClass(), null );
-        List<AuditEvent> events = new ArrayList<AuditEvent>();
+        List<AuditEvent> events = new ArrayList<>();
         events.add( new AuditEvent( this, "file2", message ) );
         events.add( new AuditEvent( this, "file2", message ) );
         files.put( "file2", events );
 
         message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.ERROR, null, getClass(), null );
-        events = new ArrayList<AuditEvent>();
+        events = new ArrayList<>();
         events.add( new AuditEvent( this, "file3", message ) );
         events.add( new AuditEvent( this, "file3", message ) );
         events.add( new AuditEvent( this, "file3", message ) );
         files.put( "file3", events );
 
         message = new LocalizedMessage( 0, 0, "", "", null, SeverityLevel.IGNORE, null, getClass(), null );
-        events = new ArrayList<AuditEvent>();
+        events = new ArrayList<>();
         events.add( new AuditEvent( this, "file4", message ) );
         events.add( new AuditEvent( this, "file4", message ) );
         events.add( new AuditEvent( this, "file4", message ) );

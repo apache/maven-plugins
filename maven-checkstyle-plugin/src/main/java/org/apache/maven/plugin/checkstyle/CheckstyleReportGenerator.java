@@ -340,7 +340,7 @@ public class CheckstyleReportGenerator
             sink.text( ruleName );
         }
 
-        List<String> attribnames = new ArrayList<String>( Arrays.asList( checkerConfig.getAttributeNames() ) );
+        List<String> attribnames = new ArrayList<>( Arrays.asList( checkerConfig.getAttributeNames() ) );
         attribnames.remove( "severity" ); // special value (deserves unique column)
         if ( !attribnames.isEmpty() )
         {
@@ -531,7 +531,7 @@ public class CheckstyleReportGenerator
         sink.tableRow_();
 
         // Sort the files before writing them to the report
-        List<String> fileList = new ArrayList<String>( results.getFiles().keySet() );
+        List<String> fileList = new ArrayList<>( results.getFiles().keySet() );
         Collections.sort( fileList );
 
         for ( String filename : fileList )
@@ -579,7 +579,7 @@ public class CheckstyleReportGenerator
         sink.sectionTitle1_();
 
         // Sort the files before writing their details to the report
-        List<String> fileList = new ArrayList<String>( results.getFiles().keySet() );
+        List<String> fileList = new ArrayList<>( results.getFiles().keySet() );
         Collections.sort( fileList );
 
         for ( String file : fileList )
@@ -777,7 +777,7 @@ public class CheckstyleReportGenerator
 
     public List<ConfReference> sortConfiguration( CheckstyleResults results )
     {
-        List<ConfReference> result = new ArrayList<ConfReference>();
+        List<ConfReference> result = new ArrayList<>();
 
         sortConfiguration( result, checkstyleConfig, null, results );
 
@@ -796,7 +796,7 @@ public class CheckstyleReportGenerator
             if ( treeWalkerNames.contains( ruleName ) )
             {
                 // special sub-case: TreeWalker is the parent of multiple rules, not an effective rule
-                sortConfiguration( result, childConfig, new ChainedItem<Configuration>( config, parent ), results );
+                sortConfiguration( result, childConfig, new ChainedItem<>( config, parent ), results );
             }
             else
             {

@@ -59,7 +59,7 @@ public class CheckstyleCheckerListener
      */
     public CheckstyleCheckerListener( File sourceDirectory )
     {
-        this.sourceDirectories = new ArrayList<File>();
+        this.sourceDirectories = new ArrayList<>();
         this.sourceDirectories.add( sourceDirectory );
     }
     /**
@@ -69,7 +69,7 @@ public class CheckstyleCheckerListener
      */
     public CheckstyleCheckerListener( File sourceDirectory, Configuration configuration )
     {
-        this.sourceDirectories = new ArrayList<File>();
+        this.sourceDirectories = new ArrayList<>();
         this.sourceDirectories.add( sourceDirectory );
         this.checkstyleConfiguration = configuration;
     }
@@ -80,7 +80,7 @@ public class CheckstyleCheckerListener
      */
     public CheckstyleCheckerListener( Configuration configuration )
     {
-        this.sourceDirectories = new ArrayList<File>();
+        this.sourceDirectories = new ArrayList<>();
         this.checkstyleConfiguration = configuration;
     }
 
@@ -141,7 +141,7 @@ public class CheckstyleCheckerListener
 
         if ( events == null )
         {
-            events = new ArrayList<AuditEvent>();
+            events = new ArrayList<>();
         }
     }
 

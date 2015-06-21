@@ -75,15 +75,7 @@ public class DefaultCheckstyleRssGenerator
         {
             throw new MavenReportException( "Unable to find checkstyle-rss.vm resource.", e );
         }
-        catch ( MojoExecutionException e )
-        {
-            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
-        }
-        catch ( VelocityException e )
-        {
-            throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
-        }
-        catch ( IOException e )
+        catch ( MojoExecutionException | IOException | VelocityException e )
         {
             throw new MavenReportException( "Unable to generate checkstyle.rss.", e );
         }

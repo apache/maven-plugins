@@ -120,23 +120,22 @@ public class DefaultCheckstyleExecutor
         Checker checker = new Checker();
 
         // setup classloader, needed to avoid "Unable to get class information for ..." errors
-        List<String> classPathStrings = new ArrayList<String>();
-        List<String> outputDirectories = new ArrayList<String>();
+        List<String> classPathStrings = new ArrayList<>();
+        List<String> outputDirectories = new ArrayList<>();
         
         // stand-alone
         Collection<File> sourceDirectories = null;
         Collection<File> testSourceDirectories = request.getTestSourceDirectories();
         
         // aggregator
-        Map<MavenProject, Collection<File>> sourceDirectoriesByProject = new HashMap<MavenProject, Collection<File>>();
-        Map<MavenProject, Collection<File>> testSourceDirectoriesByProject =
-            new HashMap<MavenProject, Collection<File>>();
+        Map<MavenProject, Collection<File>> sourceDirectoriesByProject = new HashMap<>();
+        Map<MavenProject, Collection<File>> testSourceDirectoriesByProject = new HashMap<>();
         
         if ( request.isAggregate() )
         {
             for ( MavenProject childProject : request.getReactorProjects() )
             {
-                sourceDirectories = new ArrayList<File>( childProject.getCompileSourceRoots().size() );
+                sourceDirectories = new ArrayList<>( childProject.getCompileSourceRoots().size() );
                 List<String> compileSourceRoots = childProject.getCompileSourceRoots();
                 for ( String compileSourceRoot : compileSourceRoots )
                 {
@@ -144,7 +143,7 @@ public class DefaultCheckstyleExecutor
                 }
                 sourceDirectoriesByProject.put( childProject, sourceDirectories );
                 
-                testSourceDirectories = new ArrayList<File>( childProject.getTestCompileSourceRoots().size() );
+                testSourceDirectories = new ArrayList<>( childProject.getTestCompileSourceRoots().size() );
                 List<String> testCompileSourceRoots = childProject.getTestCompileSourceRoots();
                 for ( String testCompileSourceRoot : testCompileSourceRoots )
                 {
@@ -163,7 +162,7 @@ public class DefaultCheckstyleExecutor
                                     testSourceDirectories );
         }
 
-        final List<URL> urls = new ArrayList<URL>( classPathStrings.size() );
+        final List<URL> urls = new ArrayList<>( classPathStrings.size() );
 
         for ( String path : classPathStrings )
         {
@@ -279,7 +278,7 @@ public class DefaultCheckstyleExecutor
 
         if ( nbErrors > 0 )
         {
-            StringBuffer message = new StringBuffer( "There " );
+            StringBuilder message = new StringBuilder( "There " );
             if ( nbErrors == 1 )
             {
                 message.append( "is" );
@@ -569,12 +568,7 @@ public class DefaultCheckstyleExecutor
                         p.setProperty( "checkstyle.header.file", headerFile.getAbsolutePath() );
                     }
                 }
-                catch ( FileResourceCreationException e )
-                {
-                    getLogger().debug( "Unable to process header location: " + headerLocation );
-                    getLogger().debug( "Checkstyle will throw exception if ${checkstyle.header.file} is used" );
-                }
-                catch ( ResourceNotFoundException e )
+                catch ( FileResourceCreationException | ResourceNotFoundException e )
                 {
                     getLogger().debug( "Unable to process header location: " + headerLocation );
                     getLogger().debug( "Checkstyle will throw exception if ${checkstyle.header.file} is used" );
@@ -586,15 +580,7 @@ public class DefaultCheckstyleExecutor
                 p.setProperty( "checkstyle.cache.file", request.getCacheFile() );
             }
         }
-        catch ( IOException e )
-        {
-            throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
-        }
-        catch ( FileResourceCreationException e )
-        {
-            throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
-        }
-        catch ( ResourceNotFoundException e )
+        catch ( IOException | ResourceNotFoundException | FileResourceCreationException e )
         {
             throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
         }
@@ -632,12 +618,12 @@ public class DefaultCheckstyleExecutor
             excludesStr.append( defaultExclude );
         }
 
-        Set<File> files = new LinkedHashSet<File>();
+        Set<File> files = new LinkedHashSet<>();
         if ( request.isAggregate() )
         {
             for ( MavenProject project : request.getReactorProjects() )
             {
-                Set<File> sourceDirectories = new LinkedHashSet<File>();
+                Set<File> sourceDirectories = new LinkedHashSet<>();
                 
                 // CompileSourceRoots are absolute paths
                 List<String> compileSourceRoots = project.getCompileSourceRoots(); 
@@ -646,7 +632,7 @@ public class DefaultCheckstyleExecutor
                     sourceDirectories.add( new File( compileSourceRoot ) );
                 }
 
-                Set<File> testSourceDirectories = new LinkedHashSet<File>();
+                Set<File> testSourceDirectories = new LinkedHashSet<>();
                 // CompileSourceRoots are absolute paths
                 List<String> testCompileSourceRoots = project.getTestCompileSourceRoots(); 
                 for ( String testCompileSourceRoot : testCompileSourceRoots )
@@ -667,7 +653,7 @@ public class DefaultCheckstyleExecutor
 
         getLogger().debug( "Added " + files.size() + " files to process." );
 
-        return new ArrayList<File>( files );
+        return new ArrayList<>( files );
     }
 
     private void addFilesToProcess( CheckstyleExecutorRequest request, Collection<File> sourceDirectories,
