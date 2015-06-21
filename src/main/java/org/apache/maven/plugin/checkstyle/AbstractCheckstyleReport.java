@@ -517,7 +517,7 @@ public abstract class AbstractCheckstyleReport
             plugin = mojoExecution.getMojoDescriptor().getPluginDescriptor();
         }
         
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
 
         PluginManagement pluginManagement = project.getBuild().getPluginManagement();
         if ( pluginManagement != null )
@@ -532,7 +532,7 @@ public abstract class AbstractCheckstyleReport
 
     private List<Artifact> getCheckstylePluginDependenciesAsArtifacts( Map<String, Plugin> plugins, String hint )
     {
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
         
         Plugin checkstylePlugin = plugins.get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
         if ( checkstylePlugin != null )
@@ -732,7 +732,7 @@ public abstract class AbstractCheckstyleReport
         }
         else
         {
-            sourceDirs = new ArrayList<File>( sourceDirectories.size() );
+            sourceDirs = new ArrayList<>( sourceDirectories.size() );
             for ( String sourceDir : sourceDirectories )
             {
                 sourceDirs.add( FileUtils.resolveFile( project.getBasedir(), sourceDir ) );
@@ -753,7 +753,7 @@ public abstract class AbstractCheckstyleReport
         // probably null-check only required due to MavenProjectStubs
         else if ( testSourceDirectories != null )
         {
-            testSourceDirs = new ArrayList<File>( testSourceDirectories.size() );
+            testSourceDirs = new ArrayList<>( testSourceDirectories.size() );
             for ( String testSourceDir : testSourceDirectories )
             {
                 testSourceDirs.add( FileUtils.resolveFile( project.getBasedir(), testSourceDir ) );

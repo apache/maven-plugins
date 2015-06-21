@@ -48,7 +48,7 @@ public class MinMavenProjectStub
     public List<String> getTestClasspathElements()
         throws DependencyResolutionRequiredException
     {
-        List<String> list = new ArrayList<String>( getCompileClasspathElements() );
+        List<String> list = new ArrayList<>( getCompileClasspathElements() );
         list.add( PlexusTestCase.getBasedir() + "/target/test-classes" );
         return list;
     }

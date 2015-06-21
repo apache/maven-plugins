@@ -108,11 +108,7 @@ public class VelocityTemplate
         {
             throw new ResourceNotFoundException( "Template not found: " + templateDirectory + "/" + template, e );
         }
-        catch ( VelocityException e )
-        {
-            throw e; // to get past generic catch for Exception.
-        }
-        catch ( IOException e )
+        catch ( VelocityException | IOException e )
         {
             throw e; // to get past generic catch for Exception.
         }

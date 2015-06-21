@@ -584,12 +584,7 @@ public class CheckstyleViolationCheckMojo
                 getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
             }
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
-                                              e );
-        }
-        catch ( XmlPullParserException e )
+        catch ( IOException | XmlPullParserException e )
         {
             throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
                                               e );
@@ -803,7 +798,7 @@ public class CheckstyleViolationCheckMojo
             plugin = mojoExecution.getMojoDescriptor().getPluginDescriptor();
         }
         
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
 
         PluginManagement pluginManagement = project.getBuild().getPluginManagement();
         if ( pluginManagement != null )
@@ -818,7 +813,7 @@ public class CheckstyleViolationCheckMojo
 
     private List<Artifact> getCheckstylePluginDependenciesAsArtifacts( Map<String, Plugin> plugins, String hint )
     {
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
         
         Plugin checkstylePlugin = plugins.get( plugin.getGroupId() + ":" + plugin.getArtifactId() );
         if ( checkstylePlugin != null )
@@ -843,7 +838,7 @@ public class CheckstyleViolationCheckMojo
         }
         else
         {
-            sourceDirs = new ArrayList<File>( sourceDirectories.size() );
+            sourceDirs = new ArrayList<>( sourceDirectories.size() );
             for ( String sourceDir : sourceDirectories )
             {
                 sourceDirs.add( FileUtils.resolveFile( project.getBasedir(), sourceDir ) );
@@ -864,7 +859,7 @@ public class CheckstyleViolationCheckMojo
         // probably null-check only required due to MavenProjectStubs
         else if ( testSourceDirectories != null )
         {
-            testSourceDirs = new ArrayList<File>( testSourceDirectories.size() );
+            testSourceDirs = new ArrayList<>( testSourceDirectories.size() );
             for ( String testSourceDir : testSourceDirectories )
             {
                 testSourceDirs.add( FileUtils.resolveFile( project.getBasedir(), testSourceDir ) );

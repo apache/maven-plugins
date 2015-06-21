@@ -43,7 +43,7 @@ public class CheckstyleResults
 
     public CheckstyleResults()
     {
-        files = new HashMap<String, List<AuditEvent>>();
+        files = new HashMap<>();
     }
 
     public List<AuditEvent> getFileViolations( String file )
@@ -56,7 +56,7 @@ public class CheckstyleResults
         }
         else
         {
-            violations = new LinkedList<AuditEvent>();
+            violations = new LinkedList<>();
             if ( file != null )
             {
                 this.files.put( file, violations );

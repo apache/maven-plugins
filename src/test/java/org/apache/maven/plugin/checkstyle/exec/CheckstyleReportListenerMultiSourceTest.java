@@ -46,7 +46,7 @@ public class CheckstyleReportListenerMultiSourceTest
     protected void setUp()
         throws Exception
     {
-        listenerMap = new HashMap<SeverityLevel, CheckstyleCheckerListener>();
+        listenerMap = new HashMap<>();
 
         CheckstyleCheckerListener listener = new CheckstyleCheckerListener( new File( "/source/path" ) );
         listener.addSourceDirectory( new File( "/source/path2" ) );
