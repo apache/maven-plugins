@@ -159,7 +159,6 @@ public class ResolvePluginsMojo
      * @throws ArtifactNotFoundException
      * @throws ArtifactFilterException 
      */
-    @SuppressWarnings( "unchecked" )
     protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactResolutionException, ArtifactNotFoundException, ArtifactFilterException
     {

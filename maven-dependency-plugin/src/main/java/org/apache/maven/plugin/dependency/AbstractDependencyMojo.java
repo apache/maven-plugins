@@ -28,7 +28,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -67,12 +66,6 @@ public abstract class AbstractDependencyMojo
      */
     @Component
     protected ArtifactResolver resolver;
-
-    /**
-     * Artifact collector, needed to resolve dependencies.
-     */
-    @Component( role = ArtifactCollector.class )
-    protected ArtifactCollector artifactCollector;
 
     /**
      *
@@ -429,22 +422,6 @@ public abstract class AbstractDependencyMojo
     public void setArchiverManager( ArchiverManager archiverManager )
     {
         this.archiverManager = archiverManager;
-    }
-
-    /**
-     * @return Returns the artifactCollector.
-     */
-    public ArtifactCollector getArtifactCollector()
-    {
-        return this.artifactCollector;
-    }
-
-    /**
-     * @param theArtifactCollector The artifactCollector to set.
-     */
-    public void setArtifactCollector( ArtifactCollector theArtifactCollector )
-    {
-        this.artifactCollector = theArtifactCollector;
     }
 
     /**
