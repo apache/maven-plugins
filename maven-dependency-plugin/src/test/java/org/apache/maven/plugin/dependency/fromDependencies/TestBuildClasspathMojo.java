@@ -77,7 +77,7 @@ public class TestBuildClasspathMojo
             // expected to catch this.
         }
 
-        mojo.setCpFile( new File( testDir, "buildClasspath.txt" ) );
+        mojo.setOutputFile( new File( testDir, "buildClasspath.txt" ) );
         mojo.execute();
 
         file = mojo.readClasspathFile();
