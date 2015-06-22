@@ -44,6 +44,7 @@ public class UnpackFileMarkerHandler
         setArtifactItem( artifactItem );
     }
 
+    @Override
     protected File getMarkerFile()
     {
         /**

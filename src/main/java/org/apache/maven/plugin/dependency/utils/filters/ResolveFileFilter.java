@@ -37,6 +37,7 @@ public class ResolveFileFilter
         super( true, true, true, handler );
     }
 
+    @Override
     public boolean isArtifactIncluded( ArtifactItem item )
         throws ArtifactFilterException
     {

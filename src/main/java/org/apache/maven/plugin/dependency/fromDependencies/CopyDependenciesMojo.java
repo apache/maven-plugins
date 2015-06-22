@@ -116,6 +116,7 @@ public class CopyDependenciesMojo
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException
     {
@@ -318,6 +319,7 @@ public class CopyDependenciesMojo
         return pomArtifact;
     }
 
+    @Override
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return new DestFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,

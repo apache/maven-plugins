@@ -91,12 +91,13 @@ public class DestFileFilter
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
-    public Set filter( Set artifacts )
+    @Override
+    public Set<Artifact> filter( Set<Artifact> artifacts )
         throws ArtifactFilterException
     {
         Set<Artifact> result = new HashSet<Artifact>();
         
-        for ( Artifact artifact : (Set<Artifact>) artifacts )
+        for ( Artifact artifact : artifacts )
         {
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
             {
@@ -261,6 +262,7 @@ public class DestFileFilter
         this.useRepositoryLayout = useRepositoryLayout;
     }
 
+    @Override
     public boolean isArtifactIncluded( ArtifactItem item )
     {
         Artifact artifact = item.getArtifact();

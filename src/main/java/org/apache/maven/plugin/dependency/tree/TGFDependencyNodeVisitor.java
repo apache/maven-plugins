@@ -79,6 +79,7 @@ public class TGFDependencyNodeVisitor
         /**
          * build a string representing the edge.
          */
+        @Override
         public String toString()
         {
             StringBuilder result = new StringBuilder( generateId( from ) );
@@ -110,6 +111,7 @@ public class TGFDependencyNodeVisitor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean endVisit( DependencyNode node )
     {
         if ( node.getParent() == null || node.getParent() == node )
@@ -133,6 +135,7 @@ public class TGFDependencyNodeVisitor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean visit( DependencyNode node )
     {
         // write node

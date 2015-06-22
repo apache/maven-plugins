@@ -69,6 +69,7 @@ public class DefaultFileMarkerHandler
      *          java.lang.SecurityManager#checkRead(java.lang.String)}</code>
      *             method denies read access to the file or directory
      */
+    @Override
     public boolean isMarkerSet()
         throws MojoExecutionException
     {
@@ -76,6 +77,7 @@ public class DefaultFileMarkerHandler
         return marker.exists();
     }
 
+    @Override
     public boolean isMarkerOlder( Artifact artifact1 )
         throws MojoExecutionException
     {
@@ -92,6 +94,7 @@ public class DefaultFileMarkerHandler
         }
     }
 
+    @Override
     public void setMarker()
         throws MojoExecutionException
     {
@@ -147,6 +150,7 @@ public class DefaultFileMarkerHandler
      *          java.lang.SecurityManager#checkDelete}</code>
      *             method denies delete access to the file
      */
+    @Override
     public boolean clearMarker()
         throws MojoExecutionException
     {
@@ -166,6 +170,7 @@ public class DefaultFileMarkerHandler
      * @param artifact
      *            The artifact to set.
      */
+    @Override
     public void setArtifact( Artifact artifact )
     {
         this.artifact = artifact;

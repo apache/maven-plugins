@@ -97,6 +97,7 @@ public class CopyMojo
      * @see #getArtifactItems
      * @see #copyArtifact(ArtifactItem)
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -134,6 +135,7 @@ public class CopyMojo
         copyFile( artifactItem.getArtifact().getFile(), destFile );
     }
 
+    @Override
     protected ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
         ArtifactItemFilter destinationNameOverrideFilter =

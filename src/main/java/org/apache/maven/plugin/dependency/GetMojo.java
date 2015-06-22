@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Resolves a single artifact, eventually transitively, from the specified remote repositories.
- * Caveat: will always check thecentral repository defined in the super pom. You could use a mirror entry in your
+ * Caveat: will always check the central repository defined in the super pom. You could use a mirror entry in your
  * <code>settings.xml</code>
  */
 @Mojo( name = "get", requiresProject = false, threadSafe = true )
@@ -127,7 +127,7 @@ public class GetMojo
     private String remoteRepositories;
 
     /**
-     * A string of the form groupId:artifactId:version[:packaging][:classifier].
+     * A string of the form groupId:artifactId:version[:packaging[:classifier]].
      */
     @Parameter( property = "artifact" )
     private String artifact;
@@ -152,6 +152,7 @@ public class GetMojo
     @Parameter( property = "mdep.skip", defaultValue = "false" )
     private boolean skip;
 
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -172,7 +173,7 @@ public class GetMojo
             if ( tokens.length < 3 || tokens.length > 5 )
             {
                 throw new MojoFailureException(
-                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging][:classifier] "
+                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging[:classifier]] "
                         + artifact );
             }
             groupId = tokens[0];

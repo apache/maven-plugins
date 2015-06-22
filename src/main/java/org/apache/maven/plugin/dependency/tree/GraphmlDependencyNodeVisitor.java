@@ -68,6 +68,7 @@ public class GraphmlDependencyNodeVisitor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean endVisit( DependencyNode node )
     {
         if ( node.getParent() == null || node.getParent() == node )
@@ -92,6 +93,7 @@ public class GraphmlDependencyNodeVisitor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean visit( DependencyNode node )
     {
         if ( node.getParent() == null || node.getParent() == node )

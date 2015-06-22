@@ -107,6 +107,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -165,6 +166,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputName()
      */
+    @Override
     public String getOutputName()
     {
         return "dependency-analysis";
@@ -173,6 +175,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.reporting.AbstractMavenReport#getName(java.util.Locale)
      */
+    @Override
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "analyze.report.name" );
@@ -181,6 +184,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.reporting.AbstractMavenReport#getDescription(java.util.Locale)
      */
+    @Override
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "analyze.report.description" );
@@ -191,6 +195,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
      */
+    @Override
     protected MavenProject getProject()
     {
         return project;
@@ -199,6 +204,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
      */
+    @Override
     protected String getOutputDirectory()
     {
         getLog().info( outputDirectory.toString() );
@@ -209,6 +215,7 @@ public class AnalyzeReportMojo
     /*
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
+    @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;

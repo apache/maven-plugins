@@ -232,6 +232,7 @@ public abstract class AbstractAnalyzeMojo
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -282,6 +283,7 @@ public abstract class AbstractAnalyzeMojo
         }
     }
 
+    @Override
     public void contextualize( Context context )
         throws ContextException
     {

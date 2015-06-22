@@ -64,6 +64,7 @@ public class PropertiesMojo
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
+    @Override
     public void execute()
         throws MojoExecutionException
     {
@@ -73,7 +74,7 @@ public class PropertiesMojo
             return;
         }
 
-        @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = getProject().getArtifacts();
+        Set<Artifact> artifacts = getProject().getArtifacts();
 
         for ( Artifact artifact : artifacts )
         {

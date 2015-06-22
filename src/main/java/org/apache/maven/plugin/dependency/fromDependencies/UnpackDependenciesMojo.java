@@ -77,6 +77,7 @@ public class UnpackDependenciesMojo
      * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
      *      Log)
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException
     {
@@ -99,6 +100,7 @@ public class UnpackDependenciesMojo
         }
     }
 
+    @Override
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return new MarkerFileFilter( this.overWriteReleases, this.overWriteSnapshots, this.overWriteIfNewer,
