@@ -81,17 +81,6 @@ public class BuildClasspathMojo
     private String prefix;
 
     /**
-     * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
-     * This parameter is deprecated. Use outputFile instead.
-     *
-     * @since 2.0
-     * @deprecated use outputFile instead
-     */
-    @Deprecated
-    @Parameter( property = "mdep.cpFile" )
-    private File cpFile;
-
-    /**
      * A property to set to the content of the classpath string.
      */
     @Parameter( property = "mdep.outputProperty" )
@@ -145,7 +134,7 @@ public class BuildClasspathMojo
      * @since 2.0
      */
     @Parameter( defaultValue = "false" )
-    boolean attach;
+    private boolean attach;
 
     /**
      * Write out the classpath in a format compatible with filtering (classpath=xxxxx)
@@ -153,7 +142,7 @@ public class BuildClasspathMojo
      * @since 2.0
      */
     @Parameter( property = "mdep.outputFilterFile", defaultValue = "false" )
-    boolean outputFilterFile;
+    private boolean outputFilterFile;
 
     /**
      * Either append the artifact's baseVersion or uniqueVersion to the filename.
@@ -161,29 +150,13 @@ public class BuildClasspathMojo
      * @since 2.6
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
-    protected boolean useBaseVersion = true;
+    private boolean useBaseVersion = true;
 
     /**
      * Maven ProjectHelper
      */
     @Component
     private MavenProjectHelper projectHelper;
-
-    /**
-     * <i>not used in this goal</i>
-     */
-    @Parameter
-    protected boolean useJvmChmod = true;
-
-    /**
-     * <i>not used in this goal</i>
-     */
-    @Parameter
-    protected boolean ignorePermissions;
-
-    boolean isFileSepSet = true;
-
-    boolean isPathSepSet = true;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
@@ -196,16 +169,9 @@ public class BuildClasspathMojo
     protected void doExecute()
         throws MojoExecutionException
     {
-
-        if ( cpFile != null )
-        {
-            getLog().warn( "The parameter cpFile is deprecated. Use outputFile instead." );
-            this.outputFile = cpFile;
-        }
-
         // initialize the separators.
-        isFileSepSet = StringUtils.isNotEmpty( fileSeparator );
-        isPathSepSet = StringUtils.isNotEmpty( pathSeparator );
+        boolean isFileSepSet = StringUtils.isNotEmpty( fileSeparator );
+        boolean isPathSepSet = StringUtils.isNotEmpty( pathSeparator );
 
         //don't allow them to have absolute paths when they attach.
         if ( attach && StringUtils.isEmpty( localRepoProperty ) )
@@ -451,43 +417,19 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @return the outputFile
-     */
-    public File getCpFile()
-    {
-        return this.outputFile;
-    }
-
-    /**
      * @param theCpFile the outputFile to set
      */
-    public void setCpFile( File theCpFile )
+    public void setOutputFile( File outputFile )
     {
-        this.outputFile = theCpFile;
+        this.outputFile = outputFile;
     }
-
-    /**
-     * @return the outputProperty
-     */
-    public String getOutputProperty()
-    {
-        return this.outputProperty;
-    }
-
+    
     /**
      * @param theOutputProperty the outputProperty to set
      */
     public void setOutputProperty( String theOutputProperty )
     {
         this.outputProperty = theOutputProperty;
-    }
-
-    /**
-     * @return the fileSeparator
-     */
-    public String getFileSeparator()
-    {
-        return this.fileSeparator;
     }
 
     /**
@@ -499,14 +441,6 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @return the pathSeparator
-     */
-    public String getPathSeparator()
-    {
-        return this.pathSeparator;
-    }
-
-    /**
      * @param thePathSeparator the pathSeparator to set
      */
     public void setPathSeparator( String thePathSeparator )
@@ -515,27 +449,11 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @return the prefix
-     */
-    public String getPrefix()
-    {
-        return this.prefix;
-    }
-
-    /**
      * @param thePrefix the prefix to set
      */
     public void setPrefix( String thePrefix )
     {
         this.prefix = thePrefix;
-    }
-
-    /**
-     * @return the regenerateFile
-     */
-    public boolean isRegenerateFile()
-    {
-        return this.regenerateFile;
     }
 
     /**
@@ -562,33 +480,8 @@ public class BuildClasspathMojo
         this.stripVersion = theStripVersion;
     }
 
-    public String getLocalRepoProperty()
-    {
-        return localRepoProperty;
-    }
-
     public void setLocalRepoProperty( String localRepoProperty )
     {
         this.localRepoProperty = localRepoProperty;
-    }
-
-    public boolean isFileSepSet()
-    {
-        return isFileSepSet;
-    }
-
-    public void setFileSepSet( boolean isFileSepSet )
-    {
-        this.isFileSepSet = isFileSepSet;
-    }
-
-    public boolean isPathSepSet()
-    {
-        return isPathSepSet;
-    }
-
-    public void setPathSepSet( boolean isPathSepSet )
-    {
-        this.isPathSepSet = isPathSepSet;
     }
 }
