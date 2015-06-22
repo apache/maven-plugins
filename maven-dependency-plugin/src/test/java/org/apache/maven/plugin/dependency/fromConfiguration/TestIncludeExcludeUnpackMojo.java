@@ -19,21 +19,18 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * under the License.    
  */
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
-import org.apache.maven.plugin.dependency.fromConfiguration.UnpackMojo;
-import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
-import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
-import org.apache.maven.plugin.testing.stubs.StubArtifactCollector;
-import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
+import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
+import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
+import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 public class TestIncludeExcludeUnpackMojo
     extends AbstractDependencyMojoTestCase
