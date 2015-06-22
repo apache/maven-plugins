@@ -128,22 +128,36 @@ under the License.
     </profile>
 
     <profile>
-      <id>maven-3</id>
+      <id>maven-3_jdk5</id>
       <activation>
         <file>
           <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
           <exists>${basedir}</exists>
         </file>
+        <jdk>[1.5,)</jdk>
       </activation>
       <modules>
         <!--Moved to maven-3 profile as a workaround for MNG-3814 -->
-        <module>maven-assembly-plugin</module>
-        <module>maven-dependency-plugin</module>
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
         <!--Moved to maven-3 profile as they require Maven 3.0 -->
         <module>maven-shade-plugin</module>
         <module>maven-scm-publish-plugin</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>maven-3_jdk6</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+        <jdk>[1.6,)</jdk>
+      </activation>
+      <modules>
+        <module>maven-assembly-plugin</module>
+        <module>maven-dependency-plugin</module>
       </modules>
     </profile>
     
