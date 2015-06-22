@@ -76,7 +76,6 @@ public class TestUnpackMojo
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
-        mojo.setArtifactCollector( new StubArtifactCollector() );
         mojo.setUseJvmChmod( true );
     }
 

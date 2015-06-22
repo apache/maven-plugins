@@ -21,12 +21,14 @@ package org.apache.maven.plugin.dependency.resolvers;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ResolutionListener;
 import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
@@ -47,6 +49,12 @@ import java.util.Set;
 public class ListRepositoriesMojo
     extends AbstractDependencyMojo
 {
+    /**
+     * Artifact collector, needed to resolve dependencies.
+     */
+    @Component( role = ArtifactCollector.class )
+    private ArtifactCollector artifactCollector;
+
     /**
      * Displays a list of the repositories used by this build.
      *
@@ -80,5 +88,22 @@ public class ListRepositoriesMojo
         {
             throw new MojoExecutionException( "Unable to resolve artifacts", e );
         }
+    }
+    
+
+    /**
+     * @return Returns the artifactCollector.
+     */
+    public ArtifactCollector getArtifactCollector()
+    {
+        return this.artifactCollector;
+    }
+
+    /**
+     * @param theArtifactCollector The artifactCollector to set.
+     */
+    public void setArtifactCollector( ArtifactCollector theArtifactCollector )
+    {
+        this.artifactCollector = theArtifactCollector;
     }
 }

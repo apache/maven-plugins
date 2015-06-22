@@ -76,7 +76,6 @@ public class TestIncludeExcludeUnpackMojo
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
-        mojo.setArtifactCollector( new StubArtifactCollector() );
         mojo.setArtifactItems( list );
     }
 
