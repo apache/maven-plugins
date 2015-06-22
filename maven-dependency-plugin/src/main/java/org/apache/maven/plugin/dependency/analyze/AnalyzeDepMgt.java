@@ -90,6 +90,7 @@ public class AnalyzeDepMgt
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -149,7 +150,7 @@ public class AnalyzeDepMgt
             }
 
             // get dependencies for the project (including transitive)
-            @SuppressWarnings( "unchecked" ) Set<Artifact> allDependencyArtifacts =
+            Set<Artifact> allDependencyArtifacts =
                 new HashSet<Artifact>( project.getArtifacts() );
 
             // don't warn if a dependency that is directly listed overrides
@@ -157,7 +158,7 @@ public class AnalyzeDepMgt
             if ( this.ignoreDirect )
             {
                 getLog().info( "\tIgnoring Direct Dependencies." );
-                @SuppressWarnings( "unchecked" ) Set<Artifact> directDependencies = project.getDependencyArtifacts();
+                Set<Artifact> directDependencies = project.getDependencyArtifacts();
                 allDependencyArtifacts.removeAll( directDependencies );
             }
 

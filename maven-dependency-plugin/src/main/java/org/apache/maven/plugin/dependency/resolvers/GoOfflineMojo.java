@@ -49,10 +49,11 @@ public class GoOfflineMojo
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" ) Set<Artifact> artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         if ( !silent )
         {
@@ -63,6 +64,7 @@ public class GoOfflineMojo
         }
     }
 
+    @Override
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return null;

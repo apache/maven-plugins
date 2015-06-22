@@ -229,6 +229,7 @@ public class PurgeLocalRepositoryMojo
             this.directDependencyArtifacts = directDependencyArtifacts;
         }
 
+        @Override
         public boolean include( Artifact artifact )
         {
             if ( artifactsGAMatch( artifact, projectArtifact ) )
@@ -275,6 +276,7 @@ public class PurgeLocalRepositoryMojo
     private class SystemScopeExcludeFilter
         implements ArtifactFilter
     {
+        @Override
         public boolean include( Artifact artifact )
         {
             return !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() );
@@ -287,12 +289,14 @@ public class PurgeLocalRepositoryMojo
     private class SnapshotsFilter
         implements ArtifactFilter
     {
+        @Override
         public boolean include( Artifact artifact )
         {
             return artifact.isSnapshot();
         }
     }
 
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -502,7 +506,6 @@ public class PurgeLocalRepositoryMojo
                 resolver.resolveTransitively( artifacts, project.getArtifact(), localRepository, remoteRepositories,
                                               metadataSource, filter );
 
-            @SuppressWarnings( "unchecked" )
             Set<Artifact> resolvedArtifacts = result.getArtifacts();
 
             return resolvedArtifacts;

@@ -67,6 +67,7 @@ public class AnalyzeDuplicateMojo
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

@@ -51,6 +51,7 @@ public class SourcesFileMarkerHandler
      * 
      * @return File object for marker. The file is not guaranteed to exist.
      */
+    @Override
     public File getMarkerFile()
     {
         return getMarkerFile( this.resolved );
@@ -90,6 +91,7 @@ public class SourcesFileMarkerHandler
      *          java.lang.SecurityManager#checkRead(java.lang.String)}</code>
      *             method denies read access to the file or directory
      */
+    @Override
     public boolean isMarkerSet()
         throws MojoExecutionException
     {
@@ -100,6 +102,7 @@ public class SourcesFileMarkerHandler
         return marker.exists() || marker2.exists();
     }
 
+    @Override
     public boolean isMarkerOlder( Artifact theArtifact )
         throws MojoExecutionException
     {
@@ -124,6 +127,7 @@ public class SourcesFileMarkerHandler
         }
     }
 
+    @Override
     public void setMarker()
         throws MojoExecutionException
     {
@@ -169,6 +173,7 @@ public class SourcesFileMarkerHandler
      *          java.lang.SecurityManager#checkDelete}</code>
      *             method denies delete access to the file
      */
+    @Override
     public boolean clearMarker()
         throws MojoExecutionException
     {

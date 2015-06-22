@@ -93,6 +93,7 @@ public class TreeMojo
      *
      * @deprecated use outputFile instead.
      */
+    @Deprecated
     @Parameter( property = "output" )
     private File output;
 
@@ -214,6 +215,7 @@ public class TreeMojo
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

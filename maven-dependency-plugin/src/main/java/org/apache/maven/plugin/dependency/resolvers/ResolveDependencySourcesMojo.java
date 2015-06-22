@@ -46,6 +46,7 @@ public class ResolveDependencySourcesMojo
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException
     {

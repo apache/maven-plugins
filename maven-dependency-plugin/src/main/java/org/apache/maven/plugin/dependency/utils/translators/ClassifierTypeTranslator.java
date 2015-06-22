@@ -54,6 +54,7 @@ public class ClassifierTypeTranslator
      * @see org.apache.mojo.dependency.utils.translators.ArtifactTranslator#translate(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
+    @Override
     public Set<Artifact> translate( Set<Artifact> artifacts, Log log )
     {
         Set<Artifact> results;

@@ -80,6 +80,7 @@ public class ResolveDependenciesMojo
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException
     {
@@ -112,6 +113,7 @@ public class ResolveDependenciesMojo
         return this.results;
     }
 
+    @Override
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return new ResolveFileFilter( new SourcesFileMarkerHandler( this.markersDirectory ) );

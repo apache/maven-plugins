@@ -19,6 +19,10 @@ package org.apache.maven.plugin.dependency.fromConfiguration;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -37,11 +41,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Abstract parent class used by mojos that get Artifact information from the plugin configuration as an ArrayList of
@@ -278,7 +277,7 @@ public abstract class AbstractFromConfigurationMojo
     private Artifact getArtifactFomReactor( Artifact artifact )
     {
         // check project dependencies first off
-        for ( Artifact a : (Set<Artifact>) project.getArtifacts() )
+        for ( Artifact a : project.getArtifacts() )
         {
             if ( equals( artifact, a ) && hasFile( a ) )
             {
@@ -296,7 +295,7 @@ public abstract class AbstractFromConfigurationMojo
             }
 
             // check any side artifacts
-            for ( Artifact a : (List<Artifact>) p.getAttachedArtifacts() )
+            for ( Artifact a : p.getAttachedArtifacts() )
             {
                 if ( equals( artifact, a ) && hasFile( a ) )
                 {
@@ -349,8 +348,8 @@ public abstract class AbstractFromConfigurationMojo
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" ) List<Dependency> deps = project.getDependencies();
-        @SuppressWarnings( "unchecked" ) List<Dependency> depMngt = project.getDependencyManagement() == null
+        List<Dependency> deps = project.getDependencies();
+        List<Dependency> depMngt = project.getDependencyManagement() == null
             ? Collections.<Dependency>emptyList()
             : project.getDependencyManagement().getDependencies();
 
@@ -409,6 +408,7 @@ public abstract class AbstractFromConfigurationMojo
      *
      * @return Returns the local.
      */
+    @Override
     protected ArtifactRepository getLocal()
     {
         if ( this.overrideLocalRepository != null )

@@ -61,6 +61,7 @@ public class DefaultArtifactsResolver
      * @see org.apache.mojo.dependency.utils.resolvers.ArtifactsResolver#resolve(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
+    @Override
     public Set<Artifact> resolve( Set<Artifact> artifacts, Log log )
         throws MojoExecutionException
     {

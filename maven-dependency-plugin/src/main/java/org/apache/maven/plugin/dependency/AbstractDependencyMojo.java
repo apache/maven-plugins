@@ -162,6 +162,7 @@ public abstract class AbstractDependencyMojo
     /*
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public final void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -183,6 +184,7 @@ public abstract class AbstractDependencyMojo
     /**
      * @return Returns the log.
      */
+    @Override
     public Log getLog()
     {
         if ( log == null )

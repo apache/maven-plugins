@@ -248,6 +248,7 @@ public class ArtifactItem
         this.classifier = filterEmptyString( classifier );
     }
 
+    @Override
     public String toString()
     {
         if ( this.classifier == null )

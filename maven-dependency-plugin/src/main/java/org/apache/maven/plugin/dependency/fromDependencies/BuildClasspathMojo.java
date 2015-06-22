@@ -87,6 +87,7 @@ public class BuildClasspathMojo
      * @since 2.0
      * @deprecated use outputFile instead
      */
+    @Deprecated
     @Parameter( property = "mdep.cpFile" )
     private File cpFile;
 
@@ -191,6 +192,7 @@ public class BuildClasspathMojo
      * @see #getDependencies
      * @see #copyArtifact(Artifact, boolean)
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException
     {
@@ -420,6 +422,7 @@ public class BuildClasspathMojo
      *         <code>0</code> if this string is lexicographically less than the string argument; and a value greater
      *         than <code>0</code> if this string is lexicographically greater than the string argument.
      */
+    @Override
     public int compare( Artifact art1, Artifact art2 )
     {
         if ( art1 == art2 )
@@ -441,6 +444,7 @@ public class BuildClasspathMojo
         return s1.compareTo( s2 );
     }
 
+    @Override
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return null;

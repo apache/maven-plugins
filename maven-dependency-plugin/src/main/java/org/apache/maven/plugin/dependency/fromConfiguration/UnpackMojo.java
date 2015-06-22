@@ -88,6 +88,7 @@ public class UnpackMojo
      * @see #getArtifactItems
      * @see #unpackArtifact(ArtifactItem)
      */
+    @Override
     protected void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -129,6 +130,7 @@ public class UnpackMojo
         handler.setMarker();
     }
 
+    @Override
     ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item )
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( item, this.markersDirectory );

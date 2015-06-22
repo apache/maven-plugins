@@ -50,6 +50,7 @@ public class DisplayAncestorsMojo
     @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
 
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
