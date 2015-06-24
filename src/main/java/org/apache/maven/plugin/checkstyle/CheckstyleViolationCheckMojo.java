@@ -168,6 +168,14 @@ public class CheckstyleViolationCheckMojo
      */
     @Parameter( defaultValue = "${project.resources}", readonly = true )
     protected List<Resource> resources;
+    
+    /**
+     * Specifies the location of the test resources to be used for Checkstyle.
+     *
+     * @since 2.16
+     */
+    @Parameter( defaultValue = "${project.testResources}", readonly = true )
+    protected List<Resource> testResources;
 
     /**
      * <p>
@@ -520,7 +528,7 @@ public class CheckstyleViolationCheckMojo
                     .setIncludeTestResources( includeTestResources )
                     .setIncludeTestSourceDirectory( includeTestSourceDirectory ).setListener( getListener() )
                     .setProject( project ).setSourceDirectories( getSourceDirectories() )
-                    .setResources( resources )
+                    .setResources( resources ).setTestResources( testResources )
                     .setStringOutputStream( stringOutputStream ).setSuppressionsLocation( suppressionsLocation )
                     .setTestSourceDirectories( getTestSourceDirectories() ).setConfigLocation( configLocation )
                     .setConfigurationArtifacts( collectArtifacts( "config" ) )
