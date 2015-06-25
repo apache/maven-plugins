@@ -42,7 +42,9 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
@@ -246,9 +248,14 @@ public class TreeMojo
                 getLog().info( "Verbose not supported since maven-dependency-plugin 3.0" );
             }
             
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            
+            buildingRequest.setProject( project );
+            
             // non-verbose mode use dependency graph component, which gives consistent results with Maven version
             // running
-            rootNode = dependencyGraphBuilder.buildDependencyGraph( project, artifactFilter );
+            rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, artifactFilter );
 
             dependencyTreeString = serializeDependencyTree( rootNode );
 
