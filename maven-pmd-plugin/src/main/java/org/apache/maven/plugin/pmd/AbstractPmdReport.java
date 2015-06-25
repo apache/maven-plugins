@@ -128,13 +128,13 @@ public abstract class AbstractPmdReport
     /**
      * The directories containing the sources to be compiled.
      */
-    @Parameter( property = "project.compileSourceRoots", required = true, readonly = true )
+    @Parameter( defaultValue = "${project.compileSourceRoots}" )
     private List<String> compileSourceRoots;
 
     /**
      * The directories containing the test-sources to be compiled.
      */
-    @Parameter( property = "project.testCompileSourceRoots", required = true, readonly = true )
+    @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
     private List<String> testSourceRoots;
 
     /**
