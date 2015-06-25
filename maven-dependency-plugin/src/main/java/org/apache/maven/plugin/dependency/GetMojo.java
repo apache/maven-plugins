@@ -39,6 +39,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -220,15 +222,20 @@ public class GetMojo
 
         try
         {
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            
+            buildingRequest.setRemoteRepositories( repoList );
+            
             if ( transitive )
             {
                 getLog().info( "Resolving " + toDownload + " with transitive dependencies" );
-                artifactResolver.resolveTransitively( session.getProjectBuildingRequest(), toDownload,  repoList );
+                artifactResolver.resolveTransitively( buildingRequest, toDownload );
             }
             else
             {
                 getLog().info( "Resolving " + toDownload );
-                artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), toDownload,  repoList );
+                artifactResolver.resolveArtifact( buildingRequest, toDownload );
             }
         }
         catch ( ArtifactResolverException e )
