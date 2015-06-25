@@ -93,16 +93,6 @@ public class TreeMojo
      * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
      * writing to the console.
      *
-     * @deprecated use outputFile instead.
-     */
-    @Deprecated
-    @Parameter( property = "output" )
-    private File output;
-
-    /**
-     * If specified, this parameter will cause the dependency tree to be written to the path specified, instead of
-     * writing to the console.
-     *
      * @since 2.0-alpha-5
      */
     @Parameter( property = "outputFile" )
@@ -225,12 +215,6 @@ public class TreeMojo
         {
             getLog().info( "Skipping plugin execution" );
             return;
-        }
-
-        if ( output != null )
-        {
-            getLog().warn( "The parameter output is deprecated. Use outputFile instead." );
-            this.outputFile = output;
         }
 
         try
