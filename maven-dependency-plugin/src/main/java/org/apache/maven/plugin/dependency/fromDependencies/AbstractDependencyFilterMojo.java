@@ -37,9 +37,11 @@ import org.apache.maven.plugin.dependency.utils.translators.ArtifactTranslator;
 import org.apache.maven.plugin.dependency.utils.translators.ClassifierTypeTranslator;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -49,6 +51,7 @@ import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFilter;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -62,6 +65,9 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractDependencyFilterMojo
     extends AbstractDependencyMojo
 {
+    @Component
+    private ArtifactResolver artifactResolver;
+    
     /**
      * Overwrite release artifacts
      *
@@ -395,9 +401,14 @@ public abstract class AbstractDependencyFilterMojo
             // the unskipped artifacts are in the resolved set.
             artifacts = status.getResolvedDependencies();
 
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            buildingRequest.setLocalRepository( this.getLocal() );
+            buildingRequest.setRemoteRepositories( this.remoteRepos );
+            
             // resolve the rest of the artifacts
             ArtifactsResolver artifactsResolver =
-                new DefaultArtifactsResolver( this.resolver, this.getLocal(), this.remoteRepos, stopOnFailure );
+                new DefaultArtifactsResolver( this.artifactResolver, buildingRequest, stopOnFailure );
             resolvedArtifacts = artifactsResolver.resolve( artifacts, getLog() );
 
             // calculate the artifacts not resolved.
