@@ -20,16 +20,14 @@ package org.apache.maven.plugin.dependency.utils.resolvers;
  */
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -38,20 +36,16 @@ import org.apache.maven.plugin.logging.Log;
 public class DefaultArtifactsResolver
     implements ArtifactsResolver
 {
-    ArtifactResolver resolver;
+    private ArtifactResolver resolver;
 
-    ArtifactRepository local;
-
-    List<ArtifactRepository> remoteRepositories;
+    private ProjectBuildingRequest buildingRequest;
 
     boolean stopOnFailure;
 
-    public DefaultArtifactsResolver( ArtifactResolver theResolver, ArtifactRepository theLocal,
-                                    List<ArtifactRepository> theRemoteRepositories, boolean theStopOnFailure )
+    public DefaultArtifactsResolver( ArtifactResolver theResolver, ProjectBuildingRequest buildingRequest, boolean theStopOnFailure )
     {
         this.resolver = theResolver;
-        this.local = theLocal;
-        this.remoteRepositories = theRemoteRepositories;
+        this.buildingRequest = buildingRequest;
         this.stopOnFailure = theStopOnFailure;
     }
 
@@ -71,10 +65,10 @@ public class DefaultArtifactsResolver
         {
             try
             {
-                resolver.resolve( artifact, remoteRepositories, local );
+                artifact = resolver.resolveArtifact( buildingRequest, artifact );
                 resolvedArtifacts.add( artifact );
             }
-            catch ( ArtifactResolutionException ex )
+            catch ( ArtifactResolverException ex )
             {
                 // an error occurred during resolution, log it an continue
                 log.debug( "error resolving: " + artifact.getId() );
@@ -82,15 +76,6 @@ public class DefaultArtifactsResolver
                 if ( stopOnFailure )
                 {
                     throw new MojoExecutionException( "error resolving: " + artifact.getId(), ex );
-                }
-            }
-            catch ( ArtifactNotFoundException ex )
-            {
-                // not found, log it and continue
-                log.debug( "not found in any repository: " + artifact.getId() );
-                if ( stopOnFailure )
-                {
-                    throw new MojoExecutionException( "not found in any repository: " + artifact.getId(), ex );
                 }
             }
         }
