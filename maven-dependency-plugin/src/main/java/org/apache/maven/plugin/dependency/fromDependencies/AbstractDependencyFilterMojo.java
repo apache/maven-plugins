@@ -25,8 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
@@ -52,6 +50,7 @@ import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFil
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -353,20 +352,25 @@ public abstract class AbstractDependencyFilterMojo
         {
             project = project.getParent();
 
-            if ( !artifacts.add( project.getArtifact() ) )
+            if ( artifacts.contains( project.getArtifact() ) )
             {
                 // artifact already in the set
                 break;
             }
             try
             {
-                resolver.resolve( project.getArtifact(), this.remoteRepos, this.getLocal() );
+                ProjectBuildingRequest buildingRequest =
+                    new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+                
+                buildingRequest.setLocalRepository( this.getLocal() );
+                
+                buildingRequest.setRemoteRepositories( this.remoteRepos );
+                
+                Artifact resolvedArtifact = artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() );
+                
+                artifacts.add( resolvedArtifact );
             }
-            catch ( ArtifactResolutionException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-            catch ( ArtifactNotFoundException e )
+            catch ( ArtifactResolverException e )
             {
                 throw new MojoExecutionException( e.getMessage(), e );
             }
