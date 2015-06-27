@@ -34,12 +34,12 @@ import org.apache.maven.artifact.repository.metadata.Snapshot;
 import org.apache.maven.artifact.repository.metadata.SnapshotArtifactRepositoryMetadata;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
@@ -75,7 +75,10 @@ public class TestCopyDependenciesMojo2
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
         LegacySupport legacySupport = lookup( LegacySupport.class );
-        legacySupport.setSession( newMavenSession( new MavenProjectStub() ) );
+        MavenSession session = newMavenSession( project );
+        setVariableValueToObject( mojo, "session", session );
+        
+        legacySupport.setSession( session );
         DefaultRepositorySystemSession repoSession =
             (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( testDir.getAbsolutePath() ) );

@@ -34,7 +34,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -310,9 +313,16 @@ public class CopyDependenciesMojo
         // Resolve the pom artifact using repos
         try
         {
-            this.resolver.resolve( pomArtifact, this.remoteRepos, this.getLocal() );
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+
+            buildingRequest.setLocalRepository( this.getLocal() );
+            
+            buildingRequest.setRemoteRepositories( this.remoteRepos );
+            
+            pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact );
         }
-        catch ( Exception e )
+        catch ( ArtifactResolverException e )
         {
             getLog().info( e.getMessage() );
         }
