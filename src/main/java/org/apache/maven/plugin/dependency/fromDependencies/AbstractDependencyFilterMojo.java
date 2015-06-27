@@ -491,4 +491,9 @@ public abstract class AbstractDependencyFilterMojo
     {
         this.prependGroupId = prependGroupId;
     }
+    
+    protected final ArtifactResolver getArtifactResolver()
+    {
+        return artifactResolver;
+    }
 }

@@ -29,16 +29,18 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -128,10 +130,6 @@ public class ResolvePluginsMojo
         {
             throw new MojoExecutionException( "Nested:", e );
         }
-        catch ( final ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "Nested:", e );
-        }
         catch ( final ArtifactNotFoundException e )
         {
             throw new MojoExecutionException( "Nested:", e );
@@ -141,6 +139,10 @@ public class ResolvePluginsMojo
             throw new MojoExecutionException( "Nested:", e );
         }
         catch ( final ArtifactFilterException e )
+        {
+            throw new MojoExecutionException( "Nested:", e );
+        }
+        catch ( ArtifactResolverException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
@@ -155,12 +157,11 @@ public class ResolvePluginsMojo
      * This method resolves the plugin artifacts from the project.
      *
      * @return set of resolved plugin artifacts.
-     * @throws ArtifactResolutionException
-     * @throws ArtifactNotFoundException
      * @throws ArtifactFilterException 
+     * @throws ArtifactResolverException 
      */
     protected Set<Artifact> resolvePluginArtifacts()
-        throws ArtifactResolutionException, ArtifactNotFoundException, ArtifactFilterException
+        throws ArtifactFilterException, ArtifactResolverException
     {
         final Set<Artifact> plugins = project.getPluginArtifacts();
         final Set<Artifact> reports = project.getReportArtifacts();
@@ -189,8 +190,15 @@ public class ResolvePluginsMojo
             //     continue;
             // }
 
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            
+            buildingRequest.setLocalRepository( this.getLocal() );
+            
+            buildingRequest.setRemoteRepositories( this.remotePluginRepositories );
+            
             // resolve the new artifact
-            this.resolver.resolve( artifact, this.remotePluginRepositories, this.getLocal() );
+            getArtifactResolver().resolveArtifact( buildingRequest, artifact );
         }
         return artifacts;
     }
