@@ -19,25 +19,30 @@ package org.apache.maven.plugin.dependency.fromDependencies;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoFailureException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.LegacyLocalRepositoryManager;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.fromDependencies.CopyDependenciesMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
+import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.repository.LocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestCopyDependenciesMojo
     extends AbstractDependencyMojoTestCase
@@ -60,6 +65,23 @@ public class TestCopyDependenciesMojo
         assertNotNull( mojo.getProject() );
         MavenProject project = mojo.getProject();
 
+        MavenSession session = newMavenSession( project );
+        setVariableValueToObject( mojo, "session", session );
+
+        DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
+        
+        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
+            @Override
+            public String pathOf( Artifact artifact )
+            {
+                return ArtifactStubFactory.getFormattedFileName( artifact, false );
+            }
+        };
+        mojo.setLocal( repo );
+        RepositorySystem repoSystem = lookup( RepositorySystem.class );
+        
+        repoSession.setLocalRepositoryManager( LegacyLocalRepositoryManager.wrap( repo, repoSystem ) );
+        
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
@@ -437,11 +459,18 @@ public class TestCopyDependenciesMojo
     {
         mojo.classifier = testClassifier;
         mojo.type = testType;
+        
+        for( Artifact artifact : mojo.getProject().getArtifacts() )
+        {
+            String type = testType != null ? testType : artifact.getType();
+            
+            stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), artifact.getScope(), type, testClassifier );
+            
+        }
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
-        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         mojo.execute();
 

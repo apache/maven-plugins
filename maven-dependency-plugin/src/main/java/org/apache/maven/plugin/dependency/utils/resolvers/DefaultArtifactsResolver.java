@@ -42,7 +42,8 @@ public class DefaultArtifactsResolver
 
     boolean stopOnFailure;
 
-    public DefaultArtifactsResolver( ArtifactResolver theResolver, ProjectBuildingRequest buildingRequest, boolean theStopOnFailure )
+    public DefaultArtifactsResolver( ArtifactResolver theResolver, ProjectBuildingRequest buildingRequest,
+                                     boolean theStopOnFailure )
     {
         this.resolver = theResolver;
         this.buildingRequest = buildingRequest;
