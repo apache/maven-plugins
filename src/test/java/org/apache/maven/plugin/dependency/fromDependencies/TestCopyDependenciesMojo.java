@@ -794,6 +794,7 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> set = new HashSet<Artifact>();
         set.add( stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE ) );
+        stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE, "pom", null );
         mojo.getProject().setArtifacts( set );
         mojo.execute();
 
@@ -802,7 +803,7 @@ public class TestCopyDependenciesMojo
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName.substring( 0, fileName.length() - 4 ) + ".pom" );
-            assertTrue( file.exists() );
+            assertTrue( file + " doesn't exist", file.exists() );
         }
     }
     
