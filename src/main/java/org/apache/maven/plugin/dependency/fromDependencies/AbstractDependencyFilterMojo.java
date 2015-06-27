@@ -393,7 +393,8 @@ public abstract class AbstractDependencyFilterMojo
         // if this did something, we need to resolve the new artifacts
         if ( StringUtils.isNotEmpty( classifier ) )
         {
-            ArtifactTranslator translator = new ClassifierTypeTranslator( this.classifier, this.type, this.factory );
+            ArtifactTranslator translator =
+                new ClassifierTypeTranslator( this.classifier, this.type, this.factory, this.getLocal() );
             artifacts = translator.translate( artifacts, getLog() );
 
             status = filterMarkedDependencies( artifacts );

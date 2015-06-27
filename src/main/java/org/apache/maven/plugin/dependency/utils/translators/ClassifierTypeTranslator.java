@@ -19,11 +19,13 @@ package org.apache.maven.plugin.dependency.utils.translators;
  * under the License.
  */
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -40,12 +42,23 @@ public class ClassifierTypeTranslator
     private String type;
 
     private ArtifactFactory factory;
+    
+    private ArtifactRepository repository;
 
-    public ClassifierTypeTranslator( String theClassifier, String theType, ArtifactFactory theFactory )
+    /**
+     * 
+     * @param theClassifier
+     * @param theType
+     * @param theFactory
+     * @param theRepository required when using system scoped artifacts 
+     */
+    public ClassifierTypeTranslator( String theClassifier, String theType, ArtifactFactory theFactory,
+                                     ArtifactRepository theRepository )
     {
         this.classifier = theClassifier;
         this.type = theType;
         this.factory = theFactory;
+        this.repository = theRepository;
     }
 
     /*
@@ -94,6 +107,11 @@ public class ClassifierTypeTranslator
             // should
             // reset it here so that it will pass other filters if needed
             newArtifact.setScope( artifact.getScope() );
+            
+            if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
+            {
+                newArtifact.setFile( new File( repository.getBasedir(), repository.pathOf( newArtifact ) ) );
+            }
 
             results.add( newArtifact );
         }

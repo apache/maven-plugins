@@ -29,10 +29,12 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 
 /**
  * @author brianf
@@ -44,6 +46,8 @@ public class TestClassifierTypeTranslator
     Set<Artifact> artifacts = new HashSet<Artifact>();
 
     ArtifactFactory artifactFactory;
+    
+    ArtifactRepository artifactRepository;
 
     Log log = new SilentLog();
 
@@ -58,6 +62,8 @@ public class TestClassifierTypeTranslator
         artifactFactory = new DefaultArtifactFactory();
         this.setVariableValueToObject( artifactFactory, "artifactHandlerManager", manager );
 
+        artifactRepository = new StubArtifactRepository( null );
+        
         DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getMixedArtifacts();
     }
@@ -76,7 +82,7 @@ public class TestClassifierTypeTranslator
     {
         String type = "zip";
 
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
+        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, artifactRepository );
         Set<Artifact> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -116,7 +122,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "jdk5";
 
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
+        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, artifactRepository );
         Set<Artifact> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -146,7 +152,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "jdk14";
         String type = "sources";
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
+        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, artifactRepository );
         Set<Artifact> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -175,7 +181,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "class";
         String type = "type";
-        ClassifierTypeTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory );
+        ClassifierTypeTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, null );
 
         assertEquals( classifier, at.getClassifier() );
         assertEquals( type, at.getType() );
