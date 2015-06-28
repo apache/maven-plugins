@@ -22,7 +22,6 @@ package org.apache.maven.plugin.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
@@ -81,11 +80,6 @@ public abstract class AbstractDependencyMojoTestCase
         }
         
         stubFactory = null;
-    }
-
-    protected void setResolver( AbstractDependencyMojo mojo, ArtifactResolver resolver )
-    {
-        mojo.resolver = resolver;
     }
 
     protected void setSilent( AbstractDependencyMojo mojo, boolean silent )

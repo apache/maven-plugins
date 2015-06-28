@@ -19,7 +19,12 @@ package org.apache.maven.plugin.dependency.fromDependencies;
  * under the License.    
  */
 
-import org.apache.maven.plugin.MojoFailureException;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.LegacyLocalRepositoryManager;
@@ -27,25 +32,18 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.fromDependencies.UnpackDependenciesMojo;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class TestUnpackDependenciesMojo
     extends AbstractDependencyMojoTestCase
@@ -537,7 +535,6 @@ public class TestUnpackDependenciesMojo
         mojo.classifier = testClassifier;
         mojo.type = testType;
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
 
         for (Artifact artifact : mojo.getProject().getArtifacts())
         {
@@ -586,7 +583,6 @@ public class TestUnpackDependenciesMojo
         mojo.type = "java-sources";
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( null, are, anfe ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try

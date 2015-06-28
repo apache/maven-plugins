@@ -34,7 +34,6 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
@@ -78,7 +77,6 @@ public class TestIncludeExcludeUnpackMojo
         mojo.setArchiverManager( (ArchiverManager) lookup( ArchiverManager.ROLE ) );
 
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
         mojo.setArtifactItems( list );
         

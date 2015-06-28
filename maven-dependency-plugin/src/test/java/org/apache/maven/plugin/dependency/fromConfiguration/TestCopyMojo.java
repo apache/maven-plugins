@@ -34,7 +34,6 @@ import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
@@ -68,7 +67,6 @@ public class TestCopyMojo
         // MavenProject project = mojo.getProject();
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         
         MavenSession session = newMavenSession( mojo.getProject() );
         setVariableValueToObject( mojo, "session", session );
@@ -564,7 +562,6 @@ public class TestCopyMojo
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( null, are, anfe ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try

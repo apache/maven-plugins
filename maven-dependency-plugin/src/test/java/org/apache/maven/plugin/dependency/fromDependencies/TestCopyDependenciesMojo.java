@@ -37,11 +37,9 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.repository.LocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestCopyDependenciesMojo
@@ -470,7 +468,6 @@ public class TestCopyDependenciesMojo
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
 
         mojo.execute();
 
@@ -522,7 +519,6 @@ public class TestCopyDependenciesMojo
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        setResolver( mojo, new StubArtifactResolver( null, are, anfe ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
@@ -789,7 +785,6 @@ public class TestCopyDependenciesMojo
         throws Exception
     {
         mojo.setCopyPom( true );
-        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         Set<Artifact> set = new HashSet<Artifact>();

@@ -28,7 +28,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -60,12 +59,6 @@ public abstract class AbstractDependencyMojo
      */
     @Component
     protected ArtifactFactory factory;
-
-    /**
-     * Used to look up Artifacts in the remote repository.
-     */
-    @Component
-    protected ArtifactResolver resolver;
 
     /**
      *
@@ -398,22 +391,6 @@ public abstract class AbstractDependencyMojo
     public void setRemoteRepos( List<ArtifactRepository> remoteRepos )
     {
         this.remoteRepos = remoteRepos;
-    }
-
-    /**
-     * @return Returns the resolver.
-     */
-    public ArtifactResolver getResolver()
-    {
-        return this.resolver;
-    }
-
-    /**
-     * @param resolver The resolver to set.
-     */
-    public void setResolver( ArtifactResolver resolver )
-    {
-        this.resolver = resolver;
     }
 
     /**
