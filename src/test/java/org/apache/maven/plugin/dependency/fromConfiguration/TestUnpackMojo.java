@@ -40,7 +40,6 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
-import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
@@ -79,8 +78,6 @@ public class TestUnpackMojo
             + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
 
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
-        // mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
         mojo.setUseJvmChmod( true );
         
         MavenSession session = newMavenSession( mojo.getProject() );
@@ -404,7 +401,6 @@ public class TestUnpackMojo
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setResolver( new StubArtifactResolver( null, are, anfe ) );
         mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
