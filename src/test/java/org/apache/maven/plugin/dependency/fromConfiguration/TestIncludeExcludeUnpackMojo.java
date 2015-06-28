@@ -25,12 +25,19 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.LegacyLocalRepositoryManager;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
+import org.apache.maven.plugin.testing.ArtifactStubFactory;
+import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestIncludeExcludeUnpackMojo
     extends AbstractDependencyMojoTestCase
@@ -74,6 +81,23 @@ public class TestIncludeExcludeUnpackMojo
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
         mojo.setArtifactItems( list );
+        
+        MavenSession session = newMavenSession( mojo.getProject() );
+        setVariableValueToObject( mojo, "session", session );
+        
+        DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
+        
+        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
+            @Override
+            public String pathOf( Artifact artifact )
+            {
+                return ArtifactStubFactory.getFormattedFileName( artifact, false );
+            }
+        };
+        mojo.setLocal( repo );
+        RepositorySystem repoSystem = lookup( RepositorySystem.class );
+        
+        repoSession.setLocalRepositoryManager( LegacyLocalRepositoryManager.wrap( repo, repoSystem ) );
     }
 
     protected void tearDown()

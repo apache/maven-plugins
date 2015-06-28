@@ -20,18 +20,29 @@ package org.apache.maven.plugin.dependency.testUtils;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.dependency.fromConfiguration.ArtifactItem;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 
 public class DependencyArtifactStubFactory
     extends ArtifactStubFactory
 {
- 
+    private boolean flattenedPath = true;
+
+    public DependencyArtifactStubFactory( File theWorkingDir, boolean theCreateFiles, boolean flattenedPath )
+    {
+        this( theWorkingDir, theCreateFiles );
+        this.flattenedPath = flattenedPath;
+    }
+
+    
     /**
      * @param theWorkingDir
      * @param theCreateFiles
@@ -55,5 +66,33 @@ public class DependencyArtifactStubFactory
             list.add( getArtifactItem( artifact ) );
         }
         return list;
+    }
+    
+    @Override
+    public Artifact createArtifact( String groupId, String artifactId, VersionRange versionRange, String scope,
+                                    String type, String classifier, boolean optional )
+        throws IOException
+    {
+        File workingDir = getWorkingDir();
+        
+        if ( !flattenedPath )
+        {
+            StringBuilder path = new StringBuilder( 128 );
+
+            path.append( groupId.replace( '.', '/' ) ).append( '/' );
+
+            path.append( artifactId ).append( '/' );
+
+            path.append( ArtifactUtils.toSnapshotVersion( versionRange.getRecommendedVersion().toString() ) );
+
+            // don't use flatten directories, won't happen at runtime
+            setWorkingDir( new File( workingDir, path.toString() ) );
+        }
+        
+        Artifact artifact = super.createArtifact( groupId, artifactId, versionRange, scope, type, classifier, optional );
+        
+        setWorkingDir( workingDir );
+        
+        return artifact;
     }
  }

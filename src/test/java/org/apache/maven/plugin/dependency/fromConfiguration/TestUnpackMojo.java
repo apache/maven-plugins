@@ -28,16 +28,22 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.LegacyLocalRepositoryManager;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
+import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 import org.apache.maven.project.MavenProject;
+import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestUnpackMojo
     extends AbstractDependencyMojoTestCase
@@ -74,8 +80,25 @@ public class TestUnpackMojo
 
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setResolver( new StubArtifactResolver( stubFactory, false, false ) );
-        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
+        // mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
         mojo.setUseJvmChmod( true );
+        
+        MavenSession session = newMavenSession( mojo.getProject() );
+        setVariableValueToObject( mojo, "session", session );
+        
+        DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
+        
+        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
+            @Override
+            public String pathOf( Artifact artifact )
+            {
+                return ArtifactStubFactory.getFormattedFileName( artifact, false );
+            }
+        };
+        mojo.setLocal( repo );
+        RepositorySystem repoSystem = lookup( RepositorySystem.class );
+        
+        repoSession.setLocalRepositoryManager( LegacyLocalRepositoryManager.wrap( repo, repoSystem ) );
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
@@ -86,7 +109,7 @@ public class TestUnpackMojo
     }
 
     public void testGetArtifactItems()
-        throws MojoExecutionException
+        throws Exception
     {
 
         ArtifactItem item = new ArtifactItem();
@@ -96,7 +119,7 @@ public class TestUnpackMojo
         item.setVersion( "1.0" );
 
         ArrayList<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
-        list.add( item );
+        list.add( createArtifact( item ) );
 
         mojo.setArtifactItems( list );
 
@@ -391,14 +414,7 @@ public class TestUnpackMojo
         }
         catch ( MojoExecutionException e )
         {
-            if ( are )
-            {
-                assertEquals( "Unable to resolve artifact.", e.getMessage() );
-            }
-            else
-            {
-                assertEquals( "Unable to find artifact.", e.getMessage() );
-            }
+            assertEquals( "Unable to find/resolve artifact.", e.getMessage() );
         }
     }
 
@@ -604,5 +620,14 @@ public class TestUnpackMojo
                                     VersionRange.createFromVersion( art.getVersion() ), null,
                                     art.getType(), classifier, art.isOptional() );
         return art;
+    }
+    
+    private ArtifactItem createArtifact( ArtifactItem item ) throws IOException
+    {
+        String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier(); 
+        stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(),
+                                    item.getVersion(), null,
+                                    item.getType(), classifier );
+        return item;
     }
 }
