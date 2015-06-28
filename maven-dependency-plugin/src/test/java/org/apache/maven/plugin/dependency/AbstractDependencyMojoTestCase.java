@@ -40,19 +40,25 @@ public abstract class AbstractDependencyMojoTestCase
     {
         super();
     }
-
+    
     protected void setUp( String testDirStr, boolean createFiles )
+        throws Exception
+    {
+        setUp( testDirStr, createFiles, true );
+    }
+
+    protected void setUp( String testDirStr, boolean createFiles, boolean flattenedPath )
         throws Exception
     {
         // required for mojo lookups to work
         super.setUp();
-        testDir = new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar
-            + testDirStr + File.separatorChar );
+        testDir =
+            new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar + testDirStr
+                + File.separatorChar );
         DependencyTestUtils.removeDirectory( testDir );
         assertFalse( testDir.exists() );
 
-        stubFactory = new DependencyArtifactStubFactory( this.testDir, createFiles );
-
+        stubFactory = new DependencyArtifactStubFactory( this.testDir, createFiles, flattenedPath );
     }
 
     protected void tearDown()

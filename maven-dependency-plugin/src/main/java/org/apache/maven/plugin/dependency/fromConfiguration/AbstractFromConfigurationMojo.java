@@ -26,8 +26,6 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
@@ -38,8 +36,13 @@ import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -109,6 +112,12 @@ public abstract class AbstractFromConfigurationMojo
     @Parameter
     private File localRepositoryDirectory;
 
+    @Component
+    private ArtifactResolver artifactResolver;
+    
+    @Component
+    private RepositoryManager repositoryManager;
+    
     /**
      * To host and cache localRepositoryDirectory
      */
@@ -252,16 +261,27 @@ public abstract class AbstractFromConfigurationMojo
              * artifactResolutionResult.getArtifactResolutionNodes().iterator(); while ( iter.hasNext() ) {
              * ResolutionNode node = (ResolutionNode) iter.next(); artifact = node.getArtifact(); }
              */
+            
+            ProjectBuildingRequest buildingRequest;
+            
+            if ( localRepositoryDirectory != null )
+            {
+                buildingRequest =
+                    repositoryManager.setLocalRepositoryBasedir( session.getProjectBuildingRequest(),
+                                                                 localRepositoryDirectory );
+            }
+            else
+            {
+                buildingRequest = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            }
+            
+            buildingRequest.setRemoteRepositories( remoteRepos );
 
-            resolver.resolve( artifact, remoteRepos, getLocal() );
+            artifact = artifactResolver.resolveArtifact( buildingRequest, artifact );
         }
-        catch ( ArtifactResolutionException e )
+        catch ( ArtifactResolverException e )
         {
-            throw new MojoExecutionException( "Unable to resolve artifact.", e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "Unable to find artifact.", e );
+            throw new MojoExecutionException( "Unable to find/resolve artifact.", e );
         }
 
         return artifact;
