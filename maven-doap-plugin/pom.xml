@@ -59,6 +59,8 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <scmVersion>1.9.2</scmVersion>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>    
   </properties>
 
   <dependencies>
@@ -139,9 +141,9 @@ under the License.
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.hp.hpl.jena</groupId>
-      <artifactId>jena</artifactId>
-      <version>2.6.3</version>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-core</artifactId>
+      <version>2.11.2</version>
     </dependency>
     <dependency>
       <groupId>commons-httpclient</groupId>
