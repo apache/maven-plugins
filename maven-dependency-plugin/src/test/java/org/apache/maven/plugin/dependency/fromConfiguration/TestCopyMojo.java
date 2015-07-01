@@ -33,7 +33,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
@@ -42,11 +41,7 @@ public class TestCopyMojo
     extends AbstractDependencyMojoTestCase
 {
     CopyMojo mojo;
-    
-    private File localRepoDir;
-    
-    SimpleLocalRepositoryManager lrm;
-    
+
     public TestCopyMojo()
     {
         super();
@@ -73,19 +68,7 @@ public class TestCopyMojo
         
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
         
-//        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
-//            @Override
-//            public String pathOf( Artifact artifact )
-//            {
-//                return ArtifactStubFactory.getFormattedFileName( artifact, false );
-//            }
-//        };
-//        mojo.setLocal( repo );
-        
-        localRepoDir = stubFactory.getWorkingDir();
-        
-        lrm = new SimpleLocalRepositoryManager( localRepoDir );
-        repoSession.setLocalRepositoryManager( lrm );
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion, boolean useBaseVersion )
@@ -562,7 +545,6 @@ public class TestCopyMojo
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
         {
@@ -745,7 +727,6 @@ public class TestCopyMojo
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setArtifactItems( list );
-        mojo.setLocal( null );
         
         File execLocalRepo =  new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
         assertFalse( execLocalRepo.exists() );

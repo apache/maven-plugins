@@ -36,6 +36,7 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestIncludeExcludeUnpackMojo
@@ -55,7 +56,7 @@ public class TestIncludeExcludeUnpackMojo
         throws Exception
     {
         // required for mojo lookups to work
-        super.setUp( "unpack", true );
+        super.setUp( "unpack", true, false );
 
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-test/plugin-config.xml" );
         mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
@@ -85,17 +86,7 @@ public class TestIncludeExcludeUnpackMojo
         
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
         
-        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
-            @Override
-            public String pathOf( Artifact artifact )
-            {
-                return ArtifactStubFactory.getFormattedFileName( artifact, false );
-            }
-        };
-        mojo.setLocal( repo );
-        RepositorySystem repoSystem = lookup( RepositorySystem.class );
-        
-        repoSession.setLocalRepositoryManager( LegacyLocalRepositoryManager.wrap( repo, repoSystem ) );
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
     }
 
     protected void tearDown()

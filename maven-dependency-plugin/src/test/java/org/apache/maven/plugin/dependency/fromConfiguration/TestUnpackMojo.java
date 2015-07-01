@@ -28,8 +28,6 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.LegacyLocalRepositoryManager;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
@@ -38,10 +36,8 @@ import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.markers.UnpackFileMarkerHandler;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.project.MavenProject;
-import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestUnpackMojo
@@ -58,7 +54,7 @@ public class TestUnpackMojo
     protected void setUp()
         throws Exception
     {
-        super.setUp( "unpack", true );
+        super.setUp( "unpack", true, false );
 
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-test/plugin-config.xml" );
         mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
@@ -84,18 +80,8 @@ public class TestUnpackMojo
         setVariableValueToObject( mojo, "session", session );
         
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
-        
-        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
-            @Override
-            public String pathOf( Artifact artifact )
-            {
-                return ArtifactStubFactory.getFormattedFileName( artifact, false );
-            }
-        };
-        mojo.setLocal( repo );
-        RepositorySystem repoSystem = lookup( RepositorySystem.class );
-        
-        repoSession.setLocalRepositoryManager( LegacyLocalRepositoryManager.wrap( repo, repoSystem ) );
+
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
     }
 
     public ArtifactItem getSingleArtifactItem( boolean removeVersion )
@@ -401,7 +387,6 @@ public class TestUnpackMojo
 
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
         {

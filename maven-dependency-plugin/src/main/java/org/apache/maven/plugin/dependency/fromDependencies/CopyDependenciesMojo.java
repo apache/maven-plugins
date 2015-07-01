@@ -316,8 +316,6 @@ public class CopyDependenciesMojo
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
-            buildingRequest.setLocalRepository( this.getLocal() );
-            
             buildingRequest.setRemoteRepositories( this.remoteRepos );
             
             pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact );

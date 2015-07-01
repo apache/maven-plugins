@@ -366,15 +366,7 @@ public abstract class AbstractDependencyMojo
      */
     protected ArtifactRepository getLocal()
     {
-        return this.local;
-    }
-
-    /**
-     * @param local The local to set.
-     */
-    public void setLocal( ArtifactRepository local )
-    {
-        this.local = local;
+        throw new UnsupportedOperationException( "Don't use this anymore. " );
     }
 
     /**

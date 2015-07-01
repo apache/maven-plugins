@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.LegacyLocalRepositoryManager;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
@@ -38,11 +36,9 @@ import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactor
 import org.apache.maven.plugin.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
 import org.apache.maven.plugin.dependency.utils.markers.DefaultFileMarkerHandler;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
-import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestUnpackDependenciesMojo
@@ -59,7 +55,7 @@ public class TestUnpackDependenciesMojo
         throws Exception
     {
         // required for mojo lookups to work
-        super.setUp( "unpack-dependencies", true );
+        super.setUp( "unpack-dependencies", true, false );
 
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
         mojo = (UnpackDependenciesMojo) lookupMojo( "unpack-dependencies", testPom );
@@ -81,18 +77,7 @@ public class TestUnpackDependenciesMojo
         setVariableValueToObject( mojo, "session", session );
         
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
-        
-        ArtifactRepository repo = new StubArtifactRepository( stubFactory.getWorkingDir().getAbsolutePath() ) {
-            @Override
-            public String pathOf( Artifact artifact )
-            {
-                return ArtifactStubFactory.getFormattedFileName( artifact, false );
-            }
-        };
-        mojo.setLocal( repo );
-        RepositorySystem repoSystem = lookup( RepositorySystem.class );
-        
-        repoSession.setLocalRepositoryManager( LegacyLocalRepositoryManager.wrap( repo, repoSystem ) );
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
 
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
@@ -583,7 +568,6 @@ public class TestUnpackDependenciesMojo
         mojo.type = "java-sources";
         // init classifier things
         mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-        mojo.setLocal( new StubArtifactRepository( this.testDir.getAbsolutePath() ) );
 
         try
         {

@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
@@ -49,6 +50,7 @@ import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFilter;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -66,6 +68,9 @@ public abstract class AbstractDependencyFilterMojo
 {
     @Component
     private ArtifactResolver artifactResolver;
+    
+    @Component
+    private RepositoryManager repositoryManager;
     
     /**
      * Overwrite release artifacts
@@ -229,6 +234,12 @@ public abstract class AbstractDependencyFilterMojo
     @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
     protected boolean prependGroupId = false;
 
+    /**
+     * Location of the local repository.
+     */
+    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
+    private ArtifactRepository local;
+
     @Component
     private ProjectBuilder projectBuilder;
 
@@ -362,8 +373,6 @@ public abstract class AbstractDependencyFilterMojo
                 ProjectBuildingRequest buildingRequest =
                     new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
                 
-                buildingRequest.setLocalRepository( this.getLocal() );
-                
                 buildingRequest.setRemoteRepositories( this.remoteRepos );
                 
                 Artifact resolvedArtifact = artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() );
@@ -398,7 +407,8 @@ public abstract class AbstractDependencyFilterMojo
         if ( StringUtils.isNotEmpty( classifier ) )
         {
             ArtifactTranslator translator =
-                new ClassifierTypeTranslator( this.classifier, this.type, this.factory, this.getLocal() );
+                new ClassifierTypeTranslator( this.classifier, this.type, this.factory, repositoryManager,
+                                              session.getProjectBuildingRequest() );
             artifacts = translator.translate( artifacts, getLog() );
 
             status = filterMarkedDependencies( artifacts );
@@ -408,7 +418,7 @@ public abstract class AbstractDependencyFilterMojo
 
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            buildingRequest.setLocalRepository( this.getLocal() );
+            
             buildingRequest.setRemoteRepositories( this.remoteRepos );
             
             // resolve the rest of the artifacts
