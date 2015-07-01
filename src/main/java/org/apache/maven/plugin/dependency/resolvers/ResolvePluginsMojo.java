@@ -193,8 +193,6 @@ public class ResolvePluginsMojo
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             
-            buildingRequest.setLocalRepository( this.getLocal() );
-            
             buildingRequest.setRemoteRepositories( this.remotePluginRepositories );
             
             // resolve the new artifact

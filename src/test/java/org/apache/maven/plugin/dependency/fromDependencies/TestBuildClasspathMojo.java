@@ -23,12 +23,12 @@ import java.io.File;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugin.dependency.fromDependencies.BuildClasspathMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyUtil;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.apache.maven.project.MavenProject;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class TestBuildClasspathMojo
     extends AbstractDependencyMojoTestCase
@@ -120,11 +120,13 @@ public class TestBuildClasspathMojo
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
 
-        ArtifactRepository local = new StubArtifactRepository( stubFactory.getWorkingDir().getPath() );
-        mojo.setLocal( local );
+        MavenSession session = newMavenSession( mojo.getProject() );
+        setVariableValueToObject( mojo, "session", session );
+
+        DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
 
         Artifact artifact = stubFactory.getReleaseArtifact();
-
 
         StringBuilder sb = new StringBuilder();
         mojo.setPrefix( null );

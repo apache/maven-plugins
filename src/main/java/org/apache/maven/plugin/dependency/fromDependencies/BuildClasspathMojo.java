@@ -29,6 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -157,6 +158,9 @@ public class BuildClasspathMojo
      */
     @Component
     private MavenProjectHelper projectHelper;
+    
+    @Component
+    private RepositoryManager repositoryManager; 
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
@@ -272,7 +276,9 @@ public class BuildClasspathMojo
             // substitute the property for the local repo path to make the classpath file portable.
             if ( StringUtils.isNotEmpty( localRepoProperty ) )
             {
-                file = StringUtils.replace( file, getLocal().getBasedir(), localRepoProperty );
+                File localBasedir = repositoryManager.getLocalRepositoryBasedir( session.getProjectBuildingRequest() );
+                
+                file = StringUtils.replace( file, localBasedir.getAbsolutePath(), localRepoProperty );
             }
             sb.append( file );
         }

@@ -25,8 +25,9 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -43,7 +44,9 @@ public class ClassifierTypeTranslator
 
     private ArtifactFactory factory;
     
-    private ArtifactRepository repository;
+    private RepositoryManager repositoryManager;
+    
+    ProjectBuildingRequest buildingRequest;
 
     /**
      * 
@@ -53,12 +56,13 @@ public class ClassifierTypeTranslator
      * @param theRepository required when using system scoped artifacts 
      */
     public ClassifierTypeTranslator( String theClassifier, String theType, ArtifactFactory theFactory,
-                                     ArtifactRepository theRepository )
+                                     RepositoryManager theRepository, ProjectBuildingRequest buildingRequest )
     {
         this.classifier = theClassifier;
         this.type = theType;
         this.factory = theFactory;
-        this.repository = theRepository;
+        this.repositoryManager = theRepository;
+        this.buildingRequest = buildingRequest;
     }
 
     /*
@@ -110,7 +114,9 @@ public class ClassifierTypeTranslator
             
             if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
             {
-                newArtifact.setFile( new File( repository.getBasedir(), repository.pathOf( newArtifact ) ) );
+                File baseDir = repositoryManager.getLocalRepositoryBasedir( buildingRequest );
+                String path = repositoryManager.getPathForLocalArtifact( buildingRequest, newArtifact );
+                newArtifact.setFile( new File( baseDir, path ) );
             }
 
             results.add( newArtifact );

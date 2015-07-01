@@ -30,11 +30,17 @@ import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.handler.manager.DefaultArtifactHandlerManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugin.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.SilentLog;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 /**
  * @author brianf
@@ -50,11 +56,15 @@ public class TestClassifierTypeTranslator
     ArtifactRepository artifactRepository;
 
     Log log = new SilentLog();
+    
+    private RepositoryManager repoManager;
+    
+    private ProjectBuildingRequest buildingRequest;
 
     protected void setUp()
         throws Exception
     {
-        super.setUp();
+        super.setUp( "classifiertype-translator", false);
 
         ArtifactHandlerManager manager = new DefaultArtifactHandlerManager();
         this.setVariableValueToObject( manager, "artifactHandlers", new HashMap() );
@@ -66,6 +76,16 @@ public class TestClassifierTypeTranslator
         
         DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getMixedArtifacts();
+        
+        repoManager = lookup( RepositoryManager.class );
+        
+        MavenSession session = newMavenSession( new MavenProjectStub() ); 
+        buildingRequest = session.getProjectBuildingRequest();
+        
+        DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
+        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
+
+
     }
 
     public void testNullClassifier()
@@ -82,7 +102,7 @@ public class TestClassifierTypeTranslator
     {
         String type = "zip";
 
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, artifactRepository );
+        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, repoManager, buildingRequest );
         Set<Artifact> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -122,7 +142,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "jdk5";
 
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, artifactRepository );
+        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, repoManager, buildingRequest );
         Set<Artifact> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -152,7 +172,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "jdk14";
         String type = "sources";
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, artifactRepository );
+        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, repoManager, buildingRequest );
         Set<Artifact> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -181,7 +201,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "class";
         String type = "type";
-        ClassifierTypeTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, null );
+        ClassifierTypeTranslator at = new ClassifierTypeTranslator( classifier, type, artifactFactory, repoManager, buildingRequest );
 
         assertEquals( classifier, at.getClassifier() );
         assertEquals( type, at.getType() );
