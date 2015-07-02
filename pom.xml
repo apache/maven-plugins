@@ -69,7 +69,6 @@ under the License.
     <module>maven-clean-plugin</module>
     <module>maven-compiler-plugin</module>
     <module>maven-deploy-plugin</module>
-    <module>maven-doap-plugin</module>
     <module>maven-docck-plugin</module>
     <module>maven-ear-plugin</module>
     <module>maven-ejb-plugin</module>
@@ -107,6 +106,7 @@ under the License.
       <!-- For plugins that require at least Java 6 to build -->
       <id>java-6</id>
       <modules>
+        <module>maven-doap-plugin</module>
         <module>maven-pmd-plugin</module>
         <module>maven-invoker-plugin</module>
       </modules>
