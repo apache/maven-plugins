@@ -20,9 +20,6 @@ package org.apache.maven.plugin.dependency.fromDependencies;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,10 +34,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.apache.maven.shared.artifact.install.ArtifactInstaller;
+import org.apache.maven.shared.artifact.install.ArtifactInstallerException;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,7 +68,7 @@ public class CopyDependenciesMojo
      *
      */
     @Component
-    protected ArtifactInstaller installer;
+    private ArtifactInstaller installer;
 
     /**
      *
@@ -136,21 +135,13 @@ public class CopyDependenciesMojo
         }
         else
         {
-            try
+            ProjectBuildingRequest buildingRequest =
+                getRepositoryManager().setLocalRepositoryBasedir( session.getProjectBuildingRequest(),
+                                                                  outputDirectory );
+
+            for ( Artifact artifact : artifacts )
             {
-                ArtifactRepository targetRepository =
-                    repositoryFactory.createDeploymentArtifactRepository( "local",
-                                                                          outputDirectory.toURL().toExternalForm(),
-                                                                          repositoryLayouts.get( "default" ),
-                                                                          false /* uniqueVersion */ );
-                for ( Artifact artifact : artifacts )
-                {
-                    installArtifact( artifact, targetRepository );
-                }
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new MojoExecutionException( "Could not create outputDirectory repository", e );
+                installArtifact( artifact, buildingRequest );
             }
         }
 
@@ -174,46 +165,39 @@ public class CopyDependenciesMojo
      * @param artifact
      * @param targetRepository
      */
-    private void installArtifact( Artifact artifact, ArtifactRepository targetRepository )
+    private void installArtifact( Artifact artifact, ProjectBuildingRequest buildingRequest )
     {
         try
         {
-            if ( "pom".equals( artifact.getType() ) )
-            {
-                installer.install( artifact.getFile(), artifact, targetRepository );
-                installBaseSnapshot( artifact, targetRepository );
-            }
-            else
-            {
-                installer.install( artifact.getFile(), artifact, targetRepository );
-                installBaseSnapshot( artifact, targetRepository );
+            installer.install( buildingRequest, Collections.singletonList( artifact ) );
+            installBaseSnapshot( artifact, buildingRequest );
 
-                if ( isCopyPom() )
+            if ( !"pom".equals( artifact.getType() ) && isCopyPom() )
+            {
+                Artifact pomArtifact = getResolvedPomArtifact( artifact );
+                if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
                 {
-                    Artifact pomArtifact = getResolvedPomArtifact( artifact );
-                    if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
-                    {
-                        installer.install( pomArtifact.getFile(), pomArtifact, targetRepository );
-                        installBaseSnapshot( pomArtifact, targetRepository );
-                    }
+                    installer.install( buildingRequest, Collections.singletonList( pomArtifact ) );
+                    installBaseSnapshot( pomArtifact, buildingRequest );
                 }
             }
         }
-        catch ( ArtifactInstallationException e )
+        catch ( ArtifactInstallerException e )
         {
             getLog().warn( "unable to install " + artifact, e );
         }
     }
 
-    private void installBaseSnapshot( Artifact artifact, ArtifactRepository targetRepository )
-        throws ArtifactInstallationException
+    private void installBaseSnapshot( Artifact artifact, ProjectBuildingRequest buildingRequest )
+        throws ArtifactInstallerException
     {
         if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
         {
             Artifact baseArtifact =
                 this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),
                                              artifact.getScope(), artifact.getType() );
-            installer.install( artifact.getFile(), baseArtifact, targetRepository );
+            baseArtifact.setFile( artifact.getFile() );
+            installer.install( buildingRequest, Collections.singletonList( baseArtifact ) );
         }
     }
 
