@@ -19,23 +19,15 @@ package org.apache.maven.plugin.dependency.resolvers;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ResolutionListener;
-import org.apache.maven.artifact.resolver.ResolutionNode;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.maven.shared.artifact.collect.CollectorResult;
+import org.apache.maven.shared.artifact.collect.DependencyCollector;
+import org.apache.maven.shared.artifact.collect.DependencyCollectorException;
 
 /**
  * Goal that resolves all project dependencies and then lists the repositories
@@ -50,10 +42,10 @@ public class ListRepositoriesMojo
     extends AbstractDependencyMojo
 {
     /**
-     * Artifact collector, needed to resolve dependencies.
+     * Dependency collector, needed to resolve dependencies.
      */
-    @Component( role = ArtifactCollector.class )
-    private ArtifactCollector artifactCollector;
+    @Component( role = DependencyCollector.class )
+    private DependencyCollector dependencyCollector;
 
     /**
      * Displays a list of the repositories used by this build.
@@ -66,44 +58,20 @@ public class ListRepositoriesMojo
     {
         try
         {
-            ArtifactResolutionResult result =
-                this.artifactCollector.collect( project.getArtifacts(), project.getArtifact(), this.getLocal(),
-                                                this.remoteRepos, this.artifactMetadataSource,
-                                                new ScopeArtifactFilter( Artifact.SCOPE_TEST ),
-                                                new ArrayList<ResolutionListener>() );
-            Set<ArtifactRepository> repos = new HashSet<ArtifactRepository>();
-            Set<ResolutionNode> nodes = result.getArtifactResolutionNodes();
-            for ( ResolutionNode node : nodes )
-            {
-                repos.addAll( node.getRemoteRepositories() );
-            }
+            CollectorResult collectResult =
+                dependencyCollector.collectDependencies( session.getProjectBuildingRequest(), project.getArtifact() );
 
             this.getLog().info( "Repositories Used by this build:" );
-            for ( ArtifactRepository repo : repos )
+            
+            for ( ArtifactRepository repo : collectResult.getRemoteRepositories() )
             {
                 this.getLog().info( repo.toString() );
             }
         }
-        catch ( ArtifactResolutionException e )
+        catch ( DependencyCollectorException e )
         {
             throw new MojoExecutionException( "Unable to resolve artifacts", e );
         }
     }
-    
 
-    /**
-     * @return Returns the artifactCollector.
-     */
-    public ArtifactCollector getArtifactCollector()
-    {
-        return this.artifactCollector;
-    }
-
-    /**
-     * @param theArtifactCollector The artifactCollector to set.
-     */
-    public void setArtifactCollector( ArtifactCollector theArtifactCollector )
-    {
-        this.artifactCollector = theArtifactCollector;
-    }
 }

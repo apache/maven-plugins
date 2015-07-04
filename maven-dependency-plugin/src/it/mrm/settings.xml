@@ -27,12 +27,10 @@ under the License.
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
+  
   <profiles>
     <profile>
       <id>it-repo</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <repositories>
         <repository>
           <id>snapshots</id>
@@ -67,4 +65,8 @@ under the License.
       </pluginRepositories>
     </profile>
   </profiles>
+  
+  <activeProfiles>
+    <activeProfile>it-repo</activeProfile>
+  </activeProfiles>
 </settings>
