@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
@@ -233,12 +232,6 @@ public abstract class AbstractDependencyFilterMojo
      */
     @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
     protected boolean prependGroupId = false;
-
-    /**
-     * Location of the local repository.
-     */
-    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
-    private ArtifactRepository local;
 
     @Component
     private ProjectBuilder projectBuilder;

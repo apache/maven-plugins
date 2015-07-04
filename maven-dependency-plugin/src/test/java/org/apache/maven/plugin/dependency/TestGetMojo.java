@@ -21,14 +21,12 @@ package org.apache.maven.plugin.dependency;
 
 import java.io.File;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
@@ -48,25 +46,6 @@ public class TestGetMojo
         mojo = (GetMojo) lookupMojo( "get", testPom );
         
         assertNotNull( mojo );
-        setVariableValueToObject( mojo, "localRepository", new StubArtifactRepository( testDir.getAbsolutePath() ){
-            @Override
-            public String pathOf( Artifact artifact )
-            {
-                StringBuilder pathOf = new StringBuilder();
-                pathOf.append( artifact.getGroupId() )
-                    .append( '_' )
-                    .append( artifact.getArtifactId() )
-                    .append( '-' )
-                    .append( artifact.getVersion() );
-                if ( artifact.getClassifier() != null )
-                {
-                    pathOf.append( '-' )
-                    .append( artifact.getClassifier() );
-                }
-                pathOf.append( '.' ).append( artifact.getArtifactHandler().getExtension() );
-                return pathOf.toString();
-            }
-        } );
         
         LegacySupport legacySupport = lookup( LegacySupport.class );
         legacySupport.setSession( newMavenSession( new MavenProjectStub() ) );
