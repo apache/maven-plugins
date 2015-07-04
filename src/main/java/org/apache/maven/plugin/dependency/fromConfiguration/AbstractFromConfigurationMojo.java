@@ -411,51 +411,6 @@ public abstract class AbstractFromConfigurationMojo
         return false;
     }
 
-    /*
-     * private Map createManagedVersionMap( ArtifactFactory artifactFactory, String projectId, DependencyManagement
-     * dependencyManagement ) throws MojoExecutionException { Map map; if ( dependencyManagement != null &&
-     * dependencyManagement.getDependencies() != null ) { map = new HashMap(); for ( Iterator i =
-     * dependencyManagement.getDependencies().iterator(); i.hasNext(); ) { Dependency d = (Dependency) i.next(); try {
-     * VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() ); Artifact artifact =
-     * artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(), versionRange, d.getType(), d
-     * .getClassifier(), d.getScope(), d .isOptional() ); map.put( d.getManagementKey(), artifact ); } catch (
-     * InvalidVersionSpecificationException e ) { throw new MojoExecutionException( "Unable to parse version", e ); } }
-     * } else { map = Collections.EMPTY_MAP; } return map; }
-     */
-
-    /**
-     * Override the base to
-     *
-     * @return Returns the local.
-     */
-    @Override
-    protected ArtifactRepository getLocal()
-    {
-        if ( this.overrideLocalRepository != null )
-        {
-            return this.overrideLocalRepository;
-        }
-
-        ArtifactRepository local = super.getLocal();
-
-        if ( this.localRepositoryDirectory != null )
-        {
-            // create a new local repo using existing layout, snapshots, and releases policy
-            String url = "file://" + this.localRepositoryDirectory.getAbsolutePath();
-            this.overrideLocalRepository =
-                artifactRepositoryManager.createArtifactRepository( local.getId(), url, local.getLayout(),
-                                                                    local.getSnapshots(), local.getReleases() );
-
-            this.getLog().debug( "Execution local repository is at: " + this.overrideLocalRepository.getBasedir() );
-        }
-        else
-        {
-            this.overrideLocalRepository = local;
-        }
-
-        return this.overrideLocalRepository;
-    }
-
     /**
      * @return Returns the artifactItems.
      */
