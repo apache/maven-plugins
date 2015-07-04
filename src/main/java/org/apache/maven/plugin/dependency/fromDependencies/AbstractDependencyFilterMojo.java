@@ -510,4 +510,9 @@ public abstract class AbstractDependencyFilterMojo
     {
         return artifactResolver;
     }
+    
+    protected final RepositoryManager getRepositoryManager()
+    {
+        return repositoryManager;
+    }
 }

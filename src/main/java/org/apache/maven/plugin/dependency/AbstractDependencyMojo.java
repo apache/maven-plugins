@@ -361,15 +361,7 @@ public abstract class AbstractDependencyMojo
         return this.project;
     }
 
-    /**
-     * @return Returns the local.
-     */
-    protected ArtifactRepository getLocal()
-    {
-        throw new UnsupportedOperationException( "Don't use this anymore. " );
-    }
-
-    /**
+     /**
      * @return Returns the remoteRepos.
      */
     public List<ArtifactRepository> getRemoteRepos()
