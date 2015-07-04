@@ -84,12 +84,6 @@ public class GetMojo
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
-     *
-     */
-    @Parameter( defaultValue = "${localRepository}", readonly = true )
-    private ArtifactRepository localRepository;
-
-    /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
      */
     @Parameter( property = "groupId" )

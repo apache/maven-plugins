@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -59,18 +58,6 @@ public abstract class AbstractDependencyMojo
      */
     @Component
     protected ArtifactFactory factory;
-
-    /**
-     *
-     */
-    @Component( role = ArtifactMetadataSource.class, hint = "maven" )
-    protected ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * Location of the local repository.
-     */
-    @Parameter( defaultValue = "${localRepository}", readonly = true, required = true )
-    private ArtifactRepository local;
 
     /**
      * List of Remote Repositories used by the resolver
@@ -383,22 +370,6 @@ public abstract class AbstractDependencyMojo
     public void setArchiverManager( ArchiverManager archiverManager )
     {
         this.archiverManager = archiverManager;
-    }
-
-    /**
-     * @return Returns the artifactMetadataSource.
-     */
-    public ArtifactMetadataSource getArtifactMetadataSource()
-    {
-        return this.artifactMetadataSource;
-    }
-
-    /**
-     * @param theArtifactMetadataSource The artifactMetadataSource to set.
-     */
-    public void setArtifactMetadataSource( ArtifactMetadataSource theArtifactMetadataSource )
-    {
-        this.artifactMetadataSource = theArtifactMetadataSource;
     }
 
     public boolean isUseJvmChmod()
