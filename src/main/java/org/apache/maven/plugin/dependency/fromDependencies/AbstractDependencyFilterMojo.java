@@ -280,7 +280,8 @@ public abstract class AbstractDependencyFilterMojo
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
 
-        filter.addFilter( new ProjectTransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
+        filter.addFilter( new ProjectTransitivityFilter( getProject().getDependencyArtifacts(), 
+                                                         this.excludeTransitive ) );
 
         filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
                                            DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
@@ -298,7 +299,7 @@ public abstract class AbstractDependencyFilterMojo
                                                 DependencyUtil.cleanToBeTokenizedString( this.excludeArtifactIds ) ) );
 
         // start with all artifacts.
-        Set<Artifact> artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = getProject().getArtifacts();
 
         if ( includeParents )
         {
@@ -309,7 +310,7 @@ public abstract class AbstractDependencyFilterMojo
             }
 
             // add current project parent
-            addParentArtifacts( project, artifacts );
+            addParentArtifacts( getProject(), artifacts );
         }
 
         // perform filtering
@@ -366,7 +367,7 @@ public abstract class AbstractDependencyFilterMojo
                 ProjectBuildingRequest buildingRequest =
                     new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
                 
-                buildingRequest.setRemoteRepositories( this.remoteRepos );
+                buildingRequest.setRemoteRepositories( getRemoteRepos() );
                 
                 Artifact resolvedArtifact = artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() );
                 
@@ -400,7 +401,7 @@ public abstract class AbstractDependencyFilterMojo
         if ( StringUtils.isNotEmpty( classifier ) )
         {
             ArtifactTranslator translator =
-                new ClassifierTypeTranslator( this.classifier, this.type, this.factory, repositoryManager,
+                new ClassifierTypeTranslator( this.classifier, this.type, this.getFactory(), repositoryManager,
                                               session.getProjectBuildingRequest() );
             artifacts = translator.translate( artifacts, getLog() );
 
@@ -412,7 +413,7 @@ public abstract class AbstractDependencyFilterMojo
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             
-            buildingRequest.setRemoteRepositories( this.remoteRepos );
+            buildingRequest.setRemoteRepositories( getRemoteRepos() );
             
             // resolve the rest of the artifacts
             ArtifactsResolver artifactsResolver =

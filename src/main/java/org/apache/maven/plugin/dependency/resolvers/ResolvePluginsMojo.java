@@ -163,8 +163,8 @@ public class ResolvePluginsMojo
     protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactFilterException, ArtifactResolverException
     {
-        final Set<Artifact> plugins = project.getPluginArtifacts();
-        final Set<Artifact> reports = project.getReportArtifacts();
+        final Set<Artifact> plugins = getProject().getPluginArtifacts();
+        final Set<Artifact> reports = getProject().getReportArtifacts();
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         artifacts.addAll( reports );

@@ -57,19 +57,19 @@ public abstract class AbstractDependencyMojo
      * Used to look up Artifacts in the remote repository.
      */
     @Component
-    protected ArtifactFactory factory;
+    private ArtifactFactory factory;
 
     /**
      * List of Remote Repositories used by the resolver
      */
     @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
-    protected List<ArtifactRepository> remoteRepos;
+    private List<ArtifactRepository> remoteRepos;
 
     /**
      * To look up Archiver/UnArchiver implementations
      */
     @Component
-    protected ArchiverManager archiverManager;
+    private ArchiverManager archiverManager;
 
     /**
      * <p>
@@ -79,7 +79,7 @@ public abstract class AbstractDependencyMojo
      * @since 2.5.1
      */
     @Parameter( property = "dependency.useJvmChmod", defaultValue = "true" )
-    protected boolean useJvmChmod = true;
+    private boolean useJvmChmod = true;
 
     /**
      * ignore to set file permissions when unpacking a dependency
@@ -92,7 +92,7 @@ public abstract class AbstractDependencyMojo
      * POM
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * Contains the full list of projects in the reactor.
@@ -354,14 +354,6 @@ public abstract class AbstractDependencyMojo
     public List<ArtifactRepository> getRemoteRepos()
     {
         return this.remoteRepos;
-    }
-
-    /**
-     * @param remoteRepos The remoteRepos to set.
-     */
-    public void setRemoteRepos( List<ArtifactRepository> remoteRepos )
-    {
-        this.remoteRepos = remoteRepos;
     }
 
     /**

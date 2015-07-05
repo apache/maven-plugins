@@ -59,7 +59,8 @@ public class ListRepositoriesMojo
         try
         {
             CollectorResult collectResult =
-                dependencyCollector.collectDependencies( session.getProjectBuildingRequest(), project.getArtifact() );
+                dependencyCollector.collectDependencies( session.getProjectBuildingRequest(),
+                                                         getProject().getArtifact() );
 
             this.getLog().info( "Repositories Used by this build:" );
             

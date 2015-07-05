@@ -158,13 +158,13 @@ public abstract class AbstractResolveMojo
         throws ArtifactResolverException, ArtifactNotFoundException, InvalidDependencyVersionException
     {
         final Set<Artifact> artifacts =
-            theProject.createArtifacts( this.factory, Artifact.SCOPE_TEST,
+            theProject.createArtifacts( this.getFactory(), Artifact.SCOPE_TEST,
                                         new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
 
         ProjectBuildingRequest buildingRequest =
             new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
         
-        buildingRequest.setRemoteRepositories( this.remoteRepos );
+        buildingRequest.setRemoteRepositories( getRemoteRepos() );
         
         for ( final Artifact artifact : artifacts )
         {
@@ -190,8 +190,8 @@ public abstract class AbstractResolveMojo
         InvalidDependencyVersionException
     {
         final Artifact pomArtifact =
-            this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "",
-                                         "pom" );
+            this.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                              "", "pom" );
 
         final MavenProject pomProject =
             projectBuilder.build( pomArtifact, session.getProjectBuildingRequest() ).getProject();
