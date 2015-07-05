@@ -226,7 +226,7 @@ public class BuildClasspathMojo
 
         if ( outputProperty != null )
         {
-            project.getProperties().setProperty( outputProperty, cpString );
+            getProject().getProperties().setProperty( outputProperty, cpString );
             if ( getLog().isDebugEnabled() )
             {
                 getLog().debug( outputProperty + " = " + cpString );
@@ -256,10 +256,10 @@ public class BuildClasspathMojo
     protected void attachFile( String cpString )
         throws MojoExecutionException
     {
-        File attachedFile = new File( project.getBuild().getDirectory(), "classpath" );
+        File attachedFile = new File( getProject().getBuild().getDirectory(), "classpath" );
         storeClasspathFile( cpString, attachedFile );
 
-        projectHelper.attachArtifact( project, attachedFile, "classpath" );
+        projectHelper.attachArtifact( getProject(), attachedFile, "classpath" );
     }
 
     /**

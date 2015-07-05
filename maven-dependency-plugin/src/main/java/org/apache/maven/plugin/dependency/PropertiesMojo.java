@@ -49,7 +49,7 @@ public class PropertiesMojo
      * The current Maven project
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * Skip plugin execution completely.

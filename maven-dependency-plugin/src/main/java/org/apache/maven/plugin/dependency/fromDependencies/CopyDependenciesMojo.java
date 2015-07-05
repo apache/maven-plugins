@@ -194,8 +194,8 @@ public class CopyDependenciesMojo
         if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
         {
             Artifact baseArtifact =
-                this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getBaseVersion(),
-                                             artifact.getScope(), artifact.getType() );
+                this.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+                                                  artifact.getBaseVersion(), artifact.getScope(), artifact.getType() );
             baseArtifact.setFile( artifact.getFile() );
             installer.install( buildingRequest, Collections.singletonList( baseArtifact ) );
         }
@@ -292,15 +292,15 @@ public class CopyDependenciesMojo
     protected Artifact getResolvedPomArtifact( Artifact artifact )
     {
         Artifact pomArtifact =
-            this.factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), "",
-                                         "pom" );
+            this.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                              "", "pom" );
         // Resolve the pom artifact using repos
         try
         {
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
-            buildingRequest.setRemoteRepositories( this.remoteRepos );
+            buildingRequest.setRemoteRepositories( getRemoteRepos() );
             
             pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact );
         }

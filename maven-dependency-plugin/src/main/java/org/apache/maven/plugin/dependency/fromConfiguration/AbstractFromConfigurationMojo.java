@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
@@ -98,12 +97,6 @@ public abstract class AbstractFromConfigurationMojo
     private List<ArtifactItem> artifactItems;
 
     /**
-     * To look up ArtifactRepository implementation
-     */
-    @Component
-    private ArtifactRepositoryFactory artifactRepositoryManager;
-
-    /**
      * Path to override default local repository during plugin's execution. To remove all downloaded artifacts as part
      * of the build, set this value to a location under your project's target directory
      *
@@ -118,11 +111,6 @@ public abstract class AbstractFromConfigurationMojo
     @Component
     private RepositoryManager repositoryManager;
     
-    /**
-     * To host and cache localRepositoryDirectory
-     */
-    private ArtifactRepository overrideLocalRepository;
-
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
     
     // artifactItems is filled by either field injection or by setArtifact()
@@ -232,14 +220,16 @@ public abstract class AbstractFromConfigurationMojo
 
         if ( StringUtils.isEmpty( artifactItem.getClassifier() ) )
         {
-            artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                         artifactItem.getType(), null, Artifact.SCOPE_COMPILE );
+            artifact =
+                getFactory().createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
+                                                       artifactItem.getType(), null, Artifact.SCOPE_COMPILE );
         }
         else
         {
-            artifact = factory.createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                         artifactItem.getType(), artifactItem.getClassifier(),
-                                                         Artifact.SCOPE_COMPILE );
+            artifact =
+                getFactory().createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
+                                                       artifactItem.getType(), artifactItem.getClassifier(),
+                                                       Artifact.SCOPE_COMPILE );
         }
 
         // Maven 3 will search the reactor for the artifact but Maven 2 does not
@@ -275,7 +265,7 @@ public abstract class AbstractFromConfigurationMojo
                 buildingRequest = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             }
             
-            buildingRequest.setRemoteRepositories( remoteRepos );
+            buildingRequest.setRemoteRepositories( getRemoteRepos() );
 
             artifact = artifactResolver.resolveArtifact( buildingRequest, artifact );
         }
@@ -297,7 +287,7 @@ public abstract class AbstractFromConfigurationMojo
     private Artifact getArtifactFomReactor( Artifact artifact )
     {
         // check project dependencies first off
-        for ( Artifact a : project.getArtifacts() )
+        for ( Artifact a : getProject().getArtifacts() )
         {
             if ( equals( artifact, a ) && hasFile( a ) )
             {
@@ -368,6 +358,7 @@ public abstract class AbstractFromConfigurationMojo
     private void fillMissingArtifactVersion( ArtifactItem artifact )
         throws MojoExecutionException
     {
+        MavenProject project = getProject();
         List<Dependency> deps = project.getDependencies();
         List<Dependency> depMngt = project.getDependencyManagement() == null
             ? Collections.<Dependency>emptyList()
@@ -527,8 +518,8 @@ public abstract class AbstractFromConfigurationMojo
             }
     
             Artifact toUnpack = classifier == null
-            ? factory.createBuildArtifact( groupId, artifactId, version, packaging )
-            : factory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
+            ? getFactory().createBuildArtifact( groupId, artifactId, version, packaging )
+            : getFactory().createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
             
             setArtifactItems( Collections.singletonList( new ArtifactItem( toUnpack ) ) );
         }

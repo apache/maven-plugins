@@ -53,7 +53,7 @@ public class GoOfflineMojo
     protected void doExecute()
         throws MojoExecutionException
     {
-        Set<Artifact> artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = getProject().getArtifacts();
 
         if ( !silent )
         {
