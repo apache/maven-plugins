@@ -251,25 +251,22 @@ public class ShadeMojo
     private String finalName;
 
     /**
-     * The name of the shaded artifactId. So you may want to use a different artifactId and keep
-     * the standard version. If the original artifactId was "foo" then the final artifact would
-     * be something like foo-1.0.jar. So if you change the artifactId you might have something
-     * like foo-special-1.0.jar.
+     * The name of the shaded artifactId. So you may want to use a different artifactId and keep the standard version.
+     * If the original artifactId was "foo" then the final artifact would be something like foo-1.0.jar. So if you
+     * change the artifactId you might have something like foo-special-1.0.jar.
      */
     @Parameter( defaultValue = "${project.artifactId}" )
     private String shadedArtifactId;
 
     /**
-     * If specified, this will include only artifacts which have groupIds which
-     * start with this.
+     * If specified, this will include only artifacts which have groupIds which start with this.
      */
     @Parameter
     private String shadedGroupFilter;
 
     /**
-     * Defines whether the shaded artifact should be attached as classifier to
-     * the original artifact. If false, the shaded jar will be the main artifact
-     * of the project
+     * Defines whether the shaded artifact should be attached as classifier to the original artifact. If false, the
+     * shaded jar will be the main artifact of the project
      */
     @Parameter
     private boolean shadedArtifactAttached;
@@ -278,17 +275,16 @@ public class ShadeMojo
      * Flag whether to generate a simplified POM for the shaded artifact. If set to <code>true</code>, dependencies that
      * have been included into the uber JAR will be removed from the <code>&lt;dependencies&gt;</code> section of the
      * generated POM. The reduced POM will be named <code>dependency-reduced-pom.xml</code> and is stored into the same
-     * directory as the shaded artifact. Unless you also specify dependencyReducedPomLocation, the plugin will
-     * create a temporary file named <code>dependency-reduced-pom.xml</code> in the project basedir.
+     * directory as the shaded artifact. Unless you also specify dependencyReducedPomLocation, the plugin will create a
+     * temporary file named <code>dependency-reduced-pom.xml</code> in the project basedir.
      */
     @Parameter( defaultValue = "true" )
     private boolean createDependencyReducedPom;
 
     /**
-     * Where to put the dependency reduced pom.
-     * Note: setting a value for this parameter with a directory other than ${basedir} will change the value of
-     * ${basedir} for all executions that come after the shade execution. This is often not what you want.
-     * This is considered an open issue with this plugin.
+     * Where to put the dependency reduced pom. Note: setting a value for this parameter with a directory other than
+     * ${basedir} will change the value of ${basedir} for all executions that come after the shade execution. This is
+     * often not what you want. This is considered an open issue with this plugin.
      *
      * @since 1.7
      */
@@ -296,9 +292,9 @@ public class ShadeMojo
     private File dependencyReducedPomLocation;
 
     /**
-     * Create a dependency-reduced POM in ${basedir}/drp-UNIQUE.pom. This avoids build collisions
-     * of parallel builds without moving the dependency-reduced POM to a different directory.
-     * The property maven.shade.dependency-reduced-pom is set to the generated filename.
+     * Create a dependency-reduced POM in ${basedir}/drp-UNIQUE.pom. This avoids build collisions of parallel builds
+     * without moving the dependency-reduced POM to a different directory. The property
+     * maven.shade.dependency-reduced-pom is set to the generated filename.
      *
      * @since 1.7.2
      */
@@ -306,16 +302,14 @@ public class ShadeMojo
     private boolean generateUniqueDependencyReducedPom;
 
     /**
-     * When true, dependencies are kept in the pom but with scope 'provided'; when false,
-     * the dependency is removed.
+     * When true, dependencies are kept in the pom but with scope 'provided'; when false, the dependency is removed.
      */
     @Parameter
     private boolean keepDependenciesWithProvidedScope;
 
     /**
-     * When true, transitive deps of removed dependencies are promoted to direct dependencies.
-     * This should allow the drop in replacement of the removed deps with the new shaded
-     * jar and everything should still work.
+     * When true, transitive deps of removed dependencies are promoted to direct dependencies. This should allow the
+     * drop in replacement of the removed deps with the new shaded jar and everything should still work.
      */
     @Parameter
     private boolean promoteTransitiveDependencies;
@@ -333,9 +327,9 @@ public class ShadeMojo
     private boolean createSourcesJar;
 
     /**
-     * When true, it will attempt to shade the contents of the java source files when creating the sources jar.
-     * When false, it will just relocate the java source files to the shaded paths, but will not modify the
-     * actual contents of the java source files.
+     * When true, it will attempt to shade the contents of the java source files when creating the sources jar. When
+     * false, it will just relocate the java source files to the shaded paths, but will not modify the actual contents
+     * of the java source files.
      */
     @Parameter( property = "shadeSourcesContent", defaultValue = "false" )
     private boolean shadeSourcesContent;
@@ -370,10 +364,9 @@ public class ShadeMojo
 
     /**
      * When true, the version of each dependency of the reduced pom will be based on the baseVersion of the original
-     * dependency instead of its resolved version.
-     * For example, if the original pom (transitively) depends on a:a:2.7-SNAPSHOT, if useBaseVersion is set to false,
-     * the reduced pom will depend on a:a:2.7-20130312.222222-12 whereas if useBaseVersion is set to true, the reduced
-     * pom will depend on a:a:2.7-SNAPSHOT
+     * dependency instead of its resolved version. For example, if the original pom (transitively) depends on
+     * a:a:2.7-SNAPSHOT, if useBaseVersion is set to false, the reduced pom will depend on a:a:2.7-20130312.222222-12
+     * whereas if useBaseVersion is set to true, the reduced pom will depend on a:a:2.7-SNAPSHOT
      *
      * @since 3.0
      */
@@ -739,8 +732,8 @@ public class ShadeMojo
 
         for ( PackageRelocation r : relocations )
         {
-            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(),
-                                                 r.getExcludes(), r.isRawString() ) );
+            relocators.add( new SimpleRelocator( r.getPattern(), r.getShadedPattern(), r.getIncludes(), r.getExcludes(),
+                                                 r.isRawString() ) );
         }
 
         return relocators;
@@ -831,27 +824,24 @@ public class ShadeMojo
     private File shadedArtifactFileWithClassifier()
     {
         Artifact artifact = project.getArtifact();
-        final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "."
-                + artifact.getArtifactHandler().getExtension();
+        final String shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "."
+            + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
 
     private File shadedSourceArtifactFileWithClassifier()
     {
         Artifact artifact = project.getArtifact();
-        final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-sources."
-                + artifact.getArtifactHandler().getExtension();
+        final String shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName
+            + "-sources." + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
 
     private File shadedTestArtifactFileWithClassifier()
     {
         Artifact artifact = project.getArtifact();
-        final String shadedName =
-            shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName + "-tests."
-                + artifact.getArtifactHandler().getExtension();
+        final String shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-" + shadedClassifierName
+            + "-tests." + artifact.getArtifactHandler().getExtension();
         return new File( outputDirectory, shadedName );
     }
 
@@ -867,9 +857,8 @@ public class ShadeMojo
         }
         else
         {
-            shadedName =
-                shadedArtifactId + "-" + artifact.getVersion() + "-sources."
-                    + artifact.getArtifactHandler().getExtension();
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-sources."
+                + artifact.getArtifactHandler().getExtension();
         }
 
         return new File( outputDirectory, shadedName );
@@ -887,9 +876,8 @@ public class ShadeMojo
         }
         else
         {
-            shadedName =
-                shadedArtifactId + "-" + artifact.getVersion() + "-tests."
-                    + artifact.getArtifactHandler().getExtension();
+            shadedName = shadedArtifactId + "-" + artifact.getVersion() + "-tests."
+                + artifact.getArtifactHandler().getExtension();
         }
 
         return new File( outputDirectory, shadedName );
@@ -971,7 +959,8 @@ public class ShadeMojo
 
     private void rewriteDependencyReducedPomIfWeHaveReduction( List<Dependency> dependencies, boolean modified,
                                                                List<Dependency> transitiveDeps, Model model )
-        throws IOException, ProjectBuildingException, DependencyGraphBuilderException
+                                                                   throws IOException, ProjectBuildingException,
+                                                                   DependencyGraphBuilderException
     {
         if ( modified )
         {
@@ -1121,7 +1110,7 @@ public class ShadeMojo
 
     public boolean updateExcludesInDeps( MavenProject project, List<Dependency> dependencies,
                                          List<Dependency> transitiveDeps )
-        throws DependencyGraphBuilderException
+                                             throws DependencyGraphBuilderException
     {
         DependencyNode node = dependencyGraphBuilder.buildDependencyGraph( project, null );
         boolean modified = false;
@@ -1140,8 +1129,7 @@ public class ShadeMojo
                 {
                     if ( dep.getArtifactId().equals( n3.getArtifact().getArtifactId() )
                         && dep.getGroupId().equals( n3.getArtifact().getGroupId() )
-                        && ( dep.getType() == null ||
-                             dep.getType().equals( n3.getArtifact().getType() ) ) )
+                        && ( dep.getType() == null || dep.getType().equals( n3.getArtifact().getType() ) ) )
                     {
                         found = true;
                         break;
@@ -1154,8 +1142,7 @@ public class ShadeMojo
                     {
                         if ( dep.getArtifactId().equals( n2.getArtifact().getArtifactId() )
                             && dep.getGroupId().equals( n2.getArtifact().getGroupId() )
-                            && ( dep.getType() == null ||
-                                 dep.getType().equals( n2.getArtifact().getType() ) ) )
+                            && ( dep.getType() == null || dep.getType().equals( n2.getArtifact().getType() ) ) )
                         {
                             Exclusion exclusion = new Exclusion();
                             exclusion.setArtifactId( n3.getArtifact().getArtifactId() );
