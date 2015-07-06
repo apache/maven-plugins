@@ -35,11 +35,10 @@ ${project.name}
   This version of the plugin uses Checkstyle ${checkstyleVersion} by default and requires Java ${javaVersion}. But you can
   {{{./examples/upgrading-checkstyle.html}upgrade the version used at runtime}}.
 
-  The plugin can be configured in the project's POM. Predefined rulesets are included with the plugin, these are:
-  {{{http://checkstyle.sourceforge.net/sun_style.html}<<<sun_checks.xml>>>}},
-  {{{http://checkstyle.sourceforge.net/google_style.html}<<<google_checks.xml>>>}} and
-  {{{/shared/maven-shared-resources/maven_checks.html}<<<config/maven_checks.xml>>>}}. You can also use a custom ruleset by
-  specifying it in the plugin configuration.
+  The plugin can be configured in the project's POM. Predefined rulesets available for use in this version of the plugin are:
+  {{{http://checkstyle.sourceforge.net/sun_style.html}<<<sun_checks.xml>>>}} and
+  {{{http://checkstyle.sourceforge.net/google_style.html}<<<google_checks.xml>>>}}.
+  You can also use a custom ruleset by specifying it in the plugin configuration.
 
 * Goals Overview
 

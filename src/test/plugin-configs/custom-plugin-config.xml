@@ -29,7 +29,7 @@ under the License.
           <enableFilesSummary>true</enableFilesSummary>
           <enableRSS>true</enableRSS>
           <includes>**/*.java</includes>
-          <configLocation>config/maven_checks.xml</configLocation>
+          <configLocation>google_checks.xml</configLocation>
           <headerLocation>LICENSE.txt</headerLocation>
           <headerFile>${basedir}/src/test/test-sources/LICENSE.txt</headerFile>
           <cacheFile>${basedir}/target/test-harness/checkstyle/custom/checkstyle-cachefile</cacheFile>

@@ -59,7 +59,6 @@ public class CheckstyleReport
         Map<String, String> fmt2Cfg = new HashMap<>();
 
         fmt2Cfg.put( "sun", "sun_checks.xml" );
-        fmt2Cfg.put( "maven", "config/maven_checks.xml" );
 
         FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
     }

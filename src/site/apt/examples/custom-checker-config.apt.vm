@@ -55,11 +55,9 @@ Using a Custom Checkstyle Checker Configuration
   resource named <<<checkstyle.xml>>> within the compile scope of the dependencies or build extensions
   classpath.
 
-  There are 3 predefined Checkstyle configuration definitions that ship with the Checkstyle Plugin,
+  There are 2 predefined Checkstyle configuration definitions that ship with the Checkstyle Plugin,
   the Sun Microsystems Definition is selected by default.
 
   * <<sun_checks.xml>> - Sun Microsystems Definition (default).
 
   * <<google_checks.xml>> - Google Definition.
-
-  * <<config/maven_checks.xml>> - Maven Development Definitions.
