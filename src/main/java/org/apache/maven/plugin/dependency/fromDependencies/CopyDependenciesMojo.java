@@ -302,7 +302,7 @@ public class CopyDependenciesMojo
 
             buildingRequest.setRemoteRepositories( getRemoteRepos() );
             
-            pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact );
+            pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {

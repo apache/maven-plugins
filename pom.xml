@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-dependency-plugin</artifactId>
-  <version>2.11-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Dependency Plugin</name>
@@ -91,6 +91,7 @@ under the License.
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
       <version>${mavenVersion}</version>
+      <scope>test</scope>
     </dependency>
   
     <!-- maven -->
