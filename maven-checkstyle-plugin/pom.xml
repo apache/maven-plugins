@@ -129,11 +129,6 @@ under the License.
       <artifactId>maven-reporting-impl</artifactId>
       <version>2.3</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-shared-resources</artifactId>
-      <version>2</version>
-    </dependency>
 
     <!-- doxia -->
     <dependency>

@@ -2,8 +2,9 @@
  Predefined Rulesets
  ------
  Hervé Boutemy
+ Dennis Lundberg
  ------
- 2015-05-01
+ 2015-07-06
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,36 +30,22 @@
 
 Predefined Rulesets
 
-  Maven Checkstyle Plugin no longer contains any predefined rulesets. Instead it
-  references rulesets from other places:
+  Maven Checkstyle Plugin has had different sets of predefined rulesets across
+  different versions. Some have been included in the plugin itself while others
+  have been references to other projects. The table below shows this history.
 
-   * {{{http://checkstyle.sourceforge.net/sun_style.html}<<<sun_checks.xml>>>}}
-
-   * {{{http://checkstyle.sourceforge.net/google_style.html}<<<google_checks.xml>>>}}
-
-   * {{{/shared/maven-shared-resources/maven_checks.html}<<<config/maven_checks.xml>>>}}
-
-   []
-
-  In versions up to and including 2.13 the plugin included the
-  <<<config/maven_checks.xml>>> predefined ruleset. In version 2.14 this was
-  moved to {{{/shared/maven-shared-resources/}maven-shared-resources}}. It is
-  still available to use, because maven-shared-resources has been added as a
-  dependency to Maven Checkstyle Plugin
-
-  In versions up to and including 2.13 the plugin included the
-  <<<config/avalon_checks.xml>>> predefined ruleset. This was removed in
-  version 2.14.
-
-  In versions up to and including 2.14 the plugin included the
-  <<<config/turbine_checks.xml>>> predefined ruleset. This was removed in
-  version 2.15.
-
-  In versions up to and including 2.15 the plugin included the
-  <<<config/sun_checks.xml>>> predefined ruleset. This was removed in
-  version 2.16 and the plugin instead references the original configuration
-  provided by the Checkstyle project.
-
-  In versions 2.16 and later the plugin references the <<<google_checks.xml>>>
-  predefined ruleset. This is a configuration provided by the Checkstyle
-  project.
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<Predefined ruleset>>          | 2.0 - 2.13 | 2.14                                                            | 2.15                                                            | 2.16 - |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<<config/avalon_checks.xml>>>  | Included   | -                                                               | -                                                               | -      |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<<config/maven_checks.xml>>>   | Included   | {{{/shared/maven-shared-resources/maven_checks.html}Reference}} | {{{/shared/maven-shared-resources/maven_checks.html}Reference}} | -      |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<<config/sun_checks.xml>>>     | Included   | Included                                                        | Included                                                        | -      |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<<config/turbine_checks.xml>>> | Included   | Included                                                        | -                                                               | -      |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<<google_checks.xml>>>         | -          | -                                                               | -                                                               | {{{http://checkstyle.sourceforge.net/google_style.html}Reference}} |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
+| <<<sun_checks.xml>>>            | -          | -                                                               | -                                                               | {{{http://checkstyle.sourceforge.net/sun_style.html}Reference}} |
+*---------------------------------+------------+-----------------------------------------------------------------+-----------------------------------------------------------------+--------+
