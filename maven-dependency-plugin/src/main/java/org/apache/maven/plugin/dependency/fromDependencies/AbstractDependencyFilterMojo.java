@@ -369,7 +369,8 @@ public abstract class AbstractDependencyFilterMojo
                 
                 buildingRequest.setRemoteRepositories( getRemoteRepos() );
                 
-                Artifact resolvedArtifact = artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() );
+                Artifact resolvedArtifact =
+                    artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() ).getArtifact();
                 
                 artifacts.add( resolvedArtifact );
             }

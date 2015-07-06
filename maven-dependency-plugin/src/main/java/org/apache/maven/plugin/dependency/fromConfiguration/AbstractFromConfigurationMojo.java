@@ -266,7 +266,7 @@ public abstract class AbstractFromConfigurationMojo
             
             buildingRequest.setRemoteRepositories( getRemoteRepos() );
 
-            artifact = artifactResolver.resolveArtifact( buildingRequest, artifact );
+            artifact = artifactResolver.resolveArtifact( buildingRequest, artifact ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {

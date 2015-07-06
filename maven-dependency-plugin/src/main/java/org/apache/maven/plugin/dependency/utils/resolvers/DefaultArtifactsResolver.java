@@ -66,7 +66,7 @@ public class DefaultArtifactsResolver
         {
             try
             {
-                artifact = resolver.resolveArtifact( buildingRequest, artifact );
+                artifact = resolver.resolveArtifact( buildingRequest, artifact ).getArtifact();
                 resolvedArtifacts.add( artifact );
             }
             catch ( ArtifactResolverException ex )
