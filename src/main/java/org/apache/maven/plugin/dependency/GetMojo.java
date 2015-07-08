@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -70,12 +70,6 @@ public class GetMojo
      */
     @Component
     private ArtifactResolver artifactResolver;
-
-    /**
-     *
-     */
-    @Component
-    private ArtifactRepositoryFactory artifactRepositoryFactory;
 
     /**
      * Map that contains the layouts.
@@ -263,7 +257,7 @@ public class GetMojo
             }
             url = matcher.group( 3 ).trim();
         }
-        return artifactRepositoryFactory.createArtifactRepository( id, url, layout, policy, policy );
+        return new MavenArtifactRepository( id, url, layout, policy, policy );
     }
 
     private ArtifactRepositoryLayout getLayout( String id )
