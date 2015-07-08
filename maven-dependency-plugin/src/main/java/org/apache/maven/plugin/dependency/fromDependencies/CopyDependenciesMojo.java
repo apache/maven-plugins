@@ -20,7 +20,6 @@ package org.apache.maven.plugin.dependency.fromDependencies;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.dependency.utils.DependencyStatusSets;
@@ -69,12 +68,6 @@ public class CopyDependenciesMojo
      */
     @Component
     private ArtifactInstaller installer;
-
-    /**
-     *
-     */
-    @Component
-    protected ArtifactRepositoryFactory repositoryFactory;
 
     /**
      *

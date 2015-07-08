@@ -28,6 +28,8 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.artifact.repository.metadata.RepositoryMetadata;
 import org.apache.maven.artifact.repository.metadata.Snapshot;
@@ -289,11 +291,12 @@ public class TestCopyDependenciesMojo2
         mojo.execute();
         
         File outputDirectory = mojo.outputDirectory;
-		ArtifactRepository targetRepository = mojo.repositoryFactory.createDeploymentArtifactRepository( 
+		ArtifactRepository targetRepository = new MavenArtifactRepository( 
         		"local", 
         		outputDirectory.toURL().toExternalForm(), 
                 new DefaultRepositoryLayout(),
-                false );
+                new ArtifactRepositoryPolicy(), 
+                new ArtifactRepositoryPolicy() );
 
         Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
