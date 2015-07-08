@@ -19,16 +19,23 @@ package org.apache.maven.plugin.dependency;
  * under the License.    
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,18 +44,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
-import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
-import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.AbstractFilter;
+import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
+import org.apache.maven.shared.artifact.filter.resolve.Node;
+import org.apache.maven.shared.artifact.filter.resolve.PatternExclusionsFilter;
+import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
+import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.artifact.resolve.ArtifactResult;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Remove the project dependencies from the local repository, and optionally re-resolve them.
@@ -75,6 +83,9 @@ public class PurgeLocalRepositoryMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
+    
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    private MavenSession session;
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should BE deleted/purged from the local
@@ -143,22 +154,10 @@ public class PurgeLocalRepositoryMojo
     private ArtifactRepository localRepository;
 
     /**
-     * List of Remote Repositories used by the resolver
-     */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
-    protected List<ArtifactRepository> remoteRepositories;
-
-    /**
      * The artifact resolver used to re-resolve dependencies, if that option is enabled.
      */
     @Component
     private ArtifactResolver resolver;
-
-    /**
-     * The artifact metadata source used to resolve dependencies
-     */
-    @Component
-    private ArtifactMetadataSource metadataSource;
 
     /**
      * Determines how liberally the plugin will delete an artifact from the local repository. Values are: <br/>
@@ -210,7 +209,7 @@ public class PurgeLocalRepositoryMojo
      * Includes only direct project dependencies.
      */
     private class DirectDependencyFilter
-        implements ArtifactFilter
+        extends AbstractFilter
     {
 
         private Artifact projectArtifact;
@@ -230,15 +229,16 @@ public class PurgeLocalRepositoryMojo
         }
 
         @Override
-        public boolean include( Artifact artifact )
+        public boolean accept( Node node, List<Node> parents )
         {
-            if ( artifactsGAMatch( artifact, projectArtifact ) )
+            
+            if ( artifactsGAMatch( node, projectArtifact ) )
             {
                 return true;
             }
             for ( Artifact depArtifact : directDependencyArtifacts )
             {
-                if ( this.artifactsGAMatch( artifact, depArtifact ) )
+                if ( this.artifactsGAMatch( node, depArtifact ) )
                 {
                     return true;
                 }
@@ -249,21 +249,21 @@ public class PurgeLocalRepositoryMojo
         /*
          * Compare the groupId:artifactId of two artifacts.
          */
-        private boolean artifactsGAMatch( Artifact artifact1, Artifact artifact2 )
+        private boolean artifactsGAMatch( Node node, Artifact artifact2 )
         {
-            if ( artifact1 == artifact2 )
+            if ( node.getDependency() == null )
             {
-                return true;
-            }
-
-            if ( !artifact1.getGroupId().equals( artifact2.getGroupId() ) )
-            {
-                getLog().debug( "Different groupId: " + artifact1 + "  " + artifact2 );
                 return false;
             }
-            if ( !artifact1.getArtifactId().equals( artifact2.getArtifactId() ) )
+
+            if ( !node.getDependency().getGroupId().equals( artifact2.getGroupId() ) )
             {
-                getLog().debug( "Different artifactId: " + artifact1 + "  " + artifact2 );
+                getLog().debug( "Different groupId: " + node.getDependency() + "  " + artifact2 );
+                return false;
+            }
+            if ( !node.getDependency().getArtifactId().equals( artifact2.getArtifactId() ) )
+            {
+                getLog().debug( "Different artifactId: " + node.getDependency() + "  " + artifact2 );
                 return false;
             }
             return true;
@@ -271,28 +271,21 @@ public class PurgeLocalRepositoryMojo
     }
 
     /**
-     * Includes only artifacts that do not use system scope
-     */
-    private class SystemScopeExcludeFilter
-        implements ArtifactFilter
-    {
-        @Override
-        public boolean include( Artifact artifact )
-        {
-            return !Artifact.SCOPE_SYSTEM.equals( artifact.getScope() );
-        }
-    }
-
-    /**
      * Includes only snapshot artifacts
      */
-    private class SnapshotsFilter
-        implements ArtifactFilter
+    private class SnapshotsFilter extends AbstractFilter
     {
         @Override
-        public boolean include( Artifact artifact )
+        public boolean accept( Node node, List<Node> parents )
         {
-            return artifact.isSnapshot();
+            if ( node.getDependency() == null )
+            {
+                return false;
+            }
+            else
+            {
+                return ArtifactUtils.isSnapshot( node.getDependency().getVersion() );
+            }
         }
     }
 
@@ -328,10 +321,10 @@ public class PurgeLocalRepositoryMojo
             throw new MojoFailureException( "Unable to purge dependencies due to invalid dependency version ", e );
         }
 
-        ArtifactFilter artifactFilter = createPurgeArtifactsFilter( dependencyArtifacts );
+        TransformableFilter dependencyFilter = createPurgeArtifactsFilter( dependencyArtifacts );
 
         Set<Artifact> resolvedArtifactsToPurge =
-            getFilteredResolvedArtifacts( project, dependencyArtifacts, artifactFilter );
+            getFilteredResolvedArtifacts( project, dependencyArtifacts, dependencyFilter );
 
         if ( resolvedArtifactsToPurge.isEmpty() )
         {
@@ -344,6 +337,7 @@ public class PurgeLocalRepositoryMojo
 
         if ( reResolve )
         {
+            ArtifactFilter artifactFilter = dependencyFilter.transform( new ArtifactIncludeFilterTransformer() );
             try
             {
                 reResolveArtifacts( project, resolvedArtifactsToPurge, artifactFilter );
@@ -439,16 +433,16 @@ public class PurgeLocalRepositoryMojo
      *            dependencies
      * @return
      */
-    private ArtifactFilter createPurgeArtifactsFilter( Set<Artifact> dependencyArtifacts )
+    private TransformableFilter createPurgeArtifactsFilter( Set<Artifact> dependencyArtifacts )
     {
-        AndArtifactFilter andFilter = new AndArtifactFilter();
+        List<TransformableFilter> subFilters = new ArrayList<TransformableFilter>();
 
         // System dependencies should never be purged
-        andFilter.add( new SystemScopeExcludeFilter() );
+        subFilters.add( ScopeFilter.excluding( Artifact.SCOPE_SYSTEM ) );
 
         if ( this.snapshotsOnly )
         {
-            andFilter.add( new SnapshotsFilter() );
+            subFilters.add( new SnapshotsFilter() );
         }
 
         // The CLI includes/excludes overrides configuration in the pom
@@ -458,7 +452,7 @@ public class PurgeLocalRepositoryMojo
         }
         if ( this.includes != null )
         {
-            andFilter.add( new PatternIncludesArtifactFilter( includes ) );
+            subFilters.add( new PatternInclusionsFilter( includes ) );
         }
 
         if ( !StringUtils.isEmpty( this.exclude ) )
@@ -467,15 +461,15 @@ public class PurgeLocalRepositoryMojo
         }
         if ( this.excludes != null )
         {
-            andFilter.add( new PatternExcludesArtifactFilter( excludes ) );
+            subFilters.add( new PatternExclusionsFilter( excludes ) );
         }
 
         if ( !actTransitively )
         {
-            andFilter.add( new DirectDependencyFilter( project.getArtifact(), dependencyArtifacts ) );
+            subFilters.add( new DirectDependencyFilter( project.getArtifact(), dependencyArtifacts ) );
         }
 
-        return andFilter;
+        return new AndFilter( subFilters );
     }
 
     /**
@@ -498,48 +492,47 @@ public class PurgeLocalRepositoryMojo
     }
 
     private Set<Artifact> getFilteredResolvedArtifacts( MavenProject project, Set<Artifact> artifacts,
-                                                        ArtifactFilter filter )
+                                                        TransformableFilter filter )
     {
         try
         {
-            ArtifactResolutionResult result =
-                resolver.resolveTransitively( artifacts, project.getArtifact(), localRepository, remoteRepositories,
-                                              metadataSource, filter );
+            Iterable<ArtifactResult> results =
+                resolver.resolveTransitively( session.getProjectBuildingRequest(), project.getArtifact(), filter );
 
-            Set<Artifact> resolvedArtifacts = result.getArtifacts();
+            Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
+            
+            for ( ArtifactResult artResult : results )
+            {
+                resolvedArtifacts.add( artResult.getArtifact() );
+            }
 
             return resolvedArtifacts;
         }
-        catch ( ArtifactResolutionException e )
+        catch ( ArtifactResolverException e )
         {
-            getLog().info( "Unable to resolve all dependencies for : " + e.getGroupId() + ":" + e.getArtifactId() + ":"
-                               + e.getVersion()
-                               + ". Falling back to non-transitive mode for initial artifact resolution." );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            getLog().info( "Unable to resolve all dependencies for : " + e.getGroupId() + ":" + e.getArtifactId() + ":"
-                               + e.getVersion()
+            getLog().info( "Unable to resolve all dependencies for : " + project.getGroupId() + ":"
+                               + project.getArtifactId() + ":" + project.getVersion()
                                + ". Falling back to non-transitive mode for initial artifact resolution." );
         }
 
         Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>();
+        
+        ArtifactFilter artifactFilter = filter.transform( new ArtifactIncludeFilterTransformer() );
+        
         // Resolve the only poms here instead of the actual artifacts, because the files will be deleted during the
         // purge anyway
         for ( Artifact artifact : artifacts )
         {
-            if ( filter.include( artifact ) )
+            if ( artifactFilter.include( artifact ) )
             {
                 try
                 {
-                    resolvedArtifacts.add( artifact );
-                    resolver.resolve( artifact, remoteRepositories, localRepository );
+                    ArtifactResult artifactResult =
+                        resolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
+                    
+                    resolvedArtifacts.add( artifactResult.getArtifact() );
                 }
-                catch ( ArtifactResolutionException e )
-                {
-                    getLog().debug( "Unable to resolve artifact: " + artifact );
-                }
-                catch ( ArtifactNotFoundException e )
+                catch ( ArtifactResolverException e )
                 {
                     getLog().debug( "Unable to resolve artifact: " + artifact );
                 }
@@ -594,13 +587,9 @@ public class PurgeLocalRepositoryMojo
                 Artifact pomArtifact =
                     factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
                                             null, "pom" );
-                resolver.resolveAlways( pomArtifact, remoteRepositories, localRepository );
+                resolver.resolveArtifact( session.getProjectBuildingRequest(), pomArtifact );
             }
-            catch ( ArtifactResolutionException e )
-            {
-                verbose( e.getMessage() );
-            }
-            catch ( ArtifactNotFoundException e )
+            catch ( ArtifactResolverException e )
             {
                 verbose( e.getMessage() );
             }
@@ -614,14 +603,9 @@ public class PurgeLocalRepositoryMojo
 
             try
             {
-                resolver.resolveAlways( artifact, project.getRemoteArtifactRepositories(), localRepository );
+                resolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
             }
-            catch ( ArtifactResolutionException e )
-            {
-                verbose( e.getMessage() );
-                missingArtifacts.add( artifact );
-            }
-            catch ( ArtifactNotFoundException e )
+            catch ( ArtifactResolverException e )
             {
                 verbose( e.getMessage() );
                 missingArtifacts.add( artifact );
