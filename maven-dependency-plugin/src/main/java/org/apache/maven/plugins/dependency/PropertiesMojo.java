@@ -74,7 +74,7 @@ public class PropertiesMojo
             return;
         }
 
-        Set<Artifact> artifacts = getProject().getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         for ( Artifact artifact : artifacts )
         {
@@ -83,18 +83,8 @@ public class PropertiesMojo
         }
     }
 
-    public MavenProject getProject()
-    {
-        return project;
-    }
-
     public boolean isSkip()
     {
         return skip;
-    }
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
 }

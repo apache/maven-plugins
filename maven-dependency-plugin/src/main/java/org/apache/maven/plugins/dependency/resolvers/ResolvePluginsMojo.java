@@ -94,7 +94,7 @@ public class ResolvePluginsMojo
             for ( final Artifact plugin : plugins )
             {
                 String logStr = "Plugin Resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
-                if ( !silent )
+                if ( !isSilent() )
                 {
                     this.getLog().info( logStr );
                 }
@@ -112,7 +112,7 @@ public class ResolvePluginsMojo
                         logStr =
                             "    Plugin Dependency Resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
 
-                        if ( !silent )
+                        if ( !isSilent() )
                         {
                             this.getLog().info( logStr );
                         }

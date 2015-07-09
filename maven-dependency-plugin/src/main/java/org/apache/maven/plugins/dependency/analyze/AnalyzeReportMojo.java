@@ -111,7 +111,7 @@ public class AnalyzeReportMojo
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        if ( isSkip() )
+        if ( skip )
         {
             getLog().info( "Skipping plugin execution" );
             return;
@@ -229,15 +229,5 @@ public class AnalyzeReportMojo
     protected ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "analyze-report", locale, this.getClass().getClassLoader() );
-    }
-
-    public boolean isSkip()
-    {
-        return skip;
-    }
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
 }

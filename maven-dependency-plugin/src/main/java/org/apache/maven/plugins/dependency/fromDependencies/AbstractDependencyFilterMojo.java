@@ -367,8 +367,6 @@ public abstract class AbstractDependencyFilterMojo
                 ProjectBuildingRequest buildingRequest =
                     new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
                 
-                buildingRequest.setRemoteRepositories( getRemoteRepos() );
-                
                 Artifact resolvedArtifact =
                     artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() ).getArtifact();
                 
@@ -413,8 +411,6 @@ public abstract class AbstractDependencyFilterMojo
 
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            
-            buildingRequest.setRemoteRepositories( getRemoteRepos() );
             
             // resolve the rest of the artifacts
             ArtifactsResolver artifactsResolver =

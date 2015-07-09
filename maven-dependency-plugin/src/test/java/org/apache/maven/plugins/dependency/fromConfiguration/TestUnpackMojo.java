@@ -60,7 +60,7 @@ public class TestUnpackMojo
         mojo = (UnpackMojo) lookupMojo( "unpack", testPom );
         mojo.setOutputDirectory( new File( this.testDir, "outputDirectory" ) );
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
-        setSilent( mojo, true );
+        mojo.setSilent( true );
 
         assertNotNull( mojo );
         assertNotNull( mojo.getProject() );
@@ -499,7 +499,7 @@ public class TestUnpackMojo
     {
         final long now = System.currentTimeMillis();
         
-        setSilent( mojo, false );
+        mojo.setSilent( false );
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
         assertTrue( artifact.getFile().setLastModified( now - 20000 ) );

@@ -55,7 +55,7 @@ public class GoOfflineMojo
     {
         Set<Artifact> artifacts = getProject().getArtifacts();
 
-        if ( !silent )
+        if ( !isSilent() )
         {
             for ( Artifact artifact : artifacts )
             {

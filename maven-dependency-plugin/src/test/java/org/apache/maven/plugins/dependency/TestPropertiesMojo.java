@@ -47,8 +47,8 @@ public class TestPropertiesMojo
         PropertiesMojo mojo = (PropertiesMojo) lookupMojo( "properties", testPom );
 
         assertNotNull( mojo );
-        assertNotNull( mojo.getProject() );
-        MavenProject project = mojo.getProject();
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        assertNotNull( project );
 
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
