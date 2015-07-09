@@ -290,14 +290,9 @@ public abstract class AbstractAnalyzeMojo
         this.context = context;
     }
 
-    public boolean isSkip()
+    protected final boolean isSkip()
     {
         return skip;
-    }
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
 
     // private methods --------------------------------------------------------

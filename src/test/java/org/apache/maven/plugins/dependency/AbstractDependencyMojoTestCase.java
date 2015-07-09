@@ -82,11 +82,6 @@ public abstract class AbstractDependencyMojoTestCase
         stubFactory = null;
     }
 
-    protected void setSilent( AbstractDependencyMojo mojo, boolean silent )
-    {
-        mojo.silent = silent;
-    }
-
     protected void copyFile( AbstractDependencyMojo mojo, File artifact, File destFile )
         throws MojoExecutionException
     {

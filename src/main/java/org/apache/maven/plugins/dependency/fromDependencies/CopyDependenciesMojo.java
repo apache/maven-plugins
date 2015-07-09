@@ -293,8 +293,6 @@ public class CopyDependenciesMojo
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
-            buildingRequest.setRemoteRepositories( getRemoteRepos() );
-            
             pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact ).getArtifact();
         }
         catch ( ArtifactResolverException e )

@@ -94,7 +94,7 @@ public class AnalyzeDepMgt
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( isSkip() )
+        if ( skip )
         {
             getLog().info( "Skipping plugin execution" );
             return;
@@ -316,7 +316,7 @@ public class AnalyzeDepMgt
     /**
      * @return the failBuild
      */
-    public boolean isFailBuild()
+    protected final boolean isFailBuild()
     {
         return this.failBuild;
     }
@@ -332,7 +332,7 @@ public class AnalyzeDepMgt
     /**
      * @return the project
      */
-    public MavenProject getProject()
+    protected final MavenProject getProject()
     {
         return this.project;
     }
@@ -348,7 +348,7 @@ public class AnalyzeDepMgt
     /**
      * @return the ignoreDirect
      */
-    public boolean isIgnoreDirect()
+    protected final boolean isIgnoreDirect()
     {
         return this.ignoreDirect;
     }
@@ -359,15 +359,5 @@ public class AnalyzeDepMgt
     public void setIgnoreDirect( boolean theIgnoreDirect )
     {
         this.ignoreDirect = theIgnoreDirect;
-    }
-
-    public boolean isSkip()
-    {
-        return skip;
-    }
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
 }

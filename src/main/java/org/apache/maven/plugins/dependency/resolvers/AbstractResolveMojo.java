@@ -164,8 +164,6 @@ public abstract class AbstractResolveMojo
         ProjectBuildingRequest buildingRequest =
             new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
         
-        buildingRequest.setRemoteRepositories( getRemoteRepos() );
-        
         for ( final Artifact artifact : artifacts )
         {
             // resolve the new artifact

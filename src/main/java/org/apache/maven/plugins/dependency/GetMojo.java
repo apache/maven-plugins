@@ -273,14 +273,11 @@ public class GetMojo
         return layout;
     }
 
-    public boolean isSkip()
+    protected boolean isSkip()
     {
         return skip;
-}
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
+
+
 
 }

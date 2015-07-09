@@ -71,7 +71,7 @@ public class AnalyzeDuplicateMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( isSkip() )
+        if ( skip )
         {
             getLog().info( "Skipping plugin execution" );
             return;
@@ -166,15 +166,5 @@ public class AnalyzeDuplicateMojo
 
         return new HashSet<String>(
             CollectionUtils.disjunction( modelDependencies2, new HashSet<String>( modelDependencies2 ) ) );
-    }
-
-    public boolean isSkip()
-    {
-        return skip;
-    }
-
-    public void setSkip( boolean skip )
-    {
-        this.skip = skip;
     }
 }

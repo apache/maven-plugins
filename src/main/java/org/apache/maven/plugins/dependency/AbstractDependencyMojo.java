@@ -26,15 +26,13 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.dependency.utils.DependencySilentLog;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.dependency.utils.DependencySilentLog;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -60,12 +58,6 @@ public abstract class AbstractDependencyMojo
     private ArtifactFactory factory;
 
     /**
-     * List of Remote Repositories used by the resolver
-     */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
-    private List<ArtifactRepository> remoteRepos;
-
-    /**
      * To look up Archiver/UnArchiver implementations
      */
     @Component
@@ -86,7 +78,7 @@ public abstract class AbstractDependencyMojo
      * @since 2.7
      */
     @Parameter( property = "dependency.ignorePermissions", defaultValue = "false" )
-    protected boolean ignorePermissions;
+    private boolean ignorePermissions;
 
     /**
      * POM
@@ -112,7 +104,7 @@ public abstract class AbstractDependencyMojo
      * @since 2.0
      */
     @Parameter( property = "silent", defaultValue = "false" )
-    protected boolean silent;
+    private boolean silent;
 
     /**
      * Output absolute filename for resolved artifacts
@@ -150,30 +142,6 @@ public abstract class AbstractDependencyMojo
 
     protected abstract void doExecute()
             throws MojoExecutionException, MojoFailureException;
-
-
-    private Log log;
-
-    /**
-     * @return Returns the log.
-     */
-    @Override
-    public Log getLog()
-    {
-        if ( log == null )
-        {
-            if ( silent )
-            {
-                log = new DependencySilentLog();
-            }
-            else
-            {
-                log = super.getLog();
-            }
-        }
-
-        return this.log;
-    }
 
     /**
      * @return Returns the archiverManager.
@@ -348,14 +316,6 @@ public abstract class AbstractDependencyMojo
         return this.project;
     }
 
-     /**
-     * @return Returns the remoteRepos.
-     */
-    public List<ArtifactRepository> getRemoteRepos()
-    {
-        return this.remoteRepos;
-    }
-
     /**
      * @param archiverManager The archiverManager to set.
      */
@@ -383,7 +343,20 @@ public abstract class AbstractDependencyMojo
     {
         this.skip = skip;
     }
-
+    
+    protected final boolean isSilent()
+    {
+        return silent;
+    }
+    
+    public void setSilent( boolean silent )
+    {
+        this.silent = silent;
+        if ( silent )
+        {
+            setLog( new DependencySilentLog() ); 
+        }
+    }
 
     private void logUnpack( File file, File location, String includes, String excludes )
     {
