@@ -20,28 +20,25 @@ package org.apache.maven.plugins.dependency.resolvers;
  */
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.fromDependencies.AbstractDependencyFilterMojo;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.artifact.resolve.ArtifactResult;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -50,12 +47,6 @@ import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 public abstract class AbstractResolveMojo
     extends AbstractDependencyFilterMojo
 {
-    /**
-     * Project builder -- builds a model from a pom.xml
-     */
-    @Component
-    private ProjectBuilder projectBuilder;
-    
     /**
      * If specified, this parameter will cause the dependencies to be written to the path specified, instead of writing
      * to the console.
@@ -136,8 +127,9 @@ public abstract class AbstractResolveMojo
 
         final FilterArtifacts filter = new FilterArtifacts();
 
-        filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
-                                           DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
+        filter.addFilter( new org.apache.maven.shared.artifact.filter.collection.ScopeFilter(
+                                                  DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
+                                                  DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
 
         filter.addFilter( new TypeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeTypes ),
                                           DependencyUtil.cleanToBeTokenizedString( this.excludeTypes ) ) );
@@ -157,19 +149,7 @@ public abstract class AbstractResolveMojo
     protected Set<Artifact> resolveDependencyArtifacts( final MavenProject theProject )
         throws ArtifactResolverException, ArtifactNotFoundException, InvalidDependencyVersionException
     {
-        final Set<Artifact> artifacts =
-            theProject.createArtifacts( this.getFactory(), Artifact.SCOPE_TEST,
-                                        new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
-
-        ProjectBuildingRequest buildingRequest =
-            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-        
-        for ( final Artifact artifact : artifacts )
-        {
-            // resolve the new artifact
-            getArtifactResolver().resolveArtifact( buildingRequest, artifact );
-        }
-        return artifacts;
+        return resolveArtifactDependencies( theProject.getArtifact() );
     }
 
     /**
@@ -178,22 +158,25 @@ public abstract class AbstractResolveMojo
      * @param artifact the artifact used to retrieve dependencies
      * @return resolved set of dependencies
      * @throws ArtifactResolverException
-     * @throws ArtifactNotFoundException
-     * @throws ProjectBuildingException
-     * @throws InvalidDependencyVersionException
-     *
      */
     protected Set<Artifact> resolveArtifactDependencies( final Artifact artifact )
-        throws ArtifactResolverException, ArtifactNotFoundException, ProjectBuildingException,
-        InvalidDependencyVersionException
+        throws ArtifactResolverException
     {
-        final Artifact pomArtifact =
-            this.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                                              "", "pom" );
+        ProjectBuildingRequest buildingRequest =
+            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
-        final MavenProject pomProject =
-            projectBuilder.build( pomArtifact, session.getProjectBuildingRequest() ).getProject();
+        Iterable<ArtifactResult> artifactResults =
+            getArtifactResolver().resolveTransitively( buildingRequest,
+                                                       artifact );
 
-        return resolveDependencyArtifacts( pomProject );
+        Set<Artifact> artifacts = new HashSet<Artifact>();
+
+        for ( final ArtifactResult artifactResult : artifactResults )
+        {
+            artifacts.add( artifactResult.getArtifact() );
+        }
+
+        return artifacts;
+
     }
 }

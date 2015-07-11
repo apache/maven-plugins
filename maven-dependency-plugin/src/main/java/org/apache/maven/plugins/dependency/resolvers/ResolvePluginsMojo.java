@@ -28,14 +28,12 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -127,14 +125,6 @@ public class ResolvePluginsMojo
             }
         }
         catch ( final IOException e )
-        {
-            throw new MojoExecutionException( "Nested:", e );
-        }
-        catch ( final ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "Nested:", e );
-        }
-        catch ( final ProjectBuildingException e )
         {
             throw new MojoExecutionException( "Nested:", e );
         }
