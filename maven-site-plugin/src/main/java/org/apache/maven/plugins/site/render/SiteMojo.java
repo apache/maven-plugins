@@ -47,7 +47,7 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
  * Note that links between module sites in a multi module build will <b>not</b> work, since local build directory
  * structure doesn't match deployed site.
  * </p>
- * 
+ *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -70,7 +70,7 @@ public class SiteMojo
 
     /**
      * Generate a sitemap. The result will be a "sitemap.html" file at the site root.
-     * 
+     *
      * @since 2.1
      */
     @Parameter( property = "generateSitemap", defaultValue = "false" )
@@ -79,7 +79,7 @@ public class SiteMojo
     /**
      * Whether to validate xml input documents. If set to true, <strong>all</strong> input documents in xml format (in
      * particular xdoc and fml) will be validated and any error will lead to a build failure.
-     * 
+     *
      * @since 2.1.1
      */
     @Parameter( property = "validate", defaultValue = "false" )
@@ -87,7 +87,7 @@ public class SiteMojo
 
     /**
      * Set this to 'true' to skip site generation and staging.
-     * 
+     *
      * @since 3.0
      */
     @Parameter( property = "maven.site.skip", defaultValue = "false" )
@@ -95,7 +95,8 @@ public class SiteMojo
 
     /**
      * Which types of feed to generate. The result will be in a "feeds" folder at the site root.
-     * 
+     * Valid feed types are rss_0.90, rss_0.91, rss_0.92, rss_0.93, rss_0.94, rss_1.0 rss_2.0 or atom_0.3
+     *
      * @since 3.4.1
      */
     @Parameter( property = "feedType" )
@@ -105,7 +106,7 @@ public class SiteMojo
      * {@inheritDoc} Generate the project site
      * <p/>
      * throws MojoExecutionException if any
-     * 
+     *
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     @Override
@@ -221,7 +222,7 @@ public class SiteMojo
 
     /**
      * Renders Doxia documents, but not reports.
-     * 
+     *
      * @param documents a collection of documents
      * @return the sublist of documents that are not Doxia parsed
      */
