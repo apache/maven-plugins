@@ -47,7 +47,7 @@ Resource Transformers
 *-----------------------------------------+------------------------------------------+
 | {{PluginXmlResourceTransformer}}        | Aggregates Mavens <<<plugin.xml>>>       |
 *-----------------------------------------+------------------------------------------+
-| {{ServicesResourceTransformer}}         | Merges <<<META-INF/services>>> resources |
+| {{ServicesResourceTransformer}}         | Relocated class names in <<<META-INF/services>>> resources and merges them. |
 *-----------------------------------------+------------------------------------------+
 | {{XmlAppendingTransformer}}             | Adds XML content to an XML resource      | 
 *-----------------------------------------+------------------------------------------+
@@ -129,7 +129,9 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
 * Concatenating Service Entries with the {ServicesResourceTransformer}
 
   JAR files providing implementations of some interfaces often ship with a <<<META-INF/services/>>> directory that
-  maps interfaces to their implementation classes for lookup by the service locator. To merge multiple implementations
+  maps interfaces to their implementation classes for lookup by the service locator.
+  To relocate the class names of these implementation classes, and to
+  To merge multiple implementations
   of the same interface into one service entry, the <<<ServicesResourceTransformer>>> can be used:
 
 +-----
