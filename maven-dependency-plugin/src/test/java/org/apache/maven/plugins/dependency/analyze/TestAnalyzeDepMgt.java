@@ -22,7 +22,10 @@ package org.apache.maven.plugins.dependency.analyze;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -175,6 +178,18 @@ public class TestAnalyzeDepMgt
         assertEquals( 1,map.size() );
         assertTrue( map.containsKey( mojo.getExclusionKey( ex ) ) );
         assertSame( ex, map.get( mojo.getExclusionKey( ex ) ) );
+
+        mojo.setIgnoredExclusions( Collections.singleton( mojo.getExclusionKey( ex ) ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
+
+        mojo.setIgnoredExclusions( Collections.singleton( ex.getGroupId() + ":*" ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
+
+        mojo.setIgnoredExclusions( Collections.singleton( "*:" + ex.getArtifactId() ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
+
+        mojo.setIgnoredExclusions( Collections.singleton( "*:*" ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
     }
 
     public void testGetExclusionErrors()
@@ -267,7 +282,7 @@ public class TestAnalyzeDepMgt
         {
             DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
             project.setDependencyManagement( depMgtMatchingVersion );
-            // test without ignore exclusion errors
+            // test without ignoring the exclusion error
             mojo.setFailBuild( true );
             mojo.setIgnoreDirect( false );
             mojo.execute();
@@ -282,10 +297,10 @@ public class TestAnalyzeDepMgt
         {
             DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
             project.setDependencyManagement( depMgtMatchingVersion );
-            // test with ignore exclusion errors
+            // test with the exclusion error ignored
             mojo.setFailBuild( true );
             mojo.setIgnoreDirect( false );
-            mojo.setIgnoreExclusionErrors(true);
+            mojo.setIgnoredExclusions( Collections.singleton(mojo.getExclusionKey( ex )) );
             mojo.execute();
         }
         catch ( Exception e )

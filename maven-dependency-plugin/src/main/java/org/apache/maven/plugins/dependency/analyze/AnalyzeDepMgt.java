@@ -37,6 +37,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -79,9 +80,22 @@ public class AnalyzeDepMgt
 
     /**
      * Ignore excluded dependencies that appear in the dependency tree.
+     * Format is <code>groupId:artifactId</code>.
+     *
+     * E.g.
+     * <pre>
+     *   &lt;ignoredExclusions&gt;
+     *     &lt;ignoredExclusion&gt;*:*&lt;/ignoredExclusion&gt;
+     *     &lt;ignoredExclusion&gt;org.foo.*:*&lt;/ignoredExclusion&gt;
+     *     &lt;ignoredExclusion&gt;com.foo.bar:*&lt;/ignoredExclusion&gt;
+     *     &lt;ignoredExclusion&gt;dot.foo.bar:utilities&lt;/ignoredExclusion&gt;
+     *   &lt;/ignoredExclusions&gt;
+     * </pre>
+     *
+     * @since 3.0
      */
-    @Parameter( property = "mdep.analyze.ignore.exclusion.errors", defaultValue = "false" )
-    private boolean ignoreExclusionErrors = false;
+    @Parameter
+    private Set<String> ignoredExclusions = new HashSet<String>();
 
     /**
      * Skip plugin execution completely.
@@ -168,17 +182,14 @@ public class AnalyzeDepMgt
                 allDependencyArtifacts.removeAll( directDependencies );
             }
 
-            if ( !this.ignoreExclusionErrors )
+            // log exclusion errors
+            List<Artifact> exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
+            for ( Artifact exclusion : exclusionErrors )
             {
-                // log exclusion errors
-                List<Artifact> exclusionErrors = getExclusionErrors( exclusions, allDependencyArtifacts );
-                for ( Artifact exclusion : exclusionErrors )
-                {
-                    getLog().info( StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
-                        + " was excluded in DepMgt, but version " + exclusion.getVersion()
-                        + " has been found in the dependency tree." );
-                    foundError = true;
-                }
+                getLog().info( StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
+                    + " was excluded in DepMgt, but version " + exclusion.getVersion()
+                    + " has been found in the dependency tree." );
+                foundError = true;
             }
 
             // find and log version mismatches
@@ -216,10 +227,32 @@ public class AnalyzeDepMgt
         {
             for ( Exclusion exclusion : exclusionList )
             {
-                exclusions.put( getExclusionKey( exclusion ), exclusion );
+                if ( !isExclusionIgnored( exclusion ) )
+                {
+                    exclusions.put( getExclusionKey( exclusion ), exclusion );
+                }
             }
         }
         return exclusions;
+    }
+
+    /**
+     * Checks the exclusion against the list of ignored exclusions
+     *
+     * @return whether the exclusion should be ignored
+     */
+    public boolean isExclusionIgnored( Exclusion exclusion )
+    {
+        String exclusionKey = getExclusionKey( exclusion );
+        for ( String ignoredExclusion : ignoredExclusions )
+        {
+            if ( SelectorUtils.match( ignoredExclusion, exclusionKey ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -371,18 +404,10 @@ public class AnalyzeDepMgt
     }
 
     /**
-     * @return the ignoreExclusionErrors
+     * @param ignoredExclusions the ignoredExclusions to set
      */
-    protected final boolean isIgnoreExclusionErrors()
+    public void setIgnoredExclusions( Set<String> ignoredExclusions )
     {
-        return this.ignoreExclusionErrors;
-    }
-
-    /**
-     * @param theIgnoreExclusionErrors the ignoreExclusionErrors to set
-     */
-    public void setIgnoreExclusionErrors( boolean theIgnoreExclusionErrors )
-    {
-        this.ignoreExclusionErrors = theIgnoreExclusionErrors;
+        this.ignoredExclusions = ignoredExclusions;
     }
 }
