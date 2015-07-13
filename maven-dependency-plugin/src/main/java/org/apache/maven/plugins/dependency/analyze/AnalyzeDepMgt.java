@@ -187,8 +187,8 @@ public class AnalyzeDepMgt
             for ( Artifact exclusion : exclusionErrors )
             {
                 getLog().info( StringUtils.stripEnd( getArtifactManagementKey( exclusion ), ":" )
-                    + " was excluded in DepMgt, but version " + exclusion.getVersion()
-                    + " has been found in the dependency tree." );
+                                   + " was excluded in DepMgt, but version " + exclusion.getVersion()
+                                   + " has been found in the dependency tree." );
                 foundError = true;
             }
 
