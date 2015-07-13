@@ -300,7 +300,7 @@ public class TestAnalyzeDepMgt
             // test with the exclusion error ignored
             mojo.setFailBuild( true );
             mojo.setIgnoreDirect( false );
-            mojo.setIgnoredExclusions( Collections.singleton(mojo.getExclusionKey( ex )) );
+            mojo.setIgnoredExclusions( Collections.singleton( mojo.getExclusionKey( ex ) ) );
             mojo.execute();
         }
         catch ( Exception e )
