@@ -164,8 +164,7 @@ public class AddFileSetsTask
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
 
             final List<String> excludes = fileSet.getExcludes();
-            excludes.add( "**/*.filtered" );
-            excludes.add( "**/*.formatted" );
+            // MASSEMBLY-777: before 3.0.0, this forced an exclude for *.filtered and *.formatted
             task.setExcludes( excludes );
 
             task.setIncludes( fileSet.getIncludes() );
