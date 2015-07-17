@@ -24,14 +24,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.fromDependencies.AbstractDependencyFilterMojo;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
@@ -146,12 +145,6 @@ public abstract class AbstractResolveMojo
         return filter;
     }
 
-    protected Set<Artifact> resolveDependencyArtifacts( final MavenProject theProject )
-        throws ArtifactResolverException, ArtifactNotFoundException, InvalidDependencyVersionException
-    {
-        return resolveArtifactDependencies( theProject.getArtifact() );
-    }
-
     /**
      * This method resolves all transitive dependencies of an artifact.
      *
@@ -159,15 +152,14 @@ public abstract class AbstractResolveMojo
      * @return resolved set of dependencies
      * @throws ArtifactResolverException
      */
-    protected Set<Artifact> resolveArtifactDependencies( final Artifact artifact )
+    protected Set<Artifact> resolveArtifactDependencies( final ArtifactCoordinate artifact )
         throws ArtifactResolverException
     {
         ProjectBuildingRequest buildingRequest =
             new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
         Iterable<ArtifactResult> artifactResults =
-            getArtifactResolver().resolveTransitively( buildingRequest,
-                                                       artifact );
+            getArtifactResolver().resolveDependencies( buildingRequest, artifact, null );
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
 

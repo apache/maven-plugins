@@ -21,13 +21,12 @@ package org.apache.maven.plugins.dependency;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
@@ -41,6 +40,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -63,12 +63,6 @@ public class GetMojo
      *
      */
     @Component
-    private ArtifactFactory artifactFactory;
-
-    /**
-     *
-     */
-    @Component
     private ArtifactResolver artifactResolver;
 
     /**
@@ -77,6 +71,8 @@ public class GetMojo
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
+    private ArtifactCoordinate coordinate = new ArtifactCoordinate();
+    
     /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
      */
@@ -152,7 +148,7 @@ public class GetMojo
             return;
         }
 
-        if ( artifactId == null && artifact == null )
+        if ( coordinate.getArtifactId() == null && artifact == null )
         {
             throw new MojoFailureException( "You must specify an artifact, "
                 + "e.g. -Dartifact=org.apache.maven.plugins:maven-downloader-plugin:1.0" );
@@ -166,26 +162,18 @@ public class GetMojo
                     "Invalid artifact, you must specify groupId:artifactId:version[:packaging[:classifier]] "
                         + artifact );
             }
-            groupId = tokens[0];
-            artifactId = tokens[1];
-            version = tokens[2];
+            coordinate.setGroupId( tokens[0] );
+            coordinate.setArtifactId( tokens[1] );
+            coordinate.setVersion( tokens[2] );
             if ( tokens.length >= 4 )
             {
-                packaging = tokens[3];
+                coordinate.setType( tokens[3] );
             }
             if ( tokens.length == 5 )
             {
-                classifier = tokens[4];
-            }
-            else
-            {
-                classifier = null;
+                coordinate.setClassifier( tokens[4] );
             }
         }
-
-        Artifact toDownload = classifier == null
-            ? artifactFactory.createBuildArtifact( groupId, artifactId, version, packaging )
-            : artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
 
         ArtifactRepositoryPolicy always =
             new ArtifactRepositoryPolicy( true, ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS,
@@ -217,13 +205,13 @@ public class GetMojo
             
             if ( transitive )
             {
-                getLog().info( "Resolving " + toDownload + " with transitive dependencies" );
-                artifactResolver.resolveTransitively( buildingRequest, toDownload );
+                getLog().info( "Resolving " + coordinate + " with transitive dependencies" );
+                artifactResolver.resolveDependencies( buildingRequest, Collections.singletonList( coordinate ), null );
             }
             else
             {
-                getLog().info( "Resolving " + toDownload );
-                artifactResolver.resolveArtifact( buildingRequest, toDownload );
+                getLog().info( "Resolving " + coordinate );
+                artifactResolver.resolveArtifact( buildingRequest, coordinate );
             }
         }
         catch ( ArtifactResolverException e )
@@ -278,6 +266,34 @@ public class GetMojo
         return skip;
     }
 
-
+    // @Parameter( alias = "groupId" )
+    public void setGroupId( String groupId )
+    {
+      this.coordinate.setGroupId( groupId );
+    }
+    
+    // @Parameter( alias = "artifactId" )
+    public void setArtifactId( String artifactId )
+    {
+      this.coordinate.setArtifactId( artifactId );
+    }
+    
+    // @Parameter( alias = "version" )
+    public void setVersion( String version )
+    {
+      this.coordinate.setVersion( version );
+    }
+    
+    // @Parameter( alias = "classifier" )
+    public void setClassifier( String classifier )
+    {
+      this.coordinate.setClassifier( classifier );
+    }
+    
+    // @Parameter( alias = "packaging" )
+    public void setPackaging( String type )
+    {
+      this.coordinate.setType( type );
+    }
 
 }
