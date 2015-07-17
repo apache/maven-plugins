@@ -162,12 +162,7 @@ public class AddFileSetsTask
             }
 
             task.setUseDefaultExcludes( fileSet.isUseDefaultExcludes() );
-
-            final List<String> excludes = fileSet.getExcludes();
-            excludes.add( "**/*.filtered" );
-            excludes.add( "**/*.formatted" );
-            task.setExcludes( excludes );
-
+            task.setExcludes( fileSet.getExcludes() );
             task.setIncludes( fileSet.getIncludes() );
             task.setOutputDirectory( destDirectory );
 
