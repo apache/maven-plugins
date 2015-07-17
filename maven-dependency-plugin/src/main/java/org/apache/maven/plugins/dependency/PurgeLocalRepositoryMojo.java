@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -43,7 +42,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.shared.artifact.TransferUtils;
 import org.apache.maven.shared.artifact.filter.resolve.AbstractFilter;
 import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
 import org.apache.maven.shared.artifact.filter.resolve.Node;
@@ -178,12 +177,6 @@ public class PurgeLocalRepositoryMojo
     private boolean actTransitively;
 
     /**
-     * Used to construct artifacts for deletion/resolution...
-     */
-    @Component
-    private ArtifactFactory factory;
-
-    /**
      * Whether this plugin should output verbose messages. Default is false.
      */
     @Parameter( property = "verbose", defaultValue = "false" )
@@ -310,16 +303,7 @@ public class PurgeLocalRepositoryMojo
             return;
         }
 
-        Set<Artifact> dependencyArtifacts;
-
-        try
-        {
-            dependencyArtifacts = project.createArtifacts( factory, null, null );
-        }
-        catch ( InvalidDependencyVersionException e )
-        {
-            throw new MojoFailureException( "Unable to purge dependencies due to invalid dependency version ", e );
-        }
+        Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
 
         TransformableFilter dependencyFilter = createPurgeArtifactsFilter( dependencyArtifacts );
 
@@ -496,8 +480,10 @@ public class PurgeLocalRepositoryMojo
     {
         try
         {
+            
             Iterable<ArtifactResult> results =
-                resolver.resolveTransitively( session.getProjectBuildingRequest(), project.getArtifact(), filter );
+                resolver.resolveDependencies( session.getProjectBuildingRequest(),
+                                              TransferUtils.toArtifactCoordinate( project ), filter );
 
             Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
             
@@ -584,10 +570,8 @@ public class PurgeLocalRepositoryMojo
         {
             try
             {
-                Artifact pomArtifact =
-                    factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                                            null, "pom" );
-                resolver.resolveArtifact( session.getProjectBuildingRequest(), pomArtifact );
+                resolver.resolveArtifact( session.getProjectBuildingRequest(),
+                                          TransferUtils.toArtifactCoordinate( artifact ) );
             }
             catch ( ArtifactResolverException e )
             {

@@ -35,6 +35,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.TransferUtils;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
@@ -105,7 +107,9 @@ public class ResolvePluginsMojo
 
                 if ( !excludeTransitive )
                 {
-                    for ( final Artifact artifact : resolveArtifactDependencies( plugin ) )
+                    ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate( plugin );
+                    
+                    for ( final Artifact artifact : resolveArtifactDependencies( coordinate ) )
                     {
                         logStr =
                             "    Plugin Dependency Resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
@@ -163,6 +167,7 @@ public class ResolvePluginsMojo
         final FilterArtifacts filter = getPluginArtifactsFilter();
         artifacts = filter.filter( artifacts );
 
+        Set<Artifact> resolvedArtifacts = new HashSet<Artifact>( artifacts.size() );
         //        final ArtifactFilter filter = getPluginFilter();
         for ( final Artifact artifact : new HashSet<Artifact>( artifacts ) )
         {
@@ -186,7 +191,7 @@ public class ResolvePluginsMojo
             buildingRequest.setRemoteRepositories( this.remotePluginRepositories );
             
             // resolve the new artifact
-            getArtifactResolver().resolveArtifact( buildingRequest, artifact );
+            resolvedArtifacts.add( getArtifactResolver().resolveArtifact( buildingRequest, artifact ) .getArtifact() );
         }
         return artifacts;
     }
