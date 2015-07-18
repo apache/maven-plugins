@@ -51,7 +51,7 @@ under the License.
             <id>build-parent-assembly</id>
             <phase>package</phase>
             <goals>
-              <goal>directory-single</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>

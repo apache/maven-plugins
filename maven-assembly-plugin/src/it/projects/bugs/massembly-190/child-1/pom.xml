@@ -28,7 +28,7 @@ under the License.
   </parent>
   <artifactId>child-1</artifactId>
   <packaging>jar</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>commons-codec</groupId>

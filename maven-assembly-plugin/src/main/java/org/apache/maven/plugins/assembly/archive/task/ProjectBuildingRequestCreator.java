@@ -72,7 +72,6 @@ public class ProjectBuildingRequestCreator
     }
 
     public static Object invoke( Object object, String method )
-        throws RuntimeException
     {
         try
         {
@@ -93,7 +92,6 @@ public class ProjectBuildingRequestCreator
     }
 
     public static Method getMethod( Class<?> objectClazz, String method, Class<?>... params )
-        throws RuntimeException
     {
         try
         {
@@ -106,7 +104,6 @@ public class ProjectBuildingRequestCreator
     }
 
     public static Object invoke( Method method, Object object, Object... args )
-        throws RuntimeException
     {
         try
         {

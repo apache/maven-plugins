@@ -25,7 +25,7 @@ boolean result = true;
 
 try
 {
-    File zipFile = new File( basedir, "target/assembly-assembly-with-module-binaries-1.0-bin.zip" );
+    File zipFile = new File( basedir, "child2/target/child2-1.0-SNAPSHOT-bin.zip" );
     
     if ( !zipFile.exists() || zipFile.isDirectory() )
     {
@@ -35,13 +35,13 @@ try
     
     ZipFile zf = new ZipFile( zipFile );
     
-    if ( zf.getEntry( "assembly-assembly-with-module-binaries-1.0/modules/child1.jar" ) == null )
+    if ( zf.getEntry( "child2-1.0-SNAPSHOT/modules/child1.jar" ) == null )
     {
         System.err.println( "child1 entry is missing." );
         result = false;
     }
     
-    if ( zf.getEntry( "assembly-assembly-with-module-binaries-1.0/modules/child2.jar" ) == null )
+    if ( zf.getEntry( "child2-1.0-SNAPSHOT/modules/child2.jar" ) == null )
     {
         System.err.println( "child2 entry is missing." );
         result = false;

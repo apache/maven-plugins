@@ -56,7 +56,7 @@ under the License.
             <id>package</id>
             <phase>package</phase>
             <goals>
-              <goal>directory-inline</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>

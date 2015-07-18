@@ -20,7 +20,7 @@
 import java.io.*;
 import java.util.zip.*;
 
-ZipFile zf = new ZipFile( new File( basedir, "target/massembly-298-1-bin.zip" ) );
+ZipFile zf = new ZipFile( new File( basedir, "assembly/target/assembly-1-bin.zip" ) );
 
 ZipEntry child1InclEntry = zf.getEntry( "child1/org/test/child1/App2.class" );
 
