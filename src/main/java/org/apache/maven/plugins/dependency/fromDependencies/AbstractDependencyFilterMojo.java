@@ -26,15 +26,13 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugins.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
-import org.apache.maven.plugins.dependency.utils.resolvers.ArtifactsResolver;
-import org.apache.maven.plugins.dependency.utils.resolvers.DefaultArtifactsResolver;
 import org.apache.maven.plugins.dependency.utils.translators.ArtifactTranslator;
 import org.apache.maven.plugins.dependency.utils.translators.ClassifierTypeTranslator;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
@@ -409,13 +407,8 @@ public abstract class AbstractDependencyFilterMojo
             // the unskipped artifacts are in the resolved set.
             artifacts = status.getResolvedDependencies();
 
-            ProjectBuildingRequest buildingRequest =
-                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            
             // resolve the rest of the artifacts
-            ArtifactsResolver artifactsResolver =
-                new DefaultArtifactsResolver( this.artifactResolver, buildingRequest, stopOnFailure );
-            resolvedArtifacts = artifactsResolver.resolve( artifacts, getLog() );
+            resolvedArtifacts = resolve( artifacts, stopOnFailure );
 
             // calculate the artifacts not resolved.
             unResolvedArtifacts.addAll( artifacts );
@@ -462,6 +455,34 @@ public abstract class AbstractDependencyFilterMojo
         return new DependencyStatusSets( unMarkedArtifacts, null, skippedArtifacts );
     }
 
+    
+    protected Set<Artifact> resolve( Set<Artifact> artifacts, boolean stopOnFailure )
+                    throws MojoExecutionException
+    {
+        ProjectBuildingRequest buildingRequest =
+                        new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+        
+        Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
+        for ( Artifact artifact : artifacts )
+        {
+            try
+            {
+                artifact = artifactResolver.resolveArtifact( buildingRequest, artifact ).getArtifact();
+                resolvedArtifacts.add( artifact );
+            }
+            catch ( ArtifactResolverException ex )
+            {
+                // an error occurred during resolution, log it an continue
+                getLog().debug( "error resolving: " + artifact.getId() );
+                getLog().debug( ex );
+                if ( stopOnFailure )
+                {
+                    throw new MojoExecutionException( "error resolving: " + artifact.getId(), ex );
+                }
+            }
+        }
+        return resolvedArtifacts;
+    }
     /**
      * @return Returns the markersDirectory.
      */
