@@ -24,16 +24,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.dependency.utils.filters.ArtifactItemFilter;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -204,41 +202,6 @@ public abstract class AbstractFromConfigurationMojo
     {
         Artifact artifact;
 
-        // Map managedVersions = createManagedVersionMap( factory, project.getId(), project.getDependencyManagement() );
-        VersionRange vr;
-        try
-        {
-            vr = VersionRange.createFromVersionSpec( artifactItem.getVersion() );
-        }
-        catch ( InvalidVersionSpecificationException e1 )
-        {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-            vr = VersionRange.createFromVersion( artifactItem.getVersion() );
-        }
-
-        if ( StringUtils.isEmpty( artifactItem.getClassifier() ) )
-        {
-            artifact =
-                getFactory().createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                       artifactItem.getType(), null, Artifact.SCOPE_COMPILE );
-        }
-        else
-        {
-            artifact =
-                getFactory().createDependencyArtifact( artifactItem.getGroupId(), artifactItem.getArtifactId(), vr,
-                                                       artifactItem.getType(), artifactItem.getClassifier(),
-                                                       Artifact.SCOPE_COMPILE );
-        }
-
-        // Maven 3 will search the reactor for the artifact but Maven 2 does not
-        // to keep consistent behaviour, we search the reactor ourselves.
-        Artifact result = getArtifactFomReactor( artifact );
-        if ( result != null )
-        {
-            return result;
-        }
-
         try
         {
             // mdep-50 - rolledback for now because it's breaking some functionality.
@@ -264,7 +227,7 @@ public abstract class AbstractFromConfigurationMojo
                 buildingRequest = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             }
             
-            artifact = artifactResolver.resolveArtifact( buildingRequest, artifact ).getArtifact();
+            artifact = artifactResolver.resolveArtifact( buildingRequest, artifactItem ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {

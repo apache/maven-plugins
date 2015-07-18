@@ -23,6 +23,7 @@ import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -33,7 +34,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-public class ArtifactItem
+public class ArtifactItem implements ArtifactCoordinate
 {
     /**
      * Group Id of Artifact
