@@ -146,7 +146,6 @@ public class TestCopyMojo
         item.setArtifactId( "artifact" );
         item.setGroupId( "groupId" );
         item.setVersion( "1.0-20130210.213424-191" );
-        item.setBaseVersion( "1.0-SNAPSHOT" );
         list.add(item);
 
         mojo.setArtifactItems( createArtifactItemArtifacts( list ) );
