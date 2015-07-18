@@ -156,6 +156,7 @@ public class AnalyzeDuplicateMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private Set<String> findDuplicateDependencies( List<Dependency> modelDependencies )
     {
         List<String> modelDependencies2 = new ArrayList<String>();

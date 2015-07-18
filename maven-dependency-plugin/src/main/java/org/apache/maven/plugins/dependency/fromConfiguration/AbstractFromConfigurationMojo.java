@@ -238,76 +238,6 @@ public abstract class AbstractFromConfigurationMojo
     }
 
     /**
-     * Checks to see if the specified artifact is available from the reactor.
-     *
-     * @param artifact The artifact we are looking for.
-     * @return The resolved artifact that is the same as the one we were looking for or <code>null</code> if one could
-     *         not be found.
-     */
-    private Artifact getArtifactFomReactor( Artifact artifact )
-    {
-        // check project dependencies first off
-        for ( Artifact a : getProject().getArtifacts() )
-        {
-            if ( equals( artifact, a ) && hasFile( a ) )
-            {
-                return a;
-            }
-        }
-
-        // check reactor projects
-        for ( MavenProject p : reactorProjects == null ? Collections.<MavenProject>emptyList() : reactorProjects )
-        {
-            // check the main artifact
-            if ( equals( artifact, p.getArtifact() ) && hasFile( p.getArtifact() ) )
-            {
-                return p.getArtifact();
-            }
-
-            // check any side artifacts
-            for ( Artifact a : p.getAttachedArtifacts() )
-            {
-                if ( equals( artifact, a ) && hasFile( a ) )
-                {
-                    return a;
-                }
-            }
-        }
-
-        // not available
-        return null;
-    }
-
-    /**
-     * Returns <code>true</code> if the artifact has a file.
-     *
-     * @param artifact the artifact (may be null)
-     * @return <code>true</code> if and only if the artifact is non-null and has a file.
-     */
-    private static boolean hasFile( Artifact artifact )
-    {
-        return artifact != null && artifact.getFile() != null && artifact.getFile().isFile();
-    }
-
-    /**
-     * Null-safe compare of two artifacts based on groupId, artifactId, version, type and classifier.
-     *
-     * @param a the first artifact.
-     * @param b the second artifact.
-     * @return <code>true</code> if and only if the two artifacts have the same groupId, artifactId, version,
-     *         type and classifier.
-     */
-    private static boolean equals( Artifact a, Artifact b )
-    {
-        return a == b || !( a == null || b == null )
-            && StringUtils.equals( a.getGroupId(), b.getGroupId() )
-            && StringUtils.equals( a.getArtifactId(), b.getArtifactId() )
-            && StringUtils.equals( a.getVersion(), b.getVersion() )
-            && StringUtils.equals( a.getType(), b.getType() )
-            && StringUtils.equals( a.getClassifier(), b.getClassifier() );
-    }
-
-    /**
      * Tries to find missing version from dependency list and dependency management. If found, the artifact is updated
      * with the correct version. It will first look for an exact match on artifactId/groupId/classifier/type and if it
      * doesn't find a match, it will try again looking for artifactId and groupId only.
@@ -477,11 +407,14 @@ public abstract class AbstractFromConfigurationMojo
                 classifier = null;
             }
     
-            Artifact toUnpack = classifier == null
-            ? getFactory().createBuildArtifact( groupId, artifactId, version, packaging )
-            : getFactory().createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
+            ArtifactItem artifactItem = new ArtifactItem();
+            artifactItem.setGroupId( groupId );
+            artifactItem.setArtifactId( artifactId );
+            artifactItem.setVersion( version );
+            artifactItem.setType( packaging );
+            artifactItem.setClassifier( classifier );
             
-            setArtifactItems( Collections.singletonList( new ArtifactItem( toUnpack ) ) );
+            setArtifactItems( Collections.singletonList( artifactItem ) );
         }
     }
 }

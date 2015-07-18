@@ -187,11 +187,16 @@ public class CopyDependenciesMojo
     {
         if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
         {
-            Artifact baseArtifact =
-                this.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                  artifact.getBaseVersion(), artifact.getScope(), artifact.getType() );
-            baseArtifact.setFile( artifact.getFile() );
-            installer.install( buildingRequest, Collections.singletonList( baseArtifact ) );
+            String version = artifact.getVersion();
+            try 
+            {
+                artifact.setVersion( artifact.getBaseVersion() );
+                installer.install( buildingRequest, Collections.singletonList( artifact ) );
+            }
+            finally 
+            {
+                artifact.setVersion( version );
+            }
         }
     }
 
