@@ -40,7 +40,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -71,7 +71,7 @@ public class GetMojo
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
-    private ArtifactCoordinate coordinate = new ArtifactCoordinate();
+    private DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
     
     /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
