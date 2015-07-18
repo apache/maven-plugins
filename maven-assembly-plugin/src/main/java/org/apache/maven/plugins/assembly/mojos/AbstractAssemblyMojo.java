@@ -642,16 +642,6 @@ public abstract class AbstractAssemblyMojo
         return result;
     }
 
-    AssemblyArchiver getAssemblyArchiver()
-    {
-        return assemblyArchiver;
-    }
-
-    AssemblyReader getAssemblyReader()
-    {
-        return assemblyReader;
-    }
-
     public File getBasedir()
     {
         return basedir;
@@ -676,17 +666,6 @@ public abstract class AbstractAssemblyMojo
     /**
      * {@inheritDoc}
      *
-     * @deprecated This has been replaced by {@link #setDescriptors(String[])}
-     */
-    @Deprecated
-    public void setDescriptor( final String descriptor )
-    {
-        this.descriptor = descriptor;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @deprecated This has been replaced by {@link #getDescriptorReferences()}
      */
     @Deprecated
@@ -695,16 +674,6 @@ public abstract class AbstractAssemblyMojo
         return descriptorId;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated This has been replaced by {@link #setDescriptorRefs(String[])}
-     */
-    @Deprecated
-    public void setDescriptorId( final String descriptorId )
-    {
-        this.descriptorId = descriptorId;
-    }
 
     public String[] getDescriptorReferences()
     {
@@ -714,11 +683,6 @@ public abstract class AbstractAssemblyMojo
     public File getDescriptorSourceDirectory()
     {
         return descriptorSourceDirectory;
-    }
-
-    public void setDescriptorSourceDirectory( final File descriptorSourceDirectory )
-    {
-        this.descriptorSourceDirectory = descriptorSourceDirectory;
     }
 
     public String[] getDescriptors()
@@ -857,16 +821,6 @@ public abstract class AbstractAssemblyMojo
         this.classifier = classifier;
     }
 
-    protected MavenProjectHelper getProjectHelper()
-    {
-        return projectHelper;
-    }
-
-    public void setProjectHelper( final MavenProjectHelper projectHelper )
-    {
-        this.projectHelper = projectHelper;
-    }
-
     public void setAppendAssemblyId( final boolean appendAssemblyId )
     {
         this.appendAssemblyId = appendAssemblyId;
@@ -915,11 +869,6 @@ public abstract class AbstractAssemblyMojo
     public boolean isIgnoreMissingDescriptor()
     {
         return ignoreMissingDescriptor;
-    }
-
-    public void setIgnoreMissingDescriptor( final boolean ignoreMissingDescriptor )
-    {
-        this.ignoreMissingDescriptor = ignoreMissingDescriptor;
     }
 
     public MavenSession getMavenSession()
