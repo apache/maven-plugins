@@ -21,8 +21,8 @@ import java.io.*;
 
 boolean result = true;
 
-String finalName = "two-levels-includeBaseDir-withBin-1.0-SNAPSHOT";
-String rootDir = "target/" + finalName + "-bin/" + finalName + "/modules/";
+String finalName = "assembly/target/assembly-1.0-SNAPSHOT-bin/assembly-1.0-SNAPSHOT";
+String rootDir = finalName + "/modules/";
 
 result = result && new File( basedir, rootDir + "child-level1-project1-1.0-SNAPSHOT.jar" ).exists();   
 

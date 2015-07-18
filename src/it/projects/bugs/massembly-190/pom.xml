@@ -29,23 +29,11 @@ under the License.
   
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/bin.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  
+
   <modules>
     <module>child-1</module>
     <module>child-2</module>
+    <module>child-3</module>
+
   </modules>
 </project>

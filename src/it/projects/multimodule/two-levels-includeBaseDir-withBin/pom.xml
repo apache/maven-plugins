@@ -36,18 +36,7 @@ under the License.
   <modules>
     <module>child-level1-project1</module>
     <module>child-level1-project2</module>
+    <module>assembly</module>
   </modules>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/assemble/bin.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
