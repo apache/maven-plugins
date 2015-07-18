@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -130,7 +131,7 @@ public final class DependencyUtil
         {
             if ( useBaseVersion )
             {
-                versionString = "-" + artifact.getBaseVersion();
+                versionString = "-" + ArtifactUtils.toSnapshotVersion( artifact.getVersion() );
             }
             else
             {

@@ -22,6 +22,7 @@ package org.apache.maven.plugins.dependency.fromConfiguration;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.codehaus.plexus.util.StringUtils;
@@ -58,13 +59,6 @@ public class ArtifactItem implements ArtifactCoordinate
      * @parameter
      */
     private String version = null;
-
-    /**
-     * BaseVersion of Artifact
-     *
-     * @parameter
-     */
-    private String baseVersion = null;
 
     /**
      * Type of Artifact (War,Jar,etc)
@@ -135,7 +129,6 @@ public class ArtifactItem implements ArtifactCoordinate
         this.setGroupId( artifact.getGroupId() );
         this.setType( artifact.getType() );
         this.setVersion( artifact.getVersion() );
-        this.setBaseVersion( artifact.getBaseVersion() );
     }
 
     private String filterEmptyString( String in )
@@ -220,16 +213,7 @@ public class ArtifactItem implements ArtifactCoordinate
      */
     public String getBaseVersion()
     {
-        return baseVersion;
-    }
-
-    /**
-     * @param baseVersion
-     *            The base version to set.
-     */
-    public void setBaseVersion( String baseVersion )
-    {
-        this.baseVersion = filterEmptyString( baseVersion );
+        return ArtifactUtils.toSnapshotVersion( version );
     }
 
     /**

@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.apache.maven.shared.artifact.install.ArtifactInstaller;
 import org.apache.maven.shared.artifact.install.ArtifactInstallerException;
@@ -168,7 +169,7 @@ public class CopyDependenciesMojo
             if ( !"pom".equals( artifact.getType() ) && isCopyPom() )
             {
                 Artifact pomArtifact = getResolvedPomArtifact( artifact );
-                if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
+                if ( pomArtifact != null && pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
                 {
                     installer.install( buildingRequest, Collections.singletonList( pomArtifact ) );
                     installBaseSnapshot( pomArtifact, buildingRequest );
@@ -269,7 +270,7 @@ public class CopyDependenciesMojo
             Artifact pomArtifact = getResolvedPomArtifact( artifact );
 
             // Copy the pom
-            if ( pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
+            if ( pomArtifact != null && pomArtifact.getFile() != null && pomArtifact.getFile().exists() )
             {
                 File pomDestFile =
                     new File( destDir, DependencyUtil.getFormattedFileName( pomArtifact, removeVersion, prependGroupId,
@@ -284,16 +285,20 @@ public class CopyDependenciesMojo
 
     protected Artifact getResolvedPomArtifact( Artifact artifact )
     {
-        Artifact pomArtifact =
-            this.getFactory().createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                                              "", "pom" );
+        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+        coordinate.setGroupId( artifact.getGroupId() );
+        coordinate.setArtifactId( artifact.getArtifactId() );
+        coordinate.setVersion( artifact.getVersion() );
+        coordinate.setType( "pom" );
+        
+        Artifact pomArtifact = null;
         // Resolve the pom artifact using repos
         try
         {
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
-            pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, pomArtifact ).getArtifact();
+            pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, coordinate ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {
