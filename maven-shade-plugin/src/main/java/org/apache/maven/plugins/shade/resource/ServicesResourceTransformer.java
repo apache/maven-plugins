@@ -125,7 +125,7 @@ public class ServicesResourceTransformer
                 write( '\n' );
             }
 
-            byte[] contentBytes = content.getBytes( Charsets.UTF_8 );
+            byte[] contentBytes = content.getBytes( "UTF-8" );
             this.write( contentBytes );
         }
 
