@@ -27,6 +27,7 @@ import java.util.Comparator;
 public class AssemblyArchiverPhaseComparator
     implements Comparator<AssemblyArchiverPhase>
 {
+    @Override
     public int compare( AssemblyArchiverPhase o1, AssemblyArchiverPhase o2 )
     {
         boolean o1hasOrder = o1 instanceof PhaseOrder;

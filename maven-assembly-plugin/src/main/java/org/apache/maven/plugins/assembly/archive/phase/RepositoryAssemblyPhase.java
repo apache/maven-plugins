@@ -68,6 +68,7 @@ public class RepositoryAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings( "ResultOfMethodCallIgnored" )
     public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
@@ -133,6 +134,7 @@ public class RepositoryAssemblyPhase
         return new RepoInfoWrapper( repository );
     }
 
+    @Override
     public int order()
     {
         // CHECKSTYLE_OFF: MagicNumber

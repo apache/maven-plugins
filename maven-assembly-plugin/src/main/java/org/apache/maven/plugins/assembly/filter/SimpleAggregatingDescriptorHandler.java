@@ -73,6 +73,7 @@ public class SimpleAggregatingDescriptorHandler
 
     private Logger logger;
 
+    @Override
     public void finalizeArchiveCreation( final Archiver archiver )
     {
         checkConfig();
@@ -138,10 +139,12 @@ public class SimpleAggregatingDescriptorHandler
         return f;
     }
 
+    @Override
     public void finalizeArchiveExtraction( final UnArchiver unarchiver )
     {
     }
 
+    @Override
     public List<String> getVirtualFiles()
     {
         checkConfig();
@@ -149,6 +152,7 @@ public class SimpleAggregatingDescriptorHandler
         return Collections.singletonList( outputPath );
     }
 
+    @Override
     public boolean isSelected( @Nonnull final FileInfo fileInfo )
         throws IOException
     {
@@ -218,6 +222,7 @@ public class SimpleAggregatingDescriptorHandler
         return logger;
     }
 
+    @Override
     public void enableLogging( final Logger logger )
     {
         this.logger = logger;

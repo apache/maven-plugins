@@ -122,6 +122,7 @@ public class ManifestCreationFinalizer
         }
     }
 
+    @Override
     public List<String> getVirtualFiles()
     {
         if ( archiveConfiguration != null )

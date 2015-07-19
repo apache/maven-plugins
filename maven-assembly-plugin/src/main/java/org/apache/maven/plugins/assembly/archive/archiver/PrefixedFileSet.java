@@ -83,6 +83,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getExcludes()
     {
         return fileSet.getExcludes();
@@ -91,6 +92,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public FileSelector[] getFileSelectors()
     {
         FileSelector[] sel = fileSet.getFileSelectors();
@@ -101,6 +103,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public String[] getIncludes()
     {
         return fileSet.getIncludes();
@@ -109,6 +112,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getPrefix()
     {
         String prefix = fileSet.getPrefix();
@@ -135,6 +139,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isCaseSensitive()
     {
         return fileSet.isCaseSensitive();
@@ -143,6 +148,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isIncludingEmptyDirectories()
     {
         return fileSet.isIncludingEmptyDirectories();
@@ -151,6 +157,7 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isUsingDefaultExcludes()
     {
         return fileSet.isUsingDefaultExcludes();
@@ -159,11 +166,13 @@ class PrefixedFileSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public File getDirectory()
     {
         return fileSet.getDirectory();
     }
 
+    @Override
     public InputStreamTransformer getStreamTransformer()
     {
         return fileSet.getStreamTransformer();

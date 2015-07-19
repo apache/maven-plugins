@@ -43,6 +43,7 @@ class GroupVersionAlignmentWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getExcludes()
     {
         return alignment.getExcludes();
@@ -51,6 +52,7 @@ class GroupVersionAlignmentWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getId()
     {
         return alignment.getId();
@@ -59,6 +61,7 @@ class GroupVersionAlignmentWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getVersion()
     {
         return alignment.getVersion();

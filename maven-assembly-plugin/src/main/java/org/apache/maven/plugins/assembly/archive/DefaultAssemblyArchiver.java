@@ -131,6 +131,7 @@ public class DefaultAssemblyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public File createArchive( final Assembly assembly, final String fullName, final String format,
                                final AssemblerConfigurationSource configSource, boolean recompressZippedFiles )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
@@ -526,6 +527,7 @@ public class DefaultAssemblyArchiver
         return tarArchiver;
     }
 
+    @Override
     public void contextualize( final Context context )
         throws ContextException
     {

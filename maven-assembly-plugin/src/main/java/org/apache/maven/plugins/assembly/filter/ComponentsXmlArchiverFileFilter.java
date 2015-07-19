@@ -34,6 +34,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.annotation.Nonnull;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -139,6 +140,7 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
+    @Override
     public void finalizeArchiveCreation( final Archiver archiver )
     {
         // this will prompt the isSelected() call, below, for all resources added to the archive.
@@ -161,6 +163,7 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
+    @Override
     public List<String> getVirtualFiles()
     {
         if ( ( components != null ) && !components.isEmpty() )
@@ -171,6 +174,7 @@ public class ComponentsXmlArchiverFileFilter
         return null;
     }
 
+    @Override
     public boolean isSelected( @Nonnull final FileInfo fileInfo )
         throws IOException
     {
@@ -226,6 +230,7 @@ public class ComponentsXmlArchiverFileFilter
         }
     }
 
+    @Override
     public void finalizeArchiveExtraction( final UnArchiver unarchiver )
     {
     }

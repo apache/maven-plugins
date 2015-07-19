@@ -48,6 +48,7 @@ public class RepoInfoWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getExcludes()
     {
         return repo.getExcludes();
@@ -56,6 +57,7 @@ public class RepoInfoWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<GroupVersionAlignmentWrapper> getGroupVersionAlignments()
     {
         final List<GroupVersionAlignment> alignments = repo.getGroupVersionAlignments();
@@ -79,6 +81,7 @@ public class RepoInfoWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getIncludes()
     {
         return repo.getIncludes();
@@ -87,6 +90,7 @@ public class RepoInfoWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getScope()
     {
         return repo.getScope();
@@ -95,6 +99,7 @@ public class RepoInfoWrapper
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isIncludeMetadata()
     {
         return repo.isIncludeMetadata();

@@ -52,6 +52,7 @@ class PrefixedClasspathLocatorStrategy
         return prefix;
     }
 
+    @Override
     public Location resolve( String locationSpecification, MessageHolder messageHolder )
     {
         String spec = formatLocation( locationSpecification );

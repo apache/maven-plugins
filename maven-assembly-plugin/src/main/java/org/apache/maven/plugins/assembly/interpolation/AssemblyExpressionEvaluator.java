@@ -55,6 +55,7 @@ public class AssemblyExpressionEvaluator
         interceptor = new PrefixAwareRecursionInterceptor( InterpolationConstants.PROJECT_PREFIXES, true );
     }
 
+    @Override
     public File alignToBaseDirectory( File f )
     {
         String basePath = configSource.getBasedir().getAbsolutePath();
@@ -70,6 +71,7 @@ public class AssemblyExpressionEvaluator
         }
     }
 
+    @Override
     public Object evaluate( String expression )
         throws ExpressionEvaluationException
     {

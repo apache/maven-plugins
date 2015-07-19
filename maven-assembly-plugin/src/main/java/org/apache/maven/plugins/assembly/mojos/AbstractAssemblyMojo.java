@@ -445,6 +445,7 @@ public abstract class AbstractAssemblyMojo
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -642,6 +643,7 @@ public abstract class AbstractAssemblyMojo
         return result;
     }
 
+    @Override
     public File getBasedir()
     {
         return basedir;
@@ -657,6 +659,7 @@ public abstract class AbstractAssemblyMojo
      *
      * @deprecated This has been replaced by {@link #getDescriptors()}
      */
+    @Override
     @Deprecated
     public String getDescriptor()
     {
@@ -668,6 +671,7 @@ public abstract class AbstractAssemblyMojo
      *
      * @deprecated This has been replaced by {@link #getDescriptorReferences()}
      */
+    @Override
     @Deprecated
     public String getDescriptorId()
     {
@@ -675,16 +679,19 @@ public abstract class AbstractAssemblyMojo
     }
 
 
+    @Override
     public String[] getDescriptorReferences()
     {
         return descriptorRefs;
     }
 
+    @Override
     public File getDescriptorSourceDirectory()
     {
         return descriptorSourceDirectory;
     }
 
+    @Override
     public String[] getDescriptors()
     {
         return descriptors;
@@ -695,8 +702,10 @@ public abstract class AbstractAssemblyMojo
         this.descriptors = descriptors;
     }
 
+    @Override
     public abstract MavenProject getProject();
 
+    @Override
     public File getSiteDirectory()
     {
         return siteDirectory;
@@ -707,11 +716,13 @@ public abstract class AbstractAssemblyMojo
         this.siteDirectory = siteDirectory;
     }
 
+    @Override
     public boolean isSiteIncluded()
     {
         return includeSite;
     }
 
+    @Override
     public String getFinalName()
     {
         return finalName;
@@ -722,11 +733,13 @@ public abstract class AbstractAssemblyMojo
         this.finalName = finalName;
     }
 
+    @Override
     public boolean isAssemblyIdAppended()
     {
         return appendAssemblyId;
     }
 
+    @Override
     public String getTarLongFileMode()
     {
         return tarLongFileMode;
@@ -737,6 +750,7 @@ public abstract class AbstractAssemblyMojo
         this.tarLongFileMode = tarLongFileMode;
     }
 
+    @Override
     public File getOutputDirectory()
     {
         return outputDirectory;
@@ -747,16 +761,19 @@ public abstract class AbstractAssemblyMojo
         this.outputDirectory = outputDirectory;
     }
 
+    @Override
     public MavenArchiveConfiguration getJarArchiveConfiguration()
     {
         return archive;
     }
 
+    @Override
     public File getWorkingDirectory()
     {
         return workDirectory;
     }
 
+    @Override
     public ArtifactRepository getLocalRepository()
     {
         return localRepository;
@@ -767,16 +784,19 @@ public abstract class AbstractAssemblyMojo
         this.localRepository = localRepository;
     }
 
+    @Override
     public File getTemporaryRootDirectory()
     {
         return tempRoot;
     }
 
+    @Override
     public File getArchiveBaseDirectory()
     {
         return archiveBaseDirectory;
     }
 
+    @Override
     public List<String> getFilters()
     {
         if ( filters == null )
@@ -795,11 +815,13 @@ public abstract class AbstractAssemblyMojo
         this.filters = filters;
     }
 
+    @Override
     public boolean isIncludeProjectBuildFilters()
     {
         return includeProjectBuildFilters;
     }
 
+    @Override
     public List<MavenProject> getReactorProjects()
     {
         return reactorProjects;
@@ -810,6 +832,7 @@ public abstract class AbstractAssemblyMojo
         this.reactorProjects = reactorProjects;
     }
 
+    @Override
     public String getClassifier()
     {
         // TODO Auto-generated method stub
@@ -851,56 +874,67 @@ public abstract class AbstractAssemblyMojo
         this.workDirectory = workDirectory;
     }
 
+    @Override
     public List<ArtifactRepository> getRemoteRepositories()
     {
         return remoteRepositories;
     }
 
+    @Override
     public boolean isDryRun()
     {
         return dryRun;
     }
 
+    @Override
     public boolean isIgnoreDirFormatExtensions()
     {
         return ignoreDirFormatExtensions;
     }
 
+    @Override
     public boolean isIgnoreMissingDescriptor()
     {
         return ignoreMissingDescriptor;
     }
 
+    @Override
     public MavenSession getMavenSession()
     {
         return mavenSession;
     }
 
+    @Override
     public String getArchiverConfig()
     {
         return archiverConfig == null ? null : archiverConfig.toString();
     }
 
+    @Override
     public MavenReaderFilter getMavenReaderFilter()
     {
         return mavenReaderFilter;
     }
 
+    @Override
     public boolean isUpdateOnly()
     {
         return updateOnly;
     }
 
+    @Override
     public boolean isUseJvmChmod()
     {
         return useJvmChmod;
     }
 
+    @Override
     public boolean isIgnorePermissions()
     {
         return ignorePermissions;
     }
 
+    @Override
     public String getEncoding()
     {
         return encoding;
@@ -911,11 +945,13 @@ public abstract class AbstractAssemblyMojo
         return recompressZippedFiles;
     }
 
+    @Override
     public String getEscapeString()
     {
         return escapeString;
     }
 
+    @Override
     public List<String> getDelimiters()
     {
         return delimiters;
@@ -926,6 +962,7 @@ public abstract class AbstractAssemblyMojo
         this.delimiters = delimiters;
     }
 
+    @Override
     @Nonnull
     public FixedStringSearchInterpolator getCommandLinePropsInterpolator()
     {
@@ -936,6 +973,7 @@ public abstract class AbstractAssemblyMojo
         return commanndLinePropertiesInterpolator;
     }
 
+    @Override
     @Nonnull
     public FixedStringSearchInterpolator getEnvInterpolator()
     {
@@ -946,6 +984,7 @@ public abstract class AbstractAssemblyMojo
         return envInterpolator;
     }
 
+    @Override
     @Nonnull
     public FixedStringSearchInterpolator getRepositoryInterpolator()
     {
@@ -956,6 +995,7 @@ public abstract class AbstractAssemblyMojo
         return rootInterpolator;
     }
 
+    @Override
     @Nonnull
     public FixedStringSearchInterpolator getMainProjectInterpolator()
     {

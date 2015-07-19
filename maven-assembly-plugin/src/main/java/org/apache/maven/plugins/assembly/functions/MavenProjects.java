@@ -93,6 +93,7 @@ public class MavenProjects
     {
         return new MavenProjectConsumer()
         {
+            @Override
             public void accept( MavenProject project )
             {
                 final String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
@@ -106,6 +107,7 @@ public class MavenProjects
     {
         return new MavenProjectConsumer()
         {
+            @Override
             public void accept( MavenProject project )
             {
                 set.add( project );
