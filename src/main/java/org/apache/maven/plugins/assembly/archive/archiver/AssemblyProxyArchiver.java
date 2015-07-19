@@ -140,6 +140,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addArchivedFileSet( @Nonnull final File archiveFile, final String prefix, final String[] includes,
                                     final String[] excludes )
     {
@@ -174,6 +175,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addArchivedFileSet( @Nonnull final File archiveFile, final String prefix )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -197,6 +199,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addArchivedFileSet( final File archiveFile, final String[] includes, final String[] excludes )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -222,6 +225,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addArchivedFileSet( @Nonnull final File archiveFile )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -245,6 +249,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addDirectory( @Nonnull final File directory, final String prefix, final String[] includes,
                               final String[] excludes )
     {
@@ -272,6 +277,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addSymlink( String symlinkName, String symlinkDestination )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -289,6 +295,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addSymlink( String symlinkName, int permissions, String symlinkDestination )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -306,6 +313,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addDirectory( @Nonnull final File directory, final String prefix )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -330,6 +338,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addDirectory( @Nonnull final File directory, final String[] includes, final String[] excludes )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -356,6 +365,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addDirectory( @Nonnull final File directory )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -380,6 +390,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addFile( @Nonnull final File inputFile, @Nonnull final String destFileName, final int permissions )
     {
         if ( acceptFile( inputFile ) )
@@ -401,6 +412,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addFile( @Nonnull final File inputFile, @Nonnull final String destFileName )
     {
         if ( acceptFile( inputFile ) )
@@ -422,6 +434,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createArchive()
         throws IOException
     {
@@ -440,6 +453,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getDefaultDirectoryMode()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -456,6 +470,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDefaultDirectoryMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -472,6 +487,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getDefaultFileMode()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -488,6 +504,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDefaultFileMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -504,6 +521,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public File getDestFile()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -520,6 +538,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDestFile( final File destFile )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -533,6 +552,7 @@ public class AssemblyProxyArchiver
         }
     }
 
+    @Override
     @SuppressWarnings( { "rawtypes", "deprecation" } )
     /** {@inheritDoc} */ public Map<String, ArchiveEntry> getFiles()
     {
@@ -550,6 +570,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean getIncludeEmptyDirs()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -566,6 +587,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setIncludeEmptyDirs( final boolean includeEmptyDirs )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -582,6 +604,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isForced()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -598,6 +621,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setForced( final boolean forced )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -615,6 +639,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSupportingForced()
     {
         inPublicApi.set( Boolean.TRUE );
@@ -631,6 +656,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDotFileDirectory( final File dotFileDirectory )
     {
         throw new UnsupportedOperationException(
@@ -640,6 +666,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addArchivedFileSet( final ArchivedFileSet fileSet )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -657,6 +684,7 @@ public class AssemblyProxyArchiver
         }
     }
 
+    @Override
     public void addArchivedFileSet( ArchivedFileSet archivedFileSet, Charset charset )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -678,6 +706,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addFileSet( @Nonnull final FileSet fileSet )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -782,6 +811,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addResource( final PlexusIoResource resource, final String destFileName, final int permissions )
     {
         File file = new File( resource.getName() ); // zOMG.
@@ -803,6 +833,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addResources( final PlexusIoResourceCollection resources )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -819,6 +850,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     @Nonnull
     public ResourceIterator getResources()
     {
@@ -828,6 +860,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDuplicateBehavior()
     {
         return delegate.getDuplicateBehavior();
@@ -836,6 +869,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDuplicateBehavior( final String duplicate )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -852,6 +886,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getDirectoryMode()
     {
         return delegate.getDirectoryMode();
@@ -860,6 +895,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDirectoryMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -876,6 +912,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getFileMode()
     {
         return delegate.getFileMode();
@@ -884,6 +921,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setFileMode( final int mode )
     {
         inPublicApi.set( Boolean.TRUE );
@@ -900,6 +938,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getOverrideDirectoryMode()
     {
         return delegate.getOverrideDirectoryMode();
@@ -908,6 +947,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getOverrideFileMode()
     {
         return delegate.getOverrideFileMode();
@@ -916,6 +956,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isUseJvmChmod()
     {
         return useJvmChmod;
@@ -924,6 +965,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setUseJvmChmod( final boolean useJvmChmod )
     {
         this.useJvmChmod = useJvmChmod;
@@ -932,6 +974,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isIgnorePermissions()
     {
         return delegate.isIgnorePermissions();
@@ -940,6 +983,7 @@ public class AssemblyProxyArchiver
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setIgnorePermissions( final boolean ignorePermissions )
     {
         delegate.setIgnorePermissions( ignorePermissions );
@@ -956,27 +1000,32 @@ public class AssemblyProxyArchiver
             this.inputFile = inputFile;
         }
 
+        @Override
         public InputStream getContents()
             throws IOException
         {
             return new FileInputStream( inputFile );
         }
 
+        @Override
         public String getName()
         {
             return inputFile.getName();
         }
 
+        @Override
         public boolean isDirectory()
         {
             return inputFile.isDirectory();
         }
 
+        @Override
         public boolean isFile()
         {
             return inputFile.isFile();
         }
 
+        @Override
         public boolean isSymbolicLink()
         {
             return false;

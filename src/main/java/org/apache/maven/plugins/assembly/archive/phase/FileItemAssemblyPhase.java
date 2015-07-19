@@ -54,6 +54,7 @@ public class FileItemAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
@@ -132,6 +133,7 @@ public class FileItemAssemblyPhase
         }
     }
 
+    @Override
     public int order()
     {
         return 10;

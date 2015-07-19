@@ -57,6 +57,7 @@ abstract class AbstractLineAggregatingHandler
         return "UTF-8";
     }
 
+    @Override
     public void finalizeArchiveCreation( final Archiver archiver )
     {
         // this will prompt the isSelected() call, below, for all resources added to the archive.
@@ -109,15 +110,18 @@ abstract class AbstractLineAggregatingHandler
         }
     }
 
+    @Override
     public void finalizeArchiveExtraction( final UnArchiver unArchiver )
     {
     }
 
+    @Override
     public List<String> getVirtualFiles()
     {
         return new ArrayList<String>( catalog.keySet() );
     }
 
+    @Override
     public boolean isSelected( @Nonnull final FileInfo fileInfo )
         throws IOException
     {

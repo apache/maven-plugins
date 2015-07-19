@@ -70,6 +70,7 @@ public class AssemblyInterpolator
 
         return new AssemblyXpp3Reader.ContentTransformer()
         {
+            @Override
             public String transform( String source, String contextDescription )
             {
                 if ( blacklistFields.contains( contextDescription ) )
@@ -97,6 +98,7 @@ public class AssemblyInterpolator
 
         return new ComponentXpp3Reader.ContentTransformer()
         {
+            @Override
             public String transform( String source, String contextDescription )
             {
                 if ( blacklistFields.contains( contextDescription ) )
@@ -161,6 +163,7 @@ public class AssemblyInterpolator
             this.basedir = basedir;
         }
 
+        @Override
         public Object execute( final String expression, final Object value )
         {
             final String path = String.valueOf( value );

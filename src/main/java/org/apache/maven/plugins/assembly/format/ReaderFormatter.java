@@ -126,6 +126,7 @@ public class ReaderFormatter
         {
             return new InputStreamTransformer()
             {
+                @Override
                 @Nonnull
                 public InputStream transform( @Nonnull PlexusIoResource plexusIoResource,
                                               @Nonnull InputStream inputStream )

@@ -85,6 +85,7 @@ public class DefaultDependencyResolver
         enableLogging( logger );
     }
 
+    @Override
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly, ModuleSet moduleSet,
                                                                     final AssemblerConfigurationSource configSource,
                                                                     List<DependencySet> dependencySets )
@@ -140,6 +141,7 @@ public class DefaultDependencyResolver
         result.put( dependencySet, artifacts );
     }
 
+    @Override
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly,
                                                                     final AssemblerConfigurationSource configSource,
                                                                     List<DependencySet> dependencySets )
@@ -210,7 +212,6 @@ public class DefaultDependencyResolver
         return resolved;
     }
 
-    @SuppressWarnings( "unchecked" )
     private Set<Artifact> resolveTransitively( final Set<Artifact> dependencyArtifacts,
                                                final List<ArtifactRepository> repos,
                                                final ResolutionManagementInfo info,
@@ -312,8 +313,6 @@ public class DefaultDependencyResolver
         }
     }
 
-
-    @SuppressWarnings( "unchecked" )
     void updateDependencySetResolutionRequirements( final DependencySet set,
                                                     final ResolutionManagementInfo requirements, AssemblyId assemblyId,
                                                     final MavenProject... projects )
@@ -377,7 +376,6 @@ public class DefaultDependencyResolver
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     List<ArtifactRepository> aggregateRemoteArtifactRepositories( final List<ArtifactRepository> remoteRepositories,
                                                                   final Set<MavenProject> projects )
     {

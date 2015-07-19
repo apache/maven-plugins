@@ -40,6 +40,7 @@ class RelativeFileLocatorStrategy
         this.basedir = basedir;
     }
 
+    @Override
     public Location resolve( String locationSpecification, MessageHolder messageHolder )
     {
         File file = new File( basedir, locationSpecification );

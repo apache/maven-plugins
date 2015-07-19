@@ -87,6 +87,7 @@ public class DefaultAssemblyReader
             new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project, true ) );
     }
 
+    @Override
     public List<Assembly> readAssemblies( final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
@@ -184,6 +185,7 @@ public class DefaultAssemblyReader
         return assemblies;
     }
 
+    @Override
     public Assembly getAssemblyForDescriptorReference( final String ref,
                                                        final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
@@ -191,6 +193,7 @@ public class DefaultAssemblyReader
         return addAssemblyForDescriptorReference( ref, configSource, new ArrayList<Assembly>( 1 ) );
     }
 
+    @Override
     public Assembly getAssemblyFromDescriptorFile( final File file, final AssemblerConfigurationSource configSource )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
@@ -522,6 +525,7 @@ public class DefaultAssemblyReader
         }
     }
 
+    @Override
     public void includeSiteInAssembly( final Assembly assembly, final AssemblerConfigurationSource configSource )
         throws InvalidAssemblerConfigurationException
     {

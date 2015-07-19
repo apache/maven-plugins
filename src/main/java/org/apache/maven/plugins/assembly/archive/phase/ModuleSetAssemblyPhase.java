@@ -176,6 +176,7 @@ public class ModuleSetAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
@@ -183,6 +184,7 @@ public class ModuleSetAssemblyPhase
     {
         Assemblies.forEachModuleSet( assembly, new ModuleSetConsumer()
         {
+            @Override
             public void accept( ModuleSet resolvedModule )
                 throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
                 DependencyResolutionException
@@ -577,6 +579,7 @@ public class ModuleSetAssemblyPhase
         return fs;
     }
 
+    @Override
     public int order()
     {
         // CHECKSTYLE_OFF: MagicNumber

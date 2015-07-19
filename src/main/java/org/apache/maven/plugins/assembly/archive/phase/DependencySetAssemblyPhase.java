@@ -85,6 +85,7 @@ public class DependencySetAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute( final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException,
@@ -104,6 +105,7 @@ public class DependencySetAssemblyPhase
         }
     }
 
+    @Override
     public int order()
     {
         // CHECKSTYLE_OFF: MagicNumber

@@ -46,6 +46,7 @@ public class FileSetAssemblyPhase
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute( @Nonnull final Assembly assembly, final Archiver archiver,
                          final AssemblerConfigurationSource configSource )
         throws ArchiveCreationException, AssemblyFormattingException
@@ -62,6 +63,7 @@ public class FileSetAssemblyPhase
     }
 
 
+    @Override
     public int order()
     {
         // CHECKSTYLE_OFF: MagicNumber

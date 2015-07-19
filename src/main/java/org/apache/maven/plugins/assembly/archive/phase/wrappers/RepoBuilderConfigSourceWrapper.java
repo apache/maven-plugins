@@ -38,11 +38,13 @@ public class RepoBuilderConfigSourceWrapper
         this.configSource = configSource;
     }
 
+    @Override
     public ArtifactRepository getLocalRepository()
     {
         return configSource.getLocalRepository();
     }
 
+    @Override
     public MavenProject getProject()
     {
         return configSource.getProject();
