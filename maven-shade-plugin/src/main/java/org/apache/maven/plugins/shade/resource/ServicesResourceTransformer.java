@@ -19,12 +19,6 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
-import com.google.common.base.Charsets;
-import com.google.common.io.LineReader;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,12 +30,18 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.codehaus.plexus.util.IOUtil;
+
+import com.google.common.io.LineReader;
+
 /**
- * Resources transformer that relocates classes in META-INF/services and appends entries in META-INF/services resources into
- * a single resource. For example, if there are several META-INF/services/org.apache.maven.project.ProjectBuilder
+ * Resources transformer that relocates classes in META-INF/services and appends entries in META-INF/services resources
+ * into a single resource. For example, if there are several META-INF/services/org.apache.maven.project.ProjectBuilder
  * resources spread across many JARs the individual entries will all be concatenated into a single
- * META-INF/services/org.apache.maven.project.ProjectBuilder resource packaged into the resultant JAR produced
- * by the shading process.
+ * META-INF/services/org.apache.maven.project.ProjectBuilder resource packaged into the resultant JAR produced by the
+ * shading process.
  */
 public class ServicesResourceTransformer
     implements ResourceTransformer
