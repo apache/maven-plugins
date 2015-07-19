@@ -19,12 +19,9 @@
 
 package org.apache.maven.plugins.shade.resource;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,9 +32,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.apache.maven.plugins.shade.relocation.SimpleRelocator;
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Test for handling META-INF/service/...
@@ -50,7 +50,7 @@ public class ServiceResourceTransformerTest {
         List<Relocator> relocators = Lists.<Relocator>newArrayList( relocator );
 
         String content = "org.foo.Service\n";
-        byte[] contentBytes = content.getBytes( Charsets.UTF_8 );
+        byte[] contentBytes = content.getBytes( "UTF-8" );
         InputStream contentStream = new ByteArrayInputStream( contentBytes );
         String contentResource = "META-INF/services/org.something.another";
 
@@ -90,7 +90,7 @@ public class ServiceResourceTransformerTest {
         List<Relocator> relocators = Lists.<Relocator>newArrayList( relocator );
 
         String content = "org.foo.Service\n";
-        byte[] contentBytes = content.getBytes( Charsets.UTF_8 );
+        byte[] contentBytes = content.getBytes( "UTF-8" );
         InputStream contentStream = new ByteArrayInputStream( contentBytes );
         String contentResource = "META-INF/services/org.something.another";
 
@@ -98,7 +98,7 @@ public class ServiceResourceTransformerTest {
         xformer.processResource( contentResource, contentStream, relocators );
 
         content = "org.blah.Service\n";
-        contentBytes = content.getBytes( Charsets.UTF_8 );
+        contentBytes = content.getBytes( "UTF-8" );
         contentStream = new ByteArrayInputStream( contentBytes );
         contentResource = "META-INF/services/org.something.another";
 
