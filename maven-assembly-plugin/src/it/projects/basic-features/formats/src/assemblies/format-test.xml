@@ -31,6 +31,7 @@ under the License.
     <format>tbz2</format>
     <format>jar</format>
     <format>war</format>
+    <format>tar.snappy</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <files>
