@@ -496,7 +496,7 @@ public class DefaultAssemblyArchiver
         {
             TarArchiver.TarCompressionMethod tarCompressionMethod;
             // TODO: this should accept gz and bz2 as well so we can skip
-            // over the switch
+            // TODO: over the switch
             final String compression = format.substring( index + 1 );
             if ( "gz".equals( compression ) )
             {
@@ -505,6 +505,9 @@ public class DefaultAssemblyArchiver
             else if ( "bz2".equals( compression ) )
             {
                 tarCompressionMethod = TarArchiver.TarCompressionMethod.bzip2;
+            } else if ( "snappy".equals( compression ) )
+            {
+                tarCompressionMethod = TarArchiver.TarCompressionMethod.snappy;
             }
             else
             {
