@@ -37,7 +37,6 @@ import org.apache.maven.plugin.trac.TracIssueManagmentSystem;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.changes.model.Release;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -67,7 +66,7 @@ import java.util.Map;
  * @version $Id$
  * @since 2.0-beta-2
  */
-@Mojo( name = "announcement-generate", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+@Mojo( name = "announcement-generate", threadSafe = true )
 public class AnnouncementMojo
     extends AbstractAnnouncementMojo
 {
