@@ -21,7 +21,6 @@ package org.apache.maven.plugins.dependency;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -202,16 +201,21 @@ public class GetMojo
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             
             buildingRequest.setRemoteRepositories( repoList );
-            
+
             if ( transitive )
             {
                 getLog().info( "Resolving " + coordinate + " with transitive dependencies" );
-                artifactResolver.resolveDependencies( buildingRequest, Collections.singletonList( coordinate ), null );
             }
             else
             {
                 getLog().info( "Resolving " + coordinate );
-                artifactResolver.resolveArtifact( buildingRequest, coordinate );
+            }
+
+            artifactResolver.resolveArtifact( buildingRequest, coordinate );
+
+            if ( transitive )
+            {
+                artifactResolver.resolveDependencies( buildingRequest, coordinate, null );
             }
         }
         catch ( ArtifactResolverException e )
