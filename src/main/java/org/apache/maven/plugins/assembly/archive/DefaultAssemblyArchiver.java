@@ -505,7 +505,8 @@ public class DefaultAssemblyArchiver
             else if ( "bz2".equals( compression ) )
             {
                 tarCompressionMethod = TarArchiver.TarCompressionMethod.bzip2;
-            } else if ( "snappy".equals( compression ) )
+            }
+            else if ( "snappy".equals( compression ) )
             {
                 tarCompressionMethod = TarArchiver.TarCompressionMethod.snappy;
             }
