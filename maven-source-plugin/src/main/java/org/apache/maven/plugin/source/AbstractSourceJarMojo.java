@@ -101,7 +101,7 @@ public abstract class AbstractSourceJarMojo
      * @since 2.1
      */
     @Parameter
-    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+    private MavenArchiveConfiguration archive = new SourceArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
@@ -287,9 +287,7 @@ public abstract class AbstractSourceJarMojo
 
             try
             {
-                archiver.setOutputFile( outputFile );
-
-                archive.setAddMavenDescriptor( false );
+                archiver.setOutputFile(outputFile);
                 archive.setForced( forceCreation );
 
                 archiver.createArchive( session, project, archive );

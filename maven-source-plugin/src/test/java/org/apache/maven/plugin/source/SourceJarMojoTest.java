@@ -56,17 +56,17 @@ public class SourceJarMojoTest
         executeMojo( "project-005", "sources" );
         // Now make sure that no archive got created
         final File expectedFile = getTestTargetDir( "project-005" );
-        assertFalse( "Source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
-                     expectedFile.exists() );
+        assertFalse("Source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
+                expectedFile.exists());
     }
 
     public void testIncludes()
         throws Exception
     {
-        doTestProjectWithSourceArchive( "project-007", new String[]{ "templates/configuration-template.properties",
-            "foo/project007/App.java", "templates/", "foo/project007/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
+        doTestProjectWithSourceArchive("project-007", new String[]{"templates/configuration-template.properties",
+                "foo/project007/App.java", "templates/", "foo/project007/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
 
-        }, "sources" );
+        }, "sources");
     }
 
     public void testIncludePom()
@@ -74,5 +74,20 @@ public class SourceJarMojoTest
     {
         doTestProjectWithSourceArchive( "project-009", new String[]{ "default-configuration.properties", "pom.xml",
             "foo/project009/App.java", "foo/project009/", "foo/", "META-INF/MANIFEST.MF", "META-INF/" }, "sources" );
+    }
+
+    public void testIncludeMavenDescriptorWhenExplicitlyConfigured()
+            throws Exception {
+        doTestProjectWithSourceArchive("project-010",
+                new String[]{
+                        "default-configuration.properties", "foo/project010/App.java",
+                        "foo/project010/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+                        "META-INF/maven/", "META-INF/maven/source/",
+                        "META-INF/maven/source/maven-source-plugin-test-project-010/",
+                        "META-INF/maven/source/maven-source-plugin-test-project-010/pom.xml",
+                        "META-INF/maven/source/maven-source-plugin-test-project-010/pom" +
+                                ".properties"
+                },
+                "sources");
     }
 }
