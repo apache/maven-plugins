@@ -28,17 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
- * @version $Id$
+ * Project stub for testing archive configuration.
  */
-public class JavadocJarDefaultMavenProjectStub
+public class JavadocJarArchiveConfigProjectStub
     extends MavenProjectStub
 {
     private Scm scm;
 
-    public JavadocJarDefaultMavenProjectStub()
+    public JavadocJarArchiveConfigProjectStub()
     {
-        readModel( new File( getBasedir(), "javadocjar-default-plugin-config.xml" ) );
+        File projectFile =  new File( getBasedir(), "javadocjar-archive-config.xml" );
+        readModel( new File( getBasedir(), "javadocjar-archive-config.xml" ) );
+
+        setFile(projectFile);
 
         setGroupId( getModel().getGroupId() );
         setArtifactId( getModel().getArtifactId() );
@@ -60,7 +62,7 @@ public class JavadocJarDefaultMavenProjectStub
 
         Build build = new Build();
         build.setFinalName( "javadocjar-archive-config" );
-        build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-default/target" );
+        build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-archive-config/target" );
         setBuild( build );
 
         List<String> compileSourceRoots = new ArrayList<String>();
@@ -83,6 +85,6 @@ public class JavadocJarDefaultMavenProjectStub
     /** {@inheritDoc} */
     public File getBasedir()
     {
-        return new File( super.getBasedir() + "/src/test/resources/unit/javadocjar-default" );
+        return new File( super.getBasedir() + "/src/test/resources/unit/javadocjar-archive-config" );
     }
 }
