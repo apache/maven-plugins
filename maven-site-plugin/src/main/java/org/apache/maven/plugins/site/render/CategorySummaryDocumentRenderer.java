@@ -189,4 +189,9 @@ public class CategorySummaryDocumentRenderer
     {
         return true;
     }
+    
+    public boolean isExternalReport()
+    {
+        return false;
+    }
 }
