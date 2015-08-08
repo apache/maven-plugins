@@ -466,26 +466,4 @@ public class TreeMojo
         // only singular versions ever have a recommendedVersion
         return recommendedVersion.compareTo( theVersion ) <= 0;
     }
-
-    /**
-     * Check the current Maven version to see if it's Maven 2.x.
-     */
-    protected static boolean isMaven2x()
-    {
-        return !canFindCoreClass( "org.apache.maven.project.DependencyResolutionRequest" ); // Maven 3 specific
-    }
-
-    private static boolean canFindCoreClass( String className )
-    {
-        try
-        {
-            Thread.currentThread().getContextClassLoader().loadClass( className );
-
-            return true;
-        }
-        catch ( ClassNotFoundException e )
-        {
-            return false;
-        }
-    }
 }
