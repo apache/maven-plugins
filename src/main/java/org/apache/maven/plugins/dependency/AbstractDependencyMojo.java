@@ -25,7 +25,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -51,12 +50,6 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractDependencyMojo
     extends AbstractMojo
 {
-    /**
-     * Used to look up Artifacts in the remote repository.
-     */
-    @Component
-    private ArtifactFactory factory;
-
     /**
      * To look up Archiver/UnArchiver implementations
      */
@@ -290,22 +283,6 @@ public abstract class AbstractDependencyMojo
         {
             // was a nice try. Don't bother logging because the log is silent.
         }
-    }
-
-    /**
-     * @return Returns the factory.
-     */
-    public ArtifactFactory getFactory()
-    {
-        return this.factory;
-    }
-
-    /**
-     * @param factory The factory to set.
-     */
-    public void setFactory( ArtifactFactory factory )
-    {
-        this.factory = factory;
     }
 
     /**

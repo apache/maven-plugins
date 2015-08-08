@@ -19,15 +19,13 @@ package org.apache.maven.plugins.dependency.utils.translators;
  * under the License.
  */
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -42,27 +40,15 @@ public class ClassifierTypeTranslator
 
     private String type;
 
-    private ArtifactFactory factory;
-    
-    private RepositoryManager repositoryManager;
-    
-    ProjectBuildingRequest buildingRequest;
-
     /**
      * 
      * @param theClassifier
      * @param theType
-     * @param theFactory
-     * @param theRepository required when using system scoped artifacts 
      */
-    public ClassifierTypeTranslator( String theClassifier, String theType, ArtifactFactory theFactory,
-                                     RepositoryManager theRepository, ProjectBuildingRequest buildingRequest )
+    public ClassifierTypeTranslator( String theClassifier , String theType  )
     {
         this.classifier = theClassifier;
         this.type = theType;
-        this.factory = theFactory;
-        this.repositoryManager = theRepository;
-        this.buildingRequest = buildingRequest;
     }
 
     /*
@@ -72,12 +58,12 @@ public class ClassifierTypeTranslator
      *      org.apache.maven.plugin.logging.Log)
      */
     @Override
-    public Set<Artifact> translate( Set<Artifact> artifacts, Log log )
+    public Set<ArtifactCoordinate> translate( Set<Artifact> artifacts, Log log )
     {
-        Set<Artifact> results;
+        Set<ArtifactCoordinate> results;
 
         log.debug( "Translating Artifacts using Classifier: " + this.classifier + " and Type: " + this.type );
-        results = new HashSet<Artifact>();
+        results = new HashSet<ArtifactCoordinate>();
         for ( Artifact artifact : artifacts )
         {
             // this translator must pass both type and classifier here so we
@@ -103,23 +89,30 @@ public class ClassifierTypeTranslator
                 useClassifier = artifact.getClassifier();
             }
 
-            // Create a new artifact
-            Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
-                .getArtifactId(), artifact.getVersion(), useType, useClassifier );
-
-            // note the new artifacts will always have the scope set to null. We
-            // should
-            // reset it here so that it will pass other filters if needed
-            newArtifact.setScope( artifact.getScope() );
+            DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+            coordinate.setGroupId( artifact.getGroupId() );
+            coordinate.setArtifactId( artifact.getArtifactId() );
+            coordinate.setVersion( artifact.getVersion() );
+            coordinate.setClassifier( useClassifier );
+            coordinate.setType( useType );
             
-            if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
-            {
-                File baseDir = repositoryManager.getLocalRepositoryBasedir( buildingRequest );
-                String path = repositoryManager.getPathForLocalArtifact( buildingRequest, newArtifact );
-                newArtifact.setFile( new File( baseDir, path ) );
-            }
+//            // Create a new artifact
+//            Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
+//                .getArtifactId(), artifact.getVersion(), useType, useClassifier );
+//
+//            // note the new artifacts will always have the scope set to null. We
+//            // should
+//            // reset it here so that it will pass other filters if needed
+//            newArtifact.setScope( artifact.getScope() );
+//            
+//            if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
+//            {
+//                File baseDir = repositoryManager.getLocalRepositoryBasedir( buildingRequest );
+//                String path = repositoryManager.getPathForLocalArtifact( buildingRequest, newArtifact );
+//                newArtifact.setFile( new File( baseDir, path ) );
+//            }
 
-            results.add( newArtifact );
+            results.add( coordinate );
         }
 
         return results;

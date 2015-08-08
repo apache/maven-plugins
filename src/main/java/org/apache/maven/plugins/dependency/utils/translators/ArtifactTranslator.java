@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -30,5 +31,5 @@ import org.apache.maven.plugin.logging.Log;
  */
 public interface ArtifactTranslator
 {
-    Set<Artifact> translate( Set<Artifact> artifacts, Log log );
+    Set<ArtifactCoordinate> translate( Set<Artifact> artifacts, Log log );
 }

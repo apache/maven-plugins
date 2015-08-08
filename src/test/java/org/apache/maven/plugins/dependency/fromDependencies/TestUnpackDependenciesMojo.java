@@ -519,7 +519,6 @@ public class TestUnpackDependenciesMojo
     {
         mojo.classifier = testClassifier;
         mojo.type = testType;
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
 
         for (Artifact artifact : mojo.getProject().getArtifacts())
         {
@@ -566,8 +565,6 @@ public class TestUnpackDependenciesMojo
     {
         mojo.classifier = "jdk";
         mojo.type = "java-sources";
-        // init classifier things
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
 
         try
         {

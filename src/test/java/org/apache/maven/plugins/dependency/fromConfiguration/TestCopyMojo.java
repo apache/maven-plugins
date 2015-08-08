@@ -31,7 +31,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugins.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
@@ -61,7 +60,6 @@ public class TestCopyMojo
         assertNotNull( mojo.getProject() );
         // MavenProject project = mojo.getProject();
         // init classifier things
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         
         MavenSession session = newMavenSession( mojo.getProject() );
         setVariableValueToObject( mojo, "session", session );
@@ -541,9 +539,6 @@ public class TestCopyMojo
         List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
-
-        // init classifier things
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
 
         try
         {
