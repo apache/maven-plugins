@@ -553,8 +553,8 @@ public class AssemblyProxyArchiver
     }
 
     @Override
-    @SuppressWarnings( { "rawtypes", "deprecation" } )
-    /** {@inheritDoc} */ public Map<String, ArchiveEntry> getFiles()
+    @SuppressWarnings( { "deprecation" } )
+    public Map<String, ArchiveEntry> getFiles()
     {
         inPublicApi.set( Boolean.TRUE );
         try

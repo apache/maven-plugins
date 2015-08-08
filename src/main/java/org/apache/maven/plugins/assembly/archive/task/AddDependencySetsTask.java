@@ -108,7 +108,7 @@ public class AddDependencySetsTask
             return;
         }
 
-        @SuppressWarnings( "unchecked" ) final List<Dependency> deps = project.getDependencies();
+        final List<Dependency> deps = project.getDependencies();
         if ( ( deps == null ) || deps.isEmpty() )
         {
             logger.debug( "Project " + project.getId() + " has no dependencies. Skipping dependency set addition." );
@@ -309,7 +309,7 @@ public class AddDependencySetsTask
 
         if ( dependencySet.isUseProjectAttachments() )
         {
-            @SuppressWarnings( "unchecked" ) final List<Artifact> attachments = project.getAttachedArtifacts();
+            final List<Artifact> attachments = project.getAttachedArtifacts();
             if ( attachments != null )
             {
                 for ( final Artifact attachment : attachments )

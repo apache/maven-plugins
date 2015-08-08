@@ -524,7 +524,7 @@ public class ModuleSetAssemblyPhase
 
         if ( sources.isExcludeSubModuleDirectories() )
         {
-            @SuppressWarnings( "unchecked" ) final List<String> modules = moduleProject.getModules();
+            final List<String> modules = moduleProject.getModules();
             for ( final String moduleSubPath : modules )
             {
                 excludes.add( moduleSubPath + "/**" );

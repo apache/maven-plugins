@@ -19,7 +19,15 @@ package org.apache.maven.plugins.assembly.archive.task;
  * under the License.
  */
 
+import static org.easymock.EasyMock.anyObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
 import junit.framework.TestCase;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.archive.ArchiveCreationException;
@@ -35,14 +43,6 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
-import static org.easymock.EasyMock.anyObject;
-
-@SuppressWarnings( "OctalInteger" )
 public class AddArtifactTaskTest
     extends TestCase
 {
@@ -142,9 +142,7 @@ public class AddArtifactTaskTest
         mac.expectInterpolators();
 
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
-        File artifactFile = artifactMock.setNewFile();
-
-        String outputLocation = "";
+        artifactMock.setNewFile();
 
         mac.expectGetDestFile( new File( "junk" ) );
         try
@@ -178,12 +176,8 @@ public class AddArtifactTaskTest
         mac.expectModeChange( -1, -1, directoryMode, fileMode, 2 );
         mac.expectInterpolators();
 
-//        mac.expectIsSnapshot( false );
-
-        String outputLocation = "";
-
         ArtifactMock artifactMock = new ArtifactMock( mockManager, "group", "artifact", "version", "jar", false );
-        File artifactFile = artifactMock.setNewFile();
+        artifactMock.setNewFile();
 
         mac.expectGetDestFile( new File( "junk" ) );
         try

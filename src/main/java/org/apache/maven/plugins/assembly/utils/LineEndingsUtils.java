@@ -24,6 +24,7 @@ import org.codehaus.plexus.util.IOUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -156,6 +157,7 @@ public final class LineEndingsUtils
      *                    line-ending characters, not null.
      * @return an input stream that enforces a specifi line ending style
      */
+    @SuppressWarnings( "resource" )
     public static InputStream lineEndingConverter( @Nonnull InputStream in, LineEndings lineEndings )
         throws IOException
     {

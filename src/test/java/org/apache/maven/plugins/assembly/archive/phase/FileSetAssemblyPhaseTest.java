@@ -129,30 +129,6 @@ public class FileSetAssemblyPhaseTest
             logger = mm.createMock( Logger.class );
         }
 
-        public void expectDebug( final boolean debugCheck, final boolean debugEnabled )
-        {
-            if ( debugCheck )
-            {
-                expect( logger.isDebugEnabled() ).andReturn( debugEnabled ).anyTimes();
-            }
-
-            logger.debug( (String) anyObject() );
-            EasyMock.expectLastCall().anyTimes();
-        }
-
-        public void expectWarn( final boolean debugCheck, final boolean debugEnabled )
-        {
-            if ( debugCheck )
-            {
-                expect( logger.isDebugEnabled() ).andReturn( debugEnabled ).anyTimes();
-            }
-
-            logger.debug( (String) anyObject() );
-            EasyMock.expectLastCall().anyTimes();
-            logger.warn( (String) anyObject() );
-            EasyMock.expectLastCall().anyTimes();
-        }
-
         public void expectError( final boolean debugCheck, final boolean debugEnabled )
         {
             if ( debugCheck )

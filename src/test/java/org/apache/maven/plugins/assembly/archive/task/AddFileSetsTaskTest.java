@@ -38,7 +38,6 @@ import java.util.ArrayList;
 
 import static org.easymock.EasyMock.expect;
 
-@SuppressWarnings( "ResultOfMethodCallIgnored" )
 public class AddFileSetsTaskTest
     extends TestCase
 {

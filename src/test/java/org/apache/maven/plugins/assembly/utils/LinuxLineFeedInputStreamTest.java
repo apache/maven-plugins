@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.codehaus.plexus.util.IOUtil;
+
 public class LinuxLineFeedInputStreamTest
     extends TestCase
 {
@@ -82,10 +84,19 @@ public class LinuxLineFeedInputStreamTest
         throws IOException
     {
         ByteArrayInputStream baos = new ByteArrayInputStream( msg.getBytes() );
-        LinuxLineFeedInputStream lf = new LinuxLineFeedInputStream( baos, ensure );
-        byte[] buf = new byte[100];
-        final int read = lf.read( buf );
-        return new String( buf, 0, read );
+        
+        LinuxLineFeedInputStream lf  = null;
+        try
+        {
+            lf = new LinuxLineFeedInputStream( baos, ensure );
+            byte[] buf = new byte[100];
+            final int read = lf.read( buf );
+            return new String( buf, 0, read );
+        }
+        finally
+        {
+            IOUtil.close( lf );            
+        }
     }
 
 }
