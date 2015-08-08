@@ -21,6 +21,7 @@ package org.apache.maven.plugins.dependency.fromDependencies;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +39,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -398,9 +400,8 @@ public abstract class AbstractDependencyFilterMojo
         if ( StringUtils.isNotEmpty( classifier ) )
         {
             ArtifactTranslator translator =
-                new ClassifierTypeTranslator( this.classifier, this.type, this.getFactory(), repositoryManager,
-                                              session.getProjectBuildingRequest() );
-            artifacts = translator.translate( artifacts, getLog() );
+                new ClassifierTypeTranslator( this.classifier, this.type );
+            Collection<ArtifactCoordinate> coordinates = translator.translate( artifacts, getLog() );
 
             status = filterMarkedDependencies( artifacts );
 
@@ -408,7 +409,7 @@ public abstract class AbstractDependencyFilterMojo
             artifacts = status.getResolvedDependencies();
 
             // resolve the rest of the artifacts
-            resolvedArtifacts = resolve( artifacts, stopOnFailure );
+            resolvedArtifacts = resolve( new HashSet<ArtifactCoordinate>( coordinates ), stopOnFailure );
 
             // calculate the artifacts not resolved.
             unResolvedArtifacts.addAll( artifacts );
@@ -456,28 +457,28 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     
-    protected Set<Artifact> resolve( Set<Artifact> artifacts, boolean stopOnFailure )
+    protected Set<Artifact> resolve( Set<ArtifactCoordinate> coordinates, boolean stopOnFailure )
                     throws MojoExecutionException
     {
         ProjectBuildingRequest buildingRequest =
                         new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
         
         Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
-        for ( Artifact artifact : artifacts )
+        for ( ArtifactCoordinate coordinate : coordinates )
         {
             try
             {
-                artifact = artifactResolver.resolveArtifact( buildingRequest, artifact ).getArtifact();
+                Artifact artifact = artifactResolver.resolveArtifact( buildingRequest, coordinate ).getArtifact();
                 resolvedArtifacts.add( artifact );
             }
             catch ( ArtifactResolverException ex )
             {
                 // an error occurred during resolution, log it an continue
-                getLog().debug( "error resolving: " + artifact.getId() );
+                getLog().debug( "error resolving: " + coordinate );
                 getLog().debug( ex );
                 if ( stopOnFailure )
                 {
-                    throw new MojoExecutionException( "error resolving: " + artifact.getId(), ex );
+                    throw new MojoExecutionException( "error resolving: " + coordinate, ex );
                 }
             }
         }

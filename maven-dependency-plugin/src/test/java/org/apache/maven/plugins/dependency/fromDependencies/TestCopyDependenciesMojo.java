@@ -30,7 +30,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
-import org.apache.maven.plugins.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
@@ -452,9 +451,6 @@ public class TestCopyDependenciesMojo
             
         }
 
-        // init classifier things
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
-
         mojo.execute();
 
         Set<Artifact> artifacts = mojo.getProject().getArtifacts();
@@ -502,9 +498,6 @@ public class TestCopyDependenciesMojo
     {
         mojo.classifier = "jdk";
         mojo.type = "java-sources";
-
-        // init classifier things
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
 
         try
         {

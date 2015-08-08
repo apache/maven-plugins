@@ -34,7 +34,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugins.dependency.testUtils.DependencyArtifactStubFactory;
-import org.apache.maven.plugins.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugins.dependency.utils.markers.UnpackFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
@@ -73,7 +72,6 @@ public class TestUnpackMojo
         stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar
             + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
 
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
         mojo.setUseJvmChmod( true );
         
         MavenSession session = newMavenSession( mojo.getProject() );
@@ -384,9 +382,6 @@ public class TestUnpackMojo
         List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
         mojo.setArtifactItems( list );
-
-        // init classifier things
-        mojo.setFactory( DependencyTestUtils.getArtifactFactory() );
 
         try
         {
