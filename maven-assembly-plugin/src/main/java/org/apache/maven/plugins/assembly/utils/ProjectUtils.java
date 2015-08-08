@@ -148,7 +148,7 @@ public final class ProjectUtils
                                                   @Nonnull final MavenProject moduleProject )
         throws IOException
     {
-        @SuppressWarnings( "unchecked" ) final List<String> modules = mainProject.getModules();
+        final List<String> modules = mainProject.getModules();
         final File basedir = mainProject.getBasedir();
 
         final File moduleFile = moduleProject.getFile().getCanonicalFile();

@@ -58,7 +58,6 @@ import java.util.Set;
 import static java.util.Collections.singleton;
 
 
-@SuppressWarnings( "OctalInteger" )
 public class ModuleSetAssemblyPhaseTest
     extends TestCase
 {

@@ -20,6 +20,7 @@ package org.apache.maven.plugins.assembly.filter;
  */
 
 import junit.framework.TestCase;
+
 import org.apache.maven.plugins.assembly.testutils.TestFileManager;
 import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
@@ -43,6 +44,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
 import javax.annotation.Nonnull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -259,16 +261,28 @@ public class ComponentsXmlArchiverFileFilterTest
 
         archiver.createArchive();
 
-        final ZipFile zf = new ZipFile( archiveFile );
+        ZipFile zf = null;
+        try
+        {
+            zf = new ZipFile( archiveFile );
 
-        final ZipEntry ze = zf.getEntry( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
+            final ZipEntry ze = zf.getEntry( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH );
 
-        assertNotNull( ze );
+            assertNotNull( ze );
 
-        final FileOutputStream fileStream = new FileOutputStream( descriptorFile );
+            final FileOutputStream fileStream = new FileOutputStream( descriptorFile );
 
-        IOUtil.copy( zf.getInputStream( ze ), fileStream );
-        IOUtil.close( fileStream );
+            IOUtil.copy( zf.getInputStream( ze ), fileStream );
+            IOUtil.close( fileStream );
+        }
+        finally
+        {
+            if ( zf != null )
+            {
+                zf.close();
+            }
+        }
+        
 
         final SAXBuilder builder = new SAXBuilder( false );
 
@@ -475,7 +489,6 @@ public class ComponentsXmlArchiverFileFilterTest
             throw new UnsupportedOperationException( "not supported" );
         }
 
-        @SuppressWarnings( "rawtypes" )
         public Map<String, ArchiveEntry> getFiles()
         {
             throw new UnsupportedOperationException( "not supported" );

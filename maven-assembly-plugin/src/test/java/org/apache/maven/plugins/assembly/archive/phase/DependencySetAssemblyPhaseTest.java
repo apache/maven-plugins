@@ -19,7 +19,12 @@ package org.apache.maven.plugins.assembly.archive.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+
 import junit.framework.TestCase;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.InvalidAssemblerConfigurationException;
@@ -32,14 +37,9 @@ import org.apache.maven.plugins.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugins.assembly.model.Assembly;
 import org.apache.maven.plugins.assembly.model.DependencySet;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuilder;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 
 public class DependencySetAssemblyPhaseTest
     extends TestCase
@@ -141,14 +141,8 @@ public class DependencySetAssemblyPhaseTest
     private DependencySetAssemblyPhase createPhase( final MockAndControlForAddDependencySetsTask macTask,
                                                     final Logger logger, DependencyResolver dr )
     {
-        ProjectBuilder projectBuilder = null;
-
-        if ( macTask != null )
-        {
-            projectBuilder = macTask.projectBuilder;
-        }
-
         final DependencySetAssemblyPhase phase = new DependencySetAssemblyPhase( null, dr, null );
+
         phase.enableLogging( logger );
 
         return phase;

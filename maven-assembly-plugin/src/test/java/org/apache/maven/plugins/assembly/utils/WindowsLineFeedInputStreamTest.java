@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.codehaus.plexus.util.IOUtil;
+
 public class WindowsLineFeedInputStreamTest
     extends TestCase
 {
@@ -83,11 +85,18 @@ public class WindowsLineFeedInputStreamTest
         throws IOException
     {
         ByteArrayInputStream baos = new ByteArrayInputStream( msg.getBytes() );
-        WindowsLineFeedInputStream lf = new WindowsLineFeedInputStream( baos, ensure );
-        byte[] buf = new byte[100];
-        final int read = lf.read( buf );
-        return new String( buf, 0, read );
+        
+        WindowsLineFeedInputStream lf = null;
+        try
+        {
+            lf = new WindowsLineFeedInputStream( baos, ensure );
+            byte[] buf = new byte[100];
+            final int read = lf.read( buf );
+            return new String( buf, 0, read );
+        }
+        finally
+        {
+            IOUtil.close( lf );
+        }
     }
-
-
 }

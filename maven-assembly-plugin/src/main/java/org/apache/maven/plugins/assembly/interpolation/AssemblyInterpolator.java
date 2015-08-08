@@ -64,7 +64,7 @@ public class AssemblyInterpolator
     public static AssemblyXpp3Reader.ContentTransformer assemblyInterpolator(
         final FixedStringSearchInterpolator interpolator, final InterpolationState is, final Logger logger )
     {
-        @SuppressWarnings( "unchecked" ) final Set<String> blacklistFields =
+        final Set<String> blacklistFields =
             new HashSet<String>( FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES );
         blacklistFields.addAll( INTERPOLATION_BLACKLIST );
 
@@ -92,7 +92,7 @@ public class AssemblyInterpolator
     public static ComponentXpp3Reader.ContentTransformer componentInterpolator(
         final FixedStringSearchInterpolator interpolator, final InterpolationState is, final Logger logger )
     {
-        @SuppressWarnings( "unchecked" ) final Set<String> blacklistFields =
+        final Set<String> blacklistFields =
             new HashSet<String>( FieldBasedObjectInterpolator.DEFAULT_BLACKLISTED_FIELD_NAMES );
         blacklistFields.addAll( INTERPOLATION_BLACKLIST );
 

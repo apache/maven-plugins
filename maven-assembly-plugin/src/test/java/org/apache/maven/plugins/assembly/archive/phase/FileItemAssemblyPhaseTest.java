@@ -482,19 +482,9 @@ public class FileItemAssemblyPhaseTest
         }
 
 
-        public void expectGetTemporaryRootDirectory( final File tempRoot )
-        {
-            expect( configSource.getTemporaryRootDirectory() ).andReturn( tempRoot ).atLeastOnce();
-        }
-
         public void expectGetBasedir( final File basedir )
         {
             expect( configSource.getBasedir() ).andReturn( basedir ).atLeastOnce();
-        }
-
-        public void expectGetEncoding()
-        {
-            expect( configSource.getEncoding() ).andReturn( "UTF-8" ).atLeastOnce();
         }
     }
 
