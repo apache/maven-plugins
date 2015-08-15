@@ -1976,6 +1976,8 @@ public abstract class AbstractInvokerMojo
             // it would be nice if we could figure out what types these are... but perhaps
             // not necessary for the -Dinvoker.test=xxx t
             buildJobs = scanProjectsDirectory( includes, excludes, BuildJob.Type.DIRECT );
+            
+            Arrays.sort( buildJobs, new BuildJobComparator( setupIncludes ) );
         }
         else
         {
