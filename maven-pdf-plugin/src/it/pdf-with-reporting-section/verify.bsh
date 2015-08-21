@@ -33,10 +33,40 @@ in.close();
 
 String content = new String( bytes, "ISO-8859-1" );
 
-if ( content.indexOf( "/Title (Continuous Integration)" ) < 0 )
+if ( !content.contains( "/Title (Continuous Integration)" ) )
 {
     System.err.println( "MPIR CIM report not included in pdf." );
-    // return false; MPDF-48: known issue...
+    // return false; MPDF-48: known issue with Maven 3...
+}
+
+if ( !content.contains( "/Title (APT)" ) )
+{
+    System.err.println( "APT Doxia Markup not included in pdf." );
+    return false;
+}
+
+if ( !content.contains( "/Title (FML)" ) )
+{
+    System.err.println( "FML Doxia Markup not included in pdf." );
+    return false;
+}
+
+if ( !content.contains( "/Title (Xdoc)" ) )
+{
+    System.err.println( "Xdoc Doxia Markup not included in pdf." );
+    return false;
+}
+
+if ( !content.contains( "/Title (XHTML)" ) )
+{
+    System.err.println( "XHTML Doxia Markup not included in pdf." );
+    return false;
+}
+
+if ( !content.contains( "/Title (Markdown)" ) )
+{
+    System.err.println( "Markdown Doxia Markup not included in pdf." );
+    //return false;
 }
 
 return true;

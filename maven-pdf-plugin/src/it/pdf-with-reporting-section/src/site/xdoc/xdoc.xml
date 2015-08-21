@@ -9,7 +9,7 @@ to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
 with the License.  You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an
@@ -19,18 +19,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Xdoc Doxia Markup</title>
+    <author>Hervé Boutemy</author>
+  </properties>
   <body>
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="Usage" href="usage.html"/>
-    </menu>
-    <menu name="Doxia Markups">
-      <item name="APT" href="apt.html"/>
-      <item name="FML" href="fml.html"/>
-      <item name="Markdown" href="markdown.html"/>
-      <item name="Xdoc" href="xdoc.html"/>
-      <item name="XHTML" href="xhtml.html"/>
-    </menu>
+    <section name="Xdoc Doxia Markup">
+      <p>This file was written in Xdoc Doxia Markup.</p>
+    </section>
   </body>
-</project>
+</document>
