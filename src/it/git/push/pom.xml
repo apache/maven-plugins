@@ -40,7 +40,7 @@
   </modules>
 
   <scm>
-    <connection>scm:git:[fetch=]http://git-wip-us.apache.org/repos/asf/maven.git[push=]ssh://git-wip-us.apache.org/repos/asf/maven.git</connection>
+    <connection>scm:git:http://git-wip-us.apache.org/repos/asf/maven.git</connection>
     <developerConnection>scm:git:[fetch=]http://git-wip-us.apache.org/repos/asf/maven.git[push=]ssh://git-wip-us.apache.org/repos/asf/maven.git</developerConnection>
   </scm>
 </project>
