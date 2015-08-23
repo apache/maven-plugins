@@ -189,20 +189,16 @@ public class PluginsReport
          */
         private void renderSectionPlugins( boolean isPlugins )
         {
-            List<GAV> list = ( isPlugins ? GAV.pluginsToGAV( plugins ) : GAV.reportPluginsToGAV( reports ) );
+            List<GAV> list = isPlugins ? GAV.pluginsToGAV( plugins ) : GAV.reportPluginsToGAV( reports, project );
             String[] tableHeader = getPluginTableHeader();
 
-            startSection( ( isPlugins ? getI18nString( "title" )
-                                     : getI18nString( "report.title" ) ) );
+            startSection( getI18nString( isPlugins ? "title" : "report.title" ) );
 
             if ( list == null || list.isEmpty() )
             {
 
-                paragraph(  ( isPlugins ? getI18nString( "nolist" )
-                                        : getI18nString( "report.nolist" ) ) );
-
+                paragraph( getI18nString( isPlugins ? "nolist" : "report.nolist" ) ) ;
                 endSection();
-
                 return;
             }
 
@@ -213,17 +209,7 @@ public class PluginsReport
 
             for ( GAV plugin : list )
             {
-                String version;
-                if ( isPlugins )
-                {
-                    version =
-                        StringUtils.isEmpty( plugin.getVersion() ) ? Artifact.RELEASE_VERSION : plugin.getVersion();
-                }
-                else
-                {
-                    version = resolveReportPluginVersion( plugin, project );
-                }
-                VersionRange versionRange = VersionRange.createFromVersion( version );
+                VersionRange versionRange = VersionRange.createFromVersion( plugin.getVersion() );
 
                 Artifact pluginArtifact =
                     artifactFactory.createParentArtifact( plugin.getGroupId(), plugin.getArtifactId(),
@@ -284,14 +270,14 @@ public class PluginsReport
             {
                 groupId = plugin.getGroupId();
                 artifactId = plugin.getArtifactId();
-                version = plugin.getVersion();
+                version = StringUtils.isEmpty( plugin.getVersion() ) ? Artifact.RELEASE_VERSION : plugin.getVersion();
             }
 
-            private GAV( ReportPlugin reportPlugin )
+            private GAV( ReportPlugin reportPlugin, MavenProject project )
             {
                 groupId = reportPlugin.getGroupId();
                 artifactId = reportPlugin.getArtifactId();
-                version = reportPlugin.getVersion();
+                version = resolveReportPluginVersion( reportPlugin, project );
             }
 
             public String getGroupId()
@@ -319,12 +305,12 @@ public class PluginsReport
                 return result;
             }
 
-            public static List<GAV> reportPluginsToGAV( List<ReportPlugin> reportPlugins )
+            public static List<GAV> reportPluginsToGAV( List<ReportPlugin> reportPlugins, MavenProject project )
             {
                 List<GAV> result = new ArrayList<GAV>( reportPlugins.size() );
                 for ( ReportPlugin reportPlugin : reportPlugins )
                 {
-                    result.add( new GAV( reportPlugin ) );
+                    result.add( new GAV( reportPlugin, project ) );
                 }
                 return result;
             }
@@ -361,7 +347,7 @@ public class PluginsReport
          * @param project the current project
          * @return the report plugin version
          */
-        protected String resolveReportPluginVersion( GAV reportPlugin, MavenProject project )
+        protected static String resolveReportPluginVersion( ReportPlugin reportPlugin, MavenProject project )
         {
             // look for version defined in the reportPlugin configuration
             if ( reportPlugin.getVersion() != null )
@@ -402,7 +388,7 @@ public class PluginsReport
          * @param plugins the candidate plugins
          * @return the first similar plugin
          */
-        private Plugin find( GAV reportPlugin, List<Plugin> plugins )
+        private static Plugin find( ReportPlugin reportPlugin, List<Plugin> plugins )
         {
             if ( plugins == null )
             {
