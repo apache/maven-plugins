@@ -24,13 +24,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -78,8 +79,7 @@ public class PluginsReport
         boolean result = super.canGenerateReport();
         if ( result && skipEmptyReport )
         {
-            result = !isEmpty( getProject().getPluginArtifacts() )
-                    || !isEmpty( getProject().getReportArtifacts() );
+            result = !isEmpty( getProject().getBuildPlugins() ) || !isEmpty( getProject().getReportPlugins() );
         }
 
         return result;
@@ -90,8 +90,8 @@ public class PluginsReport
     {
         @SuppressWarnings( "unchecked" )
         PluginsRenderer r =
-            new PluginsRenderer( getLog(), getSink(), locale, getI18N( locale ), project.getPluginArtifacts(),
-                                 project.getReportArtifacts(), project, mavenProjectBuilder, artifactFactory,
+            new PluginsRenderer( getLog(), getSink(), locale, getI18N( locale ), project.getBuildPlugins(),
+                                 project.getReportPlugins(), project, mavenProjectBuilder, artifactFactory,
                                  localRepository );
         r.render();
     }
@@ -120,9 +120,9 @@ public class PluginsReport
     {
         private final Log log;
 
-        private final List<Artifact> plugins;
+        private final List<Plugin> plugins;
 
-        private final List<Artifact> reports;
+        private final List<ReportPlugin> reports;
 
         private final MavenProject project;
 
@@ -145,17 +145,18 @@ public class PluginsReport
          * @param localRepository {@link ArtifactRepository}
          *
          */
-        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, Set<Artifact> plugins,
-                                Set<Artifact> reports, MavenProject project, MavenProjectBuilder mavenProjectBuilder,
-                                ArtifactFactory artifactFactory, ArtifactRepository localRepository )
+        public PluginsRenderer( Log log, Sink sink, Locale locale, I18N i18n, List<Plugin> plugins,
+                                List<ReportPlugin> reports, MavenProject project,
+                                MavenProjectBuilder mavenProjectBuilder, ArtifactFactory artifactFactory,
+                                ArtifactRepository localRepository )
         {
             super( sink, i18n, locale );
 
             this.log = log;
 
-            this.plugins = new ArrayList<Artifact>( plugins );
+            this.plugins = new ArrayList<Plugin>( plugins );
 
-            this.reports = new ArrayList<Artifact>( reports );
+            this.reports = new ArrayList<ReportPlugin>( reports );
 
             this.project = project;
 
@@ -188,7 +189,7 @@ public class PluginsReport
          */
         private void renderSectionPlugins( boolean isPlugins )
         {
-            List<Artifact> list = ( isPlugins ? plugins : reports );
+            List<GAV> list = ( isPlugins ? GAV.pluginsToGAV( plugins ) : GAV.reportPluginsToGAV( reports ) );
             String[] tableHeader = getPluginTableHeader();
 
             startSection( ( isPlugins ? getI18nString( "title" )
@@ -205,25 +206,28 @@ public class PluginsReport
                 return;
             }
 
-            Collections.sort( list, getArtifactComparator() );
+            Collections.sort( list, getPluginComparator() );
 
             startTable();
             tableHeader( tableHeader );
 
-            for ( Artifact artifact : list )
+            for ( GAV plugin : list )
             {
-                VersionRange versionRange;
-                if ( StringUtils.isEmpty( artifact.getVersion() ) )
+                String version;
+                if ( isPlugins )
                 {
-                    versionRange = VersionRange.createFromVersion( Artifact.RELEASE_VERSION );
+                    version =
+                        StringUtils.isEmpty( plugin.getVersion() ) ? Artifact.RELEASE_VERSION : plugin.getVersion();
                 }
                 else
                 {
-                    versionRange = VersionRange.createFromVersion( artifact.getVersion() );
+                    version = resolveReportPluginVersion( plugin, project );
                 }
+                VersionRange versionRange = VersionRange.createFromVersion( version );
 
-                Artifact pluginArtifact = artifactFactory.createParentArtifact( artifact.getGroupId(), artifact
-                    .getArtifactId(), versionRange.toString() );
+                Artifact pluginArtifact =
+                    artifactFactory.createParentArtifact( plugin.getGroupId(), plugin.getArtifactId(),
+                                                          versionRange.toString() );
                 @SuppressWarnings( "unchecked" )
                 List<ArtifactRepository> artifactRepositories = project.getPluginArtifactRepositories();
                 if ( artifactRepositories == null )
@@ -240,8 +244,8 @@ public class PluginsReport
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    log.info( "Could not build project for: " + artifact.getArtifactId() + ":" + e.getMessage(), e );
-                    tableRow( getPluginRow( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                    log.info( "Could not build project for " + plugin.getArtifactId() + ": " + e.getMessage(), e );
+                    tableRow( getPluginRow( plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion(),
                                             null ) );
                 }
 
@@ -270,21 +274,149 @@ public class PluginsReport
             return new String[] { groupId, artifactId, version };
         }
 
-        private Comparator<Artifact> getArtifactComparator()
+        private static class GAV
         {
-            return new Comparator<Artifact>()
+            private final String groupId;
+            private final String artifactId;
+            private final String version;
+
+            private GAV( Plugin plugin )
+            {
+                groupId = plugin.getGroupId();
+                artifactId = plugin.getArtifactId();
+                version = plugin.getVersion();
+            }
+
+            private GAV( ReportPlugin reportPlugin )
+            {
+                groupId = reportPlugin.getGroupId();
+                artifactId = reportPlugin.getArtifactId();
+                version = reportPlugin.getVersion();
+            }
+
+            public String getGroupId()
+            {
+                return groupId;
+            }
+
+            public String getArtifactId()
+            {
+                return artifactId;
+            }
+
+            public String getVersion()
+            {
+                return version;
+            }
+
+            public static List<GAV> pluginsToGAV( List<Plugin> plugins )
+            {
+                List<GAV> result = new ArrayList<GAV>( plugins.size() );
+                for ( Plugin plugin : plugins )
+                {
+                    result.add( new GAV( plugin ) );
+                }
+                return result;
+            }
+
+            public static List<GAV> reportPluginsToGAV( List<ReportPlugin> reportPlugins )
+            {
+                List<GAV> result = new ArrayList<GAV>( reportPlugins.size() );
+                for ( ReportPlugin reportPlugin : reportPlugins )
+                {
+                    result.add( new GAV( reportPlugin ) );
+                }
+                return result;
+            }
+        }
+
+        private Comparator<GAV> getPluginComparator()
+        {
+            return new Comparator<GAV>()
             {
                 /** {@inheritDoc} */
-                public int compare( Artifact a1, Artifact a2 )
+                public int compare( GAV a1, GAV a2 )
                 {
-                    int result = a1.getGroupId().compareTo( a2.getGroupId() );
+                    int result = a1.groupId.compareTo( a2.groupId );
                     if ( result == 0 )
                     {
-                        result = a1.getArtifactId().compareTo( a2.getArtifactId() );
+                        result = a1.artifactId.compareTo( a2.artifactId );
                     }
                     return result;
                 }
             };
+        }
+
+        /**
+         * Resolve report plugin version. Steps to find a plugin version stop after each step if a non <code>null</code>
+         * value has been found:
+         * <ol>
+         * <li>use the one defined in the reportPlugin configuration,</li>
+         * <li>search similar (same groupId and artifactId) mojo in the build/plugins section of the pom,</li>
+         * <li>search similar (same groupId and artifactId) mojo in the build/pluginManagement section of the pom,</li>
+         * <li>default value is RELEASE.</li>
+         * </ol>
+         * 
+         * @param reportPlugin the report plugin to resolve the version
+         * @param project the current project
+         * @return the report plugin version
+         */
+        protected String resolveReportPluginVersion( GAV reportPlugin, MavenProject project )
+        {
+            // look for version defined in the reportPlugin configuration
+            if ( reportPlugin.getVersion() != null )
+            {
+                return reportPlugin.getVersion();
+            }
+
+            // search in the build section
+            if ( project.getBuild() != null )
+            {
+                Plugin plugin = find( reportPlugin, project.getBuild().getPlugins() );
+
+                if ( plugin != null && plugin.getVersion() != null )
+                {
+                    return plugin.getVersion();
+                }
+            }
+
+            // search in pluginManagement section
+            if ( project.getBuild() != null && project.getBuild().getPluginManagement() != null )
+            {
+                Plugin plugin = find( reportPlugin, project.getBuild().getPluginManagement().getPlugins() );
+
+                if ( plugin != null && plugin.getVersion() != null )
+                {
+                    return plugin.getVersion();
+                }
+            }
+
+            // empty version
+            return Artifact.RELEASE_VERSION;
+        }
+
+        /**
+         * Search similar (same groupId and artifactId) plugin as a given report plugin.
+         * 
+         * @param reportPlugin the report plugin to search for a similar plugin
+         * @param plugins the candidate plugins
+         * @return the first similar plugin
+         */
+        private Plugin find( GAV reportPlugin, List<Plugin> plugins )
+        {
+            if ( plugins == null )
+            {
+                return null;
+            }
+            for ( Plugin plugin : plugins )
+            {
+                if ( StringUtils.equals( plugin.getArtifactId(), reportPlugin.getArtifactId() )
+                    && StringUtils.equals( plugin.getGroupId(), reportPlugin.getGroupId() ) )
+                {
+                    return plugin;
+                }
+            }
+            return null;
         }
     }
 }
