@@ -98,7 +98,7 @@ under the License.
       <version>1.2</version>
     </dependency>
   
-    <!-- maven -->
+    <!-- Maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
@@ -140,7 +140,7 @@ under the License.
       <version>1.4</version>
     </dependency>
 
-    <!-- doxia -->
+    <!-- Doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
@@ -194,6 +194,12 @@ under the License.
           <artifactId>plexus-container-default</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency><!-- TODO remove when upgrading doxia-document-renderer 1.7 see DOXIASITETOOLS-105 -->
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-markdown</artifactId>
+      <version>${doxiaVersion}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- plexus -->

@@ -66,7 +66,7 @@ if ( !content.contains( "/Title (XHTML)" ) )
 if ( !content.contains( "/Title (Markdown)" ) )
 {
     System.err.println( "Markdown Doxia Markup not included in pdf." );
-    //return false;
+    return false;
 }
 
 return true;
