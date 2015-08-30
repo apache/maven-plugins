@@ -103,7 +103,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * Fail the build on a violation. The goal checks for the violations
-     * after logging them (if {@link #logViolationsToConsole} is 'true').
+     * after logging them (if {@link #logViolationsToConsole} is {@code true}).
      * Compare this to {@link #failsOnError} which fails the build immediately
      * before examining the output log.
      */
@@ -650,7 +650,7 @@ public class CheckstyleViolationCheckMojo
                         String rule = RuleUtil.getName( source );
                         String category = RuleUtil.getCategory( source );
 
-                        log( severity, file + '[' + line + ( ( column == null ) ? "" : ( ':' + column ) ) + "] ("
+                        log( severity, file + ":[" + line + ( ( column == null ) ? "" : ( ',' + column ) ) + "] ("
                             + category + ") " + rule + ": " + message );
                     }
                 }
