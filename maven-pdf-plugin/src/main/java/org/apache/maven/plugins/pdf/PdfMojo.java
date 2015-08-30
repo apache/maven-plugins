@@ -848,7 +848,7 @@ public class PdfMojo
                     String siteDescriptorContent = IOUtil.toString( reader );
                     siteDescriptorContent =
                         siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>( 2 ), project,
-                                                                       siteDescriptorContent, enc, enc );
+                                                                       siteDescriptorContent );
 
                     decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
                 }

@@ -72,7 +72,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.4</doxiaVersion>
+    <doxiaVersion>1.6</doxiaVersion>
     <mavenVersion>2.2.1</mavenVersion>
   </properties>
 
@@ -135,9 +135,9 @@ under the License.
       <version>2.3</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-doxia-tools</artifactId>
-      <version>1.4</version>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-integration-tools</artifactId>
+      <version>1.6</version>
     </dependency>
 
     <!-- Doxia -->
