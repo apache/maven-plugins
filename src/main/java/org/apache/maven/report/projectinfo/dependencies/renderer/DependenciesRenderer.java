@@ -555,7 +555,7 @@ public class DependenciesRenderer
         {
             if ( artifact.getFile() == null )
             {
-                log.error( "Artifact: " + artifact.getId() + " has no file, won't be listed in dependency file details." );
+                log.warn( "Artifact " + artifact.getId() + " has no file, won't be listed in dependency files details." );
                 continue;
             }
 
@@ -1504,7 +1504,7 @@ public class DependenciesRenderer
 
                 if ( artifact.getFile() == null )
                 {
-                    log.error( "Artifact: " + artifact.getId() + " has no file, even after resolution." );
+                    log.error( "Artifact " + artifact.getId() + " has no file, even after resolution." );
                     continue;
                 }
             }
