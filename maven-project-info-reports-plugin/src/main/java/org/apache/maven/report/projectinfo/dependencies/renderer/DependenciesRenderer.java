@@ -555,7 +555,7 @@ public class DependenciesRenderer
         {
             if ( artifact.getFile() == null )
             {
-                log.error( "Artifact: " + artifact.getId() + " has no file." );
+                log.error( "Artifact: " + artifact.getId() + " has no file, won't be listed in dependency file details." );
                 continue;
             }
 
@@ -1483,7 +1483,7 @@ public class DependenciesRenderer
                 }
                 catch ( ArtifactResolutionException e )
                 {
-                    log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                    log.error( "Artifact " + artifact.getId() + " can't be resolved.", e );
                     continue;
                 }
                 catch ( ArtifactNotFoundException e )
@@ -1496,7 +1496,7 @@ public class DependenciesRenderer
                     }
                     else
                     {
-                        log.error( "Artifact: " + artifact.getId() + " has no file.", e );
+                        log.error( "Artifact " + artifact.getId() + " not found.", e );
                     }
 
                     continue;
