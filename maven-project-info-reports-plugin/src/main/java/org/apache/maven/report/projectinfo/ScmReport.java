@@ -550,12 +550,11 @@ public class ScmReport
 
         private void gitClone( String url )
         {
+            // in the future, git scm url should support both repository + path: at the moment, require a hack
+            // to remove path added to repository
             int index = url.indexOf( ".git/" );
             if ( index > 0 )
             {
-                log.warn( "Wrong effective scm url " + url + ": removing " + url.substring( index + 4 )
-                    + " in report, but this should be configured in pom.xml." );
-
                 url = url.substring( 0, index + 4 );
             }
 
