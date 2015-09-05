@@ -29,7 +29,7 @@ under the License.
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>pluginManagement</artifactId>
-  <name>target bytecode defined by pluginManagement configuration</name>
+  <name>target bytecode defined by pluginManagement configuration: 1.4 expected</name>
 
   <properties><!-- will be overridden -->
     <maven.compiler.source>1.3</maven.compiler.source>
