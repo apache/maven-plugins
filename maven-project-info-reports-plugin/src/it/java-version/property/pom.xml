@@ -35,7 +35,9 @@ under the License.
     <maven.compiler.source>1.3</maven.compiler.source>
     <maven.compiler.target>1.3</maven.compiler.target>
     <!--maven.compiler.target>${maven.compiler.source}</maven.compiler.target-->
-    <!-- MINVOKER-194: with Maven 3.3.x, this ${maven.compiler.source} property is interpolated
-         in invoker to 1.5 instead of 1.3 -->
+    <!-- can't use ${maven.compiler.source} property since it is interpolated
+         in invoker to 1.5 instead of 1.3 because of http://svn.apache.org/r1646983
+         see MINVOKER-194 for detailed analysis
+    -->
   </properties>
 </project>

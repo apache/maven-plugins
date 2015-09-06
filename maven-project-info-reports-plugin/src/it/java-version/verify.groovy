@@ -21,10 +21,4 @@ assert new File( basedir, 'plugin/target/site/project-summary.html' ).text.conta
 assert new File( basedir, 'pluginManagement/target/site/project-summary.html' ).text.contains( '<td>1.4</td>' )
 assert new File( basedir, 'property/target/site/project-summary.html' ).text.contains( '<td>1.3</td>' )
 
-// trying to understand MINVOKER-194 bug when IT run with Maven 3.3.x
-if ( new File( basedir, 'effective-poms.xml' ).text.contains( '<maven.compiler.target>1.5</maven.compiler.target>' ) )
-{
-  println "WARN: MINVOKER-194 unexpected <maven.compiler.target>1.5</maven.compiler.target> in effective pom: should be 1.3"
-}
-
 return true;
