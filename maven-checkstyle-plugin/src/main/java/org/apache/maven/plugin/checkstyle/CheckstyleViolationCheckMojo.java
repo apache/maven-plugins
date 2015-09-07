@@ -83,8 +83,8 @@ public class CheckstyleViolationCheckMojo
     private static final String JAVA_FILES = "**\\/*.java";
 
     private static final String CHECKSTYLE_FILE_HEADER = "<?xml version=\"1.0\"?>\n"
-            + "<!DOCTYPE module PUBLIC \"-//Puppy Crawl//DTD Check Configuration 1.2//EN\"\n"
-            + "        \"http://www.puppycrawl.com/dtds/configuration_1_2.dtd\">\n";
+            + "<!DOCTYPE module PUBLIC \"-//Puppy Crawl//DTD Check Configuration 1.3//EN\"\n"
+            + "        \"http://www.puppycrawl.com/dtds/configuration_1_3.dtd\">\n";
 
     /**
      * Specifies the path and filename to save the Checkstyle output. The format
