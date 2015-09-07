@@ -51,6 +51,7 @@
         <version>@project.version@</version>
         <configuration>
           <resourceIncludes>**/*.txt</resourceIncludes>
+          <configLocation>checkstyle.xml</configLocation>
         </configuration>
       </plugin>
     </plugins>
