@@ -359,14 +359,9 @@ under the License.
       </pluginRepositories>
 
       <properties>
-        <invokerPluginVersion>1.9</invokerPluginVersion>
-        <itParent>${project.build.directory}/it/it-project-parent</itParent>
-        <itProjects>${project.build.directory}/it/projects</itProjects>
-        <localRepositoryPath>${project.build.directory}/local-repository</localRepositoryPath>
+        <invokerPluginVersion>3.0.0-SNAPSHOT</invokerPluginVersion>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
-        <it.pomIncludes>**/pom.xml</it.pomIncludes>
         <it.streamLogs>false</it.streamLogs>
-        <it.debug>true</it.debug>
         <testVersion>${project.version}</testVersion>
         <useJvmChmod>false</useJvmChmod>
       </properties>
@@ -378,71 +373,32 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <version>${invokerPluginVersion}</version>
             <configuration>
-              <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
               <properties>
                 <useJvmChmod>${useJvmChmod}</useJvmChmod>
                 <testVersion>${testVersion}</testVersion>
-                <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
                 <invokerPluginVersion>${invokerPluginVersion}</invokerPluginVersion>
               </properties>
               <showVersion>true</showVersion>
             </configuration>
             <executions>
               <execution>
-                <id>setup-integration-test-env</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <suppressSummaries>true</suppressSummaries>
-                  <goals>
-                    <goal>install</goal>
-                  </goals>
-                  <projectsDirectory>src/it/it-project-parent</projectsDirectory>
-                  <cloneProjectsTo>${itParent}</cloneProjectsTo>
-                  <pomIncludes>
-                    <pomInclude>pom.xml</pomInclude>
-                  </pomIncludes>
-                  <streamLogs>${it.streamLogs}</streamLogs>
-                </configuration>
-              </execution>
-              <execution>
                 <id>integration-test</id>
-                <phase>integration-test</phase>
                 <configuration>
-                  <projectsDirectory>src/it/projects</projectsDirectory>
                   <cloneClean>true</cloneClean>
-                  <cloneProjectsTo>${itProjects}</cloneProjectsTo>
                   <testPropertiesFile>test.properties</testPropertiesFile>
-                  <properties>
-                    <useJvmChmod>${useJvmChmod}</useJvmChmod>
-                  </properties>
-                  <debug>${it.debug}</debug>
-                  <settingsFile>src/it/settings.xml</settingsFile>
+                  <setupIncludes>
+                    <setupInclude>it-project-parent/pom.xml</setupInclude>
+                  </setupIncludes>
                   <pomIncludes>
-                    <pomInclude>${it.pomIncludes}</pomInclude>
+                    <pomInclude>projects/*/*/pom.xml</pomInclude>
+                    <pomInclude>projects/descriptor-refs/*/*/pom.xml</pomInclude>
+                    <pomInclude>projects/multimodule/multimodule-siblingParent/parent/pom.xml</pomInclude>
                   </pomIncludes>
                   <streamLogs>${it.streamLogs}</streamLogs>
                   <pomExcludes>
-                    <pomExclude>repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
-
-                    <!-- This will be handled by the parent in the bugs/massembly-285 dir. -->
-                    <pomExclude>bugs/massembly-285/massembly-285-*/pom.xml</pomExclude>
-
-                    <pomExclude>dependency-sets/depSet-enum-vs-wildcard/enum/pom.xml</pomExclude>
-                    <pomExclude>dependency-sets/depSet-enum-vs-wildcard/wildcard/pom.xml</pomExclude>
-
-                    <pomExclude>**/my-app*/pom.xml</pomExclude>
-                    <pomExclude>**/child*/pom.xml</pomExclude>
-                    <pomExclude>**/module*/pom.xml</pomExclude>
-                    <pomExclude>**/descriptor/pom.xml</pomExclude>
-                    <pomExclude>**/handler-def/pom.xml</pomExclude>
-                    <pomExclude>**/assembly/pom.xml</pomExclude>
-                    <pomExclude>dependency-sets/depSet-transFromProfile/pom.xml</pomExclude>
+                    <pomExclude>projects/repositories/repo-with-snapshot-parents/pom.xml</pomExclude>
+                    <pomExclude>projects/dependency-sets/depSet-transFromProfile/pom.xml</pomExclude>
                   </pomExcludes>
-                  <postBuildHookScript>verify</postBuildHookScript>
                 </configuration>
               </execution>
             </executions>
