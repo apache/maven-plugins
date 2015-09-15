@@ -273,6 +273,25 @@ public class CompilerMojoTestCase
         }
     }
 
+    public void testCompileFailOnWarning()
+                    throws Exception
+    {
+        CompilerMojo compileMojo = getCompilerMojo( "target/test-classes/unit/compiler-failonwarning-test/plugin-config.xml" );
+
+        setVariableValueToObject( compileMojo, "compilerManager", new CompilerManagerStub( true, true ) );
+
+        try
+        {
+            compileMojo.execute();
+
+            fail( "Should throw an exception" );
+        }
+        catch ( CompilationFailureException e )
+        {
+            //expected
+        }
+    }
+
     public void testCompileFailOnError()
         throws Exception
     {
@@ -338,7 +357,7 @@ public class CompilerMojoTestCase
             junitURI = junitURI.substring( "jar:".length(), junitURI.indexOf( '!' ) );
             testClasspathList.add( new File( URI.create( junitURI ) ).getAbsolutePath() );
         }
-        
+
         testClasspathList.add( compilerMojo.getOutputDirectory().getPath() );
         setVariableValueToObject( mojo, "classpathElements", testClasspathList );
 

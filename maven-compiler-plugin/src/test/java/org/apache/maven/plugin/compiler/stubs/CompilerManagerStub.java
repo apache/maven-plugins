@@ -29,20 +29,27 @@ public class CompilerManagerStub
     implements CompilerManager
 {
     private boolean shouldFail;
+    private boolean shouldWarn;
 
     public CompilerManagerStub()
     {
-        this( false );
+        this( false, false );
     }
 
     public CompilerManagerStub( boolean shouldFail )
     {
+        this( shouldFail, false );
+    }
+
+    public CompilerManagerStub( boolean shouldFail, boolean shouldWarn )
+    {
         this.shouldFail = shouldFail;
+        this.shouldWarn = shouldWarn;
     }
 
     public org.codehaus.plexus.compiler.Compiler getCompiler( String compilerId )
         throws NoSuchCompilerException
     {
-        return new CompilerStub( shouldFail );
+        return new CompilerStub( shouldFail, shouldWarn );
     }
 }
