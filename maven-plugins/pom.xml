@@ -49,7 +49,7 @@ under the License.
   <distributionManagement>
     <site><!-- to be copied in every plugin pom, since inheritance adds unwanted artifactId -->
       <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/plugins-archives/</url>
     </site>
   </distributionManagement>
 
