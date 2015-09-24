@@ -173,12 +173,13 @@ public class MinijarFilter
                     ClazzpathUnit depClazzpathUnit = addDependencyToClasspath( checkCp, dependency );
                     if ( depClazzpathUnit != null )
                     {
+                        Set<Clazz> clazzes = depClazzpathUnit.getClazzes();
                         Iterator<Clazz> j = removable.iterator();
                         while ( j.hasNext() )
                         {
                             Clazz clazz = j.next();
 
-                            if ( depClazzpathUnit.getClazzes().contains( clazz ) //
+                            if ( clazzes.contains( clazz ) //
                                 && simpleFilter.isSpecificallyIncluded( clazz.getName().replace( '.', '/' ) ) )
                             {
                                 log.info( clazz.getName() + " not removed because it was specifically included" );
