@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse.writers.myeclipse;
  * under the License.
  */
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -116,7 +115,7 @@ public class MyEclipseHibernateWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         PrintWriter pw = new PrintWriter( w );

@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.rad;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -111,7 +112,7 @@ public class RadWebSettingsWriter
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
             }
 
             XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -137,7 +138,7 @@ public class RadWebSettingsWriter
         File warSourceDirectory =
             new File( IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                                  "warSourceDirectory", //$NON-NLS-1$
-                                                 config.getProject().getBasedir() + "/src/main/webapp" ) ); //$NON-NLS-1$
+                                                 config.getProject().getBasedir() + "/src/main/webapp" ) );
         String webContentDir =
             IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(), warSourceDirectory, false );
 
@@ -182,24 +183,26 @@ public class RadWebSettingsWriter
         IdeDependency[] deps = config.getDeps();
         if ( deps != null )
         {
-            for (final IdeDependency dependency : deps) {
-                log.debug("RadWebSettingsWriter: checking dependency " + dependency.toString());
+            for ( final IdeDependency dependency : deps )
+            {
+                log.debug( "RadWebSettingsWriter: checking dependency " + dependency.toString() );
 
-                if (dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided()) {
-                    log.debug("RadWebSettingsWriter: dependency " + dependency.toString()
-                            + " selected for inclusion as lib-module");
+                if ( dependency.isReferencedProject() && !dependency.isTestDependency() && !dependency.isProvided() )
+                {
+                    log.debug( "RadWebSettingsWriter: dependency " + dependency.toString()
+                        + " selected for inclusion as lib-module" );
 
                     String depName = dependency.getEclipseProjectName();
                     String depJar = dependency.getArtifactId() + ".jar";
 
-                    writer.startElement(WEBSETTINGS_LIBMODULE);
+                    writer.startElement( WEBSETTINGS_LIBMODULE );
 
-                    writer.startElement(WEBSETTINGS_LM_JAR);
-                    writer.writeText(depJar);
+                    writer.startElement( WEBSETTINGS_LM_JAR );
+                    writer.writeText( depJar );
                     writer.endElement(); // jar
 
-                    writer.startElement(WEBSETTINGS_LM_PROJECT);
-                    writer.writeText(depName);
+                    writer.startElement( WEBSETTINGS_LM_PROJECT );
+                    writer.writeText( depName );
                     writer.endElement(); // project
 
                     writer.endElement(); // libmodule

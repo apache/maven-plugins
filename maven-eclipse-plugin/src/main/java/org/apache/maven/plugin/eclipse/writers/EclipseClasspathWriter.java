@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -168,7 +169,7 @@ public class EclipseClasspathWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -182,23 +183,19 @@ public class EclipseClasspathWriter
         // Source roots and resources
         // ----------------------------------------------------------------------
 
-        // List<EclipseSourceDir>
-        List specialSources = new ArrayList();
+        List<EclipseSourceDir> specialSources = new ArrayList<EclipseSourceDir>();
 
-        // Map<String,List<EclipseSourceDir>>
-        Map byOutputDir = new HashMap();
+        Map<String, List<EclipseSourceDir>> byOutputDir = new HashMap<String, List<EclipseSourceDir>>();
 
         for ( int j = 0; j < config.getSourceDirs().length; j++ )
         {
             EclipseSourceDir dir = config.getSourceDirs()[j];
 
-            // List<EclipseSourceDir>
-            List byOutputDirs = (List) byOutputDir.get( dir.getOutput() );
+            List<EclipseSourceDir> byOutputDirs = byOutputDir.get( dir.getOutput() );
             if ( byOutputDirs == null )
             {
-                // ArrayList<EclipseSourceDir>
-                byOutputDir.put( dir.getOutput() == null ? defaultOutput : dir.getOutput(), byOutputDirs =
-                    new ArrayList() );
+                byOutputDirs = new ArrayList<EclipseSourceDir>();
+                byOutputDir.put( dir.getOutput() == null ? defaultOutput : dir.getOutput(), byOutputDirs );
             }
             byOutputDirs.add( dir );
         }
@@ -285,21 +282,24 @@ public class EclipseClasspathWriter
                 buildXmlPrinter.addAttribute( NAME, "copy-resources" );
                 buildXmlPrinter.addAttribute( "depends", "init" );
 
-                for (Object specialSource : specialSources) {
+                for ( Object specialSource : specialSources )
+                {
                     // TODO: merge source dirs on output path+filtering to reduce
                     // <copy> tags for speed.
                     EclipseSourceDir dir = (EclipseSourceDir) specialSource;
-                    buildXmlPrinter.startElement("copy");
-                    buildXmlPrinter.addAttribute("todir", dir.getOutput());
-                    buildXmlPrinter.addAttribute("filtering", "" + dir.isFiltering());
+                    buildXmlPrinter.startElement( "copy" );
+                    buildXmlPrinter.addAttribute( "todir", dir.getOutput() );
+                    buildXmlPrinter.addAttribute( "filtering", "" + dir.isFiltering() );
 
-                    buildXmlPrinter.startElement("fileset");
-                    buildXmlPrinter.addAttribute("dir", dir.getPath());
-                    if (dir.getIncludeAsString() != null) {
-                        buildXmlPrinter.addAttribute("includes", dir.getIncludeAsString());
+                    buildXmlPrinter.startElement( "fileset" );
+                    buildXmlPrinter.addAttribute( "dir", dir.getPath() );
+                    if ( dir.getIncludeAsString() != null )
+                    {
+                        buildXmlPrinter.addAttribute( "includes", dir.getIncludeAsString() );
                     }
-                    if (dir.getExcludeAsString() != null) {
-                        buildXmlPrinter.addAttribute("excludes", dir.getExcludeAsString());
+                    if ( dir.getExcludeAsString() != null )
+                    {
+                        buildXmlPrinter.addAttribute( "excludes", dir.getExcludeAsString() );
                     }
                     buildXmlPrinter.endElement();
 
@@ -325,13 +325,12 @@ public class EclipseClasspathWriter
 
             // finally add it to the project writer.
 
-            config.getBuildCommands().add(
-                                           new BuildCommand(
-                                                             "org.eclipse.ui.externaltools.ExternalToolBuilder",
-                                                             "LaunchConfigHandle",
-                                                             "<project>/"
-                                                                 + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
-                                                                 + "Maven_Ant_Builder.launch" ) );
+            config.getBuildCommands().add( new BuildCommand(
+                                                 "org.eclipse.ui.externaltools.ExternalToolBuilder",
+                                                 "LaunchConfigHandle",
+                                                 "<project>/"
+                                                     + EclipseLaunchConfigurationWriter.FILE_DOT_EXTERNAL_TOOL_BUILDERS
+                                                     + "Maven_Ant_Builder.launch" ) );
         }
 
         // ----------------------------------------------------------------------
@@ -344,47 +343,52 @@ public class EclipseClasspathWriter
         writer.endElement();
 
         Set addedDependencies = new HashSet();
-        
+
         // ----------------------------------------------------------------------
         // Java API dependencies that may complete the classpath container must
         // be declared BEFORE all other dependencies so that container access rules don't fail
         // ----------------------------------------------------------------------
         IdeDependency[] depsToWrite = config.getDeps();
-        for (IdeDependency dep : depsToWrite) {
-            if (dep.isJavaApi()) {
-                String depId = getDependencyId(dep);
-                if (!addedDependencies.contains(depId)) {
-                    addDependency(writer, dep);
-                    addedDependencies.add(depId);
+        for ( IdeDependency dep : depsToWrite )
+        {
+            if ( dep.isJavaApi() )
+            {
+                String depId = getDependencyId( dep );
+                if ( !addedDependencies.contains( depId ) )
+                {
+                    addDependency( writer, dep );
+                    addedDependencies.add( depId );
                 }
             }
         }
-        
 
-        if (!config.isClasspathContainersLast())
+        if ( !config.isClasspathContainersLast() )
         {
-            writeClasspathContainers(writer);
+            writeClasspathContainers( writer );
         }
 
         // ----------------------------------------------------------------------
         // The project's dependencies
         // ----------------------------------------------------------------------
-        for (IdeDependency dep : depsToWrite) {
-            if (dep.isAddedToClasspath()) {
-                String depId = getDependencyId(dep);
+        for ( IdeDependency dep : depsToWrite )
+        {
+            if ( dep.isAddedToClasspath() )
+            {
+                String depId = getDependencyId( dep );
                 /* avoid duplicates in the classpath for artifacts with different types (like ejbs or test-jars) */
-                if (!addedDependencies.contains(depId)) {
-                    addDependency(writer, dep);
-                    addedDependencies.add(depId);
+                if ( !addedDependencies.contains( depId ) )
+                {
+                    addDependency( writer, dep );
+                    addedDependencies.add( depId );
                 }
             }
         }
 
-        if (config.isClasspathContainersLast())
+        if ( config.isClasspathContainersLast() )
         {
-            writeClasspathContainers(writer);
+            writeClasspathContainers( writer );
         }
-        
+
         writer.endElement();
 
         IOUtil.close( w );
@@ -394,16 +398,17 @@ public class EclipseClasspathWriter
     /**
      * @param writer
      */
-    private void writeClasspathContainers(XMLWriter writer)
+    private void writeClasspathContainers( XMLWriter writer )
     {
         // ----------------------------------------------------------------------
         // Container classpath entries
         // ----------------------------------------------------------------------
 
-        for (Object o : config.getClasspathContainers()) {
-            writer.startElement(ELT_CLASSPATHENTRY);
-            writer.addAttribute(ATTR_KIND, "con"); //$NON-NLS-1$
-            writer.addAttribute(ATTR_PATH, (String) o);
+        for ( Object o : config.getClasspathContainers() )
+        {
+            writer.startElement( ELT_CLASSPATHENTRY );
+            writer.addAttribute( ATTR_KIND, "con" ); //$NON-NLS-1$
+            writer.addAttribute( ATTR_PATH, (String) o );
             writer.endElement(); // name
         }
     }
@@ -508,7 +513,7 @@ public class EclipseClasspathWriter
         // Replace aspectJ runtime library with ajdt ASPECTJRT_CONTAINER.
         if ( ( config.getAjdtVersion() != 0 ) && isAspectJRuntime( dep ) )
         {
-            if ( ! config.getClasspathContainers().contains( ASPECTJRT_CONTAINER ) )
+            if ( !config.getClasspathContainers().contains( ASPECTJRT_CONTAINER ) )
             {
                 config.getClasspathContainers().add( ASPECTJRT_CONTAINER );
             }
@@ -530,13 +535,13 @@ public class EclipseClasspathWriter
         {
             if ( !attributeElemOpen )
             {
-                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
+                writer.startElement( ATTRIBUTES );
                 attributeElemOpen = true;
             }
 
-            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
-            writer.addAttribute( VALUE, "jar:" + new File( javadocpath ).toURI() + "!/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            writer.addAttribute( NAME, "javadoc_location" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ATTRIBUTE );
+            writer.addAttribute( VALUE, "jar:" + new File( javadocpath ).toURI() + "!/" );
+            writer.addAttribute( NAME, "javadoc_location" );
             writer.endElement();
 
         }
@@ -547,46 +552,48 @@ public class EclipseClasspathWriter
         {
             if ( !attributeElemOpen )
             {
-                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
+                writer.startElement( ATTRIBUTES );
                 attributeElemOpen = true;
             }
 
-            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
-            writer.addAttribute( VALUE, "/WEB-INF/lib" ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( NAME, "org.eclipse.jst.component.dependency" ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ATTRIBUTE );
+            writer.addAttribute( VALUE, "/WEB-INF/lib" );
+            writer.addAttribute( NAME, "org.eclipse.jst.component.dependency" );
             writer.endElement();
 
         }
 
+        // CHECKSTYLE_OFF: MagicNumber
         if ( dep.isAjdtDependency() && ( config.getAjdtVersion() >= 1.5 ) )
         {
             if ( !attributeElemOpen )
             {
-                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
+                writer.startElement( ATTRIBUTES );
                 attributeElemOpen = true;
             }
 
-            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
-            writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_ASPECTPATH ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( VALUE, Boolean.TRUE.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ATTRIBUTE );
+            writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_ASPECTPATH );
+            writer.addAttribute( VALUE, Boolean.TRUE.toString() );
             writer.endElement();
-
         }
+        // CHECKSTYLE_ON: MagicNumber
 
+        // CHECKSTYLE_OFF: MagicNumber
         if ( dep.isAjdtWeaveDependency() && ( config.getAjdtVersion() >= 1.5 ) )
         {
             if ( !attributeElemOpen )
             {
-                writer.startElement( ATTRIBUTES ); //$NON-NLS-1$
+                writer.startElement( ATTRIBUTES );
                 attributeElemOpen = true;
             }
 
-            writer.startElement( ATTRIBUTE ); //$NON-NLS-1$
-            writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_INPATH ); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.addAttribute( VALUE, Boolean.TRUE.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.startElement( ATTRIBUTE );
+            writer.addAttribute( NAME, ORG_ECLIPSE_AJDT_INPATH );
+            writer.addAttribute( VALUE, Boolean.TRUE.toString() );
             writer.endElement();
-
         }
+        // CHECKSTYLE_ON: MagicNumber
 
         if ( attributeElemOpen )
         {

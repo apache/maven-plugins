@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -309,21 +310,27 @@ public class RadPlugin
     {
         if ( this.reactorProjects != null
             && ( Constants.PROJECT_PACKAGING_JAR.equals( artifact.getType() )
-                || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
+                || Constants.PROJECT_PACKAGING_EJB.equals( artifact.getType() ) 
+                || Constants.PROJECT_PACKAGING_WAR.equals( artifact.getType() ) ) )
         {
-            for (Object reactorProject1 : this.reactorProjects) {
+            for ( Object reactorProject1 : this.reactorProjects )
+            {
                 MavenProject reactorProject = (MavenProject) reactorProject1;
 
-                if (reactorProject.getGroupId().equals(artifact.getGroupId())
-                        && reactorProject.getArtifactId().equals(artifact.getArtifactId())) {
-                    if (reactorProject.getVersion().equals(artifact.getVersion())) {
+                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
+                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
+                {
+                    if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
+                    {
                         return true;
-                    } else {
-                        getLog().info(
-                                "Artifact "
-                                        + artifact.getId()
-                                        + " already available as a reactor project, but with different version. Expected: "
-                                        + artifact.getVersion() + ", found: " + reactorProject.getVersion());
+                    }
+                    else
+                    {
+                        getLog().info( "Artifact "
+                                           + artifact.getId()
+                                           + " already available as a reactor project, but with different version. "
+                                           + "Expected: " + artifact.getVersion() 
+                                           + ", found: " + reactorProject.getVersion() );
                     }
                 }
             }

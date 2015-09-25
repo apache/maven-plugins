@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse.writers.workspace;
  * under the License.
  */
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,11 +84,11 @@ public class EclipseCodeFormatterProfile
         }
         catch ( XmlPullParserException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantparseexisting", url.toString() ) );
         }
         finally
         {
@@ -112,7 +111,7 @@ public class EclipseCodeFormatterProfile
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantreadfile", url.toString() ), e ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantreadfile", url.toString() ), e );
         }
         finally
         {

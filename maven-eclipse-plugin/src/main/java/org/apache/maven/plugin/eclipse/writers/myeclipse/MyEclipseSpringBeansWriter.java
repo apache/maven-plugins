@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse.writers.myeclipse;
  * under the License.
  */
 
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
@@ -88,12 +87,12 @@ public class MyEclipseSpringBeansWriter
         FileWriter springFileWriter;
         try
         {
-            springFileWriter =
-                new FileWriter( new File( config.getEclipseProjectDirectory(), MYECLIPSE_SPRING_CONFIGURATION_FILENAME ) );
+            springFileWriter = new FileWriter( new File( config.getEclipseProjectDirectory(), 
+                                                         MYECLIPSE_SPRING_CONFIGURATION_FILENAME ) );
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( springFileWriter, "UTF-8", null );
@@ -113,14 +112,15 @@ public class MyEclipseSpringBeansWriter
         // do this with full path so it works as we descend through various modules (projects)
         File basedir = config.getEclipseProjectDirectory();
 
-        for (Object o : getConfigurationFilesList(new File(basedir, (String) springConfig.get("basedir")),
-                (String) springConfig.get("file-pattern"))) {
+        for ( Object o : getConfigurationFilesList( new File( basedir, (String) springConfig.get( "basedir" ) ),
+                                                    (String) springConfig.get( "file-pattern" ) ) )
+        {
             String onConfigFileName = (String) o;
-            File onConfigFile = new File(onConfigFileName);
-            String relativeFileName = IdeUtils.toRelativeAndFixSeparator(basedir, onConfigFile, false);
+            File onConfigFile = new File( onConfigFileName );
+            String relativeFileName = IdeUtils.toRelativeAndFixSeparator( basedir, onConfigFile, false );
 
-            writer.startElement(MYECLIPSE_SPRING_CONFIG);
-            writer.writeText(relativeFileName);
+            writer.startElement( MYECLIPSE_SPRING_CONFIG );
+            writer.writeText( relativeFileName );
             writer.endElement();
         }
         writer.endElement();
@@ -166,8 +166,9 @@ public class MyEclipseSpringBeansWriter
 
                 if ( subdirs != null )
                 {
-                    for (File subdir : subdirs) {
-                        configFiles.addAll(getConfigurationFilesList(subdir, pattern));
+                    for ( File subdir : subdirs )
+                    {
+                        configFiles.addAll( getConfigurationFilesList( subdir, pattern ) );
                     }
                 }
 

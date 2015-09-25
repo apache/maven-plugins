@@ -1,17 +1,23 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
 package org.apache.maven.plugin.eclipse.writers;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 import java.io.File;
 import java.io.IOException;
@@ -37,11 +43,11 @@ public class EclipseManifestWriter
     extends AbstractEclipseManifestWriter
 {
 
-    private static final String GENERATED_RESOURCE_DIRNAME =
-        "target" + File.separatorChar + "generated-resources" + File.separatorChar + "eclipse";
+    private static final String GENERATED_RESOURCE_DIRNAME = "target" + File.separatorChar + "generated-resources"
+        + File.separatorChar + "eclipse";
 
-    private static final String WEBAPP_RESOURCE_DIR =
-        "src" + File.separatorChar + "main" + File.separatorChar + "webapp";
+    private static final String WEBAPP_RESOURCE_DIR = "src" + File.separatorChar + "main" + File.separatorChar
+        + "webapp";
 
     /**
      * Returns absolute path to the web content directory based on configuration of the war plugin or default one
@@ -85,10 +91,10 @@ public class EclipseManifestWriter
             // getting the path to meta-inf base dir
             metaInfBaseDirectory = getWebContentBaseDirectory( this.config );
 
-            this.log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
+            log.debug( "Attempting to use: " + metaInfBaseDirectory + " for location of META-INF in war project." );
 
-            File metaInfDirectoryFile =
-                new File( metaInfBaseDirectory + File.separatorChar + AbstractEclipseManifestWriter.META_INF_DIRECTORY );
+            File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar 
+                                                  + AbstractEclipseManifestWriter.META_INF_DIRECTORY );
 
             if ( !metaInfDirectoryFile.exists()
                 || ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() ) )

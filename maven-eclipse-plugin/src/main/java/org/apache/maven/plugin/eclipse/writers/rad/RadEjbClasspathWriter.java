@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.rad;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,13 +31,10 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Constants;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
-import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -82,7 +80,6 @@ public class RadEjbClasspathWriter
     /**
      * write the .classpath file to the project root directory.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs all eclipse source directorys
      * @param localRepository the local reposetory
      * @param buildOutputDirectory build output directory (target)
@@ -103,9 +100,11 @@ public class RadEjbClasspathWriter
             }
             Xpp3Dom classpath = readXMLFile( classpathFile );
             Xpp3Dom[] children = classpath.getChildren();
-            for (Xpp3Dom aChildren : children) {
-                if (LIB.equals(aChildren.getAttribute(KIND))
-                        && TARGET_WEBSPHERE_CLASSES.equals(aChildren.getAttribute("path"))) {
+            for ( Xpp3Dom aChildren : children )
+            {
+                if ( LIB.equals( aChildren.getAttribute( KIND ) )
+                    && TARGET_WEBSPHERE_CLASSES.equals( aChildren.getAttribute( "path" ) ) )
+                {
                     return; // nothing to do!
                 }
             }
@@ -139,7 +138,7 @@ public class RadEjbClasspathWriter
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
             }
             XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
             Xpp3DomWriter.write( writer, classpath );
@@ -217,8 +216,9 @@ public class RadEjbClasspathWriter
             }
         } );
         Xpp3Dom resultClasspath = new Xpp3Dom( CLASSPATH );
-        for (Xpp3Dom aChildren : children) {
-            resultClasspath.addChild(aChildren);
+        for ( Xpp3Dom aChildren : children )
+        {
+            resultClasspath.addChild( aChildren );
         }
         return resultClasspath;
     }

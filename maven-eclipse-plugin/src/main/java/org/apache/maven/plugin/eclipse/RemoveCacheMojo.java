@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,12 +70,16 @@ public class RemoveCacheMojo
      */
     private void deleteMarkerFiles( List/* <File> */notAvailableMarkerFiles )
     {
-        for (Object notAvailableMarkerFile : notAvailableMarkerFiles) {
+        for ( Object notAvailableMarkerFile : notAvailableMarkerFiles )
+        {
             File markerFile = (File) notAvailableMarkerFile;
-            try {
-                IdeUtils.delete(markerFile, getLog());
-            } catch (MojoExecutionException e) {
-                getLog().warn(e.getMessage(), e);
+            try
+            {
+                IdeUtils.delete( markerFile, getLog() );
+            }
+            catch ( MojoExecutionException e )
+            {
+                getLog().warn( e.getMessage(), e );
             }
         }
     }

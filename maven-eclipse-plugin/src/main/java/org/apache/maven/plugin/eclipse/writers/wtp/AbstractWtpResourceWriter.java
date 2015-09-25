@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.wtp;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import java.io.File;
 
@@ -197,7 +198,7 @@ public abstract class AbstractWtpResourceWriter
             // <dependency-type>uses</dependency-type>
             // </dependent-module>
 
-            handle = "module:/resource/" + dep.getEclipseProjectName() + "/" + dep.getEclipseProjectName(); //$NON-NLS-1$ //$NON-NLS-2$
+            handle = "module:/resource/" + dep.getEclipseProjectName() + "/" + dep.getEclipseProjectName();
 
             String archiveExtension = dep.getType();
             if ( Constants.PROJECT_PACKAGING_EJB.equals( dep.getType() ) )
@@ -307,7 +308,7 @@ public abstract class AbstractWtpResourceWriter
             // exclude test and provided and system dependencies outside the project
             if ( ( !dep.isTestDependency() && !dep.isProvided() && !dep.isSystemScopedOutsideProject( project ) )
                 && ( Constants.PROJECT_PACKAGING_JAR.equals( type ) || Constants.PROJECT_PACKAGING_EJB.equals( type )
-                    || "ejb-client".equals( type ) || Constants.PROJECT_PACKAGING_WAR.equals( type ) ) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    || "ejb-client".equals( type ) || Constants.PROJECT_PACKAGING_WAR.equals( type ) ) ) 
             {
                 addDependency( writer, dep, localRepository, config.getProject().getBasedir(), deployDir );
             }

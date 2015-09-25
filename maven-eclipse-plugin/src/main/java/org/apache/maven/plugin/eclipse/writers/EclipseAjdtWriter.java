@@ -1,19 +1,22 @@
 package org.apache.maven.plugin.eclipse.writers;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import java.io.File;
@@ -83,20 +86,23 @@ public class EclipseAjdtWriter
         IdeDependency[] deps = config.getDeps();
         int ajdtDepCount = 0;
         int ajdtWeaveDepCount = 0;
-        for (IdeDependency dep : deps) {
-            if (dep.isAjdtDependency()) {
-                addDependency(ajdtSettings, dep, ASPECT_DEP_PROP, ++ajdtDepCount);
+        for ( IdeDependency dep : deps )
+        {
+            if ( dep.isAjdtDependency() )
+            {
+                addDependency( ajdtSettings, dep, ASPECT_DEP_PROP, ++ajdtDepCount );
             }
 
-            if (dep.isAjdtWeaveDependency()) {
-                addDependency(ajdtSettings, dep, WEAVE_DEP_PROP, ++ajdtWeaveDepCount);
+            if ( dep.isAjdtWeaveDependency() )
+            {
+                addDependency( ajdtSettings, dep, WEAVE_DEP_PROP, ++ajdtWeaveDepCount );
             }
         }
 
         // write the settings, if needed
         if ( !ajdtSettings.isEmpty() )
         {
-            File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_DOT_SETTINGS ); //$NON-NLS-1$
+            File settingsDir = new File( config.getEclipseProjectDirectory(), DIR_DOT_SETTINGS );
 
             settingsDir.mkdirs();
 
@@ -127,17 +133,19 @@ public class EclipseAjdtWriter
                 {
                     ajdtSettings.store( new FileOutputStream( ajdtSettingsFile ), null );
 
-                    log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
+                    log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings",
                                                   ajdtSettingsFile.getCanonicalPath() ) );
                 }
             }
             catch ( FileNotFoundException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ), e ); //$NON-NLS-1$
+                throw new MojoExecutionException( 
+                                          Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ), e ); //$NON-NLS-1$
+                throw new MojoExecutionException( 
+                                          Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ), e );
             }
         }
     }
@@ -158,7 +166,7 @@ public class EclipseAjdtWriter
 
             if ( artifactPath == null )
             {
-                log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) ); //$NON-NLS-1$
+                log.error( Messages.getString( "EclipsePlugin.artifactpathisnull", dep.getId() ) );
                 return;
             }
 
@@ -168,7 +176,7 @@ public class EclipseAjdtWriter
 
                 if ( log.isDebugEnabled() )
                 {
-                    log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped", //$NON-NLS-1$
+                    log.debug( Messages.getString( "EclipsePlugin.artifactissystemscoped",
                                                    new Object[] { dep.getArtifactId(), path } ) );
                 }
             }
@@ -182,7 +190,7 @@ public class EclipseAjdtWriter
 
                 if ( !new File( relativePath ).isAbsolute() )
                 {
-                    path = EclipseClasspathWriter.M2_REPO + "/" //$NON-NLS-1$
+                    path = EclipseClasspathWriter.M2_REPO + "/"
                         + relativePath;
                 }
                 else

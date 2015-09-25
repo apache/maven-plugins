@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,7 +82,7 @@ public abstract class EclipseLaunchConfigurationWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -123,7 +124,8 @@ public abstract class EclipseLaunchConfigurationWriter
                 + " factoryID='org.eclipse.ui.internal.WorkingSetFactory'" + " label='workingSet'"
                 + " name='workingSet'>";
 
-        for (Object o : getMonitoredResources()) {
+        for ( Object o : getMonitoredResources() )
+        {
             MonitoredResource monitoredResource = (MonitoredResource) o;
 
             workingSet += monitoredResource.print();
@@ -206,9 +208,10 @@ public abstract class EclipseLaunchConfigurationWriter
         writer.startElement( "listAttribute" );
         writer.addAttribute( "key", key );
 
-        for (String value : values) {
-            writer.startElement("listEntry");
-            writer.addAttribute("value", value);
+        for ( String value : values )
+        {
+            writer.startElement( "listEntry" );
+            writer.addAttribute( "value", value );
             writer.endElement();
         }
 

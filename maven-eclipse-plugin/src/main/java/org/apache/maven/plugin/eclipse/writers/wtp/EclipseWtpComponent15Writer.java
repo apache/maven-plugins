@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.wtp;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import org.codehaus.plexus.util.xml.XMLWriter;
 
@@ -38,7 +39,7 @@ public class EclipseWtpComponent15Writer
      */
     protected String getComponentFileName()
     {
-        return "org.eclipse.wst.common.component"; //$NON-NLS-1$
+        return "org.eclipse.wst.common.component";
     }
 
     /**
@@ -50,11 +51,11 @@ public class EclipseWtpComponent15Writer
     {
         if ( this.config.getWtpVersion() < 2.0f )
         {
-            return "1.5.0"; //$NON-NLS-1$
+            return "1.5.0";
         }
         else
         {
-            return "2.0"; //$NON-NLS-1$
+            return "2.0";
         }
     }
 

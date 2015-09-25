@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -119,36 +120,37 @@ public class EclipsePlugin
 
     private static final String DEFAULT_ASPECT_DIRECTORY = "src/main/aspect";
 
-    private static final String NATURE_WST_FACET_CORE_NATURE = "org.eclipse.wst.common.project.facet.core.nature"; //$NON-NLS-1$
+    private static final String NATURE_WST_FACET_CORE_NATURE = 
+                    "org.eclipse.wst.common.project.facet.core.nature";
 
     private static final String BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER =
-        "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver"; //$NON-NLS-1$
+        "org.eclipse.wst.common.modulecore.ComponentStructuralBuilderDependencyResolver";
 
-    protected static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder"; //$NON-NLS-1$
+    protected static final String BUILDER_WST_VALIDATION = "org.eclipse.wst.validation.validationbuilder";
 
-    private static final String BUILDER_JDT_CORE_JAVA = "org.eclipse.jdt.core.javabuilder"; //$NON-NLS-1$
+    private static final String BUILDER_JDT_CORE_JAVA = "org.eclipse.jdt.core.javabuilder";
 
     private static final String BUILDER_WST_COMPONENT_STRUCTURAL =
-        "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder"; //$NON-NLS-1$
+        "org.eclipse.wst.common.modulecore.ComponentStructuralBuilder";
 
-    private static final String BUILDER_WST_FACET = "org.eclipse.wst.common.project.facet.core.builder"; //$NON-NLS-1$
+    private static final String BUILDER_WST_FACET = "org.eclipse.wst.common.project.facet.core.builder";
 
-    private static final String BUILDER_AJDT_CORE_JAVA = "org.eclipse.ajdt.core.ajbuilder"; //$NON-NLS-1$
+    private static final String BUILDER_AJDT_CORE_JAVA = "org.eclipse.ajdt.core.ajbuilder";
 
-    private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature"; //$NON-NLS-1$
+    private static final String NATURE_WST_MODULE_CORE_NATURE = "org.eclipse.wst.common.modulecore.ModuleCoreNature";
 
-    private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature"; //$NON-NLS-1$
+    private static final String NATURE_JDT_CORE_JAVA = "org.eclipse.jdt.core.javanature";
 
-    private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature"; //$NON-NLS-1$
+    private static final String NATURE_JEM_WORKBENCH_JAVA_EMF = "org.eclipse.jem.workbench.JavaEMFNature";
 
-    private static final String NATURE_AJDT_CORE_JAVA = "org.eclipse.ajdt.ui.ajnature"; //$NON-NLS-1$
+    private static final String NATURE_AJDT_CORE_JAVA = "org.eclipse.ajdt.ui.ajnature";
 
-    protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER"; //$NON-NLS-1$
+    protected static final String COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER";
 
-    protected static final String ASPECTJ_RT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"; //$NON-NLS-1$
+    protected static final String ASPECTJ_RT_CONTAINER = "org.eclipse.ajdt.core.ASPECTJRT_CONTAINER";
 
     // warning, order is important for binary search
-    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" }; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
+    public static final String[] WTP_SUPPORTED_VERSIONS = new String[] { "1.0", "1.5", "2.0", "R7", "none" };
 
     public static final String ASPECTJ_FILE_PATTERN = "**/*.aj";
 
@@ -157,12 +159,12 @@ public class EclipsePlugin
     /**
      * Constant for 'artifactId' element in POM.xml.
      */
-    private static final String POM_ELT_ARTIFACT_ID = "artifactId"; //$NON-NLS-1$
+    private static final String POM_ELT_ARTIFACT_ID = "artifactId";
 
     /**
      * Constant for 'groupId' element in POM.xml.
      */
-    private static final String POM_ELT_GROUP_ID = "groupId"; //$NON-NLS-1$
+    private static final String POM_ELT_GROUP_ID = "groupId";
 
     /**
      * List of eclipse project natures. By default the <code>org.eclipse.jdt.core.javanature</code> nature plus the
@@ -212,6 +214,7 @@ public class EclipsePlugin
     @Parameter
     private Map additionalProjectFacets;
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * List of eclipse build commands. By default the <code>org.eclipse.jdt.core.javabuilder</code> builder plus the
      * needed WTP builders are added. If you specify any configuration for this parameter, only those buildcommands
@@ -228,9 +231,11 @@ public class EclipsePlugin
      * 
      * For new style, see <code>additionalBuildCommands</code>.
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter
     private List buildcommands;
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * List of eclipse build commands to be added to the default ones. Old style:
      * 
@@ -257,9 +262,11 @@ public class EclipsePlugin
      * Note the difference between <code>build<strong>c</strong>ommand</code> and
      * <code>build<strong>C</strong>ommand</code>. You can mix and match old and new-style configuration entries.
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter
     private List additionalBuildcommands;
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * List of container classpath entries. By default the <code>org.eclipse.jdt.launching.JRE_CONTAINER</code>
      * classpath container is added. Configuration example:
@@ -272,6 +279,7 @@ public class EclipsePlugin
      * &lt;/classpathContainers&gt;
      * </pre>
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter
     private List classpathContainers;
 
@@ -299,7 +307,8 @@ public class EclipsePlugin
     /**
      * The default output directory
      */
-    @Parameter( property = "outputDirectory", alias = "outputDirectory", defaultValue = "${project.build.outputDirectory}", required = true )
+    @Parameter( property = "outputDirectory", alias = "outputDirectory", 
+                    defaultValue = "${project.build.outputDirectory}", required = true )
     private File buildOutputDirectory;
 
     /**
@@ -327,6 +336,7 @@ public class EclipsePlugin
     @Parameter( property = "eclipse.manifest", defaultValue = "${basedir}/META-INF/MANIFEST.MF" )
     private File manifest;
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * Allow to configure additional generic configuration files for eclipse that will be written out to disk when
      * running eclipse:eclipse. FOr each file you can specify the name and the text content.
@@ -394,6 +404,7 @@ public class EclipsePlugin
      * &lt;/plugin&gt;
      * </pre>
      */
+    // CHECKSTYLE_ON: LineLength
     @Parameter
     private EclipseConfigFile[] additionalConfig;
 
@@ -449,8 +460,8 @@ public class EclipsePlugin
 
     /**
      * If set to <code>true</code>, the standard execution environment matching the compiler settings is set as JRE. If
-     * set to <code>false</code>, the JRE matching the configured compiler-plugin executable or JAVA_HOME is selected by
-     * name, if it is configured in the workspace.
+     * set to <code>false</code>, the JRE matching the configured compiler-plugin executable or JAVA_HOME is selected 
+     * by name, if it is configured in the workspace.
      * 
      * @since 2.10
      */
@@ -910,7 +921,8 @@ public class EclipsePlugin
         // ear projects don't contain java sources
         // pde projects are always java projects
         isJavaProject =
-            ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
+            ( Constants.LANGUAGE_JAVA.equals( artifactHandler.getLanguage() ) 
+                            && !Constants.PROJECT_PACKAGING_EAR.equals( packaging ) );
 
         if ( sourceIncludes == null )
         {
@@ -1004,6 +1016,7 @@ public class EclipsePlugin
         }
     }
 
+    // CHECKSTYLE_OFF: MagicNumber
     private void parseConfigurationOptions()
     {
         if ( "R7".equalsIgnoreCase( wtpversion ) ) //$NON-NLS-1$
@@ -1027,6 +1040,7 @@ public class EclipsePlugin
             getLog().info( Messages.getString( "EclipsePlugin.wtpversion", wtpversion ) );
         }
     }
+    // CHECKSTYLE_ON: MagicNumber
 
     /**
      * Extension point for subclasses.
@@ -1057,7 +1071,7 @@ public class EclipsePlugin
         }
         if ( !containsJREContainer )
         {
-            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) ); //$NON-NLS-1$
+            getLog().warn( Messages.getString( "EclipsePlugin.missingjrecontainer" ) );
             classpathContainers.add( 0, COMMON_PATH_JDT_LAUNCHING_JRE_CONTAINER );
         }
     }
@@ -1068,10 +1082,8 @@ public class EclipsePlugin
         // validate sanity of the current m2 project
         if ( Arrays.binarySearch( WTP_SUPPORTED_VERSIONS, wtpversion ) < 0 )
         {
-            throw new MojoExecutionException(
-                                              Messages.getString( "EclipsePlugin.unsupportedwtp", new Object[] { //$NON-NLS-1$
-                                                                  wtpversion,
-                                                                      StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.unsupportedwtp", new Object[] {
+                wtpversion, StringUtils.join( WTP_SUPPORTED_VERSIONS, " " ) } ) );
         }
 
         assertNotEmpty( executedProject.getGroupId(), POM_ELT_GROUP_ID );
@@ -1079,18 +1091,18 @@ public class EclipsePlugin
 
         if ( executedProject.getFile() == null || !executedProject.getFile().exists() )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingpom" ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingpom" ) );
         }
 
-        if ( "pom".equals( packaging ) && eclipseProjectDir == null ) //$NON-NLS-1$
+        if ( "pom".equals( packaging ) && eclipseProjectDir == null )
         {
-            getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) ); //$NON-NLS-1$
+            getLog().info( Messages.getString( "EclipsePlugin.pompackaging" ) );
             return false;
         }
 
         if ( "eclipse-plugin".equals( packaging ) )
         {
-            getLog().info( Messages.getString( "EclipsePlugin.pdepackaging" ) ); //$NON-NLS-1$
+            getLog().info( Messages.getString( "EclipsePlugin.pdepackaging" ) );
             return false;
         }
 
@@ -1101,19 +1113,20 @@ public class EclipsePlugin
 
         if ( !eclipseProjectDir.exists() && !eclipseProjectDir.mkdirs() )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) );
         }
 
         if ( !eclipseProjectDir.equals( executedProject.getFile().getParentFile() ) )
         {
             if ( !eclipseProjectDir.isDirectory() )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseProjectDir ) ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.notadir", eclipseProjectDir ) );
             }
             eclipseProjectDir = new File( eclipseProjectDir, executedProject.getArtifactId() );
             if ( !eclipseProjectDir.isDirectory() && !eclipseProjectDir.mkdirs() )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir", eclipseProjectDir ) ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcreatedir",
+                                                                      eclipseProjectDir ) );
             }
         }
 
@@ -1140,9 +1153,9 @@ public class EclipsePlugin
         if ( eclipseDownloadSources )
         {
             // deprecated warning
-            getLog().warn( Messages.getString( "EclipsePlugin.deprecatedpar", new Object[] { //$NON-NLS-1$
-                                               "eclipse.downloadSources", //$NON-NLS-1$
-                                                   "downloadSources" } ) ); //$NON-NLS-1$
+            getLog().warn( Messages.getString( "EclipsePlugin.deprecatedpar", new Object[] {
+                                               "eclipse.downloadSources",
+                                                   "downloadSources" } ) );
             downloadSources = true;
         }
 
@@ -1172,6 +1185,7 @@ public class EclipsePlugin
         // NOTE: This could change the config!
         writeConfigurationExtras( config );
 
+        // CHECKSTYLE_OFF: MagicNumber
         if ( wtpVersionFloat == 0.7f )
         {
             new EclipseWtpmodulesWriter().init( getLog(), config ).write();
@@ -1189,6 +1203,7 @@ public class EclipsePlugin
         {
             new EclipseWtpComponent15Writer().init( getLog(), config ).write();
         }
+        // CHECKSTYLE_ON: MagicNumber
 
         new EclipseSettingsWriter().init( getLog(), config ).write();
 
@@ -1214,7 +1229,7 @@ public class EclipsePlugin
 
         writeAdditionalConfig();
 
-        getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] { //$NON-NLS-1$
+        getLog().info( Messages.getString( "EclipsePlugin.wrote", new Object[] {
                                            config.getEclipseProjectName(), eclipseProjectDir.getAbsolutePath() } ) );
     }
 
@@ -1229,7 +1244,7 @@ public class EclipsePlugin
                 if ( projectRelativeFile.isDirectory() )
                 {
                     // just ignore?
-                    getLog().warn( Messages.getString( "EclipsePlugin.foundadir", //$NON-NLS-1$
+                    getLog().warn( Messages.getString( "EclipsePlugin.foundadir",
                                                        projectRelativeFile.getAbsolutePath() ) );
                 }
 
@@ -1301,23 +1316,22 @@ public class EclipsePlugin
                 }
                 catch ( WagonException e )
                 {
-                    throw new MojoExecutionException(
-                                                      Messages.getString( "EclipsePlugin.remoteexception", //$NON-NLS-1$
-                                                                          new Object[] { file.getURL(), e.getMessage() } ) );
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.remoteexception",
+                                                               new Object[] { file.getURL(), e.getMessage() } ) );
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile", //$NON-NLS-1$
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile",
                                                                           projectRelativeFile.getAbsolutePath() ) );
                 }
                 catch ( ResourceNotFoundException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantfindresource", //$NON-NLS-1$
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantfindresource",
                                                                           file.getLocation() ) );
                 }
                 catch ( XmlPullParserException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.settingsxmlfailure", //$NON-NLS-1$
+                    throw new MojoExecutionException( Messages.getString( "EclipsePlugin.settingsxmlfailure",
                                                                           e.getMessage() ) );
                 }
             }
@@ -1493,7 +1507,7 @@ public class EclipsePlugin
     {
         if ( string == null )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingelement", elementName ) ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.missingelement", elementName ) );
         }
     }
 
@@ -1509,6 +1523,7 @@ public class EclipsePlugin
     {
         projectnatures = new ArrayList();
 
+        // CHECKSTYLE_OFF: MagicNumber
         if ( wtpVersionFloat >= 1.0f )
         {
             projectnatures.add( NATURE_WST_FACET_CORE_NATURE ); // WTP 1.0 nature
@@ -1533,6 +1548,7 @@ public class EclipsePlugin
                 projectnatures.add( NATURE_JEM_WORKBENCH_JAVA_EMF ); // WTP 0.7/1.0 nature
             }
         }
+        // CHECKSTYLE_ON: MagicNumber
 
     }
 
@@ -1573,6 +1589,7 @@ public class EclipsePlugin
     {
         buildcommands = new ArrayList();
 
+        // CHECKSTYLE_OFF: MagicNumber
         if ( wtpVersionFloat == 0.7f )
         {
             buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL ) ); // WTP 0.7 builder
@@ -1605,6 +1622,7 @@ public class EclipsePlugin
             // WTP 0.7 builder
             buildcommands.add( new BuildCommand( BUILDER_WST_COMPONENT_STRUCTURAL_DEPENDENCY_RESOLVER ) );
         }
+        // CHECKSTYLE_ON: MagicNumber
     }
 
     public final EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, File buildOutputDirectory )
@@ -1667,7 +1685,9 @@ public class EclipsePlugin
             directories.addAll( testDirectories );
         }
         if ( ajdt )
+        {
             extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
+        }
         return (EclipseSourceDir[]) directories.toArray( new EclipseSourceDir[directories.size()] );
     }
 
@@ -1756,14 +1776,15 @@ public class EclipsePlugin
                 boolean merged = originalDir.merge( resourceDir );
                 if ( merged )
                 {
-                    getLog().info( "Resource directory's path matches an existing source directory. Resources have been merged with the source directory "
+                    getLog().info( "Resource directory's path matches an existing source directory. "
+                        + "Resources have been merged with the source directory "
                                        + originalDir.getPath() );
                 }
                 else
                 {
-                    getLog().info( "Resource directory's path matches an existing source directory but \"test\", \"filtering\" or \"output\" were different."
-                                       + "The resulting eclipse configuration may not accurately reflect the project configuration for "
-                                       + originalDir.getPath() );
+                    getLog().info( "Resource directory's path matches an existing source directory but \"test\", "
+                        + "\"filtering\" or \"output\" were different. The resulting eclipse configuration "
+                        + "may not accurately reflect the project configuration for " + originalDir.getPath() );
                 }
 
             }
@@ -2084,8 +2105,9 @@ public class EclipsePlugin
                 {
                     getLog().info( "Artifact "
                                        + artifact.getId()
-                                       + " already available as a workspace project, but with different version. Expected: "
-                                       + artifact.getBaseVersion() + ", found: " + workspaceArtefact.getVersion() );
+                                       + " already available as a workspace project, but with different version. "
+                                       + "Expected: " + artifact.getBaseVersion() + ", found: " 
+                                       + workspaceArtefact.getVersion() );
                 }
             }
         }
@@ -2101,7 +2123,8 @@ public class EclipsePlugin
     protected final boolean hasToResolveJar( Artifact art )
     {
         return !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) )
-            || ( limitProjectReferencesToWorkspace && !( getUseProjectReferences() && isAvailableAsAWorkspaceProject( art ) ) );
+            || ( limitProjectReferencesToWorkspace 
+                            && !( getUseProjectReferences() && isAvailableAsAWorkspaceProject( art ) ) );
     }
 
     /**

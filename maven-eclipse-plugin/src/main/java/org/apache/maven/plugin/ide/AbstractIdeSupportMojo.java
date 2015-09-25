@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.ide;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.ide;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,12 +72,12 @@ import org.codehaus.plexus.logging.Logger;
  * the getters needed to get the various configuration flags and required components. The lifecycle:
  * 
  * <pre>
- *       *** calls setup() where you can configure your specific stuff and stop the mojo from execute if appropriate ***
- *       - manually resolve project dependencies, NOT failing if a dependency is missing
- *       - compute project references (reactor projects) if the getUseProjectReferences() flag is set
- *       - download sources/javadocs if the getDownloadSources() flag is set
- *       *** calls writeConfiguration(), passing the list of resolved referenced dependencies ***
- *       - report the list of missing sources or just tell how to turn this feature on if the flag was disabled
+ *      *** calls setup() where you can configure your specific stuff and stop the mojo from execute if appropriate ***
+ *      - manually resolve project dependencies, NOT failing if a dependency is missing
+ *      - compute project references (reactor projects) if the getUseProjectReferences() flag is set
+ *      - download sources/javadocs if the getDownloadSources() flag is set
+ *      *** calls writeConfiguration(), passing the list of resolved referenced dependencies ***
+ *      - report the list of missing sources or just tell how to turn this feature on if the flag was disabled
  * </pre>
  * 
  * @author Fabrizio Giustina
@@ -179,8 +180,8 @@ public abstract class AbstractIdeSupportMojo
     /**
      * Enables/disables the rechecking of the remote repository for downloading source/javadoc attachments. Defaults to
      * false. When this flag is <code>true</code> and the source or javadoc attachment has a status cache to indicate
-     * that it is not available, then the remote repository will be rechecked for a source or javadoc attachment and the
-     * status cache updated to reflect the new state.
+     * that it is not available, then the remote repository will be rechecked for a source or javadoc attachment and 
+     * the status cache updated to reflect the new state.
      */
     @Parameter( property = "forceRecheck" )
     protected boolean forceRecheck;
@@ -535,8 +536,7 @@ public abstract class AbstractIdeSupportMojo
                     catch ( ArtifactResolutionException e )
                     {
                         getLog().debug( e.getMessage(), e );
-                        getLog().error(
-                                        Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[] { //$NON-NLS-1$
+                        getLog().error( Messages.getString( "AbstractIdeSupportMojo.artifactresolution", new Object[] {
                                                             e.getGroupId(), e.getArtifactId(), e.getVersion(),
                                                                 e.getMessage() } ) );
 
@@ -550,44 +550,50 @@ public abstract class AbstractIdeSupportMojo
                     // keep track of added reactor projects in order to avoid duplicates
                     Set emittedReactorProjectId = new HashSet();
 
-                    for (Object o : artifactResolutionResult.getArtifactResolutionNodes()) {
+                    for ( Object o : artifactResolutionResult.getArtifactResolutionNodes() )
+                    {
 
                         ResolutionNode node = (ResolutionNode) o;
                         int dependencyDepth = node.getDepth();
                         Artifact art = node.getArtifact();
                         // don't resolve jars for reactor projects
-                        if (hasToResolveJar(art)) {
-                            try {
-                                artifactResolver.resolve(art, node.getRemoteRepositories(), localRepository);
-                            } catch (ArtifactNotFoundException e) {
-                                getLog().debug(e.getMessage(), e);
-                                getLog().warn(
-                                        Messages.getString(
-                                                "AbstractIdeSupportMojo.artifactdownload", new Object[]{ //$NON-NLS-1$
-                                                e.getGroupId(), e.getArtifactId(), e.getVersion(),
-                                                e.getMessage()}));
-                            } catch (ArtifactResolutionException e) {
-                                getLog().debug(e.getMessage(), e);
-                                getLog().warn(
-                                        Messages.getString(
-                                                "AbstractIdeSupportMojo.artifactresolution", new Object[]{ //$NON-NLS-1$
-                                                e.getGroupId(), e.getArtifactId(), e.getVersion(),
-                                                e.getMessage()}));
+                        if ( hasToResolveJar( art ) )
+                        {
+                            try
+                            {
+                                artifactResolver.resolve( art, node.getRemoteRepositories(), localRepository );
+                            }
+                            catch ( ArtifactNotFoundException e )
+                            {
+                                getLog().debug( e.getMessage(), e );
+                                getLog().warn( Messages.getString( "AbstractIdeSupportMojo.artifactdownload",
+                                                                   new Object[] { e.getGroupId(), e.getArtifactId(),
+                                                                       e.getVersion(), e.getMessage() } ) );
+                            }
+                            catch ( ArtifactResolutionException e )
+                            {
+                                getLog().debug( e.getMessage(), e );
+                                getLog().warn( Messages.getString( "AbstractIdeSupportMojo.artifactresolution",
+                                                                   new Object[] { e.getGroupId(), e.getArtifactId(),
+                                                                       e.getVersion(), e.getMessage() } ) );
                             }
                         }
 
                         boolean includeArtifact = true;
-                        if (getExcludes() != null) {
+                        if ( getExcludes() != null )
+                        {
                             String artifactFullId = art.getGroupId() + ":" + art.getArtifactId();
-                            if (getExcludes().contains(artifactFullId)) {
-                                getLog().info("excluded: " + artifactFullId);
+                            if ( getExcludes().contains( artifactFullId ) )
+                            {
+                                getLog().info( "excluded: " + artifactFullId );
                                 includeArtifact = false;
                             }
                         }
 
-                        if (includeArtifact
-                                && (!(getUseProjectReferences() && isAvailableAsAReactorProject(art)) || emittedReactorProjectId.add(art.getGroupId()
-                                + '-' + art.getArtifactId()))) {
+                        if ( includeArtifact
+                            && ( !( getUseProjectReferences() && isAvailableAsAReactorProject( art ) ) 
+                                    || emittedReactorProjectId.add( art.getGroupId() + '-' + art.getArtifactId() ) ) )
+                        {
 
                             // the following doesn't work: art.getArtifactHandler().getPackaging() always returns "jar"
                             // also
@@ -604,25 +610,35 @@ public abstract class AbstractIdeSupportMojo
                             // an osgi bundle
                             boolean isOsgiBundle;
                             String osgiSymbolicName = null;
-                            if (art.getFile() != null) {
+                            if ( art.getFile() != null )
+                            {
                                 JarFile jarFile = null;
-                                try {
-                                    jarFile = new JarFile(art.getFile(), false, ZipFile.OPEN_READ);
+                                try
+                                {
+                                    jarFile = new JarFile( art.getFile(), false, ZipFile.OPEN_READ );
 
                                     Manifest manifest = jarFile.getManifest();
-                                    if (manifest != null) {
+                                    if ( manifest != null )
+                                    {
                                         osgiSymbolicName =
-                                                manifest.getMainAttributes().getValue(
-                                                        new Attributes.Name(
-                                                                "Bundle-SymbolicName"));
+                                            manifest.getMainAttributes().getValue( 
+                                                                       new Attributes.Name( "Bundle-SymbolicName" ) );
                                     }
-                                } catch (IOException e) {
-                                    getLog().info("Unable to read jar manifest from " + art.getFile());
-                                } finally {
-                                    if (jarFile != null) {
-                                        try {
+                                }
+                                catch ( IOException e )
+                                {
+                                    getLog().info( "Unable to read jar manifest from " + art.getFile() );
+                                }
+                                finally
+                                {
+                                    if ( jarFile != null )
+                                    {
+                                        try
+                                        {
                                             jarFile.close();
-                                        } catch (IOException e) {
+                                        }
+                                        catch ( IOException e )
+                                        {
                                             // ignore
                                         }
                                     }
@@ -632,17 +648,18 @@ public abstract class AbstractIdeSupportMojo
                             isOsgiBundle = osgiSymbolicName != null;
 
                             IdeDependency dep =
-                                    new IdeDependency(art.getGroupId(), art.getArtifactId(), art.getVersion(),
-                                            art.getClassifier(), useProjectReference(art),
-                                            Artifact.SCOPE_TEST.equals(art.getScope()),
-                                            Artifact.SCOPE_SYSTEM.equals(art.getScope()),
-                                            Artifact.SCOPE_PROVIDED.equals(art.getScope()),
-                                            art.getArtifactHandler().isAddedToClasspath(), art.getFile(),
-                                            art.getType(), isOsgiBundle, osgiSymbolicName, dependencyDepth,
-                                            getProjectNameForArifact(art));
+                                new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
+                                                   art.getClassifier(), useProjectReference( art ),
+                                                   Artifact.SCOPE_TEST.equals( art.getScope() ),
+                                                   Artifact.SCOPE_SYSTEM.equals( art.getScope() ),
+                                                   Artifact.SCOPE_PROVIDED.equals( art.getScope() ),
+                                                   art.getArtifactHandler().isAddedToClasspath(), art.getFile(),
+                                                   art.getType(), isOsgiBundle, osgiSymbolicName, dependencyDepth,
+                                                   getProjectNameForArifact( art ) );
                             // no duplicate entries allowed. System paths can cause this problem.
-                            if (!dependencies.contains(dep)) {
-                                dependencies.add(dep);
+                            if ( !dependencies.contains( dep ) )
+                            {
+                                dependencies.add( dep );
                             }
                         }
 
@@ -670,11 +687,11 @@ public abstract class AbstractIdeSupportMojo
      * @param artifact The artifact to find the eclipse name for.
      * @return The name os the eclipse project.
      */
-    abstract public String getProjectNameForArifact( Artifact artifact );
+    public abstract String getProjectNameForArifact( Artifact artifact );
 
     /**
-     * Returns the list of project artifacts. Also artifacts generated from referenced projects will be added, but with
-     * the <code>resolved</code> property set to true.
+     * Returns the list of project artifacts. Also artifacts generated from referenced projects will be added, 
+     * but with the <code>resolved</code> property set to true.
      * 
      * @return list of projects artifacts
      * @throws MojoExecutionException if unable to parse dependency versions
@@ -685,46 +702,52 @@ public abstract class AbstractIdeSupportMojo
         // [MECLIPSE-388] Don't sort this, the order should be identical to getProject.getDependencies()
         Set artifacts = new LinkedHashSet();
 
-        for (Object o : getProject().getDependencies()) {
+        for ( Object o : getProject().getDependencies() )
+        {
             Dependency dependency = (Dependency) o;
 
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
             VersionRange versionRange;
-            try {
-                versionRange = VersionRange.createFromVersionSpec(dependency.getVersion());
-            } catch (InvalidVersionSpecificationException e) {
+            try
+            {
+                versionRange = VersionRange.createFromVersionSpec( dependency.getVersion() );
+            }
+            catch ( InvalidVersionSpecificationException e )
+            {
                 throw new MojoExecutionException(
-                        Messages.getString(
-                                "AbstractIdeSupportMojo.unabletoparseversion", new Object[]{ //$NON-NLS-1$
-                                dependency.getArtifactId(),
-                                dependency.getVersion(),
-                                dependency.getManagementKey(), e.getMessage()}),
-                        e);
+                                          Messages.getString( "AbstractIdeSupportMojo.unabletoparseversion",
+                                                              new Object[] { dependency.getArtifactId(),
+                                                                  dependency.getVersion(),
+                                                                  dependency.getManagementKey(), e.getMessage() } ),
+                                          e );
             }
 
             String type = dependency.getType();
-            if (type == null) {
+            if ( type == null )
+            {
                 type = Constants.PROJECT_PACKAGING_JAR;
             }
             String classifier = dependency.getClassifier();
             boolean optional = dependency.isOptional();
             String scope = dependency.getScope();
-            if (scope == null) {
+            if ( scope == null )
+            {
                 scope = Artifact.SCOPE_COMPILE;
             }
 
             Artifact art =
-                    getArtifactFactory().createDependencyArtifact(groupId, artifactId, versionRange, type, classifier,
-                            scope, optional);
+                getArtifactFactory().createDependencyArtifact( groupId, artifactId, versionRange, type, classifier,
+                                                               scope, optional );
 
-            if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
-                art.setFile(new File(dependency.getSystemPath()));
+            if ( scope.equalsIgnoreCase( Artifact.SCOPE_SYSTEM ) )
+            {
+                art.setFile( new File( dependency.getSystemPath() ) );
             }
 
-            handleExclusions(art, dependency);
+            handleExclusions( art, dependency );
 
-            artifacts.add(art);
+            artifacts.add( art );
         }
 
         return artifacts;
@@ -740,8 +763,9 @@ public abstract class AbstractIdeSupportMojo
     {
 
         List exclusions = new ArrayList();
-        for (Exclusion e : dependency.getExclusions()) {
-            exclusions.add(e.getGroupId() + ":" + e.getArtifactId()); //$NON-NLS-1$
+        for ( Exclusion e : dependency.getExclusions() )
+        {
+            exclusions.add( e.getGroupId() + ":" + e.getArtifactId() );
         }
 
         ArtifactFilter newFilter = new ExcludesArtifactFilter( exclusions );
@@ -770,19 +794,24 @@ public abstract class AbstractIdeSupportMojo
     {
         if ( reactorProjects != null )
         {
-            for (Object reactorProject1 : reactorProjects) {
+            for ( Object reactorProject1 : reactorProjects )
+            {
                 MavenProject reactorProject = (MavenProject) reactorProject1;
 
-                if (reactorProject.getGroupId().equals(artifact.getGroupId())
-                        && reactorProject.getArtifactId().equals(artifact.getArtifactId())) {
-                    if (reactorProject.getVersion().equals(artifact.getVersion())) {
+                if ( reactorProject.getGroupId().equals( artifact.getGroupId() )
+                    && reactorProject.getArtifactId().equals( artifact.getArtifactId() ) )
+                {
+                    if ( reactorProject.getVersion().equals( artifact.getVersion() ) )
+                    {
                         return reactorProject;
-                    } else {
-                        getLog().info(
-                                "Artifact "
-                                        + artifact.getId()
-                                        + " already available as a reactor project, but with different version. Expected: "
-                                        + artifact.getVersion() + ", found: " + reactorProject.getVersion());
+                    }
+                    else
+                    {
+                        getLog().info( "Artifact "
+                                           + artifact.getId()
+                                           + " already available as a reactor project, but with different version. "
+                                           + "Expected: " + artifact.getVersion() + ", found: " 
+                                           + reactorProject.getVersion() );
                     }
                 }
             }
@@ -806,23 +835,26 @@ public abstract class AbstractIdeSupportMojo
         if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
         {
             map = new HashMap();
-            for (Dependency d : dependencyManagement.getDependencies()) {
-                try {
-                    VersionRange versionRange = VersionRange.createFromVersionSpec(d.getVersion());
+            for ( Dependency d : dependencyManagement.getDependencies() )
+            {
+                try
+                {
+                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
                     Artifact artifact =
-                            artifactFactory.createDependencyArtifact(d.getGroupId(), d.getArtifactId(), versionRange,
-                                    d.getType(), d.getClassifier(), d.getScope(),
-                                    d.isOptional());
+                        artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(), versionRange,
+                                                                  d.getType(), d.getClassifier(), d.getScope(),
+                                                                  d.isOptional() );
 
-                    handleExclusions(artifact, d);
-                    map.put(d.getManagementKey(), artifact);
-                } catch (InvalidVersionSpecificationException e) {
+                    handleExclusions( artifact, d );
+                    map.put( d.getManagementKey(), artifact );
+                }
+                catch ( InvalidVersionSpecificationException e )
+                {
                     throw new MojoExecutionException(
-                            Messages.getString(
-                                    "AbstractIdeSupportMojo.unabletoparseversion", new Object[]{ //$NON-NLS-1$
-                                    projectId, d.getVersion(),
-                                    d.getManagementKey(), e.getMessage()}),
-                            e);
+                                                      Messages.getString( "AbstractIdeSupportMojo.unabletoparseversion",
+                                                                          new Object[] { projectId, d.getVersion(),
+                                                                              d.getManagementKey(), e.getMessage() } ),
+                                                      e );
                 }
             }
         }
@@ -868,70 +900,84 @@ public abstract class AbstractIdeSupportMojo
         // local repository for reporting missing source jars
         List remoteRepos = includeRemoteRepositories ? getRemoteArtifactRepositories() : Collections.EMPTY_LIST;
 
-        for (IdeDependency dependency : deps) {
-            if (dependency.isReferencedProject() || dependency.isSystemScoped()) {
+        for ( IdeDependency dependency : deps )
+        {
+            if ( dependency.isReferencedProject() || dependency.isSystemScoped() )
+            {
                 // artifact not needed
                 continue;
             }
 
-            if (getLog().isDebugEnabled()) {
-                getLog().debug(
-                        "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier()
-                                + " at " + dependency.getId() + ":" + inClassifier);
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Searching for sources for " + dependency.getId() + ":" + dependency.getClassifier()
+                                    + " at " + dependency.getId() + ":" + inClassifier );
             }
 
             Artifact baseArtifact =
-                    artifactFactory.createArtifactWithClassifier(dependency.getGroupId(), dependency.getArtifactId(),
-                            dependency.getVersion(), dependency.getType(),
-                            dependency.getClassifier());
+                artifactFactory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
+                                                              dependency.getVersion(), dependency.getType(),
+                                                              dependency.getClassifier() );
             baseArtifact =
-                    IdeUtils.resolveArtifact(artifactResolver, baseArtifact, remoteRepos, localRepository, getLog());
-            if (!baseArtifact.isResolved()) {
+                IdeUtils.resolveArtifact( artifactResolver, baseArtifact, remoteRepos, localRepository, getLog() );
+            if ( !baseArtifact.isResolved() )
+            {
                 // base artifact does not exist - no point checking for javadoc/sources
                 continue;
             }
 
             Artifact artifact =
-                    IdeUtils.createArtifactWithClassifier(dependency.getGroupId(), dependency.getArtifactId(),
-                            dependency.getVersion(), dependency.getClassifier(),
-                            inClassifier, artifactFactory);
-            File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile(localRepository, artifact);
+                IdeUtils.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
+                                                       dependency.getVersion(), dependency.getClassifier(),
+                                                       inClassifier, artifactFactory );
+            File notAvailableMarkerFile = IdeUtils.getNotAvailableMarkerFile( localRepository, artifact );
 
-            if (forceRecheck && notAvailableMarkerFile.exists()) {
-                if (!notAvailableMarkerFile.delete()) {
-                    getLog().warn(
-                            Messages.getString("AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile",
-                                    notAvailableMarkerFile));
+            if ( forceRecheck && notAvailableMarkerFile.exists() )
+            {
+                if ( !notAvailableMarkerFile.delete() )
+                {
+                    getLog().warn( Messages.getString( "AbstractIdeSupportMojo.unabletodeletenotavailablemarkerfile",
+                                                       notAvailableMarkerFile ) );
                 }
             }
 
-            if (!notAvailableMarkerFile.exists()) {
+            if ( !notAvailableMarkerFile.exists() )
+            {
                 artifact =
-                        IdeUtils.resolveArtifact(artifactResolver, artifact, remoteRepos, localRepository, getLog());
-                if (artifact.isResolved()) {
-                    if ("sources".equals(inClassifier)) {
-                        dependency.setSourceAttachment(artifact.getFile());
-                    } else if ("javadoc".equals(inClassifier) && includeRemoteRepositories ) {
-                        dependency.setJavadocAttachment(artifact.getFile());
+                    IdeUtils.resolveArtifact( artifactResolver, artifact, remoteRepos, localRepository, getLog() );
+                if ( artifact.isResolved() )
+                {
+                    if ( "sources".equals( inClassifier ) )
+                    {
+                        dependency.setSourceAttachment( artifact.getFile() );
                     }
-                } else {
-                    if (includeRemoteRepositories) {
-                        try {
+                    else if ( "javadoc".equals( inClassifier ) && includeRemoteRepositories )
+                    {
+                        dependency.setJavadocAttachment( artifact.getFile() );
+                    }
+                }
+                else
+                {
+                    if ( includeRemoteRepositories )
+                    {
+                        try
+                        {
                             notAvailableMarkerFile.createNewFile();
-                            getLog().debug(
-                                    Messages.getString("AbstractIdeSupportMojo.creatednotavailablemarkerfile",
-                                            notAvailableMarkerFile));
-                        } catch (IOException e) {
-                            getLog().warn(
-                                    Messages.getString(
-                                            "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
-                                            notAvailableMarkerFile));
+                            getLog().debug( 
+                                     Messages.getString( "AbstractIdeSupportMojo.creatednotavailablemarkerfile", 
+                                                         notAvailableMarkerFile ) );
+                        }
+                        catch ( IOException e )
+                        {
+                            getLog().warn( 
+                                     Messages.getString( "AbstractIdeSupportMojo.failedtocreatenotavailablemarkerfile",
+                                                         notAvailableMarkerFile ) );
                         }
                     }
                     // add the dependencies to the list
                     // of those lacking the required
                     // artifact
-                    missingClassifierDependencies.add(dependency);
+                    missingClassifierDependencies.add( dependency );
                 }
             }
         }
@@ -951,22 +997,24 @@ public abstract class AbstractIdeSupportMojo
 
         if ( getDownloadSources() && !missingSourceDependencies.isEmpty() )
         {
-            msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotavailable" ) ); //$NON-NLS-1$
+            msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesnotavailable" ) );
 
-            for (Object missingSourceDependency : missingSourceDependencies) {
+            for ( Object missingSourceDependency : missingSourceDependencies )
+            {
                 IdeDependency art = (IdeDependency) missingSourceDependency;
-                msg.append(Messages.getString("AbstractIdeSupportMojo.sourcesmissingitem", art.getId())); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.sourcesmissingitem", art.getId() ) );
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }
 
         if ( getDownloadJavadocs() && !missingJavadocDependencies.isEmpty() )
         {
-            msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotavailable" ) ); //$NON-NLS-1$
+            msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocnotavailable" ) );
 
-            for (Object missingJavadocDependency : missingJavadocDependencies) {
+            for ( Object missingJavadocDependency : missingJavadocDependencies )
+            {
                 IdeDependency art = (IdeDependency) missingJavadocDependency;
-                msg.append(Messages.getString("AbstractIdeSupportMojo.javadocmissingitem", art.getId())); //$NON-NLS-1$
+                msg.append( Messages.getString( "AbstractIdeSupportMojo.javadocmissingitem", art.getId() ) );
             }
             msg.append( "\n" ); //$NON-NLS-1$
         }

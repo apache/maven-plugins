@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,11 +29,8 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
-import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
@@ -70,9 +68,10 @@ public abstract class AbstractEclipseManifestWriter
         String[] entries = newValue.split( " " );
         Arrays.sort( entries );
         StringBuilder buffer = new StringBuilder( newValue.length() );
-        for (String entry : entries) {
-            buffer.append(entry);
-            buffer.append(' ');
+        for ( String entry : entries )
+        {
+            buffer.append( entry );
+            buffer.append( ' ' );
         }
         return buffer.toString();
     }
@@ -159,20 +158,23 @@ public abstract class AbstractEclipseManifestWriter
         Attributes newMap = manifest.getMainAttributes();
         keys.addAll( existingMap.keySet() );
         keys.addAll( newMap.keySet() );
-        for (Object key1 : keys) {
+        for ( Object key1 : keys )
+        {
             Attributes.Name key = (Attributes.Name) key1;
-            String newValue = (String) newMap.get(key);
-            String existingValue = (String) existingMap.get(key);
+            String newValue = (String) newMap.get( key );
+            String existingValue = (String) existingMap.get( key );
             // special case classpath... they are equal when there entries
             // are equal
-            if (Attributes.Name.CLASS_PATH.equals(key)) {
-                newValue = orderClasspath(newValue);
-                existingValue = orderClasspath(existingValue);
+            if ( Attributes.Name.CLASS_PATH.equals( key ) )
+            {
+                newValue = orderClasspath( newValue );
+                existingValue = orderClasspath( existingValue );
             }
-            if ((newValue == null || !newValue.equals(existingValue))
-                    && (existingValue == null || !existingValue.equals(newValue))) {
-                log.info("@@@ FALSE - Manifest are not equal because key = " + key + " has existing value = "
-                        + existingValue + " and new value = " + newValue + " are different");
+            if ( ( newValue == null || !newValue.equals( existingValue ) )
+                && ( existingValue == null || !existingValue.equals( newValue ) ) )
+            {
+                log.info( "@@@ FALSE - Manifest are not equal because key = " + key + " has existing value = "
+                    + existingValue + " and new value = " + newValue + " are different" );
                 return false;
             }
         }
@@ -187,14 +189,15 @@ public abstract class AbstractEclipseManifestWriter
      */
     protected String constructManifestClasspath()
     {
-        StringBuilder StringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         IdeDependency[] deps = this.config.getDeps();
 
-        for (IdeDependency dep : deps) {
-            addDependencyToClassPath(StringBuilder, dep);
+        for ( IdeDependency dep : deps )
+        {
+            addDependencyToClassPath( stringBuilder, dep );
         }
 
-        return StringBuilder.toString();
+        return stringBuilder.toString();
     }
 
     /**
@@ -227,7 +230,7 @@ public abstract class AbstractEclipseManifestWriter
             Manifest existingManifest = readExistingManifest( manifestFile );
             if ( areManifestsEqual( manifest, existingManifest ) )
             {
-                this.log.info( Messages.getString( "EclipsePlugin.unchangedmanifest", manifestFile.getAbsolutePath() ) );
+                log.info( Messages.getString( "EclipsePlugin.unchangedmanifest", manifestFile.getAbsolutePath() ) );
                 return false;
             }
         }
@@ -255,7 +258,6 @@ public abstract class AbstractEclipseManifestWriter
      * Otherwise generate a <b>NEW</b> (i.e the old one is overwritten) which only contains values for MANIFEST_VERSION
      * and CLASS_PATH, all other previous entries are not kept.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs all eclipse source directorys
      * @param localRepository the local reposetory
      * @param buildOutputDirectory build output directory (target)
@@ -270,9 +272,8 @@ public abstract class AbstractEclipseManifestWriter
         {
             // TODO: if this really is an error, shouldn't we stop the build??
             throw new MojoExecutionException(
-                                              Messages.getString(
-                                                                  "EclipseCleanMojo.nofilefound",
-                                                                  new Object[] { EclipseManifestWriter.META_INF_DIRECTORY } ) );
+                                  Messages.getString( "EclipseCleanMojo.nofilefound",
+                                                      new Object[] { EclipseManifestWriter.META_INF_DIRECTORY } ) );
         }
         File manifestFile =
             new File( metaInfBaseDirectory + File.separatorChar + EclipseManifestWriter.META_INF_DIRECTORY

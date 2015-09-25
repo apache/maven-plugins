@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -231,9 +232,10 @@ public class EclipseSourceDir
 
     /**
      * Wheter this resource should be copied with filtering.
+     * 
      * @param filtering filter resources
      */
-    public void setFiltering(boolean filtering)
+    public void setFiltering( boolean filtering )
     {
         this.filtering = filtering;
     }
@@ -268,7 +270,9 @@ public class EclipseSourceDir
      */
     public String toString()
     {
-        return (isResource ? "resource " : "source ") + path + ": " + "output=" + output + ", " + "include=[" + getIncludeAsString() + "], " + "exclude=[" + getExcludeAsString() + "], " + "test=" + test + ", " + "filtering=" + filtering;
+        return ( isResource ? "resource " : "source " ) + path + ": " + "output=" + output + ", " + "include=["
+            + getIncludeAsString() + "], " + "exclude=[" + getExcludeAsString() + "], " + "test=" + test + ", "
+            + "filtering=" + filtering;
     }
 
     /**
@@ -312,10 +316,10 @@ public class EclipseSourceDir
 
             // if the orginal or merged dir have an empty "include" this means all is included,
             // so merge includes only if both are not empty
-            if (!include.isEmpty() && !mergeWith.include.isEmpty())
+            if ( !include.isEmpty() && !mergeWith.include.isEmpty() )
             {
-                includesAsSet.addAll(include);
-                includesAsSet.addAll(mergeWith.include);
+                includesAsSet.addAll( include );
+                includesAsSet.addAll( mergeWith.include );
             }
 
             include = new ArrayList( includesAsSet );
@@ -326,19 +330,19 @@ public class EclipseSourceDir
             exclude = new ArrayList( excludesAsSet );
         }
 
-        if (!StringUtils.equals(output, mergeWith.output))
+        if ( !StringUtils.equals( output, mergeWith.output ) )
         {
             // Request to merge when 'output' is not identical
             return false;
         }
 
-        if (test != mergeWith.test)
+        if ( test != mergeWith.test )
         {
             // Request to merge when 'test' is not identical
             return false;
         }
 
-        if (filtering != mergeWith.filtering)
+        if ( filtering != mergeWith.filtering )
         {
             // Request to merge when 'filtering' is not identical
             return false;

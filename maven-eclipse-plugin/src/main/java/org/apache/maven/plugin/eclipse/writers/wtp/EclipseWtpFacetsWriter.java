@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.wtp;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,39 +46,39 @@ public class EclipseWtpFacetsWriter
     extends AbstractWtpResourceWriter
 {
 
-    private static final String FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR = "com.ibm.websphere.coexistence.ear"; //$NON-NLS-1$
+    private static final String FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR = "com.ibm.websphere.coexistence.ear";
 
-    private static final String FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR = "com.ibm.websphere.extended.ear"; //$NON-NLS-1$
+    private static final String FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR = "com.ibm.websphere.extended.ear";
 
-    private static final String FACET_JST_EAR = "jst.ear"; //$NON-NLS-1$
+    private static final String FACET_JST_EAR = "jst.ear"; 
 
-    private static final String FACET_JST_UTILITY = "jst.utility"; //$NON-NLS-1$
+    private static final String FACET_JST_UTILITY = "jst.utility";
 
-    private static final String FACET_JST_EJB = "jst.ejb"; //$NON-NLS-1$
+    private static final String FACET_JST_EJB = "jst.ejb";
 
-    private static final String FACET_JST_WEB = "jst.web"; //$NON-NLS-1$
+    private static final String FACET_JST_WEB = "jst.web";
 
-    private static final String FACET_JST_JAVA = "jst.java"; //$NON-NLS-1$
+    private static final String FACET_JST_JAVA = "jst.java";
 
-    private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
+    private static final String ATTR_VERSION = "version";
 
-    private static final String ELT_INSTALLED = "installed"; //$NON-NLS-1$
+    private static final String ELT_INSTALLED = "installed";
 
-    private static final String ATTR_FACET = "facet"; //$NON-NLS-1$
+    private static final String ATTR_FACET = "facet";
 
-    private static final String ELT_FIXED = "fixed"; //$NON-NLS-1$
+    private static final String ELT_FIXED = "fixed";
 
-    private static final String ELT_FACETED_PROJECT = "faceted-project"; //$NON-NLS-1$
+    private static final String ELT_FACETED_PROJECT = "faceted-project";
 
     /**
      * The .settings folder for Web Tools Project 1.x release.
      */
-    private static final String DIR_WTP_SETTINGS = ".settings"; //$NON-NLS-1$
+    private static final String DIR_WTP_SETTINGS = ".settings";
 
     /**
      * File name where Eclipse Project's Facet configuration will be stored.
      */
-    private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml"; //$NON-NLS-1$
+    private static final String FILE_FACET_CORE_XML = "org.eclipse.wst.common.project.facet.core.xml";
 
     /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
@@ -101,7 +102,7 @@ public class EclipseWtpFacetsWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
         writeModuleTypeFacetCore( writer, packaging );
@@ -117,7 +118,7 @@ public class EclipseWtpFacetsWriter
     private void writeModuleTypeFacetCore( XMLWriter writer, String packaging )
     {
         writer.startElement( ELT_FACETED_PROJECT );
-        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        if ( Constants.PROJECT_PACKAGING_WAR.equalsIgnoreCase( packaging ) )
         {
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_WEB ); // fixed
@@ -130,14 +131,16 @@ public class EclipseWtpFacetsWriter
             {
                 servletVersion = JeeUtils.resolveServletVersion( config.getProject() );
             }
-            writeFacetInstalledElement( writer, FACET_JST_WEB, servletVersion ); // installed
-            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
+            // installed
+            writeFacetInstalledElement( writer, FACET_JST_WEB, servletVersion );
+            // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); 
         }
-        else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EJB.equalsIgnoreCase( packaging ) )
         {
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_EJB ); // fixed
-            
+
             String ejbVersion;
             if ( config.getJeeVersion() != null )
             {
@@ -147,10 +150,12 @@ public class EclipseWtpFacetsWriter
             {
                 ejbVersion = JeeUtils.resolveEjbVersion( config.getProject() );
             }
-            writeFacetInstalledElement( writer, FACET_JST_EJB, ejbVersion ); // installed
-            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
+            // installed
+            writeFacetInstalledElement( writer, FACET_JST_EJB, ejbVersion ); 
+            // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); 
         }
-        else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) //$NON-NLS-1$
+        else if ( Constants.PROJECT_PACKAGING_EAR.equalsIgnoreCase( packaging ) ) 
         {
             if ( this.config.getWorkspaceConfiguration().getWebsphereVersion() != null )
             {
@@ -158,10 +163,12 @@ public class EclipseWtpFacetsWriter
                 writer.addAttribute( "name", config.getWorkspaceConfiguration().getDefaultDeployServerName() );
                 writer.endElement(); // runtime
 
+                // installed
                 writeFacetInstalledElement( writer, FACET_COM_IBM_WEBSPHERE_EXTENDED_EAR,
-                                            this.config.getWorkspaceConfiguration().getWebsphereVersion() ); // installed
+                                            this.config.getWorkspaceConfiguration().getWebsphereVersion() );
+                // installed
                 writeFacetInstalledElement( writer, FACET_COM_IBM_WEBSPHERE_COEXISTENCE_EAR,
-                                            this.config.getWorkspaceConfiguration().getWebsphereVersion() ); // installed
+                                            this.config.getWorkspaceConfiguration().getWebsphereVersion() ); 
 
             }
             writeFacetFixedElement( writer, FACET_JST_EAR ); // fixed
@@ -181,9 +188,10 @@ public class EclipseWtpFacetsWriter
         {
             writeFacetFixedElement( writer, FACET_JST_JAVA ); // fixed
             writeFacetFixedElement( writer, FACET_JST_UTILITY ); // fixed
-            writeFacetInstalledElement( writer, FACET_JST_UTILITY, "1.0" ); //$NON-NLS-1$
-            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); // installed
             // installed
+            writeFacetInstalledElement( writer, FACET_JST_UTILITY, "1.0" ); 
+            // installed
+            writeFacetInstalledElement( writer, FACET_JST_JAVA, IdeUtils.resolveJavaVersion( config.getProject() ) ); 
         }
 
         writeAdditionalProjectFacets( writer );
@@ -235,12 +243,13 @@ public class EclipseWtpFacetsWriter
             return;
         }
 
-        for (Object o : config.getProjectFacets().entrySet()) {
+        for ( Object o : config.getProjectFacets().entrySet() )
+        {
             Entry facetEntry = (Entry) o;
 
-            writer.startElement(ELT_INSTALLED);
-            writer.addAttribute(ATTR_FACET, (String) facetEntry.getKey());
-            writer.addAttribute(ATTR_VERSION, (String) facetEntry.getValue());
+            writer.startElement( ELT_INSTALLED );
+            writer.addAttribute( ATTR_FACET, (String) facetEntry.getKey() );
+            writer.addAttribute( ATTR_VERSION, (String) facetEntry.getValue() );
             writer.endElement(); // installed
         }
     }

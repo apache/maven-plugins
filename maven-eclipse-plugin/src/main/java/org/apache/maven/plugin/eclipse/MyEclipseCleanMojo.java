@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse;
  * under the License.
  */
 
-
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;

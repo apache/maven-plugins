@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.ide;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.ide;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,22 +73,22 @@ public class IdeUtils
     /**
      * compiler plugin id.
      */
-    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin"; //$NON-NLS-1$
+    private static final String ARTIFACT_MAVEN_COMPILER_PLUGIN = "maven-compiler-plugin";
 
     /**
      * 'source' property for maven-compiler-plugin.
      */
-    private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
+    private static final String PROPERTY_SOURCE = "source";
 
     /**
      * 'encoding' property for maven-compiler-plugin.
      */
-    private static final String PROPERTY_ENCODING = "encoding"; //$NON-NLS-1$
+    private static final String PROPERTY_ENCODING = "encoding";
 
     /**
      * 'target' property for maven-compiler-plugin.
      */
-    private static final String PROPERTY_TARGET = "target"; //$NON-NLS-1$
+    private static final String PROPERTY_TARGET = "target";
 
     /**
      * The suffix used to mark a file as not available.
@@ -105,11 +106,11 @@ public class IdeUtils
     {
         if ( f.isDirectory() )
         {
-            log.info( Messages.getString( "EclipseCleanMojo.deletingDirectory", f.getName() ) ); //$NON-NLS-1$
+            log.info( Messages.getString( "EclipseCleanMojo.deletingDirectory", f.getName() ) );
         }
         else
         {
-            log.info( Messages.getString( "EclipseCleanMojo.deletingFile", f.getName() ) ); //$NON-NLS-1$
+            log.info( Messages.getString( "EclipseCleanMojo.deletingFile", f.getName() ) );
         }
 
         if ( f.exists() )
@@ -122,7 +123,7 @@ public class IdeUtils
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete", //$NON-NLS-1$
+                    throw new MojoExecutionException( Messages.getString( "EclipseCleanMojo.failedtodelete",
                                                                           new Object[] { f.getName(),
                                                                               f.getAbsolutePath() } ) );
                 }
@@ -130,7 +131,7 @@ public class IdeUtils
         }
         else
         {
-            log.debug( Messages.getString( "EclipseCleanMojo.nofilefound", f.getName() ) ); //$NON-NLS-1$
+            log.debug( Messages.getString( "EclipseCleanMojo.nofilefound", f.getName() ) );
         }
     }
 
@@ -143,7 +144,7 @@ public class IdeUtils
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantcanonicalize", file 
             .getAbsolutePath() ), e );
         }
     }
@@ -188,11 +189,11 @@ public class IdeUtils
     public static String getCompilerSourceEncoding( MavenProject project )
     {
         String value = IdeUtils.getCompilerPluginSetting( project, PROPERTY_ENCODING );
-		if ( value == null )
+        if ( value == null )
         {
             project.getProperties().getProperty( "project.build.sourceEncoding" );
         }
-		return value;
+        return value;
     }
 
     /**
@@ -237,9 +238,9 @@ public class IdeUtils
      * <p>
      * The {@code len} parameter indicated what to to return:
      * <ul>
-     *   <li><strong>1</strong> indicated <code>major</code> version</li>
-     *   <li><strong>3</strong> indicated <code>major dot minor</code> version</li>
-     *   <li><strong>5 and above</strong> indicates <code>major dot minor dot incremental</code> version
+     * <li><strong>1</strong> indicated <code>major</code> version</li>
+     * <li><strong>3</strong> indicated <code>major dot minor</code> version</li>
+     * <li><strong>5 and above</strong> indicates <code>major dot minor dot incremental</code> version
      * </ul>
      * 
      * @param artifactIds artifact names to compare against for extracting version
@@ -254,23 +255,23 @@ public class IdeUtils
         if ( artifactVersion != null )
         {
             StringBuilder versionBuffer = new StringBuilder();
-            if( len >= 1 )
+            if ( len >= 1 )
             {
                 versionBuffer.append( artifactVersion.getMajorVersion() );
             }
-            if( len >= 2 )
+            if ( len >= 2 )
             {
                 versionBuffer.append( '.' );
-            }            
-            if( len >= 3 )
+            }
+            if ( len >= 3 )
             {
                 versionBuffer.append( artifactVersion.getMinorVersion() );
             }
-            if( len >= 4 )
+            if ( len >= 4 )
             {
                 versionBuffer.append( '.' );
-            }            
-            if( len >= 5 )
+            }
+            if ( len >= 5 )
             {
                 versionBuffer.append( artifactVersion.getIncrementalVersion() );
             }
@@ -278,20 +279,22 @@ public class IdeUtils
         }
         return version;
     }
-    
+
     /**
-     * 
      * @param artifactIds an array of artifactIds, should not be <code>null</code>
      * @param dependencies a list of {@link Dependency}-objects, should not be <code>null</code>
      * @return the resolved ArtifactVersion, otherwise <code>null</code>
      */
-    public static ArtifactVersion getArtifactVersion( String[] artifactIds, List /*<Dependency>*/ dependencies )
+    public static ArtifactVersion getArtifactVersion( String[] artifactIds, List /* <Dependency> */dependencies )
     {
-        for (String id : artifactIds) {
-            for (Object dependency : dependencies) {
+        for ( String id : artifactIds )
+        {
+            for ( Object dependency : dependencies )
+            {
                 Dependency dep = (Dependency) dependency;
-                if (id.equals(dep.getArtifactId())) {
-                    return VersionRange.createFromVersion(dep.getVersion()).getRecommendedVersion();
+                if ( id.equals( dep.getArtifactId() ) )
+                {
+                    return VersionRange.createFromVersion( dep.getVersion() ).getRecommendedVersion();
                 }
 
             }
@@ -309,7 +312,8 @@ public class IdeUtils
      * @param defaultValue the default value if the configuration was not found
      * @return the value of the option configured in the plugin configuration
      */
-    public static String getPluginSetting( MavenProject project, String pluginId, String optionName, String defaultValue )
+    public static String getPluginSetting( MavenProject project, String pluginId, String optionName,
+                                           String defaultValue )
     {
         Xpp3Dom dom = getPluginConfigurationDom( project, pluginId );
         if ( dom != null && dom.getChild( optionName ) != null )
@@ -359,12 +363,15 @@ public class IdeUtils
                 && index < subConfiguration.length; index++ )
             {
                 ArrayList newConfigurationDomList = new ArrayList();
-                for (Object aConfigurationDomList : configurationDomList) {
+                for ( Object aConfigurationDomList : configurationDomList )
+                {
                     Xpp3Dom child = (Xpp3Dom) aConfigurationDomList;
-                    Xpp3Dom[] deeperChild = child.getChildren(subConfiguration[index]);
-                    for (Xpp3Dom aDeeperChild : deeperChild) {
-                        if (aDeeperChild != null) {
-                            newConfigurationDomList.add(aDeeperChild);
+                    Xpp3Dom[] deeperChild = child.getChildren( subConfiguration[index] );
+                    for ( Xpp3Dom aDeeperChild : deeperChild )
+                    {
+                        if ( aDeeperChild != null )
+                        {
+                            newConfigurationDomList.add( aDeeperChild );
                         }
                     }
                 }
@@ -490,8 +497,8 @@ public class IdeUtils
         catch ( ArtifactResolutionException e )
         {
             String message =
-                Messages.getString( "IdeUtils.errorresolving", new Object[] { artifact.getClassifier(),
-                    artifact.getId(), e.getMessage() } );
+                Messages.getString( "IdeUtils.errorresolving",
+                                    new Object[] { artifact.getClassifier(), artifact.getId(), e.getMessage() } );
 
             log.warn( message );
         }
@@ -554,17 +561,17 @@ public class IdeUtils
             version = IdeUtils.getCompilerSourceVersion( project );
         }
 
-        if ( "1.5".equals( version ) ) //$NON-NLS-1$
+        if ( "1.5".equals( version ) ) 
         {
-            version = IdeUtils.JAVA_5_0;// see MECLIPSE-47 eclipse only accept 5.0 as a valid version
+            version = IdeUtils.JAVA_5_0; // see MECLIPSE-47 eclipse only accept 5.0 as a valid version
         }
-        else if ( "1.6".equals( version ) ) //$NON-NLS-1$
+        else if ( "1.6".equals( version ) )
         {
             version = IdeUtils.JAVA_6_0;
         }
         else if ( version != null && version.length() == 1 )
         {
-            version = version + ".0";// 5->5.0 6->6.0 7->7.0 //$NON-NLS-1$
+            version = version + ".0"; // 5->5.0 6->6.0 7->7.0 //$NON-NLS-1$
         }
 
         return version == null ? IdeUtils.JAVA_1_4 : version;
@@ -654,29 +661,34 @@ public class IdeUtils
     {
         String value = null;
 
-        for (Object plugin1 : plugins) {
+        for ( Object plugin1 : plugins )
+        {
             Plugin plugin = (Plugin) plugin1;
 
-            if (plugin.getArtifactId().equals(ARTIFACT_MAVEN_COMPILER_PLUGIN)) {
+            if ( plugin.getArtifactId().equals( ARTIFACT_MAVEN_COMPILER_PLUGIN ) )
+            {
                 // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
                 // this is the default setting
-                if (o != null && o.getChild(optionName) != null) {
-                    value = o.getChild(optionName).getValue();
+                if ( o != null && o.getChild( optionName ) != null )
+                {
+                    value = o.getChild( optionName ).getValue();
                 }
 
                 List executions = plugin.getExecutions();
 
                 // a different source/target version can be configured for test sources compilation
-                for (Object execution1 : executions) {
+                for ( Object execution1 : executions )
+                {
                     PluginExecution execution = (PluginExecution) execution1;
 
                     // TODO: This may cause ClassCastExceptions eventually, if the dom impls differ.
                     o = (Xpp3Dom) execution.getConfiguration();
 
-                    if (o != null && o.getChild(optionName) != null) {
-                        value = o.getChild(optionName).getValue();
+                    if ( o != null && o.getChild( optionName ) != null )
+                    {
+                        value = o.getChild( optionName ).getValue();
                     }
                 }
             }

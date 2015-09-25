@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse;
  * under the License.
  */
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -141,13 +140,15 @@ public class MyEclipsePlugin
             {
                 String warSourceDirectory =
                     IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
-                                               "warSourceDirectory",//$NON-NLS-1$
-                                               "/src/main/webapp" ); //$NON-NLS-1$
+                                               "warSourceDirectory",
+                                               "/src/main/webapp" );
 
                 EclipseSourceDir[] sourceDirs = config.getSourceDirs();
-                for (EclipseSourceDir sourceDir : sourceDirs) {
-                    if (!sourceDir.isTest()) {
-                        sourceDir.setOutput(warSourceDirectory + "/WEB-INF/classes");
+                for ( EclipseSourceDir sourceDir : sourceDirs )
+                {
+                    if ( !sourceDir.isTest() )
+                    {
+                        sourceDir.setOutput( warSourceDirectory + "/WEB-INF/classes" );
                     }
                 }
             }
@@ -297,7 +298,8 @@ public class MyEclipsePlugin
             else
             {
                 j2eeVersion =
-                    JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( project ) ).getJeeVersion();
+                    JeeUtils.getJeeDescriptorFromServletVersion( 
+                                                     JeeUtils.resolveServletVersion( project ) ).getJeeVersion();
             }
 
             if ( "1.3".equals( j2eeVersion ) )

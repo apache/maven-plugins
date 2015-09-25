@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.wtp;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.wtp;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,7 +63,7 @@ public class EclipseWtpmodulesWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -86,13 +87,14 @@ public class EclipseWtpmodulesWriter
             String warSourceDirectory =
                 IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN,
                                            "warSourceDirectory", //$NON-NLS-1$
-                                           config.getProject().getBasedir() + "/src/main/webapp" ); //$NON-NLS-1$
+                                           config.getProject().getBasedir() + "/src/main/webapp" );
 
             writer.startElement( ELT_WB_RESOURCE );
             writer.addAttribute( ATTR_DEPLOY_PATH, "/" ); //$NON-NLS-1$
-            writer.addAttribute( ATTR_SOURCE_PATH, "/" //$NON-NLS-1$
-                + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
-                                                      new File( warSourceDirectory ), false ) );
+            writer.addAttribute( ATTR_SOURCE_PATH,
+                                 "/" //$NON-NLS-1$
+                                     + IdeUtils.toRelativeAndFixSeparator( config.getEclipseProjectDirectory(),
+                                                                           new File( warSourceDirectory ), false ) );
             writer.endElement();
 
             writeWarOrEarResources( writer, config.getProject(), config.getLocalRepository() );

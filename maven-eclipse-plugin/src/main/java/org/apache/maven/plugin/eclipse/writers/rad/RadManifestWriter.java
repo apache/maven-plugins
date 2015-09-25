@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.rad;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
 
@@ -41,8 +42,8 @@ public class RadManifestWriter
     extends AbstractEclipseManifestWriter
 {
 
-    private static final String DEFAULT_WEBAPP_RESOURCE_DIR =
-        "src" + File.separatorChar + "main" + File.separatorChar + "webapp";
+    private static final String DEFAULT_WEBAPP_RESOURCE_DIR = "src" + File.separatorChar + "main" + File.separatorChar
+        + "webapp";
 
     /**
      * Search the project for the existing META-INF directory where the manifest should be located.
@@ -81,14 +82,16 @@ public class RadManifestWriter
 
         if ( metaInfBaseDirectory == null )
         {
-            for (Object o : project.getResources()) {
-                metaInfBaseDirectory = ((Resource) o).getDirectory();
+            for ( Object o : project.getResources() )
+            {
+                metaInfBaseDirectory = ( (Resource) o ).getDirectory();
 
-                File metaInfDirectoryFile = new File(metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY);
+                File metaInfDirectoryFile = new File( metaInfBaseDirectory + File.separatorChar + META_INF_DIRECTORY );
 
-                log.debug("Checking for existence of META-INF directory: " + metaInfDirectoryFile);
+                log.debug( "Checking for existence of META-INF directory: " + metaInfDirectoryFile );
 
-                if (metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory()) {
+                if ( metaInfDirectoryFile.exists() && !metaInfDirectoryFile.isDirectory() )
+                {
                     metaInfBaseDirectory = null;
                 }
             }
@@ -116,8 +119,10 @@ public class RadManifestWriter
         {
             boolean foundMetaInfBaseDirectory = false;
 
-            for (EclipseSourceDir esd : sourceDirs) {
-                if (esd.getPath().equals(metaInfBaseDirectory)) {
+            for ( EclipseSourceDir esd : sourceDirs )
+            {
+                if ( esd.getPath().equals( metaInfBaseDirectory ) )
+                {
                     foundMetaInfBaseDirectory = true;
                     break;
                 }

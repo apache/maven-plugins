@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse.writers.myeclipse;
  * under the License.
  */
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -97,7 +96,7 @@ public class MyEclipseStrutsDataWriter
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
             }
 
             XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );

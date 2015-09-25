@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,14 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.ide.IdeDependency;
@@ -106,23 +106,23 @@ public class EclipseWriterConfig
     private List classpathContainers;
 
     /**
-     * @see EclipsePlugin#getProjectNameTemplate()
+     * @see org.apache.maven.plugin.eclipse.EclipsePlugin#getProjectNameTemplate()
      */
     private String projectNameTemplate;
 
     /**
-     * @see EclipsePlugin#deployName()
+     * @see org.apache.maven.plugin.eclipse.EclipsePlugin#deployName()
      */
 
     private String contextName;
 
     /**
-     * @see EclipsePlugin#wtpapplicationxml()
+     * @see org.apache.maven.plugin.eclipse.EclipsePlugin#wtpapplicationxml()
      */
     private boolean wtpapplicationxml;
 
     /**
-     * @see EclipsePlugin#getWtpversion()
+     * @see org.apache.maven.plugin.eclipse.EclipsePlugin#getWtpversion()
      */
     private float wtpVersion;
 
@@ -131,14 +131,14 @@ public class EclipseWriterConfig
     private WorkspaceConfiguration workspaceConfiguration;
 
     private List linkedResources;
-    
+
     /**
-     * @See {@link EclipsePlugin#classpathContainersLast}
+     * @See {@link org.apache.maven.plugin.eclipse.EclipsePlugin#classpathContainersLast}
      */
     private boolean classpathContainersLast;
-    
+
     /**
-     * @see {@link EclipsePlugin#jeeversion}
+     * @see {@link org.apache.maven.plugin.eclipse.EclipsePlugin#jeeversion}
      */
     private String jeeVersion;
 
@@ -524,9 +524,9 @@ public class EclipseWriterConfig
         this.linkedResources = linkedResources;
     }
 
-    
     /**
      * Returns the classpathContainersLast.
+     * 
      * @return the classpathContainersLast
      */
     public boolean isClasspathContainersLast()
@@ -534,18 +534,19 @@ public class EclipseWriterConfig
         return classpathContainersLast;
     }
 
-    
     /**
      * Sets the classpathContainersLast.
+     * 
      * @param classpathContainersLast the classpathContainersLast to set
      */
-    public void setClasspathContainersLast(boolean classpathContainersLast)
+    public void setClasspathContainersLast( boolean classpathContainersLast )
     {
         this.classpathContainersLast = classpathContainersLast;
     }
 
     /**
      * Sets the jeeversion.
+     * 
      * @return the jeeversion
      */
     public String getJeeVersion()
@@ -555,6 +556,7 @@ public class EclipseWriterConfig
 
     /**
      * Returns the jeeversion
+     * 
      * @param jeeversion the jeeversion
      */
     public void setJeeVersion( String jeeVersion )

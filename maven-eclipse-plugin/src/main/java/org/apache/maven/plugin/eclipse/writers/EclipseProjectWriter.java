@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -118,9 +119,10 @@ public class EclipseProjectWriter
                 if ( naturesElement != null )
                 {
                     Xpp3Dom[] existingNatures = naturesElement.getChildren( ELT_NATURE );
-                    for (Xpp3Dom existingNature : existingNatures) {
+                    for ( Xpp3Dom existingNature : existingNatures )
+                    {
                         // adds all the existing natures
-                        projectnatures.add(existingNature.getValue());
+                        projectnatures.add( existingNature.getValue() );
                     }
                 }
 
@@ -128,10 +130,12 @@ public class EclipseProjectWriter
                 if ( buildSpec != null )
                 {
                     Xpp3Dom[] existingBuildCommands = buildSpec.getChildren( ELT_BUILD_COMMAND );
-                    for (Xpp3Dom existingBuildCommand : existingBuildCommands) {
-                        Xpp3Dom buildCommandName = existingBuildCommand.getChild(ELT_NAME);
-                        if (buildCommandName != null) {
-                            buildCommands.add(new BuildCommand(existingBuildCommand));
+                    for ( Xpp3Dom existingBuildCommand : existingBuildCommands )
+                    {
+                        Xpp3Dom buildCommandName = existingBuildCommand.getChild( ELT_NAME );
+                        if ( buildCommandName != null )
+                        {
+                            buildCommands.add( new BuildCommand( existingBuildCommand ) );
                         }
                     }
                 }
@@ -140,12 +144,14 @@ public class EclipseProjectWriter
                 if ( linkedResourcesElement != null )
                 {
                     Xpp3Dom[] existingLinks = linkedResourcesElement.getChildren( ELT_LINK );
-                    for (Xpp3Dom existingLink : existingLinks) {
-                        Xpp3Dom linkName = existingLink.getChild(ELT_NAME);
-                        if (linkName != null) {
+                    for ( Xpp3Dom existingLink : existingLinks )
+                    {
+                        Xpp3Dom linkName = existingLink.getChild( ELT_NAME );
+                        if ( linkName != null )
+                        {
                             // add all the existing symbolic links
-                            linkNames.add(existingLink.getChild(ELT_NAME).getValue());
-                            linkedResources.add(new LinkedResource(existingLink));
+                            linkNames.add( existingLink.getChild( ELT_NAME ).getValue() );
+                            linkedResources.add( new LinkedResource( existingLink ) );
                         }
                     }
                 }
@@ -153,11 +159,11 @@ public class EclipseProjectWriter
             }
             catch ( XmlPullParserException e )
             {
-                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) );
             }
             catch ( IOException e )
             {
-                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) ); //$NON-NLS-1$
+                log.warn( Messages.getString( "EclipsePlugin.cantparseexisting", dotProject.getAbsolutePath() ) );
             }
             finally
             {
@@ -166,16 +172,19 @@ public class EclipseProjectWriter
         }
 
         // adds new entries after the existing ones
-        for (Object o2 : config.getProjectnatures()) {
-            projectnatures.add(o2);
+        for ( Object o2 : config.getProjectnatures() )
+        {
+            projectnatures.add( o2 );
         }
 
-        for (Object o1 : config.getBuildCommands()) {
-            buildCommands.add(o1);
+        for ( Object o1 : config.getBuildCommands() )
+        {
+            buildCommands.add( o1 );
         }
 
-        for (Object o : config.getLinkedResources()) {
-            linkedResources.add(o);
+        for ( Object o : config.getLinkedResources() )
+        {
+            linkedResources.add( o );
         }
 
         Writer w;
@@ -186,7 +195,7 @@ public class EclipseProjectWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -204,14 +213,16 @@ public class EclipseProjectWriter
         IdeDependency[] dependencies = config.getDeps();
 
         List duplicates = new ArrayList();
-        for (IdeDependency dep : dependencies) {
+        for ( IdeDependency dep : dependencies )
+        {
             // Avoid duplicates entries when same project is refered using multiple types
             // (ejb, test-jar ...)
-            if (dep.isReferencedProject() && !duplicates.contains(dep.getEclipseProjectName())) {
-                writer.startElement("project"); //$NON-NLS-1$
-                writer.writeText(dep.getEclipseProjectName());
+            if ( dep.isReferencedProject() && !duplicates.contains( dep.getEclipseProjectName() ) )
+            {
+                writer.startElement( "project" ); //$NON-NLS-1$
+                writer.writeText( dep.getEclipseProjectName() );
                 writer.endElement();
-                duplicates.add(dep.getEclipseProjectName());
+                duplicates.add( dep.getEclipseProjectName() );
             }
         }
 
@@ -219,17 +230,19 @@ public class EclipseProjectWriter
 
         writer.startElement( ELT_BUILD_SPEC );
 
-        for (Object buildCommand : buildCommands) {
-            ((BuildCommand) buildCommand).print(writer);
+        for ( Object buildCommand : buildCommands )
+        {
+            ( (BuildCommand) buildCommand ).print( writer );
         }
 
         writer.endElement(); // buildSpec
 
         writer.startElement( ELT_NATURES );
 
-        for (Object projectnature : projectnatures) {
-            writer.startElement(ELT_NATURE);
-            writer.writeText((String) projectnature);
+        for ( Object projectnature : projectnatures )
+        {
+            writer.startElement( ELT_NATURE );
+            writer.writeText( (String) projectnature );
             writer.endElement(); // name
         }
 
@@ -243,8 +256,9 @@ public class EclipseProjectWriter
             // preserve the symbolic links
             if ( linkedResources.size() > 0 )
             {
-                for (Object linkedResource : linkedResources) {
-                    ((LinkedResource) linkedResource).print(writer);
+                for ( Object linkedResource : linkedResources )
+                {
+                    ( (LinkedResource) linkedResource ).print( writer );
                 }
             }
 
@@ -293,15 +307,17 @@ public class EclipseProjectWriter
     private void addSourceLinks( XMLWriter writer, File projectBaseDir, File basedir, List sourceRoots )
         throws MojoExecutionException
     {
-        for (Object sourceRoot1 : sourceRoots) {
+        for ( Object sourceRoot1 : sourceRoots )
+        {
             String sourceRootString = (String) sourceRoot1;
-            File sourceRoot = new File(sourceRootString);
+            File sourceRoot = new File( sourceRootString );
 
-            if (sourceRoot.isDirectory()) {
-                String name = IdeUtils.toRelativeAndFixSeparator(projectBaseDir, sourceRoot, true);
-                String location = IdeUtils.fixSeparator(IdeUtils.getCanonicalPath(sourceRoot));
+            if ( sourceRoot.isDirectory() )
+            {
+                String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, sourceRoot, true );
+                String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( sourceRoot ) );
 
-                addLink(writer, name, location, LINK_TYPE_DIRECTORY);
+                addLink( writer, name, location, LINK_TYPE_DIRECTORY );
             }
         }
     }
@@ -309,15 +325,17 @@ public class EclipseProjectWriter
     private void addResourceLinks( XMLWriter writer, File projectBaseDir, File basedir, List sourceRoots )
         throws MojoExecutionException
     {
-        for (Object sourceRoot : sourceRoots) {
-            String resourceDirString = ((Resource) sourceRoot).getDirectory();
-            File resourceDir = new File(resourceDirString);
+        for ( Object sourceRoot : sourceRoots )
+        {
+            String resourceDirString = ( (Resource) sourceRoot ).getDirectory();
+            File resourceDir = new File( resourceDirString );
 
-            if (resourceDir.isDirectory()) {
-                String name = IdeUtils.toRelativeAndFixSeparator(projectBaseDir, resourceDir, true);
-                String location = IdeUtils.fixSeparator(IdeUtils.getCanonicalPath(resourceDir));
+            if ( resourceDir.isDirectory() )
+            {
+                String name = IdeUtils.toRelativeAndFixSeparator( projectBaseDir, resourceDir, true );
+                String location = IdeUtils.fixSeparator( IdeUtils.getCanonicalPath( resourceDir ) );
 
-                addLink(writer, name, location, LINK_TYPE_DIRECTORY);
+                addLink( writer, name, location, LINK_TYPE_DIRECTORY );
             }
         }
     }
@@ -374,7 +392,8 @@ public class EclipseProjectWriter
         //
         // Project files that are generated with m-p-e cannot be supported by M2Eclipse
         //
-        comment += "NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.";
+        comment +=
+           "NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.";
 
         writer.startElement( ELT_COMMENT );
         writer.writeText( comment );

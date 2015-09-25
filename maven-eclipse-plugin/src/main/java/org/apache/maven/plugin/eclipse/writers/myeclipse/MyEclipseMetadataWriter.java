@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse.writers.myeclipse;
  * under the License.
  */
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -95,7 +94,7 @@ public class MyEclipseMetadataWriter
         }
         catch ( IOException ex )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
         }
 
         XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );
@@ -110,7 +109,7 @@ public class MyEclipseMetadataWriter
             // Find web application context root from maven-war-plugin configuration.
             // ArtifactId is used as the default value
             String warContextRoot =
-                IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN, "warContextRoot",//$NON-NLS-1$
+                IdeUtils.getPluginSetting( config.getProject(), JeeUtils.ARTIFACT_MAVEN_WAR_PLUGIN, "warContextRoot",
                                            "/" + config.getProject().getArtifactId() );
 
             writer.addAttribute( MYECLIPSE_METADATA_PROJECT_CONTEXT_ROOT, warContextRoot );
@@ -182,7 +181,8 @@ public class MyEclipseMetadataWriter
         else
         {
             jeeVersion =
-                JeeUtils.getJeeDescriptorFromServletVersion( JeeUtils.resolveServletVersion( config.getProject() ) ).getJeeVersion();
+                JeeUtils.getJeeDescriptorFromServletVersion( 
+                                             JeeUtils.resolveServletVersion( config.getProject() ) ).getJeeVersion();
         }
 
         if ( jeeVersion == null )

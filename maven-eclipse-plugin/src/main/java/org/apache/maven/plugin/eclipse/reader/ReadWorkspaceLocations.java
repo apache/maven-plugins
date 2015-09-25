@@ -1,22 +1,27 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- */
 package org.apache.maven.plugin.eclipse.reader;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -91,10 +96,11 @@ public class ReadWorkspaceLocations
     public void init( Log log, WorkspaceConfiguration workspaceConfiguration, MavenProject project,
                       String wtpDefaultServer, boolean preferStandardClasspathContainer )
     {
-        workspaceConfiguration.setDefaultClasspathContainer( detectDefaultJREContainer( workspaceConfiguration,
-                                                                                        project,
-                                                                                        preferStandardClasspathContainer,
-                                                                                        log ) );
+        workspaceConfiguration.setDefaultClasspathContainer( 
+                                                 detectDefaultJREContainer( workspaceConfiguration,
+                                                                            project,
+                                                                            preferStandardClasspathContainer,
+                                                                            log ) );
         readWorkspace( workspaceConfiguration, log );
         detectWTPDefaultServer( workspaceConfiguration, wtpDefaultServer, log );
     }
@@ -106,7 +112,9 @@ public class ReadWorkspaceLocations
      * @param wtpDefaultServer Default server
      * @param log the log
      */
-    private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, String wtpDefaultServer, Log log )
+    private void detectWTPDefaultServer( WorkspaceConfiguration workspaceConfiguration, 
+                                         String wtpDefaultServer, 
+                                         Log log )
     {
         Map<String, String> servers = readDefinedServers( workspaceConfiguration, log );
         if ( servers == null || servers.isEmpty() )
@@ -150,7 +158,8 @@ public class ReadWorkspaceLocations
             // now take the default server
             log.info( "no substring wtp server match." );
             workspaceConfiguration.setDefaultDeployServerId( servers.get( "" ) );
-            workspaceConfiguration.setDefaultDeployServerName( servers.get( workspaceConfiguration.getDefaultDeployServerId() ) );
+            workspaceConfiguration.setDefaultDeployServerName( 
+                                               servers.get( workspaceConfiguration.getDefaultDeployServerId() ) );
         }
         log.info( "Using as WTP server : " + workspaceConfiguration.getDefaultDeployServerName() );
     }
@@ -229,7 +238,8 @@ public class ReadWorkspaceLocations
             }
 
             foundContainer =
-                getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ), jreMap, logger );
+                getContainerFromExecutable( IdeUtils.getCompilerPluginSetting( project, "executable" ), jreMap, 
+                                            logger );
             if ( foundContainer != null )
             {
                 return foundContainer;
@@ -350,7 +360,6 @@ public class ReadWorkspaceLocations
      * @param projectLocation the location of the project
      * @param logger the logger to report errors and debug info.
      * @return an {@link IdeDependency} or null.
-     * @throws FileNotFoundException
      * @throws XmlPullParserException
      * @throws IOException
      */
@@ -405,8 +414,8 @@ public class ReadWorkspaceLocations
                 {
                     Properties properties = new Properties();
                     properties.load( new FileInputStream( prefs ) );
-                    String runtimes =
-                        properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
+                    String runtimes = properties.getProperty( 
+                              ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_RUNTIMES_KEY );
                     if ( runtimes != null )
                     {
                         runtimesElement = Xpp3DomBuilder.build( new StringReader( runtimes ) );
@@ -479,8 +488,8 @@ public class ReadWorkspaceLocations
             Properties properties = new Properties();
             properties.load( new FileInputStream( prefs ) );
             vms =
-                Xpp3DomBuilder.build( new StringReader(
-                                                        properties.getProperty( ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_VM_KEY ) ) );
+                Xpp3DomBuilder.build( new StringReader( properties.getProperty( 
+                                ReadWorkspaceLocations.METADATA_PLUGINS_ORG_ECLIPSE_CORE_RUNTIME_PREFS_VM_KEY ) ) );
         }
         catch ( Exception e )
         {
@@ -577,7 +586,7 @@ public class ReadWorkspaceLocations
 
         return projectLocations;
     }
-    
+
     /**
      * Scan the eclipse workspace and create a array with {@link IdeDependency} for all found artifacts.
      * 

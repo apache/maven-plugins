@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.workspace;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.workspace;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,15 +43,15 @@ public class EclipseSettingsWriter
     extends AbstractEclipseWriter
 {
 
-    private static final String JDK_1_2_SOURCES = "1.2"; //$NON-NLS-1$
+    private static final String JDK_1_2_SOURCES = "1.2";
 
-    private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version"; //$NON-NLS-1$
+    private static final String PROP_ECLIPSE_PREFERENCES_VERSION = "eclipse.preferences.version";
 
-    private static final String PROP_JDT_CORE_COMPILER_COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance"; //$NON-NLS-1$
+    private static final String PROP_JDT_CORE_COMPILER_COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance";
 
-    private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
+    private static final String PROP_JDT_CORE_COMPILER_SOURCE = "org.eclipse.jdt.core.compiler.source";
 
-    private static final String PROP_JDT_CORE_COMPILER_ENCODING = "encoding/"; //$NON-NLS-1$
+    private static final String PROP_JDT_CORE_COMPILER_ENCODING = "encoding/";
 
     /**
      * @see org.apache.maven.plugin.eclipse.writers.EclipseWriter#write()
@@ -71,63 +72,67 @@ public class EclipseSettingsWriter
             coreSettings.put( PROP_JDT_CORE_COMPILER_SOURCE, source );
             coreSettings.put( PROP_JDT_CORE_COMPILER_COMPLIANCE, source );
         }
-        
+
         if ( encoding != null )
         {
             File basedir = config.getProject().getBasedir();
-			List compileSourceRoots = config.getProject().getCompileSourceRoots();
-			if ( compileSourceRoots != null )
-			{
-                for (Object compileSourceRoot : compileSourceRoots) {
+            List compileSourceRoots = config.getProject().getCompileSourceRoots();
+            if ( compileSourceRoots != null )
+            {
+                for ( Object compileSourceRoot : compileSourceRoots )
+                {
                     String sourcePath = (String) compileSourceRoot;
-                    String relativePath = IdeUtils.toRelativeAndFixSeparator(basedir, new File(sourcePath), false);
-                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                    String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, new File( sourcePath ), false );
+                    coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
                 }
-			}
-			List testCompileSourceRoots = config.getProject().getTestCompileSourceRoots();
+            }
+            List testCompileSourceRoots = config.getProject().getTestCompileSourceRoots();
             if ( testCompileSourceRoots != null )
-			{
-                for (Object testCompileSourceRoot : testCompileSourceRoots) {
+            {
+                for ( Object testCompileSourceRoot : testCompileSourceRoots )
+                {
                     String sourcePath = (String) testCompileSourceRoot;
-                    String relativePath = IdeUtils.toRelativeAndFixSeparator(basedir, new File(sourcePath), false);
-                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                    String relativePath = IdeUtils.toRelativeAndFixSeparator( basedir, new File( sourcePath ), false );
+                    coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
                 }
-			}
-			List resources = config.getProject().getResources();
+            }
+            List resources = config.getProject().getResources();
             if ( resources != null )
-			{
-                for (Object resource1 : resources) {
+            {
+                for ( Object resource1 : resources )
+                {
                     Resource resource = (Resource) resource1;
                     String relativePath =
-                            IdeUtils.toRelativeAndFixSeparator(basedir, new File(resource.getDirectory()), false);
-                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                        IdeUtils.toRelativeAndFixSeparator( basedir, new File( resource.getDirectory() ), false );
+                    coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
                 }
-			}
-			List testResources = config.getProject().getTestResources();
+            }
+            List testResources = config.getProject().getTestResources();
             if ( testResources != null )
-			{
-                for (Object testResource : testResources) {
+            {
+                for ( Object testResource : testResources )
+                {
                     Resource resource = (Resource) testResource;
                     String relativePath =
-                            IdeUtils.toRelativeAndFixSeparator(basedir, new File(resource.getDirectory()), false);
-                    coreSettings.put(PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding);
+                        IdeUtils.toRelativeAndFixSeparator( basedir, new File( resource.getDirectory() ), false );
+                    coreSettings.put( PROP_JDT_CORE_COMPILER_ENCODING + relativePath, encoding );
                 }
-			}
+            }
         }
 
         if ( target != null && !JDK_1_2_SOURCES.equals( target ) )
         {
-            coreSettings.put( "org.eclipse.jdt.core.compiler.codegen.targetPlatform", target ); //$NON-NLS-1$
+            coreSettings.put( "org.eclipse.jdt.core.compiler.codegen.targetPlatform", target );
         }
 
         // write the settings, if needed
         if ( !coreSettings.isEmpty() )
         {
-            File settingsDir = new File( config.getEclipseProjectDirectory(), EclipseWorkspaceWriter.DIR_DOT_SETTINGS ); //$NON-NLS-1$
+            File settingsDir = new File( config.getEclipseProjectDirectory(), EclipseWorkspaceWriter.DIR_DOT_SETTINGS );
 
             settingsDir.mkdirs();
 
-            coreSettings.put( PROP_ECLIPSE_PREFERENCES_VERSION, "1" ); //$NON-NLS-1$ 
+            coreSettings.put( PROP_ECLIPSE_PREFERENCES_VERSION, "1" );
 
             try
             {
@@ -154,22 +159,24 @@ public class EclipseSettingsWriter
                 {
                     coreSettings.store( new FileOutputStream( coreSettingsFile ), null );
 
-                    log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings", //$NON-NLS-1$
+                    log.info( Messages.getString( "EclipseSettingsWriter.wrotesettings", 
                                                   coreSettingsFile.getCanonicalPath() ) );
                 }
             }
             catch ( FileNotFoundException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ), e ); //$NON-NLS-1$
+                throw new MojoExecutionException( 
+                                          Messages.getString( "EclipseSettingsWriter.cannotcreatesettings" ), e );
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ), e ); //$NON-NLS-1$
+                throw new MojoExecutionException( 
+                                          Messages.getString( "EclipseSettingsWriter.errorwritingsettings" ), e );
             }
         }
         else
         {
-            log.info( Messages.getString( "EclipseSettingsWriter.usingdefaults" ) ); //$NON-NLS-1$
+            log.info( Messages.getString( "EclipseSettingsWriter.usingdefaults" ) );
         }
     }
 }

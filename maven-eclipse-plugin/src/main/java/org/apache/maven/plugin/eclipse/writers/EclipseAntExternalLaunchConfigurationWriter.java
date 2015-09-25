@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers;
 
 import java.util.List;
 
@@ -60,8 +61,8 @@ public class EclipseAntExternalLaunchConfigurationWriter
 
         writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_TYPES", new String[] { "1" } );
 
-        writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_PATHS", new String[] { "/"
-            + config.getEclipseProjectName() + "/" + buildfilePath } );
+        writeAttribute( writer, "org.eclipse.debug.core.MAPPED_RESOURCE_PATHS",
+                        new String[] { "/" + config.getEclipseProjectName() + "/" + buildfilePath } );
     }
 
     protected String getLaunchConfigurationType()

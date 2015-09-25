@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.apache.maven.plugin.eclipse;
 
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -128,12 +128,12 @@ public class LinkedResource
             throw new IllegalArgumentException( "Both location and locationURI nodes are set." );
         }
 
-        if (locationNode != null)
+        if ( locationNode != null )
         {
             location = locationNode.getValue();
         }
 
-        if (locationURINode != null)
+        if ( locationURINode != null )
         {
             locationURI = locationURINode.getValue();
         }
@@ -163,7 +163,7 @@ public class LinkedResource
             writer.writeText( locationURI );
             writer.endElement(); // locationURI
         }
-        writer.endElement();// link
+        writer.endElement(); // link
     }
 
     public boolean equals( Object obj )
@@ -182,10 +182,13 @@ public class LinkedResource
         }
     }
 
+    
     public int hashCode()
     {
+        // CHECKSTYLE_OFF: MagicNumber
         return name.hashCode() + ( type == null ? 0 : 13 * type.hashCode() )
             + ( location == null ? 0 : 17 * location.hashCode() )
             + ( locationURI == null ? 0 : 19 * locationURI.hashCode() );
+        // CHECKSTYLE_ON: MagicNumber
     }
 }

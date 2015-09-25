@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.rad;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,12 +18,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Constants;
 import org.apache.maven.plugin.eclipse.Messages;
@@ -70,8 +70,6 @@ public class RadLibCopier
      * @param deps representing the dependencies to be copied.
      * @param destDir where should the atifact go.
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see DependencyUtil#copyFile(File, File, Log)
-     * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
      */
     private void copyArtifact( IdeDependency[] deps, File destDir )
         throws MojoExecutionException
@@ -79,15 +77,18 @@ public class RadLibCopier
         String[] oldFiles =
             FileUtils.getFilesFromExtension( destDir.getAbsolutePath(),
                                              new String[] { Constants.PROJECT_PACKAGING_JAR } );
-        for (String oldFile : oldFiles) {
-            if (!new File(oldFile).delete()) {
-                log.error(Messages.getString("Rad6LibCopier.cantdeletefile", new Object[]{oldFile}));
+        for ( String oldFile : oldFiles )
+        {
+            if ( !new File( oldFile ).delete() )
+            {
+                log.error( Messages.getString( "Rad6LibCopier.cantdeletefile", new Object[] { oldFile } ) );
             }
         }
-        for (IdeDependency dep : deps) {
-            if (!dep.isTestDependency() && !dep.isProvided() && !dep.isReferencedProject()
-                    && !dep.isSystemScoped()) {
-                copyFile(dep.getFile(), new File(destDir, dep.getFile().getName()), log);
+        for ( IdeDependency dep : deps )
+        {
+            if ( !dep.isTestDependency() && !dep.isProvided() && !dep.isReferencedProject() && !dep.isSystemScoped() )
+            {
+                copyFile( dep.getFile(), new File( destDir, dep.getFile().getName() ), log );
             }
         }
     }

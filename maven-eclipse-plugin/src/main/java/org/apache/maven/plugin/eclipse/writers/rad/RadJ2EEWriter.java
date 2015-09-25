@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse.writers.rad;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse.writers.rad;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,13 +25,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.Constants;
-import org.apache.maven.plugin.eclipse.EclipseSourceDir;
 import org.apache.maven.plugin.eclipse.Messages;
 import org.apache.maven.plugin.eclipse.writers.AbstractEclipseWriter;
-import org.apache.maven.plugin.eclipse.writers.wtp.AbstractWtpResourceWriter;
 import org.apache.maven.plugin.ide.JeeUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
@@ -57,7 +55,6 @@ public class RadJ2EEWriter
     /**
      * write the .j2ee file to the project root directory.
      * 
-     * @see AbstractWtpResourceWriter#write(EclipseSourceDir[], ArtifactRepository, File)
      * @param sourceDirs all eclipse source directorys
      * @param localRepository the local reposetory
      * @param buildOutputDirectory build output directory (target)
@@ -81,7 +78,7 @@ public class RadJ2EEWriter
             }
             catch ( IOException ex )
             {
-                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex ); //$NON-NLS-1$
+                throw new MojoExecutionException( Messages.getString( "EclipsePlugin.erroropeningfile" ), ex );
             }
 
             XMLWriter writer = new PrettyPrintXMLWriter( w, "UTF-8", null );

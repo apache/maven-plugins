@@ -19,7 +19,6 @@ package org.apache.maven.plugin.eclipse.writers.workspace;
  * under the License.
  */
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +33,8 @@ import org.apache.maven.plugin.eclipse.WorkspaceConfiguration;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.IOUtil;
 
+/**
+ */
 public class EclipseWorkspaceWriter
     implements WorkspaceWriter
 {
@@ -41,33 +42,33 @@ public class EclipseWorkspaceWriter
     /**
      * Path under Eclipse workspace where Eclipse Plugin metadata/config is stored.
      */
-    public static final String ECLIPSE_PLUGINS_METADATA_DIR = ".metadata/.plugins"; //$NON-NLS-1$
+    public static final String ECLIPSE_PLUGINS_METADATA_DIR = ".metadata/.plugins";
 
     /**
      * Path under {@value #ECLIPSE_PLUGINS_METADATA_DIR } folder where Eclipse Workspace Runtime settings are stored.
      */
-    public static final String ECLIPSE_CORE_RUNTIME_SETTINGS_DIR =
-        ECLIPSE_PLUGINS_METADATA_DIR + "/org.eclipse.core.runtime/.settings"; //$NON-NLS-1$
-    
+    public static final String ECLIPSE_CORE_RUNTIME_SETTINGS_DIR = ECLIPSE_PLUGINS_METADATA_DIR
+        + "/org.eclipse.core.runtime/.settings";
+
     /**
      * Directory where workspace specific settings are written.
      */
-    public static final String DIR_DOT_SETTINGS = ".settings"; //$NON-NLS-1$   
-    
+    public static final String DIR_DOT_SETTINGS = ".settings";
+
     /**
      * File that stores the Eclipse JDT Core preferences.
      */
-    public static final String ECLIPSE_JDT_CORE_PREFS_FILE = "org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
+    public static final String ECLIPSE_JDT_CORE_PREFS_FILE = "org.eclipse.jdt.core.prefs";
 
     /**
      * Property constant under which Variable 'M2_REPO' is setup.
      */
-    public static final String CLASSPATH_VARIABLE_M2_REPO = "org.eclipse.jdt.core.classpathVariable.M2_REPO"; //$NON-NLS-1$
+    public static final String CLASSPATH_VARIABLE_M2_REPO = "org.eclipse.jdt.core.classpathVariable.M2_REPO";
 
     /**
      * File that stores the Eclipse JDT UI preferences.
      */
-    public static final String ECLIPSE_JDT_UI_PREFS_FILE = "org.eclipse.jdt.ui.prefs"; //$NON-NLS-1$
+    public static final String ECLIPSE_JDT_UI_PREFS_FILE = "org.eclipse.jdt.ui.prefs";
 
     private WorkspaceConfiguration config;
 
@@ -125,7 +126,7 @@ public class EclipseWorkspaceWriter
 
         Properties props = loadProperties( f );
 
-        props.put( CLASSPATH_VARIABLE_M2_REPO, config.getLocalRepository().getBasedir() ); //$NON-NLS-1$  //$NON-NLS-2$
+        props.put( CLASSPATH_VARIABLE_M2_REPO, config.getLocalRepository().getBasedir() );
 
         storeProperties( props, f );
     }
@@ -145,12 +146,12 @@ public class EclipseWorkspaceWriter
             catch ( FileNotFoundException e )
             {
                 throw new MojoExecutionException(
-                                                  Messages.getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); //$NON-NLS-1$
+                                          Messages.getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e );
             }
             catch ( IOException e )
             {
                 throw new MojoExecutionException(
-                                                  Messages.getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); //$NON-NLS-1$
+                                          Messages.getString( "EclipsePlugin.cantreadfile", f.getAbsolutePath() ), e ); 
             }
         }
 
@@ -169,7 +170,7 @@ public class EclipseWorkspaceWriter
         }
         catch ( IOException ioe )
         {
-            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile", //$NON-NLS-1$
+            throw new MojoExecutionException( Messages.getString( "EclipsePlugin.cantwritetofile",
                                                                   f.getAbsolutePath() ) );
         }
         finally

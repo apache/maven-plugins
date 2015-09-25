@@ -1,3 +1,5 @@
+package org.apache.maven.plugin.eclipse;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.IOException;
@@ -180,28 +181,33 @@ public class InstallPluginsMojo
             eclipseDir.mkdirs();
         }
 
-        for (Object artifact1 : artifacts) {
+        for ( Object artifact1 : artifacts )
+        {
             Artifact artifact = (Artifact) artifact1;
 
-            if (pluginDependencyTypes.contains(artifact.getType())) {
-                getLog().debug("Processing Eclipse plugin dependency: " + artifact.getId());
+            if ( pluginDependencyTypes.contains( artifact.getType() ) )
+            {
+                getLog().debug( "Processing Eclipse plugin dependency: " + artifact.getId() );
 
                 MavenProject project;
 
-                try {
+                try
+                {
                     project =
-                            projectBuilder.buildFromRepository(artifact, Collections.EMPTY_LIST, localRepository, true);
-                } catch (ProjectBuildingException e) {
-                    throw new MojoExecutionException("Failed to load project metadata (POM) for: " + artifact.getId(),
-                            e);
+                        projectBuilder.buildFromRepository( artifact, Collections.EMPTY_LIST, localRepository, true );
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    throw new MojoExecutionException( "Failed to load project metadata (POM) for: " + artifact.getId(),
+                                                      e );
                 }
 
-                install(artifact, project);
-            } else {
-                getLog().debug(
-                        "Skipping dependency: "
-                                + artifact.getId()
-                                + ". Set pluginDependencyTypes with a comma-separated list of types to change this.");
+                install( artifact, project );
+            }
+            else
+            {
+                getLog().debug( "Skipping dependency: " + artifact.getId() + ". "
+                    + "Set pluginDependencyTypes with a comma-separated list of types to change this." );
             }
         }
     }
@@ -249,7 +255,7 @@ public class InstallPluginsMojo
         Properties properties = project.getProperties();
         if ( properties != null )
         {
-            installAsJar = !Boolean.valueOf(properties.getProperty(PROP_UNPACK_PLUGIN, "false"));
+            installAsJar = !Boolean.valueOf( properties.getProperty( PROP_UNPACK_PLUGIN, "false" ) );
         }
 
         Attributes attributes;
@@ -260,8 +266,7 @@ public class InstallPluginsMojo
             Manifest manifest = jar.getManifest();
             if ( manifest == null )
             {
-                getLog().debug(
-                                "Ignoring " + artifact.getArtifactId()
+                getLog().debug( "Ignoring " + artifact.getArtifactId()
                                     + " as it is does not have a Manifest (and so is not an OSGi bundle)" );
                 return;
             }
@@ -285,8 +290,7 @@ public class InstallPluginsMojo
         Object bundleSymbolicName = attributes.getValue( "Bundle-SymbolicName" );
         if ( bundleSymbolicName == null && bundleName == null )
         {
-            getLog().debug(
-                            "Ignoring " + artifact.getArtifactId()
+            getLog().debug( "Ignoring " + artifact.getArtifactId()
                                 + " as it is not an OSGi bundle (no Bundle-SymbolicName or Bundle-Name in manifest)" );
             return;
         }
@@ -334,14 +338,12 @@ public class InstallPluginsMojo
         {
             if ( installAsJar )
             {
-                getLog().info(
-                               "Skipping plugin installation for: " + artifact.getId() + "; file: " + pluginFile
+                getLog().info( "Skipping plugin installation for: " + artifact.getId() + "; file: " + pluginFile
                                    + " already exists. Set overwrite = true to override this." );
             }
             else if ( !installAsJar )
             {
-                getLog().info(
-                               "Skipping plugin installation for: " + artifact.getId() + "; directory: " + pluginDir
+                getLog().info( "Skipping plugin installation for: " + artifact.getId() + "; directory: " + pluginDir
                                    + " already exists. Set overwrite = true to override this." );
             }
         }
