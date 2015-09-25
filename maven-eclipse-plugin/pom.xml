@@ -290,8 +290,9 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes>
+            <excludes combine.children="append">
               <exclude>README-testing.txt</exclude>
+              
               <!--
                 These files contain several files for eclipse
                 which will let fail the tests if a license header
