@@ -30,13 +30,6 @@ Known Bugs and Limitations
 
   Just a brief selection...
 
-* Current Limitations
-
-  * Current prerequisite is Maven \>\= 2.0.6. It's using Doxia-1.1.x via the shade-plugin
-    (see {{{http://jira.codehaus.org/browse/MNG-3402}MNG-3402}}).
-
-  []
-
 * Missing Features
 
   * Menu sub-items are not supported in TOC (every source document starts a new chapter).
