@@ -38,11 +38,15 @@ import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.ScmRevision;
 import org.apache.maven.scm.command.changelog.ChangeLogScmResult;
 import org.apache.maven.scm.command.changelog.ChangeLogSet;
+import org.apache.maven.scm.command.info.InfoItem;
+import org.apache.maven.scm.command.info.InfoScmResult;
+import org.apache.maven.scm.log.DefaultLog;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderRepository;
 import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
+import org.apache.maven.scm.provider.svn.svnexe.command.info.SvnInfoCommandExpanded;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -654,10 +658,6 @@ public class ChangeLogReport
             }
             else if ( "tag".equals( type ) )
             {
-                if ( repository.getProvider().equals( "svn" ) )
-                {
-                    throw new MavenReportException( "The type '" + type + "' isn't supported for svn." );
-                }
 
                 Iterator<String> tagsIter = tags.iterator();
 
@@ -669,11 +669,15 @@ public class ChangeLogReport
                     while ( tagsIter.hasNext() )
                     {
                         endTag = tagsIter.next();
-
-                        result = provider.changeLog( repository, new ScmFileSet( basedir ), new ScmRevision( startTag ),
-                                                     new ScmRevision( endTag ) );
+                        String endRevision = getRevisionForTag( endTag, repository, provider );
+                        String startRevision = getRevisionForTag( startTag, repository, provider );
+                        result = provider.changeLog( repository, new ScmFileSet( basedir ),
+                                                     new ScmRevision( startRevision ),
+                                                     new ScmRevision( endRevision ) );
 
                         checkResult( result );
+                        result.getChangeLog().setStartVersion( new ScmRevision( startTag ) );
+                        result.getChangeLog().setEndVersion( new ScmRevision( endTag ) );
 
                         changeSets.add( result.getChangeLog() );
 
@@ -682,11 +686,15 @@ public class ChangeLogReport
                 }
                 else
                 {
-                    result = provider.changeLog( repository, new ScmFileSet( basedir ), new ScmRevision( startTag ),
-                                                 new ScmRevision( endTag ) );
+                    String startRevision = getRevisionForTag( startTag, repository, provider );
+                    String endRevision = getRevisionForTag( endTag, repository, provider );
+                    result = provider.changeLog( repository, new ScmFileSet( basedir ),
+                                                 new ScmRevision( startRevision ),
+                                                 new ScmRevision( endRevision ) );
 
                     checkResult( result );
-
+                    result.getChangeLog().setStartVersion( new ScmRevision( startTag ) );
+                    result.getChangeLog().setEndVersion( null );
                     changeSets.add( result.getChangeLog() );
                 }
             }
@@ -739,6 +747,42 @@ public class ChangeLogReport
         {
             throw new MavenReportException( "An error has occurred during changelog command : ", e );
         }
+    }
+
+    /**
+     * Resolves the given tag to the revision number.
+     *
+     * @param tag
+     * @param repository
+     * @param provider
+     * @return
+     * @throws ScmException
+     */
+    private String getRevisionForTag( final String tag, final ScmRepository repository, final ScmProvider provider )
+        throws ScmException
+    {
+        if ( repository.getProvider().equals( "svn" ) )
+        {
+            if ( tag == null )
+            {
+                return "HEAD";
+            }
+            SvnInfoCommandExpanded infoCommand = new SvnInfoCommandExpanded();
+            infoCommand.setLogger( new DefaultLog() );
+
+            InfoScmResult infoScmResult =
+                infoCommand.executeInfoTagCommand( (SvnScmProviderRepository) repository.getProviderRepository(),
+                                                   new ScmFileSet( basedir ), tag, null, false, null );
+            if ( infoScmResult.getInfoItems().size() == 0 )
+            {
+                throw new ScmException( "There is no tag named '" + tag + "' in the Subversion repository." );
+            }
+            InfoItem infoItem = infoScmResult.getInfoItems().get( 0 );
+            String revision = infoItem.getLastChangedRevision();
+            getLog().info( String.format( "Resolved tag '%s' to revision '%s'", tag, revision ) );
+            return revision;
+        }
+        return tag;
     }
 
     /**
