@@ -47,5 +47,5 @@ Skipping Clean
   You can also skip the cleaning via command line by executing the following command:
 
 +--------
-mvn clean -Dclean.skip=true
+mvn clean -Dmaven.clean.skip=true
 +---------

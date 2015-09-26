@@ -79,8 +79,9 @@ public class CleanMojo
 
     /**
      * Sets whether the plugin runs in verbose mode. As of plugin version 2.3, the default value is derived from Maven's
-     * global debug flag (compare command line switch <code>-X</code>). Starting with {@code 3.0.0} the property has
-     * been renamed from {@code clean.verbose} to {code maven.clean.verbose}.
+     * global debug flag (compare command line switch <code>-X</code>). <br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>clean.verbose</code> to
+     * <code>maven.clean.verbose</code>.
      * 
      * @since 2.1
      */
@@ -115,8 +116,9 @@ public class CleanMojo
      * Sets whether the plugin should follow symbolic links while deleting files from the default output directories of
      * the project. Not following symlinks requires more IO operations and heap memory, regardless whether symlinks are
      * actually present. So projects with a huge output directory that knowingly does not contain symlinks can improve
-     * performance by setting this parameter to <code>true</code>. Starting with {@code 3.0.0} the property has been
-     * renamed from {@code clean.followSymLinks} to {code maven.clean.followSymLinks}.
+     * performance by setting this parameter to <code>true</code>. <br/>
+     * Starting with <code>3.0.0</code> the property has been renamed from <code>clean.followSymLinks</code> to
+     * <code>maven.clean.followSymLinks</code>.
      * 
      * @since 2.1
      */
@@ -124,8 +126,9 @@ public class CleanMojo
     private boolean followSymLinks;
 
     /**
-     * Disables the plugin execution. Starting with {@code 3.0.0} the property has been renamed from {@code clean.skip}
-     * to {code maven.clean.skip}.
+     * Disables the plugin execution. <br/>
+     * Starting with <code>3.0.0</code> the property has been renamed from <code>clean.skip</code> to
+     * <code>maven.clean.skip</code>.
      * 
      * @since 2.2
      */
@@ -152,9 +155,9 @@ public class CleanMojo
 
     /**
      * Disables the deletion of the default output directories configured for a project. If set to <code>true</code>,
-     * only the files/directories selected via the parameter {@link #filesets} will be deleted. Starting with
-     * {@code 3.0.0} the property has been renamed from {@code clean.excludeDefaultDirectories} to {code
-     * maven.clean.excludeDefaultDirectories}.
+     * only the files/directories selected via the parameter {@link #filesets} will be deleted. <br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>clean.excludeDefaultDirectories</code> to
+     * <code>maven.clean.excludeDefaultDirectories</code>.
      *
      * @since 2.3
      */
