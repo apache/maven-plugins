@@ -30,15 +30,16 @@ import java.io.IOException;
 /**
  * Goal which cleans the build.
  * <p/>
- * <P>This attempts to clean a project's working directory of the files that
- * were generated at build-time. By default, it discovers and deletes the
- * directories configured in <code>project.build.directory</code>,
- * <code>project.build.outputDirectory</code>,
- * <code>project.build.testOutputDirectory</code>, and
- * <code>project.reporting.outputDirectory</code>. </P>
+ * <P>
+ * This attempts to clean a project's working directory of the files that were generated at build-time. By default, it
+ * discovers and deletes the directories configured in <code>project.build.directory</code>,
+ * <code>project.build.outputDirectory</code>, <code>project.build.testOutputDirectory</code>, and
+ * <code>project.reporting.outputDirectory</code>.
+ * </P>
  * <p/>
- * <P>Files outside the default may also be included in the deletion by
- * configuring the <code>filesets</code> tag.</P>
+ * <P>
+ * Files outside the default may also be included in the deletion by configuring the <code>filesets</code> tag.
+ * </P>
  *
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -78,15 +79,17 @@ public class CleanMojo
 
     /**
      * Sets whether the plugin runs in verbose mode. As of plugin version 2.3, the default value is derived from Maven's
-     * global debug flag (compare command line switch <code>-X</code>).
-     *
+     * global debug flag (compare command line switch <code>-X</code>). Starting with {@code 3.0.0} the property has
+     * been renamed from {@code clean.verbose} to {code maven.clean.verbose}.
+     * 
      * @since 2.1
      */
-    @Parameter( property = "clean.verbose" )
+    @Parameter( property = "maven.clean.verbose" )
     private Boolean verbose;
 
     /**
      * The list of file sets to delete, in addition to the default directories. For example:
+     * 
      * <pre>
      * &lt;filesets&gt;
      *   &lt;fileset&gt;
@@ -112,19 +115,21 @@ public class CleanMojo
      * Sets whether the plugin should follow symbolic links while deleting files from the default output directories of
      * the project. Not following symlinks requires more IO operations and heap memory, regardless whether symlinks are
      * actually present. So projects with a huge output directory that knowingly does not contain symlinks can improve
-     * performance by setting this parameter to <code>true</code>.
-     *
+     * performance by setting this parameter to <code>true</code>. Starting with {@code 3.0.0} the property has been
+     * renamed from {@code clean.followSymLinks} to {code maven.clean.followSymLinks}.
+     * 
      * @since 2.1
      */
-    @Parameter( property = "clean.followSymLinks", defaultValue = "false" )
+    @Parameter( property = "maven.clean.followSymLinks", defaultValue = "false" )
     private boolean followSymLinks;
 
     /**
-     * Disables the plugin execution.
-     *
+     * Disables the plugin execution. Starting with {@code 3.0.0} the property has been renamed from {@code clean.skip}
+     * to {code maven.clean.skip}.
+     * 
      * @since 2.2
      */
-    @Parameter( property = "clean.skip", defaultValue = "false" )
+    @Parameter( property = "maven.clean.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
@@ -147,11 +152,13 @@ public class CleanMojo
 
     /**
      * Disables the deletion of the default output directories configured for a project. If set to <code>true</code>,
-     * only the files/directories selected via the parameter {@link #filesets} will be deleted.
+     * only the files/directories selected via the parameter {@link #filesets} will be deleted. Starting with
+     * {@code 3.0.0} the property has been renamed from {@code clean.excludeDefaultDirectories} to {code
+     * maven.clean.excludeDefaultDirectories}.
      *
      * @since 2.3
      */
-    @Parameter( property = "clean.excludeDefaultDirectories", defaultValue = "false" )
+    @Parameter( property = "maven.clean.excludeDefaultDirectories", defaultValue = "false" )
     private boolean excludeDefaultDirectories;
 
     /**
@@ -227,7 +234,7 @@ public class CleanMojo
         }
         else
         {
-            directories = new File[]{ directory, outputDirectory, testOutputDirectory, reportDirectory };
+            directories = new File[] { directory, outputDirectory, testOutputDirectory, reportDirectory };
         }
         return directories;
     }
