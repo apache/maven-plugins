@@ -184,11 +184,11 @@ public class CleanMojo
 
         try
         {
-            for ( File directory : getDirectories() )
+            for ( File directoryItem : getDirectories() )
             {
-                if ( directory != null )
+                if ( directoryItem != null )
                 {
-                    cleaner.delete( directory, null, followSymLinks, failOnError, retryOnError );
+                    cleaner.delete( directoryItem, null, followSymLinks, failOnError, retryOnError );
                 }
             }
 

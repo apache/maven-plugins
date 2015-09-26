@@ -152,7 +152,7 @@ class Cleaner
                     String[] filenames = canonical.list();
                     if ( filenames != null )
                     {
-                        String prefix = ( pathname.length() > 0 ) ? pathname + File.separatorChar : "";
+                        String prefix = pathname.length() > 0 ? pathname + File.separatorChar : "";
                         for ( int i = filenames.length - 1; i >= 0; i-- )
                         {
                             String filename = filenames[i];
