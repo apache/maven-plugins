@@ -45,26 +45,41 @@ public class Fileset
 
     private boolean useDefaultExcludes;
 
+    /**
+     * @return {@link #directory}
+     */
     public File getDirectory()
     {
         return directory;
     }
 
+    /**
+     * @return {@link #includes}
+     */
     public String[] getIncludes()
     {
         return ( includes != null ) ? includes : new String[0];
     }
 
+    /**
+     * @return {@link #excludes}
+     */
     public String[] getExcludes()
     {
         return ( excludes != null ) ? excludes : new String[0];
     }
 
+    /**
+     * @return {@link #followSymlinks}
+     */
     public boolean isFollowSymlinks()
     {
         return followSymlinks;
     }
 
+    /**
+     * @return {@link #useDefaultExcludes}
+     */
     public boolean isUseDefaultExcludes()
     {
         return useDefaultExcludes;
