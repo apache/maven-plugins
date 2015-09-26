@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.clean;
+package org.apache.maven.plugins.clean;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -43,7 +43,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:evenisse@maven.org">Emmanuel Venisse</a>
  * @version $Id$
- * @see org.apache.maven.plugin.clean.Fileset
+ * @see org.apache.maven.plugins.clean.Fileset
  * @since 2.0
  */
 @Mojo( name = "clean", threadSafe = true )

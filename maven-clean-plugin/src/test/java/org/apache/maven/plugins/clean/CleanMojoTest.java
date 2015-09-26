@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.clean;
+package org.apache.maven.plugins.clean;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,6 +26,7 @@ import java.nio.channels.FileLock;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.clean.CleanMojo;
 import org.codehaus.plexus.util.FileUtils;
 
 /**

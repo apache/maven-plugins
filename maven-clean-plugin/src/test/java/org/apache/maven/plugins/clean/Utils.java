@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.clean;
+package org.apache.maven.plugins.clean;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

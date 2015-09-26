@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.*;
 import java.util.regex.*;
-import org.apache.maven.plugin.clean.*;
+import org.apache.maven.plugins.clean.*;
 
 try
 {
