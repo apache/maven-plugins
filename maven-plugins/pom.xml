@@ -47,7 +47,7 @@ under the License.
   </ciManagement>
 
   <distributionManagement>
-    <site><!-- to be copied in every plugin pom, since inheritance adds unwanted artifactId -->
+    <site>
       <id>apache.website</id>
       <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/plugins-archives/</url>
     </site>
