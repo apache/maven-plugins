@@ -30,11 +30,11 @@ under the License.
   </parent>
 
   <artifactId>maven-source-plugin</artifactId>
-  <version>2.5-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Source Plugin</name>
-  <description>The Maven 2 Source Plugin creates a JAR archive of the source files of the current project.</description>
+  <description>The Maven Source Plugin creates a JAR archive of the source files of the current project.</description>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
@@ -67,7 +67,13 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenVersion>3.0</mavenVersion>
+    <!--
+      ! Here we start with JDK 6 for release 3.X
+    -->
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <maven.compiler.source>1.6</maven.compiler.source>
+
   </properties>
 
   <dependencies>
@@ -88,7 +94,7 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
+      <artifactId>maven-core</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
 
@@ -97,8 +103,8 @@ under the License.
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
-    </dependency>
-
+      </dependency>
+  
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
@@ -114,11 +120,17 @@ under the License.
       <artifactId>plexus-utils</artifactId>
       <version>3.0.20</version>
     </dependency>
-
+  
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.2</version>
+      <version>2.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
+      <version>${mavenVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -128,6 +140,8 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+
 
   <profiles>
     <profile>
