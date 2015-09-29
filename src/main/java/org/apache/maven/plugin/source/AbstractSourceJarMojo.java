@@ -101,7 +101,7 @@ public abstract class AbstractSourceJarMojo
      * @since 2.1
      */
     @Parameter
-    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+    private MavenArchiveConfiguration archive = new SourceArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
@@ -129,9 +129,8 @@ public abstract class AbstractSourceJarMojo
     private boolean attach;
 
     /**
-     * Specifies whether or not to exclude resources from the sources-jar. This
-     * can be convenient if your project includes large resources, such as
-     * images, and you don't want to include them in the sources-jar.
+     * Specifies whether or not to exclude resources from the sources-jar. This can be convenient if your project
+     * includes large resources, such as images, and you don't want to include them in the sources-jar.
      *
      * @since 2.0.4
      */
@@ -159,9 +158,8 @@ public abstract class AbstractSourceJarMojo
     protected File outputDirectory;
 
     /**
-     * The filename to be used for the generated archive file.
-     * For the source:jar goal, "-sources" is appended to this filename.
-     * For the source:test-jar goal, "-test-sources" is appended.
+     * The filename to be used for the generated archive file. For the source:jar goal, "-sources" is appended to this
+     * filename. For the source:test-jar goal, "-test-sources" is appended.
      */
     @Parameter( defaultValue = "${project.build.finalName}" )
     protected String finalName;
@@ -173,9 +171,8 @@ public abstract class AbstractSourceJarMojo
     protected List reactorProjects;
 
     /**
-     * Whether creating the archive should be forced. If set to true, the jar will
-     * always be created. If set to false, the jar will only be created when the
-     * sources are newer than the jar.
+     * Whether creating the archive should be forced. If set to true, the jar will always be created. If set to false,
+     * the jar will only be created when the sources are newer than the jar.
      *
      * @since 2.1
      */
@@ -254,8 +251,8 @@ public abstract class AbstractSourceJarMojo
         if ( project.getArtifact().getClassifier() != null )
         {
             getLog().warn( "NOT adding sources to artifacts with classifier as Maven only supports one classifier "
-                               + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
-                               + project.getArtifact().getClassifier() + "] classifier." );
+                + "per artifact. Current artifact [" + project.getArtifact().getId() + "] has a ["
+                + project.getArtifact().getClassifier() + "] classifier." );
 
             return;
         }
@@ -288,8 +285,6 @@ public abstract class AbstractSourceJarMojo
             try
             {
                 archiver.setOutputFile( outputFile );
-
-                archive.setAddMavenDescriptor( false );
                 archive.setForced( forceCreation );
 
                 archiver.createArchive( session, project, archive );
@@ -426,7 +421,7 @@ public abstract class AbstractSourceJarMojo
 
     protected void addDirectory( Archiver archiver, File sourceDirectory, String prefix, String[] includes,
                                  String[] excludes )
-        throws MojoExecutionException
+                                     throws MojoExecutionException
     {
         try
         {
@@ -489,8 +484,8 @@ public abstract class AbstractSourceJarMojo
     }
 
     /**
-     * Combines the user parameter {@link #excludes}, the default excludes from plexus FileUtils,
-     * and the contents of the parameter addionalExcludes.
+     * Combines the user parameter {@link #excludes}, the default excludes from plexus FileUtils, and the contents of
+     * the parameter addionalExcludes.
      *
      * @param additionalExcludes Additional excludes to add to the array
      * @return The combined list of excludes.
