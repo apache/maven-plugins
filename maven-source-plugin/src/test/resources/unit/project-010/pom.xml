@@ -51,7 +51,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.source.stubs.Project010Stub"/>
+          <project implementation="org.apache.maven.plugins.source.stubs.Project010Stub"/>
           <outputDirectory>${basedir}/target/test/unit/project-010/target</outputDirectory>
           <finalName>maven-source-plugin-test-project-010-99.0</finalName>
           <reactorProjects/>

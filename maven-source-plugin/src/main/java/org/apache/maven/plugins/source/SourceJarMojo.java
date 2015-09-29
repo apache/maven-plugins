@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.source;
+package org.apache.maven.plugins.source;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,14 +24,16 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * This plugin bundles all the test sources into a jar archive.
+ * This plugin bundles all the sources into a jar archive.
  *
+ * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
+ * @version $Id$
  * @since 2.0.3
  */
-@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
+@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
 @Execute( phase = LifecyclePhase.GENERATE_SOURCES )
-public class TestSourceJarMojo
-    extends TestSourceJarNoForkMojo
+public class SourceJarMojo
+    extends SourceJarNoForkMojo
 {
     // no op
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.source;
+package org.apache.maven.plugins.source;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,31 +19,19 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * Aggregate sources for all modules in an aggregator project.
+ * This plugin bundles all the test sources into a jar archive.
  *
- * @version $Id$
- * @since 2.0.3
+ * @since 2.2
  */
-@Mojo( name = "aggregate", defaultPhase = LifecyclePhase.PACKAGE, aggregator = true, threadSafe = true )
-@Execute( phase = LifecyclePhase.GENERATE_SOURCES )
-public class AggregatorSourceJarMojo
-    extends SourceJarMojo
+@Mojo( name = "generated-test-jar", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
+@Execute( phase = LifecyclePhase.GENERATE_TEST_SOURCES )
+public class TestSourceGeneratedJarMojo
+    extends TestSourceJarNoForkMojo
 {
-    /**
-     * {@inheritDoc}
-     */
-    public void execute()
-        throws MojoExecutionException
-    {
-        if ( "pom".equals( project.getPackaging() ) )
-        {
-            packageSources( reactorProjects );
-        }
-    }
+    // no op
 }
