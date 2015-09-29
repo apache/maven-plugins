@@ -270,6 +270,11 @@ public class AnalyzeDepMgt
                 //workaround for MNG-2961
                 dependencyArtifact.isSnapshot();
 
+                if ( depFromDepMgt.getVersion() == null )
+                {
+                    continue;
+                }
+
                 if ( !depFromDepMgt.getVersion().equals( dependencyArtifact.getBaseVersion() ) )
                 {
                     mismatchMap.put( dependencyArtifact, depFromDepMgt );
