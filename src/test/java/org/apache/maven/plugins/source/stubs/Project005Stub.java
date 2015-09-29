@@ -1,4 +1,11 @@
-package org.apache.maven.plugin.source.stubs;
+package org.apache.maven.plugins.source.stubs;
+
+import java.io.File;
+import java.util.List;
+
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,19 +27,12 @@ package org.apache.maven.plugin.source.stubs;
  */
 
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.ReaderFactory;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
 
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
  */
-public class Project001Stub
+public class Project005Stub
     extends MavenProjectStub
 {
     private Build build;
@@ -41,7 +41,7 @@ public class Project001Stub
 
     private List testResources;
 
-    public Project001Stub()
+    public Project005Stub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model;
@@ -49,7 +49,7 @@ public class Project001Stub
         try
         {
             model = pomReader.read(
-                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-001/pom.xml" ) ) );
+                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-005/pom.xml" ) ) );
             setModel( model );
 
             setGroupId( model.getGroupId() );
@@ -61,20 +61,8 @@ public class Project001Stub
 
             Build build = new Build();
             build.setFinalName( getArtifactId() + "-" + getVersion() );
-            build.setDirectory( getBasedir() + "/target/test/unit/project-001/target" );
+            build.setDirectory( getBasedir() + "/target/test/unit/project-005/target" );
             setBuild( build );
-
-            String basedir = getBasedir().getAbsolutePath();
-            List compileSourceRoots = new ArrayList();
-            compileSourceRoots.add( basedir + "/target/test-classes/unit/project-001/src/main/java" );
-            setCompileSourceRoots( compileSourceRoots );
-
-            List testCompileSourceRoots = new ArrayList();
-            testCompileSourceRoots.add( basedir + "/target/test-classes/unit/project-001/src/test/java" );
-            setTestCompileSourceRoots( testCompileSourceRoots );
-
-            setResources( model.getBuild().getResources() );
-            setTestResources( model.getBuild().getTestResources() );
 
             SourcePluginArtifactStub artifact =
                 new SourcePluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging(), null );
@@ -119,4 +107,5 @@ public class Project001Stub
     {
         this.testResources = testResources;
     }
+
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.source;
+package org.apache.maven.plugins.source;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,19 +19,19 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.archiver.MavenArchiveConfiguration;
 
 /**
- * This plugin bundles all the test sources into a jar archive.
+ * For backwards compatibility, a custom archiver configuration that defaults to not including the Maven descriptor.
  *
- * @since 2.2
+ * @see <a href="https://issues.apache.org/browse/MSOURCES-81">MSOURCES-81</a>
+ * @since 2.4
  */
-@Mojo( name = "generated-test-jar", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
-@Execute( phase = LifecyclePhase.GENERATE_TEST_SOURCES )
-public class TestSourceGeneratedJarMojo
-    extends TestSourceJarNoForkMojo
+public class SourceArchiveConfiguration
+    extends MavenArchiveConfiguration
 {
-    // no op
+    public SourceArchiveConfiguration()
+    {
+        setAddMavenDescriptor( false );
+    }
 }

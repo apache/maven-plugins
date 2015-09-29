@@ -1,4 +1,8 @@
-package org.apache.maven.plugin.source.stubs;
+package org.apache.maven.plugins.source.stubs;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,20 +23,13 @@ package org.apache.maven.plugin.source.stubs;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.util.ReaderFactory;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
-
-/**
- * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
- */
-public class Project003Stub
+public class Project010Stub
     extends MavenProjectStub
 {
     private Build build;
@@ -41,7 +38,7 @@ public class Project003Stub
 
     private List testResources;
 
-    public Project003Stub()
+    public Project010Stub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model;
@@ -49,38 +46,41 @@ public class Project003Stub
         try
         {
             model = pomReader.read(
-                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-003/pom.xml" ) ) );
+                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ) ) );
             setModel( model );
 
-            setGroupId( model.getGroupId() );
-            setArtifactId( model.getArtifactId() );
-            setVersion( model.getVersion() );
-            setName( model.getName() );
-            setUrl( model.getUrl() );
-            setPackaging( model.getPackaging() );
+            setFile(new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ));
+
+            setGroupId(model.getGroupId());
+            setArtifactId(model.getArtifactId());
+            setVersion(model.getVersion());
+            setName(model.getName());
+            setUrl(model.getUrl());
+            setPackaging(model.getPackaging());
 
             Build build = new Build();
             build.setFinalName( getArtifactId() + "-" + getVersion() );
-            build.setDirectory( getBasedir() + "/target/test/unit/project-003/target" );
-            setBuild( build );
+            build.setDirectory(getBasedir() + "/target/test/unit/project-010/target");
+
+            setBuild(build);
 
             String basedir = getBasedir().getAbsolutePath();
             List compileSourceRoots = new ArrayList();
-            compileSourceRoots.add( basedir + "/target/test-classes/unit/project-003/src/main/java" );
-            setCompileSourceRoots( compileSourceRoots );
+            compileSourceRoots.add( basedir + "/target/test-classes/unit/project-010/src/main/java" );
+            setCompileSourceRoots(compileSourceRoots);
 
             List testCompileSourceRoots = new ArrayList();
-            testCompileSourceRoots.add( basedir + "/target/test-classes/unit/project-003/src/test/java" );
-            setTestCompileSourceRoots( testCompileSourceRoots );
+            testCompileSourceRoots.add(basedir + "/target/test-classes/unit/project-010/src/test/java");
+            setTestCompileSourceRoots(testCompileSourceRoots);
 
-            setResources( model.getBuild().getResources() );
-            setTestResources( model.getBuild().getTestResources() );
+            setResources(model.getBuild().getResources());
+            setTestResources(model.getBuild().getTestResources());
 
             SourcePluginArtifactStub artifact =
                 new SourcePluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging(), null );
-            artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
-            artifact.setType( "jar" );
-            artifact.setBaseVersion( "1.0-SNAPSHOT" );
+            artifact.setArtifactHandler(new DefaultArtifactHandlerStub());
+            artifact.setType("jar");
+            artifact.setBaseVersion("1.0-SNAPSHOT");
             setArtifact( artifact );
 
         }
@@ -119,6 +119,4 @@ public class Project003Stub
     {
         this.testResources = testResources;
     }
-
-
 }

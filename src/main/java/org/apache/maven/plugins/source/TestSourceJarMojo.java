@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.source.stubs;
+package org.apache.maven.plugins.source;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -9,7 +9,7 @@ package org.apache.maven.plugin.source.stubs;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,28 +19,19 @@ package org.apache.maven.plugin.source.stubs;
  * under the License.
  */
 
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * @author pgier
+ * This plugin bundles all the test sources into a jar archive.
+ *
+ * @since 2.0.3
  */
-public class DefaultArtifactHandlerStub
-    extends DefaultArtifactHandler
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
+@Execute( phase = LifecyclePhase.GENERATE_SOURCES )
+public class TestSourceJarMojo
+    extends TestSourceJarNoForkMojo
 {
-    private String language;
-
-    public String getLanguage()
-    {
-        if ( language == null )
-        {
-            language = "java";
-        }
-
-        return language;
-    }
-
-    public void setLanguage( String language )
-    {
-        this.language = language;
-    }
+    // no op
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.source;
+package org.apache.maven.plugins.source;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,19 +19,31 @@ package org.apache.maven.plugin.source;
  * under the License.
  */
 
-import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * For backwards compatibility, a custom archiver configuration that defaults to not including the Maven descriptor.
+ * Aggregate sources for all modules in an aggregator project.
  *
- * @see <a href="https://issues.apache.org/browse/MSOURCES-81">MSOURCES-81</a>
- * @since 2.4
+ * @version $Id$
+ * @since 2.0.3
  */
-public class SourceArchiveConfiguration
-    extends MavenArchiveConfiguration
+@Mojo( name = "aggregate", defaultPhase = LifecyclePhase.PACKAGE, aggregator = true, threadSafe = true )
+@Execute( phase = LifecyclePhase.GENERATE_SOURCES )
+public class AggregatorSourceJarMojo
+    extends SourceJarMojo
 {
-    public SourceArchiveConfiguration()
+    /**
+     * {@inheritDoc}
+     */
+    public void execute()
+        throws MojoExecutionException
     {
-        setAddMavenDescriptor( false );
+        if ( "pom".equals( project.getPackaging() ) )
+        {
+            packageSources( reactorProjects );
+        }
     }
 }

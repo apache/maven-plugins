@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.source;
+package org.apache.maven.plugins.source;
 
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,8 +19,6 @@ package org.apache.maven.plugin.source;
 * under the License.
 */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,6 +27,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 /**
  * @author Stephane Nicoll
