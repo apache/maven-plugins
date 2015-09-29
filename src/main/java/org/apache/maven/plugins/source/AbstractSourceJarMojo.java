@@ -168,7 +168,7 @@ public abstract class AbstractSourceJarMojo
      * Contains the full list of projects in the reactor.
      */
     @Parameter( defaultValue = "${reactorProjects}", readonly = true )
-    protected List reactorProjects;
+    protected List<MavenProject> reactorProjects;
 
     /**
      * Whether creating the archive should be forced. If set to true, the jar will always be created. If set to false,
@@ -358,11 +358,11 @@ public abstract class AbstractSourceJarMojo
                 continue;
             }
 
-            List resourceIncludes = resource.getIncludes();
+            List<String> resourceIncludes = resource.getIncludes();
 
             String[] combinedIncludes = getCombinedIncludes( resourceIncludes );
 
-            List resourceExcludes = resource.getExcludes();
+            List<String> resourceExcludes = resource.getExcludes();
 
             String[] combinedExcludes = getCombinedExcludes( resourceExcludes );
 
@@ -411,6 +411,7 @@ public abstract class AbstractSourceJarMojo
     {
         try
         {
+//            archiver.addFileSet( fileSet );
             archiver.addDirectory( sourceDirectory, includes, excludes );
         }
         catch ( ArchiverException e )
@@ -460,7 +461,7 @@ public abstract class AbstractSourceJarMojo
      * @param additionalIncludes The includes specified in the pom resources section
      * @return The combined array of includes.
      */
-    private String[] getCombinedIncludes( List additionalIncludes )
+    private String[] getCombinedIncludes( List<String> additionalIncludes )
     {
         List<String> combinedIncludes = new ArrayList<String>();
 
@@ -491,7 +492,7 @@ public abstract class AbstractSourceJarMojo
      * @return The combined list of excludes.
      */
 
-    private String[] getCombinedExcludes( List additionalExcludes )
+    private String[] getCombinedExcludes( List<String> additionalExcludes )
     {
         List<String> combinedExcludes = new ArrayList<String>();
 
