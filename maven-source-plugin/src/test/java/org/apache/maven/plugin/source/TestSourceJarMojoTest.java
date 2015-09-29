@@ -59,8 +59,23 @@ public class TestSourceJarMojoTest
 
         // Now make sure that no archive got created
         final File expectedFile = getTestTargetDir( "project-005" );
-        assertFalse( "Test source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
-                     expectedFile.exists() );
+        assertFalse("Test source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
+                expectedFile.exists());
+    }
+
+    public void testIncludeMavenDescriptorWhenExplicitlyConfigured()
+            throws Exception {
+        doTestProjectWithSourceArchive("project-010",
+                new String[]{
+                        "default-configuration.properties", "foo/project010/App.java",
+                        "foo/project010/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+                        "META-INF/maven/", "META-INF/maven/source/",
+                        "META-INF/maven/source/maven-source-plugin-test-project-010/",
+                        "META-INF/maven/source/maven-source-plugin-test-project-010/pom.xml",
+                        "META-INF/maven/source/maven-source-plugin-test-project-010/pom" +
+                                ".properties"
+                },
+                "test-sources");
     }
 
 }

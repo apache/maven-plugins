@@ -48,6 +48,13 @@ under the License.
         <role>MSOURCES-55</role>
       </roles>
     </contributor>
+    <contributor>
+      <name>Peter Lynch</name>
+      <email>plynch@sonatype.com</email>
+      <roles>
+        <role>MSOURCES-81</role>
+      </roles>
+    </contributor>
   </contributors>
 
   <scm>
