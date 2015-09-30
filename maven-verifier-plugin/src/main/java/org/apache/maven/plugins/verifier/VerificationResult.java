@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.verifier;
+package org.apache.maven.plugins.verifier;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

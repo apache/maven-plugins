@@ -1,4 +1,13 @@
-package org.apache.maven.plugin.verifier;
+package org.apache.maven.plugins.verifier;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.verifier.VerificationResult;
+import org.apache.maven.plugins.verifier.VerificationResultPrinter;
+import org.apache.maven.plugins.verifier.VerifierMojo;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,12 +29,6 @@ package org.apache.maven.plugin.verifier;
  */
 
 import junit.framework.TestCase;
-
-import org.apache.maven.plugin.MojoExecutionException;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 public class VerifierMojoTest
     extends TestCase
