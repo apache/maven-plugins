@@ -136,7 +136,6 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.10</version>
             <configuration>
               <goals>
                 <goal>install</goal>
