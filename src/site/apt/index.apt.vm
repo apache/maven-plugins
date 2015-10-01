@@ -31,6 +31,12 @@ ${project.name}
  The Source Plugin creates a jar archive of the source files of the current project. The jar file is, by default,
  created in the project's target directory.
 
+* Important Hint
+
+ Starting with version 3.0.0 of the plugin all properties which could be used via command line
+ have been named based on the following schema <<maven.source.*>>. Further details can be found 
+ in the goal documentations.
+
 * Goals Overview
 
    The Source Plugin has five goals:

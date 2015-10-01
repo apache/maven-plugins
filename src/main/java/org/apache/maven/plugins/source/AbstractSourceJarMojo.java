@@ -125,7 +125,7 @@ public abstract class AbstractSourceJarMojo
     /**
      * Specifies whether or not to attach the artifact to the project
      */
-    @Parameter( property = "attach", defaultValue = "true" )
+    @Parameter( property = "maven.source.attach", defaultValue = "true" )
     private boolean attach;
 
     /**
@@ -134,7 +134,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.0.4
      */
-    @Parameter( property = "source.excludeResources", defaultValue = "false" )
+    @Parameter( property = "maven.source.excludeResources", defaultValue = "false" )
     protected boolean excludeResources;
 
     /**
@@ -142,7 +142,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "source.includePom", defaultValue = "false" )
+    @Parameter( property = "maven.source.includePom", defaultValue = "false" )
     protected boolean includePom;
 
     /**
@@ -176,7 +176,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "source.forceCreation", defaultValue = "false" )
+    @Parameter( property = "maven.source.forceCreation", defaultValue = "false" )
     private boolean forceCreation;
 
     /**
@@ -185,7 +185,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "source.skip", defaultValue = "false" )
+    @Parameter( property = "maven.source.skip", defaultValue = "false" )
     private boolean skipSource;
 
     /**
