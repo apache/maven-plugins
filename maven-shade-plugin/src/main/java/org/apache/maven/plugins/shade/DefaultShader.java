@@ -250,7 +250,7 @@ public class DefaultShader
         getLogger().warn( "Usually this is not harmful and you can skip these warnings," );
         getLogger().warn( "otherwise try to manually exclude artifacts based on" );
         getLogger().warn( "mvn dependency:tree -Ddetail=true and the above output." );
-        getLogger().warn( "See http://docs.codehaus.org/display/MAVENUSER/Shade+Plugin" );
+        getLogger().warn( "See http://maven.apache.org/plugins/maven-shade-plugin/" );
     }
 
     private void logSummaryOfDuplicates( Multimap<Collection<File>, String> overlapping )
