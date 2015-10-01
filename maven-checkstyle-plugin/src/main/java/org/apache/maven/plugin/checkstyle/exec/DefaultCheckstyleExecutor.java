@@ -206,7 +206,7 @@ public class DefaultCheckstyleExecutor
             }
         } );
 
-        checker.setClassloader( projectClassLoader );
+        checker.setClassLoader( projectClassLoader );
 
         checker.setModuleClassLoader( Thread.currentThread().getContextClassLoader() );
 
