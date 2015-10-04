@@ -443,7 +443,7 @@ public class CheckstyleViolationCheckMojo
 
     /**
      * By using this property, you can specify the whole Checkstyle rules
-     * inline directly inside this pom.
+     * inline directly inside this pom. This feature requires Maven 3+.
      *
      * <pre>
      * &lt;plugin&gt;
