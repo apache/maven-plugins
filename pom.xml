@@ -41,9 +41,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/branches/maven-assembly-plugin-2.5/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-assembly-plugin-2.5/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/branches/maven-assembly-plugin-2.5</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/branches/maven-assembly-plugin-2.x/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/branches/maven-assembly-plugin-2.x/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/branches/maven-assembly-plugin-2.x</url>
   </scm>
   <issueManagement>
     <system>jira</system>
