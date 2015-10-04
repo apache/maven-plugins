@@ -60,7 +60,9 @@ under the License.
     <module>maven-antrun-plugin</module>
 
     <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
+    <!-- 
     <module>maven-eclipse-plugin</module>
+     -->
 
     <module>maven-changelog-plugin</module>
     <module>maven-changes-plugin</module>
