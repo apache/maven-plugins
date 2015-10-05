@@ -117,7 +117,7 @@ public class ReaderFormatterTest
 
     private PlexusIoVirtualFileResource dummyResource()
     {
-        return new PlexusIoVirtualFileResource( new File( "fud" ) )
+        return new PlexusIoVirtualFileResource( new File( "fud" ), "fud" )
         {
         };
     }
