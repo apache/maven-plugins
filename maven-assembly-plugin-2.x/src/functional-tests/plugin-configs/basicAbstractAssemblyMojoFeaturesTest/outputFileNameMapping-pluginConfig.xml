@@ -1,0 +1,79 @@
+<!--
+  ~ Copyright 2001-2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <basedir>${basedir}</basedir>
+          <project implementation="org.apache.maven.plugin.assembly.BasicAbstractAssemblyMojoFeaturesTest$TwoDependencyReactorProjectStub">
+            <artifactId>packager</artifactId>
+            <groupId>org.test</groupId>
+            <version>0</version>
+            <depOneArtifactId>test</depOneArtifactId>
+            <depOneGroupId>org.test</depOneGroupId>
+            <depOneVersion>1</depOneVersion>
+            <depOneFile>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/dependencies/test.jar</depOneFile>
+            <depTwoArtifactId>test2</depTwoArtifactId>
+            <depTwoGroupId>org.test.2</depTwoGroupId>
+            <depTwoVersion>2</depTwoVersion>
+            <depTwoFile>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/dependencies/test2.jar</depTwoFile>
+          </project>
+          <!-- 
+          <executedProject implementation="org.apache.maven.plugin.assembly.BasicAbstractAssemblyMojoFeaturesTest$TwoDependencyReactorProjectStub">
+            <artifactId>packager</artifactId>
+            <groupId>org.test</groupId>
+            <version>0</version>
+            <depOneArtifactId>test</depOneArtifactId>
+            <depOneGroupId>org.test</depOneGroupId>
+            <depOneVersion>1</depOneVersion>
+            <depOneFile>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/dependencies/test.jar</depOneFile>
+            <depTwoArtifactId>test2</depTwoArtifactId>
+            <depTwoGroupId>org.test.2</depTwoGroupId>
+            <depTwoVersion>2</depTwoVersion>
+            <depTwoFile>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/dependencies/test2.jar</depTwoFile>
+          </executedProject>
+          -->
+          <descriptors>
+            <descriptor>${basedir}/src/test/resources/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping-assemblyDescriptor.xml</descriptor>
+          </descriptors>
+          <outputDirectory>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/target</outputDirectory>
+          <finalName>basicAbstractAssemblyMojoFeaturesTest-ouputFileNameMapping</finalName>
+          <workDirectory>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/work</workDirectory>
+          <archiverManager implementation="org.apache.maven.plugin.assembly.BasicAbstractAssemblyMojoFeaturesTest$FileLoggingArchiverManagerStub" />
+          <localRepository>${localRepository}</localRepository>
+          <reactorProjects>
+            <reactorProject implementation="org.apache.maven.plugin.assembly.BasicAbstractAssemblyMojoFeaturesTest$TwoDependencyReactorProjectStub">
+              <artifactId>packager</artifactId>
+              <groupId>org.test</groupId>
+              <version>0</version>
+              <depOneArtifactId>test</depOneArtifactId>
+              <depOneGroupId>org.test</depOneGroupId>
+              <depOneVersion>1</depOneVersion>
+              <depOneFile>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/dependencies/test.jar</depOneFile>
+              <depTwoArtifactId>test2</depTwoArtifactId>
+              <depTwoGroupId>org.test.2</depTwoGroupId>
+              <depTwoVersion>2</depTwoVersion>
+              <depTwoFile>${basedir}/target/test-harness/basicAbstractAssemblyMojoFeaturesTest/outputFileNameMapping/dependencies/test2.jar</depTwoFile>
+            </reactorProject>
+          </reactorProjects>
+          <classifier></classifier>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
