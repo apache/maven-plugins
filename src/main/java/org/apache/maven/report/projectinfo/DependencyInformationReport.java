@@ -162,8 +162,11 @@ public final class DependencyInformationReport
             renderDependencyInfo( "Groovy Grape", new Formatter().format( "@Grapes(%n" ).format(
                 "@Grab(group='%s', module='%s', version='%s')%n", groupId, artifactId, version ).format( ")" ) );
 
-            renderDependencyInfo( "Grails",
+            renderDependencyInfo( "Gradle/Grails",
                                   new Formatter().format( "compile '%s:%s:%s'", groupId, artifactId, version ) );
+
+            renderDependencyInfo( "Scala SBT", new Formatter().format(
+                "libraryDependencies += \"%s\" %% \"%s\" %% \"%s\"", groupId, artifactId, version ) );
 
             // Leiningen
 
@@ -177,11 +180,6 @@ public final class DependencyInformationReport
             leiningenDependency.format( " \"%s\"]", version );
 
             renderDependencyInfo( "Leiningen", leiningenDependency );
-
-            // sbt
-
-            renderDependencyInfo( "SBT", new Formatter().format( "libraryDependencies += \"%s\" %% \"%s\" %% \"%s\"",
-                                                                 groupId, artifactId, version ) );
 
             endSection();
         }
