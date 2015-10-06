@@ -126,7 +126,7 @@ public class AnalyzeDepMgt
     {
         boolean foundError = false;
 
-        getLog().info( "Found Resolved Dependency / DependencyManagement mismatches:" );
+        getLog().info( "Found Resolved Dependency/DependencyManagement mismatches:" );
 
         List<Dependency> depMgtDependencies = null;
 
@@ -181,12 +181,12 @@ public class AnalyzeDepMgt
             }
             if ( !foundError )
             {
-                getLog().info( "   None" );
+                getLog().info( "\tNone" );
             }
         }
         else
         {
-            getLog().info( "   Nothing in DepMgt." );
+            getLog().info( "\tNothing in DepMgt." );
         }
 
         return foundError;
@@ -293,7 +293,7 @@ public class AnalyzeDepMgt
         if ( dependencyArtifact == null || dependencyFromDepMgt == null )
         {
             throw new MojoExecutionException(
-                "Invalid params: Artifact:" + dependencyArtifact + " Dependency:" + dependencyFromDepMgt );
+                "Invalid params: Artifact: " + dependencyArtifact + " Dependency: " + dependencyFromDepMgt );
         }
 
         getLog().info( "\tDependency: " + StringUtils.stripEnd( dependencyFromDepMgt.getManagementKey(), ":" ) );
