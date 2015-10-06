@@ -55,6 +55,7 @@ under the License.
 
   <properties>
     <maven.site.path>plugins-archives/${project.artifactId}-LATEST</maven.site.path>
+    <mavenInvokerPluginVersion>2.0.0</mavenInvokerPluginVersion>
   </properties>
 
   <repositories>
@@ -116,7 +117,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>2.0.0</version>
+          <version>${mavenInvokerPluginVersion}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -269,7 +270,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.9</version>
+            <version>${mavenInvokerPluginVersion}</version>
           </plugin>
         </plugins>
       </reporting>
