@@ -209,8 +209,14 @@ public class DependencyStatusSets
             }
 
             String id = outputScope ? artifact.toString() : artifact.getId();
+            String optionalMarker = "";
+            if ( outputScope && artifact.isOptional() )
+            {
+                optionalMarker = " (optional) ";
+            }
 
             artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
+                + optionalMarker
                 + "\n" );
         }
         if ( sort )
