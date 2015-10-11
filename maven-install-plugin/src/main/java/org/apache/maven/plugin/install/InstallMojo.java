@@ -28,14 +28,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.ProjectArtifact;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+import org.apache.maven.shared.artifact.install.ArtifactInstallerException;
 
 /**
  * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle, to the
@@ -65,7 +65,7 @@ public class InstallMojo
 
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> reactorProjects;
-
+    
     /**
      * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
      * set to {@code true} and the build fails, none of the reactor projects is installed.
@@ -77,18 +77,6 @@ public class InstallMojo
     private boolean installAtEnd;
 
     /**
-     * @deprecated either use project.getPackaging() or reactorProjects.get(i).getPackaging()
-     */
-    @Parameter( defaultValue = "${project.packaging}", required = true, readonly = true )
-    protected String packaging;
-
-    /**
-     * @deprecated either use project.getFile() or reactorProjects.get(i).getFile()
-     */
-    @Parameter( defaultValue = "${project.file}", required = true, readonly = true )
-    private File pomFile;
-
-    /**
      * Set this to <code>true</code> to bypass artifact installation. Use this for artifacts that does not need to be
      * installed in the local repository.
      * 
@@ -96,18 +84,6 @@ public class InstallMojo
      */
     @Parameter( property = "maven.install.skip", defaultValue = "false" )
     private boolean skip;
-
-    /**
-     * @deprecated either use project.getArtifact() or reactorProjects.get(i).getArtifact()
-     */
-    @Parameter( defaultValue = "${project.artifact}", required = true, readonly = true )
-    private Artifact artifact;
-
-    /**
-     * @deprecated either use project.getAttachedArtifacts() or reactorProjects.get(i).getAttachedArtifacts()
-     */
-    @Parameter( defaultValue = "${project.attachedArtifacts}", required = true, readonly = true )
-    private List<Artifact> attachedArtifacts;
 
     public void execute()
         throws MojoExecutionException
@@ -163,13 +139,13 @@ public class InstallMojo
         Artifact artifact = project.getArtifact();
         String packaging = project.getPackaging();
         File pomFile = project.getFile();
-        @SuppressWarnings( "unchecked" )
+
         List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
         // TODO: push into transformation
         boolean isPomArtifact = "pom".equals( packaging );
 
-        ArtifactMetadata metadata;
+        ProjectArtifactMetadata metadata;
 
         if ( updateReleaseInfo )
         {
@@ -182,7 +158,9 @@ public class InstallMojo
 
             if ( isPomArtifact )
             {
-                installer.install( pomFile, artifact, localRepository );
+//                installer.install( pomFile, artifact, localRepository );
+                installer.install( session.getProjectBuildingRequest(),
+                                   Collections.<Artifact>singletonList( new ProjectArtifact( project ) ) );
                 installChecksums( artifact, createChecksum );
                 addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
             }
@@ -197,7 +175,8 @@ public class InstallMojo
                 // but not package). We are designing in a proper solution for Maven 2.1
                 if ( file != null && file.isFile() )
                 {
-                    installer.install( file, artifact, localRepository );
+//                    installer.install( file, artifact, localRepository );
+                    installer.install( session.getProjectBuildingRequest(), Collections.singletonList( artifact ) );
                     installChecksums( artifact, createChecksum );
                     addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
                 }
@@ -214,7 +193,8 @@ public class InstallMojo
                         pomArtifact.setRelease( true );
                     }
 
-                    installer.install( pomFile, pomArtifact, localRepository );
+//                    installer.install( pomFile, pomArtifact, localRepository );
+                    installer.install( session.getProjectBuildingRequest(), Collections.singletonList( pomArtifact ) );
                     installChecksums( pomArtifact, createChecksum );
                     addMetaDataFilesForArtifact( pomArtifact, metadataFiles, createChecksum );
                 }
@@ -229,14 +209,15 @@ public class InstallMojo
 
             for ( Artifact attached : attachedArtifacts )
             {
-                installer.install( attached.getFile(), attached, localRepository );
+//                installer.install( attached.getFile(), attached, localRepository );
+                installer.install( session.getProjectBuildingRequest(), Collections.singletonList( attached ) );
                 installChecksums( attached, createChecksum );
                 addMetaDataFilesForArtifact( attached, metadataFiles, createChecksum );
             }
 
             installChecksums( metadataFiles );
         }
-        catch ( ArtifactInstallationException e )
+        catch ( ArtifactInstallerException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }

@@ -70,6 +70,11 @@ public class InstallArtifactStub
         return file;
     }
 
+    public String getType()
+    {
+        return "jar";
+    }
+    
     public ArtifactHandler getArtifactHandler()
     {
         return new DefaultArtifactHandler()

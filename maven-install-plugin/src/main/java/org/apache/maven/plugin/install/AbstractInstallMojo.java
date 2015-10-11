@@ -25,13 +25,15 @@ import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.artifact.install.ArtifactInstaller;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
 import org.apache.maven.shared.utils.io.FileUtils;
 
 /**
@@ -53,6 +55,9 @@ public abstract class AbstractInstallMojo
      */
     @Component
     protected ArtifactInstaller installer;
+    
+    @Component
+    protected RepositoryManager repositoryManager;
 
     /**
      */
@@ -75,6 +80,9 @@ public abstract class AbstractInstallMojo
 
     protected final DualDigester digester = new DualDigester();
 
+    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    protected MavenSession session;
+
     /**
      * Gets the path of the specified artifact within the local repository. Note that the returned path need not exist
      * (yet).
@@ -84,7 +92,7 @@ public abstract class AbstractInstallMojo
      */
     protected File getLocalRepoFile( Artifact artifact )
     {
-        String path = localRepository.pathOf( artifact );
+        String path = repositoryManager.getPathForLocalArtifact( session.getProjectBuildingRequest(), artifact );
         return new File( localRepository.getBasedir(), path );
     }
 

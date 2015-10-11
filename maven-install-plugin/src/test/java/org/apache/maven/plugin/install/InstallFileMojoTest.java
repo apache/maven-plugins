@@ -19,12 +19,25 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.impl.internal.EnhancedLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 import java.io.File;
 import java.io.Reader;
@@ -57,6 +70,11 @@ public class InstallFileMojoTest
         super.setUp();
 
         FileUtils.deleteDirectory( new File( getBasedir() + "/" + LOCAL_REPO ) );
+        
+//        LegacySupport legacySupport = lookup( LegacySupport.class );
+//        RepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
+//        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+//        legacySupport.setSession( new MavenSession( getContainer(), repositorySession, executionRequest, null ) );
     }
 
     public void testInstallFileTestEnvironment()
@@ -65,6 +83,8 @@ public class InstallFileMojoTest
         File testPom = new File( getBasedir(), "target/test-classes/unit/install-file-basic-test/plugin-config.xml" );
 
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assertNotNull( mojo );
     }
@@ -77,6 +97,8 @@ public class InstallFileMojoTest
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assignValuesForParameter( mojo );
 
@@ -89,31 +111,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
-    }
-
-    public void testLayoutInstallFile()
-        throws Exception
-    {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/install-file-layout-test/plugin-config.xml" );
-
-        InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
-
-        assertNotNull( mojo );
-
-        assignValuesForParameter( mojo );
-
-        mojo.setLocalRepositoryPath( new File( getBasedir(), LOCAL_REPO ) );
-
-        mojo.execute();
         
-        File pomFile = (File) getVariableValueFromObject( mojo, "pomFile" );
-        org.codehaus.plexus.util.FileUtils.forceDelete( pomFile );
-
-        File installedArtifact = new File( getBasedir(),
-                                           LOCAL_REPO + legacyGroupId + "/" + "jars" + "/" + artifactId + "-" + version
-                                               + "." + packaging );
-
-        assertTrue( installedArtifact.exists() );
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithClassifier()
@@ -125,6 +124,8 @@ public class InstallFileMojoTest
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assignValuesForParameter( mojo );
 
@@ -139,6 +140,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "-" + classifier + "." + packaging );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithGeneratePom()
@@ -150,6 +153,8 @@ public class InstallFileMojoTest
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assignValuesForParameter( mojo );
 
@@ -185,6 +190,8 @@ public class InstallFileMojoTest
         assertEquals( artifactId, model.getArtifactId() );
 
         assertEquals( version, model.getVersion() );
+
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithPomFile()
@@ -196,6 +203,8 @@ public class InstallFileMojoTest
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assignValuesForParameter( mojo );
 
@@ -214,6 +223,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "." + "pom" );
 
         assertTrue( installedPom.exists() );
+        
+        assertEquals( 5, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithPomAsPackaging()
@@ -225,6 +236,8 @@ public class InstallFileMojoTest
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assignValuesForParameter( mojo );
 
@@ -238,6 +251,8 @@ public class InstallFileMojoTest
             artifactId + "-" + version + "." + "pom" );
 
         assertTrue( installedPom.exists() );
+
+        assertEquals( 4, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testInstallFileWithChecksum()
@@ -249,6 +264,8 @@ public class InstallFileMojoTest
         InstallFileMojo mojo = (InstallFileMojo) lookupMojo( "install-file", testPom );
 
         assertNotNull( mojo );
+        
+        setVariableValueToObject( mojo, "session", createMavenSession() );
 
         assignValuesForParameter( mojo );
 
@@ -281,6 +298,8 @@ public class InstallFileMojoTest
         assertEquals( actualSha1Sum, generatedSha1 );
 
         assertTrue( installedArtifact.exists() );
+        
+        assertEquals( 9, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     private void assignValuesForParameter( Object obj )
@@ -304,5 +323,16 @@ public class InstallFileMojoTest
     private String dotToSlashReplacer( String parameter )
     {
         return parameter.replace( '.', '/' );
+    }
+    
+    private MavenSession createMavenSession()
+    {
+        MavenSession session = mock( MavenSession.class );
+        DefaultRepositorySystemSession repositorySession  = new DefaultRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new EnhancedLocalRepositoryManager( new File( LOCAL_REPO )     ) );
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession( repositorySession );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        return session;
     }
 }

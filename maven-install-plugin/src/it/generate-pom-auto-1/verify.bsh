@@ -25,8 +25,8 @@ import org.apache.maven.plugin.install.*;
 String[] paths =
 {
     "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml",
-    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.md5",
-    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.sha1",
+//    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.md5",
+//    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.sha1",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar.md5",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar.sha1",

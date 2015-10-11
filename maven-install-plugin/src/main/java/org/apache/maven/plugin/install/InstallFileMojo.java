@@ -27,32 +27,36 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.building.DefaultModelBuildingRequest;
+import org.apache.maven.model.building.ModelBuildingRequest;
+import org.apache.maven.model.building.ModelProblem.Severity;
+import org.apache.maven.model.building.ModelProblemCollector;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.model.validation.ModelValidator;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.apache.maven.project.validation.ModelValidationResult;
-import org.apache.maven.project.validation.ModelValidator;
+import org.apache.maven.shared.artifact.install.ArtifactInstallerException;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.WriterFactory;
 import org.apache.maven.shared.utils.io.IOUtil;
@@ -147,21 +151,6 @@ public class InstallFileMojo
     private Boolean generatePom;
 
     /**
-     * The type of remote repository layout to install to. Try <code>legacy</code> for a Maven 1.x-style repository
-     * layout.
-     * 
-     * @since 2.2
-     */
-    @Parameter( property = "repositoryLayout", defaultValue = "default", required = true )
-    private String repositoryLayout;
-
-    /**
-     * Map that contains the repository layouts.
-     */
-    @Component( role = ArtifactRepositoryLayout.class )
-    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
-
-    /**
      * The path for a specific local repository directory. If not specified the local repository path configured in the
      * Maven settings will be used.
      * 
@@ -171,11 +160,11 @@ public class InstallFileMojo
     private File localRepositoryPath;
 
     /**
-     * The component used to validate the user-supplied artifact coordinates.
-     */
+    * The component used to validate the user-supplied artifact coordinates.
+    */
     @Component
     private ModelValidator modelValidator;
-
+    
     /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
@@ -190,25 +179,16 @@ public class InstallFileMojo
             throw new MojoFailureException( message );
         }
 
+        ProjectBuildingRequest buildingRequest = session.getProjectBuildingRequest();
+        
         // ----------------------------------------------------------------------
         // Override the default localRepository variable
         // ----------------------------------------------------------------------
         if ( localRepositoryPath != null )
         {
-            try
-            {
-                ArtifactRepositoryLayout layout = repositoryLayouts.get( repositoryLayout );
-                getLog().debug( "Layout: " + layout.getClass() );
-
-                // noinspection deprecation
-                localRepository =
-                    new DefaultArtifactRepository( localRepository.getId(), localRepositoryPath.toURL().toString(),
-                                                   layout );
-            }
-            catch ( MalformedURLException e )
-            {
-                throw new MojoExecutionException( "MalformedURLException: " + e.getMessage(), e );
-            }
+            buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, localRepositoryPath );
+            
+            getLog().debug( "localRepoPath: " + repositoryManager.getLocalRepositoryBasedir( buildingRequest ) );
         }
 
         if ( pomFile != null )
@@ -303,6 +283,7 @@ public class InstallFileMojo
             throw new MojoFailureException( "Cannot install artifact. "
                 + "Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
         }
+        artifact.setFile( file );
 
         File generatedPomFile = null;
 
@@ -341,12 +322,13 @@ public class InstallFileMojo
         // we don't
         try
         {
-            installer.install( file, artifact, localRepository );
+//            installer.install( file, artifact, localRepository );
+            installer.install( buildingRequest, Collections.singletonList( artifact ) );
             installChecksums( artifact, createChecksum );
             addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
 
         }
-        catch ( ArtifactInstallationException e )
+        catch ( ArtifactInstallerException e )
         {
             throw new MojoExecutionException( "Error installing artifact '" + artifact.getDependencyConflictId()
                 + "': " + e.getMessage(), e );
@@ -363,14 +345,16 @@ public class InstallFileMojo
         if ( sources != null )
         {
             artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
+            artifact.setFile( sources );
             try
             {
-                installer.install( sources, artifact, localRepository );
+//                installer.install( sources, artifact, localRepository );
+                installer.install( buildingRequest, Collections.singletonList( artifact ) );
                 installChecksums( artifact, createChecksum );
                 addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
 
             }
-            catch ( ArtifactInstallationException e )
+            catch ( ArtifactInstallerException e )
             {
                 throw new MojoExecutionException( "Error installing sources " + sources + ": " + e.getMessage(), e );
             }
@@ -379,14 +363,16 @@ public class InstallFileMojo
         if ( javadoc != null )
         {
             artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
+            artifact.setFile( javadoc );
             try
             {
-                installer.install( javadoc, artifact, localRepository );
+//                installer.install( javadoc, artifact, localRepository );
+                installer.install( buildingRequest, Collections.singletonList( artifact ) );                
                 installChecksums( artifact, createChecksum );
                 addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
 
             }
-            catch ( ArtifactInstallationException e )
+            catch ( ArtifactInstallerException e )
             {
                 throw new MojoExecutionException( "Error installing API docs " + javadoc + ": " + e.getMessage(), e );
             }
@@ -474,15 +460,19 @@ public class InstallFileMojo
     {
         Model model = generateModel();
 
-        ModelValidationResult result = modelValidator.validate( model );
+        ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
+        
+        InstallModelProblemCollector problemCollector = new InstallModelProblemCollector();
+        
+        modelValidator.validateEffectiveModel( model, buildingRequest , problemCollector );
 
-        if ( result.getMessageCount() > 0 )
+        if ( problemCollector.getMessageCount() > 0 )
         {
             throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
-                + result.render( "  " ) );
+                + problemCollector.render( "  " ) );
         }
     }
-
+    
     /**
      * Generates a minimal model from the user-supplied artifact information.
      * 
@@ -553,4 +543,41 @@ public class InstallFileMojo
         this.localRepositoryPath = theLocalRepositoryPath;
     }
 
+    
+    private static class InstallModelProblemCollector implements ModelProblemCollector
+    {
+        /** */
+        private static final String NEWLINE = System.getProperty( "line.separator" );
+
+        /** */
+        private List<String> messages = new ArrayList<String>();
+        
+        @Override
+        public void add( Severity severity, String message, InputLocation location, Exception cause )
+        {
+            messages.add( message );
+        }
+
+        public int getMessageCount()
+        {
+            return messages.size();
+        }
+
+        public String render( String indentation )
+        {
+            if ( messages.size() == 0 )
+            {
+                return indentation + "There were no validation errors.";
+            }
+
+            StringBuilder message = new StringBuilder();
+
+            for ( int i = 0; i < messages.size(); i++ )
+            {
+                message.append( indentation + "[" + i + "]  " + messages.get( i ).toString() + NEWLINE );
+            }
+
+            return message.toString();
+        }
+    };
 }
