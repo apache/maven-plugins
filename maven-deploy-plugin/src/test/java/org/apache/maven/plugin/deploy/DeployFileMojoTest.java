@@ -19,14 +19,25 @@ package org.apache.maven.plugin.deploy;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -34,6 +45,8 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 public class DeployFileMojoTest
     extends AbstractMojoTestCase
 {
+    private String LOCAL_REPO = getBasedir() + "/target/local-repo";
+    
     private List<String> expectedFiles;
 
     private List<String> fileList;
@@ -41,6 +54,12 @@ public class DeployFileMojoTest
     private File remoteRepo;
 
     MavenProjectStub projectStub = new MavenProjectStub();
+    
+    @Mock
+    private MavenSession session;
+    
+    @InjectMocks
+    private DeployFileMojo mojo;
     
     public void setUp()
         throws Exception
@@ -62,7 +81,7 @@ public class DeployFileMojoTest
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-test/plugin-config.xml" );
 
-        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
+        AbstractDeployMojo mojo = (AbstractDeployMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
     }
@@ -72,9 +91,17 @@ public class DeployFileMojoTest
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-test/plugin-config.xml" );
 
-        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
+        mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
+        MockitoAnnotations.initMocks( this );
+        
         assertNotNull( mojo );
+        
+        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
         
         setVariableValueToObject( mojo, "project", projectStub );
 
@@ -167,9 +194,17 @@ public class DeployFileMojoTest
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-classifier/plugin-config.xml" );
 
-        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
+        mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
+        MockitoAnnotations.initMocks( this );
+        
         assertNotNull( mojo );
+        
+        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
 
         setVariableValueToObject( mojo, "project", projectStub );
 
@@ -209,9 +244,17 @@ public class DeployFileMojoTest
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-artifact-not-jar/plugin-config.xml" );
 
-        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
+        mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
+        MockitoAnnotations.initMocks( this );
+        
         assertNotNull( mojo );
+        
+        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
 
         setVariableValueToObject( mojo, "project", projectStub );
 
@@ -241,7 +284,7 @@ public class DeployFileMojoTest
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-legacy-repository-layout/plugin-config.xml" );
 
-        DeployFileMojo mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
+        AbstractDeployMojo mojo = (AbstractDeployMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
 
@@ -257,40 +300,16 @@ public class DeployFileMojoTest
 
         assertEquals( "legacy", repositoryLayout );
 
-        mojo.execute();
-
-        File artifactFile = new File( remoteRepo, "deploy-file-legacy-repository-layout/" + groupId + "/jars/" + artifactId + "-" + version + ".jar" );
-
-        assertTrue( artifactFile.exists() );
-
-        //check the remote-repo
-        expectedFiles = new ArrayList<String>();
-        fileList = new ArrayList<String>();
-
-        File repo = new File( remoteRepo, "deploy-file-legacy-repository-layout" );
-
-        File[] files = repo.listFiles();
-
-        for (File file : files) {
-            addFileToList(file, fileList);
+        try
+        {
+            mojo.execute();
+            fail( "legacy is not supported anymore" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertEquals( "Invalid repository layout: legacy", e.getMessage() );
         }
 
-        expectedFiles.add( "org.apache.maven.test" );
-        expectedFiles.add( "jars" );
-        expectedFiles.add( "maven-deploy-file-test-1.0.jar" );
-        expectedFiles.add( "maven-deploy-file-test-1.0.jar.md5" );
-        expectedFiles.add( "maven-deploy-file-test-1.0.jar.sha1" );
-        expectedFiles.add( "poms" );
-        expectedFiles.add( "maven-deploy-file-test-1.0.pom" );
-        expectedFiles.add( "maven-deploy-file-test-1.0.pom.md5" );
-        expectedFiles.add( "maven-deploy-file-test-1.0.pom.sha1" );
-        expectedFiles.add( "maven-metadata.xml" );
-        expectedFiles.add( "maven-metadata.xml.md5" );
-        expectedFiles.add( "maven-metadata.xml.sha1" );
-
-        assertEquals( expectedFiles.size(), fileList.size() );
-
-        assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );
     }
 
     private void addFileToList( File file, List<String> fileList )

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -34,14 +35,19 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.building.DefaultModelBuildingRequest;
+import org.apache.maven.model.building.ModelBuildingRequest;
+import org.apache.maven.model.building.ModelProblemCollector;
+import org.apache.maven.model.building.ModelProblem.Severity;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.model.validation.ModelValidator;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -50,8 +56,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.apache.maven.project.validation.ModelValidationResult;
-import org.apache.maven.project.validation.ModelValidator;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -145,6 +150,7 @@ public class DeployFileMojo
     /**
      * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
      */
+    @Deprecated
     @Parameter( property = "repositoryLayout", defaultValue = "default" )
     private String repositoryLayout;
 
@@ -314,7 +320,7 @@ public class DeployFileMojo
         ArtifactRepositoryLayout layout = getLayout( repositoryLayout );
 
         ArtifactRepository deploymentRepository =
-            repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
+            createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
 
         String protocol = deploymentRepository.getProtocol();
 
@@ -354,14 +360,13 @@ public class DeployFileMojo
 
         project.setArtifact( artifact );
 
-        try
-        {
-            deploy( file, artifact, deploymentRepository, getLocalRepository(), getRetryFailedDeploymentCount() );
-        }
-        catch ( ArtifactDeploymentException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+        artifact.setFile( file );
+        
+        artifact.setRepository( deploymentRepository );
+        
+        List<Artifact> deployableArtifacts = new ArrayList<Artifact>(); 
+        
+        deployableArtifacts.add( artifact );
 
         if ( sources != null )
         {
@@ -455,23 +460,21 @@ public class DeployFileMojo
             }
         }
 
-        @SuppressWarnings( "unchecked" )
         List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
         for ( Artifact attached : attachedArtifacts )
         {
-            try
-            {
-                deploy( attached.getFile(), attached, deploymentRepository, getLocalRepository(),
-                        getRetryFailedDeploymentCount() );
-            }
-            catch ( ArtifactDeploymentException e )
-            {
-                throw new MojoExecutionException( "Error deploying attached artifact " + attached.getFile() + ": "
-                    + e.getMessage(), e );
-            }
+            deployableArtifacts.add( attached );
         }
 
+        try
+        {
+            deploy( deployableArtifacts, deploymentRepository, getLocalRepository(), getRetryFailedDeploymentCount() );
+        }
+        catch ( ArtifactDeployerException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
     }
 
     /**
@@ -598,12 +601,16 @@ public class DeployFileMojo
     {
         Model model = generateModel();
 
-        ModelValidationResult result = modelValidator.validate( model );
+        ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
 
-        if ( result.getMessageCount() > 0 )
+        DeployModelProblemCollector problemCollector = new DeployModelProblemCollector();
+        
+        modelValidator.validateEffectiveModel( model, buildingRequest, problemCollector );
+
+        if ( problemCollector.getMessageCount() > 0 )
         {
             throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
-                + result.render( "  " ) );
+                + problemCollector.render( "  " ) );
         }
     }
 
@@ -687,4 +694,41 @@ public class DeployFileMojo
     {
         this.classifier = classifier;
     }
+    
+    private static class DeployModelProblemCollector implements ModelProblemCollector
+    {
+        /** */
+        private static final String NEWLINE = System.getProperty( "line.separator" );
+
+        /** */
+        private List<String> messages = new ArrayList<String>();
+        
+        @Override
+        public void add( Severity severity, String message, InputLocation location, Exception cause )
+        {
+            messages.add( message );
+        }
+
+        public int getMessageCount()
+        {
+            return messages.size();
+        }
+
+        public String render( String indentation )
+        {
+            if ( messages.size() == 0 )
+            {
+                return indentation + "There were no validation errors.";
+            }
+
+            StringBuilder message = new StringBuilder();
+
+            for ( int i = 0; i < messages.size(); i++ )
+            {
+                message.append( indentation + "[" + i + "]  " + messages.get( i ).toString() + NEWLINE );
+            }
+
+            return message.toString();
+        }
+    };
 }

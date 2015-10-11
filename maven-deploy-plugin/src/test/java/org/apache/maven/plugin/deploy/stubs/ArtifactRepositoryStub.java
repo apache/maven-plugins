@@ -25,9 +25,10 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.plugin.testing.stubs.StubArtifactRepository;
 
 public class ArtifactRepositoryStub
-    implements ArtifactRepository
+    extends StubArtifactRepository
 {
     private boolean blacklisted;
     
@@ -36,6 +37,16 @@ public class ArtifactRepositoryStub
     private String url;
     
     private String basedir = System.getProperty( "basedir" );
+    
+    public ArtifactRepositoryStub()
+    {
+        super( null );
+    }
+    
+    public ArtifactRepositoryStub( String dir )
+    {
+        super( dir );
+    }
 
     public String pathOf( Artifact artifact )
     {
