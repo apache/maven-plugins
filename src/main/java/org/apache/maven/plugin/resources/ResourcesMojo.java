@@ -196,6 +196,8 @@ public class ResourcesMojo
     protected List<String> delimiters;
 
     /**
+     * Use default delimiters in addition to custom delimiters, if any.
+     *
      * @since 2.4
      */
     @Parameter( defaultValue = "true" )
