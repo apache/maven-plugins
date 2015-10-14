@@ -181,15 +181,6 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
-        <!--
-          ! TODO: Can be removed if we upgrade to a new parent version
-          ! which contains the definition.
-        -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-invoker-plugin</artifactId>
-          <version>1.10</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
