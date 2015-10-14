@@ -219,7 +219,7 @@ public class MinijarFilter
     public void finished()
     {
         int classesTotal = classesRemoved + classesKept;
-        if ( classesTotal == 0 )
+        if ( classesTotal != 0 )
         {
             log.info( "Minimized " + classesTotal + " -> " + classesKept + " (" + 100 * classesKept / classesTotal
                 + "%)" );
