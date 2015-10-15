@@ -55,6 +55,16 @@ public class MinijarFilter
 
     private int classesRemoved;
 
+    //[MSHADE-209] This is introduced only for testing purposes which shows
+    // there is something wrong with the design of this class. (SoC?)
+    // unfortunately i don't have a better idea at the moment.
+    MinijarFilter( int classesKept, int classesRemoved, Log log )
+    {
+        this.classesKept = classesKept;
+        this.classesRemoved = classesRemoved;
+        this.log = log;
+    }
+
     /**
      * @param project {@link MavenProject}
      * @param log {@link Log}
@@ -73,7 +83,6 @@ public class MinijarFilter
      * @throws IOException in case of errors.
      * @since 1.6
      */
-    @SuppressWarnings( { "unchecked" } )
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
@@ -112,9 +121,8 @@ public class MinijarFilter
         {
             log.warn( dependency.getFile()
                 + " could not be unpacked/read for minimization; dependency is probably malformed." );
-            IOException ioe =
-                new IOException( "Dependency " + dependency.toString() + " in file " + dependency.getFile()
-                    + " could not be unpacked. File is probably corrupt" );
+            IOException ioe = new IOException( "Dependency " + dependency.toString() + " in file "
+                + dependency.getFile() + " could not be unpacked. File is probably corrupt" );
             ioe.initCause( e );
             throw ioe;
         }
