@@ -848,6 +848,13 @@ public abstract class AbstractDeployMojo
             final char[] chars = uriString.toCharArray();
             final StringBuilder uri = new StringBuilder( chars.length );
 
+            // MSITE-750: wagon dav: pseudo-protocol
+            if ( uriString.startsWith( "dav:http" ) )
+            {
+                // transform dav:http to dav-http
+                chars[3] = '-';
+            }
+
             for ( char c : chars )
             {
                 if ( ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' )
