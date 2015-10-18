@@ -22,6 +22,7 @@ package org.apache.maven.plugin.deploy.stubs;
 import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
@@ -32,6 +33,13 @@ public class ArtifactDeployerStub
 
     @Override
     public void deploy( ProjectBuildingRequest request, Collection<Artifact> mavenArtifacts )
+        throws ArtifactDeployerException
+    {
+        // does nothing
+    }
+
+    @Override
+    public void deploy( ProjectBuildingRequest arg0, ArtifactRepository arg1, Collection<Artifact> arg2 )
         throws ArtifactDeployerException
     {
         // does nothing

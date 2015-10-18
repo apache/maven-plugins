@@ -373,12 +373,22 @@ public class DeployFileMojo
 
         if ( sources != null )
         {
-            projectHelper.attachArtifact( project, "jar", "sources", sources );
+            Artifact sourcesArtifact =
+                artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
+
+            sourcesArtifact.setFile( sources );
+
+            deployableArtifacts.add( sourcesArtifact );
         }
 
         if ( javadoc != null )
         {
-            projectHelper.attachArtifact( project, "jar", "javadoc", javadoc );
+            Artifact javadocArtifact =
+                artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
+
+            javadocArtifact.setFile( javadoc );
+
+            deployableArtifacts.add( javadocArtifact );
         }
 
         if ( files != null )

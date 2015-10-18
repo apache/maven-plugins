@@ -155,7 +155,7 @@ public abstract class AbstractDeployMojo
                                        + retryFailedDeploymentCounter );
                 }
                 
-                getDeployer().deploy( session.getProjectBuildingRequest(), artifacts );
+                getDeployer().deploy( session.getProjectBuildingRequest(), deploymentRepository, artifacts );
                 exception = null;
                 break;
             }

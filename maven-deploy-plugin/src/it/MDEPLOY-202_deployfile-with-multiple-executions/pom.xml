@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+  license agreements. See the NOTICE file distributed with this work for additional 
+  information regarding copyright ownership. The ASF licenses this file to 
+  you under the Apache License, Version 2.0 (the "License"); you may not use 
+  this file except in compliance with the License. You may obtain a copy of 
+  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+  by applicable law or agreed to in writing, software distributed under the 
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+  OF ANY KIND, either express or implied. See the License for the specific 
+  language governing permissions and limitations under the License. -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.its.mdeploy-170</groupId>
+  <artifactId>configperproject</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+
+  <description>
+    Tests file deployment with multiple execution blocks
+  </description>
+
+  <url>https://issues.apache.org/jira/browse/MDEPLOY-202</url>
+
+  <properties>
+    <maven.test.skip>true</maven.test.skip>
+    
+    <downloaded>lib</downloaded>
+    <org.eclipse.osgi>1.0</org.eclipse.osgi>
+    <org.eclipse.equinox.common>1.0</org.eclipse.equinox.common>
+  </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>it</id>
+      <url>file:///${basedir}/target/repo</url>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <url>file:target/repo</url>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>deploy-equinox-snapshots</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>deploy-osgi</id>
+                <goals>
+                  <goal>deploy-file</goal>
+                </goals>
+                <phase>deploy</phase>
+                <configuration>
+                  <file>${downloaded}/org.eclipse.osgi_${org.eclipse.osgi}.jar</file>
+                  <sources>${downloaded}/org.eclipse.osgi.source_${org.eclipse.osgi}.jar</sources>
+                  <pomFile>${project.build.outputDirectory}/org.eclipse.osgi.pom</pomFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>deploy-equinox-common</id>
+                <goals>
+                  <goal>deploy-file</goal>
+                </goals>
+                <phase>deploy</phase>
+                <configuration>
+                  <file>${downloaded}/org.eclipse.equinox.common_${org.eclipse.equinox.common}.jar</file>
+                  <sources>${downloaded}/org.eclipse.equinox.common.source_${org.eclipse.equinox.common}.jar</sources>
+                  <pomFile>${project.build.outputDirectory}/org.eclipse.equinox.common.pom</pomFile>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
