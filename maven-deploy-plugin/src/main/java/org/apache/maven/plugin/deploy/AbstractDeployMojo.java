@@ -61,11 +61,6 @@ public abstract class AbstractDeployMojo
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
-     */
-    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
-    private ArtifactRepository localRepository;
-
-    /**
      * Flag whether Maven is currently in online/offline mode.
      */
     @Parameter( defaultValue = "${settings.offline}", readonly = true )
@@ -99,16 +94,6 @@ public abstract class AbstractDeployMojo
     public void setDeployer( ArtifactDeployer deployer )
     {
         this.deployer = deployer;
-    }
-
-    public ArtifactRepository getLocalRepository()
-    {
-        return localRepository;
-    }
-
-    public void setLocalRepository( ArtifactRepository localRepository )
-    {
-        this.localRepository = localRepository;
     }
 
     void failIfOffline()
@@ -153,7 +138,7 @@ public abstract class AbstractDeployMojo
      * @throws ArtifactDeployerException if an error occurred deploying the artifact
      */
     protected void deploy( Collection<Artifact> artifacts, ArtifactRepository deploymentRepository,
-                           ArtifactRepository localRepository, int retryFailedDeploymentCount )
+                           int retryFailedDeploymentCount )
         throws ArtifactDeployerException
     {
 
@@ -199,5 +184,10 @@ public abstract class AbstractDeployMojo
     {
         return new MavenArtifactRepository( id, url, layout, new ArtifactRepositoryPolicy(),
                                             new ArtifactRepositoryPolicy() );
+    }
+    
+    protected final MavenSession getSession()
+    {
+        return session;
     }
 }

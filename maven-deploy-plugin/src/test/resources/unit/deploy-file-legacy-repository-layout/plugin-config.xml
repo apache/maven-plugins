@@ -31,7 +31,6 @@ under the License.
           <repositoryId>deploy-test</repositoryId>
           <url>file://${basedir}/target/remote-repo/deploy-file-legacy-repository-layout</url>
           <uniqueVersion>true</uniqueVersion>
-          <localRepository>${localRepository}</localRepository>
           <repositoryLayout>legacy</repositoryLayout>
           <generatePom>true</generatePom>
         </configuration>

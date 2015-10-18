@@ -35,7 +35,6 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.InputLocation;
@@ -43,8 +42,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.DefaultModelBuildingRequest;
 import org.apache.maven.model.building.ModelBuildingRequest;
-import org.apache.maven.model.building.ModelProblemCollector;
 import org.apache.maven.model.building.ModelProblem.Severity;
+import org.apache.maven.model.building.ModelProblemCollector;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.model.validation.ModelValidator;
@@ -57,6 +56,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
+import org.apache.maven.shared.artifact.repository.RepositoryManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -211,7 +211,10 @@ public class DeployFileMojo
      */
     @Parameter( property = "files" )
     private String files;
-
+    
+    @Component
+    private RepositoryManager repoManager;
+    
     void initProperties()
         throws MojoExecutionException
     {
@@ -343,12 +346,12 @@ public class DeployFileMojo
         {
             if ( pomFile != null )
             {
-                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
+                ProjectArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pomFile );
                 artifact.addMetadata( metadata );
             }
             else if ( generatePom )
             {
-                ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, generatePomFile() );
+                ProjectArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, generatePomFile() );
                 artifact.addMetadata( metadata );
             }
         }
@@ -469,7 +472,7 @@ public class DeployFileMojo
 
         try
         {
-            deploy( deployableArtifacts, deploymentRepository, getLocalRepository(), getRetryFailedDeploymentCount() );
+            deploy( deployableArtifacts, deploymentRepository, getRetryFailedDeploymentCount() );
         }
         catch ( ArtifactDeployerException e )
         {
@@ -486,8 +489,8 @@ public class DeployFileMojo
      */
     private File getLocalRepoFile( Artifact artifact )
     {
-        String path = getLocalRepository().pathOf( artifact );
-        return new File( getLocalRepository().getBasedir(), path );
+        String path = repoManager.getPathForLocalArtifact( getSession().getProjectBuildingRequest(), artifact );
+        return new File( repoManager.getLocalRepositoryBasedir( getSession().getProjectBuildingRequest() ), path );
     }
 
     /**
@@ -731,4 +734,5 @@ public class DeployFileMojo
             return message.toString();
         }
     };
+
 }

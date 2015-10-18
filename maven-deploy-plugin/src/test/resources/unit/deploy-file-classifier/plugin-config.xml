@@ -31,7 +31,6 @@ under the License.
           <repositoryId>deploy-test</repositoryId>
           <url>file://${basedir}/target/remote-repo/deploy-file-classifier</url>
           <uniqueVersion>true</uniqueVersion>
-          <localRepository>${localRepository}</localRepository>
           <classifier>bin</classifier>
           <repositoryLayout>default</repositoryLayout>
           <generatePom>true</generatePom>

@@ -30,7 +30,6 @@ under the License.
           <repositoryId>deploy-test</repositoryId>
           <url>file://${basedir}/target/remote-repo/deploy-file-artifact-not-jar</url>
           <uniqueVersion>true</uniqueVersion>
-          <localRepository>${localRepository}</localRepository>
           <repositoryLayout>default</repositoryLayout>
           <generatePom>true</generatePom>
         </configuration>
