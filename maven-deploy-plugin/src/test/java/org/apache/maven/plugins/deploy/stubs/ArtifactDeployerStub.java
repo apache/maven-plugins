@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.deploy.stubs;
+package org.apache.maven.plugins.deploy.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,17 +19,29 @@ package org.apache.maven.plugin.deploy.stubs;
  * under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import java.util.Collection;
 
-public class MavenProjectStub
-    extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
+
+public class ArtifactDeployerStub
+    implements ArtifactDeployer
 {
 
-    private ArtifactRepositoryStub deploymentRepository;
-
-    public ArtifactRepository getDistributionManagementArtifactRepository()
+    @Override
+    public void deploy( ProjectBuildingRequest request, Collection<Artifact> mavenArtifacts )
+        throws ArtifactDeployerException
     {
-        return deploymentRepository;
+        // does nothing
     }
 
+    @Override
+    public void deploy( ProjectBuildingRequest arg0, ArtifactRepository arg1, Collection<Artifact> arg2 )
+        throws ArtifactDeployerException
+    {
+        // does nothing
+    }
 }

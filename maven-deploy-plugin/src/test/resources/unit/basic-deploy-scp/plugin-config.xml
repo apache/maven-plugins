@@ -23,15 +23,15 @@ under the License.
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.deploy.stubs.MavenProjectStub">
+          <project implementation="org.apache.maven.plugins.deploy.stubs.MavenProjectStub">
             <file>${basedir}/src/test/resources/unit/basic-deploy-scp/plugin-config.xml</file>
             <packaging>jar</packaging>
-            <artifact implementation="org.apache.maven.plugin.deploy.stubs.DeployArtifactStub" />
+            <artifact implementation="org.apache.maven.plugins.deploy.stubs.DeployArtifactStub" />
             <attachedArtifacts />
-            <deploymentRepository implementation="org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub2" />
+            <deploymentRepository implementation="org.apache.maven.plugins.deploy.stubs.ArtifactRepositoryStub2" />
           </project>
           <updateReleaseInfo>false</updateReleaseInfo>
-          <deployer implementation="org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub" />
+          <deployer implementation="org.apache.maven.plugins.deploy.stubs.ArtifactDeployerStub" />
         </configuration>
       </plugin>
     </plugins>

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.deploy;
+package org.apache.maven.plugins.deploy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,9 +35,9 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.deploy.stubs.ArtifactDeployerStub;
-import org.apache.maven.plugin.deploy.stubs.ArtifactRepositoryStub;
-import org.apache.maven.plugin.deploy.stubs.DeployArtifactStub;
+import org.apache.maven.plugins.deploy.stubs.ArtifactDeployerStub;
+import org.apache.maven.plugins.deploy.stubs.ArtifactRepositoryStub;
+import org.apache.maven.plugins.deploy.stubs.DeployArtifactStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;

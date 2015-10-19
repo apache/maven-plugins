@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.deploy.stubs;
+package org.apache.maven.plugins.deploy.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,29 +19,20 @@ package org.apache.maven.plugin.deploy.stubs;
  * under the License.
  */
 
-import java.util.Collection;
+import java.io.File;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
-
-public class ArtifactDeployerStub
-    implements ArtifactDeployer
+public class AttachedArtifactStub
+    extends DeployArtifactStub
 {
-
-    @Override
-    public void deploy( ProjectBuildingRequest request, Collection<Artifact> mavenArtifacts )
-        throws ArtifactDeployerException
+    public String getArtifactId()
     {
-        // does nothing
+        return "attached-artifact-test-0";
     }
-
-    @Override
-    public void deploy( ProjectBuildingRequest arg0, ArtifactRepository arg1, Collection<Artifact> arg2 )
-        throws ArtifactDeployerException
+    
+    public File getFile()
     {
-        // does nothing
-    }
+        return new File( System.getProperty( "basedir" ), 
+            "target/test-classes/unit/basic-deploy-with-attached-artifacts/" +
+            "target/deploy-test-file-1.0-SNAPSHOT.jar" ); 
+    }    
 }
