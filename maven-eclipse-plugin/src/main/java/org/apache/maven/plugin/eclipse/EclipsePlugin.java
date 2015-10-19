@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1352,7 +1353,7 @@ public class EclipsePlugin
 
         // build a list of UNIQUE source dirs (both src and resources) to be
         // used in classpath and wtpmodules
-        EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory );
+        EclipseSourceDir[] sourceDirs = buildDirectoryList( executedProject, eclipseProjectDir, buildOutputDirectory, linkedResources );
 
         EclipseWriterConfig config = new EclipseWriterConfig();
 
@@ -1625,7 +1626,7 @@ public class EclipsePlugin
         // CHECKSTYLE_ON: MagicNumber
     }
 
-    public final EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, File buildOutputDirectory )
+    public final EclipseSourceDir[] buildDirectoryList( MavenProject project, File basedir, File buildOutputDirectory, List<LinkedResource> linkedResources)
         throws MojoExecutionException
     {
         File projectBaseDir = project.getFile().getParentFile();
@@ -1684,6 +1685,29 @@ public class EclipsePlugin
             directories.addAll( mainDirectories );
             directories.addAll( testDirectories );
         }
+        
+        if (linkedResources != null && linkedResources.size() > 0)
+        {
+        	//Check if there are source directories outside the basedir and if there is a matching linkedResource, if so replace the full path with the linked resource
+        	String basedirPath = IdeUtils.getCanonicalPath( basedir );
+        	for (EclipseSourceDir eclipseSourceDir : (Collection<EclipseSourceDir>) directories)
+        	{
+        		//check if path is absolute
+        		if (eclipseSourceDir.getPath().startsWith("/"))
+        		{
+        			//See if there are any resources which match the path
+        			for (LinkedResource linkedResource : linkedResources)
+        			{
+        				if (eclipseSourceDir.getPath().startsWith(IdeUtils.getCanonicalPath(new File(linkedResource.getLocationURI()))))
+        				{
+        					eclipseSourceDir.setPath(linkedResource.getName() + "/" + eclipseSourceDir.getPath().substring(IdeUtils.getCanonicalPath(new File(linkedResource.getLocationURI())).length()));
+        					break;
+        				}
+        			}
+        		}
+        	}
+        }
+        
         if ( ajdt )
         {
             extractAspectDirs( directories, project, basedir, projectBaseDir, testOutput );
