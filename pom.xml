@@ -67,6 +67,8 @@
     <mavenVersion>3.0</mavenVersion>
     <currentVersion>${project.version}</currentVersion>
     <asmVersion>5.0.2</asmVersion>
+    <maven.compiler.source>1.5</maven.compiler.source>
+    <maven.compiler.target>1.5</maven.compiler.target>
   </properties>
 
   <contributors>
