@@ -20,7 +20,10 @@ def buildLog = new File(basedir, 'build.log');
 assert buildLog.exists()
 
 def LS = System.getProperty("line.separator") 
-assert buildLog.text.contains('<properties>' + LS +
-'    <maven.compiler.source>1.6</maven.compiler.source>' + LS +
-'    <maven.compiler.target>1.6</maven.compiler.target>' + LS +
-'  </properties>')
+assert buildLog.text.find(
+'(?s)' +
+'  <properties>' + LS +
+'    <maven\\.compiler\\.source>1\\.6</maven\\.compiler\\.source>' + LS +
+'    <maven\\.compiler\\.target>1\\.6</maven\\.compiler\\.target>' + LS +
+'.*' +
+'  </properties>') != null
