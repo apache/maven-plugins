@@ -24,6 +24,7 @@ under the License.
     <proxy>
       <id>deep-clone</id>
       <active>false</active>
+      <host>proxy-host</host>
       <password>proxy-password</password>
     </proxy>
   </proxies>
