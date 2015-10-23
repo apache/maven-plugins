@@ -23,7 +23,8 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.collections.PropertiesConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.apache.commons.lang.ClassUtils;
+
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -485,7 +486,7 @@ public class EvaluateMojo
             {
                 Object elt = list.iterator().next();
 
-                String name = StringUtils.lowercaseFirstLetter( ClassUtils.getShortClassName( elt.getClass() ) );
+                String name = StringUtils.lowercaseFirstLetter( elt.getClass().getSimpleName() );
                 currentXStream.alias( pluralize( name ), List.class );
             }
             else
@@ -605,7 +606,7 @@ public class EvaluateMojo
                         try
                         {
                             Class<?> clazz = ClassUtils.getClass( name );
-                            String alias = StringUtils.lowercaseFirstLetter( ClassUtils.getShortClassName( clazz ) );
+                            String alias = StringUtils.lowercaseFirstLetter( clazz.getSimpleName() );
                             xstreamObject.alias( alias, clazz );
                             if ( !clazz.equals( Model.class ) )
                             {
