@@ -122,10 +122,11 @@ public class GitHubDownloader
         this.githubRepo = urlPathParts[1];
     }
 
-    private Issue createIssue( org.eclipse.egit.github.core.Issue githubIssue )
+    protected Issue createIssue( org.eclipse.egit.github.core.Issue githubIssue )
     {
         Issue issue = new Issue();
 
+        issue.setKey( String.valueOf( githubIssue.getNumber() ) );
         issue.setId( String.valueOf( githubIssue.getNumber() ) );
 
         issue.setLink( this.githubIssueURL + githubIssue.getNumber() );
@@ -148,7 +149,7 @@ public class GitHubDownloader
 
         issue.setTitle( githubIssue.getTitle() );
 
-        issue.setSummary( githubIssue.getTitle() );
+        issue.setSummary( githubIssue.getBody() );
 
         if ( githubIssue.getMilestone() != null )
         {
