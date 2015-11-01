@@ -94,12 +94,7 @@ public class ComponentsXmlArchiverFileFilter
                 final String key = role + roleHint;
                 if ( !components.containsKey( key ) )
                 {
-                    System.out.println( "Adding " + key );
                     components.put( key, component );
-                }
-                else
-                {
-                    System.out.println( "Component: " + key + " is already defined. Skipping." );
                 }
             }
         }
