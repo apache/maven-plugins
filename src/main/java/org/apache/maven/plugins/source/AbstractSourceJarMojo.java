@@ -61,7 +61,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter
+    @Parameter( property = "maven.source.includes" )
     private String[] includes;
 
     /**
@@ -70,7 +70,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter
+    @Parameter( property = "maven.source.excludes" )
     private String[] excludes;
 
     /**
@@ -79,7 +79,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter( property = "maven.source.useDefaultExcludes", defaultValue = "true" )
     private boolean useDefaultExcludes;
 
     /**
@@ -119,7 +119,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( property = "maven.source.useDefaultManifestFile", defaultValue = "false" )
     private boolean useDefaultManifestFile;
 
     /**
@@ -154,14 +154,14 @@ public abstract class AbstractSourceJarMojo
     /**
      * The directory where the generated archive file will be put.
      */
-    @Parameter( defaultValue = "${project.build.directory}" )
+    @Parameter( property = "maven.source.outputDirectory", defaultValue = "${project.build.directory}" )
     protected File outputDirectory;
 
     /**
      * The filename to be used for the generated archive file. For the source:jar goal, "-sources" is appended to this
      * filename. For the source:test-jar goal, "-test-sources" is appended.
      */
-    @Parameter( defaultValue = "${project.build.finalName}" )
+    @Parameter( property = "maven.source.finalName", defaultValue = "${project.build.finalName}" )
     protected String finalName;
 
     /**
@@ -411,7 +411,7 @@ public abstract class AbstractSourceJarMojo
     {
         try
         {
-//            archiver.addFileSet( fileSet );
+            // archiver.addFileSet( fileSet );
             archiver.addDirectory( sourceDirectory, includes, excludes );
         }
         catch ( ArchiverException e )
