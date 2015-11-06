@@ -59,7 +59,7 @@ public class JavadocJarDefaultMavenProjectStub
         setArtifact( artifact );
 
         Build build = new Build();
-        build.setFinalName( "javadocjar-archive-config" );
+        build.setFinalName( "javadocjar-default-config" );
         build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-default/target" );
         setBuild( build );
 
