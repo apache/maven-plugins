@@ -27,10 +27,8 @@ import org.apache.maven.archiver.MavenArchiveConfiguration;
  * @see <a href="https://issues.apache.org/browse/MJAVADOC-431">MJAVADOC-431</a>
  */
 public class JavadocArchiveConfiguration
-        extends MavenArchiveConfiguration
-{
-    public JavadocArchiveConfiguration()
-    {
+        extends MavenArchiveConfiguration {
+    public JavadocArchiveConfiguration() {
         setAddMavenDescriptor( false );
     }
 }

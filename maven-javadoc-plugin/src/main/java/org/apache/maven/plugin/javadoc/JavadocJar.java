@@ -49,15 +49,14 @@ import java.util.Locale;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE,
-                threadSafe = true )
+@Mojo(name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE,
+        threadSafe = true)
 public class JavadocJar
-    extends AbstractJavadocMojo
-{
+        extends AbstractJavadocMojo {
     /**
      * Includes all generated Javadoc files
      */
-    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
+    private static final String[] DEFAULT_INCLUDES = new String[]{"**/**"};
 
     /**
      * Excludes all processing files.
@@ -69,8 +68,8 @@ public class JavadocJar
      * @see AbstractJavadocMojo#FILES_FILE_NAME
      */
     private static final String[] DEFAULT_EXCLUDES =
-        new String[]{ DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME,
-            FILES_FILE_NAME };
+            new String[]{DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME,
+                    FILES_FILE_NAME};
 
     // ----------------------------------------------------------------------
     // Mojo components
@@ -87,7 +86,7 @@ public class JavadocJar
      *
      * @since 2.5
      */
-    @Component( role = Archiver.class, hint = "jar" )
+    @Component(role = Archiver.class, hint = "jar")
     private JarArchiver jarArchiver;
 
     // ----------------------------------------------------------------------
@@ -100,27 +99,27 @@ public class JavadocJar
      *
      * @deprecated
      */
-    @Parameter( property = "destDir" )
+    @Parameter(property = "destDir")
     private File destDir;
 
     /**
      * Specifies the directory where the generated jar file will be put.
      */
-    @Parameter( property = "project.build.directory" )
+    @Parameter(property = "project.build.directory")
     private String jarOutputDirectory;
 
     /**
      * Specifies the filename that will be used for the generated jar file. Please note that <code>-javadoc</code>
      * or <code>-test-javadoc</code> will be appended to the file name.
      */
-    @Parameter( property = "project.build.finalName" )
+    @Parameter(property = "project.build.finalName")
     private String finalName;
 
     /**
      * Specifies whether to attach the generated artifact to the project helper.
      * <br/>
      */
-    @Parameter( property = "attach", defaultValue = "true" )
+    @Parameter(property = "attach", defaultValue = "true")
     private boolean attach;
 
     /**
@@ -138,8 +137,8 @@ public class JavadocJar
      *
      * @since 2.5
      */
-    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", required = true,
-                readonly = true )
+    @Parameter(defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", required = true,
+            readonly = true)
     private File defaultManifestFile;
 
     /**
@@ -148,81 +147,62 @@ public class JavadocJar
      *
      * @since 2.5
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter(defaultValue = "false")
     private boolean useDefaultManifestFile;
 
     /**
      * @since 2.10
      */
-    @Parameter( property = "maven.javadoc.classifier", defaultValue = "javadoc", required = true )
+    @Parameter(property = "maven.javadoc.classifier", defaultValue = "javadoc", required = true)
     private String classifier;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
-        throws MojoExecutionException
-    {
-        if ( skip )
-        {
+            throws MojoExecutionException {
+        if (skip) {
             getLog().info( "Skipping javadoc generation" );
             return;
         }
 
         File innerDestDir = this.destDir;
-        if ( innerDestDir == null )
-        {
+        if (innerDestDir == null) {
             innerDestDir = new File( getOutputDirectory() );
         }
 
-        if ( !( "pom".equalsIgnoreCase( project.getPackaging() ) && isAggregator() ) )
-        {
+        if (!("pom".equalsIgnoreCase( project.getPackaging() ) && isAggregator())) {
             ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
-            if ( !"java".equals( artifactHandler.getLanguage() ) )
-            {
+            if (!"java".equals( artifactHandler.getLanguage() )) {
                 getLog().info( "Not executing Javadoc as the project is not a Java classpath-capable package" );
                 return;
             }
         }
 
-        try
-        {
+        try {
             executeReport( Locale.getDefault() );
-        }
-        catch ( MavenReportException e )
-        {
+        } catch (MavenReportException e) {
             failOnError( "MavenReportException: Error while generating Javadoc", e );
-        }
-        catch ( RuntimeException e )
-        {
+        } catch (RuntimeException e) {
             failOnError( "RuntimeException: Error while generating Javadoc", e );
         }
 
-        if ( innerDestDir.exists() )
-        {
-            try
-            {
+        if (innerDestDir.exists()) {
+            try {
                 File outputFile = generateArchive( innerDestDir, finalName + "-" + getClassifier() + ".jar" );
 
-                if ( !attach )
-                {
+                if (!attach) {
                     getLog().info( "NOT adding javadoc to attached artifacts list." );
-                }
-                else
-                {
+                } else {
                     // TODO: these introduced dependencies on the project are going to become problematic - can we export it
                     //  through metadata instead?
                     projectHelper.attachArtifact( project, "javadoc", getClassifier(), outputFile );
                 }
-            }
-            catch ( ArchiverException e )
-            {
+            } catch (ArchiverException e) {
                 failOnError( "ArchiverException: Error while creating archive", e );
-            }
-            catch ( IOException e )
-            {
+            } catch (IOException e) {
                 failOnError( "IOException: Error while creating archive", e );
-            }
-            catch ( RuntimeException e )
-            {
+            } catch (RuntimeException e) {
                 failOnError( "RuntimeException: Error while creating archive", e );
             }
         }
@@ -235,8 +215,7 @@ public class JavadocJar
     /**
      * @return the wanted classifier, i.e. <code>javadoc</code> or <code>test-javadoc</code>
      */
-    protected String getClassifier()
-    {
+    protected String getClassifier() {
         return classifier;
     }
 
@@ -248,18 +227,16 @@ public class JavadocJar
      * Method that creates the jar file
      *
      * @param javadocFiles the directory where the generated jar file will be put
-     * @param jarFileName the filename of the generated jar file
+     * @param jarFileName  the filename of the generated jar file
      * @return a File object that contains the generated jar file
      * @throws ArchiverException {@link ArchiverException}
-     * @throws IOException {@link IOException}
+     * @throws IOException       {@link IOException}
      */
-    private File generateArchive( File javadocFiles, String jarFileName )
-        throws ArchiverException, IOException
-    {
+    private File generateArchive(File javadocFiles, String jarFileName)
+            throws ArchiverException, IOException {
         File javadocJar = new File( jarOutputDirectory, jarFileName );
 
-        if ( javadocJar.exists() )
-        {
+        if (javadocJar.exists()) {
             javadocJar.delete();
         }
 
@@ -268,41 +245,30 @@ public class JavadocJar
         archiver.setOutputFile( javadocJar );
 
         File contentDirectory = javadocFiles;
-        if ( !contentDirectory.exists() )
-        {
+        if (!contentDirectory.exists()) {
             getLog().warn( "JAR will be empty - no content was marked for inclusion!" );
-        }
-        else
-        {
+        } else {
             archiver.getArchiver().addDirectory( contentDirectory, DEFAULT_INCLUDES, DEFAULT_EXCLUDES );
         }
 
         List<Resource> resources = project.getBuild().getResources();
 
-        for ( Resource r : resources )
-        {
-            if ( r.getDirectory().endsWith( "maven-shared-archive-resources" ) )
-            {
+        for (Resource r : resources) {
+            if (r.getDirectory().endsWith( "maven-shared-archive-resources" )) {
                 archiver.getArchiver().addDirectory( new File( r.getDirectory() ) );
             }
         }
 
-        if ( useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null )
-        {
+        if (useDefaultManifestFile && defaultManifestFile.exists() && archive.getManifestFile() == null) {
             getLog().info( "Adding existing MANIFEST to archive. Found under: " + defaultManifestFile.getPath() );
             archive.setManifestFile( defaultManifestFile );
         }
 
-        try
-        {
+        try {
             archiver.createArchive( session, project, archive );
-        }
-        catch ( ManifestException e )
-        {
+        } catch (ManifestException e) {
             throw new ArchiverException( "ManifestException: " + e.getMessage(), e );
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
+        } catch (DependencyResolutionRequiredException e) {
             throw new ArchiverException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
         }
 

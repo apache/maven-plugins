@@ -31,16 +31,14 @@ import java.util.List;
  * Project stub for testing archive configuration.
  */
 public class JavadocJarArchiveConfigProjectStub
-    extends MavenProjectStub
-{
+        extends MavenProjectStub {
     private Scm scm;
 
-    public JavadocJarArchiveConfigProjectStub()
-    {
-        File projectFile =  new File( getBasedir(), "javadocjar-archive-config.xml" );
+    public JavadocJarArchiveConfigProjectStub() {
+        File projectFile = new File( getBasedir(), "javadocjar-archive-config.xml" );
         readModel( new File( getBasedir(), "javadocjar-archive-config.xml" ) );
 
-        setFile(projectFile);
+        setFile( projectFile );
 
         setGroupId( getModel().getGroupId() );
         setArtifactId( getModel().getArtifactId() );
@@ -54,7 +52,7 @@ public class JavadocJarArchiveConfigProjectStub
         setScm( scm );
 
         JavadocPluginArtifactStub artifact =
-            new JavadocPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
+                new JavadocPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         artifact.setType( "jar" );
         artifact.setBaseVersion( "1.0-SNAPSHOT" );
@@ -70,21 +68,24 @@ public class JavadocJarArchiveConfigProjectStub
         setCompileSourceRoots( compileSourceRoots );
     }
 
-    /** {@inheritDoc} */
-    public Scm getScm()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Scm getScm() {
         return scm;
     }
 
-    /** {@inheritDoc} */
-    public void setScm( Scm scm )
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setScm(Scm scm) {
         this.scm = scm;
     }
 
-    /** {@inheritDoc} */
-    public File getBasedir()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public File getBasedir() {
         return new File( super.getBasedir() + "/src/test/resources/unit/javadocjar-archive-config" );
     }
 }
