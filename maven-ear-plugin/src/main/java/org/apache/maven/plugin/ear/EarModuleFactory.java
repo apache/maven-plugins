@@ -45,7 +45,6 @@ public final class EarModuleFactory
         List<String> temp = new ArrayList<String>();
         temp.add( "jar" );
         temp.add( "ejb" );
-        temp.add( "ejb3" );
         temp.add( "par" );
         temp.add( "ejb-client" );
         temp.add( "app-client" );
@@ -95,10 +94,6 @@ public final class EarModuleFactory
         else if ( "ejb".equals( artifactType ) )
         {
             return new EjbModule( artifact );
-        }
-        else if ( "ejb3".equals( artifactType ) )
-        {
-            return new Ejb3Module( artifact );
         }
         else if ( "par".equals( artifactType ) )
         {

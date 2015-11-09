@@ -32,9 +32,7 @@ EAR Modules
 
   * {{{ejbModule}ejbModule}}
 
-  * {{{ejbModule}ejb3Module}} (deprecated. ejbModule provides the same functionality)
-
-  * {{{jarModule}jarModule}} (previously know as javaModule and deprecated)
+  * {{{jarModule}jarModule}}
 
   * {{{parModule}parModule}}
 

@@ -417,14 +417,6 @@ public class EarMojo
 
             for ( EarModule module : getModules() )
             {
-                if ( module instanceof JavaModule )
-                {
-                    getLog().warn( "JavaModule is deprecated (" + module + "), please use JarModule instead." );
-                }
-                if ( module instanceof Ejb3Module )
-                {
-                    getLog().warn( "Ejb3Module is deprecated (" + module + "), please use EjbModule instead." );
-                }
                 final File sourceFile = module.getArtifact().getFile();
                 final File destinationFile = buildDestinationFile( getWorkDirectory(), module.getUri() );
                 if ( !sourceFile.isFile() )
