@@ -33,7 +33,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
@@ -281,37 +280,29 @@ public class GenerateApplicationXmlMojo
         {
             return result;
         }
-        try
-        {
-            final PlexusConfiguration[] securityRoles = security.getChildren( SecurityRole.SECURITY_ROLE );
+        final PlexusConfiguration[] securityRoles = security.getChildren( SecurityRole.SECURITY_ROLE );
 
-            for ( PlexusConfiguration securityRole : securityRoles )
+        for ( PlexusConfiguration securityRole : securityRoles )
+        {
+            final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
+            final String childRoleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
+            final String childRoleNameId =
+                securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
+            final String childDescription = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
+            final String childDescriptionId =
+                securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
+
+            if ( childRoleName == null )
             {
-                final String id = securityRole.getAttribute( SecurityRole.ID_ATTRIBUTE );
-                final String childRoleName = securityRole.getChild( SecurityRole.ROLE_NAME ).getValue();
-                final String childRoleNameId =
-                    securityRole.getChild( SecurityRole.ROLE_NAME ).getAttribute( SecurityRole.ID_ATTRIBUTE );
-                final String childDescription = securityRole.getChild( SecurityRole.DESCRIPTION ).getValue();
-                final String childDescriptionId =
-                    securityRole.getChild( SecurityRole.DESCRIPTION ).getAttribute( SecurityRole.ID_ATTRIBUTE );
-
-                if ( childRoleName == null )
-                {
-                    throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
-                }
-                else
-                {
-                    result.add( new SecurityRole( childRoleName, childRoleNameId, id, childDescription,
-                                                  childDescriptionId ) );
-                }
+                throw new EarPluginException( "Invalid security-role configuration, role-name could not be null." );
             }
-            return result;
+            else
+            {
+                result.add( new SecurityRole( childRoleName, childRoleNameId, id, childDescription,
+                                              childDescriptionId ) );
+            }
         }
-        catch ( PlexusConfigurationException e )
-        {
-            throw new EarPluginException( "Invalid security-role configuration", e );
-        }
-
+        return result;
     }
 
     /**
@@ -361,7 +352,8 @@ public class GenerateApplicationXmlMojo
             for ( PlexusConfiguration envEntry : allEnvEntries )
             {
                 // CHECKSTYLE_OFF: LineLength
-                final String childDescription = interpolate( ssi, envEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
+                final String childDescription =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
                 final String childEnvEntryName =
                     interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_NAME ).getValue() );
                 final String childEnvEntryType =
@@ -381,10 +373,6 @@ public class GenerateApplicationXmlMojo
                 }
             }
             return result;
-        }
-        catch ( PlexusConfigurationException e )
-        {
-            throw new EarPluginException( "Invalid env-entry configuration", e );
         }
         catch ( InterpolationException e )
         {
@@ -418,7 +406,8 @@ public class GenerateApplicationXmlMojo
             for ( PlexusConfiguration ejbEntry : allEjbEntries )
             {
                 // CHECKSTYLE_OFF: LineLength
-                final String childDescription = interpolate( ssi, ejbEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
+                final String childDescription =
+                    interpolate( ssi, ejbEntry.getChild( EnvEntry.DESCRIPTION ).getValue() );
                 final String childEjbEntryName = interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_NAME ).getValue() );
                 final String childEjbEntryType = interpolate( ssi, ejbEntry.getChild( EjbRef.EJB_TYPE ).getValue() );
                 final String childEjbLookupNameValue =
@@ -436,10 +425,6 @@ public class GenerateApplicationXmlMojo
                 }
             }
             return result;
-        }
-        catch ( PlexusConfigurationException e )
-        {
-            throw new EarPluginException( "Invalid ejb-ref configuration", e );
         }
         catch ( InterpolationException e )
         {

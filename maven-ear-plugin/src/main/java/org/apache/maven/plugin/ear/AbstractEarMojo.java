@@ -111,13 +111,12 @@ public abstract class AbstractEarMojo
     private Boolean includeLibInApplicationXml = Boolean.FALSE;
 
     /**
-     * The file name mapping to use for all dependencies included in the EAR file.
-     * The following values are valid {@code standard}, {code no-version}, {@code full}, {@code no-version-for-ejb}.
-     * The {@code standard} means the filename is the artifactId incl. the version of the artifact.
-     * The {@code no-version} means the files is only the artifactId without the version.
-     * The {@code full} means the filename is the groupId+artifactId+version of the artifact.
-     * The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of {@code EJB}
-     * type.
+     * The file name mapping to use for all dependencies included in the EAR file. The following values are valid
+     * {@code standard}, {@code no-version}, {@code full}, {@code no-version-for-ejb}. The {@code standard} means the
+     * filename is the artifactId incl. the version of the artifact. The {@code no-version} means the files is only the
+     * artifactId without the version. The {@code full} means the filename is the groupId+artifactId+version of the
+     * artifact. The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of
+     * {@code EJB} type.
      */
     @Parameter
     private String fileNameMapping;
@@ -163,7 +162,7 @@ public abstract class AbstractEarMojo
 
     @Component
     private MavenResourcesFiltering mavenResourcesFiltering;
-    
+
     private List<EarModule> earModules;
 
     private List<EarModule> allModules;
@@ -247,9 +246,8 @@ public abstract class AbstractEarMojo
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional()
                     && filter.include( artifact ) )
                 {
-                    EarModule module =
-                        EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
-                                                       includeLibInApplicationXml, typeMappingService );
+                    EarModule module = EarModuleFactory.newEarModule( artifact, javaEEVersion, defaultLibBundleDir,
+                                                                      includeLibInApplicationXml, typeMappingService );
                     module.setEarExecutionContext( earExecutionContext );
                     allModules.add( module );
                 }
@@ -346,54 +344,47 @@ public abstract class AbstractEarMojo
         }
         else
         {
-            try
+            String childVersion = jboss.getChild( JbossConfiguration.VERSION ).getValue();
+            if ( childVersion == null )
             {
-                String childVersion = jboss.getChild( JbossConfiguration.VERSION ).getValue();
-                if ( childVersion == null )
-                {
-                    getLog().info( "JBoss version not set, using JBoss 4 by default" );
-                    childVersion = JbossConfiguration.VERSION_4;
-                }
-                final String securityDomain = jboss.getChild( JbossConfiguration.SECURITY_DOMAIN ).getValue();
-                final String unauthenticatedPrincipal =
-                    jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
-
-                final PlexusConfiguration loaderRepositoryEl = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY );
-                final String loaderRepository = loaderRepositoryEl.getValue();
-                final String loaderRepositoryClass =
-                    loaderRepositoryEl.getAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS_ATTRIBUTE );
-                final PlexusConfiguration loaderRepositoryConfigEl =
-                    jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CONFIG );
-                final String loaderRepositoryConfig = loaderRepositoryConfigEl.getValue();
-                final String configParserClass =
-                    loaderRepositoryConfigEl.getAttribute( JbossConfiguration.CONFIG_PARSER_CLASS_ATTRIBUTE );
-
-                final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
-                final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
-
-                final List<String> dataSources = new ArrayList<String>();
-                final PlexusConfiguration dataSourcesEl = jboss.getChild( JbossConfiguration.DATASOURCES );
-                if ( dataSourcesEl != null )
-                {
-
-                    final PlexusConfiguration[] dataSourcesConfig =
-                        dataSourcesEl.getChildren( JbossConfiguration.DATASOURCE );
-                    for ( PlexusConfiguration dataSourceConfig : dataSourcesConfig )
-                    {
-                        dataSources.add( dataSourceConfig.getValue() );
-
-                    }
-                }
-                final String libraryDirectory = jboss.getChild( JbossConfiguration.LIBRARY_DIRECTORY ).getValue();
-                jbossConfiguration =
-                    new JbossConfiguration( childVersion, securityDomain, unauthenticatedPrincipal, jmxName,
-                                            loaderRepository, moduleOrder, dataSources, libraryDirectory,
-                                            loaderRepositoryConfig, loaderRepositoryClass, configParserClass );
+                getLog().info( "JBoss version not set, using JBoss 4 by default" );
+                childVersion = JbossConfiguration.VERSION_4;
             }
-            catch ( PlexusConfigurationException e )
+            final String securityDomain = jboss.getChild( JbossConfiguration.SECURITY_DOMAIN ).getValue();
+            final String unauthenticatedPrincipal =
+                jboss.getChild( JbossConfiguration.UNAUHTHENTICTED_PRINCIPAL ).getValue();
+
+            final PlexusConfiguration loaderRepositoryEl = jboss.getChild( JbossConfiguration.LOADER_REPOSITORY );
+            final String loaderRepository = loaderRepositoryEl.getValue();
+            final String loaderRepositoryClass =
+                loaderRepositoryEl.getAttribute( JbossConfiguration.LOADER_REPOSITORY_CLASS_ATTRIBUTE );
+            final PlexusConfiguration loaderRepositoryConfigEl =
+                jboss.getChild( JbossConfiguration.LOADER_REPOSITORY_CONFIG );
+            final String loaderRepositoryConfig = loaderRepositoryConfigEl.getValue();
+            final String configParserClass =
+                loaderRepositoryConfigEl.getAttribute( JbossConfiguration.CONFIG_PARSER_CLASS_ATTRIBUTE );
+
+            final String jmxName = jboss.getChild( JbossConfiguration.JMX_NAME ).getValue();
+            final String moduleOrder = jboss.getChild( JbossConfiguration.MODULE_ORDER ).getValue();
+
+            final List<String> dataSources = new ArrayList<String>();
+            final PlexusConfiguration dataSourcesEl = jboss.getChild( JbossConfiguration.DATASOURCES );
+            if ( dataSourcesEl != null )
             {
-                throw new EarPluginException( "Invalid JBoss configuration", e );
+
+                final PlexusConfiguration[] dataSourcesConfig =
+                    dataSourcesEl.getChildren( JbossConfiguration.DATASOURCE );
+                for ( PlexusConfiguration dataSourceConfig : dataSourcesConfig )
+                {
+                    dataSources.add( dataSourceConfig.getValue() );
+
+                }
             }
+            final String libraryDirectory = jboss.getChild( JbossConfiguration.LIBRARY_DIRECTORY ).getValue();
+            jbossConfiguration =
+                new JbossConfiguration( childVersion, securityDomain, unauthenticatedPrincipal, jmxName,
+                                        loaderRepository, moduleOrder, dataSources, libraryDirectory,
+                                        loaderRepositoryConfig, loaderRepositoryClass, configParserClass );
         }
     }
 }
