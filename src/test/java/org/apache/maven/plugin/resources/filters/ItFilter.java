@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
@@ -45,12 +43,12 @@ public class ItFilter
     /** 
      * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#filterResources(java.util.List, java.io.File, org.apache.maven.project.MavenProject, java.lang.String, java.util.List, java.util.List, org.apache.maven.execution.MavenSession)
      */
-    public void filterResources( List resources, File outputDirectory, MavenProject mavenProject, String encoding,
-                                 List fileFilters, List nonFilteredFileExtensions, MavenSession mavenSession )
-        throws MavenFilteringException
-    {
-        //no op
-    }
+//    public void filterResources( List resources, File outputDirectory, MavenProject mavenProject, String encoding,
+//                                 List fileFilters, List nonFilteredFileExtensions, MavenSession mavenSession )
+//        throws MavenFilteringException
+//    {
+//        //no op
+//    }
 
     /** 
      * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#filterResources(java.util.List, java.io.File, java.lang.String, java.util.List, java.io.File, java.util.List)
@@ -65,16 +63,16 @@ public class ItFilter
     /** 
      * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#getDefaultNonFilteredFileExtensions()
      */
-    public List getDefaultNonFilteredFileExtensions()
+    public List<String> getDefaultNonFilteredFileExtensions()
     {
         //  no op
-        return Collections.EMPTY_LIST;
+        return Collections.<String>emptyList();
     }
 
     /** 
-     * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#filteredFileExtension(java.lang.String, java.util.List)
+     * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#filteredFileExtension(String, List)
      */
-    public boolean filteredFileExtension( String fileName, List userNonFilteredFileExtensions )
+    public boolean filteredFileExtension( String fileName, List<String> userNonFilteredFileExtensions )
     {
         return false;
     }
