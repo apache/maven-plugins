@@ -27,10 +27,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Organization;
+import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 
@@ -57,14 +59,12 @@ public class RarMavenProjectStub
 
         super.setOrganization( org );
         super.setFile( getFile() );
-        super.setPluginArtifacts( Collections.EMPTY_SET );
-        super.setReportArtifacts( Collections.EMPTY_SET );
-        super.setExtensionArtifacts( Collections.EMPTY_SET );
+        super.setExtensionArtifacts( Collections.<Artifact>emptySet() );
         super.setArtifact( getArtifact() );
-        super.setRemoteArtifactRepositories( Collections.EMPTY_LIST );
-        super.setPluginArtifactRepositories( Collections.EMPTY_LIST );
-        super.setCollectedProjects( Collections.EMPTY_LIST );
-        super.setActiveProfiles( Collections.EMPTY_LIST );
+        super.setRemoteArtifactRepositories( Collections.<ArtifactRepository>emptyList() );
+        super.setPluginArtifactRepositories( Collections.<ArtifactRepository>emptyList() );
+        super.setCollectedProjects( Collections.<MavenProject>emptyList() );
+        super.setActiveProfiles( Collections.<Profile>emptyList() );
 
         super.addCompileSourceRoot( getBasedir() + "/src/test/resources/unit/basic-rar-test/src/main/java" );
         super.addTestCompileSourceRoot( getBasedir() + "/src/test/resources/unit/basic-rar-test/src/test/java" );
