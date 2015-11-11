@@ -82,26 +82,26 @@ public class EjbMojo
     /**
      * The name of the EJB file to generate.
      */
-    @Parameter( property = "jarName", defaultValue = "${project.build.finalName}" )
+    @Parameter( property = "maven.ejb.jarName", defaultValue = "${project.build.finalName}" )
     private String jarName;
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      */
-    @Parameter( property = "ejb.classifier" )
+    @Parameter( property = "maven.ejb.classifier" )
     private String classifier;
 
     /**
      * You can define the location of <code>ejb-jar.xml</code> file.
      */
-    @Parameter( property = "ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
+    @Parameter( property = "maven.ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
     // The initialization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
     private String ejbJar = "META-INF/ejb-jar.xml";
 
     /**
      * Whether the EJB client jar should be generated or not.
      */
-    @Parameter( property = "ejb.generateClient", defaultValue = "false" )
+    @Parameter( property = "maven.ejb.generateClient", defaultValue = "false" )
     private boolean generateClient;
 
     /**
@@ -177,10 +177,9 @@ public class EjbMojo
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
-     *
      * @since 2.1
      */
-    @Parameter( property = "ejb.ejbVersion", defaultValue = "2.1" )
+    @Parameter( property = "maven.ejb.ejbVersion", defaultValue = "2.1" )
     private String ejbVersion;
 
     /**
@@ -207,7 +206,7 @@ public class EjbMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "ejb.escapeBackslashesInFilePath", defaultValue = "false" )
+    @Parameter( property = "maven.ejb.escapeBackslashesInFilePath", defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
 
     /**
@@ -215,7 +214,7 @@ public class EjbMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "ejb.escapeString" )
+    @Parameter( property = "maven.ejb.escapeString" )
     protected String escapeString;
 
     /**
@@ -223,7 +222,7 @@ public class EjbMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "ejb.filterDeploymentDescriptor", defaultValue = "false" )
+    @Parameter( property = "maven.ejb.filterDeploymentDescriptor", defaultValue = "false" )
     private boolean filterDeploymentDescriptor;
 
     /**
