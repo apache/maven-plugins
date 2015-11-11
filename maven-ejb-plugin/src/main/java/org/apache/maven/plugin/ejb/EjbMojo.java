@@ -179,7 +179,7 @@ public class EjbMojo
      * </pre>
      * @since 2.1
      */
-    @Parameter( property = "maven.ejb.ejbVersion", defaultValue = "2.1" )
+    @Parameter( property = "maven.ejb.ejbVersion", defaultValue = "3.1" )
     private String ejbVersion;
 
     /**
