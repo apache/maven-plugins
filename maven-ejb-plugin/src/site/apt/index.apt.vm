@@ -5,7 +5,7 @@
  <snicoll@apache.org>
  Pete Marvin King
  ------
- 2013-07-22
+ 2015-11-11
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -56,6 +56,8 @@ ${project.name}
   Of course, patches are welcome, too. Contributors can check out the project from our
   {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
+  
+  Important Note: Starting with version 3.0.0 of the plugin all properties have been named like <<maven.ejb.*>>.
 
 * Examples
 
