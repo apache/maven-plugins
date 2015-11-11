@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -73,9 +73,10 @@ public class ActiveProfilesMojo
 
         if ( output != null )
         {
+            String formattedDateTime = DateFormatUtils.ISO_DATETIME_FORMAT.format( System.currentTimeMillis() );
             StringBuilder sb = new StringBuilder();
             sb.append( "Created by: " ).append( getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " ).append( new Date() ).append( "\n" ).append( "\n" );
+            sb.append( "Created on: " ).append( formattedDateTime ).append( "\n" ).append( "\n" );
             sb.append( message.toString() );
 
             try
@@ -114,7 +115,7 @@ public class ActiveProfilesMojo
     private void getActiveProfileStatement( MavenProject project, StringBuilder message )
     {
         Map<String, List<String>> activeProfileIds = new LinkedHashMap<String, List<String>>();
-        try 
+        try
         {
             activeProfileIds.putAll( getInjectedProfileIds( project ) );
         }
@@ -123,7 +124,7 @@ public class ActiveProfilesMojo
             // Fall back to M2 approach
             @SuppressWarnings( "unchecked" )
             List<Profile> profiles = new ArrayList<Profile>( project.getActiveProfiles() );
-            
+
             for ( Profile profile : profiles )
             {
                 List<String> profileIds = activeProfileIds.get( profile.getSource() );
@@ -135,7 +136,7 @@ public class ActiveProfilesMojo
                 profileIds.add( profile.getId() );
             }
         }
-        
+
 
         message.append( "\n" );
 

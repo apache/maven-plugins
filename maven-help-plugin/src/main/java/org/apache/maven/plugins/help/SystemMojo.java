@@ -19,13 +19,13 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -98,9 +98,10 @@ public class SystemMojo
 
         if ( output != null )
         {
+            String formattedDateTime = DateFormatUtils.ISO_DATETIME_FORMAT.format( System.currentTimeMillis() );
             StringBuilder sb = new StringBuilder();
             sb.append( "Created by: " ).append( getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " ).append( new Date() ).append( "\n" ).append( "\n" );
+            sb.append( "Created on: " ).append( formattedDateTime ).append( "\n" ).append( "\n" );
             sb.append( message.toString() );
 
             try
