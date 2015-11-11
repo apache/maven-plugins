@@ -76,7 +76,7 @@
 
   <properties>
     <mavenArchiverVersion>3.0.0</mavenArchiverVersion>
-    <mavenFilteringVersion>3.0.0-SNAPSHOT</mavenFilteringVersion>
+    <mavenFilteringVersion>3.0.0</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
   </properties>
 
