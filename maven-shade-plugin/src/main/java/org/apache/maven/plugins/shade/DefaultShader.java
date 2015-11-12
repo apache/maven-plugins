@@ -19,6 +19,23 @@ package org.apache.maven.plugins.shade;
  * under the License.
  */
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
+import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.IOUtil;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.commons.RemappingClassAdapter;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,24 +57,6 @@ import java.util.jar.JarOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipException;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.shade.filter.Filter;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
-import org.apache.maven.plugins.shade.resource.ResourceTransformer;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.IOUtil;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Jason van Zyl
@@ -89,16 +88,69 @@ public class DefaultShader
         RelocatorRemapper remapper = new RelocatorRemapper( shadeRequest.getRelocators() );
 
         // noinspection ResultOfMethodCallIgnored
-        shadeRequest.getUberJar().getParentFile().mkdirs();
+        shadeRequest.getUberJar()
+                    .getParentFile()
+                    .mkdirs();
         FileOutputStream fileOutputStream = new FileOutputStream( shadeRequest.getUberJar() );
         JarOutputStream jos = new JarOutputStream( new BufferedOutputStream( fileOutputStream ) );
 
-        goThroughAllJarEntriesForManifestTransformer( shadeRequest, resources, manifestTransformer, jos );
+        try
+        {
 
-        // CHECKSTYLE_OFF: MagicNumber
-        Multimap<String, File> duplicates = HashMultimap.create( 10000, 3 );
-        // CHECKSTYLE_ON: MagicNumber
+            goThroughAllJarEntriesForManifestTransformer( shadeRequest, resources, manifestTransformer, jos );
 
+            // CHECKSTYLE_OFF: MagicNumber
+            Multimap<String, File> duplicates = HashMultimap.create( 10000, 3 );
+            // CHECKSTYLE_ON: MagicNumber
+
+            shadeJars( shadeRequest, resources, transformers, remapper, jos, duplicates );
+
+            // CHECKSTYLE_OFF: MagicNumber
+            Multimap<Collection<File>, String> overlapping = HashMultimap.create( 20, 15 );
+            // CHECKSTYLE_ON: MagicNumber
+
+            for ( String clazz : duplicates.keySet() )
+            {
+                Collection<File> jarz = duplicates.get( clazz );
+                if ( jarz.size() > 1 )
+                {
+                    overlapping.put( jarz, clazz );
+                }
+            }
+
+            // Log a summary of duplicates
+            logSummaryOfDuplicates( overlapping );
+
+            if ( overlapping.keySet()
+                            .size() > 0 )
+            {
+                showOverlappingWarning();
+            }
+
+            for ( ResourceTransformer transformer : transformers )
+            {
+                if ( transformer.hasTransformedResource() )
+                {
+                    transformer.modifyOutputStream( jos );
+                }
+            }
+
+        }
+        finally
+        {
+            IOUtil.close( jos );
+        }
+
+        for ( Filter filter : shadeRequest.getFilters() )
+        {
+            filter.finished();
+        }
+    }
+
+    private void shadeJars( ShadeRequest shadeRequest, Set<String> resources, List<ResourceTransformer> transformers,
+                            RelocatorRemapper remapper, JarOutputStream jos, Multimap<String, File> duplicates )
+        throws IOException, MojoExecutionException
+    {
         for ( File jar : shadeRequest.getJars() )
         {
 
@@ -108,107 +160,95 @@ public class DefaultShader
 
             JarFile jarFile = newJarFile( jar );
 
-            for ( Enumeration<JarEntry> j = jarFile.entries(); j.hasMoreElements(); )
+            try
             {
-                JarEntry entry = j.nextElement();
 
-                String name = entry.getName();
-
-                if ( "META-INF/INDEX.LIST".equals( name ) )
+                for ( Enumeration<JarEntry> j = jarFile.entries(); j.hasMoreElements(); )
                 {
-                    // we cannot allow the jar indexes to be copied over or the
-                    // jar is useless. Ideally, we could create a new one
-                    // later
-                    continue;
+                    JarEntry entry = j.nextElement();
+
+                    String name = entry.getName();
+
+                    if ( "META-INF/INDEX.LIST".equals( name ) )
+                    {
+                        // we cannot allow the jar indexes to be copied over or the
+                        // jar is useless. Ideally, we could create a new one
+                        // later
+                        continue;
+                    }
+
+                    if ( !entry.isDirectory() && !isFiltered( jarFilters, name ) )
+                    {
+                        shadeSingleJar( shadeRequest, resources, transformers, remapper, jos, duplicates, jar, jarFile,
+                                        entry, name );
+                    }
                 }
 
-                if ( !entry.isDirectory() && !isFiltered( jarFilters, name ) )
+            }
+            finally
+            {
+                jarFile.close();
+            }
+        }
+    }
+
+    private void shadeSingleJar( ShadeRequest shadeRequest, Set<String> resources,
+                                 List<ResourceTransformer> transformers, RelocatorRemapper remapper,
+                                 JarOutputStream jos, Multimap<String, File> duplicates, File jar, JarFile jarFile,
+                                 JarEntry entry, String name )
+        throws IOException, MojoExecutionException
+    {
+        InputStream is = jarFile.getInputStream( entry );
+
+        try
+        {
+
+            String mappedName = remapper.map( name );
+
+            int idx = mappedName.lastIndexOf( '/' );
+            if ( idx != -1 )
+            {
+                // make sure dirs are created
+                String dir = mappedName.substring( 0, idx );
+                if ( !resources.contains( dir ) )
                 {
-                    InputStream is = jarFile.getInputStream( entry );
-
-                    String mappedName = remapper.map( name );
-
-                    int idx = mappedName.lastIndexOf( '/' );
-                    if ( idx != -1 )
-                    {
-                        // make sure dirs are created
-                        String dir = mappedName.substring( 0, idx );
-                        if ( !resources.contains( dir ) )
-                        {
-                            addDirectory( resources, jos, dir );
-                        }
-                    }
-
-                    if ( name.endsWith( ".class" ) )
-                    {
-                        duplicates.put( name, jar );
-                        addRemappedClass( remapper, jos, jar, name, is );
-                    }
-                    else if ( shadeRequest.isShadeSourcesContent() && name.endsWith( ".java" ) )
-                    {
-                        // Avoid duplicates
-                        if ( resources.contains( mappedName ) )
-                        {
-                            continue;
-                        }
-
-                        addJavaSource( resources, jos, mappedName, is, shadeRequest.getRelocators() );
-                    }
-                    else
-                    {
-                        if ( !resourceTransformed( transformers, mappedName, is, shadeRequest.getRelocators() ) )
-                        {
-                            // Avoid duplicates that aren't accounted for by the resource transformers
-                            if ( resources.contains( mappedName ) )
-                            {
-                                continue;
-                            }
-
-                            addResource( resources, jos, mappedName, is );
-                        }
-                    }
-
-                    IOUtil.close( is );
+                    addDirectory( resources, jos, dir );
                 }
             }
 
-            jarFile.close();
-        }
-
-        // CHECKSTYLE_OFF: MagicNumber
-        Multimap<Collection<File>, String> overlapping = HashMultimap.create( 20, 15 );
-        // CHECKSTYLE_ON: MagicNumber
-
-        for ( String clazz : duplicates.keySet() )
-        {
-            Collection<File> jarz = duplicates.get( clazz );
-            if ( jarz.size() > 1 )
+            if ( name.endsWith( ".class" ) )
             {
-                overlapping.put( jarz, clazz );
+                duplicates.put( name, jar );
+                addRemappedClass( remapper, jos, jar, name, is );
             }
-        }
-
-        // Log a summary of duplicates
-        logSummaryOfDuplicates( overlapping );
-
-        if ( overlapping.keySet().size() > 0 )
-        {
-            showOverlappingWarning();
-        }
-
-        for ( ResourceTransformer transformer : transformers )
-        {
-            if ( transformer.hasTransformedResource() )
+            else if ( shadeRequest.isShadeSourcesContent() && name.endsWith( ".java" ) )
             {
-                transformer.modifyOutputStream( jos );
+                // Avoid duplicates
+                if ( resources.contains( mappedName ) )
+                {
+                    return;
+                }
+
+                addJavaSource( resources, jos, mappedName, is, shadeRequest.getRelocators() );
             }
+            else
+            {
+                if ( !resourceTransformed( transformers, mappedName, is, shadeRequest.getRelocators() ) )
+                {
+                    // Avoid duplicates that aren't accounted for by the resource transformers
+                    if ( resources.contains( mappedName ) )
+                    {
+                        return;
+                    }
+
+                    addResource( resources, jos, mappedName, is );
+                }
+            }
+
         }
-
-        IOUtil.close( jos );
-
-        for ( Filter filter : shadeRequest.getFilters() )
+        finally
         {
-            filter.finished();
+            IOUtil.close( is );
         }
     }
 
@@ -268,11 +308,13 @@ public class DefaultShader
 
             for ( String clazz : overlapping.get( jarz ) )
             {
-                classes.add( clazz.replace( ".class", "" ).replace( "/", "." ) );
+                classes.add( clazz.replace( ".class", "" )
+                                  .replace( "/", "." ) );
             }
 
             //CHECKSTYLE_OFF: LineLength
-            getLogger().warn( Joiner.on( ", " ).join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
+            getLogger().warn( Joiner.on( ", " )
+                                    .join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
             //CHECKSTYLE_ON: LineLength
 
             int max = 10;
@@ -438,7 +480,8 @@ public class DefaultShader
         {
             if ( transformer.canTransformResource( name ) )
             {
-                getLogger().debug( "Transforming " + name + " using " + transformer.getClass().getName() );
+                getLogger().debug( "Transforming " + name + " using " + transformer.getClass()
+                                                                                   .getName() );
 
                 transformer.processResource( name, is, relocators );
 
