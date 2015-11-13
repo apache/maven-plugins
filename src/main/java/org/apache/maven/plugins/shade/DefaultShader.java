@@ -523,7 +523,7 @@ public class DefaultShader
         resources.add( name );
     }
 
-    class RelocatorRemapper
+    static class RelocatorRemapper
         extends Remapper
     {
 
