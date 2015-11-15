@@ -61,7 +61,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "maven.source.includes" )
+    @Parameter
     private String[] includes;
 
     /**
@@ -70,7 +70,7 @@ public abstract class AbstractSourceJarMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "maven.source.excludes" )
+    @Parameter
     private String[] excludes;
 
     /**
@@ -154,14 +154,14 @@ public abstract class AbstractSourceJarMojo
     /**
      * The directory where the generated archive file will be put.
      */
-    @Parameter( property = "maven.source.outputDirectory", defaultValue = "${project.build.directory}" )
+    @Parameter( defaultValue = "${project.build.directory}" )
     protected File outputDirectory;
 
     /**
      * The filename to be used for the generated archive file. For the source:jar goal, "-sources" is appended to this
      * filename. For the source:test-jar goal, "-test-sources" is appended.
      */
-    @Parameter( property = "maven.source.finalName", defaultValue = "${project.build.finalName}" )
+    @Parameter( defaultValue = "${project.build.finalName}" )
     protected String finalName;
 
     /**
