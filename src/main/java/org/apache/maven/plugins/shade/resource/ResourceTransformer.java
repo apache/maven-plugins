@@ -31,6 +31,13 @@ public interface ResourceTransformer
 {
     boolean canTransformResource( String resource );
 
+    /**
+     * Transform an individual resource
+     * @param resource The resoure name
+     * @param is An input stream for the resource, the implementation should *not* close this stream
+     * @param relocators  A list of relocators
+     * @throws IOException When the IO blows up
+     */
     void processResource( String resource, InputStream is, List<Relocator> relocators )
         throws IOException;
 

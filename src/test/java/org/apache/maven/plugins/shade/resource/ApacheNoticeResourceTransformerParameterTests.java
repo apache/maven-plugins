@@ -96,6 +96,7 @@ public class ApacheNoticeResourceTransformerParameterTests
             final ByteArrayInputStream noticeInputStream = new ByteArrayInputStream( noticeText.getBytes() );
             final List<Relocator> emptyList = Collections.emptyList();
             subject.processResource( NOTICE_RESOURCE, noticeInputStream, emptyList );
+            noticeInputStream.close();
         }
         catch ( NullPointerException e )
         {

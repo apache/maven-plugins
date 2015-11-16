@@ -86,8 +86,6 @@ public class ServicesResourceTransformer
             }
             fout.append( relContent + "\n" );
         }
-
-        is.close();
     }
     public boolean hasTransformedResource()
     {

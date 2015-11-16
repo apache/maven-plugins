@@ -88,9 +88,7 @@ public class DefaultShader
         RelocatorRemapper remapper = new RelocatorRemapper( shadeRequest.getRelocators() );
 
         // noinspection ResultOfMethodCallIgnored
-        shadeRequest.getUberJar()
-                    .getParentFile()
-                    .mkdirs();
+        shadeRequest.getUberJar().getParentFile().mkdirs();
         FileOutputStream fileOutputStream = new FileOutputStream( shadeRequest.getUberJar() );
         JarOutputStream jos = new JarOutputStream( new BufferedOutputStream( fileOutputStream ) );
 
@@ -121,8 +119,7 @@ public class DefaultShader
             // Log a summary of duplicates
             logSummaryOfDuplicates( overlapping );
 
-            if ( overlapping.keySet()
-                            .size() > 0 )
+            if ( overlapping.keySet().size() > 0 )
             {
                 showOverlappingWarning();
             }
@@ -269,8 +266,15 @@ public class DefaultShader
                     if ( manifestTransformer.canTransformResource( resource ) )
                     {
                         resources.add( resource );
-                        manifestTransformer.processResource( resource, jarFile.getInputStream( entry ),
-                                                             shadeRequest.getRelocators() );
+                        InputStream inputStream = jarFile.getInputStream( entry );
+                        try
+                        {
+                            manifestTransformer.processResource( resource, inputStream, shadeRequest.getRelocators() );
+                        }
+                        finally
+                        {
+                            inputStream.close();
+                        }
                         break;
                     }
                 }
@@ -308,13 +312,12 @@ public class DefaultShader
 
             for ( String clazz : overlapping.get( jarz ) )
             {
-                classes.add( clazz.replace( ".class", "" )
-                                  .replace( "/", "." ) );
+                classes.add( clazz.replace( ".class", "" ).replace( "/", "." ) );
             }
 
             //CHECKSTYLE_OFF: LineLength
-            getLogger().warn( Joiner.on( ", " )
-                                    .join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
+            getLogger().warn(
+                Joiner.on( ", " ).join( jarzS ) + " define " + classes.size() + " overlapping classes: " );
             //CHECKSTYLE_ON: LineLength
 
             int max = 10;
@@ -480,8 +483,7 @@ public class DefaultShader
         {
             if ( transformer.canTransformResource( name ) )
             {
-                getLogger().debug( "Transforming " + name + " using " + transformer.getClass()
-                                                                                   .getName() );
+                getLogger().debug( "Transforming " + name + " using " + transformer.getClass().getName() );
 
                 transformer.processResource( name, is, relocators );
 

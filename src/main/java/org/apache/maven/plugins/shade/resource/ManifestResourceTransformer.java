@@ -20,7 +20,6 @@ package org.apache.maven.plugins.shade.resource;
  */
 
 import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.codehaus.plexus.util.IOUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +73,6 @@ public class ManifestResourceTransformer
         {
             manifest = new Manifest( is );
             manifestDiscovered = true;
-            IOUtil.close( is );
         }
     }
 
