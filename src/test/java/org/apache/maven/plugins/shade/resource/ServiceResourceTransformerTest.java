@@ -75,6 +75,7 @@ public class ServiceResourceTransformerTest {
                 assertEquals("borg.foo.Service\n", xformedContent);
             } finally {
                 IOUtils.closeQuietly( entryStream );
+                jarFile.close();
             }
         } finally {
             if (jos != null)
@@ -139,6 +140,7 @@ public class ServiceResourceTransformerTest {
                 assertTrue( h1 && h2 );
             } finally {
                 IOUtils.closeQuietly( entryStream );
+                jarFile.close();
             }
         } finally {
             if (jos != null)

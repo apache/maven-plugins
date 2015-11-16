@@ -259,24 +259,32 @@ public class DefaultShader
             for ( File jar : shadeRequest.getJars() )
             {
                 JarFile jarFile = newJarFile( jar );
-                for ( Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); )
+                try
                 {
-                    JarEntry entry = en.nextElement();
-                    String resource = entry.getName();
-                    if ( manifestTransformer.canTransformResource( resource ) )
+                    for ( Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); )
                     {
-                        resources.add( resource );
-                        InputStream inputStream = jarFile.getInputStream( entry );
-                        try
+                        JarEntry entry = en.nextElement();
+                        String resource = entry.getName();
+                        if ( manifestTransformer.canTransformResource( resource ) )
                         {
-                            manifestTransformer.processResource( resource, inputStream, shadeRequest.getRelocators() );
+                            resources.add( resource );
+                            InputStream inputStream = jarFile.getInputStream( entry );
+                            try
+                            {
+                                manifestTransformer.processResource( resource, inputStream,
+                                                                     shadeRequest.getRelocators() );
+                            }
+                            finally
+                            {
+                                inputStream.close();
+                            }
+                            break;
                         }
-                        finally
-                        {
-                            inputStream.close();
-                        }
-                        break;
                     }
+                }
+                finally
+                {
+                    jarFile.close();
                 }
             }
             if ( manifestTransformer.hasTransformedResource() )
