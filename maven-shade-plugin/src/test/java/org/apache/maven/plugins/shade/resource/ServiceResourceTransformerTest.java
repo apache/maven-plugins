@@ -56,6 +56,7 @@ public class ServiceResourceTransformerTest {
 
         ServicesResourceTransformer xformer = new ServicesResourceTransformer();
         xformer.processResource( contentResource, contentStream, relocators );
+        contentStream.close();
 
         File tempJar = File.createTempFile("shade.", ".jar");
         tempJar.deleteOnExit();
@@ -96,6 +97,7 @@ public class ServiceResourceTransformerTest {
 
         ServicesResourceTransformer xformer = new ServicesResourceTransformer();
         xformer.processResource( contentResource, contentStream, relocators );
+        contentStream.close();
 
         content = "org.blah.Service\n";
         contentBytes = content.getBytes( "UTF-8" );
@@ -103,6 +105,7 @@ public class ServiceResourceTransformerTest {
         contentResource = "META-INF/services/org.something.another";
 
         xformer.processResource( contentResource, contentStream, relocators );
+        contentStream.close();
 
         File tempJar = File.createTempFile("shade.", ".jar");
         tempJar.deleteOnExit();

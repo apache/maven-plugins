@@ -55,8 +55,6 @@ public class AppendingTransformer
     {
         IOUtil.copy( is, data );
         data.write( '\n' );
-
-        is.close();
     }
 
     public boolean hasTransformedResource()
