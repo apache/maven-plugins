@@ -139,7 +139,6 @@ under the License.
         <jdk>[1.5,)</jdk>
       </activation>
       <modules>
-        <module>maven-plugins</module>
         <!--Moved to maven-3 profile as a workaround for MNG-3814 -->
         <module>maven-project-info-reports-plugin</module>
         <module>maven-remote-resources-plugin</module>
