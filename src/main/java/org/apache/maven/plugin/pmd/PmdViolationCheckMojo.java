@@ -19,19 +19,6 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.pmd.model.PmdErrorDetail;
@@ -45,6 +32,19 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Fail the build if there were any PMD violations in the source code.
@@ -112,8 +112,11 @@ public class PmdViolationCheckMojo
         for ( final Entry<Object, Object> propEntry : props.entrySet() )
         {
             final Set<String> excludedRuleSet = new HashSet<String>();
-            final String className = propEntry.getKey().toString();
-            final String[] excludedRules = propEntry.getValue().toString().split( "," );
+            final String className = propEntry.getKey()
+                                              .toString();
+            final String[] excludedRules = propEntry.getValue()
+                                                    .toString()
+                                                    .split( "," );
             for ( final String excludedRule : excludedRules )
             {
                 excludedRuleSet.add( excludedRule.trim() );
@@ -141,7 +144,8 @@ public class PmdViolationCheckMojo
         {
             final String fileName = errorDetail.getFileName();
             final int javaIdx = fileName.indexOf( "\\java\\" );
-            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 ).replace( '\\', '.' );
+            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 )
+                           .replace( '\\', '.' );
         }
     }
 
@@ -152,7 +156,9 @@ public class PmdViolationCheckMojo
     {
 
         StringBuilder buff = new StringBuilder( 100 );
-        buff.append( "PMD " ).append( severity ).append( ": " );
+        buff.append( "PMD " )
+            .append( severity )
+            .append( ": " );
         if ( item.getViolationClass() != null )
         {
             if ( item.getViolationPackage() != null )
@@ -168,32 +174,45 @@ public class PmdViolationCheckMojo
         }
         buff.append( ":" );
         buff.append( item.getBeginline() );
-        buff.append( " Rule:" ).append( item.getRule() );
-        buff.append( " Priority:" ).append( item.getPriority() );
-        buff.append( " " ).append( item.getText() ).append( "." );
+        buff.append( " Rule:" )
+            .append( item.getRule() );
+        buff.append( " Priority:" )
+            .append( item.getPriority() );
+        buff.append( " " )
+            .append( item.getText() )
+            .append( "." );
 
-        this.getLog().info( buff.toString() );
+        this.getLog()
+            .info( buff.toString() );
     }
 
     @Override
     protected List<Violation> getErrorDetails( File pmdFile )
         throws XmlPullParserException, IOException
     {
-        PmdXpp3Reader reader = new PmdXpp3Reader();
-        PmdErrorDetail details = reader.read( new FileReader( pmdFile ), false );
-
-        List<Violation> violations = new ArrayList<Violation>();
-        for ( PmdFile file : details.getFiles() )
+        final FileReader reader1 = new FileReader( pmdFile );
+        try
         {
-            String fullPath = file.getName();
+            PmdXpp3Reader reader = new PmdXpp3Reader();
+            PmdErrorDetail details = reader.read( reader1, false );
 
-            for ( Violation violation : file.getViolations() )
+            List<Violation> violations = new ArrayList<Violation>();
+            for ( PmdFile file : details.getFiles() )
             {
-                violation.setFileName( getFilename( fullPath, violation.getViolationPackage() ) );
-                violations.add( violation );
+                String fullPath = file.getName();
+
+                for ( Violation violation : file.getViolations() )
+                {
+                    violation.setFileName( getFilename( fullPath, violation.getViolationPackage() ) );
+                    violations.add( violation );
+                }
             }
+            return violations;
         }
-        return violations;
+        finally
+        {
+            reader1.close();
+        }
     }
 
     @Override
@@ -214,7 +233,8 @@ public class PmdViolationCheckMojo
 
         while ( StringUtils.isNotEmpty( pkg ) )
         {
-            index = fullpath.substring( 0, index ).lastIndexOf( File.separatorChar );
+            index = fullpath.substring( 0, index )
+                            .lastIndexOf( File.separatorChar );
 
             int dot = pkg.indexOf( '.' );
 

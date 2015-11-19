@@ -31,6 +31,7 @@ import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -48,16 +49,20 @@ public class DefaultConfigurationMavenProjectStub
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
+        FileReader reader = null;
         try
         {
-            model =
-                pomReader.read( new FileReader( new File( getBasedir()
-                    + "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" ) ) );
+            reader = new FileReader( new File( getBasedir() + "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" ) );
+            model = pomReader.read( reader );
             setModel( model );
         }
         catch ( Exception e )
         {
 
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
 
         setGroupId( model.getGroupId() );
@@ -72,12 +77,14 @@ public class DefaultConfigurationMavenProjectStub
         setScm( scm );
 
         Build build = new Build();
-        build.setFinalName( model.getBuild().getFinalName() );
+        build.setFinalName( model.getBuild()
+                                 .getFinalName() );
         build.setDirectory( getBasedir() + "/target/test/unit/default-configuration/target" );
         build.setSourceDirectory( getBasedir() + "/src/test/resources/unit/default-configuration" );
         setBuild( build );
 
-        setReportPlugins( model.getReporting().getPlugins() );
+        setReportPlugins( model.getReporting()
+                               .getPlugins() );
 
         String basedir = getBasedir().getAbsolutePath();
         List<String> compileSourceRoots = new ArrayList<String>();
