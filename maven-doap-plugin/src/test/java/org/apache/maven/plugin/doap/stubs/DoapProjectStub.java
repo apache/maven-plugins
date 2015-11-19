@@ -35,7 +35,9 @@ import org.apache.maven.model.Organization;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -52,18 +54,23 @@ public class DoapProjectStub
     public DoapProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
+        XmlStreamReader reader = null;
         try
         {
+            reader = ReaderFactory.newXmlReader(
+                new File( new File( super.getBasedir(), "/src/test/resources/unit/doap-configuration/" ),
+                          "doap-configuration-plugin-config.xml" ) );
             model =
-                pomReader.read( ReaderFactory.newXmlReader( new File(
-                                                                      new File( super.getBasedir(),
-                                                                                "/src/test/resources/unit/doap-configuration/" ),
-                                                                      "doap-configuration-plugin-config.xml" ) ) );
+                pomReader.read( reader );
             setModel( model );
         }
         catch ( Exception e )
         {
             throw new RuntimeException( e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
 
         setGroupId( model.getGroupId() );

@@ -540,6 +540,69 @@ public class DoapMojo
             throw new MojoExecutionException( "Error creating DOAP file " + outputFile.getAbsolutePath(), e );
         }
 
+        try
+        {
+            doWrite( project, outputFile, w );
+        }
+        finally
+        {
+
+            try
+            {
+                w.close();
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error when closing the writer.", e );
+            }
+        }
+
+        if ( !messages.getWarnMessages().isEmpty() )
+        {
+            for ( String warn : messages.getWarnMessages() )
+            {
+                getLog().warn( warn );
+            }
+        }
+
+        if ( !messages.getErrorMessages().isEmpty() )
+        {
+            getLog().error( "" );
+            for ( String error : messages.getErrorMessages() )
+            {
+                getLog().error( error );
+            }
+            getLog().error( "" );
+
+            if ( ASFExtOptionsUtil.isASFProject( project ) )
+            {
+                getLog().error( "For more information about the errors and possible solutions, "
+                                    + "please read the plugin documentation:" );
+                getLog().error( "http://maven.apache.org/plugins/maven-doap-plugin/usage.html#DOAP_ASF_Configuration" );
+                throw new MojoExecutionException( "The generated DOAP doesn't respect ASF rules, see above." );
+            }
+        }
+
+        if ( validate )
+        {
+            List<String> errors = DoapUtil.validate( outputFile );
+            if ( !errors.isEmpty() )
+            {
+                getLog().error( "" );
+                for ( String error : errors )
+                {
+                    getLog().error( error );
+                }
+                getLog().error( "" );
+
+                throw new MojoExecutionException( "Error parsing the generated DOAP file, see above." );
+            }
+        }
+    }
+
+    private void doWrite( MavenProject project, File outputFile, Writer w )
+        throws MojoExecutionException
+    {
         if ( asfExtOptions.isIncluded() )
         {
             getLog().info( "Generating an ASF DOAP file " + outputFile.getAbsolutePath() );
@@ -753,57 +816,6 @@ public class DoapMojo
         writeOrganizations( writer );
 
         writer.endElement(); // rdf:RDF
-
-        try
-        {
-            w.close();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error when closing the writer.", e );
-        }
-
-        if ( !messages.getWarnMessages().isEmpty() )
-        {
-            for ( String warn : messages.getWarnMessages() )
-            {
-                getLog().warn( warn );
-            }
-        }
-
-        if ( !messages.getErrorMessages().isEmpty() )
-        {
-            getLog().error( "" );
-            for ( String error : messages.getErrorMessages() )
-            {
-                getLog().error( error );
-            }
-            getLog().error( "" );
-
-            if ( ASFExtOptionsUtil.isASFProject( project ) )
-            {
-                getLog().error( "For more information about the errors and possible solutions, "
-                                    + "please read the plugin documentation:" );
-                getLog().error( "http://maven.apache.org/plugins/maven-doap-plugin/usage.html#DOAP_ASF_Configuration" );
-                throw new MojoExecutionException( "The generated DOAP doesn't respect ASF rules, see above." );
-            }
-        }
-
-        if ( validate )
-        {
-            List<String> errors = DoapUtil.validate( outputFile );
-            if ( !errors.isEmpty() )
-            {
-                getLog().error( "" );
-                for ( String error : errors )
-                {
-                    getLog().error( error );
-                }
-                getLog().error( "" );
-
-                throw new MojoExecutionException( "Error parsing the generated DOAP file, see above." );
-            }
-        }
     }
 
     /**
