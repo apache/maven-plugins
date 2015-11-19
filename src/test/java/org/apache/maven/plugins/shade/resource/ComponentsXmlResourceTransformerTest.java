@@ -60,11 +60,13 @@ public class ComponentsXmlResourceTransformerTest
         transformer.processResource( "components-1.xml", resourceAsStream1,
                                      Collections.<Relocator> emptyList() );
         resourceAsStream1.close();
+        final InputStream resourceAsStream2 = getClass().getResourceAsStream( "/components-expected.xml" );
         Diff diff = XMLUnit.compareXML(
-            IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
+            IOUtil.toString( resourceAsStream2, "UTF-8" ),
             IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ) );
         //assertEquals( IOUtil.toString( getClass().getResourceAsStream( "/components-expected.xml" ), "UTF-8" ),
         //              IOUtil.toString( transformer.getTransformedResource(), "UTF-8" ).replaceAll("\r\n", "\n") );
+        resourceAsStream2.close();
         XMLAssert.assertXMLIdentical( diff, true );
     }
 }
