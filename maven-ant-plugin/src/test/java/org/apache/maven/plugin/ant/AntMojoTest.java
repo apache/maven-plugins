@@ -125,8 +125,12 @@ public class AntMojoTest
                 new File( antBasedir, "target/" + currentProject.getBuild().getFinalName() + ".jar" ).exists() );
 
             Properties properties = new Properties();
-            properties.load(
-                new FileInputStream( new File( antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME ) ) );
+            final FileInputStream inStream = new FileInputStream(new File(antBasedir, AntBuildWriter.DEFAULT_MAVEN_PROPERTIES_FILENAME));
+            try {
+                properties.load(inStream);
+            } finally {
+                inStream.close();
+            }
             String repo = properties.getProperty( "maven.repo.local" );
             assertTrue( repo.equals( new File( getBasedir(), "target/local-repo" ).getAbsolutePath() ) );
         }
