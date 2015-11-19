@@ -27,7 +27,9 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -48,17 +50,23 @@ public class SiteMavenProjectStub
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model;
 
+        XmlStreamReader reader = null;
         try
         {
             File pomFile =
                 new File( getBasedir(), pomFilePath == null ? "/src/test/resources/unit/interpolated-site/pom.xml"
                                 : pomFilePath );
-            model = pomReader.read( ReaderFactory.newXmlReader( pomFile ) );
+            reader = ReaderFactory.newXmlReader( pomFile );
+            model = pomReader.read( reader );
             setModel( model );
         }
         catch ( Exception e )
         {
             throw new RuntimeException( e );
+        }
+        finally
+        {
+            IOUtil.close( reader);
         }
         Site site = new Site();
         site.setId( "localhost" );
