@@ -29,6 +29,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.codehaus.plexus.util.ReaderFactory;
 
+import static org.apache.maven.plugins.source.stubs.Project001Stub.readModelFromFile;
+
 public class Project010Stub
     extends MavenProjectStub
 {
@@ -40,13 +42,11 @@ public class Project010Stub
 
     public Project010Stub()
     {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model;
 
         try
         {
-            model = pomReader.read(
-                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ) ) );
+            model = readModelFromFile( new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ) );
             setModel( model );
 
             setFile(new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ));

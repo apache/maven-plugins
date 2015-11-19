@@ -1,12 +1,18 @@
 package org.apache.maven.plugins.source.stubs;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,9 +33,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.codehaus.plexus.util.ReaderFactory;
-
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
  */
@@ -44,13 +47,11 @@ public class Project001Stub
 
     public Project001Stub()
     {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model;
 
         try
         {
-            model = pomReader.read(
-                ReaderFactory.newXmlReader( new File( getBasedir(), "target/test-classes/unit/project-001/pom.xml" ) ) );
+            model = readModelFromFile( new File( getBasedir(), "target/test-classes/unit/project-001/pom.xml" ) );
             setModel( model );
 
             setGroupId( model.getGroupId() );
@@ -74,8 +75,10 @@ public class Project001Stub
             testCompileSourceRoots.add( basedir + "/target/test-classes/unit/project-001/src/test/java" );
             setTestCompileSourceRoots( testCompileSourceRoots );
 
-            setResources( model.getBuild().getResources() );
-            setTestResources( model.getBuild().getTestResources() );
+            setResources( model.getBuild()
+                               .getResources() );
+            setTestResources( model.getBuild()
+                                   .getTestResources() );
 
             SourcePluginArtifactStub artifact =
                 new SourcePluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging(), null );
@@ -119,5 +122,21 @@ public class Project001Stub
     public void setTestResources( List testResources )
     {
         this.testResources = testResources;
+    }
+
+    static Model readModelFromFile(File file)
+        throws IOException, XmlPullParserException
+    {
+        MavenXpp3Reader pomReader = new MavenXpp3Reader();
+        XmlStreamReader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( file );
+            return pomReader.read( reader );
+        } finally {
+            IOUtil.close( reader );
+        }
+
+
     }
 }
