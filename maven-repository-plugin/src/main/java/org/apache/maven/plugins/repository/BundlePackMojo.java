@@ -40,8 +40,10 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.components.interactivity.InputHandler;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -218,18 +220,20 @@ public class BundlePackMojo
                 licenses.add( license );
                 rewrite = true;
             }
-            
+
             if ( disableMaterialization )
             {
                 getLog().warn( "Validations to confirm support for project materialization have been DISABLED."
-                       + "\n\nYour project may not provide the POM elements necessary to allow users to retrieve "
-                       + "sources on-demand,"
-                       + "\nor to easily checkout your project in an IDE. THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS."
-                       + "\n\nContinue? [y/N]" );
-                
+                                   + "\n\nYour project may not provide the POM elements necessary to allow "
+                                   + "users to retrieve sources on-demand,"
+                                   + "\nor to easily checkout your project in an IDE. "
+                                   + "THIS CAN SERIOUSLY INCONVENIENCE YOUR USERS.\n\nContinue? [y/N]" );
+
                 try
                 {
-                    if ( 'y' != inputHandler.readLine().toLowerCase().charAt( 0 ) )
+                    if ( 'y' != inputHandler.readLine()
+                                            .toLowerCase()
+                                            .charAt( 0 ) )
                     {
                         disableMaterialization = false;
                     }
@@ -238,9 +242,9 @@ public class BundlePackMojo
                 {
                     getLog().debug( "Error reading confirmation: " + e.getMessage(), e );
                 }
-                
+
             }
-            
+
             if ( !disableMaterialization )
             {
                 Scm scm = model.getScm();
@@ -249,7 +253,7 @@ public class BundlePackMojo
                     scm = new Scm();
                     model.setScm( scm );
                 }
-                
+
                 if ( scm.getUrl() == null )
                 {
                     if ( scmUrl != null )
@@ -263,7 +267,7 @@ public class BundlePackMojo
                         rewrite = true;
                     }
                 }
-                
+
                 if ( scm.getConnection() == null )
                 {
                     if ( scmConnection != null )
@@ -295,13 +299,14 @@ public class BundlePackMojo
 
             if ( model.getBuild() != null )
             {
-                finalName = model.getBuild().getFinalName();
+                finalName = model.getBuild()
+                                 .getFinalName();
             }
             if ( finalName == null )
             {
                 finalName = model.getArtifactId() + "-" + model.getVersion();
             }
-            
+
             boolean batchMode = settings == null ? false : !settings.isInteractiveMode();
             List<File> files = BundleUtils.selectProjectFiles( dir, inputHandler, finalName, pom, getLog(), batchMode );
 
@@ -312,21 +317,23 @@ public class BundlePackMojo
             boolean artifactChecks = !"pom".equals( model.getPackaging() );
             boolean sourcesFound = false;
             boolean javadocsFound = false;
-            
+
             for ( File f : files )
             {
-                if ( artifactChecks && f.getName().endsWith( finalName + "-sources.jar" ) )
+                if ( artifactChecks && f.getName()
+                                        .endsWith( finalName + "-sources.jar" ) )
                 {
                     sourcesFound = true;
                 }
-                else if ( artifactChecks && f.getName().equals( finalName + "-javadoc.jar" ) )
+                else if ( artifactChecks && f.getName()
+                                             .equals( finalName + "-javadoc.jar" ) )
                 {
                     javadocsFound = true;
                 }
-                
+
                 jarArchiver.addFile( f, f.getName() );
             }
-            
+
             if ( artifactChecks && !sourcesFound )
             {
                 getLog().warn( "Sources not included in upload bundle." );
@@ -401,9 +408,11 @@ public class BundlePackMojo
         throws MojoExecutionException
     {
         Model model;
+        XmlStreamReader reader = null;
         try
         {
-            model = new MavenXpp3Reader().read( ReaderFactory.newXmlReader( pom ) );
+            reader = ReaderFactory.newXmlReader( pom );
+            model = new MavenXpp3Reader().read( reader );
         }
         catch ( XmlPullParserException e )
         {
@@ -419,6 +428,10 @@ public class BundlePackMojo
         {
             throw new MojoExecutionException( "Unable to read POM at " + pom.getAbsolutePath() + ": " + e.getMessage(),
                                               e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
         return model;
     }
