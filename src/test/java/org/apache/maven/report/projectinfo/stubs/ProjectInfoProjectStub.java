@@ -38,7 +38,9 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 /**
  * @author Edwin Punzalan
@@ -59,14 +61,20 @@ public abstract class ProjectInfoProjectStub
     public ProjectInfoProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
+        XmlStreamReader reader = null;
         try
         {
-            model = pomReader.read( ReaderFactory.newXmlReader( new File( getBasedir(), getPOM() ) ) );
+            reader = ReaderFactory.newXmlReader( new File( getBasedir(), getPOM() ) );
+            model = pomReader.read( reader );
             setModel( model );
         }
         catch ( Exception e )
         {
             throw new RuntimeException( e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
 
         setGroupId( model.getGroupId() );
@@ -76,8 +84,7 @@ public abstract class ProjectInfoProjectStub
         setUrl( model.getUrl() );
         setPackaging( model.getPackaging() );
 
-        Artifact artifact = new ProjectInfoPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(),
-                                                               getPackaging() );
+        Artifact artifact = new ProjectInfoPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
@@ -85,11 +92,9 @@ public abstract class ProjectInfoProjectStub
         build.setFinalName( model.getArtifactId() );
         build.setDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId() + "/target" );
         build.setSourceDirectory( getBasedir() + "/src/main/java" );
-        build.setOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId()
-                                  + "/target/classes" );
+        build.setOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId() + "/target/classes" );
         build.setTestSourceDirectory( getBasedir() + "/src/test/java" );
-        build.setTestOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId()
-            + "/target/test-classes" );
+        build.setTestOutputDirectory( super.getBasedir() + "/target/test/unit/" + model.getArtifactId() + "/target/test-classes" );
         setBuild( build );
 
         List<String> compileSourceRoots = new ArrayList<String>();
