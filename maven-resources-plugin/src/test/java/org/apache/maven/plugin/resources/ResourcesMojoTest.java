@@ -39,10 +39,10 @@ public class ResourcesMojoTest
     extends AbstractMojoTestCase
 {
     protected final static String defaultPomFilePath = "/target/test-classes/unit/resources-test/plugin-config.xml";
-    
+
     /**
      * test mojo lookup, test harness should be working fine
-     * 
+     *
      * @throws Exception
      */
     public void testHarnessEnvironment()
@@ -53,7 +53,7 @@ public class ResourcesMojoTest
 
         assertNotNull( mojo );
     }
-    
+
     /**
      * @throws Exception
      */
@@ -63,7 +63,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceDirectoryStructure" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -76,7 +77,8 @@ public class ResourcesMojoTest
 
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
@@ -99,7 +101,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceDirectoryStructure_RelativePath" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -111,7 +114,8 @@ public class ResourcesMojoTest
         project.addFile( "notpackage/test/file2.txt" );
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
@@ -136,7 +140,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "encoding" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -147,7 +152,8 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "encoding", "UTF-8" );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
@@ -166,7 +172,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceInclude" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -193,7 +200,8 @@ public class ResourcesMojoTest
         project.addInclude( "**/test/file*" );
         project.addInclude( "**/package/*.include" );
 
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
@@ -218,7 +226,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceExclude" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -246,7 +255,8 @@ public class ResourcesMojoTest
         project.addExclude( "**/notpackage*" );
         project.addExclude( "**/notpackage*/**" );
 
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
@@ -271,7 +281,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceTargetPath" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -284,7 +295,8 @@ public class ResourcesMojoTest
         project.addFile( "notpackage/test/file2.txt" );
         project.setupBuildEnvironment();
 
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
@@ -309,7 +321,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceSystemProperties_Filtering" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -320,12 +333,13 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
-        MavenSession mavenSession = new MavenSession( null, null, null, null, null, null, null, System.getProperties(),
-                                                      null );
+        MavenSession mavenSession =
+            new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.execute();
 
@@ -335,9 +349,17 @@ public class ResourcesMojoTest
         assertTrue( userDir.exists() );
 
         Properties props = new Properties();
-        props.load( new FileInputStream( new File( resourcesDir, "file4.txt" ) ) );
+        final FileInputStream inStream = new FileInputStream( new File( resourcesDir, "file4.txt" ) );
+        try
+        {
+            props.load( inStream );
+        }
+        finally
+        {
+            inStream.close();
+        }
         File fileFromFiltering = new File( props.getProperty( "current-working-directory" ) );
-        
+
         assertTrue( fileFromFiltering.getAbsolutePath() + " does not exist.", fileFromFiltering.exists() );
         assertEquals( userDir.getAbsolutePath(), fileFromFiltering.getAbsolutePath() );
     }
@@ -351,7 +373,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceProjectProperties_Filtering" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -363,7 +386,8 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
@@ -382,9 +406,10 @@ public class ResourcesMojoTest
     {
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
-        MavenProjectResourcesStub project = new MavenProjectResourcesStub(
-                                                                           "resourcePojectProperty_Filtering_PropertyDestination" );
-        List resources = project.getBuild().getResources();
+        MavenProjectResourcesStub project =
+            new MavenProjectResourcesStub( "resourcePojectProperty_Filtering_PropertyDestination" );
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
@@ -398,7 +423,8 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
@@ -419,7 +445,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_Filtering" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
         LinkedList filterList = new LinkedList();
 
         assertNotNull( mojo );
@@ -433,7 +460,8 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", filterList );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
@@ -453,7 +481,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_Extra" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
         LinkedList filterList = new LinkedList();
 
         assertNotNull( mojo );
@@ -467,7 +496,8 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "filters", filterList );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
@@ -487,7 +517,8 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_MainAndExtra" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
         LinkedList filterList = new LinkedList();
         LinkedList extraFilterList = new LinkedList();
 
@@ -497,17 +528,18 @@ public class ResourcesMojoTest
         project.addFile( "filter.properties", "dir:testdir" );
         project.addFile( "extra-filter.properties", "dir2:testdir2" );
         project.setResourceFiltering( 0, true );
-        
+
         project.cleanBuildEnvironment();
         project.setupBuildEnvironment();
-        
+
         filterList.add( project.getResourcesDirectory() + "filter.properties" );
         extraFilterList.add( project.getResourcesDirectory() + "extra-filter.properties" );
 
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", filterList );
         setVariableValueToObject( mojo, "filters", extraFilterList );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
@@ -523,7 +555,7 @@ public class ResourcesMojoTest
     /**
      * Validates that a Filter token containing a project property will be resolved before the Filter is applied to the
      * resources.
-     * 
+     *
      * @throws Exception
      */
     public void testPropertyFiles_Filtering_TokensInFilters()
@@ -531,9 +563,10 @@ public class ResourcesMojoTest
     {
         final File testPom = new File( getBasedir(), defaultPomFilePath );
         final ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
-        final MavenProjectResourcesStub project = new MavenProjectResourcesStub(
-                                                                                 "resourcePropertyFiles_Filtering_TokensInFilters" );
-        final List resources = project.getBuild().getResources();
+        final MavenProjectResourcesStub project =
+            new MavenProjectResourcesStub( "resourcePropertyFiles_Filtering_TokensInFilters" );
+        final List resources = project.getBuild()
+                                      .getResources();
         final LinkedList filterList = new LinkedList();
 
         assertNotNull( mojo );
@@ -548,7 +581,8 @@ public class ResourcesMojoTest
         // setVariableValueToObject(mojo,"encoding","UTF-8");
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", filterList );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
@@ -565,12 +599,15 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "windows-paths" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
-        project.getProperties().setProperty( "basePath", "C:\\Users\\Administrator" );
-        project.getProperties().setProperty( "docsPath", "${basePath}\\Documents" );
+        project.getProperties()
+               .setProperty( "basePath", "C:\\Users\\Administrator" );
+        project.getProperties()
+               .setProperty( "docsPath", "${basePath}\\Documents" );
 
         project.addFile( "path-listing.txt", "base path is ${basePath}\ndocuments path is ${docsPath}" );
         project.setResourceFiltering( 0, true );
@@ -580,7 +617,8 @@ public class ResourcesMojoTest
 
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.FALSE );
@@ -601,12 +639,15 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "windows-paths" );
-        List resources = project.getBuild().getResources();
+        List resources = project.getBuild()
+                                .getResources();
 
         assertNotNull( mojo );
 
-        project.getProperties().setProperty( "basePath", "C:\\Users\\Administrator" );
-        project.getProperties().setProperty( "docsPath", "${basePath}\\Documents" );
+        project.getProperties()
+               .setProperty( "basePath", "C:\\Users\\Administrator" );
+        project.getProperties()
+               .setProperty( "docsPath", "${basePath}\\Documents" );
 
         project.addFile( "path-listing.txt", "base path is ${basePath}\ndocuments path is ${docsPath}" );
         project.setResourceFiltering( 0, true );
@@ -616,7 +657,8 @@ public class ResourcesMojoTest
 
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getOutputDirectory() ) );
+        setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
+                                                                            .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
 
@@ -628,8 +670,9 @@ public class ResourcesMojoTest
 
         assertTrue( FileUtils.fileExists( new File( resourcesDir, "path-listing.txt" ).getAbsolutePath() ) );
 
-        assertEquals( "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
-                      FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
+        assertEquals(
+            "base path is C:\\\\Users\\\\Administrator\ndocuments path is C:\\\\Users\\\\Administrator\\\\Documents",
+            FileUtils.fileRead( new File( resourcesDir, "path-listing.txt" ) ) );
     }
 
     /**
