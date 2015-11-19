@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -138,19 +139,25 @@ public class BundleRemoteResourcesMojo
 
         RemoteResourcesBundleXpp3Writer w = new RemoteResourcesBundleXpp3Writer();
 
+        Writer writer = null;
         try
         {
             File f = new File( outputDirectory, RESOURCES_MANIFEST );
 
-            FileUtils.mkdir( f.getParentFile().getAbsolutePath() );
+            FileUtils.mkdir( f.getParentFile()
+                              .getAbsolutePath() );
 
-            Writer writer = new FileWriter( f );
+            writer = new FileWriter( f );
 
             w.write( writer, remoteResourcesBundle );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error creating remote resources manifest.", e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 }
