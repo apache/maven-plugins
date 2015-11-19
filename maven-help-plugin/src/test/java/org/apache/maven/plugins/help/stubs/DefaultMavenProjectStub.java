@@ -43,10 +43,15 @@ public class DefaultMavenProjectStub
 
         try
         {
-            model =
-                pomReader.read( new FileReader( new File( getBasedir()
-                    + "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" ) ) );
-            setModel( model );
+            final FileReader reader = new FileReader(new File(getBasedir()
+                    + "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml"));
+            try {
+                model =
+                        pomReader.read(reader);
+            } finally {
+                reader.close();
+            }
+            setModel(model);
         }
         catch ( Exception e )
         {
