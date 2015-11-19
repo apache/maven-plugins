@@ -48,7 +48,13 @@ public class JiraUnicodeTestCase
 
         JiraMojo mojo = (JiraMojo) lookupMojo( "jira-report", pom );
         InputStream testJiraXmlStream = JiraUnicodeTestCase.class.getResourceAsStream( "unicode-jira-results.xml" );
-        String jiraXml = IOUtils.toString( testJiraXmlStream, "utf-8" );
+        String jiraXml = null;
+        try {
+            jiraXml = IOUtils.toString(testJiraXmlStream, "utf-8");
+        } finally {
+            testJiraXmlStream.close();
+        }
+
         MockJiraDownloader mockDownloader = new MockJiraDownloader();
         mockDownloader.setJiraXml( jiraXml );
         mojo.setMockDownloader( mockDownloader );
