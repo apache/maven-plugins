@@ -24,4 +24,7 @@ assert content.contains( 'Markdown Format works' );
 
 assert !content.contains( ' quotes and double quotes were stripped' );
 
+assert !content.contains( 'MACRO' );
+assert content.contains( 'href="#Subsection"' );
+
 return true;
