@@ -331,7 +331,6 @@ public class RarMojo
         // Copy dependencies
         try
         {
-            @SuppressWarnings( "unchecked" )
             Set<Artifact> artifacts = project.getArtifacts();
             for ( Artifact artifact : artifacts )
             {
