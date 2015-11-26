@@ -559,6 +559,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getDirectory() ) );
         setVariableValueToObject( mojo, "sourceDirectory", new File( project.getBuild().getOutputDirectory() ) );
         setVariableValueToObject( mojo, "jarName", DEFAULT_JAR_NAME );
+        setVariableValueToObject( mojo, "ejbJar", EjbMojo.DEFAULT_EJBJAR );
         setVariableValueToObject( mojo, "clientExcludes", clientExcludes );
         setVariableValueToObject( mojo, "clientIncludes", clientIncludes );
         setVariableValueToObject( mojo, "excludes", excludes );

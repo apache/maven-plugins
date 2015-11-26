@@ -63,8 +63,8 @@ public class EjbMojo
     // TODO: will null work instead?
     private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
-    private static final String[] DEFAULT_CLIENT_EXCLUDES = new String[] { "**/*Bean.class", "**/*CMP.class",
-        "**/*Session.class", "**/package.html" };
+    private static final String[] DEFAULT_CLIENT_EXCLUDES =
+        new String[] { "**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html" };
 
     /**
      * The directory location for the generated EJB.
@@ -73,8 +73,7 @@ public class EjbMojo
     private File outputDirectory;
 
     /**
-     * Directory that contains the resources which are packaged into
-     * the created archive {@code target/classes}.
+     * Directory that contains the resources which are packaged into the created archive {@code target/classes}.
      */
     @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
     private File sourceDirectory;
@@ -92,11 +91,15 @@ public class EjbMojo
     private String classifier;
 
     /**
+     * Default value for {@link #ejbJar}.
+     */
+    public static final String DEFAULT_EJBJAR = "META-INF/ejb-jar.xml";
+
+    /**
      * You can define the location of <code>ejb-jar.xml</code> file.
      */
-    @Parameter( property = "maven.ejb.ejbJar", defaultValue = "META-INF/ejb-jar.xml" )
-    // The initialization is needed to get the unit tests running which seemed to lack lookup for the defaultValue.
-    private String ejbJar = "META-INF/ejb-jar.xml";
+    @Parameter( property = "maven.ejb.ejbJar", defaultValue = DEFAULT_EJBJAR )
+    private String ejbJar;
 
     /**
      * Whether the EJB client jar should be generated or not.
@@ -177,6 +180,7 @@ public class EjbMojo
      * <pre>
      * &lt;ejbVersion&gt;3.0&lt;&#47;ejbVersion&gt;
      * </pre>
+     * 
      * @since 2.1
      */
     @Parameter( property = "maven.ejb.ejbVersion", defaultValue = "3.1" )
@@ -257,7 +261,7 @@ public class EjbMojo
         if ( !sourceDirectory.exists() )
         {
             getLog().warn( "The created EJB jar will be empty cause the " + sourceDirectory.getPath()
-                               + " did not exist." );
+                + " did not exist." );
             sourceDirectory.mkdirs();
         }
 
@@ -387,23 +391,23 @@ public class EjbMojo
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage(),
+                                              e );
         }
         catch ( ManifestException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage(),
+                                              e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage(),
+                                              e );
         }
         catch ( DependencyResolutionRequiredException e )
         {
-            throw new MojoExecutionException( "There was a problem creating the EJB client archive: "
-                + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem creating the EJB client archive: " + e.getMessage(),
+                                              e );
         }
 
         // TODO: shouldn't need classifer
@@ -440,14 +444,14 @@ public class EjbMojo
         MavenResourcesExecution mavenResourcesExecution = new MavenResourcesExecution();
         mavenResourcesExecution.setEscapeString( escapeString );
         List<FilterWrapper> filterWrappers =
-            mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath,
-                                                      this.session, mavenResourcesExecution );
+            mavenFileFilter.getDefaultFilterWrappers( project, filters, escapeBackslashesInFilePath, this.session,
+                                                      mavenResourcesExecution );
 
         // Create a temporary file that we can copy-and-filter
         File unfilteredDeploymentDescriptor = new File( sourceDirectory, ejbJar + ".unfiltered" );
         FileUtils.copyFile( deploymentDescriptor, unfilteredDeploymentDescriptor );
-        mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true,
-                                  filterWrappers, getEncoding( unfilteredDeploymentDescriptor ) );
+        mavenFileFilter.copyFile( unfilteredDeploymentDescriptor, deploymentDescriptor, true, filterWrappers,
+                                  getEncoding( unfilteredDeploymentDescriptor ) );
         // Remove the temporary file
         FileUtils.forceDelete( unfilteredDeploymentDescriptor );
     }
