@@ -202,6 +202,7 @@ under the License.
     <projectInfoReportsPluginVersion>2.7</projectInfoReportsPluginVersion>
     <checkstylePluginVersion>2.9.1</checkstylePluginVersion>
     <pmdPluginVersion>3.0.1</pmdPluginVersion>
+    <romeVersion>1.0</romeVersion>
   </properties>
 
   <dependencies>
@@ -344,6 +345,14 @@ under the License.
       <artifactId>wagon-provider-api</artifactId>
       <version>${wagonVersion}</version>
     </dependency>
+    
+    <!-- Rome -->
+    <dependency>
+	  <groupId>rome</groupId>
+	  <artifactId>rome</artifactId>
+	  <version>${romeVersion}</version>
+	</dependency>
+    
 
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>

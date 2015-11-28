@@ -44,8 +44,8 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
 /**
  * Generates the site for a single project.
  * <p>
- * Note that links between module sites in a multi module build will <b>not</b>
- * work, since local build directory structure doesn't match deployed site.
+ * Note that links between module sites in a multi module build will <b>not</b> work, since local build directory
+ * structure doesn't match deployed site.
  * </p>
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -77,10 +77,8 @@ public class SiteMojo
     private boolean generateSitemap;
 
     /**
-     * Whether to validate xml input documents.
-     * If set to true, <strong>all</strong> input documents in xml format
-     * (in particular xdoc and fml) will be validated and any error will
-     * lead to a build failure.
+     * Whether to validate xml input documents. If set to true, <strong>all</strong> input documents in xml format (in
+     * particular xdoc and fml) will be validated and any error will lead to a build failure.
      *
      * @since 2.1.1
      */
@@ -96,14 +94,22 @@ public class SiteMojo
     private boolean skip;
 
     /**
-     * {@inheritDoc}
+     * Which types of feed to generate. The result will be in a "feeds" folder at the site root.
+     * Valid feed types are rss_0.90, rss_0.91, rss_0.92, rss_0.93, rss_0.94, rss_1.0 rss_2.0 or atom_0.3
      *
-     * Generate the project site
+     * @since 3.4.1
+     */
+    @Parameter( property = "feedType" )
+    private String feedType;
+
+    /**
+     * {@inheritDoc} Generate the project site
      * <p/>
      * throws MojoExecutionException if any
      *
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -130,31 +136,35 @@ public class SiteMojo
 
         try
         {
-            List<Locale> localesList = siteTool.getAvailableLocales( locales );
+            final List<Locale> localesList =
+                siteTool.getAvailableLocales( locales );
 
             // Default is first in the list
-            Locale defaultLocale = localesList.get( 0 );
+            final Locale defaultLocale = localesList.get( 0 );
             Locale.setDefault( defaultLocale );
 
-            for ( Locale locale : localesList )
+            for ( final Locale locale : localesList )
             {
                 renderLocale( locale, reports );
             }
         }
-        catch ( RendererException e )
+        catch ( final RendererException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
-        catch ( IOException e )
+        catch ( final IOException e )
         {
             throw new MojoExecutionException( "Error during site generation", e );
         }
     }
 
-    private void renderLocale( Locale locale, List<MavenReportExecution> reports )
-        throws IOException, RendererException, MojoFailureException, MojoExecutionException
+    private void renderLocale( final Locale locale,
+                               final List<MavenReportExecution> reports )
+        throws IOException, RendererException, MojoFailureException,
+        MojoExecutionException
     {
-        SiteRenderingContext context = createSiteRenderingContext( locale );
+        final SiteRenderingContext context =
+            createSiteRenderingContext( locale );
 
         context.setInputEncoding( getInputEncoding() );
         context.setOutputEncoding( getOutputEncoding() );
@@ -164,18 +174,20 @@ public class SiteMojo
             getLog().info( "Validation is switched on, xml input documents will be validated!" );
         }
 
-        File outputDir = getOutputDirectory( locale );
+        final File outputDir = getOutputDirectory( locale );
 
-        Map<String, DocumentRenderer> documents = locateDocuments( context, reports, locale );
+        final Map<String, DocumentRenderer> documents =
+            locateDocuments( context, reports, locale );
 
         // 1. render Doxia documents first
-        List<DocumentRenderer> reportDocuments = renderDoxiaDocuments( documents, context, outputDir, false );
+        final List<DocumentRenderer> reportDocuments =
+            renderDoxiaDocuments( documents, context, outputDir, false );
 
         // 2. then reports
         // For external reports
-        for ( MavenReportExecution mavenReportExecution : reports )
+        for ( final MavenReportExecution mavenReportExecution : reports )
         {
-            MavenReport report = mavenReportExecution.getMavenReport();
+            final MavenReport report = mavenReportExecution.getMavenReport();
             report.setReportOutputDirectory( outputDir );
         }
 
@@ -185,46 +197,61 @@ public class SiteMojo
         {
             getLog().info( "Generating Sitemap." );
 
-            new SiteMap( getOutputEncoding(), i18n )
-                    .generate( context.getDecoration(), generatedSiteDirectory, locale );
+            new SiteMap( getOutputEncoding(), i18n ).generate( context.getDecoration(),
+                                                               generatedSiteDirectory,
+                                                               locale );
         }
 
         // 3. Generated docs must be done afterwards as they are often generated by reports
         context.getSiteDirectories().clear();
         context.addSiteDirectory( generatedSiteDirectory );
 
-        Map<String, DocumentRenderer> generatedDocuments = siteRenderer.locateDocumentFiles( context );
+        final Map<String, DocumentRenderer> generatedDocuments =
+            siteRenderer.locateDocumentFiles( context );
 
         renderDoxiaDocuments( generatedDocuments, context, outputDir, true );
+
+        // 4. Generate feeds (atom or rss)
+        if ( feedType != null )
+        {
+            getLog().info( "Generating Feed" + feedType );
+
+            new Feed( getProject(), feedType ).generate( context, outputDir );
+        }
     }
 
     /**
      * Renders Doxia documents, but not reports.
+     *
      * @param documents a collection of documents
      * @return the sublist of documents that are not Doxia parsed
      */
-    private List<DocumentRenderer> renderDoxiaDocuments( Map<String, DocumentRenderer> documents,
-                                                         SiteRenderingContext context, File outputDir,
-                                                         boolean generated )
+    private List<DocumentRenderer> renderDoxiaDocuments( final Map<String, DocumentRenderer> documents,
+                                                         final SiteRenderingContext context,
+                                                         final File outputDir,
+                                                         final boolean generated )
         throws RendererException, IOException
     {
-        Map<String, DocumentRenderer> doxiaDocuments = new TreeMap<String, DocumentRenderer>();
-        List<DocumentRenderer> nonDoxiaDocuments = new ArrayList<DocumentRenderer>();
+        final Map<String, DocumentRenderer> doxiaDocuments =
+            new TreeMap<String, DocumentRenderer>();
+        final List<DocumentRenderer> nonDoxiaDocuments =
+            new ArrayList<DocumentRenderer>();
 
-        Map<String, Integer> counts = new TreeMap<String, Integer>();
+        final Map<String, Integer> counts = new TreeMap<String, Integer>();
 
-        for ( Map.Entry<String, DocumentRenderer> entry: documents.entrySet() )
+        for ( final Map.Entry<String, DocumentRenderer> entry : documents.entrySet() )
         {
-            DocumentRenderer doc = entry.getValue();
+            final DocumentRenderer doc = entry.getValue();
 
             if ( doc instanceof DoxiaDocumentRenderer )
             {
                 doxiaDocuments.put( entry.getKey(), doc );
 
-                DoxiaDocumentRenderer doxia = (DoxiaDocumentRenderer) doc;
+                final DoxiaDocumentRenderer doxia = (DoxiaDocumentRenderer) doc;
 
                 // count documents per parserId
-                String parserId = doxia.getRenderingContext().getParserId();
+                final String parserId =
+                    doxia.getRenderingContext().getParserId();
                 Integer count = counts.get( parserId );
                 if ( count == null )
                 {
@@ -244,8 +271,8 @@ public class SiteMojo
 
         if ( doxiaDocuments.size() > 0 )
         {
-            StringBuilder sb = new StringBuilder( 15 * counts.size() );
-            for ( Map.Entry<String, Integer> entry: counts.entrySet() )
+            final StringBuilder sb = new StringBuilder( 15 * counts.size() );
+            for ( final Map.Entry<String, Integer> entry : counts.entrySet() )
             {
                 if ( sb.length() > 0 )
                 {
@@ -256,8 +283,11 @@ public class SiteMojo
                 sb.append( entry.getKey() );
             }
 
-            getLog().info( "Rendering " + doxiaDocuments.size() + ( generated ? " generated" : "" )
-                               + " Doxia document" + ( doxiaDocuments.size() > 1 ? "s" : "" ) + ": " + sb.toString() );
+            getLog().info( "Rendering " + doxiaDocuments.size()
+                               + ( generated ? " generated" : "" )
+                               + " Doxia document"
+                               + ( doxiaDocuments.size() > 1 ? "s" : "" )
+                               + ": " + sb.toString() );
 
             siteRenderer.render( doxiaDocuments.values(), context, outputDir );
         }
@@ -265,7 +295,7 @@ public class SiteMojo
         return nonDoxiaDocuments;
     }
 
-    private File getOutputDirectory( Locale locale )
+    private File getOutputDirectory( final Locale locale )
     {
         File file;
         if ( locale.getLanguage().equals( Locale.getDefault().getLanguage() ) )
