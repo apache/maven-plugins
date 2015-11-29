@@ -86,7 +86,7 @@ public abstract class AbstractSourceJarMojo
      * The Maven Project Object
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * The Jar archiver.
@@ -453,7 +453,7 @@ public abstract class AbstractSourceJarMojo
      * @param archiver {@link Archiver}
      * @param sourceDirectory {@link File}
      * @param prefix The prefix.
-     * @param pIncludes the includes. 
+     * @param pIncludes the includes.
      * @param pExcludes the excludes.
      * @throws MojoExecutionException in case of an error.
      */
@@ -564,5 +564,21 @@ public abstract class AbstractSourceJarMojo
         }
 
         return combinedExcludes.toArray( new String[combinedExcludes.size()] );
+    }
+
+    /**
+     * @return The current project.
+     */
+    protected MavenProject getProject()
+    {
+        return project;
+    }
+
+    /**
+     * @param project {@link MavenProject}
+     */
+    protected void setProject( MavenProject project )
+    {
+        this.project = project;
     }
 }
