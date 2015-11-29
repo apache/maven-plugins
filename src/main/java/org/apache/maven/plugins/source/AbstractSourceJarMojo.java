@@ -96,11 +96,11 @@ public abstract class AbstractSourceJarMojo
 
     /**
      * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
-     * Archiver Reference</a>.
-     * <br/>
-     * <b>Note: Since 3.0.0 the resulting archives contain a maven descriptor. If you need to suppress the
-     * generation of the maven descriptor you can simply achieve this by using the 
+     * Archiver Reference</a>. <br/>
+     * <b>Note: Since 3.0.0 the resulting archives contain a maven descriptor. If you need to suppress the generation of
+     * the maven descriptor you can simply achieve this by using the
      * <a href="http://maven.apache.org/shared/maven-archiver/index.html#archive">archiver configuration</a>.</b>.
+     * 
      * @since 2.1
      */
     @Parameter
