@@ -41,7 +41,7 @@ public class AggregatorSourceJarMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( "pom".equals( project.getPackaging() ) )
+        if ( "pom".equals( getProject().getPackaging() ) )
         {
             packageSources( reactorProjects );
         }
