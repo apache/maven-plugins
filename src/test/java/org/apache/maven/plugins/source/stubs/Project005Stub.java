@@ -1,11 +1,13 @@
 package org.apache.maven.plugins.source.stubs;
 
+import static org.apache.maven.plugins.source.stubs.Project001Stub.readModelFromFile;
+
 import java.io.File;
 import java.util.List;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.Resource;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,9 +29,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
  */
 
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.codehaus.plexus.util.ReaderFactory;
-
-import static org.apache.maven.plugins.source.stubs.Project001Stub.readModelFromFile;
 
 /**
  * @author <a href="mailto:oching@exist.com">Maria Odea Ching</a>
@@ -39,9 +38,9 @@ public class Project005Stub
 {
     private Build build;
 
-    private List resources;
+    private List<Resource> resources;
 
-    private List testResources;
+    private List<Resource> testResources;
 
     public Project005Stub()
     {
@@ -87,22 +86,22 @@ public class Project005Stub
         this.build = build;
     }
 
-    public List getResources()
+    public List<Resource> getResources()
     {
         return resources;
     }
 
-    public void setResources( List resources )
+    public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }
 
-    public List getTestResources()
+    public List<Resource> getTestResources()
     {
         return testResources;
     }
 
-    public void setTestResources( List testResources )
+    public void setTestResources( List<Resource> testResources )
     {
         this.testResources = testResources;
     }

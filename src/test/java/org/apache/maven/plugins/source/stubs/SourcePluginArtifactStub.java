@@ -41,7 +41,7 @@ public class SourcePluginArtifactStub
     private String classifier;
 
     private String baseVersion;
-    
+
     private VersionRange versionRange;
 
     private ArtifactHandler handler;
@@ -144,7 +144,7 @@ public class SourcePluginArtifactStub
     {
         this.baseVersion = baseVersion;
     }
-    
+
     public ArtifactHandler getArtifactHandler()
     {
         return handler;
