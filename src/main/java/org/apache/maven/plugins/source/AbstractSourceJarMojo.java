@@ -226,19 +226,25 @@ public abstract class AbstractSourceJarMojo
     protected abstract String getClassifier();
 
     /**
-     * @param p not null
+     * @param p {@link MavenProject} not null
      * @return the compile or test sources
+     * @throws MojoExecutionException in case of an error.
      */
     protected abstract List<String> getSources( MavenProject p )
         throws MojoExecutionException;
 
     /**
-     * @param p not null
+     * @param p {@link MavenProject} not null
      * @return the compile or test resources
+     * @throws MojoExecutionException in case of an error.
      */
     protected abstract List<Resource> getResources( MavenProject p )
         throws MojoExecutionException;
 
+    /**
+     * @param p {@link MavenProject}
+     * @throws MojoExecutionException in case of an error.
+     */
     protected void packageSources( MavenProject p )
         throws MojoExecutionException
     {
@@ -248,7 +254,11 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
-    protected void packageSources( List<MavenProject> projects )
+    /**
+     * @param theProjects {@link MavenProject}
+     * @throws MojoExecutionException in case of an error.
+     */
+    protected void packageSources( List<MavenProject> theProjects )
         throws MojoExecutionException
     {
         if ( project.getArtifact().getClassifier() != null )
@@ -262,9 +272,9 @@ public abstract class AbstractSourceJarMojo
 
         MavenArchiver archiver = createArchiver();
 
-        for ( MavenProject project : projects )
+        for ( MavenProject pItem : theProjects )
         {
-            MavenProject subProject = getProject( project );
+            MavenProject subProject = getProject( pItem );
 
             if ( "pom".equals( subProject.getPackaging() ) )
             {
@@ -324,6 +334,11 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
+    /**
+     * @param p {@link MavenProject}
+     * @param archiver {@link Archiver}
+     * @throws MojoExecutionException in case of an error.
+     */
     protected void archiveProjectContent( MavenProject p, Archiver archiver )
         throws MojoExecutionException
     {
@@ -385,6 +400,10 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
+    /**
+     * @return {@link MavenArchiver}
+     * @throws MojoExecutionException in case of an error.
+     */
     protected MavenArchiver createArchiver()
         throws MojoExecutionException
     {
@@ -409,13 +428,20 @@ public abstract class AbstractSourceJarMojo
         return archiver;
     }
 
-    protected void addDirectory( Archiver archiver, File sourceDirectory, String[] includes, String[] excludes )
+    /**
+     * @param archiver {@link Archiver}
+     * @param sourceDirectory {@link File}
+     * @param pIncludes The list of includes.
+     * @param pExcludes The list of excludes.
+     * @throws MojoExecutionException in case of an error.
+     */
+    protected void addDirectory( Archiver archiver, File sourceDirectory, String[] pIncludes, String[] pExcludes )
         throws MojoExecutionException
     {
         try
         {
             // archiver.addFileSet( fileSet );
-            archiver.addDirectory( sourceDirectory, includes, excludes );
+            archiver.addDirectory( sourceDirectory, pIncludes, pExcludes );
         }
         catch ( ArchiverException e )
         {
@@ -423,13 +449,21 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
-    protected void addDirectory( Archiver archiver, File sourceDirectory, String prefix, String[] includes,
-                                 String[] excludes )
+    /**
+     * @param archiver {@link Archiver}
+     * @param sourceDirectory {@link File}
+     * @param prefix The prefix.
+     * @param pIncludes the includes. 
+     * @param pExcludes the excludes.
+     * @throws MojoExecutionException in case of an error.
+     */
+    protected void addDirectory( Archiver archiver, File sourceDirectory, String prefix, String[] pIncludes,
+                                 String[] pExcludes )
                                      throws MojoExecutionException
     {
         try
         {
-            archiver.addDirectory( sourceDirectory, prefix, includes, excludes );
+            archiver.addDirectory( sourceDirectory, prefix, pIncludes, pExcludes );
         }
         catch ( ArchiverException e )
         {
@@ -437,11 +471,18 @@ public abstract class AbstractSourceJarMojo
         }
     }
 
+    /**
+     * @return The extension {@code .jar}
+     */
     protected String getExtension()
     {
         return ".jar";
     }
 
+    /**
+     * @param p {@link MavenProject}
+     * @return The execution projet.
+     */
     protected MavenProject getProject( MavenProject p )
     {
         if ( p.getExecutionProject() != null )
@@ -452,6 +493,9 @@ public abstract class AbstractSourceJarMojo
         return p;
     }
 
+    /**
+     * @return The type {@code java-source}
+     */
     protected String getType()
     {
         return "java-source";
