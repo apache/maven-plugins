@@ -1,5 +1,7 @@
 package org.apache.maven.plugins.source.stubs;
 
+import static org.apache.maven.plugins.source.stubs.Project001Stub.readModelFromFile;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +27,17 @@ import java.util.List;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.codehaus.plexus.util.ReaderFactory;
-
-import static org.apache.maven.plugins.source.stubs.Project001Stub.readModelFromFile;
 
 public class Project010Stub
     extends MavenProjectStub
 {
     private Build build;
 
-    private List resources;
+    private List<Resource> resources;
 
-    private List testResources;
+    private List<Resource> testResources;
 
     public Project010Stub()
     {
@@ -49,38 +48,38 @@ public class Project010Stub
             model = readModelFromFile( new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ) );
             setModel( model );
 
-            setFile(new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ));
+            setFile( new File( getBasedir(), "target/test-classes/unit/project-010/pom.xml" ) );
 
-            setGroupId(model.getGroupId());
-            setArtifactId(model.getArtifactId());
-            setVersion(model.getVersion());
-            setName(model.getName());
-            setUrl(model.getUrl());
-            setPackaging(model.getPackaging());
+            setGroupId( model.getGroupId() );
+            setArtifactId( model.getArtifactId() );
+            setVersion( model.getVersion() );
+            setName( model.getName() );
+            setUrl( model.getUrl() );
+            setPackaging( model.getPackaging() );
 
             Build build = new Build();
             build.setFinalName( getArtifactId() + "-" + getVersion() );
-            build.setDirectory(getBasedir() + "/target/test/unit/project-010/target");
+            build.setDirectory( getBasedir() + "/target/test/unit/project-010/target" );
 
-            setBuild(build);
+            setBuild( build );
 
             String basedir = getBasedir().getAbsolutePath();
-            List compileSourceRoots = new ArrayList();
+            List<String> compileSourceRoots = new ArrayList<String>();
             compileSourceRoots.add( basedir + "/target/test-classes/unit/project-010/src/main/java" );
-            setCompileSourceRoots(compileSourceRoots);
+            setCompileSourceRoots( compileSourceRoots );
 
-            List testCompileSourceRoots = new ArrayList();
-            testCompileSourceRoots.add(basedir + "/target/test-classes/unit/project-010/src/test/java");
-            setTestCompileSourceRoots(testCompileSourceRoots);
+            List<String> testCompileSourceRoots = new ArrayList<String>();
+            testCompileSourceRoots.add( basedir + "/target/test-classes/unit/project-010/src/test/java" );
+            setTestCompileSourceRoots( testCompileSourceRoots );
 
-            setResources(model.getBuild().getResources());
-            setTestResources(model.getBuild().getTestResources());
+            setResources( model.getBuild().getResources() );
+            setTestResources( model.getBuild().getTestResources() );
 
             SourcePluginArtifactStub artifact =
                 new SourcePluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging(), null );
-            artifact.setArtifactHandler(new DefaultArtifactHandlerStub());
-            artifact.setType("jar");
-            artifact.setBaseVersion("1.0-SNAPSHOT");
+            artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
+            artifact.setType( "jar" );
+            artifact.setBaseVersion( "1.0-SNAPSHOT" );
             setArtifact( artifact );
 
         }
@@ -100,22 +99,22 @@ public class Project010Stub
         this.build = build;
     }
 
-    public List getResources()
+    public List<Resource> getResources()
     {
         return resources;
     }
 
-    public void setResources( List resources )
+    public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }
 
-    public List getTestResources()
+    public List<Resource> getTestResources()
     {
         return testResources;
     }
 
-    public void setTestResources( List testResources )
+    public void setTestResources( List<Resource> testResources )
     {
         this.testResources = testResources;
     }
