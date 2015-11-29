@@ -55,6 +55,9 @@ public abstract class AbstractSourcePluginTestCase
         File testPom = new File( getBasedir(), getTestDir( projectName ) + "/pom.xml" );
         AbstractSourceJarMojo mojo = (AbstractSourceJarMojo) lookupMojo( getGoal(), testPom );
 
+        //Without the following line the tests will fail, cause the project.getFile() will result with null.
+        mojo.project.setFile( testPom );
+
         setVariableValueToObject( mojo, "classifier", classifier );
 
         mojo.execute();

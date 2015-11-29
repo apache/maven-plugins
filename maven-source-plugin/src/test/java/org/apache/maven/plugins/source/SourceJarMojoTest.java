@@ -35,19 +35,21 @@ public class SourceJarMojoTest
     public void testDefaultConfiguration()
         throws Exception
     {
-        doTestProjectWithSourceArchive( "project-001",
-                                        new String[]{ "default-configuration.properties", "foo/project001/App.java",
-                                            "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/" },
-                                        "sources" );
+        doTestProjectWithSourceArchive( "project-001", new String[] { "default-configuration.properties",
+            "foo/project001/App.java", "foo/project001/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+            "META-INF/maven/", "META-INF/maven/source/", "META-INF/maven/source/maven-source-plugin-test-project-001/",
+            "META-INF/maven/source/maven-source-plugin-test-project-001/pom.properties",
+            "META-INF/maven/source/maven-source-plugin-test-project-001/pom.xml" }, "sources" );
     }
 
     public void testExcludes()
         throws Exception
     {
-        doTestProjectWithSourceArchive( "project-003",
-                                        new String[]{ "default-configuration.properties", "foo/project003/App.java",
-                                            "foo/project003/", "foo/", "META-INF/MANIFEST.MF", "META-INF/" },
-                                        "sources" );
+        doTestProjectWithSourceArchive( "project-003", new String[] { "default-configuration.properties",
+            "foo/project003/App.java", "foo/project003/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+            "META-INF/maven/", "META-INF/maven/source/", "META-INF/maven/source/maven-source-plugin-test-project-003/",
+            "META-INF/maven/source/maven-source-plugin-test-project-003/pom.properties",
+            "META-INF/maven/source/maven-source-plugin-test-project-003/pom.xml" }, "sources" );
     }
 
     public void testNoSources()
@@ -56,38 +58,39 @@ public class SourceJarMojoTest
         executeMojo( "project-005", "sources" );
         // Now make sure that no archive got created
         final File expectedFile = getTestTargetDir( "project-005" );
-        assertFalse("Source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
-                expectedFile.exists());
+        assertFalse( "Source archive should not have been created[" + expectedFile.getAbsolutePath() + "]",
+                     expectedFile.exists() );
     }
 
     public void testIncludes()
         throws Exception
     {
-        doTestProjectWithSourceArchive("project-007", new String[]{"templates/configuration-template.properties",
-                "foo/project007/App.java", "templates/", "foo/project007/", "foo/", "META-INF/MANIFEST.MF", "META-INF/"
+        doTestProjectWithSourceArchive( "project-007", new String[] { "templates/configuration-template.properties",
+            "foo/project007/App.java", "templates/", "foo/project007/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+            "META-INF/maven/", "META-INF/maven/source/", "META-INF/maven/source/maven-source-plugin-test-project-007/",
+            "META-INF/maven/source/maven-source-plugin-test-project-007/pom.properties",
+            "META-INF/maven/source/maven-source-plugin-test-project-007/pom.xml"
 
-        }, "sources");
+        }, "sources" );
     }
 
     public void testIncludePom()
         throws Exception
     {
-        doTestProjectWithSourceArchive( "project-009", new String[]{ "default-configuration.properties", "pom.xml",
-            "foo/project009/App.java", "foo/project009/", "foo/", "META-INF/MANIFEST.MF", "META-INF/" }, "sources" );
+        doTestProjectWithSourceArchive( "project-009", new String[] { "default-configuration.properties", "pom.xml",
+            "foo/project009/App.java", "foo/project009/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+            "META-INF/maven/", "META-INF/maven/source/", "META-INF/maven/source/maven-source-plugin-test-project-009/",
+            "META-INF/maven/source/maven-source-plugin-test-project-009/pom.properties",
+            "META-INF/maven/source/maven-source-plugin-test-project-009/pom.xml" }, "sources" );
     }
 
     public void testIncludeMavenDescriptorWhenExplicitlyConfigured()
-            throws Exception {
-        doTestProjectWithSourceArchive("project-010",
-                new String[]{
-                        "default-configuration.properties", "foo/project010/App.java",
-                        "foo/project010/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
-                        "META-INF/maven/", "META-INF/maven/source/",
-                        "META-INF/maven/source/maven-source-plugin-test-project-010/",
-                        "META-INF/maven/source/maven-source-plugin-test-project-010/pom.xml",
-                        "META-INF/maven/source/maven-source-plugin-test-project-010/pom" +
-                                ".properties"
-                },
-                "sources");
+        throws Exception
+    {
+        doTestProjectWithSourceArchive( "project-010", new String[] { "default-configuration.properties",
+            "foo/project010/App.java", "foo/project010/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+            "META-INF/maven/", "META-INF/maven/source/", "META-INF/maven/source/maven-source-plugin-test-project-010/",
+            "META-INF/maven/source/maven-source-plugin-test-project-010/pom.xml",
+            "META-INF/maven/source/maven-source-plugin-test-project-010/pom" + ".properties" }, "sources" );
     }
 }
