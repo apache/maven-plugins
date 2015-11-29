@@ -22,6 +22,8 @@ package org.apache.maven.plugin.resources;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.maven.shared.filtering.PropertyUtils;
+
 public class BasicPropertyUtilsTest
     extends AbstractPropertyUtilsTest
 {
