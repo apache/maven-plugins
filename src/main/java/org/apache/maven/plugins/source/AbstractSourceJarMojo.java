@@ -97,11 +97,14 @@ public abstract class AbstractSourceJarMojo
     /**
      * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
      * Archiver Reference</a>.
-     *
+     * <br/>
+     * <b>Note: Since 3.0.0 the resulting archives contain a maven descriptor. If you need to suppress the
+     * generation of the maven descriptor you can simply achieve this by using the 
+     * <a href="http://maven.apache.org/shared/maven-archiver/index.html#archive">archiver configuration</a>.</b>.
      * @since 2.1
      */
     @Parameter
-    private MavenArchiveConfiguration archive = new SourceArchiveConfiguration();
+    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
