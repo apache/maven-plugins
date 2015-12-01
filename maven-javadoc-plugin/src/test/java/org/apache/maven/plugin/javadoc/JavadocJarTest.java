@@ -23,9 +23,11 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -33,47 +35,39 @@ import java.util.zip.ZipFile;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  */
 public class JavadocJarTest
-    extends AbstractMojoTestCase
-{
+        extends AbstractMojoTestCase {
     /**
      * Test when default configuration is provided
      *
      * @throws Exception if any
      */
     public void testDefaultConfig()
-        throws Exception
-    {
+            throws Exception {
         File testPom =
-            new File( getBasedir(), "src/test/resources/unit/javadocjar-default/javadocjar-default-plugin-config.xml" );
+                new File( getBasedir(), "src/test/resources/unit/javadocjar-default/javadocjar-default-plugin-config.xml" );
         JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
         mojo.execute();
 
         //check if the javadoc jar file was generated
         File generatedFile =
-            new File( getBasedir(), "target/test/unit/javadocjar-default/target/javadocjar-default-javadoc.jar" );
+                new File( getBasedir(), "target/test/unit/javadocjar-default/target/javadocjar-default-javadoc.jar" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         //validate contents of jar file
         ZipFile jar = new ZipFile( generatedFile );
         Set<String> set = new HashSet<String>();
-        for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
-        {
+        for (Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
             ZipEntry entry = entries.nextElement();
             set.add( entry.getName() );
         }
 
         assertTrue( set.contains( "stylesheet.css" ) );
         float javadocVersion = (Float) getVariableValueFromObject( mojo, "fJavadocVersion" );
-        if ( Float.compare( javadocVersion, 1.7f ) < 0 )
-        {
+        if (Float.compare( javadocVersion, 1.7f ) < 0) {
             assertTrue( set.contains( "resources/inherit.gif" ) );
-        }
-        else if ( Float.compare( javadocVersion, 1.8f ) < 0 )
-        {
-            assertTrue( set.contains( "resources/background.gif" ) /* JDK7 */);
-        }
-        else
-        {
+        } else if (Float.compare( javadocVersion, 1.8f ) < 0) {
+            assertTrue( set.contains( "resources/background.gif" ) /* JDK7 */ );
+        } else {
             // JDK8 has no resources anymore
             assertFalse( set.contains( "resources" ) );
         }
@@ -95,11 +89,11 @@ public class JavadocJarTest
 
         //check if the javadoc files were created
         generatedFile =
-            new File( getBasedir(), "target/test/unit/javadocjar-default/target/site/apidocs/javadocjar/def/App.html" );
+                new File( getBasedir(), "target/test/unit/javadocjar-default/target/site/apidocs/javadocjar/def/App.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(),
-                                  "target/test/unit/javadocjar-default/target/site/apidocs/javadocjar/def/AppSample.html" );
+                "target/test/unit/javadocjar-default/target/site/apidocs/javadocjar/def/AppSample.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
@@ -109,21 +103,19 @@ public class JavadocJarTest
      * @throws Exception if any
      */
     public void testInvalidDestdir()
-        throws Exception
-    {
+            throws Exception {
         File testPom = new File( getBasedir(),
-                                 "src/test/resources/unit/javadocjar-invalid-destdir/javadocjar-invalid-destdir-plugin-config.xml" );
+                "src/test/resources/unit/javadocjar-invalid-destdir/javadocjar-invalid-destdir-plugin-config.xml" );
         JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
         mojo.execute();
 
         //check if the javadoc jar file was generated
         File generatedFile = new File( getBasedir(),
-                                       "target/test/unit/javadocjar-invalid-destdir/target/javadocjar-invalid-destdir-javadoc.jar" );
+                "target/test/unit/javadocjar-invalid-destdir/target/javadocjar-invalid-destdir-javadoc.jar" );
         assertTrue( !FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
-    public void testContinueIfFailOnErrorIsFalse() throws Exception
-    {
+    public void testContinueIfFailOnErrorIsFalse() throws Exception {
         File testPom =
                 new File( getBasedir(), "src/test/resources/unit/javadocjar-failonerror/javadocjar-failonerror-plugin-config.xml" );
         JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
@@ -133,5 +125,40 @@ public class JavadocJarTest
         File generatedFile =
                 new File( getBasedir(), "target/test/unit/javadocjar-failonerror/target/javadocjar-failonerror-javadoc.jar" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+
+    public void testIncludeMavenDescriptorWhenExplicitlyConfigured() throws Exception {
+        File testPom =
+                new File( getBasedir(), "src/test/resources/unit/javadocjar-archive-config/javadocjar-archive-config.xml" );
+        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        mojo.execute();
+
+        //check if the javadoc jar file was generated
+        File generatedFile =
+                new File( getBasedir(), "target/test/unit/javadocjar-archive-config/target/javadocjar-archive-config-javadoc.jar" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        //validate contents of jar file
+        ZipFile jar = new ZipFile( generatedFile );
+        Set<String> set = new HashSet<String>();
+        for (Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
+            ZipEntry entry = entries.nextElement();
+            set.add( entry.getName() );
+        }
+        jar.close();
+
+        List<String> expected = new ArrayList();
+        expected.add( "META-INF/" );
+        expected.add( "META-INF/maven/" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/javadocjar-archive-config/" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/javadocjar-archive-config/pom.xml" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/javadocjar-archive-config/pom.properties" );
+
+        for (int i = 0; i < expected.size(); i++) {
+            String entry = expected.get( i );
+            assertTrue( "Expected jar to contain " + entry, set.contains( entry ) );
+        }
     }
 }
