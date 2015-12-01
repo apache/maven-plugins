@@ -1,4 +1,4 @@
-package javadocjar.def;
+package org.apache.maven.plugin.javadoc;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -9,7 +9,7 @@ package javadocjar.def;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,32 +19,16 @@ package javadocjar.def;
  * under the License.
  */
 
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+
 /**
- * This is a sample app class with javadoc
+ * For backwards compatibility, a custom archive configuration that defaults to not including the Maven descriptor.
  *
- * @author Maria Odea Ching
+ * @see <a href="https://issues.apache.org/browse/MJAVADOC-431">MJAVADOC-431</a>
  */
-public class App
-{
-
-    /**
-     * The main method
-     *
-     * @param args  an array of strings that contains the arguments
-     */
-    public static void main( String[] args )
-    {
-        System.out.println( "Sample Application." );
+public class JavadocArchiveConfiguration
+        extends MavenArchiveConfiguration {
+    public JavadocArchiveConfiguration() {
+        setAddMavenDescriptor( false );
     }
-
-    /**
-     * Sample method
-     *
-     * @param str   the string to be displayed
-     */
-    protected void sampleMethod( String str )
-    {
-        System.out.println( str );
-    }
-
 }

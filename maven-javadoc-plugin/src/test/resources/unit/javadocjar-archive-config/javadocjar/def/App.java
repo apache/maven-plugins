@@ -24,26 +24,23 @@ package javadocjar.def;
  *
  * @author Maria Odea Ching
  */
-public class App
-{
+public class App {
 
     /**
      * The main method
      *
-     * @param args  an array of strings that contains the arguments
+     * @param args an array of strings that contains the arguments
      */
-    public static void main( String[] args )
-    {
+    public static void main(String[] args) {
         System.out.println( "Sample Application." );
     }
 
     /**
      * Sample method
      *
-     * @param str   the string to be displayed
+     * @param str the string to be displayed
      */
-    protected void sampleMethod( String str )
-    {
+    protected void sampleMethod(String str) {
         System.out.println( str );
     }
 
