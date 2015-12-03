@@ -112,11 +112,8 @@ public class PmdViolationCheckMojo
         for ( final Entry<Object, Object> propEntry : props.entrySet() )
         {
             final Set<String> excludedRuleSet = new HashSet<String>();
-            final String className = propEntry.getKey()
-                                              .toString();
-            final String[] excludedRules = propEntry.getValue()
-                                                    .toString()
-                                                    .split( "," );
+            final String className = propEntry.getKey().toString();
+            final String[] excludedRules = propEntry.getValue().toString().split( "," );
             for ( final String excludedRule : excludedRules )
             {
                 excludedRuleSet.add( excludedRule.trim() );
@@ -143,9 +140,9 @@ public class PmdViolationCheckMojo
         else
         {
             final String fileName = errorDetail.getFileName();
-            final int javaIdx = fileName.indexOf( "\\java\\" );
-            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 )
-                           .replace( '\\', '.' );
+            final int javaIdx = fileName.indexOf( File.separator + "java" + File.separator );
+            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 ).replace(
+                File.separatorChar, '.' );
         }
     }
 
@@ -156,9 +153,7 @@ public class PmdViolationCheckMojo
     {
 
         StringBuilder buff = new StringBuilder( 100 );
-        buff.append( "PMD " )
-            .append( severity )
-            .append( ": " );
+        buff.append( "PMD " ).append( severity ).append( ": " );
         if ( item.getViolationClass() != null )
         {
             if ( item.getViolationPackage() != null )
@@ -174,16 +169,11 @@ public class PmdViolationCheckMojo
         }
         buff.append( ":" );
         buff.append( item.getBeginline() );
-        buff.append( " Rule:" )
-            .append( item.getRule() );
-        buff.append( " Priority:" )
-            .append( item.getPriority() );
-        buff.append( " " )
-            .append( item.getText() )
-            .append( "." );
+        buff.append( " Rule: " ).append( item.getRule() );
+        buff.append( " Priority: " ).append( item.getPriority() );
+        buff.append( " " ).append( item.getText() ).append( "." );
 
-        this.getLog()
-            .info( buff.toString() );
+        this.getLog().info( buff.toString() );
     }
 
     @Override
@@ -233,8 +223,7 @@ public class PmdViolationCheckMojo
 
         while ( StringUtils.isNotEmpty( pkg ) )
         {
-            index = fullpath.substring( 0, index )
-                            .lastIndexOf( File.separatorChar );
+            index = fullpath.substring( 0, index ).lastIndexOf( File.separatorChar );
 
             int dot = pkg.indexOf( '.' );
 
