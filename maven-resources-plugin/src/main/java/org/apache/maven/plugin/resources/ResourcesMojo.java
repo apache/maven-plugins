@@ -236,7 +236,7 @@ public class ResourcesMojo
     /**
      * Support filtering of filenames folders etc.
      * 
-     * @since 2.8
+     * @since 3.0.0
      */
     @Parameter( defaultValue = "false" )
     private boolean fileNameFiltering;
