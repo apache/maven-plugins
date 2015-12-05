@@ -31,7 +31,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>@project.version@</version>
           <configuration>
             <skip>true</skip>
           </configuration>

@@ -37,14 +37,14 @@
       <plugins>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>@pom.version@</version>
+          <version>@project.version@</version>
         </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>@project.version@</version>
         <configuration>
           <nonFilteredFileExtensions>
             <nonFilteredFileExtension>img</nonFilteredFileExtension>
