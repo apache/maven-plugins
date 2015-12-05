@@ -28,37 +28,18 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * @author Olivier Lamy
  * @since 2.5
  * @version $Id$
- * @plexus.component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" 
- *                   role-hint="itFilter"
  */
+@Component(role = org.apache.maven.shared.filtering.MavenResourcesFiltering.class, hint = "itFilter")
 public class ItFilter
     implements MavenResourcesFiltering
 {
 
-    /** 
-     * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#filterResources(java.util.List, java.io.File, org.apache.maven.project.MavenProject, java.lang.String, java.util.List, java.util.List, org.apache.maven.execution.MavenSession)
-     */
-//    public void filterResources( List resources, File outputDirectory, MavenProject mavenProject, String encoding,
-//                                 List fileFilters, List nonFilteredFileExtensions, MavenSession mavenSession )
-//        throws MavenFilteringException
-//    {
-//        //no op
-//    }
-
-    /** 
-     * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#filterResources(java.util.List, java.io.File, java.lang.String, java.util.List, java.io.File, java.util.List)
-     */
-    public void filterResources( List resources, File outputDirectory, String encoding, List filterWrappers,
-                                 File resourcesBaseDirectory, List nonFilteredFileExtensions )
-        throws MavenFilteringException
-    {
-        // no op
-    }
 
     /** 
      * @see org.apache.maven.shared.filtering.MavenResourcesFiltering#getDefaultNonFilteredFileExtensions()
@@ -91,7 +72,7 @@ public class ItFilter
             
             lines.add( "foo" );
             lines.add( "version="+mavenResourcesExecution.getMavenProject().getVersion() );
-            lines.add( "toto=" + mavenResourcesExecution.getMavenSession().getExecutionProperties().getProperty( "toto" ) );
+            lines.add( "toto=" + mavenResourcesExecution.getMavenSession().getSystemProperties().getProperty( "toto" ) );
             FileUtils.writeLines( f, lines );
         }
         catch ( IOException e )
