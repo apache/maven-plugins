@@ -446,6 +446,12 @@ public class AnnouncementMojo
     @Parameter( defaultValue = "github" )
     private String githubAPIServerId;
 
+    /**
+     * Boolean which says if we should include open github issues in the announcement.
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean includeOpenIssues;
+
     private ReleaseUtils releaseUtils = new ReleaseUtils( getLog() );
 
     private ChangesXML xml;
@@ -838,7 +844,7 @@ public class AnnouncementMojo
         try
         {
             GitHubDownloader issueDownloader =
-                new GitHubDownloader( project, githubAPIScheme, githubAPIPort, false, true );
+                new GitHubDownloader( project, githubAPIScheme, githubAPIPort, includeOpenIssues, true );
 
             issueDownloader.configureAuthentication( githubAPIServerId, settings, getLog() );
 
