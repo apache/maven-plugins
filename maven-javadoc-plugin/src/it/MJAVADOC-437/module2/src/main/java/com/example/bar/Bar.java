@@ -28,6 +28,16 @@ public class Bar
 {
     /**
      * Glibbyfies the bar.
+     * <p>
+     * NOTE: The parameter using an external dependency is essential to
+     * make the test fail with maven-javadoc-plugin 2.10.3.
+     * <p>
+     * If one dependency fails to be resolved (the one on module1), all
+     * dependencies of the current module will be skipped.
+     * <p>
+     * As a result, in the generated Javadoc, ByteOrderMark will be missing
+     * the package prefix.
+     *
      * @param bom byte order mark
      */
     public void glibbify(ByteOrderMark bom)

@@ -39,12 +39,12 @@
       <artifactId>mjavadoc437-module1</artifactId>
       <version>${project.version}</version>
     </dependency>
-          <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.2</version>
-        </dependency>
-      
+    <!-- This is just any old external dependency to trigger the bug -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.2</version>
+    </dependency>
   </dependencies>
 
 </project>

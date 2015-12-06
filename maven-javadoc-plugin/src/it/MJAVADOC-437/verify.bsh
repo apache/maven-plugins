@@ -41,21 +41,26 @@ try
         System.err.println( javadoc + " is missing" );
         return false;
     }
-    
-	FileReader fr = new FileReader( javadoc );
-	BufferedReader br = new BufferedReader( fr );
+
+    FileReader fr = new FileReader( javadoc );
+    BufferedReader br = new BufferedReader( fr );
     String line;
-    while( ( line = br.readLine() ) != null )
+    while ( ( line = br.readLine() ) != null )
     {
         if ( line.contains( "org.apache.commons.io" ) )
         {
-            return true;
+            result = true;
+            break;
         }
     }
-    System.err.println( "package name org.apache.commons.io not found" );
-    return false;
+    br.close();
+    if ( !result )
+    {
+        System.err.println( "package name org.apache.commons.io not found" );
+    }
+    return result;
 }
-catch( RuntimeException e )
+catch ( Exception e )
 {
     e.printStackTrace();
     return false;

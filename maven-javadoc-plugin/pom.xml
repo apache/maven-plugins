@@ -405,6 +405,7 @@ under the License.
                 <pomInclude>MJAVADOC-369/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-407/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-414/pom.xml</pomInclude>
+                <pomInclude>MJAVADOC-437/pom.xml</pomInclude>
               </pomIncludes>
             </configuration>
           </plugin>
