@@ -52,7 +52,8 @@ public class ReaderFormatter
 
             MavenReaderFilterRequest filterRequest =
                 new MavenReaderFilterRequest( source, true, configSource.getProject(), configSource.getFilters(),
-                                              isPropertiesFile, null, configSource.getMavenSession(), null );
+                                              isPropertiesFile, configSource.getMavenSession(), null );
+            
             filterRequest.setEscapeString( escapeString );
 
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
