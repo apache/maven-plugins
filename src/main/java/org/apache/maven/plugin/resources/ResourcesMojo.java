@@ -241,6 +241,14 @@ public class ResourcesMojo
     @Parameter( defaultValue = "false" )
     private boolean fileNameFiltering;
 
+    /**
+     * You can skip the execution of the plugin if you need to.
+     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * @since 3.0.0
+     */
+    @Parameter( property = "maven.resources.skip", defaultValue = "false" )
+    private boolean skip;
+
     public void contextualize( Context context )
         throws ContextException
     {
@@ -250,13 +258,19 @@ public class ResourcesMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping the execution." );
+            return;
+        }
+
         try
         {
 
             if ( StringUtils.isEmpty( encoding ) && isFilteringEnabled( getResources() ) )
             {
                 getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                                   + ", i.e. build is platform dependent!" );
+                    + ", i.e. build is platform dependent!" );
             }
 
             List<String> filters = getCombinedFiltersList();
@@ -465,6 +479,11 @@ public class ResourcesMojo
     public void setUseDefaultDelimiters( boolean useDefaultDelimiters )
     {
         this.useDefaultDelimiters = useDefaultDelimiters;
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
     }
 
 }
