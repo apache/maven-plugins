@@ -2501,7 +2501,9 @@ public abstract class AbstractJavadocMojo
 
     /**
      * Method that sets the classpath elements that will be specified in the javadoc <code>-classpath</code>
-     * parameter.
+     * parameter. Since we have all the sources of the current reactor, it is sufficient to consider the
+     * dependencies of the reactor modules, excluding the module artifacts which may not yet be available
+     * when the reactor project is built for the first time.
      *
      * @return a String that contains the concatenated classpath elements, separated by the System pathSeparator
      *         string (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
@@ -2523,6 +2525,11 @@ public abstract class AbstractJavadocMojo
 
         if ( isAggregator() && project.isExecutionRoot() )
         {
+            List<Artifact> reactorArtifacts = new ArrayList<Artifact>();
+            for ( MavenProject p : reactorProjects )
+            {
+                reactorArtifacts.add( p.getArtifact() );
+            }
             try
             {
                 for ( MavenProject subProject : reactorProjects )
@@ -2532,6 +2539,8 @@ public abstract class AbstractJavadocMojo
                         classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
 
                         Set<Artifact> dependencyArtifacts = subProject.createArtifacts( factory, null, null );
+                        // do not attempt to resolve artifacts of the current reactor which may not exist yet
+                        dependencyArtifacts.removeAll( reactorArtifacts );
                         if ( !dependencyArtifacts.isEmpty() )
                         {
                             ArtifactResolutionResult result = null;
