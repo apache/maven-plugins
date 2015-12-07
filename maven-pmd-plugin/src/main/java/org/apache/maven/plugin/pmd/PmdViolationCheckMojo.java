@@ -169,8 +169,8 @@ public class PmdViolationCheckMojo
         }
         buff.append( ":" );
         buff.append( item.getBeginline() );
-        buff.append( " Rule: " ).append( item.getRule() );
-        buff.append( " Priority: " ).append( item.getPriority() );
+        buff.append( " Rule:" ).append( item.getRule() );
+        buff.append( " Priority:" ).append( item.getPriority() );
         buff.append( " " ).append( item.getText() ).append( "." );
 
         this.getLog().info( buff.toString() );
