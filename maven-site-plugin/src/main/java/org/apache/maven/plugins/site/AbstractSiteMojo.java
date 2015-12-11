@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -51,7 +52,7 @@ public abstract class AbstractSiteMojo
      * @since 2.3
      */
     @Parameter( property = "locales" )
-    protected String locales;
+    private String locales;
 
     /**
      * SiteTool.
@@ -67,7 +68,8 @@ public abstract class AbstractSiteMojo
 
     /**
      * Directory containing the <code>site.xml</code> file and the source for hand written docs (one directory
-     * per Doxia-supported markup sources: see <a href="/doxia/references/index.html">Doxia Markup Languages References</a>).
+     * per Doxia-supported markup sources:
+     * see <a href="/doxia/references/index.html">Doxia Markup Languages References</a>).
      *
      * @since 2.3
      */
@@ -159,5 +161,10 @@ public abstract class AbstractSiteMojo
         }
 
         return properties.getProperty( "version" ).trim();
+    }
+
+    protected List<Locale> getLocales()
+    {
+        return siteTool.getAvailableLocales( locales );
     }
 }

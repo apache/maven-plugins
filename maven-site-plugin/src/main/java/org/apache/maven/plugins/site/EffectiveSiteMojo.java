@@ -26,8 +26,6 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
@@ -74,9 +72,7 @@ public class EffectiveSiteMojo
 
         try
         {
-            List<Locale> localesList = siteTool.getAvailableLocales( locales );
-
-            SiteRenderingContext context = createSiteRenderingContext( localesList.get( 0 ) );
+            SiteRenderingContext context = createSiteRenderingContext( getLocales().get( 0 ) );
 
             DecorationModel decorationModel = context.getDecoration();
 
