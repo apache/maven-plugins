@@ -45,8 +45,8 @@ public abstract class AbstractSiteMojo
     extends AbstractMojo
 {
     /**
-     * A comma separated list of locales supported by Maven. The first valid token will be the default Locale
-     * for this instance of the Java Virtual Machine.
+     * A comma separated list of locales to render. The first valid token will be the default Locale
+     * for this site.
      *
      * @since 2.3
      */
@@ -66,7 +66,8 @@ public abstract class AbstractSiteMojo
     protected I18N i18n;
 
     /**
-     * Directory containing the site.xml file and the source for apt, fml and xdoc docs.
+     * Directory containing the <code>site.xml</code> file and the source for hand written docs (one directory
+     * per Doxia-supported markup sources: see <a href="/doxia/references/index.html">Doxia Markup Languages References</a>).
      *
      * @since 2.3
      */
@@ -74,7 +75,7 @@ public abstract class AbstractSiteMojo
     protected File siteDirectory;
 
     /**
-     * The maven project.
+     * The Maven project.
      */
     @Parameter( defaultValue = "${project}", readonly = true )
     protected MavenProject project;
