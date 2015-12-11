@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.jar;
+package org.apache.maven.plugins.jar;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,6 +22,7 @@ package org.apache.maven.plugin.jar;
 import java.io.File;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.jar.JarMojo;
 
 /**
  * Test for {@link JarMojo}
