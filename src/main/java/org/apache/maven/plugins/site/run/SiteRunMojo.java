@@ -157,7 +157,7 @@ public class SiteRunMojo
 
         List<MavenReportExecution> reports = getReports(); // TODO: is it sane to call getReports() method a second time?
 
-        List<Locale> localesList = siteTool.getAvailableLocales( locales );
+        List<Locale> localesList = getLocales();
         webapp.setAttribute( DoxiaFilter.LOCALES_LIST_KEY, localesList );
 
         // Default is first in the list

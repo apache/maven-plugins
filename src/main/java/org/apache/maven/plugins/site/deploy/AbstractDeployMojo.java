@@ -321,8 +321,7 @@ public abstract class AbstractDeployMojo
                 }
             }
 
-            push( directory, repository, wagon, proxyInfo, siteTool.getAvailableLocales( locales ),
-                  getDeployModuleDirectory() );
+            push( directory, repository, wagon, proxyInfo, getLocales(), getDeployModuleDirectory() );
 
             if ( chmod )
             {

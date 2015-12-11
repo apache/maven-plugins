@@ -22,7 +22,6 @@ package org.apache.maven.plugins.site;
 import java.io.File;
 import java.io.IOException;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -74,9 +73,7 @@ public class SiteDescriptorAttachMojo
             return;
         }
 
-        List<Locale> localesList = siteTool.getAvailableLocales( locales );
-
-        for ( Locale locale : localesList )
+        for ( Locale locale : getLocales() )
         {
             File descriptorFile = siteTool.getSiteDescriptorFromBasedir(
                 siteTool.getRelativePath( siteDirectory.getAbsolutePath(), project.getBasedir().getAbsolutePath() ),

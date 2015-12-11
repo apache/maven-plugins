@@ -130,7 +130,7 @@ public class SiteMojo
 
         try
         {
-            List<Locale> localesList = siteTool.getAvailableLocales( locales );
+            List<Locale> localesList = getLocales();
 
             // Default is first in the list
             Locale defaultLocale = localesList.get( 0 );
