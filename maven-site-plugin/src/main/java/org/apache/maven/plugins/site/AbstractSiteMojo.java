@@ -165,6 +165,6 @@ public abstract class AbstractSiteMojo
 
     protected List<Locale> getLocales()
     {
-        return siteTool.getAvailableLocales( locales );
+        return siteTool.getSiteLocales( locales );
     }
 }

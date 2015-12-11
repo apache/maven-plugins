@@ -330,12 +330,10 @@ under the License.
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaSitetoolsVersion}</version>
     </dependency>
-
-    <!-- Doxia Tools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-integration-tools</artifactId>
-      <version>1.6</version>
+      <version>${doxiaSitetoolsVersion}</version>
     </dependency>
 
     <!-- Wagon -->
