@@ -103,22 +103,6 @@ public abstract class AbstractSiteRenderingMojo
     private List<ArtifactRepository> repositories;
 
     /**
-     * Directory containing the template page.
-     *
-     * @deprecated use templateFile or skinning instead
-     */
-    @Parameter( property = "templateDirectory", defaultValue = "src/site" )
-    private File templateDirectory;
-
-    /**
-     * Default template page.
-     *
-     * @deprecated use templateFile or skinning instead
-     */
-    @Parameter( property = "template" )
-    private String template;
-
-    /**
      * The location of a Velocity template file to use. When used, skins and the default templates, CSS and images
      * are disabled. It is highly recommended that you package this as a skin instead.
      *
@@ -318,18 +302,6 @@ public abstract class AbstractSiteRenderingMojo
                     locale.equals( Locale.getDefault() ) ? url : url + "/" + locale.getLanguage();
                 getLog().info( "Relativizing decoration links with respect to project URL: " + localeUrl );
                 assembler.resolvePaths( decorationModel, localeUrl );
-            }
-        }
-
-        if ( template != null )
-        {
-            if ( templateFile != null )
-            {
-                getLog().warn( "'template' configuration is ignored when 'templateFile' is set" );
-            }
-            else
-            {
-                templateFile = new File( templateDirectory, template );
             }
         }
 
