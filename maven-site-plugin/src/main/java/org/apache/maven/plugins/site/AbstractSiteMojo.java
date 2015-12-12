@@ -51,7 +51,7 @@ public abstract class AbstractSiteMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "locales" )
+    @Parameter( property = "locales", defaultValue = "en" )
     private String locales;
 
     /**
