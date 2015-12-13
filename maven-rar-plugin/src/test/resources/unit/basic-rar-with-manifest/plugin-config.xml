@@ -30,7 +30,7 @@ under the License.
 		  <workDirectory>${basedir}/target/unit/basic-rar-with-manifest/target/rar-test-with-manifest</workDirectory>
 		  <outputDirectory>${basedir}/target/unit/basic-rar-with-manifest/target</outputDirectory>
 		  <finalName>test-rar-with-manifest</finalName>
-		  <project implementation="org.apache.maven.plugin.rar.stubs.RarMavenProjectStub3" />
+		  <project implementation="org.apache.maven.plugins.rar.stubs.RarMavenProjectStub3" />
 		</configuration>
       </plugin>
     </plugins>

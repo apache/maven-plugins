@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.rar;
+package org.apache.maven.plugins.rar;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,6 +27,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.rar.RarMojo;
 import org.codehaus.plexus.util.FileUtils;
 
 /**

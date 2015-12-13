@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.rar.stubs;
+package org.apache.maven.plugins.rar.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,11 +21,11 @@ package org.apache.maven.plugin.rar.stubs;
 
 import java.io.File;
 
-public class RarMavenProjectStub3
+public class RarMavenProjectStub2
     extends RarMavenProjectStub
 {
     public File getFile()
     {
-        return new File( getBasedir(), "src/test/resources/unit/basic-rar-with-manifest/plugin-config.xml" );
+        return new File( getBasedir(), "src/test/resources/unit/basic-rar-with-descriptor/plugin-config.xml" );
     }
 }

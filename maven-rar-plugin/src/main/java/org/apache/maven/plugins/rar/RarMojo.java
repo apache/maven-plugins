@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.rar;
+package org.apache.maven.plugins.rar;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

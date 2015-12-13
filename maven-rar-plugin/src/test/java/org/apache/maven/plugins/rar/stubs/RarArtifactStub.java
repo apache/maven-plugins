@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.rar.stubs;
+package org.apache.maven.plugins.rar.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

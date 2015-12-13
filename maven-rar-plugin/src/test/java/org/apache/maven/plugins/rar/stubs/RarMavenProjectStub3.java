@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.rar.stubs;
+package org.apache.maven.plugins.rar.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,20 +19,13 @@ package org.apache.maven.plugin.rar.stubs;
  * under the License.
  */
 
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import java.io.File;
 
-public class ArtifactHandlerStub
-    extends DefaultArtifactHandler
+public class RarMavenProjectStub3
+    extends RarMavenProjectStub
 {
-
-    public ArtifactHandlerStub()
+    public File getFile()
     {
-        super( "jar" );
+        return new File( getBasedir(), "src/test/resources/unit/basic-rar-with-manifest/plugin-config.xml" );
     }
-
-    public boolean isAddedToClasspath()
-    {
-        return true;
-    }
-
 }

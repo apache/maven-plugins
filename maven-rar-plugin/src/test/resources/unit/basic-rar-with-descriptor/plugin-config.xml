@@ -30,7 +30,7 @@ under the License.
 		  <workDirectory>${basedir}/target/unit/basic-rar-with-descriptor/target/rar-test-with-descriptor</workDirectory>
 		  <outputDirectory>${basedir}/target/unit/basic-rar-with-descriptor/target</outputDirectory>
 		  <finalName>test-rar-with-descriptor</finalName>
-		  <project implementation="org.apache.maven.plugin.rar.stubs.RarMavenProjectStub2" />
+		  <project implementation="org.apache.maven.plugins.rar.stubs.RarMavenProjectStub2" />
 		</configuration>
       </plugin>
     </plugins>
