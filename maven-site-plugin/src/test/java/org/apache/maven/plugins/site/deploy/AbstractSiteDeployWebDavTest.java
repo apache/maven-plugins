@@ -73,7 +73,7 @@ public abstract class AbstractSiteDeployWebDavTest
 
     abstract String getMojoName();
 
-    abstract AbstractMojo getMojo( File pluginXmlFile )
+    abstract AbstractMojo getMojo( File pomFile )
         throws Exception;
 
     @Test
@@ -85,11 +85,10 @@ public abstract class AbstractSiteDeployWebDavTest
 
         try
         {
-            File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
-            AbstractMojo mojo = getMojo( pluginXmlFile );
+            File pomFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
+            AbstractMojo mojo = getMojo( pomFile );
             assertNotNull( mojo );
-            SiteMavenProjectStub siteMavenProjectStub =
-                new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
+            SiteMavenProjectStub siteMavenProjectStub = new SiteMavenProjectStub( "deploy-dav" );
 
             assertTrue( "dav server port not available: " + simpleDavServerHandler.getPort(),
                         simpleDavServerHandler.getPort() > 0 );
@@ -126,8 +125,7 @@ public abstract class AbstractSiteDeployWebDavTest
             File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
             AbstractMojo mojo = getMojo( pluginXmlFile );
             assertNotNull( mojo );
-            SiteMavenProjectStub siteMavenProjectStub =
-                new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
+            SiteMavenProjectStub siteMavenProjectStub = new SiteMavenProjectStub( "deploy-dav" );
             // olamy, Note : toto is something like foo or bar for french folks :-)
             String siteUrl = "dav:http://toto.com/site/";
             siteMavenProjectStub.getDistributionManagement().getSite().setUrl( siteUrl );
@@ -192,8 +190,7 @@ public abstract class AbstractSiteDeployWebDavTest
             File pluginXmlFile = getTestFile( "src/test/resources/unit/deploy-dav/pom.xml" );
             AbstractMojo mojo = getMojo( pluginXmlFile );
             assertNotNull( mojo );
-            SiteMavenProjectStub siteMavenProjectStub =
-                new SiteMavenProjectStub( "src/test/resources/unit/deploy-dav/pom.xml" );
+            SiteMavenProjectStub siteMavenProjectStub = new SiteMavenProjectStub( "deploy-dav" );
 
             siteMavenProjectStub.getDistributionManagement().getSite()
                 .setUrl( "dav:http://toto.com/site/" );
