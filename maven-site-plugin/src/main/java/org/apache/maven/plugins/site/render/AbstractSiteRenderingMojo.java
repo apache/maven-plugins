@@ -277,10 +277,8 @@ public abstract class AbstractSiteRenderingMojo
         DecorationModel decorationModel;
         try
         {
-            decorationModel = siteTool.getDecorationModel( project, reactorProjects, localRepository, repositories,
-                                                           siteTool.getRelativePath( siteDirectory.getAbsolutePath(),
-                                                           project.getBasedir().getAbsolutePath() ),
-                                                           locale );
+            decorationModel = siteTool.getDecorationModel( siteDirectory, locale, project, reactorProjects,
+                                                           localRepository, repositories );
         }
         catch ( SiteToolException e )
         {
