@@ -40,10 +40,10 @@ public class SiteDeployWebDavTest
     }
 
     @Override
-    AbstractMojo getMojo( File pluginXmlFile )
+    AbstractMojo getMojo( File pomXmlFile )
         throws Exception
     {
-        return (SiteDeployMojo) lookupMojo( getMojoName(), pluginXmlFile );
+        return (SiteDeployMojo) lookupMojo( getMojoName(), pomXmlFile );
     }
 
 }

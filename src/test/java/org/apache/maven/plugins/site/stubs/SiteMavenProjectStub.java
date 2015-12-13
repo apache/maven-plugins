@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.Properties;
 
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -38,27 +37,19 @@ import org.codehaus.plexus.util.xml.XmlStreamReader;
 public class SiteMavenProjectStub
     extends MavenProjectStub
 {
+    private File basedir;
+
     DistributionManagement distributionManagement = new DistributionManagement();
     
-    public SiteMavenProjectStub()
+    public SiteMavenProjectStub( String projectName )
     {
-        this( null );
-    }    
-    
-    public SiteMavenProjectStub( String pomFilePath )
-    {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model;
+        basedir = new File( super.getBasedir() + "/src/test/resources/unit/" + projectName );
 
         XmlStreamReader reader = null;
         try
         {
-            File pomFile =
-                new File( getBasedir(), pomFilePath == null ? "/src/test/resources/unit/interpolated-site/pom.xml"
-                                : pomFilePath );
-            reader = ReaderFactory.newXmlReader( pomFile );
-            model = pomReader.read( reader );
-            setModel( model );
+            reader = ReaderFactory.newXmlReader( new File( getBasedir(), "pom.xml" ) );
+            setModel( new MavenXpp3Reader().read( reader ) );
         }
         catch ( Exception e )
         {
@@ -93,5 +84,16 @@ public class SiteMavenProjectStub
     public DistributionManagement getDistributionManagement()
     {
         return distributionManagement;
+    }
+
+    /** {@inheritDoc} */
+    public File getBasedir()
+    {
+        return basedir;
+    }
+
+    public void setBasedir( File basedir )
+    {
+        this.basedir = basedir;
     }
 }
