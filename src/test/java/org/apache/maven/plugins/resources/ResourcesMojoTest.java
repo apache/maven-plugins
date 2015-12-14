@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.resources;
+package org.apache.maven.plugins.resources;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,8 +20,9 @@ package org.apache.maven.plugin.resources;
  */
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.resources.ResourcesMojo;
+import org.apache.maven.plugins.resources.stub.MavenProjectResourcesStub;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
