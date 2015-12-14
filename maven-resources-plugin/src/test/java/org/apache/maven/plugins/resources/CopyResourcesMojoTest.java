@@ -1,11 +1,12 @@
-package org.apache.maven.plugin.resources;
+package org.apache.maven.plugins.resources;
 
 import java.io.File;
 import java.util.Collections;
 
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.resources.stub.MavenProjectResourcesStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.resources.ResourcesMojo;
+import org.apache.maven.plugins.resources.stub.MavenProjectResourcesStub;
 import org.codehaus.plexus.util.FileUtils;
 
 /*

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.resources;
+package org.apache.maven.plugins.resources;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,8 @@ package org.apache.maven.plugin.resources;
  */
 
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -27,29 +29,51 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Copy resources of the configured plugin attribute resources
- * 
- * @author Olivier Lamy
- * @since 2.3
+ * Copy resources for the test source code to the test output directory.
+ * Always uses the project.build.testResources element to specify the resources to copy.
+ *
+ * @author <a href="michal.maczka@dimatics.com">Michal Maczka</a>
+ * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  */
-@Mojo( name = "copy-resources", threadSafe = true )
-public class CopyResourcesMojo
+@Mojo( name = "testResources", defaultPhase = LifecyclePhase.PROCESS_TEST_RESOURCES, threadSafe = true )
+public class TestResourcesMojo
     extends ResourcesMojo
 {
-    
     /**
      * The output directory into which to copy the resources.
      */
-    @Parameter( required = true )
+    @Parameter( defaultValue = "${project.build.testOutputDirectory}", required = true )
     private File outputDirectory;
 
     /**
-     * The list of resources we want to transfer. See the Maven Model for a
-     * description of how to code the resources element.
+     * The list of resources we want to transfer.
      */
-    @Parameter( required = true )
+    @Parameter( defaultValue = "${project.testResources}", required = true, readonly = false )
     private List<Resource> resources;
 
+    /**
+     * Set this to 'true' to bypass copying of test resources.
+     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * @since 2.6
+     */
+    @Parameter( property = "maven.test.skip" )
+    private boolean skip;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute()
+        throws MojoExecutionException
+    {
+        if ( skip )
+        {
+            getLog().info( "Not copying test resources" );
+        }
+        else
+        {
+            super.execute();
+        }
+    }
 
     public File getOutputDirectory()
     {
@@ -70,15 +94,5 @@ public class CopyResourcesMojo
     {
         this.resources = resources;
     }
-
-    public List<String> getFilters()
-    {
-        return filters;
-    }
-
-    public void setFilters( List<String> filters )
-    {
-        this.filters = filters;
-    }    
 
 }

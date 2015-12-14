@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.resources;
+package org.apache.maven.plugins.resources;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
