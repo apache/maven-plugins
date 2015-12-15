@@ -38,7 +38,7 @@ try
     
     ZipFile zf = new ZipFile( zipFile );
 
-    ZipArchiveEntry ze = zf.getEntry( "project2-0.0.1-SNAPSHOT/symlinks/src/symDir/" );
+    ZipArchiveEntry ze = zf.getEntry( "project2-0.0.1-SNAPSHOT/symlinks/src/symDir" );
     if ( ze == null )
     {
         System.err.println( "symDir is missing." );
@@ -49,6 +49,8 @@ try
         System.err.println( "symDir is not a symnlink." );
         result = false;
     }
+
+    zf.close();
 }
 catch( IOException e )
 {
