@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.jarsigner.JarSigner;
 import org.apache.maven.shared.jarsigner.JarSignerRequest;
 import org.apache.maven.shared.jarsigner.JarSignerUtil;
@@ -42,11 +43,13 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import org.apache.maven.shared.utils.ReaderFactory;
 
 /**
  * Maven Jarsigner Plugin base class.
@@ -215,6 +218,14 @@ public abstract class AbstractJarsignerMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
+
+    /**
+     * The Maven settings.
+     *
+     * @since 1.5
+     */
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
+    private Settings settings;
 
     /**
      * Location of the working directory.
@@ -495,8 +506,60 @@ public abstract class AbstractJarsignerMojo
         request.setProviderName( providerName );
         request.setWorkingDirectory( workingDirectory );
         request.setMaxMemory( maxMemory );
-        request.setArguments( arguments );
         request.setProtectedAuthenticationPath( protectedAuthenticationPath );
+
+        // Preserves 'file.encoding' the plugin is executed with.
+        final List<String> additionalArguments = new ArrayList<String>();
+
+        boolean fileEncodingSeen = false;
+
+        if ( this.arguments != null )
+        {
+            for ( final String argument : this.arguments )
+            {
+                if ( argument.trim().startsWith( "-J-Dfile.encoding=" ) )
+                {
+                    fileEncodingSeen = true;
+                }
+
+                additionalArguments.add( argument );
+            }
+        }
+
+        if ( !fileEncodingSeen )
+        {
+            additionalArguments.add( "-J-Dfile.encoding=" + ReaderFactory.FILE_ENCODING );
+        }
+
+        // Adds proxy information.
+        if ( this.settings != null && this.settings.getActiveProxy() != null
+                 && StringUtils.isNotEmpty( this.settings.getActiveProxy().getHost() ) )
+        {
+            additionalArguments.add( "-J-Dhttp.proxyHost=" + this.settings.getActiveProxy().getHost() );
+            additionalArguments.add( "-J-Dhttps.proxyHost=" + this.settings.getActiveProxy().getHost() );
+            additionalArguments.add( "-J-Dftp.proxyHost=" + this.settings.getActiveProxy().getHost() );
+
+            if ( this.settings.getActiveProxy().getPort() > 0 )
+            {
+                additionalArguments.add( "-J-Dhttp.proxyPort=" + this.settings.getActiveProxy().getPort() );
+                additionalArguments.add( "-J-Dhttps.proxyPort=" + this.settings.getActiveProxy().getPort() );
+                additionalArguments.add( "-J-Dftp.proxyPort=" + this.settings.getActiveProxy().getPort() );
+            }
+
+            if ( StringUtils.isNotEmpty( this.settings.getActiveProxy().getNonProxyHosts() ) )
+            {
+                additionalArguments.add( "-J-Dhttp.nonProxyHosts=\""
+                                             + this.settings.getActiveProxy().getNonProxyHosts() + "\"" );
+
+                additionalArguments.add( "-J-Dftp.nonProxyHosts=\""
+                                             + this.settings.getActiveProxy().getNonProxyHosts() + "\"" );
+
+            }
+        }
+
+        request.setArguments( !additionalArguments.isEmpty()
+                                  ? additionalArguments.toArray( new String[ additionalArguments.size() ] )
+                                  : null );
 
         // Special handling for passwords through the Maven Security Dispatcher
         request.setStorepass( decrypt( storepass ) );
