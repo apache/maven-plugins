@@ -1984,12 +1984,16 @@ public abstract class AbstractJavadocMojo
         // Wrap Javadoc JVM args
         // ----------------------------------------------------------------------
 
+        boolean fileEncodingSeen = false;
+
         addMemoryArg( cmd, "-Xmx", this.maxmemory );
         addMemoryArg( cmd, "-Xms", this.minmemory );
         addProxyArg( cmd );
 
         if ( StringUtils.isNotEmpty( additionalJOption ) )
         {
+            fileEncodingSeen = this.additionalJOption.contains( "-J-Dfile.encoding=" );
+
             cmd.createArg().setValue( additionalJOption );
         }
 
@@ -1997,11 +2001,18 @@ public abstract class AbstractJavadocMojo
         {
             for ( String jo : additionalJOptions )
             {
+                if ( !fileEncodingSeen )
+                {
+                    fileEncodingSeen = jo.contains( "-J-Dfile.encoding=" );
+                }
                 cmd.createArg().setValue( jo );
             }
         }
 
-        cmd.createArg().setValue( "-J-Dfile.encoding=" + ReaderFactory.FILE_ENCODING );
+        if ( !fileEncodingSeen )
+        {
+            cmd.createArg().setValue( "-J-Dfile.encoding=" + ReaderFactory.FILE_ENCODING );
+        }
 
         List<String> arguments = new ArrayList<String>();
 
