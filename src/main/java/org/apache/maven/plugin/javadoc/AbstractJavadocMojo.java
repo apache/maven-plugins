@@ -2001,6 +2001,8 @@ public abstract class AbstractJavadocMojo
             }
         }
 
+        cmd.createArg().setValue( "-J-Dfile.encoding=" + ReaderFactory.FILE_ENCODING );
+
         List<String> arguments = new ArrayList<String>();
 
         // ----------------------------------------------------------------------
