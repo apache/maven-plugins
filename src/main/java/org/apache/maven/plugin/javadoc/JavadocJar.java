@@ -130,7 +130,7 @@ public class JavadocJar
      * @since 2.5
      */
     @Parameter
-    private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+    private MavenArchiveConfiguration archive = new JavadocArchiveConfiguration();
 
     /**
      * Path to the default MANIFEST file to use. It will be used if
@@ -295,8 +295,6 @@ public class JavadocJar
 
         try
         {
-            // we don't want Maven stuff
-            archive.setAddMavenDescriptor( false );
             archiver.createArchive( session, project, archive );
         }
         catch ( ManifestException e )
