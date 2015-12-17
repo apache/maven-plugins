@@ -23,9 +23,11 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -133,5 +135,42 @@ public class JavadocJarTest
         File generatedFile =
                 new File( getBasedir(), "target/test/unit/javadocjar-failonerror/target/javadocjar-failonerror-javadoc.jar" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    public void testIncludeMavenDescriptorWhenExplicitlyConfigured() throws Exception
+    {
+        File testPom =
+                new File( getBasedir(), "src/test/resources/unit/javadocjar-archive-config/javadocjar-archive-config.xml" );
+        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        mojo.execute();
+
+        //check if the javadoc jar file was generated
+        File generatedFile =
+                new File( getBasedir(), "target/test/unit/javadocjar-archive-config/target/javadocjar-archive-config-javadoc.jar" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        //validate contents of jar file
+        ZipFile jar = new ZipFile( generatedFile );
+        Set<String> set = new HashSet<String>();
+        for (Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
+        {
+            ZipEntry entry = entries.nextElement();
+            set.add( entry.getName() );
+        }
+        jar.close();
+
+        List<String> expected = new ArrayList();
+        expected.add( "META-INF/" );
+        expected.add( "META-INF/maven/" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/javadocjar-archive-config/" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/javadocjar-archive-config/pom.xml" );
+        expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/javadocjar-archive-config/pom.properties" );
+
+        for (int i = 0; i < expected.size(); i++)
+        {
+            String entry = expected.get( i );
+            assertTrue( "Expected jar to contain " + entry, set.contains( entry ) );
+        }
     }
 }
