@@ -168,11 +168,14 @@ public class SiteMojo
 
         Map<String, DocumentRenderer> documents = locateDocuments( context, reports, locale );
 
+        // copy resources
+        siteRenderer.copyResources( context, outputDir );
+
         // 1. render Doxia documents first
         List<DocumentRenderer> reportDocuments = renderDoxiaDocuments( documents, context, outputDir, false );
 
         // 2. then reports
-        // For external reports
+        // prepare external reports
         for ( MavenReportExecution mavenReportExecution : reports )
         {
             MavenReport report = mavenReportExecution.getMavenReport();
@@ -196,12 +199,15 @@ public class SiteMojo
         Map<String, DocumentRenderer> generatedDocuments = siteRenderer.locateDocumentFiles( context );
 
         renderDoxiaDocuments( generatedDocuments, context, outputDir, true );
+
+        // copy generated resources also
+        siteRenderer.copyResources( context, outputDir );
     }
 
     /**
-     * Renders Doxia documents, but not reports.
-     * @param documents a collection of documents
-     * @return the sublist of documents that are not Doxia parsed
+     * Render Doxia documents from the list given, but not reports.
+     * @param documents a collection of documents containing both Doxia source files and reports
+     * @return the sublist of documents that are not Doxia source files
      */
     private List<DocumentRenderer> renderDoxiaDocuments( Map<String, DocumentRenderer> documents,
                                                          SiteRenderingContext context, File outputDir,

@@ -195,13 +195,11 @@ public class SiteRunMojo
 
                 if ( defaultLocale.equals( locale ) )
                 {
-                    siteRenderer.copyResources( i18nContext, new File( siteDirectory, "resources" ),
-                                                tempWebappDirectory );
+                    siteRenderer.copyResources( i18nContext, tempWebappDirectory );
                 }
                 else
                 {
-                    siteRenderer.copyResources( i18nContext, new File( siteDirectory, "resources" ),
-                                                new File( tempWebappDirectory, locale.getLanguage() ) );
+                    siteRenderer.copyResources( i18nContext, new File( tempWebappDirectory, locale.getLanguage() ) );
                 }
             }
 

@@ -433,10 +433,11 @@ public abstract class AbstractSiteRenderingMojo
 
     /**
      * Locate every document to be rendered for given locale:<ul>
-     * <li>handwritten content,</li>
+     * <li>handwritten content, ie Doxia files,</li>
      * <li>reports,</li>
      * <li>"Project Information" and "Project Reports" category summaries.</li>
      * </ul>
+     * @see CategorySummaryDocumentRenderer
      */
     protected Map<String, DocumentRenderer> locateDocuments( SiteRenderingContext context,
                                                              List<MavenReportExecution> reports, Locale locale )
