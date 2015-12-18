@@ -48,7 +48,7 @@ public class JarMojo
      * If this is not given,it will merely be written to the output directory
      * according to the finalName.
      */
-    @Parameter( property = "maven.jar.classifier", defaultValue = "" )
+    @Parameter( property = "maven.jar.classifier" )
     private String classifier;
 
     protected String getClassifier()
