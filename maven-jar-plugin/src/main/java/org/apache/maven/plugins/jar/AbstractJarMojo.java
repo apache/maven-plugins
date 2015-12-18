@@ -43,9 +43,9 @@ public abstract class AbstractJarMojo
     extends AbstractMojo
 {
 
-    private static final String[] DEFAULT_EXCLUDES = new String[]{ "**/package.html" };
+    private static final String[] DEFAULT_EXCLUDES = new String[] { "**/package.html" };
 
-    private static final String[] DEFAULT_INCLUDES = new String[]{ "**/**" };
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
     /**
      * List of files to include. Specified as fileset patterns which are relative to the input directory whose contents
@@ -80,32 +80,33 @@ public abstract class AbstractJarMojo
     private JarArchiver jarArchiver;
 
     /**
-     * The Maven project.
+     * The {@link {MavenProject}.
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     /**
-     *
+     * The {@link MavenSession}.
      */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
     /**
-     * The archive configuration to use.
-     * See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven Archiver Reference</a>.
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * Archiver Reference</a>.
      */
     @Parameter
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * Path to the default MANIFEST file to use. It will be used if
-     * <code>useDefaultManifestFile</code> is set to <code>true</code>.
+     * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
+     * <code>true</code>.
      *
      * @since 2.2
      */
-    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", required = true,
-                readonly = true )
+    // CHECKSTYLE_OFF: LineLength
+    @Parameter( defaultValue = "${project.build.outputDirectory}/META-INF/MANIFEST.MF", required = true, readonly = true )
+    // CHECKSTYLE_ON: LineLength
     private File defaultManifestFile;
 
     /**
@@ -123,14 +124,13 @@ public abstract class AbstractJarMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * Require the jar plugin to build a new JAR even if none of the contents appear to have changed.
-     * By default, this plugin looks to see if the output jar exists and inputs have not changed.
-     * If these conditions are true, the plugin skips creation of the jar. This does not work when
-     * other plugins, like the maven-shade-plugin, are configured to post-process the jar.
-     * This plugin can not detect the post-processing, and so leaves the post-processed jar in place.
-     * This can lead to failures when those plugins do not expect to find their own output
-     * as an input. Set this parameter to <tt>true</tt> to avoid these problems by forcing
-     * this plugin to recreate the jar every time.
+     * Require the jar plugin to build a new JAR even if none of the contents appear to have changed. By default, this
+     * plugin looks to see if the output jar exists and inputs have not changed. If these conditions are true, the
+     * plugin skips creation of the jar. This does not work when other plugins, like the maven-shade-plugin, are
+     * configured to post-process the jar. This plugin can not detect the post-processing, and so leaves the
+     * post-processed jar in place. This can lead to failures when those plugins do not expect to find their own output
+     * as an input. Set this parameter to <tt>true</tt> to avoid these problems by forcing this plugin to recreate the
+     * jar every time.
      */
     @Parameter( property = "jar.forceCreation", defaultValue = "false" )
     private boolean forceCreation;
@@ -176,14 +176,12 @@ public abstract class AbstractJarMojo
     }
 
     /**
-     * Default Manifest location. Can point to a non existing file.
-     * Cannot return null.
+     * Default Manifest location. Can point to a non existing file. Cannot return null.
      */
     protected File getDefaultManifestFile()
     {
         return defaultManifestFile;
     }
-
 
     /**
      * Generates the JAR.
@@ -250,16 +248,29 @@ public abstract class AbstractJarMojo
         {
             File jarFile = createArchive();
 
-            String classifier = getClassifier();
-            if ( classifier != null )
+            if ( hasClassifier() )
             {
-                projectHelper.attachArtifact( getProject(), getType(), classifier, jarFile );
+                projectHelper.attachArtifact( getProject(), getType(), getClassifier(), jarFile );
             }
             else
             {
                 getProject().getArtifact().setFile( jarFile );
             }
         }
+    }
+
+    /**
+     * @return true in case where the classifier is not {@code null} and contains something else than white spaces.
+     */
+    private boolean hasClassifier()
+    {
+        boolean result = false;
+        if ( getClassifier() != null && getClassifier().trim().length() > 0 )
+        {
+            result = true;
+        }
+
+        return result;
     }
 
     private String[] getIncludes()

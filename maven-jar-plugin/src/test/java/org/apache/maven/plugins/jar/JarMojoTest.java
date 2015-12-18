@@ -52,7 +52,7 @@ public class JarMojoTest
         throws Exception
     {
 
-        //File pom = new File( getBasedir(), "src/test/resources/unit/clean/pom.xml" );
+        // File pom = new File( getBasedir(), "src/test/resources/unit/clean/pom.xml" );
 
         JarMojo mojo = (JarMojo) lookupMojo( "jar", testPom );
 
