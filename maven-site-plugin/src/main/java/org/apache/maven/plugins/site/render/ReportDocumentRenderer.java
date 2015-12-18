@@ -49,7 +49,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
- * Renders a Maven report in a doxia site.
+ * Renders a Maven report in a Doxia site.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
