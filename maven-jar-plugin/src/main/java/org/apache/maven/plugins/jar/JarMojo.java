@@ -44,9 +44,10 @@ public class JarMojo
     private File classesDirectory;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will be attached.
-     * If this is not given,it will merely be written to the output directory
-     * according to the finalName.
+     * Classifier to add to the artifact generated. If given, the artifact will be attached
+     * as a supplemental artifact.
+     * If not given this will create the main artifact which is the default behavior. 
+     * If you try to do that a second time without using a classifier the build will fail.
      */
     @Parameter( property = "maven.jar.classifier" )
     private String classifier;

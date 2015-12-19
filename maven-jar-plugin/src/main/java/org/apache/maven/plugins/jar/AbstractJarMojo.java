@@ -254,8 +254,25 @@ public abstract class AbstractJarMojo
             }
             else
             {
+                if ( projectHasAlreadySetAnArtifact() )
+                {
+                    throw new MojoExecutionException( "You have to use a classifier "
+                        + "to attach supplemental artifacts to the project instead of replacing them." );
+                }
                 getProject().getArtifact().setFile( jarFile );
             }
+        }
+    }
+
+    private boolean projectHasAlreadySetAnArtifact()
+    {
+        if ( getProject().getArtifact().getFile() != null )
+        {
+            return getProject().getArtifact().getFile().isFile();
+        }
+        else
+        {
+            return false;
         }
     }
 
