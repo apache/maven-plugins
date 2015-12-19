@@ -279,7 +279,7 @@ public abstract class AbstractJarMojo
     /**
      * @return true in case where the classifier is not {@code null} and contains something else than white spaces.
      */
-    private boolean hasClassifier()
+    protected boolean hasClassifier()
     {
         boolean result = false;
         if ( getClassifier() != null && getClassifier().trim().length() > 0 )

@@ -32,15 +32,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @author <a href="evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
-@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true,
-       requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "test-jar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
+// CHECKSTYLE_ON: LineLength
 public class TestJarMojo
     extends AbstractJarMojo
 {
 
     /**
-     * Set this to <code>true</code> to bypass unit tests entirely.
-     * Its use is <b>NOT RECOMMENDED</b>, but quite convenient on occasion.
+     * Set this to <code>true</code> to bypass unit tests entirely. Its use is <b>NOT RECOMMENDED</b>, but quite
+     * convenient on occasion.
      */
     @Parameter( property = "maven.test.skip" )
     private boolean skip;
@@ -51,9 +52,15 @@ public class TestJarMojo
     @Parameter( defaultValue = "${project.build.testOutputDirectory}", required = true )
     private File testClassesDirectory;
 
+    /**
+     * Classifier to used for {@code test-jar}.
+     */
+    @Parameter( property = "maven.jar.testClassifier", defaultValue = "tests" )
+    private String classifier;
+
     protected String getClassifier()
     {
-        return "tests";
+        return classifier;
     }
 
     /**
