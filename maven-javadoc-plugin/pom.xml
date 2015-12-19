@@ -381,7 +381,7 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
               <pomIncludes>
-                <pomInclude>additionnal-dependencies*/pom.xml</pomInclude>
+                <pomInclude>additional-dependencies*/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-110/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-126/pom.xml</pomInclude>
                 <pomInclude>MJAVADOC-137/pom.xml</pomInclude>
