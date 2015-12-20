@@ -34,9 +34,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -100,7 +98,7 @@ public class DoxiaFilter
         // Handle locale request
         SiteRenderingContext context;
         Map<String, DocumentRenderer> documents;
-        File generatedSiteDirectory;
+        SiteRenderingContext generatedSiteContext;
 
         String localeWanted = null;
         for ( Locale locale : localesList )
@@ -121,7 +119,7 @@ public class DoxiaFilter
             }
             context = defaultDoxiaBean.getContext();
             documents = defaultDoxiaBean.getDocuments();
-            generatedSiteDirectory = defaultDoxiaBean.getGeneratedSiteDirectory();
+            generatedSiteContext = defaultDoxiaBean.getGeneratedSiteContext();
         }
         else
         {
@@ -132,7 +130,7 @@ public class DoxiaFilter
             }
             context = i18nDoxiaBean.getContext();
             documents = i18nDoxiaBean.getDocuments();
-            generatedSiteDirectory = i18nDoxiaBean.getGeneratedSiteDirectory();
+            generatedSiteContext = i18nDoxiaBean.getGeneratedSiteContext();
         }
 
         // ----------------------------------------------------------------------
@@ -160,41 +158,36 @@ public class DoxiaFilter
                         }
                     }
                 }
+
+                return;
             }
             catch ( RendererException e )
             {
                 throw new ServletException( e );
             }
         }
-        else if ( generatedSiteDirectory != null && generatedSiteDirectory.exists() )
+        else if ( generatedSiteContext != null )
         {
-            context.getSiteDirectories().clear();
-            context.addSiteDirectory( generatedSiteDirectory );
             try
             {
-                Map<String, DocumentRenderer> locateDocuments = siteRenderer.locateDocumentFiles( context );
+                Map<String, DocumentRenderer> locateDocuments =
+                    siteRenderer.locateDocumentFiles( generatedSiteContext );
 
                 if ( locateDocuments.containsKey( path ) )
                 {
                     DocumentRenderer renderer = locateDocuments.get( path );
-                    renderer.renderDocument( servletResponse.getWriter(), siteRenderer, context );
+                    renderer.renderDocument( servletResponse.getWriter(), siteRenderer, generatedSiteContext );
+
+                    return;
                 }
             }
             catch ( RendererException e )
             {
                 throw new ServletException( e );
             }
+        }
 
-            List<File> originalSiteDirectories = new ArrayList<File>( context.getSiteDirectories() );
-            for ( File dir : originalSiteDirectories )
-            {
-                context.addSiteDirectory( dir );
-            }
-        }
-        else
-        {
-            filterChain.doFilter( servletRequest, servletResponse );
-        }
+        filterChain.doFilter( servletRequest, servletResponse );
     }
 
     /**
