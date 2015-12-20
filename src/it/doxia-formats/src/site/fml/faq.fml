@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 file:../../../../../../../doxia/doxia-modules/doxia-module-fml/src/main/resources/fml-1.0.1.xsd"
+  title="Oft Asked Questions">
+
+  <part id="contributing">
+    <!-- A comment -->
+    <title>Contributing</title>
+
+    <faq id="stupid-question">
+      <question>One <b>stupid</b> question &amp; a silly answer?</question>
+      <answer>
+        <p>
+          A paragraph with a <a href="#Using_Maven">local link</a>,
+          a link to another <a href="./cdc.html">source document</a>,
+          an <a href="http://maven.apache.org/?l=a&amp;m=b">external link</a>
+          with entities, an <i>italic</i> text and <b>non-US-ASCII characters: àéèç</b>.
+        </p>
+      </answer>
+    </faq>
+
+  </part>
+
+  <part id="using">
+    <title>Using Maven</title>
+
+    <faq id="disable-reports">
+      <question>How do I disable a report on my site?</question>
+      <answer>
+        <p>
+          Test nested <code>&lt;source&gt;&lt;/source&gt;</code> tags (DOXIA-16):
+        </p>
+        <source><![CDATA[<source>1.5</source>]]></source>
+      </answer>
+    </faq>
+
+  </part>
+
+</faqs>
+
