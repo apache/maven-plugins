@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/xsd/xdoc-2.0.xsd">
+  <properties>
+    <title>Macros in Xdoc</title>
+    <author email="hboutemy@apache.org">Hervé Boutemy</author>
+  </properties>
+  <body>
+    <section name="Macros in Xdoc">
+    <!-- START SNIPPET: macros -->
+    <subsection name="TOC">
+      <macro name="toc">
+      </macro>
+    </subsection>
+    <subsection name="Echo">
+      <macro name="echo">
+        <param name="param1" value="value1"/>
+        <param name="param2" value="value2"/>
+      </macro>
+    </subsection>
+    <subsection name="Snippet">
+      <macro name="snippet">
+        <param name="id" value="macros"/>
+        <param name="file" value="src/site/xdoc/xdoc-macro.xml"/>
+      </macro>
+    </subsection>
+    <!-- END SNIPPET: macros -->
+    </section>
+  </body>
+</document>

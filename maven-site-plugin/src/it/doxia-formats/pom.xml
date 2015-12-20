@@ -24,10 +24,10 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.site.its</groupId>
-  <artifactId>markdown-format</artifactId>
+  <artifactId>doxia-formats</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>markdown-format</name>
+  <name>Doxia formats tests</name>
 
 
   <build>

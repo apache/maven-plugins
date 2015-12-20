@@ -18,7 +18,7 @@
  * under the License.
  */
 
-content = new File( basedir, 'target/site/index.html' ).text;
+content = new File( basedir, 'target/site/markdown.html' ).text;
 
 assert content.contains( 'Markdown Format works' );
 
@@ -26,5 +26,8 @@ assert !content.contains( ' quotes and double quotes were stripped' );
 
 assert !content.contains( 'MACRO' );
 assert content.contains( 'href="#Subsection"' );
+
+ignore = new File( basedir, 'target/site/ignore.txt' );
+assert !ignore.exists();
 
 return true;
