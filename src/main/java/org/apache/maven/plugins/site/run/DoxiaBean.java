@@ -19,7 +19,6 @@ package org.apache.maven.plugins.site.run;
  * under the License.
  */
 
-import java.io.File;
 import java.util.Map;
 
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
@@ -37,7 +36,7 @@ public class DoxiaBean
 
     private Map<String, DocumentRenderer> documents;
 
-    private File generatedSiteDirectory;
+    private SiteRenderingContext generatedSiteContext;
 
     /**
      * @param context
@@ -45,11 +44,11 @@ public class DoxiaBean
      * @param generatedSiteDirectory
      */
     public DoxiaBean( SiteRenderingContext context, Map<String, DocumentRenderer> documents,
-                                 File generatedSiteDirectory )
+                      SiteRenderingContext generatedSiteContext )
     {
         this.context = context;
         this.documents = documents;
-        this.generatedSiteDirectory = generatedSiteDirectory;
+        this.generatedSiteContext = generatedSiteContext;
     }
 
     public SiteRenderingContext getContext()
@@ -72,13 +71,13 @@ public class DoxiaBean
         this.documents = documents;
     }
 
-    public File getGeneratedSiteDirectory()
+    public SiteRenderingContext getGeneratedSiteContext()
     {
-        return generatedSiteDirectory;
+        return generatedSiteContext;
     }
 
-    public void setGeneratedSiteDirectory( File generatedSiteDirectory )
+    public void setGeneratedSiteContext( SiteRenderingContext generatedSiteContext )
     {
-        this.generatedSiteDirectory = generatedSiteDirectory;
+        this.generatedSiteContext = generatedSiteContext;
     }
 }

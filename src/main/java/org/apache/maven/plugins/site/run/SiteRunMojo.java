@@ -174,17 +174,23 @@ public class SiteRunMojo
                 i18nContext.setInputEncoding( getInputEncoding() );
                 i18nContext.setOutputEncoding( getOutputEncoding() );
 
+                SiteRenderingContext i18nGeneratedSiteContext = createSiteRenderingContext( locale );
+                i18nGeneratedSiteContext.setInputEncoding( getInputEncoding() );
+                i18nGeneratedSiteContext.setOutputEncoding( getOutputEncoding() );
+                i18nGeneratedSiteContext.getSiteDirectories().clear();
+
                 Map<String, DocumentRenderer> i18nDocuments = locateDocuments( i18nContext, reports, locale );
                 DoxiaBean doxiaBean;
                 if ( defaultLocale.equals( locale ) )
                 {
-                    doxiaBean = new DoxiaBean( i18nContext, i18nDocuments, generatedSiteDirectory );
+                    i18nGeneratedSiteContext.addSiteDirectory( generatedSiteDirectory );
+                    doxiaBean = new DoxiaBean( i18nContext, i18nDocuments, i18nGeneratedSiteContext );
                 }
                 else
                 {
-                    doxiaBean =
-                        new DoxiaBean( i18nContext, i18nDocuments, new File( generatedSiteDirectory,
-                                                                             locale.getLanguage() ) );
+                    i18nGeneratedSiteContext.addSiteDirectory( new File( generatedSiteDirectory,
+                                                                         locale.getLanguage() ) );
+                    doxiaBean = new DoxiaBean( i18nContext, i18nDocuments, i18nGeneratedSiteContext );
                 }
 
                 i18nDoxiaContexts.put( locale.getLanguage(), doxiaBean );
