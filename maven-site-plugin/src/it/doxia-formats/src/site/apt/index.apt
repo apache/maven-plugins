@@ -52,3 +52,5 @@ Doxia Formats
   require to explicitely add a dependency to maven-site-plugin when using it.
 
 Velocity
+
+  See {{{./velocity-context.html} Doxia Site Renderer Velocity Context demo}}.
