@@ -29,6 +29,9 @@ under the License.
   <packaging>pom</packaging>
   <name>Doxia formats tests</name>
 
+  <properties>
+    <property-project-version>@project.version@</property-project-version>
+  </properties>
 
   <build>
     <pluginManagement>
