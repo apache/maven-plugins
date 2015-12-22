@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-javadoc-plugin</artifactId>
-  <version>2.10.4-SNAPSHOT</version>
+  <version>2.10.3-restlet</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Javadoc Plugin</name>
@@ -54,10 +54,16 @@ under the License.
     <url>https://issues.apache.org/jira/browse/MJAVADOC</url>
   </issueManagement>
   <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/components/${maven.site.path}</url>
-    </site>
+      <repository>
+          <id>nexus-releases</id>
+          <name>Nexus Release Repository</name>
+          <url>https://nexus.rest-let.com/nexus/content/repositories/releases/</url>
+      </repository>
+      <snapshotRepository>
+          <id>nexus-snapshots</id>
+          <name>Nexus Snapshot Repository</name>
+          <url>https://nexus.rest-let.com/nexus/content/repositories/snapshots/</url>
+      </snapshotRepository>
   </distributionManagement>
 
   <properties>
@@ -285,6 +291,8 @@ under the License.
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
             <excludes combine.children="append">
+              <!-- Readme -->
+              <exclude>RESTLET-README.md</exclude>
               <!-- Photoshop files are binary -->
               <exclude>**/*.psd</exclude>
               <!-- Checksum files cannot contain a license header -->
