@@ -189,6 +189,14 @@ public abstract class AbstractSiteRenderingMojo
     @Parameter( property = "generateProjectInfo", defaultValue = "true" )
     private boolean generateProjectInfo;
 
+    /**
+     * Whether to save Velocity processed Doxia documents to <code>${generatedSiteDirectory}/velocity</code>.
+     *
+     * @since 3.5
+     */
+    @Parameter
+    private boolean saveVelocityDocument;
+
     /** {@inheritDoc} */
     public void contextualize( Context context )
         throws ContextException
@@ -349,6 +357,11 @@ public abstract class AbstractSiteRenderingMojo
         if ( moduleExcludes != null )
         {
             context.setModuleExcludes( moduleExcludes );
+        }
+
+        if ( saveVelocityDocument )
+        {
+            context.setVelocityDocumentOutput( new File( generatedSiteDirectory, "velocity" ) );
         }
 
         return context;
