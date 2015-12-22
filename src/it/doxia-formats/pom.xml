@@ -40,6 +40,9 @@ under the License.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>@project.version@</version>
+          <configuration>
+            <saveVelocityDocument>true</saveVelocityDocument>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

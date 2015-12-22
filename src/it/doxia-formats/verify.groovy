@@ -30,4 +30,6 @@ assert content.contains( 'href="#Subsection"' );
 ignore = new File( basedir, 'target/site/ignore.txt' );
 assert !ignore.exists();
 
+assert new File( basedir, 'target/generated-site/velocity/velocity-context.apt' ).exists();
+
 return true;
