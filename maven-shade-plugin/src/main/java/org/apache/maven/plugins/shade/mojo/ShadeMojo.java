@@ -495,7 +495,8 @@ public class ShadeMojo
                                                   outputJar );
                     if ( createSourcesJar )
                     {
-                        projectHelper.attachArtifact( project, "jar", shadedClassifierName + "-sources", sourcesJar );
+                        projectHelper.attachArtifact( project, "java-source", shadedClassifierName + "-sources",
+                                                      sourcesJar );
                     }
                 }
                 else if ( !renamed )
@@ -513,7 +514,7 @@ public class ShadeMojo
 
                             replaceFile( shadedSources, sourcesJar );
 
-                            projectHelper.attachArtifact( project, "jar", "sources", shadedSources );
+                            projectHelper.attachArtifact( project, "java-source", "sources", shadedSources );
                         }
 
                         if ( shadeTestJar )
