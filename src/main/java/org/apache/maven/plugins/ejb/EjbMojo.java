@@ -288,7 +288,18 @@ public class EjbMojo
 
         if ( generateClient )
         {
-            generateEjbClient();
+            File clientJarFile = generateEjbClient();
+            // TODO: shouldn't need classifer
+            // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
+            }
+
         }
     }
 
@@ -360,7 +371,7 @@ public class EjbMojo
 
     }
 
-    private void generateEjbClient()
+    private File generateEjbClient()
         throws MojoExecutionException
     {
         String clientJarName = jarName;
@@ -422,16 +433,7 @@ public class EjbMojo
                                               e );
         }
 
-        // TODO: shouldn't need classifer
-        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
-        if ( classifier != null )
-        {
-            projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
-        }
-        else
-        {
-            projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
-        }
+        return clientJarFile;
     }
 
     private void checkEJBVersionCompliance( File deploymentDescriptor )
