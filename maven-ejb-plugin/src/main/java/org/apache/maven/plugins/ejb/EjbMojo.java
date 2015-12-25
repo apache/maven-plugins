@@ -91,6 +91,14 @@ public class EjbMojo
     private String classifier;
 
     /**
+     * Classifier to add to the client artifact generated.
+     * 
+     * @since 3.0.0
+     */
+    @Parameter( property = "maven.ejb.clientClassifier" )
+    private String clientClassifier;
+
+    /**
      * Default value for {@link #ejbJar}.
      */
     public static final String DEFAULT_EJBJAR = "META-INF/ejb-jar.xml";
@@ -251,8 +259,6 @@ public class EjbMojo
 
     /**
      * Generates an EJB jar and optionally an ejb-client jar.
-     *
-     * @todo Add license files in META-INF directory.
      */
     public void execute()
         throws MojoExecutionException
@@ -265,11 +271,30 @@ public class EjbMojo
             sourceDirectory.mkdirs();
         }
 
-        if ( getLog().isInfoEnabled() )
+        getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
+
+        File jarFile = generateEjb();
+
+        // Handle the classifier if necessary
+        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
+        if ( classifier != null )
         {
-            getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
+            projectHelper.attachArtifact( project, "ejb", classifier, jarFile );
+        }
+        else
+        {
+            project.getArtifact().setFile( jarFile );
         }
 
+        if ( generateClient )
+        {
+            generateEjbClient();
+        }
+    }
+
+    private File generateEjb()
+        throws MojoExecutionException
+    {
         File jarFile = getEJBJarFile( outputDirectory, jarName, classifier );
 
         MavenArchiver archiver = new MavenArchiver();
@@ -331,21 +356,8 @@ public class EjbMojo
                 + e.getMessage(), e );
         }
 
-        // Handle the classifier if necessary
-        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
-        if ( classifier != null )
-        {
-            projectHelper.attachArtifact( project, "ejb", classifier, jarFile );
-        }
-        else
-        {
-            project.getArtifact().setFile( jarFile );
-        }
+        return jarFile;
 
-        if ( generateClient )
-        {
-            generateEjbClient();
-        }
     }
 
     private void generateEjbClient()
@@ -479,6 +491,33 @@ public class EjbMojo
     }
 
     /**
+     * @return true in case where the classifier is not {@code null} and contains something else than white spaces.
+     */
+    private boolean hasClassifier()
+    {
+        return hasClassifier( getClassifier() );
+    }
+
+    /**
+     * @return true in case where the clientClassifier is not {@code null} and contains something else than white
+     *         spaces.
+     */
+    private boolean hasClientClassifier()
+    {
+        return hasClassifier( getClientClassifier() );
+    }
+
+    private boolean hasClassifier( String classfier )
+    {
+        boolean result = false;
+        if ( classfier != null && classfier.trim().length() > 0 )
+        {
+            result = true;
+        }
+        return result;
+    }
+
+    /**
      * Get the encoding from an XML-file.
      *
      * @param xmlFile the XML-file
@@ -500,4 +539,13 @@ public class EjbMojo
         }
     }
 
+    public String getClassifier()
+    {
+        return classifier;
+    }
+
+    public String getClientClassifier()
+    {
+        return clientClassifier;
+    }
 }
