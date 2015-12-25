@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.ejb;
+package org.apache.maven.plugins.ejb;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
