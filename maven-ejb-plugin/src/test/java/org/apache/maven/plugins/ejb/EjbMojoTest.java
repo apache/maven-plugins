@@ -148,6 +148,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "generateClient", Boolean.TRUE );
         setVariableValueToObject( mojo, "ejbVersion", "2.1" );
         setVariableValueToObject( mojo, "classifier", "classified" );
+        setVariableValueToObject( mojo, "clientClassifier", "classified-client" );
 
         mojo.execute();
 
@@ -564,6 +565,7 @@ public class EjbMojoTest
         setVariableValueToObject( mojo, "clientExcludes", clientExcludes );
         setVariableValueToObject( mojo, "clientIncludes", clientIncludes );
         setVariableValueToObject( mojo, "excludes", excludes );
+        setVariableValueToObject( mojo, "clientClassifier", EjbMojo.DEFAULT_CLIENT_CLASSIFIER);
 
         return mojo;
     }

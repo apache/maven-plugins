@@ -67,6 +67,16 @@ public class EjbMojo
         new String[] { "**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html" };
 
     /**
+     * Default value for {@link #clientClassifier}
+     */
+    public static final String DEFAULT_CLIENT_CLASSIFIER = "client";
+
+    /**
+     * Default value for {@link #ejbJar}.
+     */
+    public static final String DEFAULT_EJBJAR = "META-INF/ejb-jar.xml";
+
+    /**
      * The directory location for the generated EJB.
      */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
@@ -91,17 +101,12 @@ public class EjbMojo
     private String classifier;
 
     /**
-     * Classifier to add to the client artifact generated.
+     * Classifier which is used for the client artifact.
      * 
      * @since 3.0.0
      */
-    @Parameter( property = "maven.ejb.clientClassifier" )
+    @Parameter( property = "maven.ejb.clientClassifier", defaultValue = DEFAULT_CLIENT_CLASSIFIER )
     private String clientClassifier;
-
-    /**
-     * Default value for {@link #ejbJar}.
-     */
-    public static final String DEFAULT_EJBJAR = "META-INF/ejb-jar.xml";
 
     /**
      * You can define the location of <code>ejb-jar.xml</code> file.
@@ -271,15 +276,18 @@ public class EjbMojo
             sourceDirectory.mkdirs();
         }
 
-        getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
-
         File jarFile = generateEjb();
 
-        // Handle the classifier if necessary
-        // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
-        if ( classifier != null )
+        if ( hasClassifier() )
         {
-            projectHelper.attachArtifact( project, "ejb", classifier, jarFile );
+            if ( !isClassifierValid() )
+            {
+                String message = "The given classifier '" + getClassifier() + "' is not valid.";
+                getLog().error( message );
+                throw new MojoExecutionException( message );
+            }
+
+            projectHelper.attachArtifact( project, "ejb", getClassifier(), jarFile );
         }
         else
         {
@@ -289,15 +297,22 @@ public class EjbMojo
         if ( generateClient )
         {
             File clientJarFile = generateEjbClient();
-            // TODO: shouldn't need classifer
-            // TODO: For 3.0 this should be changed having a separate classifier for main artifact and ejb-client.
-            if ( classifier != null )
+            if ( hasClientClassifier() )
             {
-                projectHelper.attachArtifact( project, "ejb-client", classifier + "-client", clientJarFile );
+                if ( !isClientClassifierValid() )
+                {
+                    String message = "The given client classifier '" + getClientClassifier() + "' is not valid.";
+                    getLog().error( message );
+                    throw new MojoExecutionException( message );
+                }
+
+                projectHelper.attachArtifact( project, "ejb-client", getClientClassifier(), clientJarFile );
             }
             else
             {
-                projectHelper.attachArtifact( project, "ejb-client", "client", clientJarFile );
+                // FIXME: This does not make sense, cause a classifier for the client should always exist otherwise
+                // Failure!
+                projectHelper.attachArtifact( project, "ejb-client", getClientClassifier(), clientJarFile );
             }
 
         }
@@ -306,7 +321,9 @@ public class EjbMojo
     private File generateEjb()
         throws MojoExecutionException
     {
-        File jarFile = getEJBJarFile( outputDirectory, jarName, classifier );
+        File jarFile = EjbHelper.getJarFileName( outputDirectory, jarName, getClassifier() );
+
+        getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
 
         MavenArchiver archiver = new MavenArchiver();
 
@@ -316,7 +333,6 @@ public class EjbMojo
 
         File deploymentDescriptor = new File( sourceDirectory, ejbJar );
 
-        /* test EJB version compliance */
         checkEJBVersionCompliance( deploymentDescriptor );
 
         try
@@ -332,6 +348,7 @@ public class EjbMojo
 
             archiver.getArchiver().addDirectory( sourceDirectory, DEFAULT_INCLUDES, mainJarExcludes );
 
+            // FIXME: We should be able to filter more than just the deployment descriptor?
             if ( deploymentDescriptor.exists() )
             {
                 // EJB-34 Filter ejb-jar.xml
@@ -374,14 +391,9 @@ public class EjbMojo
     private File generateEjbClient()
         throws MojoExecutionException
     {
-        String clientJarName = jarName;
-        if ( classifier != null )
-        {
-            clientJarName += "-" + classifier;
-        }
+        File clientJarFile = EjbHelper.getJarFileName( outputDirectory, jarName, getClientClassifier() );
 
-        String resultingClientJarNameWithClassifier = clientJarName + "-client";
-        getLog().info( "Building EJB client " + resultingClientJarNameWithClassifier );
+        getLog().info( "Building EJB client " + clientJarFile.getPath() );
 
         String[] excludes = DEFAULT_CLIENT_EXCLUDES;
         String[] includes = DEFAULT_INCLUDES;
@@ -395,8 +407,6 @@ public class EjbMojo
         {
             excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
         }
-
-        File clientJarFile = new File( outputDirectory, resultingClientJarNameWithClassifier + ".jar" );
 
         MavenArchiver clientArchiver = new MavenArchiver();
 
@@ -471,33 +481,11 @@ public class EjbMojo
     }
 
     /**
-     * Returns the EJB Jar file to generate, based on an optional classifier.
-     *
-     * @param basedir the output directory
-     * @param finalName the name of the ear file
-     * @param classifier an optional classifier
-     * @return the EJB file to generate
-     */
-    private static File getEJBJarFile( File basedir, String finalName, String classifier )
-    {
-        if ( classifier == null )
-        {
-            classifier = "";
-        }
-        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
-        {
-            classifier = "-" + classifier;
-        }
-
-        return new File( basedir, finalName + classifier + ".jar" );
-    }
-
-    /**
      * @return true in case where the classifier is not {@code null} and contains something else than white spaces.
      */
     private boolean hasClassifier()
     {
-        return hasClassifier( getClassifier() );
+        return EjbHelper.hasClassifier( getClassifier() );
     }
 
     /**
@@ -506,17 +494,17 @@ public class EjbMojo
      */
     private boolean hasClientClassifier()
     {
-        return hasClassifier( getClientClassifier() );
+        return EjbHelper.hasClassifier( getClientClassifier() );
     }
 
-    private boolean hasClassifier( String classfier )
+    private boolean isClassifierValid()
     {
-        boolean result = false;
-        if ( classfier != null && classfier.trim().length() > 0 )
-        {
-            result = true;
-        }
-        return result;
+        return EjbHelper.isClassifierValid( getClassifier() );
+    }
+
+    private boolean isClientClassifierValid()
+    {
+        return EjbHelper.isClassifierValid( getClientClassifier() );
     }
 
     /**
