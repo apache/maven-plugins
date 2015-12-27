@@ -598,6 +598,7 @@ public class DependenciesRenderer
                     String sealedstr = "";
                     if ( jarDetails.isSealed() )
                     {
+                        // TODO Translate me!
                         sealedstr = "sealed";
                         totalsealed.incrementTotal( artifact.getScope() );
                     }
@@ -1388,6 +1389,7 @@ public class DependenciesRenderer
 
                         sink.figure();
                         sink.figureCaption();
+                        // TODO Translate me!
                         sink.text( "Found at " + repo.getUrl() );
                         sink.figureCaption_();
                         sink.figureGraphics( "images/icon_success_sml.gif" );
