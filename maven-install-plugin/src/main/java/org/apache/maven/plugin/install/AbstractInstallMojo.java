@@ -33,7 +33,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.artifact.install.ArtifactInstaller;
-import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.utils.io.FileUtils;
 
 /**
@@ -141,7 +141,7 @@ public abstract class AbstractInstallMojo
             return;
         }
 
-        @SuppressWarnings( "unchecked" ) Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
+        Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
         if ( metadatas != null )
         {
             for ( ArtifactMetadata metadata : metadatas )
