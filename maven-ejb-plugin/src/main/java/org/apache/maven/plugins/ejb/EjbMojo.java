@@ -21,6 +21,7 @@ package org.apache.maven.plugins.ejb;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -48,6 +49,8 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
 
+import com.google.inject.internal.util.Lists;
+
 /**
  * Build an EJB (and optional client) from the current project.
  *
@@ -60,11 +63,12 @@ import org.codehaus.plexus.util.FileUtils;
 public class EjbMojo
     extends AbstractMojo
 {
-    // TODO: will null work instead?
-    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
+    private static final List<String> DEFAULT_INCLUDES_LIST =
+        Collections.unmodifiableList( Lists.newArrayList( "**/**" ) );
 
-    private static final String[] DEFAULT_CLIENT_EXCLUDES =
-        new String[] { "**/*Bean.class", "**/*CMP.class", "**/*Session.class", "**/package.html" };
+    private static final List<String> DEFAULT_CLIENT_EXCLUDES_LIST =
+        Collections.unmodifiableList( Lists.newArrayList( "**/*Bean.class", "**/*CMP.class", "**/*Session.class",
+                                                          "**/package.html" ) );
 
     /**
      * Default value for {@link #clientClassifier}
@@ -337,16 +341,13 @@ public class EjbMojo
 
         try
         {
-            // TODO: This should be handled different.
-            String[] mainJarExcludes = new String[] { ejbJar, "**/package.html" };
+            List<String> defaultExcludes = Lists.newArrayList( ejbJar, "**/package.html" );
+            List<String> defaultIncludes = DEFAULT_INCLUDES_LIST;
 
-            if ( excludes != null && !excludes.isEmpty() )
-            {
-                excludes.add( ejbJar );
-                mainJarExcludes = (String[]) excludes.toArray( new String[excludes.size()] );
-            }
+            IncludesExcludes ie =
+                new IncludesExcludes( Collections.<String>emptyList(), excludes, defaultIncludes, defaultExcludes );
 
-            archiver.getArchiver().addDirectory( sourceDirectory, DEFAULT_INCLUDES, mainJarExcludes );
+            archiver.getArchiver().addDirectory( sourceDirectory, ie.resultingIncludes(), ie.resultingExcludes() );
 
             // FIXME: We should be able to filter more than just the deployment descriptor?
             if ( deploymentDescriptor.exists() )
@@ -395,19 +396,6 @@ public class EjbMojo
 
         getLog().info( "Building EJB client " + clientJarFile.getPath() );
 
-        String[] excludes = DEFAULT_CLIENT_EXCLUDES;
-        String[] includes = DEFAULT_INCLUDES;
-
-        if ( clientIncludes != null && !clientIncludes.isEmpty() )
-        {
-            includes = (String[]) clientIncludes.toArray( new String[clientIncludes.size()] );
-        }
-
-        if ( clientExcludes != null && !clientExcludes.isEmpty() )
-        {
-            excludes = (String[]) clientExcludes.toArray( new String[clientExcludes.size()] );
-        }
-
         MavenArchiver clientArchiver = new MavenArchiver();
 
         clientArchiver.setArchiver( clientJarArchiver );
@@ -416,9 +404,15 @@ public class EjbMojo
 
         try
         {
-            clientArchiver.getArchiver().addDirectory( sourceDirectory, includes, excludes );
+            List<String> defaultExcludes = DEFAULT_CLIENT_EXCLUDES_LIST;
+            List<String> defaultIncludes = DEFAULT_INCLUDES_LIST;
 
-            // create archive
+            IncludesExcludes ie =
+                new IncludesExcludes( clientIncludes, clientExcludes, defaultIncludes, defaultExcludes );
+
+            clientArchiver.getArchiver().addDirectory( sourceDirectory, ie.resultingIncludes(),
+                                                       ie.resultingExcludes() );
+
             clientArchiver.createArchive( session, project, archive );
 
         }
@@ -538,4 +532,5 @@ public class EjbMojo
     {
         return clientClassifier;
     }
+
 }

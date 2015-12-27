@@ -24,24 +24,34 @@ import java.io.File;
 /**
  * This class contains some helper methods which do not belong to {@link EjbMojo}.
  * 
+ * <pre>
+ * Think about this helper class, cause i've got the impression this can be made better.
+ * </pre>
+ * 
  * @author Karl Heinz Marbaise <khmarbaise@apache.org>
  */
-public class EjbHelper
+public final class EjbHelper
 {
+    private EjbHelper()
+    {
+        // prevent instantiation
+    }
+
     /**
      * Check if a <code>classifier</code> is valid or not.
      * 
      * @param classifier The classifier which should be checked.
-     * @return true in case of a valid classifier false otherwise.
+     * @return true in case of a valid <code>classifier</code> false otherwise which includes the case where
+     *         <code>classifier</code> is {@code null}.
      */
     public static boolean isClassifierValid( String classifier )
     {
-        // @FIXME: Check classifier and clientClassifier for leading "-" ??
+        // @FIXME: Check classifier for trailing dash? "a-0" valid?
         // What are the rules for a valid classifier? Somewhere documented? which can be used as a reference?
         boolean result = false;
 
         // The following check is only based on an educated guess ;-)
-        if ( classifier.matches( "^[a-zA-Z]+[0-9a-zA-Z\\-]*" ) )
+        if ( hasClassifier( classifier ) && classifier.matches( "^[a-zA-Z]+[0-9a-zA-Z\\-]*" ) )
         {
             result = true;
         }
@@ -76,6 +86,15 @@ public class EjbHelper
      */
     public static File getJarFileName( File basedir, String finalName, String classifier )
     {
+        if ( basedir == null )
+        {
+            throw new IllegalArgumentException( "basedir is not allowed to be null" );
+        }
+        if ( finalName == null )
+        {
+            throw new IllegalArgumentException( "finalName is not allowed to be null" );
+        }
+
         StringBuilder fileName = new StringBuilder( finalName );
 
         if ( hasClassifier( classifier ) )
