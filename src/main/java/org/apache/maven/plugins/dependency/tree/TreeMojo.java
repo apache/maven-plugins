@@ -111,9 +111,9 @@ public class TreeMojo
 
     /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
-     * all scopes. Note that this feature does not currently work due to MNG-3236.
+     * all scopes. Note that this feature does not currently work due to MSHARED-4
      *
-     * @see <a href="http://jira.codehaus.org/browse/MNG-3236">MNG-3236</a>
+     * @see <a href="https://issues.apache.org/jira/browse/MSHARED-4">MSHARED-4</a>
      * @since 2.0-alpha-5
      */
     @Parameter( property = "scope" )
@@ -217,8 +217,7 @@ public class TreeMojo
         {
             String dependencyTreeString;
 
-            // TODO: note that filter does not get applied due to MNG-3236
-
+            // TODO: note that filter does not get applied due to MSHARED-4
             ArtifactFilter artifactFilter = createResolvingArtifactFilter();
 
             if ( verbose )
