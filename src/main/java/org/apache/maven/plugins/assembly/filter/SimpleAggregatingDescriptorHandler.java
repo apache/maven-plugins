@@ -160,7 +160,6 @@ public class SimpleAggregatingDescriptorHandler
 
         if ( overrideFilterAction )
         {
-            System.out.println( "Filtering overridden. Returning true." );
             return true;
         }
 
