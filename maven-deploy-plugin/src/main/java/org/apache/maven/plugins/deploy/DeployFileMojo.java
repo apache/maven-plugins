@@ -56,7 +56,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
-import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
