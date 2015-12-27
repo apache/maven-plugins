@@ -48,9 +48,15 @@ public class EjbHelperTest
     }
 
     @Test
-    public void invalidClassifier()
+    public void isClassifierValidShouldReturnFalseIfClassifierIsPrefixedByDash()
     {
         assertThat( EjbHelper.isClassifierValid( "-anton" ), is( Boolean.FALSE ) );
+    }
+
+    @Test
+    public void isClassifierValidShouldReturnFalseIfClassifierIsNull()
+    {
+        assertThat( EjbHelper.isClassifierValid( null ), is( Boolean.FALSE ) );
     }
 
     @Test
