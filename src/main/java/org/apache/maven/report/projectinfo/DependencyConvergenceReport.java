@@ -711,6 +711,7 @@ public class DependencyConvergenceReport
     {
         sink.figure();
         sink.figureCaption();
+        // TODO Translate me!
         sink.text( "success" );
         sink.figureCaption_();
         sink.figureGraphics( "images/icon_success_sml.gif" );
@@ -721,6 +722,7 @@ public class DependencyConvergenceReport
     {
         sink.figure();
         sink.figureCaption();
+        // TODO Translate me!
         sink.text( "error" );
         sink.figureCaption_();
         sink.figureGraphics( "images/icon_error_sml.gif" );
