@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.Profile;
 
 /**
  * Stub
@@ -32,6 +33,11 @@ import org.apache.maven.model.Parent;
 public class ModelStub
     extends Model
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6823174384695495659L;
+
     public ModelStub()
     {
 
@@ -78,13 +84,8 @@ public class ModelStub
         return new Properties();
     }
 
-    public List getPackages()
+    public List<Profile> getProfiles()
     {
-        return new LinkedList();
-    }
-
-    public List getProfiles()
-    {
-        return new LinkedList();
+        return new LinkedList<Profile>();
     }
 }

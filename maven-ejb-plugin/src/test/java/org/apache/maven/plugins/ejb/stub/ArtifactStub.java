@@ -20,7 +20,6 @@ package org.apache.maven.plugins.ejb.stub;
  */
 
 import java.io.File;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -167,17 +166,17 @@ public class ArtifactStub
 
     public void addMetadata( ArtifactMetadata metadata )
     {
-
+        // intentionally empty
     }
 
-    public Collection getMetadataList()
+    public List<ArtifactMetadata> getMetadataList()
     {
-        return new LinkedList();
+        return new LinkedList<ArtifactMetadata>();
     }
 
     public void setRepository( ArtifactRepository remoteRepository )
     {
-
+        // intentionally empty
     }
 
     public ArtifactRepository getRepository()
@@ -187,7 +186,7 @@ public class ArtifactStub
 
     public void updateVersion( String version, ArtifactRepository localRepository )
     {
-
+        //Intentionally empty.
     }
 
     public String getDownloadUrl()
@@ -207,7 +206,7 @@ public class ArtifactStub
 
     public void setDependencyFilter( ArtifactFilter artifactFilter )
     {
-
+        //Intentionally empty.
     }
 
     public ArtifactHandler getArtifactHandler()
@@ -215,14 +214,14 @@ public class ArtifactStub
         return artifactHandler;
     }
 
-    public List getDependencyTrail()
+    public List<String> getDependencyTrail()
     {
-        return new LinkedList();
+        return new LinkedList<String>();
     }
 
-    public void setDependencyTrail( List dependencyTrail )
+    public void setDependencyTrail( List<String> dependencyTrail )
     {
-
+        //Intentionally empty.
     }
 
     public void setScope( String _scope )
@@ -237,7 +236,7 @@ public class ArtifactStub
 
     public void setVersionRange( VersionRange newRange )
     {
-
+        //Intentionally empty.
     }
 
     public void selectVersion( String version )
@@ -277,7 +276,7 @@ public class ArtifactStub
 
     public void setArtifactHandler( ArtifactHandler handler )
     {
-
+        //Intentionally empty.
     }
 
     public boolean isRelease()
@@ -290,14 +289,14 @@ public class ArtifactStub
         release = _release;
     }
 
-    public List getAvailableVersions()
+    public List<ArtifactVersion>  getAvailableVersions()
     {
-        return new LinkedList();
+        return new LinkedList<ArtifactVersion>();
     }
 
-    public void setAvailableVersions( List versions )
+    public void setAvailableVersions( List<ArtifactVersion> versions )
     {
-
+        //Intentionally empty.
     }
 
     public boolean isOptional()

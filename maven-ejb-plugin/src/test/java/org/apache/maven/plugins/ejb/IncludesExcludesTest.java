@@ -19,12 +19,13 @@ package org.apache.maven.plugins.ejb;
  * under the License.
  */
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 
 import org.junit.Test;
+
+import com.google.inject.internal.util.Lists;
 
 public class IncludesExcludesTest
 {
@@ -35,8 +36,8 @@ public class IncludesExcludesTest
         IncludesExcludes ie = new IncludesExcludes( Collections.<String>emptyList(), Collections.<String>emptyList(),
                                                     Collections.<String>emptyList(), Collections.<String>emptyList() );
 
-        assertThat( ie.resultingIncludes(), is( new String[0] ) );
-        assertThat( ie.resultingExcludes(), is( new String[0] ) );
+        assertThat( ie.resultingIncludes() ).isEqualTo( new String[0] );
+        assertThat( ie.resultingExcludes() ).isEqualTo( new String[0] );
     }
 
     @Test
@@ -45,8 +46,8 @@ public class IncludesExcludesTest
         IncludesExcludes ie = new IncludesExcludes( null, Collections.<String>emptyList(),
                                                     Collections.<String>emptyList(), Collections.<String>emptyList() );
 
-        assertThat( ie.resultingIncludes(), is( new String[0] ) );
-        assertThat( ie.resultingExcludes(), is( new String[0] ) );
+        assertThat( ie.resultingIncludes() ).isEqualTo( new String[0] );
+        assertThat( ie.resultingExcludes() ).isEqualTo( new String[0] );
     }
 
     @Test
@@ -55,7 +56,28 @@ public class IncludesExcludesTest
         IncludesExcludes ie = new IncludesExcludes( Collections.<String>emptyList(), null,
                                                     Collections.<String>emptyList(), Collections.<String>emptyList() );
 
-        assertThat( ie.resultingIncludes(), is( new String[0] ) );
-        assertThat( ie.resultingExcludes(), is( new String[0] ) );
+        assertThat( ie.resultingIncludes() ).isEqualTo( new String[0] );
+        assertThat( ie.resultingExcludes() ).isEqualTo( new String[0] );
     }
+
+    @Test
+    public void nonNullForDefaultExcludesShouldResultInExcludesWithDefaultExcludes()
+    {
+        IncludesExcludes ie = new IncludesExcludes( null, null, Collections.<String>emptyList(),
+                                                    Lists.newArrayList( "**/package.html" ) );
+
+        assertThat( ie.resultingIncludes() ).isEqualTo( new String[0] );
+        assertThat( ie.resultingExcludes() ).isEqualTo( new String[] { "**/package.html" } );
+    }
+
+    @Test
+    public void nonNullForDefaultIncludesShouldResultInExcludesWithDefaultIncludes()
+    {
+        IncludesExcludes ie = new IncludesExcludes( null, null, Lists.newArrayList( "**/package.html" ),
+                                                    Collections.<String>emptyList() );
+
+        assertThat( ie.resultingIncludes() ).isEqualTo( new String[] { "**/package.html" } );
+        assertThat( ie.resultingExcludes() ).isEqualTo( new String[0] );
+    }
+
 }
