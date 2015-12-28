@@ -559,8 +559,8 @@ public class DependenciesRenderer
         {
             if ( artifact.getFile() == null )
             {
-                log.warn( "Artifact " + artifact.getId() + " has no file,"
-                    + " won't be listed in dependency files details." );
+                log.warn( "Artifact " + artifact.getId() + " has no file"
+                    + " and won't be listed in dependency files details." );
                 continue;
             }
 
@@ -1537,7 +1537,7 @@ public class DependenciesRenderer
                 }
                 catch ( IOException e )
                 {
-                    log.error( "Artifact: " + artifact.getId() + " caused IOException: " + e.getMessage(), e );
+                    log.error( "Artifact " + artifact.getId() + " caused IOException: " + e.getMessage(), e );
                 }
             }
         }
