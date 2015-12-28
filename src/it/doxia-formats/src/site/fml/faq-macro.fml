@@ -20,39 +20,40 @@ under the License.
 
 <faqs xmlns="http://maven.apache.org/FML/1.0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
-  title="Oft Asked Questions">
+  title="Macros in FML">
 
-  <part id="contributing">
-    <!-- A comment -->
-    <title>Contributing</title>
+  <part id="Macros in FML">
+    <title>Macros in FML</title>
 
-    <faq id="stupid-question">
-      <question>One <b>stupid</b> question &amp; a silly answer?</question>
+    <!-- START SNIPPET: macros -->
+    <faq id="TOC">
+      <question>Is TOC Macro supported?</question>
       <answer>
-        <p>
-          A paragraph with a <a href="#Using_Maven">local link</a>,
-          a link to another <a href="./cdc.html">source document</a>,
-          an <a href="http://maven.apache.org/?l=a&amp;m=b">external link</a>
-          with entities, an <i>italic</i> text and <b>non-US-ASCII characters: ����</b>.
-        </p>
+        <macro name="toc">
+        </macro>
       </answer>
     </faq>
 
-  </part>
-
-  <part id="using">
-    <title>Using Maven</title>
-
-    <faq id="disable-reports">
-      <question>How do I disable a report on my site?</question>
+    <faq id="echo">
+      <question>Is Echo Macro supported?</question>
       <answer>
-        <p>
-          Test nested <code>&lt;source&gt;&lt;/source&gt;</code> tags (DOXIA-16):
-        </p>
-        <source><![CDATA[<source>1.5</source>]]></source>
+        <macro name="echo">
+          <param name="param1" value="value1"/>
+          <param name="param2" value="value2"/>
+        </macro>
       </answer>
     </faq>
 
+    <faq id="snippet">
+      <question>Is Snippet Macro supported?</question>
+      <answer>
+        <macro name="snippet">
+          <param name="id" value="macros"/>
+          <param name="file" value="src/site/fml/faq-macro.fml"/>
+        </macro>
+      </answer>
+    </faq>
+    <!-- END SNIPPET: macros -->
   </part>
 
 </faqs>
