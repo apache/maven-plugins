@@ -161,18 +161,36 @@ public abstract class AbstractJarMojo
      */
     protected abstract String getType();
 
-    protected static File getJarFile( File basedir, String finalName, String classifier )
+    
+    /**
+     * Returns the Jar file to generate, based on an optional classifier.
+     *
+     * @param basedir the output directory
+     * @param finalName the name of the ear file
+     * @param classifier an optional classifier
+     * @return the file to generate
+     */
+    protected File getJarFile( File basedir, String finalName, String classifier )
     {
-        if ( classifier == null )
+        if ( basedir == null )
         {
-            classifier = "";
+            throw new IllegalArgumentException( "basedir is not allowed to be null" );
         }
-        else if ( classifier.trim().length() > 0 && !classifier.startsWith( "-" ) )
+        if ( finalName == null )
         {
-            classifier = "-" + classifier;
+            throw new IllegalArgumentException( "finalName is not allowed to be null" );
         }
 
-        return new File( basedir, finalName + classifier + ".jar" );
+        StringBuilder fileName = new StringBuilder( finalName );
+
+        if ( hasClassifier() )
+        {
+            fileName.append( "-" ).append( classifier );
+        }
+
+        fileName.append( ".jar" );
+
+        return new File( basedir, fileName.toString() );
     }
 
     /**
