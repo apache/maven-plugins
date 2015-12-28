@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.model.Build;
 import org.codehaus.plexus.util.FileUtils;
@@ -63,30 +64,30 @@ public class MavenProjectBuildStub
 
     protected String targetTestResourcesDirectory;
 
-    protected ArrayList targetClassesList;
+    protected List<String> targetClassesList;
 
-    protected ArrayList sourceFileList;
+    protected List<String> sourceFileList;
 
-    protected ArrayList resourcesFileList;
+    protected List<String> resourcesFileList;
 
-    protected ArrayList rootFileList;
+    protected List<String> rootFileList;
 
-    protected ArrayList directoryList;
+    protected List<String> directoryList;
 
-    protected HashMap dataMap;
+    protected Map<String, String> dataMap;
 
     public MavenProjectBuildStub( String key )
         throws Exception
     {
         super( key );
 
-        build = new Build();
-        resourcesFileList = new ArrayList();
-        sourceFileList = new ArrayList();
-        rootFileList = new ArrayList();
-        directoryList = new ArrayList();
-        targetClassesList = new ArrayList();
-        dataMap = new HashMap();
+        this.build = new Build();
+        this.resourcesFileList = new ArrayList<String>();
+        this.sourceFileList = new ArrayList<String>();
+        this.rootFileList = new ArrayList<String>();
+        this.directoryList = new ArrayList<String>();
+        this.targetClassesList = new ArrayList<String>();
+        this.dataMap = new HashMap<String, String>();
         setupBuild();
 
         model.setBuild( build );
@@ -110,7 +111,7 @@ public class MavenProjectBuildStub
     {
         if ( isValidPath( name ) )
         {
-            List list = getList( type );
+            List<String> list = getList( type );
 
             list.add( name );
         }
@@ -241,9 +242,9 @@ public class MavenProjectBuildStub
         }
     }
 
-    private List getList( int type )
+    private List<String> getList( int type )
     {
-        ArrayList retVal = null;
+        List<String> retVal = null;
 
         switch ( type )
         {
@@ -267,7 +268,7 @@ public class MavenProjectBuildStub
     private void createFiles( String parent, int type )
     {
         File currentFile;
-        ArrayList list = (ArrayList) getList( type );
+        List<String> list = getList( type );
 
         // guard
         if ( list == null )
@@ -275,9 +276,9 @@ public class MavenProjectBuildStub
             return;
         }
 
-        for ( Object aList : list )
+        for ( String aList : list )
         {
-            currentFile = new File( parent, (String) aList );
+            currentFile = new File( parent, aList );
 
             // create the necessary parent directories
             // before we create the files
@@ -309,11 +310,6 @@ public class MavenProjectBuildStub
     private void setupTargetFiles()
     {
         createFiles( getOutputDirectory(), OUTPUT_FILE );
-    }
-
-    private void setupSourceFiles()
-    {
-        createFiles( srcDirectory, SOURCE_FILE );
     }
 
     private void createFiles( String parent, String testparent )
