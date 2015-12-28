@@ -504,6 +504,8 @@ public class DependenciesRenderer
         List<Artifact> alldeps = dependencies.getAllDependencies();
         Collections.sort( alldeps, getArtifactComparator() );
 
+        resolveAtrifacts( alldeps );
+
         // i18n
         String filename = getI18nString( "file.details.column.file" );
         String size = getI18nString( "file.details.column.size" );
@@ -557,8 +559,8 @@ public class DependenciesRenderer
         {
             if ( artifact.getFile() == null )
             {
-                log.warn( "Artifact " + artifact.getId() + " has no file,"
-                    + " won't be listed in dependency files details." );
+                log.warn( "Artifact " + artifact.getId() + " has no file"
+                    + " and won't be listed in dependency files details." );
                 continue;
             }
 
@@ -1245,6 +1247,57 @@ public class DependenciesRenderer
         endTable();
     }
 
+    /**
+     * Resolves all given artifacts with {@link RepositoryUtils}.
+     *
+     ** @param artifacts not null
+     */
+    private void resolveAtrifacts( List<Artifact> artifacts )
+    {
+        for ( Artifact artifact : artifacts )
+        {
+            // TODO site:run Why do we need to resolve this...
+            if ( artifact.getFile() == null )
+            {
+                if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
+                {
+                    // can not resolve system scope artifact file
+                    continue;
+                }
+
+                try
+                {
+                    repoUtils.resolve( artifact );
+                }
+                catch ( ArtifactResolutionException e )
+                {
+                    log.error( "Artifact " + artifact.getId() + " can't be resolved.", e );
+                    continue;
+                }
+                catch ( ArtifactNotFoundException e )
+                {
+                    if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
+                        && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
+                        && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
+                    {
+                        log.warn( "The artifact of this project has never been deployed." );
+                    }
+                    else
+                    {
+                        log.error( "Artifact " + artifact.getId() + " not found.", e );
+                    }
+
+                    continue;
+                }
+
+                if ( artifact.getFile() == null )
+                {
+                    log.error( "Artifact " + artifact.getId() + " has no file, even after resolution." );
+                }
+            }
+        }
+    }
+
     private Object invoke( Object object, String method )
         throws IllegalAccessException, InvocationTargetException, NoSuchMethodException
     {
@@ -1472,48 +1525,7 @@ public class DependenciesRenderer
     {
         for ( Artifact artifact : artifacts )
         {
-            // TODO site:run Why do we need to resolve this...
-            if ( artifact.getFile() == null )
-            {
-                if ( Artifact.SCOPE_SYSTEM.equals( artifact.getScope() ) )
-                {
-                    // can not resolve system scope artifact file
-                    continue;
-                }
-
-                try
-                {
-                    repoUtils.resolve( artifact );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    log.error( "Artifact " + artifact.getId() + " can't be resolved.", e );
-                    continue;
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    if ( ( dependencies.getProject().getGroupId().equals( artifact.getGroupId() ) )
-                        && ( dependencies.getProject().getArtifactId().equals( artifact.getArtifactId() ) )
-                        && ( dependencies.getProject().getVersion().equals( artifact.getVersion() ) ) )
-                    {
-                        log.warn( "The artifact of this project has never been deployed." );
-                    }
-                    else
-                    {
-                        log.error( "Artifact " + artifact.getId() + " not found.", e );
-                    }
-
-                    continue;
-                }
-
-                if ( artifact.getFile() == null )
-                {
-                    log.error( "Artifact " + artifact.getId() + " has no file, even after resolution." );
-                    continue;
-                }
-            }
-
-            if ( JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
+            if ( artifact.getFile() != null && JAR_SUBTYPE.contains( artifact.getType().toLowerCase() ) )
             {
                 try
                 {
@@ -1525,7 +1537,7 @@ public class DependenciesRenderer
                 }
                 catch ( IOException e )
                 {
-                    log.error( "Artifact: " + artifact.getId() + " caused IOException: " + e.getMessage(), e );
+                    log.error( "Artifact " + artifact.getId() + " caused IOException: " + e.getMessage(), e );
                 }
             }
         }
