@@ -518,6 +518,8 @@ public class DependenciesRenderer
         String debugInformationCellYes = getI18nString( "file.details.cell.debuginformation.yes" );
         String debugInformationCellNo = getI18nString( "file.details.cell.debuginformation.no" );
         String sealed = getI18nString( "file.details.column.sealed" );
+        String sealedCellYes = getI18nString( "file.details.cell.sealed.yes" );
+        String sealedCellNo = getI18nString( "file.details.cell.sealed.no" );
 
         int[] justification =
             new int[] { Sink.JUSTIFY_LEFT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT, Sink.JUSTIFY_RIGHT,
@@ -597,10 +599,10 @@ public class DependenciesRenderer
                         // ignore
                     }
 
-                    String sealedstr = "";
+                    String sealedCellValue = sealedCellNo;
                     if ( jarDetails.isSealed() )
                     {
-                        sealedstr = "sealed";
+                        sealedCellValue = sealedCellYes;
                         totalsealed.incrementTotal( artifact.getScope() );
                     }
 
@@ -619,7 +621,7 @@ public class DependenciesRenderer
                                   DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumEntries() ),
                                   DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumClasses() ),
                                   DEFAULT_DECIMAL_FORMAT.format( jarDetails.getNumPackages() ),
-                                  jarDetails.getJdkRevision(), debugInformationCellValue, sealedstr } );
+                                  jarDetails.getJdkRevision(), debugInformationCellValue, sealedCellValue } );
                 }
                 catch ( IOException e )
                 {
@@ -1441,6 +1443,7 @@ public class DependenciesRenderer
 
                         sink.figure();
                         sink.figureCaption();
+                        // TODO Translate me!
                         sink.text( "Found at " + repo.getUrl() );
                         sink.figureCaption_();
                         sink.figureGraphics( "images/icon_success_sml.gif" );
