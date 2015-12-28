@@ -39,7 +39,9 @@ Doxia Site Renderer Velocity Context
 *-----------------------+-------------------------------------------------------+
 | <<<decoration>>>      | <<<decoration.name>>> = <<<$decoration.name>>>
 *-----------------------+-------------------------------------------------------+
-| <<<currentDate>>>     | = <<<$currentDate>>>, <<<dateFormat.format(currentDate)>>> = <<<$dateFormat.format(${currentDate})>>>
+| <<<currentDate>>>     | = <<<$currentDate>>>
+|                       | <<<dateFormat.format(currentDate)>>> = <<<$dateFormat.format($currentDate)>>>
+|                       | <<<isoDateFormat.format(currentDate)>>> = <<<$isoDateFormat.format($currentDate)>>>
 *-----------------------+-------------------------------------------------------+
 | <<<currentFileName>>> | = <<<$currentFileName>>>
 *-----------------------+-------------------------------------------------------+
@@ -48,6 +50,8 @@ Doxia Site Renderer Velocity Context
 | <<<dateRevision>>>    | = <<<$dateRevision>>>
 *-----------------------+-------------------------------------------------------+
 | <<<doxiaSiteRendererVersion>>> | = <<<$doxiaSiteRendererVersion>>>
+*-----------------------+-------------------------------------------------------+
+| <<<isoDateFormat>>>   | = <<<$isoDateFormat>>>
 *-----------------------+-------------------------------------------------------+
 | <<<locale>>>          | = <<<$locale>>>
 *-----------------------+-------------------------------------------------------+
