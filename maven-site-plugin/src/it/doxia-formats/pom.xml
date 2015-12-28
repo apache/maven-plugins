@@ -41,7 +41,7 @@ under the License.
           <artifactId>maven-site-plugin</artifactId>
           <version>@project.version@</version>
           <configuration>
-            <saveVelocityDocument>true</saveVelocityDocument>
+            <saveProcessedContent>true</saveProcessedContent>
           </configuration>
         </plugin>
       </plugins>
