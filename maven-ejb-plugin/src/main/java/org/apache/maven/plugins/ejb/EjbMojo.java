@@ -266,6 +266,10 @@ public class EjbMojo
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
+    private static final String EJB_TYPE = "ejb";
+
+    private static final String EJB_CLIENT_TYPE = "ejb-client";
+
     /**
      * Generates an EJB jar and optionally an ejb-client jar.
      */
@@ -291,10 +295,18 @@ public class EjbMojo
                 throw new MojoExecutionException( message );
             }
 
-            projectHelper.attachArtifact( project, "ejb", getClassifier(), jarFile );
+            //TODO: We should check the attached artifacts to be sure we don't attach 
+            // the same file twice...
+            projectHelper.attachArtifact( project, EJB_TYPE, getClassifier(), jarFile );
         }
         else
         {
+            if ( projectHasAlreadySetAnArtifact() )
+            {
+                throw new MojoExecutionException( "You have to use a classifier "
+                    + "to attach supplemental artifacts to the project instead of replacing them." );
+            }
+
             project.getArtifact().setFile( jarFile );
         }
 
@@ -310,7 +322,7 @@ public class EjbMojo
                     throw new MojoExecutionException( message );
                 }
 
-                projectHelper.attachArtifact( project, "ejb-client", getClientClassifier(), clientJarFile );
+                projectHelper.attachArtifact( project, EJB_CLIENT_TYPE, getClientClassifier(), clientJarFile );
             }
             else
             {
@@ -319,6 +331,18 @@ public class EjbMojo
                 projectHelper.attachArtifact( project, "ejb-client", getClientClassifier(), clientJarFile );
             }
 
+        }
+    }
+
+    private boolean projectHasAlreadySetAnArtifact()
+    {
+        if ( getProject().getArtifact().getFile() != null )
+        {
+            return getProject().getArtifact().getFile().isFile();
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -531,6 +555,11 @@ public class EjbMojo
     public String getClientClassifier()
     {
         return clientClassifier;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 
 }
