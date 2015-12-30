@@ -24,12 +24,12 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>test</groupId>
-  <artifactId>MSITE-550</artifactId>
+  <artifactId>template-velocity</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>MSITE-550 Velocity attributes</name>
-  <description>Test Velocity attributes, ie attributes parameter of site:site</description>
+  <name>Check template Velocity context, particularly MSITE-550 regarding attributes</name>
+  <description>Test Velocity context for template, ie attributes parameter of site:site</description>
 
   <properties>
     <dummy>value</dummy>

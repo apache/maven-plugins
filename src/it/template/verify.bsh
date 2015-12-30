@@ -34,7 +34,7 @@ try
 
     String content = FileUtils.fileRead( index, "UTF-8" );
     int index1 = content.indexOf( "dummy=value" );
-    int index2 = content.indexOf( "att1=val1" );
+    int index2 = content.indexOf( "att1=val1" ); // MSITE-550
 
     if ( index1 < 0 || index2 < 0 )
     {

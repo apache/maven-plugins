@@ -1,0 +1,90 @@
+<html>
+## Licensed to the Apache Software Foundation (ASF) under one
+## or more contributor license agreements.  See the NOTICE file
+## distributed with this work for additional information
+## regarding copyright ownership.  The ASF licenses this file
+## to you under the Apache License, Version 2.0 (the
+## "License"); you may not use this file except in compliance
+## with the License.  You may obtain a copy of the License at
+## 
+##   http://www.apache.org/licenses/LICENSE-2.0
+## 
+## Unless required by applicable law or agreed to in writing,
+## software distributed under the License is distributed on an
+## "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+## KIND, either express or implied.  See the License for the
+## specific language governing permissions and limitations
+## under the License.
+<head></head>
+<body>
+
+<h1>variables available in templates' Velocity context</h1>
+
+<p>Variables are prepared in template's Velocity context by <a href="http://maven.apache.org/doxia/doxia-sitetools/doxia-site-renderer/">doxia-siterenderer</a>.</p>
+
+<h2>default variables defined by doxia-siterenderer</h2>
+
+<h3>document variables</h3>
+<pre>
+alignedFileName=$alignedFileName
+currentDate=$currentDate
+currentFileName=$currentFileName
+dateFormat=$dateFormat
+dateRevision=$dateRevision
+doxiaSiteRendererVersion=$doxiaSiteRendererVersion
+locale=$locale
+publishDate=$publishDate
+relativePath=$relativePath
+supportedLocales=$supportedLocales
+decoration=$decoration
+</pre>
+
+<h3>tools</h3>
+<pre>
+FileUtils=$FileUtils
+i18n=$i18n
+PathTool=$PathTool
+StringUtils=$StringUtils
+</pre>
+
+<h3>Velocity Generic Tools</h3>
+<pre>
+alternator=$alternator
+convert=$convert
+date=$date
+display=$display
+esc=$esc
+field=$field
+loop=$loop
+math=$math
+number=$number
+render=$render
+text=$text
+sorter=$sorter
+xml=$xml
+context (cause NullPointerException)
+link (cause NullPointerException)
+</pre>
+
+<h3>Site template-specific variables</h3>
+<pre>
+authors=$authors
+dateCreation=$dateCreation
+shortTitle=$shortTitle
+title=$title
+headContent=$headContent
+bodyContent=$bodyContent
+</pre>
+
+<h2>default properties defined by maven-site-plugin</h2>
+
+<pre>
+inputEncoding=$inputEncoding
+outputEncoding=$outputEncoding
+project=$project
+(project property) dummy=$dummy
+(attribute defined in attributes parameter of site plugin) att1=$att1
+</pre>
+
+</body>
+</html>
