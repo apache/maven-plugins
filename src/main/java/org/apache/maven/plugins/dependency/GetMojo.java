@@ -39,9 +39,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
-import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
+import org.apache.maven.shared.dependency.resolve.DependencyResolver;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -65,12 +66,18 @@ public class GetMojo
     private ArtifactResolver artifactResolver;
 
     /**
+    *
+    */
+   @Component
+   private DependencyResolver dependencyResolver;
+
+    /**
      * Map that contains the layouts.
      */
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
-    private DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+    private DefaultDependencyCoordinate coordinate = new DefaultDependencyCoordinate();
     
     /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
@@ -211,14 +218,15 @@ public class GetMojo
                 getLog().info( "Resolving " + coordinate );
             }
 
-            artifactResolver.resolveArtifact( buildingRequest, coordinate );
+            // FIXME
+            // artifactResolver.resolveArtifact( buildingRequest, coordinate );
 
             if ( transitive )
             {
-                artifactResolver.resolveDependencies( buildingRequest, coordinate, null );
+                dependencyResolver.resolveDependencies( buildingRequest, coordinate, null );
             }
         }
-        catch ( ArtifactResolverException e )
+        catch ( DependencyResolverException e )
         {
             throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
         }

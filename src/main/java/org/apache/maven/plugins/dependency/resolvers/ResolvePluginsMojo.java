@@ -35,12 +35,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.ArtifactCoordinate;
-import org.apache.maven.shared.artifact.TransferUtils;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -81,6 +81,7 @@ public class ResolvePluginsMojo
 
         try
         {
+            // ideally this should either be DependencyCoordinates or DependencyNode
             final Set<Artifact> plugins = resolvePluginArtifacts();
 
             if ( this.outputFile != null )
@@ -107,9 +108,12 @@ public class ResolvePluginsMojo
 
                 if ( !excludeTransitive )
                 {
-                    ArtifactCoordinate coordinate = TransferUtils.toArtifactCoordinate( plugin );
+                    DefaultDependencyCoordinate pluginCoordinate = new DefaultDependencyCoordinate();
+                    pluginCoordinate.setGroupId( plugin.getGroupId() );
+                    pluginCoordinate.setArtifactId( plugin.getArtifactId() );
+                    pluginCoordinate.setVersion( plugin.getVersion() );
                     
-                    for ( final Artifact artifact : resolveArtifactDependencies( coordinate ) )
+                    for ( final Artifact artifact : resolveArtifactDependencies( pluginCoordinate ) )
                     {
                         logStr =
                             "    Plugin Dependency Resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
@@ -140,6 +144,10 @@ public class ResolvePluginsMojo
         {
             throw new MojoExecutionException( "Nested:", e );
         }
+        catch ( DependencyResolverException e )
+        {
+            throw new MojoExecutionException( "Nested:", e );
+        }
         finally
         {
             IOUtil.close( outputWriter );
@@ -166,7 +174,7 @@ public class ResolvePluginsMojo
 
         final FilterArtifacts filter = getPluginArtifactsFilter();
         artifacts = filter.filter( artifacts );
-
+        
         Set<Artifact> resolvedArtifacts = new HashSet<Artifact>( artifacts.size() );
         //        final ArtifactFilter filter = getPluginFilter();
         for ( final Artifact artifact : new HashSet<Artifact>( artifacts ) )

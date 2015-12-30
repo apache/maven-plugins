@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,8 +37,9 @@ import org.apache.maven.plugins.dependency.utils.filters.ArtifactItemFilter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
-import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -107,6 +110,9 @@ public abstract class AbstractFromConfigurationMojo
     
     @Component
     private RepositoryManager repositoryManager;
+    
+    @Component
+    private ArtifactHandlerManager artifactHandlerManager;
     
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
     
@@ -227,7 +233,26 @@ public abstract class AbstractFromConfigurationMojo
                 buildingRequest = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             }
             
-            artifact = artifactResolver.resolveArtifact( buildingRequest, artifactItem ).getArtifact();
+            // Map dependency to artifact coordinate
+            DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+            coordinate.setGroupId( artifactItem.getGroupId() );
+            coordinate.setArtifactId( artifactItem.getArtifactId() );
+            coordinate.setVersion( artifactItem.getVersion() );
+            coordinate.setClassifier( artifactItem.getClassifier() );
+            
+            final String extension;
+            ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler( artifactItem.getType() );
+            if ( artifactHandler != null )
+            {
+                extension = artifactHandler.getExtension();
+            }
+            else
+            {
+                extension = artifactItem.getType();
+            }
+            coordinate.setExtension( extension );
+            
+            artifact = artifactResolver.resolveArtifact( buildingRequest, coordinate ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {

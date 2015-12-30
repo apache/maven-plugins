@@ -42,7 +42,9 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.artifact.TransferUtils;
+import org.apache.maven.shared.dependency.TransferUtils;
+import org.apache.maven.shared.dependency.resolve.DependencyResolver;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 import org.apache.maven.shared.artifact.filter.resolve.AbstractFilter;
 import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
 import org.apache.maven.shared.artifact.filter.resolve.Node;
@@ -153,10 +155,16 @@ public class PurgeLocalRepositoryMojo
     private ArtifactRepository localRepository;
 
     /**
+     * The dependency resolver
+     */
+    @Component
+    private DependencyResolver dependencyResolver;
+    
+    /**
      * The artifact resolver used to re-resolve dependencies, if that option is enabled.
      */
     @Component
-    private ArtifactResolver resolver;
+    private ArtifactResolver artifactResolver;
 
     /**
      * Determines how liberally the plugin will delete an artifact from the local repository. Values are: <br/>
@@ -482,8 +490,8 @@ public class PurgeLocalRepositoryMojo
         {
             
             Iterable<ArtifactResult> results =
-                resolver.resolveDependencies( session.getProjectBuildingRequest(),
-                                              TransferUtils.toArtifactCoordinate( project ), filter );
+                dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(),
+                                              TransferUtils.toDependencyCoordinate( project ), filter );
 
             Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
             
@@ -494,7 +502,7 @@ public class PurgeLocalRepositoryMojo
 
             return resolvedArtifacts;
         }
-        catch ( ArtifactResolverException e )
+        catch ( DependencyResolverException e )
         {
             getLog().info( "Unable to resolve all dependencies for : " + project.getGroupId() + ":"
                                + project.getArtifactId() + ":" + project.getVersion()
@@ -514,7 +522,7 @@ public class PurgeLocalRepositoryMojo
                 try
                 {
                     ArtifactResult artifactResult =
-                        resolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
+                        artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
                     
                     resolvedArtifacts.add( artifactResult.getArtifact() );
                 }
@@ -570,8 +578,8 @@ public class PurgeLocalRepositoryMojo
         {
             try
             {
-                resolver.resolveArtifact( session.getProjectBuildingRequest(),
-                                          TransferUtils.toArtifactCoordinate( artifact ) );
+                artifactResolver.resolveArtifact( session.getProjectBuildingRequest(),
+                                     org.apache.maven.shared.artifact.TransferUtils.toArtifactCoordinate( artifact ) );
             }
             catch ( ArtifactResolverException e )
             {
@@ -587,7 +595,7 @@ public class PurgeLocalRepositoryMojo
 
             try
             {
-                resolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
+                artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
             }
             catch ( ArtifactResolverException e )
             {

@@ -25,9 +25,9 @@ import org.apache.maven.plugins.dependency.AbstractDependencyMojo;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.shared.artifact.collect.CollectorResult;
-import org.apache.maven.shared.artifact.collect.DependencyCollector;
-import org.apache.maven.shared.artifact.collect.DependencyCollectorException;
+import org.apache.maven.shared.dependency.collect.CollectorResult;
+import org.apache.maven.shared.dependency.collect.DependencyCollector;
+import org.apache.maven.shared.dependency.collect.DependencyCollectorException;
 
 /**
  * Goal that resolves all project dependencies and then lists the repositories

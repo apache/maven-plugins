@@ -39,7 +39,7 @@ import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugins.dependency.testUtils.DependencyArtifactStubFactory;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.ArtifactCoordinate;
-import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
@@ -61,17 +61,19 @@ public class TestClassifierTypeTranslator
     private RepositoryManager repoManager;
     
     private ProjectBuildingRequest buildingRequest;
+    
+    private ArtifactHandlerManager artifactHandlerManager;
 
     protected void setUp()
         throws Exception
     {
         super.setUp( "classifiertype-translator", false);
 
-        ArtifactHandlerManager manager = new DefaultArtifactHandlerManager();
-        this.setVariableValueToObject( manager, "artifactHandlers", new HashMap() );
+        artifactHandlerManager = new DefaultArtifactHandlerManager();
+        this.setVariableValueToObject( artifactHandlerManager, "artifactHandlers", new HashMap() );
 
         artifactFactory = new DefaultArtifactFactory();
-        this.setVariableValueToObject( artifactFactory, "artifactHandlerManager", manager );
+        this.setVariableValueToObject( artifactFactory, "artifactHandlerManager", artifactHandlerManager );
 
         artifactRepository = new StubArtifactRepository( null );
         
@@ -103,7 +105,7 @@ public class TestClassifierTypeTranslator
     {
         String type = "zip";
 
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type );
+        ArtifactTranslator at = new ClassifierTypeTranslator( artifactHandlerManager, classifier, type );
         Set<ArtifactCoordinate> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -119,7 +121,7 @@ public class TestClassifierTypeTranslator
                 {
                     // classifier is null, should be the same as the artifact
                     assertEquals( artifact.getClassifier(), translatedArtifact.getClassifier() );
-                    assertEquals( type, translatedArtifact.getType() );
+                    assertEquals( type, translatedArtifact.getExtension() );
 
                     found = true;
                     break;
@@ -143,7 +145,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "jdk5";
 
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type );
+        ArtifactTranslator at = new ClassifierTypeTranslator( artifactHandlerManager, classifier, type );
         Set<ArtifactCoordinate> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -159,7 +161,7 @@ public class TestClassifierTypeTranslator
                 {
                     // classifier is null, should be the same as the artifact
                     assertEquals( classifier, translatedArtifact.getClassifier() );
-                    assertEquals( artifact.getType(), translatedArtifact.getType() );
+                    assertEquals( artifact.getType(), translatedArtifact.getExtension() );
 
                     found = true;
                     break;
@@ -173,7 +175,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "jdk14";
         String type = "sources";
-        ArtifactTranslator at = new ClassifierTypeTranslator( classifier, type );
+        ArtifactTranslator at = new ClassifierTypeTranslator( artifactHandlerManager, classifier, type );
         Set<ArtifactCoordinate> results = at.translate( artifacts, log );
 
         for ( Artifact artifact : artifacts )
@@ -188,7 +190,7 @@ public class TestClassifierTypeTranslator
                     /*&& artifact.getScope() == translatedArtifact.getScope()*/ )
                 {
                     assertEquals( translatedArtifact.getClassifier(), classifier );
-                    assertEquals( translatedArtifact.getType(), type );
+                    assertEquals( translatedArtifact.getExtension(), type );
 
                     found = true;
                     break;
@@ -202,7 +204,7 @@ public class TestClassifierTypeTranslator
     {
         String classifier = "class";
         String type = "type";
-        ClassifierTypeTranslator at = new ClassifierTypeTranslator( classifier, type );
+        ClassifierTypeTranslator at = new ClassifierTypeTranslator( artifactHandlerManager, classifier, type );
 
         assertEquals( classifier, at.getClassifier() );
         assertEquals( type, at.getType() );
