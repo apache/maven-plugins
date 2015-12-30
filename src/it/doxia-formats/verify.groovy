@@ -30,6 +30,10 @@ assert content.contains( 'href="#Subsection"' );
 ignore = new File( basedir, 'target/site/ignore.txt' );
 assert !ignore.exists();
 
-assert new File( basedir, 'target/generated-site/processed/velocity-context.apt' ).exists();
+velocity = new File( basedir, 'target/generated-site/processed/velocity-context.apt' );
+assert velocity.exists();
+content = velocity.text;
+
+assert content.contains( '= <<<val1>>>' ); // MSITE-550
 
 return true;

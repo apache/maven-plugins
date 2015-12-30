@@ -42,6 +42,9 @@ under the License.
           <version>@project.version@</version>
           <configuration>
             <saveProcessedContent>true</saveProcessedContent>
+            <attributes>
+              <att1>val1</att1>
+            </attributes>
           </configuration>
         </plugin>
       </plugins>
