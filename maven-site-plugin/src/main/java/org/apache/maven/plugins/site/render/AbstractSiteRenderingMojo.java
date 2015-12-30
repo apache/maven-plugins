@@ -321,7 +321,7 @@ public abstract class AbstractSiteRenderingMojo
             {
                 throw new MojoFailureException( "Template file '" + templateFile + "' does not exist" );
             }
-            context = siteRenderer.createContextForTemplate( templateFile, null, attributes, decorationModel,
+            context = siteRenderer.createContextForTemplate( templateFile, attributes, decorationModel,
                                                              project.getName(), locale );
         }
         else
