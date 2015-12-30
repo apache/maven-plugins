@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
@@ -87,6 +88,8 @@ public class TestUnpackDependenciesMojo
         project.setDependencyArtifacts( directArtifacts );
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
+        ArtifactHandlerManager manager = lookup( ArtifactHandlerManager.class );
+        setVariableValueToObject( mojo, "artifactHandlerManager", manager );
     }
 
     protected void tearDown()

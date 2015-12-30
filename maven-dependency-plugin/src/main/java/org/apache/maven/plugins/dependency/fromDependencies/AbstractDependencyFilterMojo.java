@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -49,9 +50,10 @@ import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFilter;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
-import org.apache.maven.shared.artifact.repository.RepositoryManager;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.dependency.resolve.DependencyResolver;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -67,7 +69,10 @@ public abstract class AbstractDependencyFilterMojo
 {
     @Component
     private ArtifactResolver artifactResolver;
-    
+
+    @Component
+    private DependencyResolver dependencyResolver;
+
     @Component
     private RepositoryManager repositoryManager;
     
@@ -236,6 +241,9 @@ public abstract class AbstractDependencyFilterMojo
     @Component
     private ProjectBuilder projectBuilder;
 
+    @Component
+    private ArtifactHandlerManager artifactHandlerManager;
+    
     /**
      * Return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
      * 
@@ -400,7 +408,7 @@ public abstract class AbstractDependencyFilterMojo
         if ( StringUtils.isNotEmpty( classifier ) )
         {
             ArtifactTranslator translator =
-                new ClassifierTypeTranslator( this.classifier, this.type );
+                new ClassifierTypeTranslator( artifactHandlerManager, this.classifier, this.type );
             Collection<ArtifactCoordinate> coordinates = translator.translate( artifacts, getLog() );
 
             status = filterMarkedDependencies( artifacts );
@@ -523,7 +531,12 @@ public abstract class AbstractDependencyFilterMojo
     {
         return artifactResolver;
     }
-    
+
+    protected final DependencyResolver getDependencyResolver()
+    {
+        return dependencyResolver;
+    }
+
     protected final RepositoryManager getRepositoryManager()
     {
         return repositoryManager;

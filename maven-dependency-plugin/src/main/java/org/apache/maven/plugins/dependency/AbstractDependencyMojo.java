@@ -195,6 +195,12 @@ public abstract class AbstractDependencyMojo
     protected void unpack( Artifact artifact, File location, String includes, String excludes )
         throws MojoExecutionException
     {
+        unpack( artifact, artifact.getType(), location, includes, excludes );
+    }
+    
+    protected void unpack( Artifact artifact, String type, File location, String includes, String excludes )
+                    throws MojoExecutionException
+    {
         File file = artifact.getFile(); 
         try
         {
@@ -213,7 +219,7 @@ public abstract class AbstractDependencyMojo
 
             try
             {
-                unArchiver = archiverManager.getUnArchiver( artifact.getType() );
+                unArchiver = archiverManager.getUnArchiver( type );
                 getLog().debug( "Found unArchiver by type: " + unArchiver );
             }
             catch ( NoSuchArchiverException e )

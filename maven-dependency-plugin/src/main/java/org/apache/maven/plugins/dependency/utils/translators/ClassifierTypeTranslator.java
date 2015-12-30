@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
@@ -35,18 +37,21 @@ import org.codehaus.plexus.util.StringUtils;
 public class ClassifierTypeTranslator
     implements ArtifactTranslator
 {
-
+    private ArtifactHandlerManager artifactHandlerManager;
     private String classifier;
 
     private String type;
 
     /**
      * 
+     * @param artifactHanderManager TODO
      * @param theClassifier
      * @param theType
      */
-    public ClassifierTypeTranslator( String theClassifier , String theType  )
+    public ClassifierTypeTranslator( ArtifactHandlerManager artifactHanderManager, String theClassifier,
+                                     String theType )
     {
+        this.artifactHandlerManager = artifactHanderManager;
         this.classifier = theClassifier;
         this.type = theType;
     }
@@ -69,7 +74,7 @@ public class ClassifierTypeTranslator
             // this translator must pass both type and classifier here so we
             // will use the
             // base artifact value if null comes in
-            String useType;
+            final String useType;
             if ( StringUtils.isNotEmpty( this.type ) )
             {
                 useType = this.type;
@@ -77,6 +82,18 @@ public class ClassifierTypeTranslator
             else
             {
                 useType = artifact.getType();
+            }
+            
+            ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler( useType );
+            
+            final String extension;
+            if ( artifactHandler != null )
+            {
+                extension = artifactHandler.getExtension();
+            }
+            else
+            {
+                extension = this.type;
             }
 
             String useClassifier;
@@ -94,7 +111,7 @@ public class ClassifierTypeTranslator
             coordinate.setArtifactId( artifact.getArtifactId() );
             coordinate.setVersion( artifact.getVersion() );
             coordinate.setClassifier( useClassifier );
-            coordinate.setType( useType );
+            coordinate.setExtension( extension );
             
 //            // Create a new artifact
 //            Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact

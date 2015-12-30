@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -73,6 +74,8 @@ public class TestCopyDependenciesMojo
         project.setDependencyArtifacts( directArtifacts );
         mojo.markersDirectory = new File( this.testDir, "markers" );
 
+        ArtifactHandlerManager manager = lookup( ArtifactHandlerManager.class );
+        setVariableValueToObject( mojo, "artifactHandlerManager", manager );
     }
 
     public void assertNoMarkerFile( Artifact artifact )

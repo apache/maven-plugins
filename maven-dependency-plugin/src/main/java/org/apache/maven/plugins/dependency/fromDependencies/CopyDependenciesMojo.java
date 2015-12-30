@@ -294,7 +294,7 @@ public class CopyDependenciesMojo
         coordinate.setGroupId( artifact.getGroupId() );
         coordinate.setArtifactId( artifact.getArtifactId() );
         coordinate.setVersion( artifact.getVersion() );
-        coordinate.setType( "pom" );
+        coordinate.setExtension( "pom" );
         
         Artifact pomArtifact = null;
         // Resolve the pom artifact using repos

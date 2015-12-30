@@ -124,9 +124,9 @@ public class UnpackMojo
         throws MojoExecutionException
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
-
-        unpack( artifactItem.getArtifact(), artifactItem.getOutputDirectory(), artifactItem.getIncludes(),
-                artifactItem.getExcludes() );
+        
+        unpack( artifactItem.getArtifact(), artifactItem.getType(), artifactItem.getOutputDirectory(),
+                artifactItem.getIncludes(), artifactItem.getExcludes() );
         handler.setMarker();
     }
 

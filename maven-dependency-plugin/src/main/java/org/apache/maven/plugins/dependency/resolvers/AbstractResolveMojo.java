@@ -30,14 +30,14 @@ import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.artifact.ArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
-import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.artifact.resolve.ArtifactResult;
+import org.apache.maven.shared.dependency.DependencyCoordinate;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -150,16 +150,16 @@ public abstract class AbstractResolveMojo
      *
      * @param artifact the artifact used to retrieve dependencies
      * @return resolved set of dependencies
-     * @throws ArtifactResolverException
+     * @throws DependencyResolverException
      */
-    protected Set<Artifact> resolveArtifactDependencies( final ArtifactCoordinate artifact )
-        throws ArtifactResolverException
+    protected Set<Artifact> resolveArtifactDependencies( final DependencyCoordinate artifact )
+        throws DependencyResolverException
     {
         ProjectBuildingRequest buildingRequest =
             new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
 
         Iterable<ArtifactResult> artifactResults =
-            getArtifactResolver().resolveDependencies( buildingRequest, artifact, null );
+            getDependencyResolver().resolveDependencies( buildingRequest, artifact, null );
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
 
