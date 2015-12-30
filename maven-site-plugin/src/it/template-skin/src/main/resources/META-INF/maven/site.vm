@@ -65,6 +65,7 @@ xml=$xml
 context (cause NullPointerException)
 link (cause NullPointerException)
 </pre>
+\$date.format('yyyy-MM-dd', \$currentDate) = $date.format('yyyy-MM-dd', $currentDate)
 
 <h3>Site template-specific variables</h3>
 <pre>
