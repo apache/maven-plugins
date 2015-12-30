@@ -312,31 +312,35 @@ public abstract class AbstractSiteRenderingMojo
             }
         }
 
-        File skinFile;
-        try
-        {
-            Artifact skinArtifact =
-                siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel );
-            getLog().info( "Rendering site with " + skinArtifact.getId() + " skin." );
-
-            skinFile = skinArtifact.getFile();
-        }
-        catch ( SiteToolException e )
-        {
-            throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
-        }
         SiteRenderingContext context;
         if ( templateFile != null )
         {
+            getLog().info( "Rendering site with " + templateFile + " template file." );
+
             if ( !templateFile.exists() )
             {
                 throw new MojoFailureException( "Template file '" + templateFile + "' does not exist" );
             }
-            context = siteRenderer.createContextForTemplate( templateFile, skinFile, attributes, decorationModel,
+            context = siteRenderer.createContextForTemplate( templateFile, null, attributes, decorationModel,
                                                              project.getName(), locale );
         }
         else
         {
+            File skinFile;
+            try
+            {
+                Artifact skinArtifact =
+                    siteTool.getSkinArtifactFromRepository( localRepository, repositories, decorationModel );
+
+                getLog().info( "Rendering site with " + skinArtifact.getId() + " skin." );
+
+                skinFile = skinArtifact.getFile();
+            }
+            catch ( SiteToolException e )
+            {
+                throw new MojoExecutionException( "SiteToolException while preparing skin: " + e.getMessage(), e );
+            }
+
             context = siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(),
                                                          locale );
         }
