@@ -18,4 +18,5 @@
  * under the License.
  */
 
-assert new File( basedir, 'target/site-deployed/pom-interpolation/index.html' ).isFile();
+// check that, as expected, model inheritance has appended artifact id
+assert new File( basedir, 'target/site-deployed/pom-interpolation-artifactId/index.html' ).isFile();
