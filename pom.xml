@@ -133,7 +133,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>file-management</artifactId>
-      <version>1.2.1</version>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
