@@ -79,14 +79,14 @@ public class EjbHelperTest
     @Test
     public void getJarFileNameShouldReturnFileNameWithoutClassifier()
     {
-        assertThat( EjbHelper.getJarFileName( new File( "base" ), "test",
+        assertThat( EjbHelper.getJarFile( new File( "base" ), "test",
                                               null ) ).isEqualTo( new File( "base/test.jar" ) );
     }
 
     @Test
     public void getJarFileNameShouldReturnFileNameWithClassifier()
     {
-        assertThat( EjbHelper.getJarFileName( new File( "base" ), "test",
+        assertThat( EjbHelper.getJarFile( new File( "base" ), "test",
                                               "alpha" ) ).isEqualTo( new File( "base/test-alpha.jar" ) );
     }
 }
