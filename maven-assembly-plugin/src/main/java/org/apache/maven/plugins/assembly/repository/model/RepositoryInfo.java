@@ -27,14 +27,14 @@ import java.util.List;
 public interface RepositoryInfo
 {
 
-    List getGroupVersionAlignments();
+    List<GroupVersionAlignment> getGroupVersionAlignments();
 
     boolean isIncludeMetadata();
 
     String getScope();
 
-    List getIncludes();
+    List<String> getIncludes();
 
-    List getExcludes();
+    List<String> getExcludes();
 
 }

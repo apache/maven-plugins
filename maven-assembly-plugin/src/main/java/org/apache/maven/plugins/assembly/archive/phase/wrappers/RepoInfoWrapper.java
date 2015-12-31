@@ -35,7 +35,7 @@ public class RepoInfoWrapper
 
     private final Repository repo;
 
-    private List<GroupVersionAlignmentWrapper> convertedAlignments;
+    private List<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment> convertedAlignments;
 
     /**
      * @param repo The {@link Repository}
@@ -58,14 +58,14 @@ public class RepoInfoWrapper
      * {@inheritDoc}
      */
     @Override
-    public List<GroupVersionAlignmentWrapper> getGroupVersionAlignments()
+    public List<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment> getGroupVersionAlignments()
     {
         final List<GroupVersionAlignment> alignments = repo.getGroupVersionAlignments();
 
         if ( convertedAlignments == null || alignments.size() != convertedAlignments.size() )
         {
-            final List<GroupVersionAlignmentWrapper> l =
-                new ArrayList<GroupVersionAlignmentWrapper>( alignments.size() );
+            final List<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment> l =
+                new ArrayList<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment>( alignments.size() );
 
             for ( final GroupVersionAlignment alignment : alignments )
             {

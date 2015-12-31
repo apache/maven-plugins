@@ -153,13 +153,13 @@ public class DefaultRepositoryAssembler
         MavenProject project = configSource.getProject();
         ArtifactRepository localRepository = configSource.getLocalRepository();
 
-        Map groupVersionAlignments = createGroupVersionAlignments( repository.getGroupVersionAlignments() );
+        Map<String, GroupVersionAlignment> groupVersionAlignments = createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
 
         ArtifactResolutionResult result = null;
 
-        Set dependencyArtifacts = project.getDependencyArtifacts();
+        Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
 
         if ( dependencyArtifacts == null )
         {
@@ -244,20 +244,18 @@ public class DefaultRepositoryAssembler
         // descriptor everytime the POM is updated.
         // ----------------------------------------------------------------------------
 
-        List includes = repository.getIncludes();
+        List<String> includes = repository.getIncludes();
 
         if ( ( includes == null ) || includes.isEmpty() )
         {
             List<String> patterns = new ArrayList<String>();
 
-            Set projectArtifacts = project.getDependencyArtifacts();
+            Set<Artifact> projectArtifacts = project.getDependencyArtifacts();
 
             if ( projectArtifacts != null )
             {
-                for ( Object projectArtifact : projectArtifacts )
+                for ( Artifact artifact : projectArtifacts )
                 {
-                    Artifact artifact = (Artifact) projectArtifact;
-
                     patterns.add( artifact.getDependencyConflictId() );
                 }
             }
@@ -279,7 +277,7 @@ public class DefaultRepositoryAssembler
         // up everything.
         // ----------------------------------------------------------------------------
 
-        List excludes = repository.getExcludes();
+        List<String> excludes = repository.getExcludes();
 
         if ( ( excludes != null ) && !excludes.isEmpty() )
         {
@@ -292,7 +290,7 @@ public class DefaultRepositoryAssembler
     private void assembleRepositoryArtifacts( ArtifactResolutionResult result, ArtifactFilter filter,
                                               MavenProject project, ArtifactRepository localRepository,
                                               ArtifactRepository targetRepository, File repositoryDirectory,
-                                              Map groupVersionAlignments )
+                                              Map<String, GroupVersionAlignment> groupVersionAlignments )
         throws RepositoryAssemblyException
     {
         try
@@ -304,10 +302,8 @@ public class DefaultRepositoryAssembler
 
             FileUtils.mkdir( repositoryDirectory.getAbsolutePath() );
 
-            for ( Object o : result.getArtifacts() )
+            for ( Artifact a : result.getArtifacts() )
             {
-                Artifact a = (Artifact) o;
-
                 if ( filter.include( a ) )
                 {
                     getLogger().debug( "Re-resolving: " + a + " for repository assembly." );
@@ -346,13 +342,13 @@ public class DefaultRepositoryAssembler
         }
     }
 
-    private void addPomWithAncestry( final Artifact artifact, List remoteArtifactRepositories,
+    private void addPomWithAncestry( final Artifact artifact, List<ArtifactRepository> remoteArtifactRepositories,
                                      ArtifactRepository localRepository, ArtifactRepository targetRepository,
-                                     Map groupVersionAlignments, MavenProject masterProject )
+                                     Map<String, GroupVersionAlignment> groupVersionAlignments, MavenProject masterProject )
         throws RepositoryAssemblyException
     {
         String type = artifact.getType();
-        Map refs = masterProject.getProjectReferences();
+        Map<String, MavenProject> refs = masterProject.getProjectReferences();
 
         String projectKey = ArtifactUtils.versionlessKey( artifact );
 
@@ -363,7 +359,7 @@ public class DefaultRepositoryAssembler
         }
         else if ( refs.containsKey( projectKey ) )
         {
-            p = (MavenProject) refs.get( projectKey );
+            p = refs.get( projectKey );
         }
         else
         {
@@ -443,9 +439,8 @@ public class DefaultRepositoryAssembler
     private ArtifactRepository findCentralRepository( MavenProject project )
     {
         ArtifactRepository centralRepository = null;
-        for ( Object o : project.getRemoteArtifactRepositories() )
+        for ( ArtifactRepository r : project.getRemoteArtifactRepositories() )
         {
-            ArtifactRepository r = (ArtifactRepository) o;
             if ( "central".equals( r.getId() ) )
             {
                 centralRepository = r;
@@ -459,10 +454,8 @@ public class DefaultRepositoryAssembler
                                              ArtifactRepository centralRepository, ArtifactRepository targetRepository )
         throws RepositoryAssemblyException
     {
-        for ( Object o : result.getArtifacts() )
+        for ( Artifact a : result.getArtifacts() )
         {
-            Artifact a = (Artifact) o;
-
             if ( filter.include( a ) )
             {
                 Versioning v = new Versioning();
@@ -538,16 +531,14 @@ public class DefaultRepositoryAssembler
                              sha1.toLowerCase() );
     }
 
-    protected Map createGroupVersionAlignments( List versionAlignments )
+    protected Map<String, GroupVersionAlignment> createGroupVersionAlignments( List<GroupVersionAlignment> versionAlignments )
     {
-        Map groupVersionAlignments = new HashMap();
+        Map<String, GroupVersionAlignment> groupVersionAlignments = new HashMap<String, GroupVersionAlignment>();
 
         if ( versionAlignments != null )
         {
-            for ( Object versionAlignment : versionAlignments )
+            for ( GroupVersionAlignment alignment : versionAlignments )
             {
-                GroupVersionAlignment alignment = (GroupVersionAlignment) versionAlignment;
-
                 groupVersionAlignments.put( alignment.getId(), alignment );
             }
         }
@@ -601,7 +592,7 @@ public class DefaultRepositoryAssembler
     private void invalidateProccessedProjectCache()
         throws Exception
     {
-        Class klass = DefaultMavenProjectBuilder.class;
+        Class<DefaultMavenProjectBuilder> klass = DefaultMavenProjectBuilder.class;
 
         try
         {
@@ -621,9 +612,9 @@ public class DefaultRepositoryAssembler
         }
     }
 
-    private void setAlignment( Artifact artifact, Map groupVersionAlignments )
+    private void setAlignment( Artifact artifact, Map<String, GroupVersionAlignment> groupVersionAlignments )
     {
-        GroupVersionAlignment alignment = (GroupVersionAlignment) groupVersionAlignments.get( artifact.getGroupId() );
+        GroupVersionAlignment alignment = groupVersionAlignments.get( artifact.getGroupId() );
 
         if ( alignment != null )
         {
@@ -636,13 +627,13 @@ public class DefaultRepositoryAssembler
 
     // TODO: Remove this, once we can depend on Maven 2.0.7 or later...in which
     // MavenProject.getManagedVersionMap() exists. This is from MNG-1577.
-    private Map getManagedVersionMap( MavenProject project )
+    private Map<String, Artifact> getManagedVersionMap( MavenProject project )
         throws InvalidVersionSpecificationException
     {
         DependencyManagement dependencyManagement = project.getModel().getDependencyManagement();
 
         Map<String, Artifact> map;
-        List deps = ( dependencyManagement == null ) ? null : dependencyManagement.getDependencies();
+        List<Dependency> deps = ( dependencyManagement == null ) ? null : dependencyManagement.getDependencies();
         if ( ( deps != null ) && ( deps.size() > 0 ) )
         {
             map = new HashMap<String, Artifact>();
@@ -652,10 +643,8 @@ public class DefaultRepositoryAssembler
                 getLogger().debug( "Adding managed dependencies for " + project.getId() );
             }
 
-            for ( Object o1 : dependencyManagement.getDependencies() )
+            for ( Dependency d : dependencyManagement.getDependencies() )
             {
-                Dependency d = (Dependency) o1;
-
                 VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
                 Artifact artifact =
                     artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(), versionRange,
@@ -672,9 +661,8 @@ public class DefaultRepositoryAssembler
                 if ( ( null != d.getExclusions() ) && !d.getExclusions().isEmpty() )
                 {
                     List<String> exclusions = new ArrayList<String>();
-                    for ( Object o : d.getExclusions() )
+                    for ( Exclusion e : d.getExclusions() )
                     {
-                        Exclusion e = (Exclusion) o;
                         exclusions.add( e.getGroupId() + ":" + e.getArtifactId() );
                     }
                     ExcludesArtifactFilter eaf = new ExcludesArtifactFilter( exclusions );
@@ -703,7 +691,7 @@ public class DefaultRepositoryAssembler
         {
             try
             {
-                artifactResolver = (ArtifactResolver) container.lookup( ArtifactResolver.ROLE, hint );
+                artifactResolver = container.lookup( ArtifactResolver.class, hint );
                 break;
             }
             catch ( ComponentLookupException e )
@@ -716,7 +704,7 @@ public class DefaultRepositoryAssembler
         {
             try
             {
-                artifactResolver = (ArtifactResolver) container.lookup( ArtifactResolver.ROLE );
+                artifactResolver = container.lookup( ArtifactResolver.class );
             }
             catch ( ComponentLookupException e )
             {

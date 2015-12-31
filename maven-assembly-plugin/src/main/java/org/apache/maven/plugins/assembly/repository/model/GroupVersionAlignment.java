@@ -29,7 +29,7 @@ public interface GroupVersionAlignment
 
     String getId();
 
-    List getExcludes();
+    List<String> getExcludes();
 
     String getVersion();
 
