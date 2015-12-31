@@ -69,7 +69,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * @version $Id$
  */
@@ -81,10 +80,12 @@ public class DefaultAssemblyReader
 
     public static FixedStringSearchInterpolator createProjectInterpolator( MavenProject project )
     {
-        return FixedStringSearchInterpolator.create(
-            new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
-                                               project.getProperties(), true ),
-            new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES, project, true ) );
+        // CHECKSTYLE_OFF: LineLength
+        return FixedStringSearchInterpolator.create( new PrefixedPropertiesValueSource( InterpolationConstants.PROJECT_PROPERTIES_PREFIXES,
+                                                                                        project.getProperties(), true ),
+                                                     new PrefixedObjectValueSource( InterpolationConstants.PROJECT_PREFIXES,
+                                                                                    project, true ) );
+        // CHECKSTYLE_ON: LineLength
     }
 
     @Override
@@ -141,12 +142,13 @@ public class DefaultAssemblyReader
 
         if ( ( descriptorSourceDirectory != null ) && descriptorSourceDirectory.isDirectory() )
         {
-            locator.setStrategies(
-                Collections.singletonList( new RelativeFileLocatorStrategy( descriptorSourceDirectory ) ) );
+            // CHECKSTYLE_OFF: LineLength
+            locator.setStrategies( Collections.<LocatorStrategy>singletonList( new RelativeFileLocatorStrategy( descriptorSourceDirectory ) ) );
+            // CHECKSTYLE_ON: LineLength
 
             final DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( descriptorSourceDirectory );
-            scanner.setIncludes( new String[]{ "**/*.xml" } );
+            scanner.setIncludes( new String[] { "**/*.xml" } );
             scanner.addDefaultExcludes();
 
             scanner.scan();
@@ -163,8 +165,8 @@ public class DefaultAssemblyReader
         {
             if ( configSource.isIgnoreMissingDescriptor() )
             {
-                getLogger().debug(
-                    "Ignoring missing assembly descriptors per configuration. See messages above for specifics." );
+                getLogger().debug( "Ignoring missing assembly descriptors per configuration. "
+                    + "See messages above for specifics." );
             }
             else
             {
@@ -188,7 +190,8 @@ public class DefaultAssemblyReader
     @Override
     public Assembly getAssemblyForDescriptorReference( final String ref,
                                                        final AssemblerConfigurationSource configSource )
-        throws AssemblyReadException, InvalidAssemblerConfigurationException
+                                                           throws AssemblyReadException,
+                                                           InvalidAssemblerConfigurationException
     {
         return addAssemblyForDescriptorReference( ref, configSource, new ArrayList<Assembly>( 1 ) );
     }
@@ -203,7 +206,8 @@ public class DefaultAssemblyReader
     private Assembly addAssemblyForDescriptorReference( final String ref,
                                                         final AssemblerConfigurationSource configSource,
                                                         final List<Assembly> assemblies )
-        throws AssemblyReadException, InvalidAssemblerConfigurationException
+                                                            throws AssemblyReadException,
+                                                            InvalidAssemblerConfigurationException
     {
         final InputStream resourceAsStream =
             Thread.currentThread().getContextClassLoader().getResourceAsStream( "assemblies/" + ref + ".xml" );
@@ -243,7 +247,8 @@ public class DefaultAssemblyReader
     private Assembly addAssemblyFromDescriptorFile( final File descriptor,
                                                     final AssemblerConfigurationSource configSource,
                                                     final List<Assembly> assemblies )
-        throws AssemblyReadException, InvalidAssemblerConfigurationException
+                                                        throws AssemblyReadException,
+                                                        InvalidAssemblerConfigurationException
     {
         if ( !descriptor.exists() )
         {
@@ -282,7 +287,7 @@ public class DefaultAssemblyReader
     private Assembly addAssemblyFromDescriptor( final String spec, final Locator locator,
                                                 final AssemblerConfigurationSource configSource,
                                                 final List<Assembly> assemblies )
-        throws AssemblyReadException, InvalidAssemblerConfigurationException
+                                                    throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         final Location location = locator.resolve( spec );
 
@@ -291,14 +296,13 @@ public class DefaultAssemblyReader
             if ( configSource.isIgnoreMissingDescriptor() )
             {
                 getLogger().debug( "Ignoring missing assembly descriptor with ID '" + spec
-                                       + "' per configuration.\nLocator output was:\n\n"
-                                       + locator.getMessageHolder().render() );
+                    + "' per configuration.\nLocator output was:\n\n" + locator.getMessageHolder().render() );
                 return null;
             }
             else
             {
-                throw new AssemblyReadException(
-                    "Error locating assembly descriptor: " + spec + "\n\n" + locator.getMessageHolder().render() );
+                throw new AssemblyReadException( "Error locating assembly descriptor: " + spec + "\n\n"
+                    + locator.getMessageHolder().render() );
             }
         }
 
@@ -332,7 +336,7 @@ public class DefaultAssemblyReader
 
     public Assembly readAssembly( final Reader reader, final String locationDescription, final File assemblyDir,
                                   final AssemblerConfigurationSource configSource )
-        throws AssemblyReadException, InvalidAssemblerConfigurationException
+                                      throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Assembly assembly;
 
@@ -393,8 +397,8 @@ public class DefaultAssemblyReader
         }
         catch ( final IOException e )
         {
-            getLogger().debug(
-                "Failed to print debug message with assembly descriptor listing, and message: " + message, e );
+            getLogger().debug( "Failed to print debug message with assembly descriptor listing, and message: "
+                + message, e );
         }
 
         getLogger().debug( message + "\n\n" + sWriter.toString() + "\n\n" );
@@ -403,7 +407,7 @@ public class DefaultAssemblyReader
     /**
      * Add the contents of all included components to main assembly
      *
-     * @param assembly    The assembly
+     * @param assembly The assembly
      * @param assemblyDir The assembly directory
      * @param transformer The component interpolator
      * @throws AssemblyReadException .
@@ -411,7 +415,7 @@ public class DefaultAssemblyReader
     protected void mergeComponentsWithMainAssembly( final Assembly assembly, final File assemblyDir,
                                                     final AssemblerConfigurationSource configSource,
                                                     ComponentXpp3Reader.ContentTransformer transformer )
-        throws AssemblyReadException
+                                                        throws AssemblyReadException
     {
         final Locator locator = new Locator();
 
@@ -458,12 +462,12 @@ public class DefaultAssemblyReader
             catch ( final IOException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                                                     + resolvedLocation.getSpecification() + ")", e );
+                    + resolvedLocation.getSpecification() + ")", e );
             }
             catch ( final XmlPullParserException e )
             {
                 throw new AssemblyReadException( "Error reading component descriptor: " + location + " (resolved to: "
-                                                     + resolvedLocation.getSpecification() + ")", e );
+                    + resolvedLocation.getSpecification() + ")", e );
             }
             finally
             {
@@ -478,7 +482,7 @@ public class DefaultAssemblyReader
      * Add the content of a single Component to main assembly
      *
      * @param component The component
-     * @param assembly  The assembly
+     * @param assembly The assembly
      */
     protected void mergeComponentWithAssembly( final Component component, final Assembly assembly )
     {
@@ -533,8 +537,8 @@ public class DefaultAssemblyReader
 
         if ( !siteDirectory.exists() )
         {
-            throw new InvalidAssemblerConfigurationException(
-                "site did not exist in the target directory - please run site:site before creating the assembly" );
+            throw new InvalidAssemblerConfigurationException( "site did not exist in the target directory - "
+                + "please run site:site before creating the assembly" );
         }
 
         getLogger().info( "Adding site directory to assembly : " + siteDirectory );
