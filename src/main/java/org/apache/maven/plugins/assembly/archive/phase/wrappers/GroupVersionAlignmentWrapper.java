@@ -27,7 +27,7 @@ import java.util.List;
  * @version $Id$
  */
 class GroupVersionAlignmentWrapper
-    implements org.apache.maven.shared.repository.model.GroupVersionAlignment
+    implements org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment
 {
 
     private final GroupVersionAlignment alignment;

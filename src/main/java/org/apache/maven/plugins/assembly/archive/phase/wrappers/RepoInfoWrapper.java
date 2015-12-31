@@ -21,7 +21,7 @@ package org.apache.maven.plugins.assembly.archive.phase.wrappers;
 
 import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.model.Repository;
-import org.apache.maven.shared.repository.model.RepositoryInfo;
+import org.apache.maven.plugins.assembly.repository.model.RepositoryInfo;
 
 import java.util.ArrayList;
 import java.util.List;

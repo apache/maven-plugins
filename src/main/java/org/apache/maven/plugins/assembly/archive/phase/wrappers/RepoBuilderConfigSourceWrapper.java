@@ -21,8 +21,8 @@ package org.apache.maven.plugins.assembly.archive.phase.wrappers;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
+import org.apache.maven.plugins.assembly.repository.RepositoryBuilderConfigSource;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.repository.RepositoryBuilderConfigSource;
 
 /**
  * @version $Id$
