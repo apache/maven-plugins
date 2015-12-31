@@ -349,7 +349,7 @@ public class EjbMojo
     private File generateEjb()
         throws MojoExecutionException
     {
-        File jarFile = EjbHelper.getJarFileName( outputDirectory, jarName, getClassifier() );
+        File jarFile = EjbHelper.getJarFile( outputDirectory, jarName, getClassifier() );
 
         getLog().info( "Building EJB " + jarName + " with EJB version " + ejbVersion );
 
@@ -416,7 +416,7 @@ public class EjbMojo
     private File generateEjbClient()
         throws MojoExecutionException
     {
-        File clientJarFile = EjbHelper.getJarFileName( outputDirectory, jarName, getClientClassifier() );
+        File clientJarFile = EjbHelper.getJarFile( outputDirectory, jarName, getClientClassifier() );
 
         getLog().info( "Building EJB client " + clientJarFile.getPath() );
 

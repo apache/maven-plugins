@@ -84,7 +84,7 @@ public final class EjbHelper
      * @param classifier an optional classifier
      * @return the file to generate
      */
-    public static File getJarFileName( File basedir, String finalName, String classifier )
+    public static File getJarFile( File basedir, String finalName, String classifier )
     {
         if ( basedir == null )
         {
