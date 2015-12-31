@@ -31,10 +31,29 @@ under the License.
     <relativePath>parent/</relativePath>
   </parent>
 
-  <artifactId>pom-interpolation</artifactId>
+  <artifactId>pom-interpolation-artifactId</artifactId>
   <packaging>pom</packaging>
 
-  <name>site-interpolation IT</name>
+  <name>pom inheritance and interpolation IT of site distributionManagement url</name>
+  <description>
+    test of distributionManagement.site.url inheritance and interpolation
+    step 1: inheritance assembly injects parent value with current artifactId appended
+           gives "${site.repository}/pom-interpolation-artifactId" (not yet interpolated)
+    step 2: model interpolation of ${*} variables
+    
+    Conclusion: even if current site.repository property ends with target/site-deployed,
+    inheritance will append artifact id, then content will go to
+    target/site-deployed/pom-interpolation-artifactId, which is not immediately intuitive
+    
+    This happens for the 5 urls in pom.xml,
+    see http://maven.apache.org/ref/current/maven-model-builder/ for complete reference
+    
+    Notice that this is not tied to maven-site-plugin itself, but Maven model building:
+    the IT could just echo $project.distributionManagement.site.url or the effective pom.
+    But since users discover this feature through the maven-site-plugin, they first think
+    it's a maven-site-plugin bug: no, there is no bug, and the cause is not in maven-site-plugin
+    :)
+  </description>
 
   <properties>
     <site.server>site-deploy</site.server>
