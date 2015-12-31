@@ -34,18 +34,18 @@ public class DefaultRepositoryInfo
 
     private String scope = Artifact.SCOPE_COMPILE;
 
-    private List includes;
+    private List<String> includes;
 
-    private List groupVersionAlignments;
+    private List<GroupVersionAlignment> groupVersionAlignments;
 
-    private List excludes;
+    private List<String> excludes;
 
-    public List getExcludes()
+    public List<String> getExcludes()
     {
         return excludes;
     }
 
-    public void setGroupVersionAlignments( List groupVersionAlignments )
+    public void setGroupVersionAlignments( List<GroupVersionAlignment> groupVersionAlignments )
     {
         this.groupVersionAlignments = groupVersionAlignments;
     }
@@ -55,7 +55,7 @@ public class DefaultRepositoryInfo
         this.includeMetadata = includeMetadata;
     }
 
-    public void setIncludes( List includes )
+    public void setIncludes( List<String> includes )
     {
         this.includes = includes;
     }
@@ -65,12 +65,12 @@ public class DefaultRepositoryInfo
         this.scope = scope;
     }
 
-    public List getGroupVersionAlignments()
+    public List<GroupVersionAlignment> getGroupVersionAlignments()
     {
         return groupVersionAlignments;
     }
 
-    public List getIncludes()
+    public List<String> getIncludes()
     {
         return includes;
     }
@@ -85,7 +85,7 @@ public class DefaultRepositoryInfo
         return includeMetadata;
     }
 
-    public void setExcludes( List excludes )
+    public void setExcludes( List<String> excludes )
     {
         this.excludes = excludes;
     }
