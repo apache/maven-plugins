@@ -153,7 +153,8 @@ public class DefaultRepositoryAssembler
         MavenProject project = configSource.getProject();
         ArtifactRepository localRepository = configSource.getLocalRepository();
 
-        Map<String, GroupVersionAlignment> groupVersionAlignments = createGroupVersionAlignments( repository.getGroupVersionAlignments() );
+        Map<String, GroupVersionAlignment> groupVersionAlignments =
+            createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
 
@@ -344,7 +345,8 @@ public class DefaultRepositoryAssembler
 
     private void addPomWithAncestry( final Artifact artifact, List<ArtifactRepository> remoteArtifactRepositories,
                                      ArtifactRepository localRepository, ArtifactRepository targetRepository,
-                                     Map<String, GroupVersionAlignment> groupVersionAlignments, MavenProject masterProject )
+                                     Map<String, GroupVersionAlignment> groupVersionAlignments,
+                                     MavenProject masterProject )
         throws RepositoryAssemblyException
     {
         String type = artifact.getType();
@@ -531,7 +533,9 @@ public class DefaultRepositoryAssembler
                              sha1.toLowerCase() );
     }
 
+    // CHECKSTYLE_OFF: LineLength
     protected Map<String, GroupVersionAlignment> createGroupVersionAlignments( List<GroupVersionAlignment> versionAlignments )
+    // CHECKSTYLE_ON: LineLength
     {
         Map<String, GroupVersionAlignment> groupVersionAlignments = new HashMap<String, GroupVersionAlignment>();
 

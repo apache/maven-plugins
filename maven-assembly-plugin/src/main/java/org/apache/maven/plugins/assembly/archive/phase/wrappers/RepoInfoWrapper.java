@@ -19,8 +19,8 @@ package org.apache.maven.plugins.assembly.archive.phase.wrappers;
  * under the License.
  */
 
-import org.apache.maven.plugins.assembly.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.model.Repository;
+import org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.repository.model.RepositoryInfo;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class RepoInfoWrapper
 
     private final Repository repo;
 
-    private List<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment> convertedAlignments;
+    private List<GroupVersionAlignment> convertedAlignments;
 
     /**
      * @param repo The {@link Repository}
@@ -58,16 +58,16 @@ public class RepoInfoWrapper
      * {@inheritDoc}
      */
     @Override
-    public List<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment> getGroupVersionAlignments()
+    public List<GroupVersionAlignment> getGroupVersionAlignments()
     {
-        final List<GroupVersionAlignment> alignments = repo.getGroupVersionAlignments();
+        final List<org.apache.maven.plugins.assembly.model.GroupVersionAlignment> alignments =
+            repo.getGroupVersionAlignments();
 
         if ( convertedAlignments == null || alignments.size() != convertedAlignments.size() )
         {
-            final List<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment> l =
-                new ArrayList<org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment>( alignments.size() );
+            final List<GroupVersionAlignment> l = new ArrayList<GroupVersionAlignment>( alignments.size() );
 
-            for ( final GroupVersionAlignment alignment : alignments )
+            for ( final org.apache.maven.plugins.assembly.model.GroupVersionAlignment alignment : alignments )
             {
                 l.add( new GroupVersionAlignmentWrapper( alignment ) );
             }
