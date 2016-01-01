@@ -20,7 +20,6 @@ package org.apache.maven.plugins.assembly.repository;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -31,22 +30,14 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.metadata.ArtifactRepositoryMetadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.repository.model.RepositoryInfo;
 import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.TransferUtils;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
@@ -75,7 +66,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -195,7 +185,8 @@ public class DefaultRepositoryAssembler
         Map<String, GroupVersionAlignment> groupVersionAlignments =
                         createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
-        assembleRepositoryArtifacts( buildingRequest, result, filter, project, localRepository, targetRepository, groupVersionAlignments );
+        assembleRepositoryArtifacts( buildingRequest, result, filter, project, localRepository, targetRepository,
+                                     groupVersionAlignments );
 
         ArtifactRepository centralRepository = findCentralRepository( project );
 
@@ -204,9 +195,6 @@ public class DefaultRepositoryAssembler
             assembleRepositoryMetadata( result, filter, centralRepository, targetRepository );
         }
 
-        addPomWithAncestry( project.getArtifact(), project.getRemoteArtifactRepositories(), localRepository,
-                            targetRepository, groupVersionAlignments, project );
-        
         try
         {
             FileUtils.deleteDirectory( tempRepo );
@@ -302,9 +290,6 @@ public class DefaultRepositoryAssembler
                     FileUtils.copyFile( a.getFile(), targetFile );
 
                     writeChecksums( targetFile );
-
-                    addPomWithAncestry( a, project.getRemoteArtifactRepositories(), localRepository, targetRepository,
-                                        groupVersionAlignments, project );
                 }
             }
         }
@@ -315,101 +300,6 @@ public class DefaultRepositoryAssembler
         catch ( IOException e )
         {
             throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
-        }
-    }
-
-    private void addPomWithAncestry( final Artifact artifact, List<ArtifactRepository> remoteArtifactRepositories,
-                                     ArtifactRepository localRepository, ArtifactRepository targetRepository,
-                                     Map<String, GroupVersionAlignment> groupVersionAlignments,
-                                     MavenProject masterProject )
-        throws RepositoryAssemblyException
-    {
-        String type = artifact.getType();
-        Map<String, MavenProject> refs = masterProject.getProjectReferences();
-
-        String projectKey = ArtifactUtils.versionlessKey( artifact );
-
-        MavenProject p;
-        if ( artifact == masterProject.getArtifact() )
-        {
-            p = masterProject;
-        }
-        else if ( refs.containsKey( projectKey ) )
-        {
-            p = refs.get( projectKey );
-        }
-        else
-        {
-            try
-            {
-                artifact.isSnapshot();
-
-                Artifact pomArtifact =
-                    artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                           artifact.getBaseVersion() );
-
-                getLogger().debug( "Building MavenProject instance for: " + pomArtifact
-                                       + ". NOTE: This SHOULD BE available in the Artifact API! ...but it's not." );
-                p = projectBuilder.buildFromRepository( pomArtifact, remoteArtifactRepositories, localRepository );
-            }
-            catch ( ProjectBuildingException e )
-            {
-                throw new RepositoryAssemblyException( "Error reading POM for: " + artifact.getId(), e );
-            }
-        }
-
-        // if we're dealing with a POM artifact, then we've already copied the POM itself; only process ancestry.
-        // NOTE: We need to preserve the original artifact for comparison here.
-        if ( "pom".equals( type ) )
-        {
-            p = p.getParent();
-        }
-
-        while ( p != null )
-        {
-            Artifact destArtifact =
-                artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(), p.getVersion() );
-
-            setAlignment( destArtifact, groupVersionAlignments );
-
-            File sourceFile = p.getFile();
-
-            // try to use the POM file from the project instance itself first.
-            if ( ( sourceFile == null ) || !sourceFile.exists() )
-            {
-                // something that hasn't been realigned yet...we want to read from the original location.
-                Artifact srcArtifact =
-                    artifactFactory.createProjectArtifact( p.getGroupId(), p.getArtifactId(), p.getVersion() );
-
-                sourceFile = new File( localRepository.getBasedir(), localRepository.pathOf( srcArtifact ) );
-            }
-
-            if ( !sourceFile.exists() )
-            {
-                break;
-            }
-
-            File targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( destArtifact ) );
-
-            try
-            {
-                FileUtils.copyFile( sourceFile, targetFile );
-            }
-            catch ( IOException e )
-            {
-                throw new RepositoryAssemblyException( "Error writing POM metdata: " + destArtifact.getId(), e );
-            }
-
-            try
-            {
-                writeChecksums( targetFile );
-            }
-            catch ( IOException e )
-            {
-                throw new RepositoryAssemblyException( "Error writing checksums for POM: " + destArtifact.getId(), e );
-            }
-
-            p = p.getParent();
         }
     }
 
