@@ -33,8 +33,6 @@ import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
@@ -49,22 +47,23 @@ import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.TransferUtils;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.artifact.resolve.ArtifactResult;
+import org.apache.maven.shared.dependency.resolve.DependencyResolver;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,7 +74,7 @@ import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,11 +94,8 @@ import static org.apache.commons.codec.digest.DigestUtils.shaHex;
 @Component( role = RepositoryAssembler.class )
 public class DefaultRepositoryAssembler
     extends AbstractLogEnabled
-    implements RepositoryAssembler, Contextualizable
+    implements RepositoryAssembler
 {
-    private static final String[] PREFERRED_RESOLVER_HINTS = { "project-cache-aware", // Provided in Maven 2.1-SNAPSHOT
-        "default" };
-
     protected static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone( "UTC" );
 
     protected static final String UTC_TIMESTAMP_PATTERN = "yyyyMMddHHmmss";
@@ -111,6 +107,7 @@ public class DefaultRepositoryAssembler
     //
     // @plexus.requirement
     //
+    @Requirement
     protected ArtifactResolver artifactResolver;
 
     @Requirement
@@ -125,26 +122,11 @@ public class DefaultRepositoryAssembler
     @Requirement
     protected MavenProjectBuilder projectBuilder;
 
-    public DefaultRepositoryAssembler()
-    {
-        // used for plexus init.
-    }
-
-    public DefaultRepositoryAssembler( ArtifactFactory artifactFactory, ArtifactResolver artifactResolver,
-                                       ArtifactRepositoryLayout repositoryLayout,
-                                       ArtifactRepositoryFactory artifactRepositoryFactory,
-                                       ArtifactMetadataSource metadataSource, MavenProjectBuilder projectBuilder )
-    {
-        // used for testing, primarily.
-        this.artifactFactory = artifactFactory;
-        this.artifactResolver = artifactResolver;
-        this.repositoryLayout = repositoryLayout;
-        this.artifactRepositoryFactory = artifactRepositoryFactory;
-        this.metadataSource = metadataSource;
-        this.projectBuilder = projectBuilder;
-
-        enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, getClass().getName() + "::Internal" ) );
-    }
+    @Requirement
+    private DependencyResolver dependencyResolver;
+    
+    @Requirement
+    private RepositoryManager repositoryManager;
 
     public void buildRemoteRepository( File repositoryDirectory, RepositoryInfo repository,
                                        RepositoryBuilderConfigSource configSource )
@@ -152,17 +134,13 @@ public class DefaultRepositoryAssembler
     {
         MavenProject project = configSource.getProject();
         ArtifactRepository localRepository = configSource.getLocalRepository();
+        ProjectBuildingRequest buildingRequest = configSource.getProjectBuildingRequest();
 
-        Map<String, GroupVersionAlignment> groupVersionAlignments =
-            createGroupVersionAlignments( repository.getGroupVersionAlignments() );
+        Iterable<ArtifactResult> result = null;
 
-        ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
+        Collection<Dependency> dependencies = project.getDependencies();
 
-        ArtifactResolutionResult result = null;
-
-        Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
-
-        if ( dependencyArtifacts == null )
+        if ( dependencies == null )
         {
             Logger logger = getLogger();
 
@@ -174,30 +152,25 @@ public class DefaultRepositoryAssembler
 
             return;
         }
+        
+        Collection<Dependency> managedDependencies = null;
+        if ( project.getDependencyManagement() != null )
+        {
+            managedDependencies = project.getDependencyManagement().getDependencies();
+        }
 
+        // Older Aether versions use an cache which can't be cleared. So can't delete repoDir and use it again.
+        // Instead create a temporary repository, delete it at end (should be in a finally-block)
+        
+        File tempRepo = new File( repositoryDirectory.getParentFile(), repositoryDirectory.getName() + "_tmp" );
+        
+        buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, tempRepo );
+        
         try
         {
-            // i have to get everything first as a filter or transformation here
-            // doesn't seem to work
-            // to align everything. If I use a filter to change the version on
-            // the fly then I get the
-            // I get JARs but no POMs, and in some directories POMs with no
-            // JARs.
-
-            // FIXME I'm not getting runtime dependencies here
-            result = artifactResolver.resolveTransitively( dependencyArtifacts, project.getArtifact(),
-                                                           getManagedVersionMap( project ), localRepository,
-                                                           project.getRemoteArtifactRepositories(), metadataSource );
+            result = dependencyResolver.resolveDependencies( buildingRequest, dependencies, managedDependencies, null );
         }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
-        }
-        catch ( InvalidVersionSpecificationException e )
+        catch ( DependencyResolverException e )
         {
             throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
         }
@@ -215,8 +188,14 @@ public class DefaultRepositoryAssembler
 
         ArtifactFilter filter = buildRepositoryFilter( repository, project );
 
-        assembleRepositoryArtifacts( result, filter, project, localRepository, targetRepository, repositoryDirectory,
-                                     groupVersionAlignments );
+        buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, repositoryDirectory );
+        
+        ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
+
+        Map<String, GroupVersionAlignment> groupVersionAlignments =
+                        createGroupVersionAlignments( repository.getGroupVersionAlignments() );
+
+        assembleRepositoryArtifacts( buildingRequest, result, filter, project, localRepository, targetRepository, groupVersionAlignments );
 
         ArtifactRepository centralRepository = findCentralRepository( project );
 
@@ -227,6 +206,15 @@ public class DefaultRepositoryAssembler
 
         addPomWithAncestry( project.getArtifact(), project.getRemoteArtifactRepositories(), localRepository,
                             targetRepository, groupVersionAlignments, project );
+        
+        try
+        {
+            FileUtils.deleteDirectory( tempRepo );
+        }
+        catch ( IOException e )
+        {
+            // noop
+        }
     }
 
     private ArtifactFilter buildRepositoryFilter( RepositoryInfo repository, MavenProject project )
@@ -288,34 +276,25 @@ public class DefaultRepositoryAssembler
         return filter;
     }
 
-    private void assembleRepositoryArtifacts( ArtifactResolutionResult result, ArtifactFilter filter,
-                                              MavenProject project, ArtifactRepository localRepository,
-                                              ArtifactRepository targetRepository, File repositoryDirectory,
+    private void assembleRepositoryArtifacts( ProjectBuildingRequest buildingRequest, Iterable<ArtifactResult> result,
+                                              ArtifactFilter filter, MavenProject project,
+                                              ArtifactRepository localRepository, ArtifactRepository targetRepository,
                                               Map<String, GroupVersionAlignment> groupVersionAlignments )
-        throws RepositoryAssemblyException
+                                                  throws RepositoryAssemblyException
     {
         try
         {
-            // Now that we have the graph, let's try to align it to versions
-            // that we want and remove
-            // the repository we previously populated.
-            FileUtils.deleteDirectory( repositoryDirectory );
-
-            FileUtils.mkdir( repositoryDirectory.getAbsolutePath() );
-
-            for ( Artifact a : result.getArtifacts() )
+            for ( ArtifactResult ar : result )
             {
+                Artifact a = ar.getArtifact();
+                
                 if ( filter.include( a ) )
                 {
                     getLogger().debug( "Re-resolving: " + a + " for repository assembly." );
 
                     setAlignment( a, groupVersionAlignments );
 
-                    // We need to flip it back to not being resolved so we can
-                    // look for it again!
-                    a.setResolved( false );
-
-                    artifactResolver.resolve( a, project.getRemoteArtifactRepositories(), localRepository );
+                    artifactResolver.resolveArtifact( buildingRequest, TransferUtils.toArtifactCoordinate( a ) );
 
                     a.setVersion( a.getBaseVersion() );
 
@@ -329,11 +308,7 @@ public class DefaultRepositoryAssembler
                 }
             }
         }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
-        }
-        catch ( ArtifactNotFoundException e )
+        catch ( ArtifactResolverException e )
         {
             throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
         }
@@ -452,12 +427,14 @@ public class DefaultRepositoryAssembler
         return centralRepository;
     }
 
-    private void assembleRepositoryMetadata( ArtifactResolutionResult result, ArtifactFilter filter,
+    private void assembleRepositoryMetadata( Iterable<ArtifactResult> result, ArtifactFilter filter,
                                              ArtifactRepository centralRepository, ArtifactRepository targetRepository )
         throws RepositoryAssemblyException
     {
-        for ( Artifact a : result.getArtifacts() )
+        for ( ArtifactResult ar : result )
         {
+            Artifact a = ar.getArtifact();
+            
             if ( filter.include( a ) )
             {
                 Versioning v = new Versioning();
@@ -626,101 +603,6 @@ public class DefaultRepositoryAssembler
             {
                 artifact.setVersion( alignment.getVersion() );
             }
-        }
-    }
-
-    // TODO: Remove this, once we can depend on Maven 2.0.7 or later...in which
-    // MavenProject.getManagedVersionMap() exists. This is from MNG-1577.
-    private Map<String, Artifact> getManagedVersionMap( MavenProject project )
-        throws InvalidVersionSpecificationException
-    {
-        DependencyManagement dependencyManagement = project.getModel().getDependencyManagement();
-
-        Map<String, Artifact> map;
-        List<Dependency> deps = ( dependencyManagement == null ) ? null : dependencyManagement.getDependencies();
-        if ( ( deps != null ) && ( deps.size() > 0 ) )
-        {
-            map = new HashMap<String, Artifact>();
-
-            if ( getLogger().isDebugEnabled() )
-            {
-                getLogger().debug( "Adding managed dependencies for " + project.getId() );
-            }
-
-            for ( Dependency d : dependencyManagement.getDependencies() )
-            {
-                VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
-                Artifact artifact =
-                    artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(), versionRange,
-                                                              d.getType(), d.getClassifier(), d.getScope(),
-                                                              d.isOptional() );
-                if ( getLogger().isDebugEnabled() )
-                {
-                    getLogger().debug( "  " + artifact );
-                }
-
-                // If the dependencyManagement section listed exclusions,
-                // add them to the managed artifacts here so that transitive
-                // dependencies will be excluded if necessary.
-                if ( ( null != d.getExclusions() ) && !d.getExclusions().isEmpty() )
-                {
-                    List<String> exclusions = new ArrayList<String>();
-                    for ( Exclusion e : d.getExclusions() )
-                    {
-                        exclusions.add( e.getGroupId() + ":" + e.getArtifactId() );
-                    }
-                    ExcludesArtifactFilter eaf = new ExcludesArtifactFilter( exclusions );
-                    artifact.setDependencyFilter( eaf );
-                }
-                else
-                {
-                    artifact.setDependencyFilter( null );
-                }
-                map.put( d.getManagementKey(), artifact );
-            }
-        }
-        else
-        {
-            map = Collections.emptyMap();
-        }
-        return map;
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        PlexusContainer container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-
-        for ( String hint : PREFERRED_RESOLVER_HINTS )
-        {
-            try
-            {
-                artifactResolver = container.lookup( ArtifactResolver.class, hint );
-                break;
-            }
-            catch ( ComponentLookupException e )
-            {
-                getLogger().debug( "No ArtifactResolver with hint " + hint );
-            }
-        }
-
-        if ( artifactResolver == null )
-        {
-            try
-            {
-                artifactResolver = container.lookup( ArtifactResolver.class );
-            }
-            catch ( ComponentLookupException e )
-            {
-                getLogger().debug( "Cannot find ArtifactResolver with no hint.", e );
-            }
-        }
-
-        if ( artifactResolver == null )
-        {
-            throw new ContextException(
-                "Failed to lookup a valid ArtifactResolver implementation. Tried hints:\n" + Arrays.asList(
-                    PREFERRED_RESOLVER_HINTS ) );
         }
     }
 }
