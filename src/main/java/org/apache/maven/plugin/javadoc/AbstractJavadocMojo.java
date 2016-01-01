@@ -1683,8 +1683,8 @@ public abstract class AbstractJavadocMojo
     private transient List<JavadocBundle> dependencyJavadocBundles;
 
     /**
-     * capability to add optionnal dependencies to the javadoc classpath.
-     * Exemple:
+     * Capability to add additional dependencies to the javadoc classpath.
+     * Example:
      * <pre>
      * &lt;additionalDependencies&gt;
      *   &lt;additionalDependency&gt;
