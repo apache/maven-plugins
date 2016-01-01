@@ -20,7 +20,6 @@ package org.apache.maven.plugins.assembly.repository;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
@@ -91,13 +90,6 @@ public class DefaultRepositoryAssembler
     protected static final String UTC_TIMESTAMP_PATTERN = "yyyyMMddHHmmss";
 
     @Requirement
-    protected ArtifactFactory artifactFactory;
-
-    // Replaced by Contextualizable code, to select the resolver in order of preference.
-    //
-    // @plexus.requirement
-    //
-    @Requirement
     protected ArtifactResolver artifactResolver;
 
     @Requirement
@@ -105,9 +97,6 @@ public class DefaultRepositoryAssembler
 
     @Requirement
     protected ArtifactRepositoryFactory artifactRepositoryFactory;
-
-    @Requirement
-    protected ArtifactMetadataSource metadataSource;
 
     @Requirement
     protected MavenProjectBuilder projectBuilder;
