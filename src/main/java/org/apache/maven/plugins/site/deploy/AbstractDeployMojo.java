@@ -209,8 +209,10 @@ public abstract class AbstractDeployMojo
         {
             topDistributionManagementSiteUrl = determineTopDistributionManagementSiteUrl();
 
-            getLog().debug( "top distributionManagement.site.url=" + topDistributionManagementSiteUrl
-                                + ", actual module relative path: " + getDeployModuleDirectory() );
+            if ( !isDeploy() )
+            {
+                getLog().debug( "distributionManagement.site.url relative path: " + getDeployModuleDirectory() );
+            }
         }
         return topDistributionManagementSiteUrl;
     }
