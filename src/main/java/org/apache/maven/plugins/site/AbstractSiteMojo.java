@@ -35,7 +35,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Base class for site mojos.
@@ -93,42 +92,6 @@ public abstract class AbstractSiteMojo
      */
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     protected List<MavenProject> reactorProjects;
-
-    /**
-     * Specifies the input encoding.
-     *
-     * @since 2.3
-     */
-    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
-    private String inputEncoding;
-
-    /**
-     * Specifies the output encoding.
-     *
-     * @since 2.3
-     */
-    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
-    private String outputEncoding;
-
-    /**
-     * Gets the input files encoding.
-     *
-     * @return The input files encoding, never <code>null</code>.
-     */
-    protected String getInputEncoding()
-    {
-        return ( inputEncoding == null ) ? ReaderFactory.ISO_8859_1 : inputEncoding;
-    }
-
-    /**
-     * Gets the effective reporting output files encoding.
-     *
-     * @return The effective reporting output file encoding, never <code>null</code>.
-     */
-    protected String getOutputEncoding()
-    {
-        return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
-    }
 
     /**
      * Check the current Maven version to see if it's Maven 3.0 or newer.

@@ -53,12 +53,14 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.reporting.exec.ReportPlugin;
+import org.apache.maven.shared.utils.StringUtils;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Base class for site rendering mojos.
@@ -190,6 +192,42 @@ public abstract class AbstractSiteRenderingMojo
     private boolean generateProjectInfo;
 
     /**
+     * Specifies the input encoding.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
+    private String inputEncoding;
+
+    /**
+     * Specifies the output encoding.
+     *
+     * @since 2.3
+     */
+    @Parameter( property = "outputEncoding", defaultValue = "${project.reporting.outputEncoding}" )
+    private String outputEncoding;
+
+    /**
+     * Gets the input files encoding.
+     *
+     * @return The input files encoding, never <code>null</code>.
+     */
+    protected String getInputEncoding()
+    {
+        return ( StringUtils.isEmpty( inputEncoding ) ) ? ReaderFactory.FILE_ENCODING : inputEncoding;
+    }
+
+    /**
+     * Gets the effective reporting output files encoding.
+     *
+     * @return The effective reporting output file encoding, never <code>null</code>.
+     */
+    protected String getOutputEncoding()
+    {
+        return ( outputEncoding == null ) ? ReaderFactory.UTF_8 : outputEncoding;
+    }
+
+    /**
      * Whether to save Velocity processed Doxia content (<code>*.<ext>.vm</code>)
      * to <code>${generatedSiteDirectory}/processed</code>.
      *
@@ -203,6 +241,15 @@ public abstract class AbstractSiteRenderingMojo
         throws ContextException
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
+    protected void checkInputEncoding()
+    {
+        if ( StringUtils.isEmpty( inputEncoding ) )
+        {
+            getLog().warn( "Input file encoding has not been set, using platform encoding "
+                + ReaderFactory.FILE_ENCODING + ", i.e. build is platform dependent!" );
+        }
     }
 
     protected List<MavenReportExecution> getReports()

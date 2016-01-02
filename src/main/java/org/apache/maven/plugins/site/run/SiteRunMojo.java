@@ -76,6 +76,8 @@ public class SiteRunMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        checkInputEncoding();
+
         Server server = new Server();
         server.setStopAtShutdown( true );
 
