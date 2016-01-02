@@ -19,8 +19,27 @@ package org.apache.maven.plugins.assembly.repository;
  * under the License.
  */
 
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.codec.digest.DigestUtils.shaHex;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
@@ -55,26 +74,6 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-
-import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.codec.digest.DigestUtils.shaHex;
-
 /**
  * @author Jason van Zyl
  */
@@ -103,13 +102,13 @@ public class DefaultRepositoryAssembler
 
     @Requirement
     private DependencyResolver dependencyResolver;
-    
+
     @Requirement
     private RepositoryManager repositoryManager;
 
     public void buildRemoteRepository( File repositoryDirectory, RepositoryInfo repository,
                                        RepositoryBuilderConfigSource configSource )
-        throws RepositoryAssemblyException
+                                           throws RepositoryAssemblyException
     {
         MavenProject project = configSource.getProject();
         ArtifactRepository localRepository = configSource.getLocalRepository();
@@ -126,12 +125,12 @@ public class DefaultRepositoryAssembler
             if ( logger.isDebugEnabled() )
             {
                 logger.debug( "dependency-artifact set for project: " + project.getId()
-                                  + " is null. Skipping repository processing." );
+                    + " is null. Skipping repository processing." );
             }
 
             return;
         }
-        
+
         Collection<Dependency> managedDependencies = null;
         if ( project.getDependencyManagement() != null )
         {
@@ -140,11 +139,11 @@ public class DefaultRepositoryAssembler
 
         // Older Aether versions use an cache which can't be cleared. So can't delete repoDir and use it again.
         // Instead create a temporary repository, delete it at end (should be in a finally-block)
-        
+
         File tempRepo = new File( repositoryDirectory.getParentFile(), repositoryDirectory.getName() + "_tmp" );
-        
+
         buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, tempRepo );
-        
+
         try
         {
             result = dependencyResolver.resolveDependencies( buildingRequest, dependencies, managedDependencies, null );
@@ -168,11 +167,11 @@ public class DefaultRepositoryAssembler
         ArtifactFilter filter = buildRepositoryFilter( repository, project );
 
         buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, repositoryDirectory );
-        
+
         ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
 
         Map<String, GroupVersionAlignment> groupVersionAlignments =
-                        createGroupVersionAlignments( repository.getGroupVersionAlignments() );
+            createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         assembleRepositoryArtifacts( buildingRequest, result, filter, project, localRepository, targetRepository,
                                      groupVersionAlignments );
@@ -264,7 +263,7 @@ public class DefaultRepositoryAssembler
             for ( ArtifactResult ar : result )
             {
                 Artifact a = ar.getArtifact();
-                
+
                 if ( filter.include( a ) )
                 {
                     getLogger().debug( "Re-resolving: " + a + " for repository assembly." );
@@ -308,12 +307,12 @@ public class DefaultRepositoryAssembler
 
     private void assembleRepositoryMetadata( Iterable<ArtifactResult> result, ArtifactFilter filter,
                                              ArtifactRepository centralRepository, ArtifactRepository targetRepository )
-        throws RepositoryAssemblyException
+                                                 throws RepositoryAssemblyException
     {
         for ( ArtifactResult ar : result )
         {
             Artifact a = ar.getArtifact();
-            
+
             if ( filter.include( a ) )
             {
                 Versioning v = new Versioning();
