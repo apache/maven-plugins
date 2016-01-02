@@ -118,6 +118,8 @@ public class SiteMojo
             getLog().debug( "executing Site Mojo" );
         }
 
+        checkInputEncoding();
+
         List<MavenReportExecution> reports;
         if ( generateReports )
         {
