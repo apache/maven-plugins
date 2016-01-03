@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.descriptor;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.FileUtils;
  */
 @Mojo( name = "attach-descriptor", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
 public class SiteDescriptorAttachMojo
-    extends AbstractSiteMojo
+    extends AbstractSiteDescriptorMojo
 {
     /**
      */

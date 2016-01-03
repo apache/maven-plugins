@@ -31,11 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
-import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.siterenderer.DocumentRenderer;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.RendererException;
@@ -47,7 +45,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.site.AbstractSiteMojo;
+import org.apache.maven.plugins.site.descriptor.AbstractSiteDescriptorMojo;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
@@ -69,7 +67,7 @@ import org.codehaus.plexus.util.ReaderFactory;
  * @version $Id$
  */
 public abstract class AbstractSiteRenderingMojo
-    extends AbstractSiteMojo implements Contextualizable
+    extends AbstractSiteDescriptorMojo implements Contextualizable
 {
     /**
      * Module type exclusion mappings
@@ -89,20 +87,6 @@ public abstract class AbstractSiteRenderingMojo
      */
     @Parameter
     private Map<String, String> moduleExcludes;
-
-    /**
-     * The component for assembling inheritance.
-     */
-    @Component
-    private DecorationModelInheritanceAssembler assembler;
-
-    /**
-     * Remote repositories used for the project.
-     *
-     * @todo this is used for site descriptor resolution - it should relate to the actual project but for some reason they are not always filled in
-     */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true )
-    private List<ArtifactRepository> repositories;
 
     /**
      * The location of a Velocity template file to use. When used, skins and the default templates, CSS and images
@@ -170,18 +154,6 @@ public abstract class AbstractSiteRenderingMojo
     private ReportPlugin[] reportPlugins;
 
     private PlexusContainer container;
-
-    /**
-     * Make links in the site descriptor relative to the project URL.
-     * By default, any absolute links that appear in the site descriptor,
-     * e.g. banner hrefs, breadcrumbs, menu links, etc., will be made relative to project.url.
-     * <p/>
-     * Links will not be changed if this is set to false, or if the project has no URL defined.
-     *
-     * @since 2.3
-     */
-    @Parameter( property = "relativizeDecorationLinks", defaultValue = "true" )
-    private boolean relativizeDecorationLinks;
 
     /**
      * Whether to generate the summary page for project reports: project-info.html.
@@ -304,6 +276,7 @@ public abstract class AbstractSiteRenderingMojo
     protected SiteRenderingContext createSiteRenderingContext( Locale locale )
         throws MojoExecutionException, IOException, MojoFailureException
     {
+        DecorationModel decorationModel = prepareDecorationModel( locale );
         if ( attributes == null )
         {
             attributes = new HashMap<String, Object>();
@@ -328,35 +301,6 @@ public abstract class AbstractSiteRenderingMojo
         for ( Map.Entry<Object, Object> entry : project.getProperties().entrySet() )
         {
             attributes.put( (String) entry.getKey(), entry.getValue() );
-        }
-
-        DecorationModel decorationModel;
-        try
-        {
-            decorationModel = siteTool.getDecorationModel( siteDirectory, locale, project, reactorProjects,
-                                                           localRepository, repositories );
-        }
-        catch ( SiteToolException e )
-        {
-            throw new MojoExecutionException( "SiteToolException: " + e.getMessage(), e );
-        }
-
-        if ( relativizeDecorationLinks )
-        {
-            final String url = project.getUrl();
-
-            if ( url == null )
-            {
-                getLog().warn( "No project URL defined - decoration links will not be relativized!" );
-            }
-            else
-            {
-                // MSITE-658
-                final String localeUrl =
-                    locale.equals( Locale.getDefault() ) ? url : url + "/" + locale.getLanguage();
-                getLog().info( "Relativizing decoration links with respect to project URL: " + localeUrl );
-                assembler.resolvePaths( decorationModel, localeUrl );
-            }
         }
 
         SiteRenderingContext context;

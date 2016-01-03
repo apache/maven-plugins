@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.descriptor;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,12 +29,10 @@ import java.util.Date;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
-import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.site.render.AbstractSiteRenderingMojo;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -44,7 +42,7 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Displays the effective site descriptor as an XML for this build, after inheritance and interpolation of
- * <code>site.xml</code>.
+ * <code>site.xml</code>, for the first locale.
  *
  * @author <a href="mailto:hboutemy@apache.org">Hervé Boutemy</a>
  * @version $Id$
@@ -52,7 +50,7 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  */
 @Mojo( name = "effective-site", requiresReports = true )
 public class EffectiveSiteMojo
-    extends AbstractSiteRenderingMojo
+    extends AbstractSiteDescriptorMojo
 {
     /**
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
@@ -68,29 +66,18 @@ public class EffectiveSiteMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        String effectiveSite;
-
-        try
-        {
-            SiteRenderingContext context = createSiteRenderingContext( getLocales().get( 0 ) );
-
-            DecorationModel decorationModel = context.getDecoration();
-
-            StringWriter w = new StringWriter();
-            XMLWriter writer =
-                new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", XmlWriterUtil.DEFAULT_INDENTATION_SIZE ),
-                                          decorationModel.getModelEncoding(), null );
-
-            writeHeader( writer );
-
-            writeEffectiveSite( decorationModel, writer );
-
-            effectiveSite = w.toString();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error during site descriptor calculation", e );
-        }
+        DecorationModel decorationModel = prepareDecorationModel( getLocales().get( 0 ) );
+    
+        StringWriter w = new StringWriter();
+        XMLWriter writer =
+            new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", XmlWriterUtil.DEFAULT_INDENTATION_SIZE ),
+                                      decorationModel.getModelEncoding(), null );
+    
+        writeHeader( writer );
+    
+        writeEffectiveSite( decorationModel, writer );
+    
+        String effectiveSite = w.toString();
 
         if ( output != null )
         {
