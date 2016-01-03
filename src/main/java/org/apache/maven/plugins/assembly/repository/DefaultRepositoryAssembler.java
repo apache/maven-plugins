@@ -156,8 +156,7 @@ public class DefaultRepositoryAssembler
         Map<String, GroupVersionAlignment> groupVersionAlignments =
             createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
-        assembleRepositoryArtifacts( buildingRequest, result, filter, project, localRepository, targetRepository,
-                                     groupVersionAlignments );
+        assembleRepositoryArtifacts( buildingRequest, result, filter, groupVersionAlignments );
 
         ArtifactRepository centralRepository = findCentralRepository( project );
 
@@ -236,8 +235,7 @@ public class DefaultRepositoryAssembler
     }
 
     private void assembleRepositoryArtifacts( ProjectBuildingRequest buildingRequest, Iterable<ArtifactResult> result,
-                                              ArtifactFilter filter, MavenProject project,
-                                              ArtifactRepository localRepository, ArtifactRepository targetRepository,
+                                              ArtifactFilter filter,
                                               Map<String, GroupVersionAlignment> groupVersionAlignments )
                                                   throws RepositoryAssemblyException
     {
@@ -257,7 +255,9 @@ public class DefaultRepositoryAssembler
 
                     a.setVersion( a.getBaseVersion() );
 
-                    File targetFile = new File( targetRepository.getBasedir(), targetRepository.pathOf( a ) );
+                    File targetFile = new File( repositoryManager.getLocalRepositoryBasedir( buildingRequest ),
+                                                repositoryManager.getPathForLocalArtifact( buildingRequest, a ) );
+                    
                     FileUtils.copyFile( a.getFile(), targetFile );
 
                     writeChecksums( targetFile );
