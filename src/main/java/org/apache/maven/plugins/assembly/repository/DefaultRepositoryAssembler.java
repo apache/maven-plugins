@@ -27,7 +27,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,9 +52,7 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.assembly.repository.model.GroupVersionAlignment;
 import org.apache.maven.plugins.assembly.repository.model.RepositoryInfo;
-import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.TransferUtils;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
@@ -96,9 +93,6 @@ public class DefaultRepositoryAssembler
 
     @Requirement
     protected ArtifactRepositoryFactory artifactRepositoryFactory;
-
-    @Requirement
-    protected MavenProjectBuilder projectBuilder;
 
     @Requirement
     private DependencyResolver dependencyResolver;
@@ -151,17 +145,6 @@ public class DefaultRepositoryAssembler
         catch ( DependencyResolverException e )
         {
             throw new RepositoryAssemblyException( "Error resolving artifacts: " + e.getMessage(), e );
-        }
-
-        try
-        {
-            // Blow the cache in the project builder so that we get POMs again
-            // on this next download
-            invalidateProccessedProjectCache();
-        }
-        catch ( Exception e )
-        {
-            throw new RepositoryAssemblyException( "Error invalidating the processed project cache.", e );
         }
 
         ArtifactFilter filter = buildRepositoryFilter( repository, project );
@@ -446,29 +429,6 @@ public class DefaultRepositoryAssembler
         artifactRepositoryFactory.setGlobalChecksumPolicy( globalChecksumPolicy );
 
         return localRepository;
-    }
-
-    private void invalidateProccessedProjectCache()
-        throws Exception
-    {
-        Class<DefaultMavenProjectBuilder> klass = DefaultMavenProjectBuilder.class;
-
-        try
-        {
-            Field field = klass.getDeclaredField( "processedProjectCache" );
-
-            field.setAccessible( true );
-
-            Object cache = field.get( projectBuilder );
-
-            cache.getClass().getDeclaredMethod( "clear", null ).invoke( cache, null );
-
-            field.setAccessible( false );
-        }
-        catch ( NoSuchFieldException e )
-        {
-            // fine... no field, no cache. we'll ignore it.
-        }
     }
 
     private void setAlignment( Artifact artifact, Map<String, GroupVersionAlignment> groupVersionAlignments )
