@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.site;
+package org.apache.maven.plugins.site.descriptor;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
