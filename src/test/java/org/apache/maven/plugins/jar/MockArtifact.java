@@ -116,181 +116,152 @@ class MockArtifact
 
     public String getId()
     {
-        // TODO
         return null;
     }
 
     public String getDependencyConflictId()
     {
-        // TODO
         return null;
     }
 
     public void addMetadata( ArtifactMetadata artifactMetadata )
     {
-        // TODO
+        // intentionally empty.
     }
 
     public Collection getMetadataList()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setRepository( ArtifactRepository artifactRepository )
     {
         //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public ArtifactRepository getRepository()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void updateVersion( String string, ArtifactRepository artifactRepository )
     {
         //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public String getDownloadUrl()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setDownloadUrl( String string )
     {
         //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public ArtifactFilter getDependencyFilter()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setDependencyFilter( ArtifactFilter artifactFilter )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public ArtifactHandler getArtifactHandler()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public List getDependencyTrail()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setDependencyTrail( List list )
     {
         //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public void setScope( String string )
     {
         //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public VersionRange getVersionRange()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setVersionRange( VersionRange versionRange )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void selectVersion( String string )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean isSnapshot()
     {
-        // TODO
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setResolved( boolean b )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean isResolved()
     {
-        // TODO
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setResolvedVersion( String string )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setArtifactHandler( ArtifactHandler artifactHandler )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean isRelease()
     {
-        // TODO
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setRelease( boolean b )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public List getAvailableVersions()
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setAvailableVersions( List list )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean isOptional()
     {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public void setOptional( boolean b )
     {
-        // TODO
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public ArtifactVersion getSelectedVersion()
         throws OverConstrainedVersionException
     {
-        // TODO
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -298,7 +269,6 @@ class MockArtifact
         throws OverConstrainedVersionException
     {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
-        // TODO
     }
 
     public void setGroupId( String groupId )
@@ -323,13 +293,11 @@ class MockArtifact
 
     public int compareTo( Artifact o )
     {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     public ArtifactMetadata getMetadata( Class<?> metadataClass )
     {
-        // TODO Auto-generated method stub
         return null;
     }
 }
