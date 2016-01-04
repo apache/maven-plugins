@@ -19,34 +19,16 @@ package org.apache.maven.plugins.assembly.repository;
  * under the License.
  */
 
-import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.codec.digest.DigestUtils.shaHex;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.artifact.repository.metadata.ArtifactRepositoryMetadata;
-import org.apache.maven.artifact.repository.metadata.Versioning;
-import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Dependency;
@@ -65,7 +47,6 @@ import org.apache.maven.shared.dependency.resolve.DependencyResolver;
 import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.utils.io.FileUtils;
-import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -81,18 +62,8 @@ public class DefaultRepositoryAssembler
     extends AbstractLogEnabled
     implements RepositoryAssembler
 {
-    protected static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone( "UTC" );
-
-    protected static final String UTC_TIMESTAMP_PATTERN = "yyyyMMddHHmmss";
-
     @Requirement
     protected ArtifactResolver artifactResolver;
-
-    @Requirement
-    protected ArtifactRepositoryLayout repositoryLayout;
-
-    @Requirement
-    protected ArtifactRepositoryFactory artifactRepositoryFactory;
 
     @Requirement
     private DependencyResolver dependencyResolver;
@@ -105,7 +76,6 @@ public class DefaultRepositoryAssembler
                                            throws RepositoryAssemblyException
     {
         MavenProject project = configSource.getProject();
-        ArtifactRepository localRepository = configSource.getLocalRepository();
         ProjectBuildingRequest buildingRequest = configSource.getProjectBuildingRequest();
 
         Iterable<ArtifactResult> result = null;
@@ -151,18 +121,14 @@ public class DefaultRepositoryAssembler
 
         buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, repositoryDirectory );
 
-        ArtifactRepository targetRepository = createLocalRepository( repositoryDirectory );
-
         Map<String, GroupVersionAlignment> groupVersionAlignments =
             createGroupVersionAlignments( repository.getGroupVersionAlignments() );
 
         assembleRepositoryArtifacts( buildingRequest, result, filter, groupVersionAlignments );
 
-        ArtifactRepository centralRepository = findCentralRepository( project );
-
         if ( repository.isIncludeMetadata() )
         {
-            assembleRepositoryMetadata( result, filter, centralRepository, targetRepository );
+//            assembleRepositoryMetadata( result, filter, centralRepository, targetRepository );
         }
 
         try
@@ -260,7 +226,7 @@ public class DefaultRepositoryAssembler
                     
                     FileUtils.copyFile( a.getFile(), targetFile );
 
-                    writeChecksums( targetFile );
+//                    writeChecksums( targetFile );
                 }
             }
         }
@@ -272,103 +238,6 @@ public class DefaultRepositoryAssembler
         {
             throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
         }
-    }
-
-    private ArtifactRepository findCentralRepository( MavenProject project )
-    {
-        ArtifactRepository centralRepository = null;
-        for ( ArtifactRepository r : project.getRemoteArtifactRepositories() )
-        {
-            if ( "central".equals( r.getId() ) )
-            {
-                centralRepository = r;
-            }
-        }
-
-        return centralRepository;
-    }
-
-    private void assembleRepositoryMetadata( Iterable<ArtifactResult> result, ArtifactFilter filter,
-                                             ArtifactRepository centralRepository, ArtifactRepository targetRepository )
-                                                 throws RepositoryAssemblyException
-    {
-        for ( ArtifactResult ar : result )
-        {
-            Artifact a = ar.getArtifact();
-
-            if ( filter.include( a ) )
-            {
-                Versioning v = new Versioning();
-
-                v.setRelease( a.getVersion() );
-
-                v.setLatest( a.getVersion() );
-
-                v.addVersion( a.getVersion() );
-
-                v.setLastUpdated( getUtcDateFormatter().format( new Date() ) );
-
-                ArtifactRepositoryMetadata metadata = new ArtifactRepositoryMetadata( a, v );
-                String path = targetRepository.pathOfLocalRepositoryMetadata( metadata, centralRepository );
-                File metadataFile = new File( targetRepository.getBasedir(), path );
-
-                MetadataXpp3Writer metadataWriter = new MetadataXpp3Writer();
-
-                Writer writer = null;
-                try
-                {
-                    writer = new FileWriter( metadataFile );
-
-                    metadataWriter.write( writer, metadata.getMetadata() );
-                }
-                catch ( IOException e )
-                {
-                    throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
-                }
-                finally
-                {
-                    IOUtil.close( writer );
-                }
-
-                try
-                {
-                    writeChecksums( metadataFile );
-
-                    File metadataFileRemote = new File( targetRepository.getBasedir(),
-                                                        targetRepository.pathOfRemoteRepositoryMetadata( metadata ) );
-
-                    FileUtils.copyFile( metadataFile, metadataFileRemote );
-
-                    FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".sha1" ),
-                                        new File( metadataFileRemote.getParentFile(),
-                                                  metadataFileRemote.getName() + ".sha1" ) );
-
-                    FileUtils.copyFile( new File( metadataFile.getParentFile(), metadataFile.getName() + ".md5" ),
-                                        new File( metadataFileRemote.getParentFile(),
-                                                  metadataFileRemote.getName() + ".md5" ) );
-                }
-                catch ( IOException e )
-                {
-                    throw new RepositoryAssemblyException( "Error writing artifact metdata.", e );
-                }
-            }
-        }
-    }
-
-    private void writeChecksums( File file )
-        throws IOException, RepositoryAssemblyException
-    {
-        FileInputStream data = new FileInputStream( file );
-        String md5 = md5Hex( data ).toUpperCase();
-        data.close();
-        FileInputStream data1 = new FileInputStream( file );
-        String sha1 = shaHex( data1 ).toUpperCase();
-        data1.close();
-
-        FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(),
-                             md5.toLowerCase() );
-        FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".sha1" ).getAbsolutePath(),
-                             sha1.toLowerCase() );
     }
 
     // CHECKSTYLE_OFF: LineLength
@@ -386,49 +255,6 @@ public class DefaultRepositoryAssembler
         }
 
         return groupVersionAlignments;
-    }
-
-    protected static DateFormat getUtcDateFormatter()
-    {
-        DateFormat utcDateFormatter = new SimpleDateFormat( UTC_TIMESTAMP_PATTERN );
-        utcDateFormatter.setTimeZone( UTC_TIME_ZONE );
-        return utcDateFormatter;
-    }
-
-    protected ArtifactRepository createLocalRepository( File directory )
-    {
-        String localRepositoryUrl = directory.getAbsolutePath();
-
-        if ( !localRepositoryUrl.startsWith( "file:" ) )
-        {
-            localRepositoryUrl = "file://" + localRepositoryUrl;
-        }
-
-        return createRepository( "local", localRepositoryUrl, false, true,
-                                 ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN );
-    }
-
-    public ArtifactRepository createRepository( String repositoryId, String repositoryUrl, boolean offline,
-                                                boolean updateSnapshots, String globalChecksumPolicy )
-    {
-        ArtifactRepository localRepository =
-            new DefaultArtifactRepository( repositoryId, repositoryUrl, repositoryLayout );
-
-        boolean snapshotPolicySet = false;
-
-        if ( offline )
-        {
-            snapshotPolicySet = true;
-        }
-
-        if ( !snapshotPolicySet && updateSnapshots )
-        {
-            artifactRepositoryFactory.setGlobalUpdatePolicy( ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS );
-        }
-
-        artifactRepositoryFactory.setGlobalChecksumPolicy( globalChecksumPolicy );
-
-        return localRepository;
     }
 
     private void setAlignment( Artifact artifact, Map<String, GroupVersionAlignment> groupVersionAlignments )

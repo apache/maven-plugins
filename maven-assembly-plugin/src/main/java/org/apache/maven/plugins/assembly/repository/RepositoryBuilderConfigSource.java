@@ -19,7 +19,6 @@ package org.apache.maven.plugins.assembly.repository;
  * under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 
@@ -31,8 +30,6 @@ public interface RepositoryBuilderConfigSource
 
     MavenProject getProject();
 
-    ArtifactRepository getLocalRepository();
-    
     ProjectBuildingRequest getProjectBuildingRequest();
 
 }

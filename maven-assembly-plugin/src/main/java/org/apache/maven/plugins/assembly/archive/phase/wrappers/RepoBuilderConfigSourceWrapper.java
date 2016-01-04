@@ -19,7 +19,6 @@ package org.apache.maven.plugins.assembly.archive.phase.wrappers;
  * under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugins.assembly.repository.RepositoryBuilderConfigSource;
 import org.apache.maven.project.MavenProject;
@@ -37,12 +36,6 @@ public class RepoBuilderConfigSourceWrapper
     public RepoBuilderConfigSourceWrapper( AssemblerConfigurationSource configSource )
     {
         this.configSource = configSource;
-    }
-
-    @Override
-    public ArtifactRepository getLocalRepository()
-    {
-        return configSource.getLocalRepository();
     }
 
     @Override
