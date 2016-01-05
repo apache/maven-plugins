@@ -533,8 +533,9 @@ public class DefaultRepositoryAssembler
                              sha1.toLowerCase() );
     }
 
-    protected Map<String, GroupVersionAlignment> createGroupVersionAlignments(
-            List<GroupVersionAlignment> versionAlignments )
+    // CHECKSTYLE_OFF: LineLength
+    protected Map<String, GroupVersionAlignment> createGroupVersionAlignments( List<GroupVersionAlignment> versionAlignments )
+    // CHECKSTYLE_ON: LineLength
     {
         Map<String, GroupVersionAlignment> groupVersionAlignments = new HashMap<String, GroupVersionAlignment>();
 
