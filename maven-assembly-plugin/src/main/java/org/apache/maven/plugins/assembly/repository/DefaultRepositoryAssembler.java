@@ -85,7 +85,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
-import static org.apache.commons.codec.digest.DigestUtils.shaHex;
+import static org.apache.commons.codec.digest.DigestUtils.sha1Hex;
 
 /**
  * @author Jason van Zyl
@@ -524,7 +524,7 @@ public class DefaultRepositoryAssembler
         String md5 = md5Hex( data ).toUpperCase();
         data.close();
         FileInputStream data1 = new FileInputStream( file );
-        String sha1 = shaHex( data1 ).toUpperCase();
+        String sha1 = sha1Hex( data1 ).toUpperCase();
         data1.close();
 
         FileUtils.fileWrite( new File( file.getParentFile(), file.getName() + ".md5" ).getAbsolutePath(),
