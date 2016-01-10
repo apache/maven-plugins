@@ -177,16 +177,20 @@ public abstract class AbstractInvokerMojo
     @Parameter
     private File cloneProjectsTo;
 
+// CHECKSTYLE_OFF: LineLength
     /**
      * Some files are normally excluded when copying the IT projects from the directory specified by the parameter
      * projectsDirectory to the directory given by cloneProjectsTo (e.g. <code>.svn</code>, <code>CVS</code>,
-     * <code>*~</code>, etc). Setting this parameter to <code>true</code> will cause all files to be copied to the
-     * cloneProjectsTo directory.
+     * <code>*~</code>, etc: see <a href=
+     * "https://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/AbstractScanner.html#DEFAULTEXCLUDES">
+     * reference</a> for full list). Setting this parameter to <code>true</code> will cause all files to be copied to
+     * the <code>cloneProjectsTo</code> directory.
      *
      * @since 1.2
      */
     @Parameter( defaultValue = "false" )
     private boolean cloneAllFiles;
+// CHECKSTYLE_ON: LineLength
 
     /**
      * Ensure the {@link #cloneProjectsTo} directory is not polluted with files from earlier invoker runs.
