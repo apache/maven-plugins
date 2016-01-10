@@ -19,29 +19,30 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.plugins.site.its</groupId>
-  <artifactId>interpolation-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <parent>
+    <groupId>org.apache.maven.plugins.site.its.inheritance-interpolation</groupId>
+    <artifactId>repo-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>relative-parent</artifactId>
   <packaging>pom</packaging>
 
-  <name>site-interpolation IT - parent</name>
-
-  <properties>
-    <interpolated>pom-interpolation</interpolated>
-    <site.server>site-deploy</site.server>
-    <site.repository>file://@project.build.directory@/it/${interpolated}/target/site-deployed/parent/</site.repository>
-  </properties>
-
-  <distributionManagement>
-    <site>
-      <id>${site.server}</id>
-      <url>${site.repository}</url>
-    </site>
-  </distributionManagement>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <generateReports>false</generateReports>
+          <saveProcessedContent>true</saveProcessedContent>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
