@@ -1,0 +1,77 @@
+ -----
+ POM Inheritance and Interpolation
+ -----
+ Hervé Boutemy
+ -----
+ 2015-12-31
+ -----
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+POM Inheritance and Interpolation
+
+  Since maven-site-plugin uses parent projects values, we need to be sure they have been
+  properly interpolated, which is not necessary to general Maven use: outside the reactor, Maven core
+  may not do the interpolation job but stop at inheritance step (yet to be proven, but there is
+  code in Doxia Sitetools that does workaround against such things, without IT to prove when it
+  is/was useful).
+
+  Then maven-site-plugin does project interpolation itself in Doxia Sitetools,
+  where usually it relies on core work already done.
+
+* Usual Field Inheritance and Interpolation
+
+  Usual fields (not urls) are inherited "as-is" from parent POM to child, then interpolated at the end.
+
+  This test shows the value of a property that has been defined in parent pom with a value containing
+  <<<$\{project.artifactId}>>> expression: here are values at runtime when iterating from project
+  to parent:
+
+#set( $p = $project )
+*-------*------*-------*
+|| level || artifactId || <<<prop>>> property value ||
+*-------+------+--------+
+#foreach( $i in [1..4] )
+#if( $p )|    $i| <<<$p.artifactId>>> | <<<$p.properties.getProperty("prop")>>>
+*-------+------+--------+
+#set( $p = $p.parent )#end
+#end
+
+
+* Url Field Inheritance and Interpolation
+
+  Url fields (<<<project.url>>>, <<<project.scm.connection>>>, <<<project.scm.developerConnection>>>,
+  <<<project.scm.url>>> and <<<project.distributionManagement.site.url>>>)
+  are inherited with the addition of artifactId, then interpolated at the end: see
+  {{{http://maven.apache.org/ref/3-LATEST/maven-model-builder/} reference documentation}}.
+
+  Same test with <<<project.url>>>: top parent defines url with a property that is
+  not defined, then property is defined in some childs:
+
+#set( $p = $project )
+*-------*------*-------*
+|| level || artifactId || <<<project.url>>> value ||
+*-------+------+--------+
+#foreach( $i in [1..4] )
+#if( $p )|    $i| <<<$p.artifactId>>> | <<<$p.url>>>
+*-------+------+--------+
+#set( $p = $p.parent )#end
+#end
