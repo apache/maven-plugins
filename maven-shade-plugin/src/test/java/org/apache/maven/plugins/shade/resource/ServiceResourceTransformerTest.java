@@ -52,7 +52,8 @@ public class ServiceResourceTransformerTest {
         String content = "org.foo.Service\n";
         byte[] contentBytes = content.getBytes( "UTF-8" );
         InputStream contentStream = new ByteArrayInputStream( contentBytes );
-        String contentResource = "META-INF/services/org.something.another";
+        String contentResource = "META-INF/services/org.foo.something.another";
+        String contentResourceShaded = "META-INF/services/borg.foo.something.another";
 
         ServicesResourceTransformer xformer = new ServicesResourceTransformer();
         xformer.processResource( contentResource, contentStream, relocators );
@@ -67,7 +68,7 @@ public class ServiceResourceTransformerTest {
             jos.close();
             jos = null;
             JarFile jarFile = new JarFile( tempJar );
-            JarEntry jarEntry = jarFile.getJarEntry( contentResource );
+            JarEntry jarEntry = jarFile.getJarEntry( contentResourceShaded );
             assertNotNull( jarEntry );
             InputStream entryStream = jarFile.getInputStream( jarEntry );
             try {
