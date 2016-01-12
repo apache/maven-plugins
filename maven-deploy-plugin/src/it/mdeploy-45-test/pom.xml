@@ -25,11 +25,12 @@ under the License.
   <groupId>org.apache.maven.its.deploy.45</groupId>
   <artifactId>test</artifactId>
   <version>0.1</version>
-  <packaging>war</packaging>
+  <!-- war to pom, see MDEPLOY-205 -->  
+  <packaging>pom</packaging>
 
   <name>MDEPLOY-45</name>
   <description>sample web project with classified artifact output</description>
-  <url>http://jira.codehaus.org/browse/MDEPLOY-45</url>
+  <url>https://issues.apache.org/jira/browse/MDEPLOY-45</url>
 
   <properties>
    <mdp45.artifact.classifier>mdp45</mdp45.artifact.classifier>
@@ -51,19 +52,40 @@ under the License.
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>war</goal>
+            </goals>
+          </execution> 
+        </executions>
+        <configuration>
+          <!-- this will cause an error  -->
+          <classifier>${mdp45.artifact.classifier}</classifier>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
           <!-- because i don't know your distribution management, deployments will be written to ${basedir}/target -->
           <altDeploymentRepository>mine::default::file://${basedir}/target</altDeploymentRepository>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <!-- this will cause an error  -->
-          <classifier>${mdp45.artifact.classifier}</classifier>
         </configuration>
       </plugin>
     </plugins>

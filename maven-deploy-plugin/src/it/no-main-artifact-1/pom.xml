@@ -25,6 +25,7 @@ under the License.
   <groupId>org.apache.maven.its.deploy.nma1</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
+  <!-- jar to pom, see MDEPLOY-205 -->
   <packaging>jar</packaging>
 
   <description>

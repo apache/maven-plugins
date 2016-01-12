@@ -235,26 +235,13 @@ public class DeployMojo
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
-                    getLog().info( "No primary artifact to deploy, deploying attached artifacts instead." );
-
-                    Artifact pomArtifact =
-                        artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                               artifact.getBaseVersion() );
-                    pomArtifact.setFile( pomFile );
-                    if ( request.isUpdateReleaseInfo() )
-                    {
-                        pomArtifact.setRelease( true );
-                    }
-
-                    deployableArtifacts.add( pomArtifact );
-
-                    // propagate the timestamped version to the main artifact for the attached artifacts to pick it up
-                    artifact.setResolvedVersion( pomArtifact.getVersion() );
+                    throw new MojoExecutionException( "The packaging plugin for this project did not assign "
+                                   + "a main file to the project but it has attachments. Change packaging to 'pom'." );
                 }
                 else
                 {
-                    String message = "The packaging for this project did not assign a file to the build artifact";
-                    throw new MojoExecutionException( message );
+                    throw new MojoExecutionException( "The packaging for this project did not assign "
+                        + "a file to the build artifact" );
                 }
             }
 

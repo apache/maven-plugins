@@ -54,6 +54,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuildingHelper;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 import org.apache.maven.shared.repository.RepositoryManager;
@@ -214,6 +215,9 @@ public class DeployFileMojo
     
     @Component
     private RepositoryManager repoManager;
+    
+    @Component
+    private ProjectBuildingHelper projectBuildingHelper;
     
     void initProperties()
         throws MojoExecutionException
