@@ -274,7 +274,7 @@ public class InstallFileMojo
         }
 
         validateArtifactInformation();
-
+        
         Artifact artifact =
             artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
 
@@ -526,24 +526,6 @@ public class InstallFileMojo
         }
     }
 
-    /**
-     * @return the localRepositoryPath
-     */
-    @SuppressWarnings( "UnusedDeclaration" )
-    public File getLocalRepositoryPath()
-    {
-        return this.localRepositoryPath;
-    }
-
-    /**
-     * @param theLocalRepositoryPath the localRepositoryPath to set
-     */
-    public void setLocalRepositoryPath( File theLocalRepositoryPath )
-    {
-        this.localRepositoryPath = theLocalRepositoryPath;
-    }
-
-    
     private static class InstallModelProblemCollector implements ModelProblemCollector
     {
         /** */

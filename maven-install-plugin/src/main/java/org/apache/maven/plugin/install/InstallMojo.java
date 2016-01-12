@@ -182,21 +182,8 @@ public class InstallMojo
                 }
                 else if ( !attachedArtifacts.isEmpty() )
                 {
-                    getLog().info( "No primary artifact to install, installing attached artifacts instead." );
-
-                    Artifact pomArtifact =
-                        artifactFactory.createProjectArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-                                                               artifact.getBaseVersion() );
-                    pomArtifact.setFile( pomFile );
-                    if ( updateReleaseInfo )
-                    {
-                        pomArtifact.setRelease( true );
-                    }
-
-//                    installer.install( pomFile, pomArtifact, localRepository );
-                    installer.install( session.getProjectBuildingRequest(), Collections.singletonList( pomArtifact ) );
-                    installChecksums( pomArtifact, createChecksum );
-                    addMetaDataFilesForArtifact( pomArtifact, metadataFiles, createChecksum );
+                    throw new MojoExecutionException( "The packaging plugin for this project did not assign "
+                                   + "a main file to the project but it has attachments. Change packaging to 'pom'." );
                 }
                 else
                 {

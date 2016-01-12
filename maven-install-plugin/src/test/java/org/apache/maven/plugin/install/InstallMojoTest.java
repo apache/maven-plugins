@@ -145,10 +145,10 @@ public class InstallMojoTest
                 attachedArtifact.getArtifactId() + "/" + attachedArtifact.getVersion() + "/" +
                 attachedArtifact.getArtifactId() + "-" + attachedArtifact.getVersion() + "." + packaging );
 
-            assertTrue( installedArtifact.exists() );
+            assertTrue( installedArtifact.getPath() + " does not exist", installedArtifact.exists() );
         }
         
-        assertEquals( 12, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
+        assertEquals( 13, FileUtils.getFiles( new File( LOCAL_REPO ), null, null ).size() );
     }
 
     public void testUpdateReleaseParamSetToTrue()
