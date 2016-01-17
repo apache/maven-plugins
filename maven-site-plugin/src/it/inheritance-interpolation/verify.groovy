@@ -36,12 +36,8 @@ assert content.contains( '<<<http://maven.apache.org/prop-value-from-child/relat
 // Site Decoration Model inheritance+interpolation
 childContent = new File( basedir, 'child/target/site/index.html' ).text;
 
-// see DOXIASITETOOLS-118: interpolation happens too early
-// assert childContent.contains( 'project.artifactId = child' );
-assert childContent.contains( 'project.artifactId = repo-parent' );
+assert childContent.contains( 'project.artifactId = child' );
 
 reactorContent = new File( basedir, 'reactor-parent/target/site/index.html' ).text;
 
-// see DOXIASITETOOLS-118: interpolation happens too early
-// assert reactorContent.contains( 'project.artifactId = reactor-parent' );
-assert reactorContent.contains( 'project.artifactId = repo-parent' );
+assert reactorContent.contains( 'project.artifactId = reactor-parent' );
