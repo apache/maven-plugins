@@ -20,12 +20,20 @@
 target = new File( basedir, 'target' );
 assert target.isDirectory();
 
-// msite604.siteRepositoryUrl property value from settings.xml
-settingsDirectory = new File( target, 'settingsRepositoryUrl' );
-assert settingsDirectory.isDirectory();
+// msite604.siteRepositoryRoot property value from settings.xml
+rootDirectory = new File( target, 'root' );
+assert rootDirectory.isDirectory();
+
+// msite604.siteRepositoryBase property value from pom.xml
+baseDirectory = new File( rootDirectory, 'defaultBase' );
+assert !baseDirectory.isDirectory();
+
+// msite604.siteRepositoryBase property value from settings.xml
+baseDirectory = new File( rootDirectory, 'settingsBase' );
+assert baseDirectory.isDirectory();
 
 // msite604.siteRepositoryUrl property value from pom.xml
-defaultDirectory = new File( target, 'defaultRepositoryUrl' );
-assert !defaultDirectory.exists();
+defaultDirectory = new File( baseDirectory, 'defaultRepositoryUrl' );
+assert defaultDirectory.exists();
 
 return true;

@@ -75,3 +75,17 @@ POM Inheritance and Interpolation
 *-------+------+--------+
 #set( $p = $p.parent )#end
 #end
+
+* Property from Settings
+
+  Expected values from settings profile to override default values from repo-parent
+
+#set( $p = $project )
+*-------*------*-------*
+|| level || artifactId || <<<project.distributionManagement.site.url>>> value ||
+*-------+------+--------+
+#foreach( $i in [1..4] )
+#if( $p )|    $i| <<<$p.artifactId>>> | <<<$p.distributionManagement.site.url>>>
+*-------+------+--------+
+#set( $p = $p.parent )#end
+#end
