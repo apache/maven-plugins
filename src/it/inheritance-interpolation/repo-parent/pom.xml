@@ -38,7 +38,17 @@ under the License.
   <properties>
     <project.source.encoding>UTF-8</project.source.encoding>
     <prop>project.artifactId = '${project.artifactId}'</prop>
+    <distUrl>scp://from.repo/dist</distUrl>
+    <msite604.siteRepositoryId>repo-parent-id</msite604.siteRepositoryId>
+    <msite604.siteRepositoryBase>default-repository-base-from-repo-parent</msite604.siteRepositoryBase>
   </properties>
+
+  <distributionManagement>
+    <site>
+      <id>${msite604.siteRepositoryId}</id>
+      <url>${msite604.siteRepositoryRoot}/${msite604.siteRepositoryBase}</url>
+    </site>
+  </distributionManagement>
 
   <build>
     <plugins>
