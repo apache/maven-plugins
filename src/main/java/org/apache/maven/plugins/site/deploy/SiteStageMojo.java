@@ -57,14 +57,6 @@ public class SiteStageMojo
     @Parameter( property = "stagingDirectory" )
     private File stagingDirectory;
 
-    /**
-     * Set this to 'true' to skip site generation and staging.
-     *
-     * @since 3.2
-     */
-    @Parameter( property = "maven.site.skip", defaultValue = "false" )
-    private boolean skip;
-
     @Override
     public void execute()
         throws MojoExecutionException
