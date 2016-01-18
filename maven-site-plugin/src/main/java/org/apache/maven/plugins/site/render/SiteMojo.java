@@ -88,14 +88,6 @@ public class SiteMojo
     private boolean validate;
 
     /**
-     * Set this to 'true' to skip site generation and staging.
-     *
-     * @since 3.0
-     */
-    @Parameter( property = "maven.site.skip", defaultValue = "false" )
-    private boolean skip;
-
-    /**
      * {@inheritDoc}
      *
      * Generate the project site
