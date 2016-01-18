@@ -38,9 +38,8 @@ under the License.
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
-          <!-- when site is skipped, deploy needs to be skipped too -->
+          <!-- when site is skipped, deploy needs is automatically skipped too: MSITE-696 -->
           <skip>true</skip>
-          <skipDeploy>true</skipDeploy>
         </configuration>
       </plugin>
     </plugins>

@@ -53,6 +53,14 @@ public abstract class AbstractSiteMojo
     private String locales;
 
     /**
+     * Set this to 'true' to skip site generation and staging.
+     *
+     * @since 3.0
+     */
+    @Parameter( property = "maven.site.skip", defaultValue = "false" )
+    protected boolean skip;
+
+    /**
      * SiteTool.
      */
     @Component

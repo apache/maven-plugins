@@ -157,6 +157,12 @@ public abstract class AbstractDeployMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( skip && isDeploy() )
+        {
+            getLog().info( "maven.site.skip = true: Skipping site deployment" );
+            return;
+        }
+
         if ( skipDeploy && isDeploy() )
         {
             getLog().info( "maven.site.deploy.skip = true: Skipping site deployment" );
