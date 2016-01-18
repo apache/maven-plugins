@@ -121,6 +121,12 @@ public class SiteJarMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            getLog().info( "maven.site.skip = true: Skipping jar generation" );
+            return;
+        }
+
         if ( !outputDirectory.exists() )
         {
             super.execute();
