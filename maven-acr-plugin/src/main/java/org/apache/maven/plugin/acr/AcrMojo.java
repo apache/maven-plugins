@@ -75,7 +75,9 @@ public class AcrMojo
     private File basedir;
 
     /**
-     * Directory that resources are copied to during the build.
+     * Directory that resources are copied to during the build.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>outputDirectory</code> to
+     * <code>maven.acr.outputDirectory</code>. 
      */
     @Parameter( property = "maven.acr.outputDirectory", defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
