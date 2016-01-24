@@ -77,7 +77,7 @@ public class AcrMojo
     /**
      * Directory that resources are copied to during the build.<br/>
      * Starting with <b>3.0.0</b> the property has been renamed from <code>outputDirectory</code> to
-     * <code>maven.acr.outputDirectory</code>. 
+     * <code>maven.acr.outputDirectory</code>.
      */
     @Parameter( property = "maven.acr.outputDirectory", defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
@@ -126,7 +126,7 @@ public class AcrMojo
     /**
      * To escape interpolated value with windows path. c:\foo\bar will be replaced with c:\\foo\\bar.<br/>
      * Starting with <b>3.0.0</b> the property has been renamed from <code>acr.escapeBackslashesInFilePath</code> to
-     * <code>maven.acr.escapeBackslashesInFilePath</code>. 
+     * <code>maven.acr.escapeBackslashesInFilePath</code>.
      */
     @Parameter( property = "maven.acr.escapeBackslashesInFilePath", defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
@@ -134,15 +134,14 @@ public class AcrMojo
     /**
      * An expression preceded with this String won't be interpolated. \${foo} will be replaced with ${foo}.<br/>
      * Starting with <b>3.0.0</b> the property has been renamed from <code>acr.escapeString</code> to
-     * <code>maven.acr.escapeString</code>. 
+     * <code>maven.acr.escapeString</code>.
      */
     @Parameter( property = "maven.acr.escapeString" )
     protected String escapeString;
 
     /**
-     * To filter the deployment descriptor.
-     * Starting with <b>3.0.0</b> the property has been renamed from <code>acr.filterDeploymentDescriptor</code> to
-     * <code>maven.acr.filterDeploymentDescriptor</code>. 
+     * To filter the deployment descriptor. Starting with <b>3.0.0</b> the property has been renamed from
+     * <code>acr.filterDeploymentDescriptor</code> to <code>maven.acr.filterDeploymentDescriptor</code>.
      */
     @Parameter( property = "maven.acr.filterDeploymentDescriptor", defaultValue = "false" )
     private boolean filterDeploymentDescriptor;
@@ -163,18 +162,15 @@ public class AcrMojo
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
-    /**
-     * Generates the application client jar file.
-     */
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
-        //todo: Add license files in META-INF directory
-
         if ( getLog().isInfoEnabled() )
         {
             getLog().info( "Building JavaEE Application client: " + jarName );
         }
+
 
         File jarFile = getAppClientJarFile( basedir, jarName );
 
@@ -184,8 +180,6 @@ public class AcrMojo
 
         archiver.setOutputFile( jarFile );
 
-        //TODO: outputDirectory needed to be checked if it exists otherwise it is needed to be created.
-        File deploymentDescriptor = new File( outputDirectory, APP_CLIENT_XML );
         try
         {
             String[] mainJarExcludes = DEFAULT_EXCLUDES;
@@ -206,6 +200,8 @@ public class AcrMojo
                 getLog().info( "JAR will only contain the META-INF/application-client.xml as no content was marked for inclusion" );
                 // CHECKSTYLE_ON: LineLength
             }
+
+            File deploymentDescriptor = new File( outputDirectory, APP_CLIENT_XML );
 
             if ( deploymentDescriptor.exists() )
             {
@@ -240,21 +236,18 @@ public class AcrMojo
         }
         catch ( ManifestException e )
         {
-            throw new MojoExecutionException(
-                                              "There was a problem reading / creating the manifest for the JavaEE Application Client  archive: "
-                                                  + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem reading / creating the manifest for the JavaEE Application Client  archive: "
+                + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException(
-                                              "There was a I/O problem creating the JavaEE Application Client archive: "
-                                                  + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a I/O problem creating the JavaEE Application Client archive: "
+                + e.getMessage(), e );
         }
         catch ( DependencyResolutionRequiredException e )
         {
-            throw new MojoExecutionException(
-                                              "There was a problem resolving dependencies while creating the JavaEE Application Client archive: "
-                                                  + e.getMessage(), e );
+            throw new MojoExecutionException( "There was a problem resolving dependencies while creating the JavaEE Application Client archive: "
+                + e.getMessage(), e );
         }
         catch ( MavenFilteringException e )
         {
