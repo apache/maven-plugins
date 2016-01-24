@@ -41,28 +41,28 @@
             <id>default</id>
             <phases>
               <process-resources>
-                org.apache.maven.plugins:maven-resources-plugin:2.4.3:resources
+                org.apache.maven.plugins:maven-resources-plugin:2.7:resources
               </process-resources>
               <compile>
-                org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile
+                org.apache.maven.plugins:maven-compiler-plugin:3.3:compile
               </compile>
               <process-test-resources>
-                org.apache.maven.plugins:maven-resources-plugin:2.4.3:testResources
+                org.apache.maven.plugins:maven-resources-plugin:2.7:testResources
               </process-test-resources>
               <test-compile>
                 org.apache.maven.plugins:maven-compiler-plugin:2.3.2:testCompile
               </test-compile>
               <test>
-                org.apache.maven.plugins:maven-surefire-plugin:2.7.2:test
+                org.apache.maven.plugins:maven-surefire-plugin:2.18.1:test
               </test>
               <package>
                 org.apache.maven.plugins:maven-acr-plugin:acr
               </package>
               <install>
-                org.apache.maven.plugins:maven-install-plugin:2.3.1:install
+                org.apache.maven.plugins:maven-install-plugin:2.5.2:install
               </install>
               <deploy>
-                org.apache.maven.plugins:maven-deploy-plugin:2.5:deploy
+                org.apache.maven.plugins:maven-deploy-plugin:2.8.2:deploy
               </deploy>
             </phases>
           </lifecycle>
