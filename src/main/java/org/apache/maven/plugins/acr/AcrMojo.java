@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.acr;
+package org.apache.maven.plugins.acr;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
