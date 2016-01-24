@@ -36,4 +36,6 @@ content = velocity.text;
 
 assert content.contains( '= <<<val1>>>' ); // MSITE-550
 
+assert new File( basedir, 'target/site/markdown2.html' ).exists(); // DOXIA-535
+
 return true;
