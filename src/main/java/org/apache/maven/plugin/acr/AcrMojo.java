@@ -77,13 +77,13 @@ public class AcrMojo
     /**
      * Directory that resources are copied to during the build.
      */
-    @Parameter( property = "outputDirectory", defaultValue = "${project.build.outputDirectory}" )
+    @Parameter( property = "maven.acr.outputDirectory", defaultValue = "${project.build.outputDirectory}" )
     private File outputDirectory;
 
     /**
      * The name of the Application client JAR file to generate.
      */
-    @Parameter( property = "jarName", defaultValue = "${project.build.finalName}" )
+    @Parameter( defaultValue = "${project.build.finalName}" )
     private String jarName;
 
     /**
@@ -122,21 +122,27 @@ public class AcrMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * To escape interpolated value with windows path. c:\foo\bar will be replaced with c:\\foo\\bar.
+     * To escape interpolated value with windows path. c:\foo\bar will be replaced with c:\\foo\\bar.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>acr.escapeBackslashesInFilePath</code> to
+     * <code>maven.acr.escapeBackslashesInFilePath</code>. 
      */
-    @Parameter( property = "acr.escapeBackslashesInFilePath", defaultValue = "false" )
+    @Parameter( property = "maven.acr.escapeBackslashesInFilePath", defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
 
     /**
-     * An expression preceded with this String won't be interpolated. \${foo} will be replaced with ${foo}.
+     * An expression preceded with this String won't be interpolated. \${foo} will be replaced with ${foo}.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>acr.escapeString</code> to
+     * <code>maven.acr.escapeString</code>. 
      */
-    @Parameter( property = "acr.escapeString" )
+    @Parameter( property = "maven.acr.escapeString" )
     protected String escapeString;
 
     /**
      * To filter the deployment descriptor.
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>acr.filterDeploymentDescriptor</code> to
+     * <code>maven.acr.filterDeploymentDescriptor</code>. 
      */
-    @Parameter( property = "acr.filterDeploymentDescriptor", defaultValue = "false" )
+    @Parameter( property = "maven.acr.filterDeploymentDescriptor", defaultValue = "false" )
     private boolean filterDeploymentDescriptor;
 
     /**
@@ -176,6 +182,7 @@ public class AcrMojo
 
         archiver.setOutputFile( jarFile );
 
+        //TODO: outputDirectory needed to be checked if it exists otherwise it is needed to be created.
         File deploymentDescriptor = new File( outputDirectory, APP_CLIENT_XML );
         try
         {
