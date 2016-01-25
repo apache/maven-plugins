@@ -152,6 +152,9 @@ under the License.
                 <debug>true</debug>
                 <projectsDirectory>src/it</projectsDirectory>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                <setupIncludes>
+                  <setupInclude>setup/pom.xml</setupInclude>
+                </setupIncludes>
                 <pomIncludes>
                   <pomInclude>*/pom.xml</pomInclude>
                 </pomIncludes>
