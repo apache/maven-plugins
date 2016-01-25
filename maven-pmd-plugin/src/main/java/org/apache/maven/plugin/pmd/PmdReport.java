@@ -27,7 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -162,8 +162,8 @@ public class PmdReport
     @Component
     private ResourceManager locator;
 
-    /** The PMD report listener for collecting violations. */
-    private PmdReportListener reportListener;
+    /** The PMD renderer for collecting violations. */
+    private PmdCollectingRenderer renderer;
 
     /**
      * per default pmd executions error are ignored to not break the whole
@@ -254,7 +254,7 @@ public class PmdReport
                 executePmdWithClassloader();
                 if ( skipEmptyReport )
                 {
-                    result = reportListener.hasViolations();
+                    result = renderer.hasViolations();
                     if ( result )
                     {
                         getLog().debug( "Skipping report since skipEmptyReport is true and"
@@ -288,7 +288,7 @@ public class PmdReport
     private void executePmd()
         throws MavenReportException
     {
-        if ( reportListener != null )
+        if ( renderer != null )
         {
             // PMD has already been run
             getLog().debug( "PMD has already been run - skipping redundant execution." );
@@ -300,10 +300,9 @@ public class PmdReport
         locator.addSearchPath( "url", "" );
         locator.setOutputDirectory( targetDirectory );
 
-        reportListener = new PmdReportListener();
+        renderer = new PmdCollectingRenderer();
         PMDConfiguration pmdConfiguration = getPMDConfiguration();
         RuleContext ruleContext = new RuleContext();
-        ruleContext.getReport().addListener( reportListener );
 
         RuleSetFactory ruleSetFactory = new RuleSetFactory();
         ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
@@ -373,13 +372,12 @@ public class PmdReport
         try
         {
             getLog().debug( "Executing PMD..." );
-
             PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
-                              Collections.<Renderer>emptyList() );
+                              Arrays.<Renderer>asList( renderer ) );
 
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( "PMD finished. Found " + reportListener.getViolations().size() + " violations." );
+                getLog().debug( "PMD finished. Found " + renderer.getViolations().size() + " violations." );
             }
         }
         catch ( Exception e )
@@ -392,11 +390,23 @@ public class PmdReport
             getLog().warn( message, e );
         }
 
+        if ( renderer.hasErrors() )
+        {
+            if ( !skipPmdError )
+            {
+                getLog().error( "PMD processing errors:" );
+                getLog().error( renderer.getErrorsAsString() );
+                throw new MavenReportException( "Found " + renderer.getErrors().size() + " PMD processing errors" );
+            }
+            getLog().warn( "There are " + renderer.getErrors().size() + " PMD processing errors:" );
+            getLog().warn( renderer.getErrorsAsString() );
+        }
+
         // if format is XML, we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
-        if ( isXml() && reportListener != null )
+        if ( isXml() && renderer != null )
         {
-            writeNonHtml( reportListener.asReport() );
+            writeNonHtml( renderer.asReport() );
         }
 
         if ( benchmark )
@@ -425,22 +435,22 @@ public class PmdReport
         throws MavenReportException
     {
         Sink sink = getSink();
-        PmdReportGenerator renderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
-        renderer.setFiles( filesToProcess );
-        renderer.setViolations( reportListener.getViolations() );
+        PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
+        doxiaRenderer.setFiles( filesToProcess );
+        doxiaRenderer.setViolations( renderer.getViolations() );
 
         try
         {
-            renderer.beginDocument();
-            renderer.render();
-            renderer.endDocument();
+            doxiaRenderer.beginDocument();
+            doxiaRenderer.render();
+            doxiaRenderer.endDocument();
         }
         catch ( IOException e )
         {
             getLog().warn( "Failure creating the report: " + e.getLocalizedMessage(), e );
         }
 
-        return reportListener.asReport();
+        return renderer.asReport();
     }
 
     /**
