@@ -1,5 +1,9 @@
 package org.apache.maven.plugin.war;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -38,10 +42,6 @@ import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
 /**
  * Build a WAR file.
  *
@@ -50,7 +50,7 @@ import java.util.Arrays;
  */
 // CHECKSTYLE_OFF: LineLength
 @Mojo( name = "war", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
-//CHECKSTYLE_ON: LineLength
+// CHECKSTYLE_ON: LineLength
 public class WarMojo
     extends AbstractWarMojo
 {
@@ -139,7 +139,6 @@ public class WarMojo
      *   <classifier>classes</classifier>
      * </dependency>]]>
      * </pre>
-     * 
      * </p>
      *
      * @since 2.1-alpha-2
@@ -155,6 +154,15 @@ public class WarMojo
     @Parameter( defaultValue = "classes" )
     private String classesClassifier = "classes";
 
+    /**
+     * You can skip the execution of the plugin if you need to. Its use is NOT RECOMMENDED, but quite convenient on
+     * occasion.
+     * 
+     * @since 3.0.0
+     */
+    @Parameter( property = "maven.war.skip", defaultValue = "false" )
+    private boolean skip;
+
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
@@ -168,6 +176,13 @@ public class WarMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+
+        if ( isSkip() )
+        {
+            getLog().info( "Skipping the execution." );
+            return;
+        }
+
         File warFile = getTargetWarFile();
 
         try
@@ -218,7 +233,8 @@ public class WarMojo
         archiver.setOutputFile( warFile );
 
         // CHECKSTYLE_OFF: LineLength
-        getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated webapp archive." );
+        getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() )
+            + " from the generated webapp archive." );
         getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated webapp archive." );
         // CHECKSTYLE_ON: LineLength
 
@@ -513,5 +529,10 @@ public class WarMojo
     public void setFailOnMissingWebXml( boolean failOnMissingWebXml )
     {
         this.failOnMissingWebXml = failOnMissingWebXml;
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
     }
 }
