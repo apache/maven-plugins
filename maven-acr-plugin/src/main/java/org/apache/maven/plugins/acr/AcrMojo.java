@@ -137,7 +137,7 @@ public class AcrMojo
      * <code>maven.acr.escapeString</code>.
      */
     @Parameter( property = "maven.acr.escapeString" )
-    protected String escapeString;
+    private String escapeString;
 
     /**
      * To filter the deployment descriptor. Starting with <b>3.0.0</b> the property has been renamed from
