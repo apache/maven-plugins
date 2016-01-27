@@ -205,7 +205,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.10</version>
             <configuration>
               <goals>
                 <goal>clean</goal>
