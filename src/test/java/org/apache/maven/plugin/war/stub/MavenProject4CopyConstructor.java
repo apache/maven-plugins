@@ -25,6 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Profile;
+import org.apache.maven.project.MavenProject;
 
 public class MavenProject4CopyConstructor
     extends MavenProjectBasicStub
@@ -49,13 +52,11 @@ public class MavenProject4CopyConstructor
         super.setFile( new File( getBasedir(), "pom.xml" ) );
         super.setDependencyArtifacts( new HashSet<Artifact>() );
         super.setArtifacts( new HashSet<Artifact>() );
-        super.setPluginArtifacts( new HashSet<Artifact>() );
-        super.setReportArtifacts( new HashSet<Artifact>() );
         super.setExtensionArtifacts( new HashSet<Artifact>() );
-        super.setRemoteArtifactRepositories( new LinkedList<Artifact>() );
-        super.setPluginArtifactRepositories( new LinkedList<Artifact>() );
-        super.setCollectedProjects( new LinkedList<Artifact>() );
-        super.setActiveProfiles( new LinkedList<Artifact>() );
+        super.setRemoteArtifactRepositories( new LinkedList<ArtifactRepository>() );
+        super.setPluginArtifactRepositories( new LinkedList<ArtifactRepository>() );
+        super.setCollectedProjects( new LinkedList<MavenProject>() );
+        super.setActiveProfiles( new LinkedList<Profile>() );
         super.setOriginalModel( null );
         super.setExecutionProject( this );
         super.setBuild( getBuild() );

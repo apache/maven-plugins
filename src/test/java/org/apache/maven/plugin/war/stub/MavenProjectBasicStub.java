@@ -119,4 +119,11 @@ public class MavenProjectBasicStub
 
         return build;
     }
+    
+    @Override
+    public MavenProject clone()
+    {
+        return this;
+    }
+
 }
