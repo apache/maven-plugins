@@ -54,12 +54,13 @@ public interface AssemblyArchiver
      * @param format                The format.
      * @param configSource          The {@link org.apache.maven.plugins.assembly.AssemblerConfigurationSource}
      * @param recompressZippedFiles recompress zipped files.
+     * @param mergeManifestMode     How to handle already existing Manifest files (skip, merge, mergewithoutmain)
      * @return The resulting archive file.
      * @throws ArchiveCreationException                                                 when creation fails
      * @throws org.apache.maven.plugins.assembly.format.AssemblyFormattingException     when formatting fails
      * @throws org.apache.maven.plugins.assembly.InvalidAssemblerConfigurationException when the configurationis bad
      */
     File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource,
-                        boolean recompressZippedFiles )
+                        boolean recompressZippedFiles, String mergeManifestMode )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 }
