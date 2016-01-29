@@ -133,7 +133,8 @@ public class DefaultAssemblyArchiver
      */
     @Override
     public File createArchive( final Assembly assembly, final String fullName, final String format,
-                               final AssemblerConfigurationSource configSource, boolean recompressZippedFiles )
+                               final AssemblerConfigurationSource configSource, boolean recompressZippedFiles,
+                               String mergeManifestMode )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         validate( assembly );
@@ -171,7 +172,7 @@ public class DefaultAssemblyArchiver
 
             final Archiver archiver =
                 createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers,
-                                recompressZippedFiles );
+                                recompressZippedFiles, mergeManifestMode );
 
             archiver.setDestFile( destFile );
 
@@ -280,6 +281,7 @@ public class DefaultAssemblyArchiver
      * @param configSource          {@link AssemblerConfigurationSource}
      * @param containerHandlers     The list of {@link ContainerDescriptorHandler}
      * @param recompressZippedFiles recompress zipped files.
+     * @param mergeManifestMode     how to handle already existing Manifest files
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
@@ -287,7 +289,7 @@ public class DefaultAssemblyArchiver
     protected Archiver createArchiver( final String format, final boolean includeBaseDir, final String finalName,
                                        final AssemblerConfigurationSource configSource,
                                        final List<ContainerDescriptorHandler> containerHandlers,
-                                       boolean recompressZippedFiles )
+                                       boolean recompressZippedFiles, String mergeManifestMode )
         throws NoSuchArchiverException
     {
         Archiver archiver;
@@ -313,6 +315,12 @@ public class DefaultAssemblyArchiver
         final List<ArchiveFinalizer> extraFinalizers = new ArrayList<ArchiveFinalizer>();
         if ( archiver instanceof JarArchiver )
         {
+            if ( mergeManifestMode != null )
+            {
+                ( (JarArchiver) archiver ).setFilesetmanifest(
+                    JarArchiver.FilesetManifestConfig.valueOf( mergeManifestMode ) );
+            }
+
             extraSelectors.add( new JarSecurityFileSelector() );
 
             extraFinalizers.add(

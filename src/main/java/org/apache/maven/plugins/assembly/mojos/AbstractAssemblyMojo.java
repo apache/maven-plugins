@@ -324,6 +324,13 @@ public abstract class AbstractAssemblyMojo
     private boolean recompressZippedFiles;
 
     /**
+     * sets the merge manifest mode in the JarArchiver
+     * @since 3
+     */
+    @Parameter
+    private String mergeManifestMode;
+
+    /**
      */
     @Component
     private AssemblyArchiver assemblyArchiver;
@@ -502,7 +509,8 @@ public abstract class AbstractAssemblyMojo
                 for ( final String format : effectiveFormats )
                 {
                     final File destFile =
-                        assemblyArchiver.createArchive( assembly, fullName, format, this, isRecompressZippedFiles() );
+                        assemblyArchiver.createArchive( assembly, fullName, format,
+                            this, isRecompressZippedFiles(), getMergeManifestMode() );
 
                     final MavenProject project = getProject();
                     final String classifier = getClassifier();
@@ -943,6 +951,11 @@ public abstract class AbstractAssemblyMojo
     boolean isRecompressZippedFiles()
     {
         return recompressZippedFiles;
+    }
+
+    public String getMergeManifestMode()
+    {
+        return mergeManifestMode;
     }
 
     @Override

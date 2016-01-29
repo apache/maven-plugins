@@ -127,7 +127,7 @@ public class DefaultAssemblyArchiverTest
         mm.replayAll();
 
         final DefaultAssemblyArchiver archiver = createSubject( macMgr, null, null );
-        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false );
+        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false, null );
 
         mm.verifyAll();
     }
@@ -200,7 +200,7 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = createSubject( macMgr, Collections.singletonList( phase ), null );
 
-        subject.createArchive( assembly, "full-name", "zip", configSource, false );
+        subject.createArchive( assembly, "full-name", "zip", configSource, false, null );
 
         mm.verifyAll();
     }
@@ -249,7 +249,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "dummy", false, "finalName", configSource, null, false );
+        subject.createArchiver( "dummy", false, "finalName", configSource, null, false, null );
 
         assertEquals( simpleConfig, archiver.getSimpleConfig() );
 
@@ -277,7 +277,7 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = setupStdExpectations( mm, macArchiverManager, configSource );
 
-        subject.createArchiver( "tar", false, "finalName", configSource, null, false );
+        subject.createArchiver( "tar", false, "finalName", configSource, null, false, null );
 
         assertNull( ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
@@ -323,7 +323,7 @@ public class DefaultAssemblyArchiverTest
         expect( configSource.getMavenSession() ).andReturn( null ).anyTimes();
         final DefaultAssemblyArchiver subject = setupStdExpectations( mm, macArchiverManager, configSource );
 
-        subject.createArchiver( "war", false, null, configSource, null, false );
+        subject.createArchiver( "war", false, null, configSource, null, false, null );
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -354,7 +354,7 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "zip", false, null, configSource, null, false );
+        subject.createArchiver( "zip", false, null, configSource, null, false, null );
     }
 
     @Test
