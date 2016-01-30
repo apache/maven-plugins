@@ -42,12 +42,6 @@ public class ProjectInfoPluginArtifactStub
 
     private ArtifactHandler handler;
 
-    /**
-     * @param groupId
-     * @param artifactId
-     * @param version
-     * @param packaging
-     */
     public ProjectInfoPluginArtifactStub( String groupId, String artifactId, String version, String packaging )
     {
         this.groupId = groupId;
@@ -93,17 +87,11 @@ public class ProjectInfoPluginArtifactStub
         return version;
     }
 
-    /**
-     * @param packaging
-     */
     public void setPackaging( String packaging )
     {
         this.packaging = packaging;
     }
 
-    /**
-     * @return the packaging
-     */
     public String getPackaging()
     {
         return packaging;
