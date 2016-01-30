@@ -161,7 +161,7 @@ public abstract class AbstractProjectInfoReport
     protected Settings settings;
 
     /**
-     * Path for a custom bundle instead of using the default one. <br/>
+     * Path for a custom bundle instead of using the default one. <br>
      * Using this field, you could change the texts in the generated reports.
      *
      * @since 2.3
