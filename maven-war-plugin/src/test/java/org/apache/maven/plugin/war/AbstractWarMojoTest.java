@@ -19,20 +19,24 @@ package org.apache.maven.plugin.war;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.WarOverlayStub;
 import org.apache.maven.shared.filtering.MavenFileFilter;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import org.sonatype.aether.RepositorySystemSession;
 
 public abstract class AbstractWarMojoTest
     extends AbstractMojoTestCase
@@ -60,14 +64,18 @@ public abstract class AbstractWarMojoTest
      */
     protected void configureMojo( AbstractWarMojo mojo, List<String> filters, File classesDir, File webAppSource,
                                   File webAppDir, MavenProjectBasicStub project )
-        throws Exception
+                                      throws Exception
     {
         setVariableValueToObject( mojo, "filters", filters );
         setVariableValueToObject( mojo, "useCache", Boolean.FALSE );
         setVariableValueToObject( mojo, "mavenFileFilter", lookup( MavenFileFilter.class.getName() ) );
         setVariableValueToObject( mojo, "useJvmChmod", Boolean.TRUE );
+
+        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+        request.setSystemProperties( System.getProperties() );
+
         MavenSession mavenSession =
-            new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+            new MavenSession( (PlexusContainer) null, (RepositorySystemSession) null, request, null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.setClassesDirectory( classesDir );
         mojo.setWarSourceDirectory( webAppSource );
@@ -248,10 +256,9 @@ public abstract class AbstractWarMojoTest
         // Archive was not yet created for that id so let's create it
         final File rootDir = new File( OVERLAYS_ROOT_DIR, id );
         rootDir.mkdirs();
-        String[] filePaths =
-            new String[] { "jsp/d/a.jsp", "jsp/d/b.jsp", "jsp/d/c.jsp", "jsp/a.jsp", "jsp/b.jsp", "jsp/c.jsp",
-                "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class", "WEB-INF/lib/a.jar",
-                "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml" };
+        String[] filePaths = new String[] { "jsp/d/a.jsp", "jsp/d/b.jsp", "jsp/d/c.jsp", "jsp/a.jsp", "jsp/b.jsp",
+            "jsp/c.jsp", "WEB-INF/classes/a.class", "WEB-INF/classes/b.class", "WEB-INF/classes/c.class",
+            "WEB-INF/lib/a.jar", "WEB-INF/lib/b.jar", "WEB-INF/lib/c.jar", "WEB-INF/web.xml" };
 
         for ( String filePath : filePaths )
         {
