@@ -135,6 +135,7 @@ public class WarExplodedMojoFilteringTest
 
         // update property, and generate again
         System.setProperty( "system.property", "new-system-property-value" );
+        this.configureMojo( mojo, filterList, classesDir, webAppSource, webAppDirectory, project );
 
         mojo.execute();
 
