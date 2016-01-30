@@ -305,8 +305,8 @@ public class Dependencies
     /**
      * get the artifact's file, with detection of target/classes directory with already packaged jar available.
      *
-     * @param artifact
-     * @return
+     * @param artifact the artifact to retrieve the physical file
+     * @return the physical file representing the given artifact
      */
     public File getFile( Artifact artifact )
     {
