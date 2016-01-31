@@ -74,6 +74,12 @@ import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNode
 public class DependencyConvergenceReport
     extends AbstractProjectInfoReport
 {
+    /** URL for the 'icon_success_sml.gif' image */
+    private static final String IMG_SUCCESS_URL = "images/icon_success_sml.gif";
+
+    /** URL for the 'icon_error_sml.gif' image */
+    private static final String IMG_ERROR_URL = "images/icon_error_sml.gif";
+
     private static final int PERCENTAGE = 100;
 
     // ----------------------------------------------------------------------
@@ -276,7 +282,7 @@ public class DependencyConvergenceReport
             sink.text( key );
             sink.sectionTitle3_();
 
-            generateDependencyDetails( sink, depList );
+            generateDependencyDetails( locale, sink, depList );
 
             sink.section3_();
         }
@@ -294,7 +300,7 @@ public class DependencyConvergenceReport
 
             List<ReverseDependencyLink> depList = new ArrayList<ReverseDependencyLink>();
             depList.add( dependencyLink );
-            generateDependencyDetails( sink, depList );
+            generateDependencyDetails( locale, sink, depList );
 
             sink.section3_();
         }
@@ -308,7 +314,7 @@ public class DependencyConvergenceReport
      * @param sink
      * @param depList
      */
-    private void generateDependencyDetails( Sink sink, List<ReverseDependencyLink> depList )
+    private void generateDependencyDetails( Locale locale, Sink sink, List<ReverseDependencyLink> depList )
     {
         sink.table();
 
@@ -318,7 +324,7 @@ public class DependencyConvergenceReport
 
         sink.tableCell();
 
-        iconError( sink );
+        iconError( locale, sink );
 
         sink.tableCell_();
 
@@ -538,7 +544,7 @@ public class DependencyConvergenceReport
         sink.tableRow();
 
         sink.tableCell();
-        iconError( sink );
+        iconError( locale, sink );
         sink.tableCell_();
         sink.tableCell();
         sink.text( getI18nString( locale, "legend.different" ) );
@@ -629,11 +635,11 @@ public class DependencyConvergenceReport
         sink.tableCell();
         if ( convergence < PERCENTAGE )
         {
-            iconError( sink );
+            iconError( locale, sink );
         }
         else
         {
-            iconSuccess( sink );
+            iconSuccess( locale, sink );
         }
         sink.nonBreakingSpace();
         sink.bold();
@@ -649,7 +655,7 @@ public class DependencyConvergenceReport
         sink.tableCell();
         if ( convergence >= PERCENTAGE && snapshotCount <= 0 )
         {
-            iconSuccess( sink );
+            iconSuccess( locale, sink );
             sink.nonBreakingSpace();
             sink.bold();
             sink.text( getI18nString( locale, "stats.readyrelease.success" ) );
@@ -657,7 +663,7 @@ public class DependencyConvergenceReport
         }
         else
         {
-            iconError( sink );
+            iconError( locale, sink );
             sink.nonBreakingSpace();
             sink.bold();
             sink.text( getI18nString( locale, "stats.readyrelease.error" ) );
@@ -707,25 +713,23 @@ public class DependencyConvergenceReport
         return this.reactorProjects.size() > 1;
     }
 
-    private void iconSuccess( Sink sink )
+    private void iconSuccess( Locale locale, Sink sink )
     {
         sink.figure();
         sink.figureCaption();
-        // TODO Translate me!
-        sink.text( "success" );
+        sink.text( getI18nString( locale, "icon.success" ) );
         sink.figureCaption_();
-        sink.figureGraphics( "images/icon_success_sml.gif" );
+        sink.figureGraphics( IMG_SUCCESS_URL );
         sink.figure_();
     }
 
-    private void iconError( Sink sink )
+    private void iconError( Locale locale, Sink sink )
     {
         sink.figure();
         sink.figureCaption();
-        // TODO Translate me!
-        sink.text( "error" );
+        sink.text( getI18nString( locale, "icon.error" ) );
         sink.figureCaption_();
-        sink.figureGraphics( "images/icon_error_sml.gif" );
+        sink.figureGraphics( IMG_ERROR_URL );
         sink.figure_();
     }
 
