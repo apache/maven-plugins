@@ -41,7 +41,7 @@ Customize the Text Reports
         <version>${project.version}</version>
         <configuration>
           <!-- By default -->
-          <customBundle>\${project.basedir}/src/site/custom/project-info-report.properties</customBundle>
+          <customBundle>\${project.basedir}/src/site/custom/project-info-reports.properties</customBundle>
         </configuration>
       </plugin>
       ...
@@ -55,13 +55,13 @@ Customize the Text Reports
   {{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/}}
   and edit them. For example, if you want to modify the Mailing List introduction, you should edit the <<<report.mailing-lists.intro>>> property.
 
-  Extract of the default bundle {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-report.properties}project-info-report.properties}}:
+  Extract of the default bundle {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-project-info-reports-plugin/src/main/resources/project-info-reports.properties}project-info-reports.properties}}:
 
 +-----------------+
 report.mailing-lists.intro = These are the mailing lists that have been established for this project. For each list, there is a subscribe, unsubscribe, and an archive link.
 +-----------------+
 
-  Extract of a custom bundle <<<$\{project.basedir\}/src/site/custom/project-info-report.properties>>> for the Apache Commons project:
+  Extract of a custom bundle <<<$\{project.basedir\}/src/site/custom/project-info-reports.properties>>> for the Apache Commons project:
 
 +-----------------+
 

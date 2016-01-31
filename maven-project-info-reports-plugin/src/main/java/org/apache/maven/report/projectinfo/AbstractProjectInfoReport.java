@@ -166,7 +166,7 @@ public abstract class AbstractProjectInfoReport
      *
      * @since 2.3
      */
-    @Parameter( defaultValue = "${project.basedir}/src/site/custom/project-info-report.properties" )
+    @Parameter( defaultValue = "${project.basedir}/src/site/custom/project-info-reports.properties" )
     protected String customBundle;
 
     /**
@@ -370,7 +370,7 @@ public abstract class AbstractProjectInfoReport
      */
     protected String getI18nString( Locale locale, String key )
     {
-        return getI18N( locale ).getString( "project-info-report", locale, "report." + getI18Nsection() + '.' + key );
+        return getI18N( locale ).getString( "project-info-reports", locale, "report." + getI18Nsection() + '.' + key );
     }
 
     /**

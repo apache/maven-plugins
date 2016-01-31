@@ -80,7 +80,7 @@ public abstract class AbstractProjectInfoRenderer
      */
     protected String getI18nString( String section, String key )
     {
-        return i18n.getString( "project-info-report", locale, "report." + section + '.' + key );
+        return i18n.getString( "project-info-reports", locale, "report." + section + '.' + key );
     }
 
     @Override
