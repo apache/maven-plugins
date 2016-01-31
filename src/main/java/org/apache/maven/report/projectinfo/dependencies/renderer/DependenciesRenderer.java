@@ -21,6 +21,8 @@ package org.apache.maven.report.projectinfo.dependencies.renderer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -39,7 +41,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -85,11 +86,6 @@ public class DependenciesRenderer
     protected static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat( "###0" );
 
     private static final Set<String> JAR_SUBTYPE;
-
-    /**
-     * An HTML script tag with the Javascript used by the dependencies report.
-     */
-    private static final String JAVASCRIPT;
 
     private final DependencyNode dependencyNode;
 
@@ -155,20 +151,6 @@ public class DependenciesRenderer
         jarSubtype.add( "par" );
         jarSubtype.add( "ejb" );
         JAR_SUBTYPE = Collections.unmodifiableSet( jarSubtype );
-
-        JAVASCRIPT =
-            "<script language=\"javascript\" type=\"text/javascript\">" + SystemUtils.LINE_SEPARATOR
-                + "      function toggleDependencyDetail( divId, imgId )" + SystemUtils.LINE_SEPARATOR + "      {"
-                + SystemUtils.LINE_SEPARATOR + "        var div = document.getElementById( divId );"
-                + SystemUtils.LINE_SEPARATOR + "        var img = document.getElementById( imgId );"
-                + SystemUtils.LINE_SEPARATOR + "        if( div.style.display == '' )" + SystemUtils.LINE_SEPARATOR
-                + "        {" + SystemUtils.LINE_SEPARATOR + "          div.style.display = 'none';"
-                + SystemUtils.LINE_SEPARATOR + "          img.src='" + IMG_INFO_URL + "';" + SystemUtils.LINE_SEPARATOR
-                + "        }" + SystemUtils.LINE_SEPARATOR + "        else" + SystemUtils.LINE_SEPARATOR + "        {"
-                + SystemUtils.LINE_SEPARATOR + "          div.style.display = '';" + SystemUtils.LINE_SEPARATOR
-                + "          img.src='" + IMG_CLOSE_URL + "';" + SystemUtils.LINE_SEPARATOR + "        }"
-                + SystemUtils.LINE_SEPARATOR + "      }" + SystemUtils.LINE_SEPARATOR + "</script>"
-                + SystemUtils.LINE_SEPARATOR;
     }
 
     /**
@@ -485,7 +467,31 @@ public class DependenciesRenderer
 
     private void renderSectionDependencyTree()
     {
-        sink.rawText( JAVASCRIPT );
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter( sw );
+
+        pw.println( "" );
+        pw.println( "<script language=\"javascript\" type=\"text/javascript\">" );
+        pw.println( "      function toggleDependencyDetails( divId, imgId )" );
+        pw.println( "      {" );
+        pw.println( "        var div = document.getElementById( divId );" );
+        pw.println( "        var img = document.getElementById( imgId );" );
+        pw.println( "        if( div.style.display == '' )" );
+        pw.println( "        {" );
+        pw.println( "          div.style.display = 'none';" );
+        pw.printf(  "          img.src='%s';%n", IMG_INFO_URL );
+        pw.printf(  "          img.alt='%s';%n", getI18nString( "graph.icon.information" ) );
+        pw.println( "        }" );
+        pw.println( "        else" );
+        pw.println( "        {" );
+        pw.println( "          div.style.display = '';" );
+        pw.printf(  "          img.src='%s';%n", IMG_CLOSE_URL );
+        pw.printf(  "          img.alt='%s';%n", getI18nString( "graph.icon.close" ) );
+        pw.println( "        }" );
+        pw.println( "      }" );
+        pw.println( "</script>" );
+
+        sink.rawText( sw.toString() );
 
         // for Dependencies Graph Tree
         startSection( getI18nString( "graph.tree.title" ) );
@@ -934,9 +940,13 @@ public class DependenciesRenderer
         sink.listItem();
 
         sink.text( id + ( StringUtils.isNotEmpty( artifact.getScope() ) ? " (" + artifact.getScope() + ") " : " " ) );
-        sink.rawText( "<img id=\"" + imgId + "\" src=\"" + IMG_INFO_URL
-            + "\" alt=\"Information\" onclick=\"toggleDependencyDetail( '" + dependencyDetailId + "', '" + imgId
-            + "' );\" style=\"cursor: pointer;vertical-align:text-bottom;\"></img>" );
+
+        String javascript = String.format( "<img id=\"%s\" src=\"%s\" alt=\"%s\""
+                + " onclick=\"toggleDependencyDetails( '%s', '%s' );\""
+                + " style=\"cursor: pointer; vertical-align: text-bottom;\"></img>",
+                imgId, IMG_INFO_URL, getI18nString( "graph.icon.information" ), dependencyDetailId, imgId );
+
+        sink.rawText( javascript );
 
         printDescriptionsAndURLs( node, dependencyDetailId );
 
