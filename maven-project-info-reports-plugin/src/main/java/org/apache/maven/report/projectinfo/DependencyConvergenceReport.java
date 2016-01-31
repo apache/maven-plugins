@@ -80,7 +80,7 @@ public class DependencyConvergenceReport
     /** URL for the 'icon_error_sml.gif' image */
     private static final String IMG_ERROR_URL = "images/icon_error_sml.gif";
 
-    private static final int PERCENTAGE = 100;
+    private static final int FULL_CONVERGENCE = 100;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -180,19 +180,25 @@ public class DependencyConvergenceReport
         sink.sectionTitle1_();
 
         DependencyAnalyzeResult dependencyResult = analyzeDependencyTree();
+        int convergence = calculateConvergence( dependencyResult );
 
-        // legend
-        generateLegend( locale, sink );
-
-        sink.lineBreak();
+        if ( convergence < FULL_CONVERGENCE )
+        {
+            // legend
+            generateLegend( locale, sink );
+            sink.lineBreak();
+        }
 
         // stats
         generateStats( locale, sink, dependencyResult );
 
         sink.section1_();
 
-        // convergence
-        generateConvergence( locale, sink, dependencyResult );
+        if ( convergence < FULL_CONVERGENCE )
+        {
+            // convergence
+            generateConvergence( locale, sink, dependencyResult );
+        }
 
         sink.body_();
         sink.flush();
@@ -570,7 +576,7 @@ public class DependencyConvergenceReport
         int snapshotCount = result.getSnapshotCount();
         int conflictingCount = result.getConflictingCount();
 
-        int convergence = (int) ( ( (double) depCount / (double) artifactCount ) * PERCENTAGE );
+        int convergence = calculateConvergence( result );
 
         // Create report
         sink.table();
@@ -633,7 +639,7 @@ public class DependencyConvergenceReport
         sink.text( getI18nString( locale, "stats.convergence" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
-        if ( convergence < PERCENTAGE )
+        if ( convergence < FULL_CONVERGENCE )
         {
             iconError( locale, sink );
         }
@@ -653,7 +659,7 @@ public class DependencyConvergenceReport
         sink.text( getI18nString( locale, "stats.readyrelease" ) );
         sink.tableHeaderCell_();
         sink.tableCell();
-        if ( convergence >= PERCENTAGE && snapshotCount <= 0 )
+        if ( convergence >= FULL_CONVERGENCE && snapshotCount <= 0 )
         {
             iconSuccess( locale, sink );
             sink.nonBreakingSpace();
@@ -668,7 +674,7 @@ public class DependencyConvergenceReport
             sink.bold();
             sink.text( getI18nString( locale, "stats.readyrelease.error" ) );
             sink.bold_();
-            if ( convergence < PERCENTAGE )
+            if ( convergence < FULL_CONVERGENCE )
             {
                 sink.lineBreak();
                 sink.text( getI18nString( locale, "stats.readyrelease.error.convergence" ) );
@@ -959,6 +965,12 @@ public class DependencyConvergenceReport
             }
         }
         return children;
+    }
+
+    private int calculateConvergence( DependencyAnalyzeResult result )
+    {
+        return (int) ( ( (double) result.getDependencyCount()
+                / (double) result.getArtifactCount() ) * FULL_CONVERGENCE );
     }
 
     /**
