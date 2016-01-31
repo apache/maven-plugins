@@ -127,7 +127,7 @@ public class ProjectInfoReportUtilsTest
         assertTrue( ProjectInfoReportUtils.isArtifactUrlValid( "http://my.intern.domain:8080/test" ) );
 
         // file
-        URL url = new File( getBasedir(), "/target/classes/project-info-report.properties" ).toURI().toURL();
+        URL url = new File( getBasedir(), "/target/classes/project-info-reports.properties" ).toURI().toURL();
 
         String content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
                                                             "ISO-8859-1" );
@@ -145,7 +145,7 @@ public class ProjectInfoReportUtilsTest
         // http + no auth
         startJetty( false, false );
 
-        url = new URL( "http://localhost:" + port + "/project-info-report.properties" );
+        url = new URL( "http://localhost:" + port + "/project-info-reports.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
                                                      "ISO-8859-1" );
@@ -157,7 +157,7 @@ public class ProjectInfoReportUtilsTest
         // http + auth
         startJetty( false, true );
 
-        url = new URL( "http://localhost:" + port + "/project-info-report.properties" );
+        url = new URL( "http://localhost:" + port + "/project-info-reports.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( false ), settingsStub,
                                                      "ISO-8859-1" );
@@ -169,7 +169,7 @@ public class ProjectInfoReportUtilsTest
         // https + no auth
         startJetty( true, false );
 
-        url = new URL( "https://localhost:" + port + "/project-info-report.properties" );
+        url = new URL( "https://localhost:" + port + "/project-info-reports.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub,
                                                      "ISO-8859-1" );
@@ -181,7 +181,7 @@ public class ProjectInfoReportUtilsTest
         // https + auth
         startJetty( true, true );
 
-        url = new URL( "https://localhost:" + port + "/project-info-report.properties" );
+        url = new URL( "https://localhost:" + port + "/project-info-reports.properties" );
 
         content = ProjectInfoReportUtils.getContent( url, getMavenProjectStub( true ), settingsStub,
                                                      "ISO-8859-1" );

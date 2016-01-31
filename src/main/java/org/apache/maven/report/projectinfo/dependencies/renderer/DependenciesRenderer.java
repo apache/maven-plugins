@@ -1612,7 +1612,7 @@ public class DependenciesRenderer
 
         private String getString( String key )
         {
-            return i18n.getString( "project-info-report", locale, key );
+            return i18n.getString( "project-info-reports", locale, key );
         }
     }
 

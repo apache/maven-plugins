@@ -25,7 +25,7 @@ under the License.
       <role>org.codehaus.plexus.i18n.I18N</role>
       <implementation>org.codehaus.plexus.i18n.DefaultI18N</implementation>
       <configuration>
-        <default-bundle-name>project-info-report</default-bundle-name>
+        <default-bundle-name>project-info-reports</default-bundle-name>
       </configuration>
     </component>
   </components>
