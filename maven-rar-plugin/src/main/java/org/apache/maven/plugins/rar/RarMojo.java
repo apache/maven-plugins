@@ -254,7 +254,7 @@ public class RarMojo
      * @since 2.3
      */
     @Parameter( property = "warnOnMissingRaXml", defaultValue = "true" )
-    protected boolean warnOnMissingRaXml = true;
+    protected boolean warnOnMissingRaXml;
 
     /**
      * To skip execution of the rar mojo.
@@ -301,15 +301,6 @@ public class RarMojo
             return;
         }
 
-        getLog().debug( " ======= RarMojo settings =======" );
-        getLog().debug( "rarSourceDirectory[" + rarSourceDirectory + "]" );
-        getLog().debug( "manifestFile[" + manifestFile + "]" );
-        getLog().debug( "raXmlFile[" + raXmlFile + "]" );
-        getLog().debug( "workDirectory[" + workDirectory + "]" );
-        getLog().debug( "outputDirectory[" + outputDirectory + "]" );
-        getLog().debug( "finalName[" + finalName + "]" );
-        getLog().debug( "classifier[" + classifier + "]" );
-
         // Check if jar file is there and if requested, copy it
         try
         {
@@ -350,6 +341,56 @@ public class RarMojo
             throw new MojoExecutionException( "Error copying RAR dependencies", e );
         }
 
+        resourceHandling();
+
+        // Include custom manifest if necessary
+        try
+        {
+            includeCustomRaXmlFile();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error copying ra.xml file", e );
+        }
+
+        // Check if connector deployment descriptor is there
+        File ddFile = new File( getBuildDir(), RA_XML_URI );
+        if ( !ddFile.exists() && warnOnMissingRaXml )
+        {
+            getLog().warn( "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
+        }
+
+        File rarFile = getRarFile( outputDirectory, finalName, classifier );
+        try
+        {
+            MavenArchiver archiver = new MavenArchiver();
+            archiver.setArchiver( jarArchiver );
+            archiver.setOutputFile( rarFile );
+
+            // Include custom manifest if necessary
+            includeCustomManifestFile();
+
+            archiver.getArchiver().addDirectory( getBuildDir() );
+            archiver.createArchive( session, project, archive );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Error assembling RAR", e );
+        }
+
+        if ( classifier != null )
+        {
+            projectHelper.attachArtifact( project, "rar", classifier, rarFile );
+        }
+        else
+        {
+            project.getArtifact().setFile( rarFile );
+        }
+    }
+
+    private void resourceHandling()
+        throws MojoExecutionException
+    {
         Resource resource = new Resource();
         resource.setDirectory( rarSourceDirectory.getAbsolutePath() );
         resource.setTargetPath( getBuildDir().getAbsolutePath() );
@@ -415,50 +456,6 @@ public class RarMojo
         catch ( MavenFilteringException e )
         {
             throw new MojoExecutionException( "Error copying RAR resources", e );
-        }
-
-        // Include custom manifest if necessary
-        try
-        {
-            includeCustomRaXmlFile();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error copying ra.xml file", e );
-        }
-
-        // Check if connector deployment descriptor is there
-        File ddFile = new File( getBuildDir(), RA_XML_URI );
-        if ( !ddFile.exists() && warnOnMissingRaXml )
-        {
-            getLog().warn( "Connector deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
-        }
-
-        File rarFile = getRarFile( outputDirectory, finalName, classifier );
-        try
-        {
-            MavenArchiver archiver = new MavenArchiver();
-            archiver.setArchiver( jarArchiver );
-            archiver.setOutputFile( rarFile );
-
-            // Include custom manifest if necessary
-            includeCustomManifestFile();
-
-            archiver.getArchiver().addDirectory( getBuildDir() );
-            archiver.createArchive( session, project, archive );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error assembling RAR", e );
-        }
-
-        if ( classifier != null )
-        {
-            projectHelper.attachArtifact( project, "rar", classifier, rarFile );
-        }
-        else
-        {
-            project.getArtifact().setFile( rarFile );
         }
     }
 
