@@ -38,6 +38,11 @@ childContent = new File( basedir, 'child/target/site/index.html' ).text;
 
 assert childContent.contains( 'project.artifactId = child' );
 
+// breadcrumbs
+assert childContent.contains( '<a href="../../index.html"' );
+assert childContent.contains( '<a href="../index.html"' );
+assert childContent.contains( '<a href="index.html"' );
+
 reactorContent = new File( basedir, 'reactor-parent/target/site/index.html' ).text;
 
 assert reactorContent.contains( 'project.artifactId = reactor-parent' );
