@@ -60,11 +60,6 @@ public abstract class AbstractPropertyUtilsTest
         loadValidationProperties( validationFile );
     }
 
-    protected void tearDown()
-    {
-
-    }
-
     protected boolean validateProperties( Properties prop )
     {
         boolean bRetVal = false;

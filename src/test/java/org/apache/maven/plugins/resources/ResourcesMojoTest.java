@@ -19,22 +19,27 @@ package org.apache.maven.plugins.resources;
  * under the License.
  */
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.resources.ResourcesMojo;
-import org.apache.maven.plugins.resources.stub.MavenProjectResourcesStub;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.resources.stub.MavenProjectResourcesStub;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.sonatype.aether.RepositorySystemSession;
 
 public class ResourcesMojoTest
     extends AbstractMojoTestCase
@@ -64,7 +69,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceDirectoryStructure" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -80,7 +85,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -102,7 +107,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceDirectoryStructure_RelativePath" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -119,7 +124,7 @@ public class ResourcesMojoTest
                                                                             .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -141,7 +146,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "encoding" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -155,7 +160,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -173,7 +178,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceInclude" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -205,7 +210,7 @@ public class ResourcesMojoTest
                                                                             .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -227,7 +232,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceExclude" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -260,7 +265,7 @@ public class ResourcesMojoTest
                                                                             .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -282,7 +287,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceTargetPath" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -300,7 +305,7 @@ public class ResourcesMojoTest
                                                                             .getOutputDirectory() ) );
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -322,7 +327,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceSystemProperties_Filtering" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -336,11 +341,15 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
+        
+        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+        request.setSystemProperties( System.getProperties() );
+
         MavenSession mavenSession =
-            new MavenSession( null, null, null, null, null, null, null, System.getProperties(), null );
+            new MavenSession( (PlexusContainer) null, (RepositorySystemSession) null, request, null );
         setVariableValueToObject( mojo, "session", mavenSession );
         mojo.execute();
 
@@ -374,7 +383,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourceProjectProperties_Filtering" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -389,7 +398,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
@@ -409,7 +418,7 @@ public class ResourcesMojoTest
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project =
             new MavenProjectResourcesStub( "resourcePojectProperty_Filtering_PropertyDestination" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -426,7 +435,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );
         mojo.execute();
@@ -446,9 +455,9 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_Filtering" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
-        LinkedList filterList = new LinkedList();
+        LinkedList<String> filterList = new LinkedList<String>();
 
         assertNotNull( mojo );
 
@@ -482,9 +491,9 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_Extra" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
-        LinkedList filterList = new LinkedList();
+        LinkedList<String> filterList = new LinkedList<String>();
 
         assertNotNull( mojo );
 
@@ -518,10 +527,10 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "resourcePropertyFiles_MainAndExtra" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
-        LinkedList filterList = new LinkedList();
-        LinkedList extraFilterList = new LinkedList();
+        LinkedList<String> filterList = new LinkedList<String>();
+        LinkedList<String> extraFilterList = new LinkedList<String>();
 
         assertNotNull( mojo );
 
@@ -566,9 +575,9 @@ public class ResourcesMojoTest
         final ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         final MavenProjectResourcesStub project =
             new MavenProjectResourcesStub( "resourcePropertyFiles_Filtering_TokensInFilters" );
-        final List resources = project.getBuild()
+        final List<Resource> resources = project.getBuild()
                                       .getResources();
-        final LinkedList filterList = new LinkedList();
+        final LinkedList<String> filterList = new LinkedList<String>();
 
         assertNotNull( mojo );
 
@@ -600,7 +609,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "windows-paths" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -620,7 +629,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.FALSE );
 
@@ -640,7 +649,7 @@ public class ResourcesMojoTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         ResourcesMojo mojo = (ResourcesMojo) lookupMojo( "resources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "windows-paths" );
-        List resources = project.getBuild()
+        List<Resource> resources = project.getBuild()
                                 .getResources();
 
         assertNotNull( mojo );
@@ -660,7 +669,7 @@ public class ResourcesMojoTest
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild()
                                                                             .getOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
 
         setVariableValueToObject( mojo, "escapeWindowsPaths", Boolean.TRUE );

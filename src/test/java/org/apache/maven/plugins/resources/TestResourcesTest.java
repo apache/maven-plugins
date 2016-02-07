@@ -20,12 +20,11 @@ package org.apache.maven.plugins.resources;
  */
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.resources.ResourcesMojo;
-import org.apache.maven.plugins.resources.TestResourcesMojo;
 import org.apache.maven.plugins.resources.stub.MavenProjectResourcesStub;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -38,11 +37,6 @@ public class TestResourcesTest
         throws Exception
     {
         super.setUp();
-    }
-
-    protected void tearDown()
-    {
-
     }
 
     /**
@@ -68,7 +62,7 @@ public class TestResourcesTest
         File testPom = new File( getBasedir(), defaultPomFilePath );
         TestResourcesMojo mojo = (TestResourcesMojo) lookupMojo( "testResources", testPom );
         MavenProjectResourcesStub project = new MavenProjectResourcesStub( "testResourceDirectoryStructure" );
-        List resources = project.getBuild().getResources();
+        List<Resource> resources = project.getBuild().getResources();
 
         assertNotNull( mojo );
 
@@ -82,7 +76,7 @@ public class TestResourcesTest
         setVariableValueToObject( mojo, "project", project );
         setVariableValueToObject( mojo, "resources", resources );
         setVariableValueToObject( mojo, "outputDirectory", new File( project.getBuild().getTestOutputDirectory() ) );
-        setVariableValueToObject( mojo, "buildFilters", new LinkedList() );
+        setVariableValueToObject( mojo, "buildFilters", Collections.emptyList() );
         setVariableValueToObject( mojo, "useBuildFilters", Boolean.TRUE );
         mojo.execute();
 
