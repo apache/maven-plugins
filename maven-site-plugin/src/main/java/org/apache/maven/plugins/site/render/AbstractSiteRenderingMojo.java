@@ -51,7 +51,6 @@ import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
 import org.apache.maven.reporting.exec.ReportPlugin;
-import org.apache.maven.shared.utils.StringUtils;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -59,6 +58,7 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base class for site rendering mojos.
