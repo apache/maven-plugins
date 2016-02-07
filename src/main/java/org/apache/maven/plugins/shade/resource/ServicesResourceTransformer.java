@@ -19,10 +19,13 @@ package org.apache.maven.plugins.shade.resource;
  * under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +35,6 @@ import java.util.jar.JarOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.codehaus.plexus.util.IOUtil;
 
 import com.google.common.io.LineReader;
 
@@ -50,6 +52,8 @@ public class ServicesResourceTransformer
     private static final String SERVICES_PATH = "META-INF/services";
 
     private Map<String, ServiceStream> serviceEntries = new HashMap<String, ServiceStream>();
+
+    private List<Relocator> relocators;
 
     public boolean canTransformResource( String resource )
     {
@@ -86,6 +90,11 @@ public class ServicesResourceTransformer
             }
             fout.append( relContent + "\n" );
         }
+
+        if ( this.relocators == null )
+        {
+            this.relocators = relocators;
+        }
     }
     public boolean hasTransformedResource()
     {
@@ -100,8 +109,51 @@ public class ServicesResourceTransformer
             String key = entry.getKey();
             ServiceStream data = entry.getValue();
 
+            if ( relocators != null )
+            {
+                key = key.substring( SERVICES_PATH.length() + 1 );
+                for ( Relocator relocator : relocators )
+                {
+                    if ( relocator.canRelocateClass( key ) )
+                    {
+                        key = relocator.relocateClass( key );
+                        break;
+                    }
+                }
+
+                key = SERVICES_PATH + '/' + key;
+            }
+
             jos.putNextEntry( new JarEntry( key ) );
-            IOUtil.copy( data.toInputStream(), jos );
+
+
+            //read the content of service file for candidate classes for relocation
+            PrintWriter writer = new PrintWriter( jos );
+            InputStreamReader streamReader = new InputStreamReader( data.toInputStream() );
+            BufferedReader reader = new BufferedReader( streamReader );
+            String className;
+
+            while ( ( className = reader.readLine() ) != null )
+            {
+
+                if ( relocators != null )
+                {
+                    for ( Relocator relocator : relocators )
+                    {
+                        //if the class can be relocated then relocate it
+                        if ( relocator.canRelocateClass( className ) )
+                        {
+                            className = relocator.applyToSourceContent( className );
+                            break;
+                        }
+                    }
+                }
+
+                writer.println( className );
+                writer.flush();
+            }
+
+            reader.close();
             data.reset();
         }
     }
