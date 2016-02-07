@@ -57,8 +57,7 @@ public class BasicPropertyUtilsTest
     }
 
     /**
-     * load property test case can be adjusted by modifying the basic.properties and
-     * basic_validation properties
+     * load property test case can be adjusted by modifying the basic.properties and basic_validation properties
      *
      * @throws Exception
      */
@@ -72,8 +71,7 @@ public class BasicPropertyUtilsTest
     }
 
     /**
-     * load property test case can be adjusted by modifying the basic.properties and
-     * basic_validation properties
+     * load property test case can be adjusted by modifying the basic.properties and basic_validation properties
      *
      * @throws Exception
      */
@@ -87,8 +85,7 @@ public class BasicPropertyUtilsTest
     }
 
     /**
-     * load property test case can be adjusted by modifying the basic.properties and
-     * basic_validation properties
+     * load property test case can be adjusted by modifying the basic.properties and basic_validation properties
      *
      * @throws Exception
      */
@@ -103,8 +100,7 @@ public class BasicPropertyUtilsTest
     }
 
     /**
-     * load property test case can be adjusted by modifying the basic.properties and
-     * basic_validation properties
+     * load property test case can be adjusted by modifying the basic.properties and basic_validation properties
      *
      * @throws Exception
      */
@@ -119,8 +115,7 @@ public class BasicPropertyUtilsTest
     }
 
     /**
-     * load property test case can be adjusted by modifying the basic.properties and
-     * basic_validation properties
+     * load property test case can be adjusted by modifying the basic.properties and basic_validation properties
      *
      * @throws Exception
      */
