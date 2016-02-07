@@ -97,5 +97,5 @@ Velocity processing
 | \ \ projectInfoReportsPluginVersion |                | $projectInfoReportsPluginVersion |
 *---------------------------------+--------------------+-------------------------------+
 
-  see <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  see <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.html\#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
   source for more details.
