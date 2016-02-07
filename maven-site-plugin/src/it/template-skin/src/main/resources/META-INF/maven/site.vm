@@ -18,7 +18,7 @@
 <head></head>
 <body>
 
-<h1>variables available in templates' Velocity context</h1>
+<h1>variables available in template's Velocity context</h1>
 
 <p>Variables are prepared in template's Velocity context by <a href="http://maven.apache.org/doxia/doxia-sitetools/doxia-site-renderer/">doxia-siterenderer</a>.</p>
 
@@ -62,8 +62,8 @@ render=$render
 text=$text
 sorter=$sorter
 xml=$xml
-context (cause NullPointerException)
-link (cause NullPointerException)
+context=$context
+link=$link
 </pre>
 \$date.format('yyyy-MM-dd', \$currentDate) = $date.format('yyyy-MM-dd', $currentDate)
 
