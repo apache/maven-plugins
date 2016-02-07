@@ -202,6 +202,9 @@
               <exclude>src/it/MSHADE-133/src/main/resources/myConfig.yml</exclude>
               <exclude>src/it/rerun-with-reloc/src/main/resources/some-ordinary-resource.txt</exclude>
               <exclude>src/it/rerun-without-reloc/src/main/resources/some-ordinary-resource.txt</exclude>
+              <exclude>src/it/MSHADE-182/src/main/resources/META-INF/services/relocateme.Service</exclude>
+              <exclude>src/it/MSHADE-182/target/classes/META-INF/services/relocateme.Service</exclude>
+              <exclude>src/it/MSHADE-182/build.log</exclude>
             </excludes>
           </configuration>
         </plugin>
