@@ -326,14 +326,19 @@ public abstract class AbstractSiteRenderingMojo
                 getLog().info( "Rendering site with " + skinArtifact.getId() + " skin." );
 
                 skinFile = skinArtifact.getFile();
+
+                context = siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(),
+                                                             locale );
             }
             catch ( SiteToolException e )
             {
                 throw new MojoExecutionException( "SiteToolException while preparing skin: " + e.getMessage(), e );
             }
-
-            context = siteRenderer.createContextForSkin( skinFile, attributes, decorationModel, project.getName(),
-                                                         locale );
+            catch ( RendererException e )
+            {
+                throw new MojoExecutionException( "RendererException while preparing context for skin: "
+                    + e.getMessage(), e );
+            }
         }
 
         // Generate static site
