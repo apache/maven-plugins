@@ -114,25 +114,4 @@ public class BasicPropertyUtilsTest
         assertNull( prop.getProperty( "does_not_exist" ) );
     }
 
-    /**
-     * load property test case can be adjusted by modifying the basic.properties and basic_validation properties
-     *
-     * @throws Exception
-     */
-    public void testException()
-        throws Exception
-    {
-        boolean failed = false;
-
-        try
-        {
-            Properties prop = PropertyUtils.loadPropertyFile( new File( "NON_EXISTENT_FILE" ), true, true );
-        }
-        catch ( Exception ex )
-        {
-            failed = true;
-        }
-
-        assertTrue( failed );
-    }
 }
