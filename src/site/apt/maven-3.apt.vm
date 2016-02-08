@@ -97,7 +97,7 @@ Using maven-site-plugin with Maven 3
   []
 
   Notice that Maven 3.0.x reports a misleading warning in case of empty report plugin version: see
-  {{{http://jira.codehaus.org/browse/MNG-5477}}MNG-5477}, fixed in Maven 3.1.0.
+  {{{http://jira.codehaus.org/browse/MNG-5477}MNG-5477}}, fixed in Maven 3.1.0.
 
 * Site descriptor attachment
 
