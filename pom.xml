@@ -190,7 +190,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.7-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.7</doxiaVersion>
     <doxiaSitetoolsVersion>1.7-SNAPSHOT</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
