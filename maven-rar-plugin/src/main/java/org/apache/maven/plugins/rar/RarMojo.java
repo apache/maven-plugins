@@ -78,8 +78,8 @@ public class RarMojo
      * Specify if the generated jar file of this project should be
      * included in the rar file ; default is true.
      */
-    @Parameter
-    private Boolean includeJar = Boolean.TRUE;
+    @Parameter( defaultValue = "true" )
+    private Boolean includeJar;
 
     /**
      * The location of the manifest file to be used within the rar file.
