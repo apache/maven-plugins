@@ -210,7 +210,7 @@ public class RarMojo
      * @since 2.3
      */
     @Parameter
-    protected List<String> delimiters;
+    protected LinkedHashSet<String> delimiters;
 
     /**
      * The list of extra filter properties files to be used along with System properties,
@@ -418,32 +418,7 @@ public class RarMojo
         mavenResourcesExecution.setOverwrite( overwrite );
         mavenResourcesExecution.setIncludeEmptyDirs( includeEmptyDirs );
         mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
-
-        // if these are NOT set, just use the defaults, which are '${*}' and '@'.
-        if ( delimiters != null && !delimiters.isEmpty() )
-        {
-            LinkedHashSet<String> delims = new LinkedHashSet<String>();
-            if ( useDefaultDelimiters )
-            {
-                //noinspection unchecked
-                delims.addAll( mavenResourcesExecution.getDelimiters() );
-            }
-
-            for ( String delim : delimiters )
-            {
-                if ( delim == null )
-                {
-                    // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
-                    delims.add( "${*}" );
-                }
-                else
-                {
-                    delims.add( delim );
-                }
-            }
-
-            mavenResourcesExecution.setDelimiters( delims );
-        }
+        mavenResourcesExecution.setDelimiters( delimiters, useDefaultDelimiters );
 
         if ( nonFilteredFileExtensions != null )
         {
