@@ -441,4 +441,18 @@ public class PmdReportTest
             assertTrue( e.getMessage().endsWith( "Found 1 PMD processing errors" ) );
         }
     }
+
+    public void testPMDExcludeRootsShouldExcludeSubdirectories() throws Exception {
+        File testPom = new File(getBasedir(), "src/test/resources/unit/exclude-roots/pmd-exclude-roots-plugin-config.xml");
+        PmdReport mojo = (PmdReport) lookupMojo ("pmd", testPom);
+        mojo.execute();
+
+        File generatedFile = new File( getBasedir(), "target/test/unit/exclude-roots/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( generatedFile );
+
+        assertTrue( "Seems like all directories are excluded now", str.contains("ForLoopShouldBeWhileLoop") );
+        assertFalse( "Exclusion of an exact source directory not working", str.contains( "OverrideBothEqualsAndHashcode" ) );
+        assertFalse( "Exclusion of basedirectory with subdirectories not working (MPMD-178)", str.contains( "JumbledIncrementer") );
+    }
 }

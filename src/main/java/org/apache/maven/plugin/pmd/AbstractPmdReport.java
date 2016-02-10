@@ -366,7 +366,7 @@ public abstract class AbstractPmdReport
         {
             getLog().debug( "Searching for files in directory " + finfo.getSourceDirectory().toString() );
             File sourceDirectory = finfo.getSourceDirectory();
-            if ( sourceDirectory.isDirectory() && !excludeRootFiles.contains( sourceDirectory ) )
+            if ( sourceDirectory.isDirectory() && !isDirectoryExcluded( excludeRootFiles, sourceDirectory ) )
             {
                 List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
                 for ( File newfile : newfiles )
@@ -377,6 +377,22 @@ public abstract class AbstractPmdReport
         }
 
         return files;
+    }
+
+    private boolean isDirectoryExcluded( Collection<File> excludeRootFiles, File sourceDirectoryToCheck )
+    {
+        boolean returnVal = false;
+        for ( File excludeDir : excludeRootFiles )
+        {
+            if ( sourceDirectoryToCheck.getAbsolutePath().startsWith( excludeDir.getAbsolutePath() ) )
+            {
+                getLog().debug( "Directory " + sourceDirectoryToCheck.getAbsolutePath()
+                                    + " has been excluded as it matches excludeRoot " + excludeDir.getAbsolutePath() );
+                returnVal = true;
+                break;
+            }
+        }
+        return returnVal;
     }
 
     /**
