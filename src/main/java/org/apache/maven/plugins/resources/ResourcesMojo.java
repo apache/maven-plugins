@@ -19,6 +19,13 @@ package org.apache.maven.plugins.resources;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -39,13 +46,6 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 /**
  * Copy resources for the main source code to the main output directory. Always uses the project.build.resources element
@@ -193,7 +193,7 @@ public class ResourcesMojo
      * @since 2.4
      */
     @Parameter
-    protected List<String> delimiters;
+    protected LinkedHashSet<String> delimiters;
 
     /**
      * Use default delimiters in addition to custom delimiters, if any.
@@ -242,8 +242,9 @@ public class ResourcesMojo
     private boolean fileNameFiltering;
 
     /**
-     * You can skip the execution of the plugin if you need to.
-     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * You can skip the execution of the plugin if you need to. Its use is NOT RECOMMENDED, but quite convenient on
+     * occasion.
+     * 
      * @since 3.0.0
      */
     @Parameter( property = "maven.resources.skip", defaultValue = "false" )
@@ -264,14 +265,14 @@ public class ResourcesMojo
             return;
         }
 
+        if ( StringUtils.isEmpty( encoding ) && isFilteringEnabled( getResources() ) )
+        {
+            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                + ", i.e. build is platform dependent!" );
+        }
+
         try
         {
-
-            if ( StringUtils.isEmpty( encoding ) && isFilteringEnabled( getResources() ) )
-            {
-                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                    + ", i.e. build is platform dependent!" );
-            }
 
             List<String> filters = getCombinedFiltersList();
 
@@ -292,29 +293,7 @@ public class ResourcesMojo
             mavenResourcesExecution.setFilterFilenames( fileNameFiltering );
 
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
-            if ( delimiters != null && !delimiters.isEmpty() )
-            {
-                LinkedHashSet<String> delims = new LinkedHashSet<String>();
-                if ( useDefaultDelimiters )
-                {
-                    delims.addAll( mavenResourcesExecution.getDelimiters() );
-                }
-
-                for ( String delim : delimiters )
-                {
-                    if ( delim == null )
-                    {
-                        // FIXME: ${filter:*} could also trigger this condition. Need a better long-term solution.
-                        delims.add( "${*}" );
-                    }
-                    else
-                    {
-                        delims.add( delim );
-                    }
-                }
-
-                mavenResourcesExecution.setDelimiters( delims );
-            }
+            mavenResourcesExecution.setDelimiters( delimiters, useDefaultDelimiters );
 
             if ( nonFilteredFileExtensions != null )
             {
@@ -461,12 +440,12 @@ public class ResourcesMojo
         this.filters = filters;
     }
 
-    public List<String> getDelimiters()
+    public LinkedHashSet<String> getDelimiters()
     {
         return delimiters;
     }
 
-    public void setDelimiters( List<String> delimiters )
+    public void setDelimiters( LinkedHashSet<String> delimiters )
     {
         this.delimiters = delimiters;
     }
