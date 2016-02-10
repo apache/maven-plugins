@@ -428,5 +428,17 @@ public class PmdReportTest
         assertTrue(str.contains("Avoid having style information in JSP files."));
     }
 
-
+    public void testPMDProcessingError()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                "src/test/resources/unit/processing-error/pmd-processing-error-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        try {
+            mojo.execute();
+            fail("Expected exception");
+        } catch (RuntimeException e) {
+            assertTrue( e.getMessage().endsWith( "Found 1 PMD processing errors" ) );
+        }
+    }
 }
