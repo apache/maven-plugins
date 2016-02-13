@@ -42,10 +42,10 @@ Configuring the Site Descriptor
   The format is nearly the same, so you can probably reuse most of your old file.
 
   There is a
-  {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference documentation for the site descriptor}}
+  {{{/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference documentation for the site descriptor}}
   available.
 
-  The XML Schema for the site descriptor is published at {{http://maven.apache.org/xsd/decoration-1.6.0.xsd}}.
+  The XML Schema for the site descriptor is published at {{/xsd/decoration-1.7.0.xsd}}.
 
   Have a look at the
   {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-site-plugin/src/site/site.xml}site descriptor for Maven Site Plugin}}
@@ -92,7 +92,7 @@ Configuring the Site Descriptor
 +-----+
 
   Refer to the site descriptor
-  {{{http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference}}
+  {{{/doxia/doxia-sitetools/doxia-decoration-model/decoration.html}reference}}
   for a complete tag description.
 
 
@@ -234,7 +234,7 @@ Configuring the Site Descriptor
 
 * Inject xhtml into \<head\>
 
-  You can inject some xhtml into the generated <<<\<head\>>>> element of each page by adding a head element
+  You can inject some HTML code into the generated <<<\<head\>>>> element of each page by adding a head element
   to the body element of your project's site descriptor. The following example adds some javascript:
 
 +-----+
@@ -243,13 +243,16 @@ Configuring the Site Descriptor
   <body>
     ...
     <head>
-      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript" />
+      <![CDATA[<script src="http://www.google-analytics.com/urchin.js" type="text/javascript" />]]>
     </head>
     ...
   </body>
   ...
 </project>
 +-----+
+
+  Notice: since Maven Site Plugin version 3.5, if XHTML content is used, it has to be escaped, for example through
+  CDATA XML notation. Previously, XML content didn't need such escaping.
 
 * Links
 
@@ -308,12 +311,15 @@ Configuring the Site Descriptor
   ...
   <body>
     ...
-    <footer>All rights reserved.</footer>
+    <footer><![CDATA[All rights reserved.]]></footer>
     ...
   </body>
   ...
 </project>
 +-----+
+
+  Notice: since Maven Site Plugin version 3.5, if XHTML content is used, it has to be escaped, for example through
+  CDATA XML notation. Previously, XML content didn't need such escaping.
 
 * Custom content
 
@@ -334,15 +340,15 @@ Configuring the Site Descriptor
   Skins can be created to customize the look and feel of a site in a consistent way. For more information on creating a
   skin, see {{{./creatingskins.html}Creating a Skin}}. To use a specific skin in your project, you use the <<<\<skin\>>>>
   element of the site descriptor. This is a regular artifact or dependency-like element. For example, to use the
-  {{{http://maven.apache.org/skins/maven-classic-skin/}Maven Classic Skin}}, you would include:
+  {{{/skins/maven-fluido-skin/}Maven Fluido Skin}}, you would include:
 
 +-----+
 <project>
   ...
   <skin>
     <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-classic-skin</artifactId>
-    <version>1.0</version>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>1.5</version>
   </skin>
   ...
 </project>
@@ -356,7 +362,7 @@ Configuring the Site Descriptor
   template to render the site.
 
   If you don't specify a skin, the Site Plugin will use
-  {{{http://maven.apache.org/skins/maven-default-skin/}Maven Default Skin}}.
+  {{{/skins/maven-default-skin/}Maven Default Skin}}.
 
 * Custom Properties
 
@@ -365,7 +371,7 @@ Configuring the Site Descriptor
   these properties in their <<<site.xml>>> using the <<<\<custom\>>>> element.
 
   One skin that uses this is the Maven Fluido Skin. There are many examples on
-  {{{http://maven.apache.org/skins/maven-fluido-skin/}their site}} showing what
+  {{{/skins/maven-fluido-skin/}their site}} showing what
   is possible to do with custom properties. Here is one example:
 
 +-----+
