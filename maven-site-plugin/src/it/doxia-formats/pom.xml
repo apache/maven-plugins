@@ -47,6 +47,13 @@ under the License.
               <att1>val1</att1>
             </attributes>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.velocity</groupId>
+              <artifactId>velocity</artifactId>
+              <version>1.5</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>

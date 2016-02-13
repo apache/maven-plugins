@@ -33,6 +33,33 @@ Migrate
   adjustments to their environment, documents or configuration. Below is a list
   of these changes and what you as a user need to be aware of.
 
+* From 3.4 to 3.5
+
+  * Since {{{http://velocity.apache.org}Velocity}} has been upgraded from version 1.5 to version 1.7,
+  which changes escaping rules, you may need to update escape sequences in your <<<.vm>>> documents and/or skins.
+  If you can't update content and/or skin immediately, you can manually downgrade Velocity version by
+  configuring a dependency to Maven Site Plugin:
+
++-----------------+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-site-plugin</artifactId>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity</artifactId>
+          <version>1.5</version>
+        </dependency>
+      </dependencies>
+    </plugin>
++-----------------+
+
+  * Site Decoration Model has changed type for <<<head>>>/<<<footer>>> from DOM to String:
+  if your <<<site.xml>>> (or one parent) contains XML content, you'll need to escape it, usually by
+  adding <<<\<![CDATA[>>> and <<<]]\>>>>.
+
+  []
+
 * From 2.x to 3.x
 
   * Version 3 of the plugin requires at least <<Maven 2.2.0>> to run.
@@ -67,13 +94,13 @@ Migrate
   major changes itself. If you experience unexpected behavior, please read these
   resources:
 
-    * {{{http://maven.apache.org/doxia/whatsnew-1.1.html}Doxia: what's new in 1.1?}}
+    * {{{/doxia/whatsnew-1.1.html}Doxia: what's new in 1.1?}}
 
-    * {{{http://maven.apache.org/doxia/references/doxia-apt.html}Doxia: Enhancements to the APT format}}
+    * {{{/doxia/references/doxia-apt.html}Doxia: Enhancements to the APT format}}
 
-    * {{{http://maven.apache.org/doxia/issues/index.html}Doxia: Issues & Gotchas}}
+    * {{{/doxia/issues/index.html}Doxia: Issues & Gotchas}}
 
-    * {{{http://maven.apache.org/doxia/faq.html}Doxia: Frequently Asked Questions}}
+    * {{{/doxia/faq.html}Doxia: Frequently Asked Questions}}
 
     []
 
