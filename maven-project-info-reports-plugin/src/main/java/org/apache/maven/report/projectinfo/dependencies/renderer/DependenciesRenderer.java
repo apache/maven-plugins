@@ -1557,7 +1557,7 @@ public class DependenciesRenderer
     // CHECKSTYLE_OFF: LineLength
     /**
      * Formats file length with the associated <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI</a> prefix
-     * (GB, MB, kB) and using the pattern <code>###0.00</code> by default.
+     * (GB, MB, kB) and using the pattern <code>###0.#</code> by default.
      *
      * @see <a href="https://en.wikipedia.org/wiki/Metric_prefix">https://en.wikipedia.org/wiki/Metric_prefix</a>
      * @see <a href="https://en.wikipedia.org/wiki/Binary_prefix">https://en.wikipedia.org/wiki/Binary_prefix</a>
