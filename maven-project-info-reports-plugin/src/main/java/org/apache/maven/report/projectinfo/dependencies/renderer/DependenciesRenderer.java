@@ -1582,7 +1582,7 @@ public class DependenciesRenderer
          */
         public FileDecimalFormat( I18N i18n, Locale locale )
         {
-            super( "###0.00" );
+            super( "###0.#" );
 
             this.i18n = i18n;
             this.locale = locale;
