@@ -35,7 +35,7 @@ Creating Skins
   the output templates that Maven uses to generate the site documentation.
 
   For an in-depth discussion of site customization, please have a look at
-  {{{http://www.sonatype.com/books/maven-book/reference/site-generation.html} Maven: The Definitive Guide, Chapter 15. Site Generation}}
+  {{{http://books.sonatype.com/mvnref-book/reference/site-generation.html} Maven: The Complete Reference, Chapter 10. Site Generation}}
   provided by Sonatype.
 
 * About
@@ -46,7 +46,10 @@ Creating Skins
 
     * A couple of CSS files, containing the visual styling
 
-    * An optional Velocity template for an alternate HTML rendering of the site
+    * An optional Velocity template in <<</META-INF/maven/site.vm>>> for an alternate HTML rendering of the site
+
+    * Since Maven Site Plugin 3.5, an optional {{{/doxia/doxia-sitetools/doxia-skin-model/index.html}skin descriptor}}
+    in <<</META-INF/maven/skin.vm>>> containing meta-data about the skin
 
 * Building
 
@@ -75,11 +78,8 @@ Creating Skins
   modify it to your needs.
 
   For more information about how to write Velocity templates see the
-  {{{http://velocity.apache.org/engine/releases/velocity-1.5/user-guide.html}Velocity User Guide}}
+  {{{http://velocity.apache.org/engine/releases/velocity-1.7/user-guide.html}Velocity User Guide}}
   and
-  {{{http://velocity.apache.org/engine/releases/velocity-1.5/vtl-reference-guide.html}Velocity Template Language Reference Guide}}.
+  {{{http://velocity.apache.org/engine/releases/velocity-1.7/vtl-reference-guide.html}Velocity Template Language Reference Guide}}.
 
-* Examples of Existing Skins
-
-  A list of links to skins that can be used as inspiration can be found on
-  {{{http://docs.codehaus.org/display/MAVENUSER/Maven+Skins}the wiki}}.
+  Notice that Velocity 1.7 is used since Maven Site Plugin 3.5, but version 1.5 was used previously.
