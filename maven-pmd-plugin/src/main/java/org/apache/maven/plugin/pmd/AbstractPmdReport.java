@@ -384,12 +384,21 @@ public abstract class AbstractPmdReport
         boolean returnVal = false;
         for ( File excludeDir : excludeRootFiles )
         {
-            if ( sourceDirectoryToCheck.getAbsolutePath().startsWith( excludeDir.getAbsolutePath() ) )
+            try
             {
-                getLog().debug( "Directory " + sourceDirectoryToCheck.getAbsolutePath()
-                                    + " has been excluded as it matches excludeRoot " + excludeDir.getAbsolutePath() );
-                returnVal = true;
-                break;
+                if ( sourceDirectoryToCheck.getCanonicalPath().startsWith( excludeDir.getCanonicalPath() ) )
+                {
+                    getLog().debug( "Directory " + sourceDirectoryToCheck.getAbsolutePath()
+                                        + " has been excluded as it matches excludeRoot "
+                                        + excludeDir.getAbsolutePath() );
+                    returnVal = true;
+                    break;
+                }
+            }
+            catch ( IOException e )
+            {
+                getLog().warn( "Error while checking " + sourceDirectoryToCheck
+                               + " whether it should be excluded.", e );
             }
         }
         return returnVal;
