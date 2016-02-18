@@ -67,8 +67,8 @@ public class TestSourceJarMojoTest
     public void testIncludeMavenDescriptorWhenExplicitlyConfigured()
         throws Exception
     {
-        doTestProjectWithSourceArchive( "project-010", new String[] { "default-configuration.properties",
-            "foo/project010/App.java", "foo/project010/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
+        doTestProjectWithTestSourceArchive( "project-010", new String[] { "test-default-configuration.properties",
+            "foo/project010/AppTest.java", "foo/project010/", "foo/", "META-INF/MANIFEST.MF", "META-INF/",
             "META-INF/maven/", "META-INF/maven/source/", "META-INF/maven/source/maven-source-plugin-test-project-010/",
             "META-INF/maven/source/maven-source-plugin-test-project-010/pom.xml",
             "META-INF/maven/source/maven-source-plugin-test-project-010/pom" + ".properties" }, "test-sources" );
