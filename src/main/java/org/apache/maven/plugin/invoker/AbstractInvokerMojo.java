@@ -330,15 +330,6 @@ public abstract class AbstractInvokerMojo
     private List<String> profiles;
 
     /**
-     * List of properties which will be used to interpolate goal files.
-     *
-     * @since 1.1
-     * @deprecated As of version 1.3, the parameter {@link #filterProperties} should be used instead.
-     */
-    @Parameter
-    private Properties interpolationsProperties;
-
-    /**
      * A list of additional properties which will be used to filter tokens in POMs and goal files.
      *
      * @since 1.3
@@ -2136,10 +2127,7 @@ public abstract class AbstractInvokerMojo
     private Map<String, Object> getInterpolationValueSource()
     {
         Map<String, Object> props = new HashMap<String, Object>();
-        if ( interpolationsProperties != null )
-        {
-            props.putAll( (Map) interpolationsProperties );
-        }
+
         if ( filterProperties != null )
         {
             props.putAll( filterProperties );

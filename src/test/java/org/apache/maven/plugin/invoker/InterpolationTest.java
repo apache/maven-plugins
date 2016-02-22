@@ -84,7 +84,7 @@ public class InterpolationTest
             Properties properties = new Properties();
             properties.put( "foo", "bar" );
             properties.put( "version", "2.0-SNAPSHOT" );
-            setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
+            setVariableValueToObject( invokerMojo, "filterProperties", properties );
             String dirPath =
                 getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar
                     + "resources" + File.separatorChar + "unit" + File.separatorChar + "interpolation";
