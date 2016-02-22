@@ -363,17 +363,6 @@ public abstract class AbstractInvokerMojo
     private String invokerTest;
 
     /**
-     * The name of the project-specific file that contains the enumeration of profiles to use for that test. <b>If the
-     * file exists and is empty no profiles will be used even if the parameter {@link #profiles} is set.</b>
-     *
-     * @since 1.1
-     * @deprecated As of version 1.2, the key <code>invoker.profiles</code> from the properties file specified by the
-     *             parameter {@link #invokerPropertiesFile} should be used instead.
-     */
-    @Parameter( property = "invoker.profilesFile", defaultValue = "profiles.txt" )
-    private String profilesFile;
-
-    /**
      * Path to an alternate <code>settings.xml</code> to use for Maven invocation with all ITs. Note that the
      * <code>&lt;localRepository&gt;</code> element of this settings file is always ignored, i.e. the path given by the
      * parameter {@link #localRepositoryPath} is dominant.
@@ -1906,7 +1895,7 @@ public abstract class AbstractInvokerMojo
     {
         try
         {
-            return getTokens( basedir, profilesFile, profiles );
+            return getTokens( basedir, null, profiles );
         }
         catch ( IOException e )
         {
