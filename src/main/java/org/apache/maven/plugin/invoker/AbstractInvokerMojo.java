@@ -246,15 +246,6 @@ public abstract class AbstractInvokerMojo
     private List<String> goals = Collections.singletonList( "package" );
 
     /**
-     * The name of the project-specific file that contains the enumeration of goals to execute for that test.
-     *
-     * @deprecated As of version 1.2, the key <code>invoker.goals</code> from the properties file specified by the
-     *             parameter {@link #invokerPropertiesFile} should be used instead.
-     */
-    @Parameter( property = "invoker.goalsFile", defaultValue = "goals.txt" )
-    private String goalsFile;
-
-    /**
      */
     @Component
     private Invoker invoker;
@@ -1915,7 +1906,9 @@ public abstract class AbstractInvokerMojo
     {
         try
         {
-            return getTokens( basedir, goalsFile, goals );
+            //FIXME: Currently we have null for goalsFile which has been removed.
+            // This might mean we can remove getGoals() at all ? Check this.
+            return getTokens( basedir, null, goals );
         }
         catch ( IOException e )
         {

@@ -71,26 +71,6 @@ public class InterpolationTest
         assertEquals( "barOnProject", compositeMap.get( "fooOnProject" ) );
     }
 
-    public void testInterpolationGoalsFile()
-        throws Exception
-    {
-        InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goalsFile", "goals.txt" );
-        setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
-        setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        Properties properties = new Properties();
-        properties.put( "cleanProps", "clean" );
-        properties.put( "version", "2.0-SNAPSHOT" );
-        setVariableValueToObject( invokerMojo, "interpolationsProperties", properties );
-        String dirPath =
-            getBasedir() + File.separatorChar + "src" + File.separatorChar + "test" + File.separatorChar + "resources"
-                + File.separatorChar + "unit" + File.separatorChar + "interpolation";
-        List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
-        assertEquals( goals.toString(), 2, goals.size() );
-        assertEquals( "clean", goals.get( 0 ) );
-        assertEquals( "bar:foo:1.0-SNAPSHOT:mygoal", goals.get( 1 ) );
-    }
-
     public void testPomInterpolation()
         throws Exception
     {
@@ -99,7 +79,6 @@ public class InterpolationTest
         try
         {
             InvokerMojo invokerMojo = new InvokerMojo();
-            setVariableValueToObject( invokerMojo, "goalsFile", "goals.txt" );
             setVariableValueToObject( invokerMojo, "project", buildMavenProjectStub() );
             setVariableValueToObject( invokerMojo, "settings", new Settings() );
             Properties properties = new Properties();
