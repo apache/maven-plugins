@@ -296,14 +296,6 @@ public abstract class AbstractInvokerMojo
     private String testPropertiesFile;
 
     /**
-     * Common set of test properties to pass in on each IT's command line, via -D parameters.
-     *
-     * @deprecated As of version 1.1, use the {@link #properties} parameter instead.
-     */
-    @Parameter
-    private Properties testProperties;
-
-    /**
      * Common set of properties to pass in on each project's command line, via -D parameters.
      *
      * @since 1.1
@@ -1805,11 +1797,6 @@ public abstract class AbstractInvokerMojo
         throws MojoExecutionException
     {
         Properties collectedTestProperties = new Properties();
-
-        if ( testProperties != null )
-        {
-            collectedTestProperties.putAll( testProperties );
-        }
 
         if ( properties != null )
         {
