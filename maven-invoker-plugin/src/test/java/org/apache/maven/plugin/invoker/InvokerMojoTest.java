@@ -20,14 +20,11 @@ package org.apache.maven.plugin.invoker;
  */
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugin.invoker.model.BuildJob;
-import org.apache.maven.settings.Settings;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 /**
  * @author Olivier Lamy
@@ -38,36 +35,16 @@ public class InvokerMojoTest
     extends AbstractMojoTestCase
 {
 
-    /**
-     * test reading goals from a file
-     */
-    public void testReadGoalsFromFile()
-        throws Exception
-    {
-        MavenProjectStub project = new MavenProjectStub();
-        project.setTestClasspathElements( Collections.EMPTY_LIST );
-
-        InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goalsFile", "goals.txt" );
-        setVariableValueToObject( invokerMojo, "project", project );
-        setVariableValueToObject( invokerMojo, "settings", new Settings() );
-        String dirPath = getBasedir() + "/src/test/resources/unit/goals-from-file/";
-        List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
-        assertEquals( 3, goals.size() );
-    }
-
     public void testSingleInvokerTest()
         throws Exception
     {
         InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
         String dirPath = getBasedir() + "/src/test/resources/unit";
         List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*dummy*" );
         BuildJob[] poms = invokerMojo.getBuildJobs();
-        System.out.println( Arrays.asList( poms ) );
         assertEquals( 1, poms.length );
     }
 
@@ -75,14 +52,12 @@ public class InvokerMojoTest
         throws Exception
     {
         InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
         String dirPath = getBasedir() + "/src/test/resources/unit";
         List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*dummy*,*terpolatio*" );
         BuildJob[] poms = invokerMojo.getBuildJobs();
-        System.out.println( Arrays.asList( poms ) );
         assertEquals( 2, poms.length );
     }
 
@@ -90,14 +65,12 @@ public class InvokerMojoTest
         throws Exception
     {
         InvokerMojo invokerMojo = new InvokerMojo();
-        setVariableValueToObject( invokerMojo, "goalsFile", "validate-goal.txt" );
         String dirPath = getBasedir() + "/src/test/resources/unit";
         List<String> goals = invokerMojo.getGoals( new File( dirPath ) );
         assertEquals( 1, goals.size() );
         setVariableValueToObject( invokerMojo, "projectsDirectory", new File( dirPath ) );
         setVariableValueToObject( invokerMojo, "invokerTest", "*" );
         BuildJob[] poms = invokerMojo.getBuildJobs();
-        System.out.println( Arrays.asList( poms ) );
         assertEquals( 4, poms.length );
     }
 

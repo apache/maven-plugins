@@ -1,2 +1,0 @@
-${cleanProps} 
-${pom.groupId}:${pom.artifactId}:${pom.version}:mygoal
