@@ -124,7 +124,7 @@ Configuring the Site Descriptor
 </project>
 +-----+
 
-  The format of the "Last Published" date is the ISO date format that is
+  The format of the "Last Published" date is the ISO extended date format that is
   {{{http://www.w3.org/QA/Tips/iso-date}recommended by the W3C}}. Because the
   web has an international, cross-cultural audience it is recommended to <not>
   change the date format.

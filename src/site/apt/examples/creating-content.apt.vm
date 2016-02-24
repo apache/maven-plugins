@@ -167,23 +167,9 @@ Creating Content
 
   <<Note:>> {{{http://velocity.apache.org/}Apache Velocity}} is used to apply the
   filtering. Because Velocity uses a dot-notation to traverse beans you <<cannot>>
-  use dots in your properties defined in <<<\<properties\>>>>.
-
-  If you declare these properties in your POM
-
-+-----+
-  <properties>
-    <!-- This will not work because the name of the property has a dot in it -->
-    <my.property>My value</my.property>
-    <!-- This will work because the name of the property has no dot in it -->
-    <myProperty>My other value</myProperty>
-  </properties>
-+-----+
-
-  and then use the expression <<<$\{my.property\}>>> in your document, it will
-  <<not>> work. If you instead use the expression <<<$\{myProperty\}>>> it will
-  work just fine. Alternatively, you can say <<<${project.properties.get("my.property")}>>>
-  which is cumbersome to write.
+  use dotted properties defined in <<<\<properties\>>>> directly. It is generally
+  advised to access properties by using the <<<$context>>> tool.
+  E.g., with <<<$context.get("my.property")>>>.
 
   Some properties are defined by default: see
   {{{/doxia/doxia-sitetools/doxia-site-renderer/#Velocity_processing} Doxia Site Renderer's Velocity processing reference}}

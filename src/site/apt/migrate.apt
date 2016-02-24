@@ -54,9 +54,11 @@ Migrate
     </plugin>
 +-----------------+
 
-  * Site Decoration Model has changed type for <<<head>>>/<<<footer>>> from DOM to String:
+  * Site Decoration Model has changed type for <<<head>>> and <<<footer>>> from <<<DOM>>> to <<<String>>>:
   if your <<<site.xml>>> (or one parent) contains XML content, you'll need to escape it, usually by
   adding <<<\<![CDATA[>>> and <<<]]\>>>>.
+  
+  * 
 
   []
 
