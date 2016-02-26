@@ -19,6 +19,15 @@ package org.apache.maven.plugin.compiler;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -27,13 +36,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Compiles application test sources.
@@ -59,12 +61,6 @@ public class TestCompilerMojo
      */
     @Parameter ( defaultValue = "${project.testCompileSourceRoots}", readonly = true, required = true )
     private List<String> compileSourceRoots;
-
-    /**
-     * Project test classpath.
-     */
-    @Parameter ( defaultValue = "${project.testClasspathElements}", required = true, readonly = true )
-    private List<String> classpathElements;
 
     /**
      * The directory where compiled test classes go.
@@ -140,6 +136,9 @@ public class TestCompilerMojo
     @Parameter ( defaultValue = "${project.build.directory}/generated-test-sources/test-annotations" )
     private File generatedTestSourcesDirectory;
 
+    private List<String> classpathElements;
+
+    private List<String> modulepathElements;
 
     public void execute()
         throws MojoExecutionException, CompilationFailureException
@@ -150,6 +149,15 @@ public class TestCompilerMojo
         }
         else
         {
+            try
+            {
+                setPaths();
+            }
+            catch ( DependencyResolutionRequiredException e )
+            {
+                throw new MojoExecutionException( e.getMessage() );
+            }
+            
             super.execute();
         }
     }
@@ -163,10 +171,73 @@ public class TestCompilerMojo
     {
         return classpathElements;
     }
+    
+    @Override
+    protected List<String> getModulepathElements()
+    {
+        return modulepathElements;
+    }
 
     protected File getOutputDirectory()
     {
         return outputDirectory;
+    }
+
+    private void setPaths()
+        throws DependencyResolutionRequiredException
+    {
+        boolean hasMainModuleDescriptor =
+            new File( getProject().getBuild().getOutputDirectory(), "module-info.class" ).exists();
+        
+        boolean hasTestModuleDescriptor = false;
+        for ( String sourceRoot : getProject().getTestCompileSourceRoots() )
+        {
+            hasTestModuleDescriptor |= new File( sourceRoot, "module-info.java" ).exists();
+        }
+        
+        List<String> compilePathElements =
+            JavaMavenProjectUtils.getCompileClasspathElements( getProject(),
+                                                           new File( getProject().getBuild().getOutputDirectory() ) );
+
+        List<String> testPathElements =
+                        JavaMavenProjectUtils.getTestClasspathElements( getProject(), getOutputDirectory() );
+
+        List<String> testScopedElements = new ArrayList<String>( testPathElements );
+        testScopedElements.removeAll( compilePathElements );
+        
+        if ( hasTestModuleDescriptor )
+        {
+            if ( hasMainModuleDescriptor )
+            {
+                modulepathElements = testPathElements;
+                classpathElements = Collections.emptyList();
+            }
+            else
+            {
+                modulepathElements = testScopedElements;
+                classpathElements = compilePathElements;
+                // Odd, extra arguments required
+            }
+        }
+        else
+        {
+            if ( hasMainModuleDescriptor )
+            {
+                modulepathElements = compilePathElements;
+                classpathElements = testScopedElements;
+                
+                if ( compilerArgs == null )
+                {
+                    compilerArgs = new ArrayList<String>();
+                }
+                compilerArgs.add( "-addmods" );
+            }
+            else
+            {
+                modulepathElements = Collections.emptyList();
+                classpathElements = testPathElements;
+            }
+        }
     }
 
     protected SourceInclusionScanner getSourceInclusionScanner( int staleMillis )

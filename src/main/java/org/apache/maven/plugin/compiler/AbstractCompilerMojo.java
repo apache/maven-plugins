@@ -21,6 +21,7 @@ package org.apache.maven.plugin.compiler;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -59,6 +60,8 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 
 import java.io.File;
+import java.io.IOException;
+//import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,6 +71,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarFile;
+//import java.util.jar.JarFile;
 
 /**
  * TODO: At least one step could be optimized, currently the plugin will do two
@@ -447,6 +452,8 @@ public abstract class AbstractCompilerMojo
     protected abstract SourceInclusionScanner getSourceInclusionScanner( String inputFileEnding );
 
     protected abstract List<String> getClasspathElements();
+    
+    protected abstract List<String> getModulepathElements();
 
     protected abstract List<String> getCompileSourceRoots();
 
@@ -461,6 +468,11 @@ public abstract class AbstractCompilerMojo
     protected abstract Map<String, String> getCompilerArguments();
 
     protected abstract File getGeneratedSourcesDirectory();
+
+    protected final MavenProject getProject()
+    {
+        return project;
+    }
 
     @Override
     public void execute()
@@ -519,6 +531,7 @@ public abstract class AbstractCompilerMojo
         {
             getLog().debug( "Source directories: " + compileSourceRoots.toString().replace( ',', '\n' ) );
             getLog().debug( "Classpath: " + getClasspathElements().toString().replace( ',', '\n' ) );
+            getLog().debug( "Modulepath: " + getModulepathElements().toString().replace( ',', '\n' ) );
             getLog().debug( "Output directory: " + getOutputDirectory() );
         }
 
@@ -531,6 +544,8 @@ public abstract class AbstractCompilerMojo
         compilerConfiguration.setOutputLocation( getOutputDirectory().getAbsolutePath() );
 
         compilerConfiguration.setClasspathEntries( getClasspathElements() );
+
+        compilerConfiguration.setModulepathEntries( getModulepathElements() );
 
         compilerConfiguration.setOptimize( optimize );
 
@@ -817,6 +832,15 @@ public abstract class AbstractCompilerMojo
             for ( String s : getClasspathElements() )
             {
                 getLog().debug( " " + s );
+            }
+
+            if ( !getModulepathElements().isEmpty() )
+            {
+                getLog().debug( "Modulepath:" );
+                for ( String s : getModulepathElements() )
+                {
+                    getLog().debug( " " + s );
+                }
             }
 
             getLog().debug( "Source roots:" );
@@ -1296,11 +1320,15 @@ public abstract class AbstractCompilerMojo
 
         Date buildStartTime = getBuildStartTime();
 
-        for ( String classPathElement : getClasspathElements() )
+        List<String> pathElements = new ArrayList<String>();
+        pathElements.addAll( getClasspathElements() );
+        pathElements.addAll( getModulepathElements() );
+        
+        for ( String pathElement : pathElements )
         {
             // ProjectArtifacts are artifacts which are available in the local project
             // that's the only ones we are interested in now.
-            File artifactPath = new File( classPathElement );
+            File artifactPath = new File( pathElement );
             if ( artifactPath.isDirectory() )
             {
                 if ( hasNewFile( artifactPath, buildStartTime ) )
@@ -1345,7 +1373,7 @@ public abstract class AbstractCompilerMojo
 
         return false;
     }
-
+    
     private List<String> resolveProcessorPathEntries()
         throws MojoExecutionException
     {
@@ -1401,5 +1429,67 @@ public abstract class AbstractCompilerMojo
             throw new MojoExecutionException( "Resolution of annotationProcessorPath dependencies failed: "
                 + e.getLocalizedMessage(), e );
         }
+    }
+    
+    protected final boolean hasModuleDescriptor( List<String> pathElements )
+        throws DependencyResolutionRequiredException
+    {
+        boolean hasModuleDescriptor = false;
+
+        for ( String sourceLocation : getCompileSourceRoots() )
+        {
+            if ( new File( sourceLocation, "module-info.java" ).exists() )
+            {
+                hasModuleDescriptor = true;
+                break;
+            }
+        }
+
+        if ( !hasModuleDescriptor )
+        {
+            for ( String entry : pathElements )
+            {
+                File entryFile = new File( entry );
+
+                if ( entryFile.isDirectory() && new File( entryFile, "module-info.class" ).exists() )
+                {
+                    hasModuleDescriptor = true;
+                    break;
+                }
+                else
+                {
+                    JarFile jarFile = null;
+                    try
+                    {
+                        jarFile = new JarFile( entryFile, false );
+
+                        if ( jarFile.getEntry( "module-info.class" ) != null )
+                        {
+                            hasModuleDescriptor = true;
+                            break;
+                        }
+                    }
+                    catch ( IOException e )
+                    {
+                        // noop
+                    }
+                    finally
+                    {
+                        try
+                        {
+                            if ( jarFile != null )
+                            {
+                                jarFile.close();
+                            }
+                        }
+                        catch ( IOException e )
+                        {
+                            // noop
+                        }
+                    }
+                }
+            }
+        }
+        return hasModuleDescriptor;
     }
 }
