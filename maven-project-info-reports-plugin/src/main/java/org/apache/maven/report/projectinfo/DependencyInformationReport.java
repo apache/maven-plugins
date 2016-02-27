@@ -40,8 +40,6 @@ public final class DependencyInformationReport
     extends AbstractProjectInfoReport
 {
 
-    private static final String DEPENDENCY_INFO = "dependency-info";
-
     private static final String JAR_PACKAGING = "jar";
 
     /**
@@ -73,7 +71,7 @@ public final class DependencyInformationReport
      */
     public String getOutputName()
     {
-        return DEPENDENCY_INFO;
+        return "dependency-info";
     }
 
     /**
@@ -82,7 +80,7 @@ public final class DependencyInformationReport
     @Override
     protected String getI18Nsection()
     {
-        return DEPENDENCY_INFO;
+        return "dependency-info";
     }
 
     /**
@@ -128,7 +126,7 @@ public final class DependencyInformationReport
         @Override
         protected String getI18Nsection()
         {
-            return DEPENDENCY_INFO;
+            return "dependency-info";
         }
 
         /**

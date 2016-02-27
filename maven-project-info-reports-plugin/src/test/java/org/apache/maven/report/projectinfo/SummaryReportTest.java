@@ -32,7 +32,7 @@ import com.meterware.httpunit.WebResponse;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class ProjectSummaryReportTest
+public class SummaryReportTest
     extends AbstractProjectInfoTestCase
 {
     /**

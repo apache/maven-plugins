@@ -23,12 +23,12 @@ package org.apache.maven.report.projectinfo.stubs;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class CimStub
+public class MailingListsStub
     extends ProjectInfoProjectStub
 {
     @Override
     protected String getPOM()
     {
-        return "cim-plugin-config.xml";
+        return "mailing-lists-plugin-config.xml";
     }
 }

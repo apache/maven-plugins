@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @since 2.0
  */
 @Mojo( name = "project-team" )
-public class TeamListReport
+public class TeamReport
     extends AbstractProjectInfoReport
 {
     /**
@@ -54,7 +54,8 @@ public class TeamListReport
      * <p/>
      * Future versions of this plugin may choose to implement different strategies for resolving avatar images, possibly
      * using different providers.
-     *
+     *<p>
+     *<strong>Note</strong>: This property will be renamed to {@code tteam.showAvatarImages} in 3.0.
      * @since 2.6
      */
     @Parameter( property = "teamlist.showAvatarImages", defaultValue = "true" )
@@ -81,8 +82,8 @@ public class TeamListReport
     public void executeReport( Locale locale )
     {
         // CHECKSTYLE_OFF: LineLength
-        TeamListRenderer r =
-            new TeamListRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog(), showAvatarImages );
+        ProjectTeamRenderer r =
+            new ProjectTeamRenderer( getSink(), project.getModel(), getI18N( locale ), locale, getLog(), showAvatarImages );
         // CHECKSTYLE_ON: LineLength
 
         r.render();
@@ -99,7 +100,7 @@ public class TeamListReport
     @Override
     protected String getI18Nsection()
     {
-        return "team-list";
+        return "team";
     }
 
     // ----------------------------------------------------------------------
@@ -109,7 +110,7 @@ public class TeamListReport
     /**
      * Internal renderer class
      */
-    private static class TeamListRenderer
+    private static class ProjectTeamRenderer
         extends AbstractProjectInfoRenderer
     {
         private static final String PROPERTIES = "properties";
@@ -138,7 +139,7 @@ public class TeamListReport
 
         private final boolean showAvatarImages;
 
-        TeamListRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log, boolean showAvatarImages )
+        ProjectTeamRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log, boolean showAvatarImages )
         {
             super( sink, i18n, locale );
 
@@ -150,7 +151,7 @@ public class TeamListReport
         @Override
         protected String getI18Nsection()
         {
-            return "team-list";
+            return "team";
         }
 
         @Override

@@ -135,7 +135,7 @@ public class DependencyManagementReport
     @Override
     protected String getI18Nsection()
     {
-        return "dependencyManagement";
+        return "dependency-management";
     }
 
     // ----------------------------------------------------------------------

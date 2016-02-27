@@ -20,10 +20,10 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugin.projectinfo.tests</groupId>
-  <artifactId>pluginManagement</artifactId>
+  <artifactId>plugin-management</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>pluginManagement project info</name>
+  <name>plugin management project info</name>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -55,7 +55,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <configuration>
-          <outputDirectory>target/test-harness/pluginManagement</outputDirectory>
+          <outputDirectory>target/test-harness/plugin-management</outputDirectory>
           <localRepository>${localRepository}</localRepository>
           <project implementation="org.apache.maven.report.projectinfo.stubs.PluginManagementStub"/>
         </configuration>

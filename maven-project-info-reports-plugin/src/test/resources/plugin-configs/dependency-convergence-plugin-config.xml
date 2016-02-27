@@ -23,7 +23,7 @@ under the License.
   <artifactId>dependency-convergence</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>dependency-convergence project info</name>
+  <name>dependency convergence project info</name>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

@@ -33,7 +33,7 @@ import com.meterware.httpunit.WebResponse;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class IssueTrackingReportTest
+public class IssueManagementReportTest
     extends AbstractProjectInfoTestCase
 {
     /**
@@ -49,7 +49,7 @@ public class IssueTrackingReportTest
     public void testReport()
         throws Exception
     {
-        generateReport( "issue-tracking", "issue-tracking-plugin-config.xml" );
+        generateReport( "issue-tracking", "issue-management-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "issue-tracking.html" ).exists() );
 
         URL reportURL = getGeneratedReport( "issue-tracking.html" ).toURI().toURL();
@@ -64,8 +64,8 @@ public class IssueTrackingReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        String expectedTitle = prepareTitle( getString( "report.issuetracking.name" ),
-            getString( "report.issuetracking.title" ) );
+        String expectedTitle = prepareTitle( getString( "report.issue-management.name" ),
+            getString( "report.issue-management.title" ) );
         assertEquals( expectedTitle, response.getTitle() );
 
         // Test the links
@@ -78,8 +78,8 @@ public class IssueTrackingReportTest
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( getString( "report.issuetracking.overview.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.issue-management.overview.title" ), textBlocks[0].getText() );
         assertEquals( "This project uses JIRA.", textBlocks[1].getText() ); // due to link pattern
-        assertEquals( getString( "report.issuetracking.name" ), textBlocks[2].getText() );
+        assertEquals( getString( "report.issue-management.name" ), textBlocks[2].getText() );
     }
 }

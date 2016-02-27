@@ -32,7 +32,7 @@ import com.meterware.httpunit.WebResponse;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class CimReportTest
+public class CiManagementReportTest
     extends AbstractProjectInfoTestCase
 {
     /**
@@ -48,7 +48,7 @@ public class CimReportTest
     public void testReport()
         throws Exception
     {
-        generateReport( "cim", "cim-plugin-config.xml" );
+        generateReport( "cim", "ci-management-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "integration.html" ).exists() );
 
         URL reportURL = getGeneratedReport( "integration.html" ).toURI().toURL();
@@ -63,13 +63,13 @@ public class CimReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        String expectedTitle = prepareTitle( getString( "report.cim.name" ),
-            getString( "report.cim.title" ) );
+        String expectedTitle = prepareTitle( getString( "report.ci-management.name" ),
+            getString( "report.ci-management.title" ) );
         assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( getString( "report.cim.name" ), textBlocks[0].getText() );
-        assertEquals( getString( "report.cim.nocim" ), textBlocks[1].getText() );
+        assertEquals( getString( "report.ci-management.name" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.ci-management.nocim" ), textBlocks[1].getText() );
     }
 }

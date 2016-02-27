@@ -29,14 +29,14 @@ import org.codehaus.plexus.util.StringUtils;
 import java.util.Locale;
 
 /**
- * Generates the Project Issue Tracking report.
+ * Generates the Project Issue Management report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
  */
 @Mojo( name = "issue-tracking" )
-public class IssueTrackingReport
+public class IssueManagementReport
     extends AbstractProjectInfoReport
 {
     // ----------------------------------------------------------------------
@@ -58,8 +58,8 @@ public class IssueTrackingReport
     @Override
     public void executeReport( Locale locale )
     {
-        IssueTrackingRenderer r =
-            new IssueTrackingRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
+        IssueManagementRenderer r =
+            new IssueManagementRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
 
         r.render();
     }
@@ -73,7 +73,7 @@ public class IssueTrackingReport
     @Override
     protected String getI18Nsection()
     {
-        return "issuetracking";
+        return "issue-management";
     }
 
     // ----------------------------------------------------------------------
@@ -83,12 +83,12 @@ public class IssueTrackingReport
     /**
      * Internal renderer class
      */
-    private static class IssueTrackingRenderer
+    private static class IssueManagementRenderer
         extends AbstractProjectInfoRenderer
     {
         private Model model;
 
-        IssueTrackingRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        IssueManagementRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink, i18n, locale );
 
@@ -98,7 +98,7 @@ public class IssueTrackingReport
         @Override
         protected String getI18Nsection()
         {
-            return "issuetracking";
+            return "issue-management";
         }
 
         @Override
@@ -165,22 +165,22 @@ public class IssueTrackingReport
          * Checks if a issue management system is Jira, bugzilla...
          *
          * @param system
-         * @param im
+         * @param actual
          * @return true if the issue management system is Jira, bugzilla, false otherwise.
          */
-        private boolean isIssueManagementSystem( String system, String im )
+        private boolean isIssueManagementSystem( String system, String actual )
         {
             if ( StringUtils.isEmpty( system ) )
             {
                 return false;
             }
 
-            if ( StringUtils.isEmpty( im ) )
+            if ( StringUtils.isEmpty( actual ) )
             {
                 return false;
             }
 
-            return system.toLowerCase( Locale.ENGLISH ).startsWith( im.toLowerCase( Locale.ENGLISH ) );
+            return system.toLowerCase( Locale.ENGLISH ).startsWith( actual.toLowerCase( Locale.ENGLISH ) );
         }
     }
 }

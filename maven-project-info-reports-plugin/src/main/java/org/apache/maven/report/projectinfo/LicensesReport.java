@@ -40,14 +40,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Generates the Project License report.
+ * Generates the Project Licenses report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 2.0
  */
 @Mojo( name = "license" )
-public class LicenseReport
+public class LicensesReport
     extends AbstractProjectInfoReport
 {
     // ----------------------------------------------------------------------
@@ -138,8 +138,8 @@ public class LicenseReport
     @Override
     public void executeReport( Locale locale )
     {
-        LicenseRenderer r =
-            new LicenseRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
+        LicensesRenderer r =
+            new LicensesRenderer( getSink(), getProject(), getI18N( locale ), locale, settings,
                                  linkOnly, licenseFileEncoding );
 
         r.render();
@@ -156,7 +156,7 @@ public class LicenseReport
     @Override
     protected String getI18Nsection()
     {
-        return "license";
+        return "licenses";
     }
 
     /**
@@ -220,7 +220,7 @@ public class LicenseReport
     /**
      * Internal renderer class
      */
-    private static class LicenseRenderer
+    private static class LicensesRenderer
         extends AbstractProjectInfoRenderer
     {
         private final MavenProject project;
@@ -231,7 +231,7 @@ public class LicenseReport
 
         private final String licenseFileEncoding;
 
-        LicenseRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings,
+        LicensesRenderer( Sink sink, MavenProject project, I18N i18n, Locale locale, Settings settings,
                          boolean linkOnly, String licenseFileEncoding )
         {
             super( sink, i18n, locale );
@@ -248,7 +248,7 @@ public class LicenseReport
         @Override
         protected String getI18Nsection()
         {
-            return "license";
+            return "licenses";
         }
 
         @Override

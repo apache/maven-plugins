@@ -19,7 +19,6 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
-import java.io.File;
 import java.net.URL;
 
 import com.meterware.httpunit.GetMethodWebRequest;
@@ -33,7 +32,7 @@ import com.meterware.httpunit.WebResponse;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class TeamListReportTest
+public class IndexReportTest
     extends AbstractProjectInfoTestCase
 {
     /**
@@ -49,13 +48,10 @@ public class TeamListReportTest
     public void testReport()
         throws Exception
     {
-        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + "project-team-plugin-config.xml" );
-        AbstractProjectInfoReport mojo  = createReportMojo( "project-team", pluginXmlFile );
-        setVariableValueToObject( mojo, "showAvatarImages", Boolean.TRUE );
-       generateReport( mojo, pluginXmlFile);
-        assertTrue( "Test html generated", getGeneratedReport( "team-list.html" ).exists() );
+        generateReport( "index", "index-plugin-config.xml" );
+        assertTrue( "Test html generated", getGeneratedReport( "index.html" ).exists() );
 
-        URL reportURL = getGeneratedReport( "team-list.html" ).toURI().toURL();
+        URL reportURL = getGeneratedReport( "index.html" ).toURI().toURL();
         assertNotNull( reportURL );
 
         // HTTPUnit
@@ -67,23 +63,15 @@ public class TeamListReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        String expectedTitle = prepareTitle( getString( "report.team-list.name" ),
-            getString( "report.team-list.title" ) );
+        // Index does not have a 'name' but 'title' only
+        String expectedTitle = prepareTitle( getString( "report.index.title" ),
+            getString( "report.index.title" ) );
         assertEquals( expectedTitle, response.getTitle() );
-
-        assertTrue( response.getText().contains( "gravatar" ));
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-
-        assertEquals( textBlocks.length, 7 );
-
-        assertEquals( getString( "report.team-list.intro.title" ), textBlocks[0].getText() );
-        assertEquals( getString( "report.team-list.intro.description1" ), textBlocks[1].getText() );
-        assertEquals( getString( "report.team-list.intro.description2" ), textBlocks[2].getText() );
-        assertEquals( getString( "report.team-list.developers.title" ), textBlocks[3].getText() );
-        assertEquals( getString( "report.team-list.developers.intro" ), textBlocks[4].getText() );
-        assertEquals( getString( "report.team-list.contributors.title" ), textBlocks[5].getText() );
-        assertEquals( getString( "report.team-list.nocontributor" ), textBlocks[6].getText() );
+        assertEquals( getString( "report.index.title" ) + " " + getTestMavenProject().getName(),
+                      textBlocks[0].getText() );
+        assertEquals( getString( "report.index.nodescription" ), textBlocks[1].getText() );
     }
 }

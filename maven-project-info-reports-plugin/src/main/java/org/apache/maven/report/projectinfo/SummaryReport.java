@@ -34,14 +34,14 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
- * Generates the project information reports summary.
+ * Generates the project summary report.
  *
  * @author Edwin Punzalan
  * @version $Id$
  * @since 2.0
  */
 @Mojo( name = "summary" )
-public class ProjectSummaryReport
+public class SummaryReport
     extends AbstractProjectInfoReport
 {
     // ----------------------------------------------------------------------

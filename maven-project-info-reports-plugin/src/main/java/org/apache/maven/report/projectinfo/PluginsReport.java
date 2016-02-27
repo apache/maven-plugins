@@ -192,7 +192,7 @@ public class PluginsReport
             List<GAV> list = isPlugins ? GAV.pluginsToGAV( plugins ) : GAV.reportPluginsToGAV( reports, project );
             String[] tableHeader = getPluginTableHeader();
 
-            startSection( getI18nString( isPlugins ? "title" : "report.title" ) );
+            startSection( getI18nString( isPlugins ? "build.title" : "report.title" ) );
 
             if ( list == null || list.isEmpty() )
             {
@@ -248,9 +248,9 @@ public class PluginsReport
         private String[] getPluginTableHeader()
         {
             // reused key...
-            String groupId = getI18nString( "dependencyManagement", "column.groupId" );
-            String artifactId = getI18nString( "dependencyManagement", "column.artifactId" );
-            String version = getI18nString( "dependencyManagement", "column.version" );
+            String groupId = getI18nString( "dependency-management", "column.groupId" );
+            String artifactId = getI18nString( "dependency-management", "column.artifactId" );
+            String version = getI18nString( "dependency-management", "column.version" );
             return new String[] { groupId, artifactId, version };
         }
 
@@ -342,7 +342,7 @@ public class PluginsReport
          * <li>search similar (same groupId and artifactId) mojo in the build/pluginManagement section of the pom,</li>
          * <li>default value is RELEASE.</li>
          * </ol>
-         * 
+         *
          * @param reportPlugin the report plugin to resolve the version
          * @param project the current project
          * @return the report plugin version
@@ -383,7 +383,7 @@ public class PluginsReport
 
         /**
          * Search similar (same groupId and artifactId) plugin as a given report plugin.
-         * 
+         *
          * @param reportPlugin the report plugin to search for a similar plugin
          * @param plugins the candidate plugins
          * @return the first similar plugin

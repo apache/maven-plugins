@@ -113,7 +113,7 @@ public class DependencyManagementRenderer
     @Override
     protected String getI18Nsection()
     {
-        return "dependencyManagement";
+        return "dependency-management";
     }
 
     @Override

@@ -23,12 +23,12 @@ package org.apache.maven.report.projectinfo.stubs;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class ProjectTeamStub
+public class TeamStub
     extends ProjectInfoProjectStub
 {
     @Override
     protected String getPOM()
     {
-        return "project-team-plugin-config.xml";
+        return "team-plugin-config.xml";
     }
 }
