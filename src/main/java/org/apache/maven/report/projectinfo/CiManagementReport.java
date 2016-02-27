@@ -31,14 +31,14 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Generates the Project Continuous Integration System report.
+ * Generates the Project Continuous Integration Management report.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
  * @version $Id$
  * @since 2.0
  */
 @Mojo( name = "cim" )
-public class CimReport
+public class CiManagementReport
     extends AbstractProjectInfoReport
 {
     // ----------------------------------------------------------------------
@@ -61,7 +61,8 @@ public class CimReport
     @Override
     public void executeReport( Locale locale )
     {
-        CimRenderer r = new CimRenderer( getSink(), getProject().getModel(), getI18N( locale ), locale );
+        CiManagementRenderer r = new CiManagementRenderer( getSink(), getProject().getModel(),
+                                                              getI18N( locale ), locale );
 
         r.render();
     }
@@ -75,7 +76,7 @@ public class CimReport
     @Override
     protected String getI18Nsection()
     {
-        return "cim";
+        return "ci-management";
     }
 
     // ----------------------------------------------------------------------
@@ -85,12 +86,12 @@ public class CimReport
     /**
      * Internal renderer class
      */
-    private static class CimRenderer
+    private static class CiManagementRenderer
         extends AbstractProjectInfoRenderer
     {
         private Model model;
 
-        CimRenderer( Sink sink, Model model, I18N i18n, Locale locale )
+        CiManagementRenderer( Sink sink, Model model, I18N i18n, Locale locale )
         {
             super( sink, i18n, locale );
 
@@ -100,7 +101,7 @@ public class CimReport
         @Override
         protected String getI18Nsection()
         {
-            return "cim";
+            return "ci-management";
         }
 
         @Override
@@ -126,39 +127,39 @@ public class CimReport
             startSection( getI18nString( "overview.title" ) );
 
             sink.paragraph();
-            if ( isCimSystem( system, "anthill" ) )
+            if ( isCiManagementSystem( system, "anthill" ) )
             {
                 linkPatternedText( getI18nString( "anthill.intro" ) );
             }
-            else if ( isCimSystem( system, "bamboo" ) )
+            else if ( isCiManagementSystem( system, "bamboo" ) )
             {
                 linkPatternedText( getI18nString( "bamboo.intro" ) );
             }
-            else if ( isCimSystem( system, "buildforge" ) )
+            else if ( isCiManagementSystem( system, "buildforge" ) )
             {
                 linkPatternedText( getI18nString( "buildforge.intro" ) );
             }
-            else if ( isCimSystem( system, "continuum" ) )
+            else if ( isCiManagementSystem( system, "continuum" ) )
             {
                 linkPatternedText( getI18nString( "continuum.intro" ) );
             }
-            else if ( isCimSystem( system, "cruisecontrol" ) )
+            else if ( isCiManagementSystem( system, "cruisecontrol" ) )
             {
                 linkPatternedText( getI18nString( "cruisecontrol.intro" ) );
             }
-            else if ( isCimSystem( system, "hudson" ) )
+            else if ( isCiManagementSystem( system, "hudson" ) )
             {
                 linkPatternedText( getI18nString( "hudson.intro" ) );
             }
-            else if ( isCimSystem( system, "jenkins" ) )
+            else if ( isCiManagementSystem( system, "jenkins" ) )
             {
                 linkPatternedText( getI18nString( "jenkins.intro" ) );
             }
-            else if ( isCimSystem( system, "luntbuild" ) )
+            else if ( isCiManagementSystem( system, "luntbuild" ) )
             {
                 linkPatternedText( getI18nString( "luntbuild.intro" ) );
             }
-            else if ( isCimSystem( system, "travis" ) )
+            else if ( isCiManagementSystem( system, "travis" ) )
             {
                 linkPatternedText( getI18nString( "travis.intro" ) );
             }
@@ -221,25 +222,23 @@ public class CimReport
         }
 
         /**
-         * Checks if a CIM system is bugzilla, continuum...
+         * Checks if a CI management system is bugzilla, continuum...
          *
-         * @param connection
-         * @param cim
-         * @return true if the CIM system is bugzilla, continuum..., false otherwise.
+         * @return true if the CI management system is bugzilla, continuum..., false otherwise.
          */
-        private boolean isCimSystem( String connection, String cim )
+        private boolean isCiManagementSystem( String system, String actual )
         {
-            if ( StringUtils.isEmpty( connection ) )
+            if ( StringUtils.isEmpty( system ) )
             {
                 return false;
             }
 
-            if ( StringUtils.isEmpty( cim ) )
+            if ( StringUtils.isEmpty( actual ) )
             {
                 return false;
             }
 
-            return connection.toLowerCase( Locale.ENGLISH ).startsWith( cim.toLowerCase( Locale.ENGLISH ) );
+            return system.toLowerCase( Locale.ENGLISH ).startsWith( actual.toLowerCase( Locale.ENGLISH ) );
         }
     }
 }

@@ -20,10 +20,17 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugin.projectinfo.tests</groupId>
-  <artifactId>issue-tracking</artifactId>
+  <artifactId>licenses</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>issue-tracking project info</name>
+  <name>licenses project info</name>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -32,18 +39,16 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <issueManagement>
-    <system>jira</system>
-    <url>http://localhost/jira</url>
-  </issueManagement>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <configuration>
-          <outputDirectory>target/test-harness/issue-tracking</outputDirectory>
+          <outputDirectory>target/test-harness/licenses</outputDirectory>
           <localRepository>${localRepository}</localRepository>
-          <project implementation="org.apache.maven.report.projectinfo.stubs.IssueTrackingStub"/>
+          <project implementation="org.apache.maven.report.projectinfo.stubs.LicensesStub"/>
+          <settings implementation="org.apache.maven.report.projectinfo.stubs.SettingsStub"/>
+          <offline>false</offline>
         </configuration>
       </plugin>
     </plugins>

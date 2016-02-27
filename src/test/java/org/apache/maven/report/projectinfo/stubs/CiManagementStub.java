@@ -23,12 +23,12 @@ package org.apache.maven.report.projectinfo.stubs;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class IssueTrackingStub
+public class CiManagementStub
     extends ProjectInfoProjectStub
 {
     @Override
     protected String getPOM()
     {
-        return "issue-tracking-plugin-config.xml";
+        return "ci-management-plugin-config.xml";
     }
 }

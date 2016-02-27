@@ -73,7 +73,7 @@ public class DistributionManagementReport
     @Override
     protected String getI18Nsection()
     {
-        return "distributionManagement";
+        return "distribution-management";
     }
 
     // ----------------------------------------------------------------------
@@ -98,7 +98,7 @@ public class DistributionManagementReport
         @Override
         protected String getI18Nsection()
         {
-            return "distributionManagement";
+            return "distribution-management";
         }
 
         @Override

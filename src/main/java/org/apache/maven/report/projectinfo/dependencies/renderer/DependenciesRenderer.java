@@ -380,7 +380,7 @@ public class DependenciesRenderer
         String version = getI18nString( "column.version" );
         String classifier = getI18nString( "column.classifier" );
         String type = getI18nString( "column.type" );
-        String license = getI18nString( "column.license" );
+        String license = getI18nString( "column.licenses" );
         String optional = getI18nString( "column.optional" );
 
         if ( withClassifier )
@@ -1042,7 +1042,7 @@ public class DependenciesRenderer
 
                 sink.paragraph();
                 sink.bold();
-                sink.text( getI18nString( "license", "title" ) + ": " );
+                sink.text( getI18nString( "licenses", "title" ) + ": " );
                 sink.bold_();
                 if ( !licenses.isEmpty() )
                 {
@@ -1080,7 +1080,7 @@ public class DependenciesRenderer
                 }
                 else
                 {
-                    sink.text( getI18nString( "license", "nolicense" ) );
+                    sink.text( getI18nString( "licenses", "nolicense" ) );
 
                     licenseMap.put( unknownLicenseMessage, artifactName );
                 }

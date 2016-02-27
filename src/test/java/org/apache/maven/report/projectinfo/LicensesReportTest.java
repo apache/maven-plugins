@@ -33,7 +33,7 @@ import com.meterware.httpunit.WebResponse;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class LicenseReportTest
+public class LicensesReportTest
     extends AbstractProjectInfoTestCase
 {
     /**
@@ -49,7 +49,7 @@ public class LicenseReportTest
     public void testReport()
         throws Exception
     {
-        generateReport( "license", "license-plugin-config.xml" );
+        generateReport( "license", "licenses-plugin-config.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "license.html" ).exists() );
 
         URL reportURL = getGeneratedReport( "license.html" ).toURI().toURL();
@@ -64,15 +64,15 @@ public class LicenseReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        String expectedTitle = prepareTitle( getString( "report.license.name" ),
-            getString( "report.license.title" ) );
+        String expectedTitle = prepareTitle( getString( "report.licenses.name" ),
+            getString( "report.licenses.title" ) );
         assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( getString( "report.license.overview.title" ), textBlocks[0].getText() );
-        assertEquals( getString( "report.license.overview.intro" ), textBlocks[1].getText() );
-        assertEquals( getString( "report.license.name" ), textBlocks[2].getText() );
+        assertEquals( getString( "report.licenses.overview.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.licenses.overview.intro" ), textBlocks[1].getText() );
+        assertEquals( getString( "report.licenses.title" ), textBlocks[2].getText() );
         assertEquals( "The Apache Software License, Version 2.0", textBlocks[3].getText() );
 
         // only 1 link in default report
@@ -84,7 +84,7 @@ public class LicenseReportTest
     public void testReportLinksOnly()
         throws Exception
     {
-        generateReport( "license", "license-plugin-config-linkonly.xml" );
+        generateReport( "license", "licenses-plugin-config-linkonly.xml" );
         assertTrue( "Test html generated", getGeneratedReport( "license.html" ).exists() );
 
         URL reportURL = getGeneratedReport( "license.html" ).toURI().toURL();
@@ -99,15 +99,15 @@ public class LicenseReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        String expectedTitle = prepareTitle( getString( "report.license.name" ),
-            getString( "report.license.title" ) );
+        String expectedTitle = prepareTitle( getString( "report.licenses.name" ),
+            getString( "report.licenses.title" ) );
         assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
         TextBlock[] textBlocks = response.getTextBlocks();
-        assertEquals( getString( "report.license.overview.title" ), textBlocks[0].getText() );
-        assertEquals( getString( "report.license.overview.intro" ), textBlocks[1].getText() );
-        assertEquals( getString( "report.license.name" ), textBlocks[2].getText() );
+        assertEquals( getString( "report.licenses.overview.title" ), textBlocks[0].getText() );
+        assertEquals( getString( "report.licenses.overview.intro" ), textBlocks[1].getText() );
+        assertEquals( getString( "report.licenses.title" ), textBlocks[2].getText() );
         assertEquals( "The Apache Software License, Version 2.0", textBlocks[3].getText() );
 
         // here's our specific test

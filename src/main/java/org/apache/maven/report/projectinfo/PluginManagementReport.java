@@ -92,7 +92,7 @@ public class PluginManagementReport
     @Override
     protected String getI18Nsection()
     {
-        return "pluginManagement";
+        return "plugin-management";
     }
 
     @Override
@@ -165,7 +165,7 @@ public class PluginManagementReport
         @Override
         protected String getI18Nsection()
         {
-            return "pluginManagement";
+            return "plugin-management";
         }
 
         @Override
@@ -248,9 +248,9 @@ public class PluginManagementReport
         private String[] getPluginTableHeader()
         {
             // reused key...
-            String groupId = getI18nString( "dependencyManagement", "column.groupId" );
-            String artifactId = getI18nString( "dependencyManagement", "column.artifactId" );
-            String version = getI18nString( "dependencyManagement", "column.version" );
+            String groupId = getI18nString( "dependency-management", "column.groupId" );
+            String artifactId = getI18nString( "dependency-management", "column.artifactId" );
+            String version = getI18nString( "dependency-management", "column.version" );
             return new String[] { groupId, artifactId, version };
         }
 

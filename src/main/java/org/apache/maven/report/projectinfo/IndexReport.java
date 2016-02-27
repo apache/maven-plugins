@@ -30,7 +30,7 @@ import org.codehaus.plexus.i18n.I18N;
 import java.util.Locale;
 
 /**
- * Generates the project index page.
+ * Generates the project index report.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter </a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
@@ -38,7 +38,7 @@ import java.util.Locale;
  * @since 2.0
  */
 @Mojo( name = "index" )
-public class ProjectIndexPageReport
+public class IndexReport
     extends AbstractProjectInfoReport
 {
     // ----------------------------------------------------------------------
