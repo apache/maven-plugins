@@ -223,14 +223,19 @@ public class TestCompilerMojo
         {
             if ( hasMainModuleDescriptor )
             {
-                modulepathElements = compilePathElements;
-                classpathElements = testScopedElements;
-                
-                if ( compilerArgs == null )
-                {
-                    compilerArgs = new ArrayList<String>();
-                }
-                compilerArgs.add( "-addmods" );
+                modulepathElements = Collections.emptyList();
+                classpathElements = testPathElements;
+
+//              Current options assume awareness of modulename:
+//                -addmods <module>
+//                -Xmodule:<module>
+//                modulepathElements = compilePathElements;
+//                classpathElements = testScopedElements;
+//                if ( compilerArgs == null )
+//                {
+//                    compilerArgs = new ArrayList<String>();
+//                }
+//                compilerArgs.add( "-addmods" );
             }
             else
             {

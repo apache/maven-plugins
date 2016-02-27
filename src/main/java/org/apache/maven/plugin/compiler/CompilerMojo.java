@@ -151,9 +151,15 @@ public class CompilerMojo
     
     private void setPaths() throws DependencyResolutionRequiredException
     {
+        boolean hasModuleDescriptor = false;
+        for ( String sourceRoot : getProject().getCompileSourceRoots() )
+        {
+            hasModuleDescriptor |= new File( sourceRoot, "module-info.java" ).exists();
+        }
+
         List<String> pathElements =
             JavaMavenProjectUtils.getCompileClasspathElements( getProject(), getOutputDirectory() );
-        if ( hasModuleDescriptor( pathElements ) )
+        if ( hasModuleDescriptor )
         {
             modulepathElements = pathElements;
             classpathElements = Collections.emptyList();
