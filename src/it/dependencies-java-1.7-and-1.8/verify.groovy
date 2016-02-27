@@ -20,7 +20,7 @@ File dependencies = new File( basedir, 'target/site/dependencies.html' )
 def mavenModel = '''\
 <tr class="a">
 <td>maven-model-3.3.9.jar</td>
-<td>163.98 kB</td>
+<td>164 kB</td>
 <td>71</td>
 <td>54</td>
 <td>3</td>
@@ -31,7 +31,7 @@ def mavenModel = '''\
 def jacksonDataTypeJsr310 = '''\
 <tr class="a">
 <td>jackson-datatype-jsr310-2.6.4.jar</td>
-<td>78.12 kB</td>
+<td>78.1 kB</td>
 <td>69</td>
 <td>51</td>
 <td>5</td>
