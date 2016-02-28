@@ -36,13 +36,13 @@ ${project.name}
  The Project Info Reports Plugin has the following goals:
 
    * {{{./cim-mojo.html}project-info-reports:cim}} is used to generate the Project Continuous Integration
-   System report.
+   Management report.
 
    * {{{./dependencies-mojo.html}project-info-reports:dependencies}} is used to generate the Project Dependencies
    report.
 
    * {{{./dependency-convergence-mojo.html}project-info-reports:dependency-convergence}} is used to generate the
-   Project Dependency Convergence report for reactor builds.
+   Project Dependency Convergence report for (reactor) builds.
 
    * {{{./dependency-info-mojo.html}project-info-reports:dependency-info}} is used to generate code snippets to
    be added to build tools.
@@ -59,9 +59,9 @@ ${project.name}
    * {{{./index-mojo.html}project-info-reports:index}} is used to generate the Project index page.
 
    * {{{./issue-tracking-mojo.html}project-info-reports:issue-tracking}} is used to generate the Project Issue
-   Tracking report.
+   Management report.
 
-   * {{{./license-mojo.html}project-info-reports:license}} is used to generate the Project License report.
+   * {{{./license-mojo.html}project-info-reports:license}} is used to generate the Project Licenses report.
 
    * {{{./mailing-list-mojo.html}project-info-reports:mailing-list}} is used to generate the Project Mailing
    List report.
@@ -77,8 +77,7 @@ ${project.name}
 
    * {{{./scm-mojo.html}project-info-reports:scm}} is used to generate the Project Source Code Management report.
 
-   * {{{./summary-mojo.html}project-info-reports:summary}} is used to generate the Project information reports
-   summary.
+   * {{{./summary-mojo.html}project-info-reports:summary}} is used to generate the Project Summary report.
 
 * Usage
 

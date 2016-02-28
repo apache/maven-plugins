@@ -30,7 +30,7 @@ import org.codehaus.plexus.i18n.I18N;
 import java.util.Locale;
 
 /**
- * Generates the project index report.
+ * Generates the Project Index report.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter </a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>

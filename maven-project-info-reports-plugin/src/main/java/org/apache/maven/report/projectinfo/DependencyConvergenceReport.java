@@ -62,7 +62,7 @@ import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.tree.traversal.FilteringDependencyNodeVisitor;
 
 /**
- * Generates the Dependency Convergence report for reactor builds.
+ * Generates the Project Dependency Convergence report for (reactor) builds.
  *
  * @author <a href="mailto:joakim@erdfelt.com">Joakim Erdfelt</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton </a>
