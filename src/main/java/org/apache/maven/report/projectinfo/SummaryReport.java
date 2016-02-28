@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
- * Generates the project summary report.
+ * Generates the Project Summary report.
  *
  * @author Edwin Punzalan
  * @version $Id$
