@@ -79,6 +79,32 @@ ${project.name}
 
    * {{{./summary-mojo.html}project-info-reports:summary}} is used to generate the Project Summary report.
 
+* Upcoming Incompatibility Notice
+
+  With the next major version (3.0) several mojos and output filenames will change fort alignment
+  with their corresponding elements in the POM. In other words, mojos will have the same names as
+  their POM counterparts. To make you aware of that, see the following table for the upcoming changes:
+
+*----------------------*------------------------*------------------------------*-----------------------------*
+|| Goal Name           || New Goal Name         || Output name                 || New Output Name            |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<cim>>>            | <<<ci-management>>>    | <<<integration.html>>>       | <<<ci-management.html>>>    |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<mailing-list>>>   | <<<mailing-lists>>>    | <<<mail-lists.html>>>        | <<<mailing-lists.html>>>    |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<project-team>>>   | <<<team>>>             | <<<team-list.html>>>         | <<<team.html>>>             |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<license>>>        | <<<licenses>>>         | <<<license.html>>>           | <<<licenses.html>>>         |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<issue-tracking>>> | <<<issue-management>>> | <<<issue-tracking.html>>>    | <<<issue-management.html>>> |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<scm>>>            | \u2013                 | <<<source-repository.html>>> | <<<scm.html>>>              |
+*----------------------+------------------------+------------------------------+-----------------------------+
+| <<<summary>>>        | \u2013                 | <<<project-summary.html>>>   | <<<summary.html>>>          |
+*----------------------+------------------------+------------------------------+-----------------------------+
+
+  Details about this change can be found in {{{https://issues.apache.org/jira/browse/MPIR-323}MPIR-323}}.
+
 * Usage
 
   General instructions on how to use the Project Info Reports Plugin can be found on the {{{./usage.html}usage page}}. Some more
