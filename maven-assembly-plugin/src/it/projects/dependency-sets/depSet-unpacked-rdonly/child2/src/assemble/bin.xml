@@ -34,7 +34,7 @@ under the License.
       <unpack>true</unpack>
       <outputDirectory>/${artifact.artifactId}</outputDirectory>
       <fileMode>0444</fileMode>
-      <directoryMode>0555</directoryMode>
+      <directoryMode>0755</directoryMode>
     </dependencySet>
   </dependencySets>
 </assembly>
