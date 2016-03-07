@@ -186,7 +186,7 @@ under the License.
         </pluginManagement>
         <plugins>
           <!--
-           ! Why is the following needed?
+           ! The following is used within the src/it/user-filters test.
           -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
