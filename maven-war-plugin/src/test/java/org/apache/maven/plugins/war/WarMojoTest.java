@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugins.war;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -33,6 +33,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.war.stub.MavenProject4CopyConstructor;
 import org.apache.maven.plugin.war.stub.ProjectHelperStub;
 import org.apache.maven.plugin.war.stub.WarArtifact4CCStub;
+import org.apache.maven.plugins.war.WarMojo;
 import org.codehaus.plexus.util.IOUtil;
 
 /**

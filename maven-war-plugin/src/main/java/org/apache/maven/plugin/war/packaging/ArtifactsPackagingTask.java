@@ -27,7 +27,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.war.Overlay;
+import org.apache.maven.plugins.war.Overlay;
 import org.codehaus.plexus.interpolation.InterpolationException;
 
 /**

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugins.war;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,6 +21,7 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub;
+import org.apache.maven.plugins.war.WarExplodedMojo;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;

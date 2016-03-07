@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugins.war;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,6 +30,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.WarOverlayStub;
+import org.apache.maven.plugins.war.AbstractWarMojo;
 import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.Archiver;

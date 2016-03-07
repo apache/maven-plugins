@@ -20,8 +20,8 @@ package org.apache.maven.plugin.war.packaging;
  */
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.PathSet;
+import org.apache.maven.plugins.war.Overlay;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
