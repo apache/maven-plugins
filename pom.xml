@@ -169,6 +169,7 @@ under the License.
               <configuration>
                 <debug>true</debug>
                 <postBuildHookScript>verify</postBuildHookScript>
+                <preBuildHookScript>setup</preBuildHookScript>
                 <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                 <goals>
                   <goal>clean</goal>
@@ -184,6 +185,9 @@ under the License.
           </plugins>
         </pluginManagement>
         <plugins>
+          <!--
+           ! Why is the following needed?
+          -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
