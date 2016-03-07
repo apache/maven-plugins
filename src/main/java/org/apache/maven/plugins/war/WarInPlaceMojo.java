@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.war;
+package org.apache.maven.plugins.war;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,18 +21,16 @@ package org.apache.maven.plugin.war;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Create an exploded webapp in a specified directory.
+ * Generate the webapp in the WAR source directory.
  *
  * @version $Id$
  */
-// CHECKSTYLE_OFF: LineLength
-@Mojo( name = "exploded", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
-public class WarExplodedMojo
+@Mojo( name = "inplace", requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true )
+public class WarInPlaceMojo
     extends AbstractWarMojo
 {
     /**
@@ -41,10 +39,8 @@ public class WarExplodedMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Exploding webapp" );
+        getLog().info( "Generating webapp in source directory [" + getWarSourceDirectory() + "]" );
 
-        buildExplodedWebapp( getWebappDirectory() );
+        buildExplodedWebapp( getWarSourceDirectory() );
     }
-
 }
-// CHECKSTYLE_ON: LineLength

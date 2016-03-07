@@ -20,9 +20,9 @@ package org.apache.maven.plugin.war.overlay;
  */
 
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
-import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.stub.MavenProjectArtifactsStub;
 import org.apache.maven.plugin.war.stub.WarArtifactStub;
+import org.apache.maven.plugins.war.Overlay;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.util.ArrayList;
