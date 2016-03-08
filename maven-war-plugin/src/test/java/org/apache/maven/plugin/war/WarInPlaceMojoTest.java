@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.war;
+package org.apache.maven.plugin.war;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,6 @@ package org.apache.maven.plugins.war;
 
 import org.apache.maven.plugin.war.stub.MavenProjectBasicStub;
 import org.apache.maven.plugin.war.stub.ResourceStub;
-import org.apache.maven.plugins.war.WarInPlaceMojo;
 
 import java.io.File;
 import java.util.LinkedList;
