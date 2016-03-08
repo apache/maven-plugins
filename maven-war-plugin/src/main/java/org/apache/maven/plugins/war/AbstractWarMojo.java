@@ -212,22 +212,6 @@ public abstract class AbstractWarMojo
     private String warSourceExcludes;
 
     /**
-     * The comma separated list of tokens to include when doing a WAR overlay. Default is '**'
-     *
-     * @deprecated Use &lt;overlay&gt;/&lt;includes&gt; instead
-     */
-    @Parameter
-    private String dependentWarIncludes = "**/**";
-
-    /**
-     * The comma separated list of tokens to exclude when doing a WAR overlay.
-     *
-     * @deprecated Use &lt;overlay&gt;/&lt;excludes&gt; instead
-     */
-    @Parameter
-    private String dependentWarExcludes = "META-INF/**";
-
-    /**
      * The overlays to apply. Each &lt;overlay&gt; element may contain:
      * <ul>
      * <li>id (defaults to <tt>currentBuild</tt>)</li>
@@ -305,7 +289,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Stop searching endToken at the end of line
-     * 
+     *
      * @since 2.4
      */
     @Parameter( property = "maven.war.supportMultiLineFiltering", defaultValue = "false" )
@@ -313,7 +297,7 @@ public abstract class AbstractWarMojo
 
     /**
      * use jvmChmod rather that cli chmod and forking process
-     * 
+     *
      * @since 2.4
      */
     @Parameter( property = "maven.war.useJvmChmod", defaultValue = "true" )
@@ -377,35 +361,6 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Returns a string array of the excludes to be used when adding dependent WAR as an overlay onto this WAR.
-     *
-     * @return an array of tokens to exclude
-     */
-    protected String[] getDependentWarExcludes()
-    {
-        String[] excludes;
-        if ( StringUtils.isNotEmpty( dependentWarExcludes ) )
-        {
-            excludes = StringUtils.split( dependentWarExcludes, "," );
-        }
-        else
-        {
-            excludes = EMPTY_STRING_ARRAY;
-        }
-        return excludes;
-    }
-
-    /**
-     * Returns a string array of the includes to be used when adding dependent WARs as an overlay onto this WAR.
-     *
-     * @return an array of tokens to include
-     */
-    protected String[] getDependentWarIncludes()
-    {
-        return StringUtils.split( StringUtils.defaultString( dependentWarIncludes ), "," );
-    }
-
-    /**
      * @param webapplicationDirectory The web application directory.
      * @throws MojoExecutionException In case of failure.
      * @throws MojoFailureException In case of failure.
@@ -457,8 +412,7 @@ public abstract class AbstractWarMojo
         getLog().info( "Assembling webapp [" + mavenProject.getArtifactId() + "] in [" + webapplicationDirectory + "]" );
 
         final OverlayManager overlayManager =
-            new OverlayManager( overlays, mavenProject, dependentWarIncludes, dependentWarExcludes,
-                                currentProjectOverlay );
+            new OverlayManager( overlays, mavenProject, currentProjectOverlay );
         final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
         // CHECKSTYLE_ON: LineLength
         List<FileUtils.FilterWrapper> defaultFilterWrappers;
@@ -507,8 +461,8 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugins.war.packaging.WarPackagingTask} instances to invoke
-     * to perform the packaging.
+     * Returns a <tt>List</tt> of the {@link org.apache.maven.plugins.war.packaging.WarPackagingTask}
+     * instances to invoke to perform the packaging.
      *
      * @param overlayManager the overlay manager
      * @return the list of packaging tasks
