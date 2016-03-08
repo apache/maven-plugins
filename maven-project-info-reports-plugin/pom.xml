@@ -109,7 +109,6 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <javaVersion>5</javaVersion>
     <doxiaVersion>1.6</doxiaVersion>
     <doxia-sitetoolsVersion>1.6</doxia-sitetoolsVersion>
     <mavenVersion>2.2.1</mavenVersion>
