@@ -24,7 +24,7 @@ under the License.
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.war.stub.MavenProjectBasicStub"/>
+          <project implementation="org.apache.maven.plugins.war.stub.MavenProjectBasicStub"/>
           <warSourceDirectory>
             ${basedir}/target/test-classes/unit/manifest/manifest-with-other-attrs/src/main</warSourceDirectory>
           <archive>
