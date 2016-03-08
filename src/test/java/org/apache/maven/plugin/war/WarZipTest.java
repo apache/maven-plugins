@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.war;
+package org.apache.maven.plugin.war;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,8 +25,6 @@ import org.apache.maven.plugin.war.overlay.DefaultOverlay;
 import org.apache.maven.plugin.war.stub.MavenZipProject;
 import org.apache.maven.plugin.war.stub.WarArtifactStub;
 import org.apache.maven.plugin.war.stub.ZipArtifactStub;
-import org.apache.maven.plugins.war.Overlay;
-import org.apache.maven.plugins.war.WarMojo;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;

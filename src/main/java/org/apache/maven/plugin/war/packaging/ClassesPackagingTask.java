@@ -22,9 +22,9 @@ package org.apache.maven.plugin.war.packaging;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.war.Overlay;
 import org.apache.maven.plugin.war.util.ClassesPackager;
 import org.apache.maven.plugin.war.util.PathSet;
-import org.apache.maven.plugins.war.Overlay;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.interpolation.InterpolationException;
 

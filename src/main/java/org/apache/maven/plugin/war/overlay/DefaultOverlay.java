@@ -20,7 +20,7 @@ package org.apache.maven.plugin.war.overlay;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugins.war.Overlay;
+import org.apache.maven.plugin.war.Overlay;
 
 /**
  * A default overlay implementation based on an {@link Artifact}.
