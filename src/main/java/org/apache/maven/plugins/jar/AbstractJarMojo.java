@@ -204,7 +204,6 @@ public abstract class AbstractJarMojo
     /**
      * Generates the JAR.
      *
-     * @todo Add license files in META-INF directory.
      */
     public File createArchive()
         throws MojoExecutionException
