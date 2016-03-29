@@ -68,9 +68,11 @@ public abstract class AbstractJarMojo
     private File outputDirectory;
 
     /**
-     * Name of the generated JAR.
+     * Name of the generated JAR.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.finalName</code> to
+     * <code>maven.jar.finalName</code>.
      */
-    @Parameter( alias = "jarName", property = "jar.finalName", defaultValue = "${project.build.finalName}" )
+    @Parameter( property = "maven.jar.finalName", defaultValue = "${project.build.finalName}" )
     private String finalName;
 
     /**
@@ -110,11 +112,13 @@ public abstract class AbstractJarMojo
     private File defaultManifestFile;
 
     /**
-     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.
+     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.useDefaultManifestFile</code> to
+     * <code>maven.jar.useDefaultManifestFile</code>.
      *
      * @since 2.2
      */
-    @Parameter( property = "jar.useDefaultManifestFile", defaultValue = "false" )
+    @Parameter( property = "maven.jar.useDefaultManifestFile", defaultValue = "false" )
     private boolean useDefaultManifestFile;
 
     /**
@@ -130,15 +134,19 @@ public abstract class AbstractJarMojo
      * configured to post-process the jar. This plugin can not detect the post-processing, and so leaves the
      * post-processed jar in place. This can lead to failures when those plugins do not expect to find their own output
      * as an input. Set this parameter to <tt>true</tt> to avoid these problems by forcing this plugin to recreate the
-     * jar every time.
+     * jar every time.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.forceCreation</code> to
+     * <code>maven.jar.forceCreation</code>.
      */
-    @Parameter( property = "jar.forceCreation", defaultValue = "false" )
+    @Parameter( property = "maven.jar.forceCreation", defaultValue = "false" )
     private boolean forceCreation;
 
     /**
-     * Skip creating empty archives
+     * Skip creating empty archives.<br/>
+     * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.skipIfEmpty</code> to
+     * <code>maven.jar.skipIfEmpty</code>.
      */
-    @Parameter( property = "jar.skipIfEmpty", defaultValue = "false" )
+    @Parameter( property = "maven.jar.skipIfEmpty", defaultValue = "false" )
     private boolean skipIfEmpty;
 
     /**
