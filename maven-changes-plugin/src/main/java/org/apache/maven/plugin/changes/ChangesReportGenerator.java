@@ -561,9 +561,9 @@ public class ChangesReportGenerator
             }
 
             sink.table_();
-
-            sink.section2_();
         }
+
+        sink.section2_();
     }
 
     /**
