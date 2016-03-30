@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * An adapter that can adapt data models from other issue management system to the data models used in the changes.xml
  * file.
- * 
+ *
  * @author Dennis Lundberg
  * @version $Id$
  * @since 2.4
@@ -60,7 +60,7 @@ public class IssueAdapter
 
     /**
      * Adapt a <code>List</code> of <code>Issue</code>s to a <code>List</code> of <code>Release</code>s.
-     * 
+     *
      * @param issues The issues
      * @return A list of releases
      */
@@ -105,7 +105,7 @@ public class IssueAdapter
 
     /**
      * Create an <code>Action</code> from an issue.
-     * 
+     *
      * @param issue The issue to extract the information from
      * @return An <code>Action</code>
      */
@@ -131,9 +131,7 @@ public class IssueAdapter
 
         action.setDev( issue.getAssignee() );
 
-        // Set dueTo to the empty String instead of null to make Velocity happy
-        action.setDueTo( "" );
-        // action.setDueTo( issue.getReporter() );
+        action.setDueTo( issue.getReporter() == null ? "" : issue.getReporter() );
 
         action.setAction( issue.getSummary() );
         return action;

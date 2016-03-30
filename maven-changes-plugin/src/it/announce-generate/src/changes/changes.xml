@@ -40,7 +40,7 @@ under the License.
         <dueto name="John Doe" email="john@doe.com"/>
         <dueto name="Jane Doe"/>
       </action>
-      <action dev="you" type="update" issue="MCHANGES-999" system="bugzilla">
+      <action dev="you" type="update" issue="MCHANGES-999" system="bugzilla" due-to="External Submitter">
         Handle different issue systems.
         <fixes issue="bug-12345"/>
         <dueto name="John Doe" email="john@doe.com"/>
