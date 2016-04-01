@@ -29,6 +29,7 @@ under the License.
   <body>
     <breadcrumbs>
       <item name="Maven"  href="http://maven.apache.org/index.html" />
+      <item name="${this.name}" href="http://maven.apache.org/${this.artifactId}" />
     </breadcrumbs>
   </body>
 </project>
