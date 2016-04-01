@@ -514,6 +514,7 @@ under the License.
               <onlyCurrentVersion>true</onlyCurrentVersion>
               <resolutionIds>Fixed</resolutionIds>
               <sortColumnNames>Type,Key</sortColumnNames>
+              <useJql>true</useJql>
             </configuration>
             <reportSets>
               <reportSet>
