@@ -56,7 +56,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author Andreas Hoheneder
  * @author William Ferguson
  */
-@Mojo( name = "resources", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true )
+@Mojo( name = "resources", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresProject = true, threadSafe = true )
 public class ResourcesMojo
     extends AbstractMojo
     implements Contextualizable
