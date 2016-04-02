@@ -19,7 +19,9 @@
   under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -120,7 +122,7 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.4.7</version>
+      <version>1.4.9</version>
     </dependency>
 
     <dependency>
@@ -165,6 +167,35 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>enforce-bytecode-version</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <enforceBytecodeVersion combine.children="append">
+                    <maxJdkVersion>${maven.compiler.target}</maxJdkVersion>
+                    <ignoreClasses>
+                      <!--
+                        ! MWAR-369:
+                        ! Added the following two ignores cause those classes
+                        ! are JDK 8 classes.
+                      -->
+                      <ignoreClass>com.thoughtworks.xstream.mapper.LambdaMapper</ignoreClass>
+                      <ignoreClass>com.thoughtworks.xstream.converters.reflection.LambdaConverter</ignoreClass>
+                    </ignoreClasses>
+                  </enforceBytecodeVersion>
+                </rules>
+                <fail>true</fail>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
