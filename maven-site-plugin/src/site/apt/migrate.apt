@@ -56,8 +56,18 @@ Migrate
 
   * Site Decoration Model has changed type for <<<head>>> and <<<footer>>> from <<<DOM>>> to <<<String>>>:
   if your <<<site.xml>>> (or one parent) contains XML content, you'll need to escape it, usually by
-  adding <<<\<![CDATA[>>> and <<<]]\>>>>.
-  
+  adding <<<\<![CDATA[>>> and <<<]]\>>>> around the content:
+
++-----------------+
+    <body>
+        <head>
+            <![CDATA[<anyHeadElement/>]]>
+        </head>
+        <footer>
+            <![CDATA[<anyFooterElement/>]]>
+        </footer>
++-----------------+
+
   * 
 
   []
