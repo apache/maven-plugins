@@ -191,7 +191,6 @@ public class WarProjectPackagingTask
     protected void handleArtifacts( WarPackagingContext context )
         throws MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" )
         ArtifactsPackagingTask task =
             new ArtifactsPackagingTask( context.getProject().getArtifacts(), currentProjectOverlay );
         task.performPackaging( context );
