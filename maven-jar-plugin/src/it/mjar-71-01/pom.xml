@@ -36,7 +36,9 @@ under the License.
         <artifactId>maven-jar-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <useDefaultManifestFile>true</useDefaultManifestFile>
+          <archive>
+            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
