@@ -54,11 +54,13 @@ Migrate
     </plugin>
 +-----------------+
 
-  * Site Decoration Model has changed type for <<<head>>> and <<<footer>>> from <<<DOM>>> to <<<String>>>:
+  * Site Decoration Model 1.7.0 has changed type for <<<head>>> and <<<footer>>> from <<<DOM>>> to <<<String>>>:
   if your <<<site.xml>>> (or one parent) contains XML content, you'll need to escape it, usually by
   adding <<<\<![CDATA[>>> and <<<]]\>>>> around the content:
 
 +-----------------+
+<project xmlns="http://maven.apache.org/DECORATION/1.7.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.7.0 http://maven.apache.org/xsd/decoration-1.7.0.xsd">
     <body>
         <head>
             <![CDATA[<anyHeadElement/>]]>
@@ -66,6 +68,9 @@ Migrate
         <footer>
             <![CDATA[<anyFooterElement/>]]>
         </footer>
+    ...
+    </body>
+</project>
 +-----------------+
 
   * 
