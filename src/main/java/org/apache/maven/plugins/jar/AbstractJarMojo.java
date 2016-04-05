@@ -101,6 +101,16 @@ public abstract class AbstractJarMojo
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
+     * Using this property will fail your build cause it has been removed from the plugin configuration. See the
+     * <a href="https://maven.apache.org/plugins/maven-jar-plugin/">Major Version Upgrade to version 3.0.0</a> for the
+     * plugin.
+     * 
+     * @deprecated For version 3.0.0 this parameter is only defined here to break the build if you use it!
+     */
+    @Parameter( property = "jar.useDefaultManifestFile", defaultValue = "false" )
+    private boolean useDefaultManifestFile;
+
+    /**
      *
      */
     @Component
@@ -148,7 +158,6 @@ public abstract class AbstractJarMojo
      */
     protected abstract String getType();
 
-    
     /**
      * Returns the Jar file to generate, based on an optional classifier.
      *
@@ -182,7 +191,6 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
-     *
      */
     public File createArchive()
         throws MojoExecutionException
@@ -222,11 +230,17 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
-     *
      */
     public void execute()
         throws MojoExecutionException
     {
+        if ( useDefaultManifestFile )
+        {
+            throw new MojoExecutionException( "You are using 'useDefaultManifestFile' which has been removed"
+                + " from the maven-jar-plugin. "
+                + "Please see the >>Major Version Upgrade to version 3.0.0<< on the plugin site." );
+        }
+
         if ( skipIfEmpty && ( !getClassesDirectory().exists() || getClassesDirectory().list().length < 1 ) )
         {
             getLog().info( "Skipping packaging of the " + getType() );

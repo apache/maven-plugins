@@ -40,6 +40,38 @@ ${project.name}
 
   []
 
+* Major Version Upgrade to version 3.0.0
+
+  Please note that the following parameter has been completely removed from the plugin configuration:
+
+  * useDefaultManifestFile
+
+  If you need to define your own <<MANIFEST.MF>> file you can simply achieve that via
+  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} configuration
+  like in the following example:
+
++-----------------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+        ...
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----------------+
+
 * Usage
 
   General instructions on how to use the JAR Plugin can be found on the {{{./usage.html}usage page}}. Some more
