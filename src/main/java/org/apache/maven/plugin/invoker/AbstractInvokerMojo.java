@@ -177,7 +177,7 @@ public abstract class AbstractInvokerMojo
     @Parameter
     private File cloneProjectsTo;
 
-// CHECKSTYLE_OFF: LineLength
+    // CHECKSTYLE_OFF: LineLength
     /**
      * Some files are normally excluded when copying the IT projects from the directory specified by the parameter
      * projectsDirectory to the directory given by cloneProjectsTo (e.g. <code>.svn</code>, <code>CVS</code>,
@@ -190,7 +190,7 @@ public abstract class AbstractInvokerMojo
      */
     @Parameter( defaultValue = "false" )
     private boolean cloneAllFiles;
-// CHECKSTYLE_ON: LineLength
+    // CHECKSTYLE_ON: LineLength
 
     /**
      * Ensure the {@link #cloneProjectsTo} directory is not polluted with files from earlier invoker runs.
@@ -601,7 +601,7 @@ public abstract class AbstractInvokerMojo
         if ( skipInvocation )
         {
             getLog().info( "Skipping invocation per configuration."
-                               + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
+                + " If this is incorrect, ensure the skipInvocation parameter is not set to true." );
             return;
         }
 
@@ -622,9 +622,8 @@ public abstract class AbstractInvokerMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException(
-                                                  "Failed to discover projectsDirectory from pom File parameter. Reason: "
-                                                      + e.getMessage(), e );
+                throw new MojoExecutionException( "Failed to discover projectsDirectory from pom File parameter. Reason: "
+                    + e.getMessage(), e );
             }
 
             buildJobs = new BuildJob[] { new BuildJob( pom.getName(), BuildJob.Type.NORMAL ) };
@@ -637,9 +636,8 @@ public abstract class AbstractInvokerMojo
             }
             catch ( final IOException e )
             {
-                throw new MojoExecutionException(
-                                                  "Error retrieving POM list from includes, excludes, and projects directory. Reason: "
-                                                      + e.getMessage(), e );
+                throw new MojoExecutionException( "Error retrieving POM list from includes, excludes, and projects directory. Reason: "
+                    + e.getMessage(), e );
             }
         }
         // CHECKSTYLE_ON: LineLength
@@ -655,7 +653,7 @@ public abstract class AbstractInvokerMojo
         if ( StringUtils.isEmpty( encoding ) )
         {
             getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                               + ", i.e. build is platform dependent!" );
+                + ", i.e. build is platform dependent!" );
         }
 
         final List<String> scriptClassPath;
@@ -797,7 +795,7 @@ public abstract class AbstractInvokerMojo
      */
     private void collectProjects( File projectsDir, String projectPath, Collection<String> projectPaths,
                                   boolean included )
-        throws MojoExecutionException
+                                      throws MojoExecutionException
     {
         projectPath = projectPath.replace( '\\', '/' );
         File pomFile = new File( projectsDir, projectPath );
@@ -976,9 +974,9 @@ public abstract class AbstractInvokerMojo
                     buildInterpolatedFile( pomFile, pomFile );
                 }
 
-                //MINVOKER-186
-                //The following is a temporary solution to support Maven 3.3.1 (.mvn/extensions.xml) filtering
-                //Will be replaced by MINVOKER-117 with general filtering mechanism
+                // MINVOKER-186
+                // The following is a temporary solution to support Maven 3.3.1 (.mvn/extensions.xml) filtering
+                // Will be replaced by MINVOKER-117 with general filtering mechanism
                 File baseDir = pomFile.getParentFile();
                 File mvnDir = new File( baseDir, ".mvn" );
                 if ( mvnDir.isDirectory() )
@@ -989,7 +987,7 @@ public abstract class AbstractInvokerMojo
                         buildInterpolatedFile( extensionsFile, extensionsFile );
                     }
                 }
-                //END MINVOKER-186
+                // END MINVOKER-186
             }
             filteredPomPrefix = null;
         }
@@ -1038,7 +1036,7 @@ public abstract class AbstractInvokerMojo
             File destFile = new File( destDir, includedFile );
             FileUtils.copyFile( sourceFile, destFile );
 
-            //ensure clone project must be writable for additional changes
+            // ensure clone project must be writable for additional changes
             destFile.setWritable( true );
         }
     }
@@ -1155,7 +1153,7 @@ public abstract class AbstractInvokerMojo
                 if ( getLog().isDebugEnabled() )
                 {
                     getLog().debug( "Created temporary file for invoker settings.xml: "
-                                        + mergedSettingsFile.getAbsolutePath() );
+                        + mergedSettingsFile.getAbsolutePath() );
                 }
             }
             catch ( IOException e )
@@ -1275,7 +1273,7 @@ public abstract class AbstractInvokerMojo
         {
             ReflectionUtils.setVariableValueInObject( trackable, "sourceLevelSet", Boolean.FALSE );
             getLog().debug( "sourceLevelSet: "
-                                + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
+                + ReflectionUtils.getValueIncludingSuperclasses( "sourceLevelSet", trackable ) );
         }
         catch ( IllegalAccessException e )
         {
@@ -1325,7 +1323,7 @@ public abstract class AbstractInvokerMojo
      */
     private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile, File actualJavaHome,
                            CharSequence actualJreVersion )
-        throws MojoExecutionException
+                               throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, buildJob.getProject() );
         File basedir;
@@ -1379,7 +1377,8 @@ public abstract class AbstractInvokerMojo
                 try
                 {
                     // CHECKSTYLE_OFF: LineLength
-                    executed = runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome, invokerProperties );
+                    executed =
+                        runBuild( basedir, interpolatedPomFile, settingsFile, actualJavaHome, invokerProperties );
                     // CHECKSTYLE_ON: LineLength
                 }
                 finally
@@ -1572,7 +1571,7 @@ public abstract class AbstractInvokerMojo
      */
     private boolean runBuild( File basedir, File pomFile, File settingsFile, File actualJavaHome,
                               InvokerProperties invokerProperties )
-        throws MojoExecutionException, RunFailureException
+                                  throws MojoExecutionException, RunFailureException
     {
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
         {
@@ -1722,15 +1721,15 @@ public abstract class AbstractInvokerMojo
         return true;
     }
 
-	private void setupLoggerForBuildJob( FileLogger logger, final InvocationRequest request )
-	{
-		if ( logger != null )
-		{
-		    request.setErrorHandler( logger );
+    private void setupLoggerForBuildJob( FileLogger logger, final InvocationRequest request )
+    {
+        if ( logger != null )
+        {
+            request.setErrorHandler( logger );
 
-		    request.setOutputHandler( logger );
-		}
-	}
+            request.setOutputHandler( logger );
+        }
+    }
 
     /**
      * Initializes the build logger for the specified project.
@@ -1841,7 +1840,7 @@ public abstract class AbstractInvokerMojo
      */
     private void verify( InvocationResult result, int invocationIndex, InvokerProperties invokerProperties,
                          FileLogger logger )
-        throws RunFailureException
+                             throws RunFailureException
     {
         if ( result.getExecutionException() != null )
         {
@@ -1878,7 +1877,7 @@ public abstract class AbstractInvokerMojo
     {
         try
         {
-            //FIXME: Currently we have null for goalsFile which has been removed.
+            // FIXME: Currently we have null for goalsFile which has been removed.
             // This might mean we can remove getGoals() at all ? Check this.
             return getTokens( basedir, null, goals );
         }
@@ -2338,7 +2337,8 @@ public abstract class AbstractInvokerMojo
                 }
                 catch ( InterpolationException e )
                 {
-                    throw new MojoExecutionException( "Failed to interpolate invoker properties: " + propertiesFile, e );
+                    throw new MojoExecutionException( "Failed to interpolate invoker properties: " + propertiesFile,
+                                                      e );
                 }
                 props.setProperty( key, value );
             }
