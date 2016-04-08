@@ -1623,12 +1623,7 @@ public abstract class AbstractInvokerMojo
 
             request.setShowVersion( showVersion );
 
-            if ( logger != null )
-            {
-                request.setErrorHandler( logger );
-
-                request.setOutputHandler( logger );
-            }
+            setupLoggerForBuildJob( logger, request );
 
             if ( mavenHome != null )
             {
@@ -1726,6 +1721,16 @@ public abstract class AbstractInvokerMojo
         }
         return true;
     }
+
+	private void setupLoggerForBuildJob( FileLogger logger, final InvocationRequest request )
+	{
+		if ( logger != null )
+		{
+		    request.setErrorHandler( logger );
+
+		    request.setOutputHandler( logger );
+		}
+	}
 
     /**
      * Initializes the build logger for the specified project.
