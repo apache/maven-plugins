@@ -168,8 +168,8 @@ Creating Content
   <<Note:>> {{{http://velocity.apache.org/}Apache Velocity}} is used to apply the
   filtering. Because Velocity uses a dot-notation to traverse beans you <<cannot>>
   use dotted properties defined in <<<\<properties\>>>> directly. It is generally
-  advised to access properties by using the <<<$context>>> tool.
-  E.g., with <<<$context.get("my.property")>>>.
+  advised to access properties by using the <<<${esc.d}context>>> tool.
+  E.g., with <<<${esc.d}context.get("my.property")>>>.
 
   Some properties are defined by default: see
   {{{/doxia/doxia-sitetools/doxia-site-renderer/#Velocity_processing} Doxia Site Renderer's Velocity processing reference}}
