@@ -29,7 +29,7 @@ under the License.
     <section name="Internationalization">
       <p>
         The documentation about internationalization and localization of plugins has been moved to:
-        <a href="http://maven.apache.org/plugins/localization.html">http://maven.apache.org/plugins/localization.html</a>
+        <a href="/plugins/localization.html">http://maven.apache.org/plugins/localization.html</a>
       </p>
     </section>
   </body>

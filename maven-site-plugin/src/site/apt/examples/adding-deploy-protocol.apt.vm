@@ -43,9 +43,9 @@ Currently supported protocols are: ...
 +-----+
 
   As explained in the error message, to deploy a site with a non-built-in protocol, you need to add the corresponding
-  {{{http://maven.apache.org/wagon/}wagon provider}}.
+  {{{/wagon/}wagon provider}}.
 
-  You can add it either as a {{{http://maven.apache.org/guides/mini/guide-using-extensions.html}global extension}},
+  You can add it either as a {{{/guides/mini/guide-using-extensions.html}global extension}},
   or declare it at as a dependency of the site plugin:
 
 +-----+

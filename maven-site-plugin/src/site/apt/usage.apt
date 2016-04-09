@@ -86,7 +86,7 @@ mvn site
 
   The <<<\<id\>>>> element identifies the repository, so that you can attach
   credentials to it in your <<<settings.xml>>> file using the
-  {{{http://maven.apache.org/settings.html#Servers}<<<\<servers\>>>> element}}
+  {{{/ref/current/maven-settings/settings.html#Servers}<<<\<servers\>>>> element}}
   as you would for any other repository.
 
   The <<<\<url\>>>> gives the location to deploy to. In the example above we
@@ -148,7 +148,7 @@ mvn site:stage -DstagingDirectory=C:\fullsite
   So if you need to add your username or password separately for stage-deploy in <<<settings.xml>>>,
   you should use <<<\<id\>stagingSite\</id\>>>> for that <<<\<server\>>>> section.
   See the
-  {{{http://maven.apache.org/guides/mini/guide-deployment-security-settings.html}Guide to Deployment and Security Settings}}
+  {{{/guides/mini/guide-deployment-security-settings.html}Guide to Deployment and Security Settings}}
   for more information on this.
 
   By default, the site will be stage-deployed to <<<${distributionManagement.site.url}/staging/>>>.
