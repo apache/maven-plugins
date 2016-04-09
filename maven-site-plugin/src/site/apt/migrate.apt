@@ -2,8 +2,9 @@
  Migrate
  ------
  Dennis Lundberg
+ Hervé Boutemy
  ------
- 2011-07-05
+ 2016-04-09
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -33,7 +34,7 @@ Migrate
   adjustments to their environment, documents or configuration. Below is a list
   of these changes and what you as a user need to be aware of.
 
-* From 3.4 to 3.5
+* From 3.4 to 3.5.1
 
   * Since {{{http://velocity.apache.org}Velocity}} has been upgraded from version 1.5 to version 1.7,
   which changes escaping rules, you may need to update escape sequences in your <<<.vm>>> documents and/or skins.
@@ -73,7 +74,14 @@ Migrate
 </project>
 +-----------------+
 
-  * 
+  * Interpolation of <<<$\{project.*}>>> and <<<$\{*}>>> expressions in <<<site.xml>>> have changed to be
+  consistent with equivalent feature in Maven <<<pom.xml>>>: interpolation is now done <after> inheritance.
+  For <<<site.xml>>>, this may lead to failures on urls (often on <<<$\{project.url}>>> expression),
+  that are expected to be rebased during inheritance: a new <early interpolation> feature has been added
+  in Maven Site Plugin 3.5.1 throught <<<$\{this.*}>>> expressions (see
+  {{{/doxia/doxia-sitetools/doxia-integration-tools/index.html} Doxia Integration Tools reference documentation}}).
+  With this feature (for example <<<$\{this.url}>>> or <<<$\{this.customProperty}>>> expressions), you'll get
+  former <<<site.xml>>> interpolation result.
 
   []
 
