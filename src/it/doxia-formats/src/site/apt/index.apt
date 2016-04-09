@@ -55,3 +55,5 @@ Doxia Formats
 Velocity
 
   See {{{./velocity-context.html} Doxia Site Renderer Velocity Context demo}}.
+
+  See also {{{./velocity-include-parse.html} Velocity #parse and #include demo}}.
