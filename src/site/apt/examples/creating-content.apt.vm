@@ -69,20 +69,20 @@ Creating Content
   The APT format ("Almost Plain Text") is a wiki-like format that allows you to
   write simple, structured documents (like this one) very quickly. A full
   reference of the
-  {{{http://maven.apache.org/doxia/references/apt-format.html} APT Format}} is
+  {{{/doxia/references/apt-format.html} APT Format}} is
   available.
 
   * FML:
   The FML format is the FAQ format. This is the same that were used in Maven 1.x.
   For more info about the
-  {{{http://maven.apache.org/doxia/references/fml-format.html}FML Format}}
-  check the {{{http://maven.apache.org/doxia/}Doxia}} site.
+  {{{/doxia/references/fml-format.html}FML Format}}
+  check the {{{/doxia/}Doxia}} site.
 
   * XDoc:
   The XDoc format is the same as
-  {{{http://maven.apache.org/maven-1.x/using/site.html} used in Maven 1.x}}.
+  {{{/maven-1.x/using/site.html} used in Maven 1.x}}.
   A reference for the
-  {{{http://maven.apache.org/doxia/references/xdoc-format.html} XDoc Format}}
+  {{{/doxia/references/xdoc-format.html} XDoc Format}}
   is available.
 
   * Markdown (since maven-site-plugin 3.3):
@@ -92,7 +92,7 @@ Creating Content
 
   Other formats are available, but the above four are recognized by default by the site plugin.
   Any other document format for which a Doxia parser exists can be used as well (see the list of
-  {{{http://maven.apache.org/doxia/references/index.html}Doxia Markup Languages}}),
+  {{{/doxia/references/index.html}Doxia Markup Languages}}),
   but in this case you need to add the corresponding Doxia dependency to your site plugin configuration, as
   explained in the last paragraph.
   Note that Doxia also supports several output formats, the site plugin only creates XHTML.

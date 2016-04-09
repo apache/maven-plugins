@@ -34,7 +34,7 @@ Configuring Reports
   current state of the project. These reports take the form of plugin goals, just
   like those used to build the project.
 
-  {{{http://maven.apache.org/plugins/maven-project-info-reports-plugin/}Maven Project Info Reports Plugin}}
+  {{{/plugins/maven-project-info-reports-plugin/}Maven Project Info Reports Plugin}}
   provides many standard reports by extracting information from the POM, for example:
 
   * Continous Integration
@@ -54,7 +54,7 @@ Configuring Reports
   []
 
   To find out more please see to the
-  {{{http://maven.apache.org/plugins/maven-project-info-reports-plugin/}Project Info Reports Plugin}}.
+  {{{/plugins/maven-project-info-reports-plugin/}Project Info Reports Plugin}}.
 
   To add these reports to your site, you must add the plugin to the
   <<<\<reporting\>>>> element in the POM. The following example shows how to
@@ -89,7 +89,7 @@ Configuring Reports
   the effective output directory to ensure that all reports end up in a common
   location.
 
-  Check out reporting plugins ("R" value in the "Type" column) in the {{{http://maven.apache.org/plugins/}plugins page}},
+  Check out reporting plugins ("R" value in the "Type" column) in the {{{/plugins/}plugins page}},
   for a list of available reporting plugins from Apache Maven Team.
 
 Selecting Reports from a Plugin: Configuring Report Sets

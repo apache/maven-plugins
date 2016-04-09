@@ -29,7 +29,7 @@ under the License.
           <dt>mvn site</dt>
           <dd>
             Calls the <i>site</i> phase of the site lifecycle, which consists in the following life cycle phases: <code>pre-site</code>, <code>site</code>, <code>post-site</code> and <code>site-deploy</code>.
-            See <a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
+            See <a href="/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
           <dt>mvn site:site</dt>
           <dd>Calls the <i>site</i> goal of the site plugin.
             See <a href="site-mojo.html">site:site</a>.</dd>
@@ -58,7 +58,7 @@ under the License.
           If you want to use a custom format like Twiki, Simple DocBook, or XHTML
           (or any other document format
           for which a doxia parser exists, see the list of
-          <a href="http://maven.apache.org/doxia/references/index.html">Doxia Markup Languages</a>),
+          <a href="/doxia/references/index.html">Doxia Markup Languages</a>),
           you need to specify the corresponding Doxia module dependency, e.g. for Twiki:
         </p>
           <source>
@@ -104,11 +104,11 @@ under the License.
           If validation is switched on, <strong>all</strong> xml source
           files need a correct schema and/or DTD definition.
           See the Doxia documentation on
-          <a href="http://maven.apache.org/doxia/references/xdoc-format.html#Validation">validating xdocs</a>,
+          <a href="/doxia/references/xdoc-format.html#Validation">validating xdocs</a>,
           and the schema definitions for
-          <a href="http://maven.apache.org/doxia/doxia/doxia-modules/doxia-module-xdoc/using-xdoc-xsd.html">xdoc</a>
+          <a href="/doxia/doxia/doxia-modules/doxia-module-xdoc/using-xdoc-xsd.html">xdoc</a>
           and
-          <a href="http://maven.apache.org/doxia/doxia/doxia-modules/doxia-module-fml/using-fml-xsd.html">fml</a>.
+          <a href="/doxia/doxia/doxia-modules/doxia-module-fml/using-fml-xsd.html">fml</a>.
         </p>
       </answer>
     </faq>
