@@ -33,10 +33,11 @@ import org.apache.maven.project.MavenProject;
  * Deploys the generated site to a local staging or mock directory based on the site URL
  * specified in the <code>&lt;distributionManagement&gt;</code> section of the
  * POM.
- * <p>
- * It can be used to test that links between module sites in a multi-module
+ * <p>It can be used to test that links between module sites in a multi-module
  * build work.
  * </p>
+ * <p>This goal requires the site to already have been generated using the site goal,
+ * such as by calling <code>mvn site</code></p>
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
