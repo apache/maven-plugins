@@ -23,15 +23,17 @@ under the License.
   <part id="General">
     <title>General</title>
     <faq id="What is the difference between mvn site and mvn site:site">
-      <question>What is the difference between <i>mvn site</i> and <i>mvn site:site</i>?</question>
+      <question>What is the difference between <code>mvn site</code> and <code>mvn site:site</code>?</question>
       <answer>
         <dl>
-          <dt>mvn site</dt>
+          <dt><code>mvn site</code></dt>
           <dd>
-            Calls the <i>site</i> phase of the site lifecycle, which consists in the following life cycle phases: <code>pre-site</code>, <code>site</code>, <code>post-site</code> and <code>site-deploy</code>.
-            See <a href="/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.</dd>
-          <dt>mvn site:site</dt>
-          <dd>Calls the <i>site</i> goal of the site plugin.
+            Calls the <i>site</i> <b>phase</b> of the site <b>lifecycle</b>.
+            Full site lifecycle consists in the following life cycle phases: <code>pre-site</code>, <code>site</code>, <code>post-site</code> and <code>site-deploy</code>.
+            See <a href="/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference">Lifecycle Reference</a>.
+            Then it calls plugin goals associated to <code>pre-site</code> and <code>site</code> phases.</dd>
+          <dt><code>mvn site:site</code></dt>
+          <dd>Calls the <i>site</i> <b>goal</b> of the site <b>plugin</b>.
             See <a href="site-mojo.html">site:site</a>.</dd>
         </dl>
       </answer>
