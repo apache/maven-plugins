@@ -53,7 +53,8 @@ ${project.name}
 
    * {{{./stage-mojo.html}site:stage}} generates a site in a local staging or mock directory based on the site URL
      specified in the <<<\<distributionManagement\>>>> section of the POM. It can be used
-     to test that links between module sites in a multi module build works.
+     to test that links between module sites in a multi module build work. This goal requires the site to already have been
+     generated using the site goal, such as by calling <<<mvn site>>>.
 
    * {{{./stage-deploy-mojo.html}site:stage-deploy}} deploys the generated site to a staging or mock directory to the site
      URL specified in the <<<\<distributionManagement\>>>> section of the POM.

@@ -37,7 +37,7 @@ import org.apache.maven.project.MavenProject;
  * build work.
  * </p>
  * <p>This goal requires the site to already have been generated using the site goal,
- * such as by calling <code>mvn site</code></p>
+ * such as by calling <code>mvn site</code>.</p>
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
