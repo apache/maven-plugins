@@ -35,3 +35,9 @@ Doxia Site Renderer Velocity ${esc.h}parse and ${esc.h}include
 * ${esc.h}parse
 
 #parse( "velocity-parse.txt" )
+
+* ${esc.h}include ../../../pom.xml
+
++---------------+
+#include( "../../../pom.xml" )
++---------------+
