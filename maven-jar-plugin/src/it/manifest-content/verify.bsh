@@ -58,9 +58,11 @@ try
         return false;
     }
 
-    if ( !"1.0-SNAPSHOT".equals( manifest.get( Attributes.Name.SPECIFICATION_VERSION ) ) )
+    // https://docs.oracle.com/javase/6/docs/technotes/guides/versioning/spec/versioning2.html
+    // Based on the above this must be "1.0" and NOT "1.0-SNAPSHOT"
+    if ( !"1.0".equals( manifest.get( Attributes.Name.SPECIFICATION_VERSION ) ) )
     {
-        System.err.println( Attributes.Name.SPECIFICATION_VERSION.toString() + " not equals 1.0-SNAPSHOT" );
+        System.err.println( Attributes.Name.SPECIFICATION_VERSION.toString() + " not equals 1.0" );
         return false;
     }
 

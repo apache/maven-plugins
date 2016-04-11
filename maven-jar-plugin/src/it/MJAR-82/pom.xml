@@ -36,8 +36,12 @@
             <manifest>
               <mainClass>myproject.HelloWorld</mainClass>
               <addClasspath>true</addClasspath>
-              <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
-              <!--<classpathPrefix></classpathPrefix>-->
+              <!--
+                ! With maven-archiver 3.0.1 the following deprecated code
+                ! has been removed which is replaced by the classpathLayoutType.
+                ! <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
+              -->
+              <classpathLayoutType>repository</classpathLayoutType>
             </manifest>
           </archive>
         </configuration>
