@@ -58,7 +58,7 @@ try
         return false;
     }
 
-    if ( !"1.0-SNAPSHOT".equals( manifest.get( Attributes.Name.SPECIFICATION_VERSION ) ) )
+    if ( !"1.0".equals( manifest.get( Attributes.Name.SPECIFICATION_VERSION ) ) )
     {
         System.err.println( "Incorrect '" + Attributes.Name.SPECIFICATION_VERSION.toString() + "' manifest entry: " +
             manifest.get( Attributes.Name.SPECIFICATION_VERSION ) );

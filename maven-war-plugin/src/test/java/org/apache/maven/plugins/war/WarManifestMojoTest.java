@@ -19,12 +19,13 @@ package org.apache.maven.plugins.war;
  * under the License.
  */
 
-import org.apache.maven.archiver.MavenArchiveConfiguration;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.war.WarManifestMojo;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
+
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author Allan Ramirez
@@ -117,6 +118,9 @@ public class WarManifestMojoTest
 
         MavenArchiveConfiguration config = (MavenArchiveConfiguration) getVariableValueFromObject( mojo, "archive" );
 
+        DefaultArtifact da = new DefaultArtifact( "org.apache.test", "xyz", "2.0.0", Artifact.SCOPE_COMPILE, "jar", "", null );
+        mojo.getProject().setArtifact( da );
+
         mojo.execute();
 
         assertTrue( config.getManifest().isAddExtensions() );
@@ -149,8 +153,11 @@ public class WarManifestMojoTest
     {
         loadMojo( "target/test-classes/unit/manifest/manifest-with-custom-attrs/plugin-config.xml" );
 
+        DefaultArtifact da = new DefaultArtifact( "org.apache.test", "xyz", "2.0.0", Artifact.SCOPE_COMPILE, "jar", "", null );
+        mojo.getProject().setArtifact( da );
+        
         MavenArchiveConfiguration config = (MavenArchiveConfiguration) getVariableValueFromObject( mojo, "archive" );
-
+        
         mojo.execute();
 
         assertTrue( config.getManifest().isAddExtensions() );
