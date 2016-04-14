@@ -238,7 +238,7 @@ public class DefaultShader
                         return;
                     }
 
-                    addResource( resources, jos, mappedName, is );
+                    addResource( resources, jos, mappedName, entry.getTime(), is );
                 }
             }
 
@@ -523,10 +523,15 @@ public class DefaultShader
         resources.add( name );
     }
 
-    private void addResource( Set<String> resources, JarOutputStream jos, String name, InputStream is )
+    private void addResource( Set<String> resources, JarOutputStream jos, String name, long lastModified, 
+                              InputStream is )
         throws IOException
     {
-        jos.putNextEntry( new JarEntry( name ) );
+        JarEntry jarEntry = new JarEntry( name );
+        
+        jarEntry.setTime( lastModified );
+        
+        jos.putNextEntry( jarEntry );
 
         IOUtil.copy( is, jos );
 
