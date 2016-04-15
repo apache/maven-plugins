@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
@@ -131,6 +132,38 @@ public abstract class AbstractWarMojo
      */
     @Parameter
     private List<String> filters;
+
+    /**
+     * <p>
+     * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the form
+     * 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * </p>
+     * <p>
+     * So, the default filtering delimiters might be specified as:
+     * </p>
+     * 
+     * <pre>
+     * &lt;delimiters&gt;
+     *   &lt;delimiter&gt;${*}&lt;/delimiter&gt;
+     *   &lt;delimiter&gt;@&lt;/delimiter&gt;
+     * &lt;/delimiters&gt;
+     * </pre>
+     * <p>
+     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * </p>
+     *
+     * @since 3.0.0
+     */
+    @Parameter
+    private LinkedHashSet<String> delimiters;
+
+    /**
+     * Use default delimiters in addition to custom delimiters, if any.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "true" )
+    private boolean useDefaultDelimiters;
 
     /**
      * The path to the web.xml file to use.
@@ -422,6 +455,15 @@ public abstract class AbstractWarMojo
             mavenResourcesExecution.setEscapeString( escapeString );
             mavenResourcesExecution.setSupportMultiLineFiltering( supportMultiLineFiltering );
             mavenResourcesExecution.setMavenProject( mavenProject );
+
+            // if these are NOT set, just use the defaults, which are '${*}' and '@'.
+            mavenResourcesExecution.setDelimiters( delimiters, useDefaultDelimiters );
+
+            if ( nonFilteredFileExtensions != null )
+            {
+                mavenResourcesExecution.setNonFilteredFileExtensions( nonFilteredFileExtensions );
+            }
+            
             if ( filters == null )
             {
                 filters = getProject().getBuild().getFilters();
