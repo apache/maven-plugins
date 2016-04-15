@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN"
+        "http://jetty.mortbay.org/configure.dtd">
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+  <!--
+    This file is encoded in UTF-8 and should be so after filtering, since it
+    specifies an encoding in the xml header. So the following characters should
+    remain unaltered after filtering even though the encoding for filtering is
+    set to ISO-8859-1:
+    Characters that should be encoded in UTF-8: åäö
+  -->
+  <New id="MyDS" class="org.mortbay.jetty.plus.naming.Resource">
+    <Arg>jdbc/EventdialogDS</Arg>
+    <Arg>
+      <New class="oracle.jdbc.pool.OracleConnectionPoolDataSource">
+        <Set name="URL">@@jdbc.url@@</Set>
+        <Set name="user">@@jdbc.user@@</Set>
+        <Set name="password">\@@jdbc.password@@</Set>
+      </New>
+    </Arg>
+  </New>
+</Configure>
