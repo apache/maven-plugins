@@ -40,7 +40,7 @@ import java.io.IOException;
  * as taglet, doclet, and link information into a deployable artifact. This artifact can then be consumed
  * by the javadoc plugin mojos when used by the <code>includeDependencySources</code> option, to generate
  * javadocs that are somewhat consistent with those generated in the original project itself.
- *  
+ *
  * @since 2.7
  */
 @Mojo( name = "resource-bundle", defaultPhase = LifecyclePhase.PACKAGE,
@@ -84,10 +84,10 @@ extends AbstractJavadocMojo
      * Assemble a new {@link org.apache.maven.plugin.javadoc.options.JavadocOptions JavadocOptions} instance that
      * contains the configuration options in this
      * mojo, which are a subset of those provided in derivatives of the {@link AbstractJavadocMojo}
-     * class (most of the javadoc mojos, in other words). Then, bundle the contents of the 
+     * class (most of the javadoc mojos, in other words). Then, bundle the contents of the
      * <code>javadocDirectory</code> along with the assembled JavadocOptions instance (serialized to
      * META-INF/maven/javadoc-options.xml) into a project attachment for installation/deployment.
-     * 
+     *
      * {@inheritDoc}
      * @see org.apache.maven.plugin.Mojo#execute()
      */
@@ -102,7 +102,7 @@ extends AbstractJavadocMojo
         {
             throw new MojoExecutionException( "Failed to generate javadoc-options file: " + e.getMessage(), e );
         }
-        
+
         Archiver archiver;
         try
         {
@@ -112,20 +112,20 @@ extends AbstractJavadocMojo
         {
             throw new MojoExecutionException( "Failed to retrieve jar archiver component from manager.", e );
         }
-        
+
         File optionsFile = getJavadocOptionsFile();
         File bundleFile =
             new File( getProject().getBuild().getDirectory(), finalName + "-" + getAttachmentClassifier() + ".jar" );
         try
         {
             archiver.addFile( optionsFile, BUNDLE_OPTIONS_PATH );
-            
+
             File javadocDir = getJavadocDirectory();
             if ( javadocDir.exists() && javadocDir.isDirectory() )
             {
-                archiver.addDirectory( javadocDir, RESOURCES_DIR_PATH );
+                archiver.addDirectory( javadocDir, RESOURCES_DIR_PATH + "/" );
             }
-            
+
             archiver.setDestFile( bundleFile );
             archiver.createArchive();
         }
@@ -139,7 +139,7 @@ extends AbstractJavadocMojo
             throw new MojoExecutionException( "Failed to assemble javadoc-resources bundle archive. Reason: "
                 + e.getMessage(), e );
         }
-        
+
         projectHelper.attachArtifact( getProject(), bundleFile, getAttachmentClassifier() );
     }
 }
