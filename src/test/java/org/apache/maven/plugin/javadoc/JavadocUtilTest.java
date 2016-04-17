@@ -115,7 +115,8 @@ public class JavadocUtilTest
         try
         {
             JavadocUtil.parseJavadocVersion( version );
-            assertTrue( "Not catch wrong pattern", false );
+            // does not fail since JEP 223 support addition
+            //assertTrue( "Not catch wrong pattern", false );
         }
         catch ( PatternSyntaxException e )
         {
@@ -124,6 +125,27 @@ public class JavadocUtilTest
 
         version = "SCO-UNIX-J2SE-1.5.0_09*FCS-UW714-OSR6*_20061114";
         assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+
+        // Java 9 EA
+        version = "java full version \"9-ea+113\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9f, 0 );
+
+        // Java 9 EA Jigsaw
+        version = "java full version \"9-ea+113-2016-04-14-161743.javare.4852.nc\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9f, 0 );
+
+        // JEP 223 example for future versions
+        version = "java full version \"9+100\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9f, 0 );
+
+        version = "java full version \"9.0.1+20\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9.01f, 0 );
+
+        version = "java full version \"10+100\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 10f, 0 );
+
+        version = "java full version \"10.0.1+20\"";
+        assertEquals( JavadocUtil.parseJavadocVersion( version ), 10.01f, 0 );
     }
 
     /**
