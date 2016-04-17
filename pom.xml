@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-compiler-plugin</artifactId>
-  <version>3.6-SNAPSHOT</version>
+  <version>3.6-jigsaw-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Compiler Plugin</name>
@@ -63,7 +63,7 @@ under the License.
       ! The following property is used in the integration tests MCOMPILER-157
     -->
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
-    <plexusCompilerVersion>2.8-SNAPSHOT</plexusCompilerVersion>
+    <plexusCompilerVersion>2.8-jigsaw-SNAPSHOT</plexusCompilerVersion>
     <groovyVersion>1.8.0</groovyVersion>
     <groovyEclipseCompilerVersion>2.7.0-01</groovyEclipseCompilerVersion>
     <groovy-eclipse-batch>2.0.4-04</groovy-eclipse-batch>
