@@ -20,6 +20,7 @@ package org.apache.maven.plugin.compiler;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -186,8 +187,11 @@ public class TestCompilerMojo
     private void setPaths()
         throws DependencyResolutionRequiredException
     {
-        boolean hasMainModuleDescriptor =
-            new File( getProject().getBuild().getOutputDirectory(), "module-info.class" ).exists();
+        File mainOutputDirectory = new File( getProject().getBuild().getOutputDirectory() );
+
+        File mainModuleInfo = new File( mainOutputDirectory, "module-info.class" );
+        
+        boolean hasMainModuleDescriptor = mainModuleInfo.exists();
         
         boolean hasTestModuleDescriptor = false;
         for ( String sourceRoot : getProject().getTestCompileSourceRoots() )
@@ -196,8 +200,7 @@ public class TestCompilerMojo
         }
         
         List<String> compilePathElements =
-            JavaMavenProjectUtils.getCompileClasspathElements( getProject(),
-                                                           new File( getProject().getBuild().getOutputDirectory() ) );
+            JavaMavenProjectUtils.getCompileClasspathElements( getProject(), mainOutputDirectory );
 
         List<String> testPathElements =
                         JavaMavenProjectUtils.getTestClasspathElements( getProject(), getOutputDirectory() );
@@ -207,35 +210,57 @@ public class TestCompilerMojo
         
         if ( hasTestModuleDescriptor )
         {
+            modulepathElements = testPathElements;
+            classpathElements = Collections.emptyList();
+
             if ( hasMainModuleDescriptor )
             {
-                modulepathElements = testPathElements;
-                classpathElements = Collections.emptyList();
+                if ( compilerArgs == null )
+                {
+                    compilerArgs = new ArrayList<String>();
+                }
+                
+                try
+                {
+                    // 
+                    String moduleName = new AsmModuleInfoParser().getModuleName( mainOutputDirectory  );
+                    compilerArgs.add( "-Xmodule:" + moduleName );
+                    compilerArgs.add( "-XaddReads:" + moduleName + "=ALL-UNNAMED" );
+                }
+                catch ( IOException e )
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             else
             {
-                modulepathElements = testScopedElements;
-                classpathElements = compilePathElements;
-                // Odd, extra arguments required
+                // very odd
             }
         }
         else
         {
             if ( hasMainModuleDescriptor )
             {
-                modulepathElements = Collections.emptyList();
-                classpathElements = testPathElements;
-
-//              Current options assume awareness of modulename:
-//                -addmods <module>
-//                -Xmodule:<module>
-//                modulepathElements = compilePathElements;
-//                classpathElements = testScopedElements;
-//                if ( compilerArgs == null )
-//                {
-//                    compilerArgs = new ArrayList<String>();
-//                }
-//                compilerArgs.add( "-addmods" );
+                modulepathElements = compilePathElements;
+                classpathElements = testScopedElements;
+                if ( compilerArgs == null )
+                {
+                    compilerArgs = new ArrayList<String>();
+                }
+                
+                try
+                {
+                    String moduleName = new AsmModuleInfoParser().getModuleName( mainOutputDirectory  );
+                    compilerArgs.add( "-Xmodule:" + moduleName );
+                    compilerArgs.add( "-addmods" );
+                    compilerArgs.add( moduleName );
+                }
+                catch ( IOException e )
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             else
             {
