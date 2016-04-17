@@ -654,7 +654,7 @@ public class JavadocUtil
      * @param output for 'javadoc -J-version'
      * @return the version of the javadoc for the output.
      * @throws PatternSyntaxException if the output doesn't match with the output pattern
-     * <tt>(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*</tt>.
+     * <tt>(?s).*?[^a-zA-Z]([0-9]+\\.?[0-9]*)(\\.([0-9]+))?.*</tt>.
      * @throws IllegalArgumentException if the output is null
      */
     protected static float parseJavadocVersion( String output )
@@ -665,7 +665,7 @@ public class JavadocUtil
             throw new IllegalArgumentException( "The output could not be null." );
         }
 
-        Pattern pattern = Pattern.compile( "(?s).*?([0-9]+\\.[0-9]+)(\\.([0-9]+))?.*" );
+        Pattern pattern = Pattern.compile( "(?s).*?[^a-zA-Z]([0-9]+\\.?[0-9]*)(\\.([0-9]+))?.*" );
 
         Matcher matcher = pattern.matcher( output );
         if ( !matcher.matches() )
