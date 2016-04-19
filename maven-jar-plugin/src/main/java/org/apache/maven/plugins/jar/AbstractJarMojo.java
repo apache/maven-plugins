@@ -72,7 +72,7 @@ public abstract class AbstractJarMojo
      * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.finalName</code> to
      * <code>maven.jar.finalName</code>.
      */
-    @Parameter( defaultValue = "${project.build.finalName}" )
+    @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     private String finalName;
 
     /**
