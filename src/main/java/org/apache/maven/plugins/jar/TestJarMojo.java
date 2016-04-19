@@ -40,7 +40,7 @@ public class TestJarMojo
 {
 
     /**
-     * Set this to <code>true</code> to bypass unit tests entirely. Its use is <b>NOT RECOMMENDED</b>, but quite
+     * Set this to <code>true</code> to bypass test-jar generation. Its use is <b>NOT RECOMMENDED</b>, but quite
      * convenient on occasion.
      */
     @Parameter( property = "maven.test.skip" )
