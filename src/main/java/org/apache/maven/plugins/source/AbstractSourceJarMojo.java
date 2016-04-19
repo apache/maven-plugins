@@ -164,7 +164,7 @@ public abstract class AbstractSourceJarMojo
      * The filename to be used for the generated archive file. For the source:jar goal, "-sources" is appended to this
      * filename. For the source:test-jar goal, "-test-sources" is appended.
      */
-    @Parameter( defaultValue = "${project.build.finalName}" )
+    @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     protected String finalName;
 
     /**
