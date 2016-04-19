@@ -49,7 +49,7 @@ public class JarMojo
      * If not given this will create the main artifact which is the default behavior. 
      * If you try to do that a second time without using a classifier the build will fail.
      */
-    @Parameter( property = "maven.jar.classifier" )
+    @Parameter
     private String classifier;
 
     protected String getClassifier()

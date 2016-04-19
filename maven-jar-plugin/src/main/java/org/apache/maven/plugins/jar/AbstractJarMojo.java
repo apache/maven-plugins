@@ -72,7 +72,7 @@ public abstract class AbstractJarMojo
      * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.finalName</code> to
      * <code>maven.jar.finalName</code>.
      */
-    @Parameter( property = "maven.jar.finalName", defaultValue = "${project.build.finalName}" )
+    @Parameter( defaultValue = "${project.build.finalName}" )
     private String finalName;
 
     /**
@@ -135,7 +135,7 @@ public abstract class AbstractJarMojo
      * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.skipIfEmpty</code> to
      * <code>maven.jar.skipIfEmpty</code>.
      */
-    @Parameter( property = "maven.jar.skipIfEmpty", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean skipIfEmpty;
 
     /**
