@@ -55,7 +55,7 @@ public class TestJarMojo
     /**
      * Classifier to used for {@code test-jar}.
      */
-    @Parameter( property = "maven.jar.testClassifier", defaultValue = "tests" )
+    @Parameter( defaultValue = "tests" )
     private String classifier;
 
     protected String getClassifier()
