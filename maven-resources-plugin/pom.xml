@@ -65,7 +65,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenFilteringVersion>3.1.0-SNAPSHOT</mavenFilteringVersion>
+    <mavenFilteringVersion>3.1.0</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
     <!--
       ! Here we start with JDK 6 for release 3.X
