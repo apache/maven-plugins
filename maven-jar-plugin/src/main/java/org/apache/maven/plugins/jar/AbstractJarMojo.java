@@ -68,9 +68,7 @@ public abstract class AbstractJarMojo
     private File outputDirectory;
 
     /**
-     * Name of the generated JAR.<br/>
-     * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.finalName</code> to
-     * <code>maven.jar.finalName</code>.
+     * Name of the generated JAR.
      */
     @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     private String finalName;
@@ -131,9 +129,7 @@ public abstract class AbstractJarMojo
     private boolean forceCreation;
 
     /**
-     * Skip creating empty archives.<br/>
-     * Starting with <b>3.0.0</b> the property has been renamed from <code>jar.skipIfEmpty</code> to
-     * <code>maven.jar.skipIfEmpty</code>.
+     * Skip creating empty archives.
      */
     @Parameter( defaultValue = "false" )
     private boolean skipIfEmpty;
