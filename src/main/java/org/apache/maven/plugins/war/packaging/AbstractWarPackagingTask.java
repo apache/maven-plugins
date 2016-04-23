@@ -308,7 +308,7 @@ public abstract class AbstractWarPackagingTask
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException( "Error unpacking file [" + file.getAbsolutePath() + "]" + "to ["
+            throw new MojoExecutionException( "Error unpacking file [" + file.getAbsolutePath() + "]" + " to ["
                 + unpackDirectory.getAbsolutePath() + "]", e );
         }
         catch ( NoSuchArchiverException e )
