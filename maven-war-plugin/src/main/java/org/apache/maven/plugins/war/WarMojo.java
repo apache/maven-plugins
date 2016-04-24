@@ -63,7 +63,7 @@ public class WarMojo
     /**
      * The name of the generated WAR.
      */
-    @Parameter( defaultValue = "${project.build.finalName}", property = "war.warName", required = true )
+    @Parameter( defaultValue = "${project.build.finalName}", required = true, readonly = true )
     private String warName;
 
     /**
