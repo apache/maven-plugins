@@ -136,9 +136,13 @@ public abstract class AbstractJarMojo
 
     /**
      * Return the specific output directory to serve as the root for the archive.
+     * @return get classes directory.
      */
     protected abstract File getClassesDirectory();
 
+    /**
+     * @return the {@link #project}
+     */
     protected final MavenProject getProject()
     {
         return project;
@@ -146,11 +150,13 @@ public abstract class AbstractJarMojo
 
     /**
      * Overload this to produce a jar with another classifier, for example a test-jar.
+     * @return get the classifier.
      */
     protected abstract String getClassifier();
 
     /**
      * Overload this to produce a test-jar, for example.
+     * @return return the type.
      */
     protected abstract String getType();
 
@@ -158,22 +164,22 @@ public abstract class AbstractJarMojo
      * Returns the Jar file to generate, based on an optional classifier.
      *
      * @param basedir the output directory
-     * @param finalName the name of the ear file
+     * @param resultFinalName the name of the ear file
      * @param classifier an optional classifier
      * @return the file to generate
      */
-    protected File getJarFile( File basedir, String finalName, String classifier )
+    protected File getJarFile( File basedir, String resultFinalName, String classifier )
     {
         if ( basedir == null )
         {
             throw new IllegalArgumentException( "basedir is not allowed to be null" );
         }
-        if ( finalName == null )
+        if ( resultFinalName == null )
         {
             throw new IllegalArgumentException( "finalName is not allowed to be null" );
         }
 
-        StringBuilder fileName = new StringBuilder( finalName );
+        StringBuilder fileName = new StringBuilder( resultFinalName );
 
         if ( hasClassifier() )
         {
@@ -187,6 +193,8 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
+     * @return The instance of File for the created archive file.
+     * @throws MojoExecutionException in case of an error.
      */
     public File createArchive()
         throws MojoExecutionException
@@ -226,6 +234,7 @@ public abstract class AbstractJarMojo
 
     /**
      * Generates the JAR.
+     * @throws MojoExecutionException in case of an error.
      */
     public void execute()
         throws MojoExecutionException
