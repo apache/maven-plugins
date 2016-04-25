@@ -58,13 +58,16 @@ public class TestJarMojo
     @Parameter( defaultValue = "tests" )
     private String classifier;
 
+    /**
+     * {@inheritDoc}
+     */
     protected String getClassifier()
     {
         return classifier;
     }
 
     /**
-     * @return type of the generated artifact
+     * {@inheritDoc}
      */
     protected String getType()
     {
@@ -72,13 +75,16 @@ public class TestJarMojo
     }
 
     /**
-     * Return the test-classes directory, to serve as the root of the tests jar.
+     * {@inheritDoc}
      */
     protected File getClassesDirectory()
     {
         return testClassesDirectory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {

@@ -52,13 +52,16 @@ public class JarMojo
     @Parameter
     private String classifier;
 
+    /**
+     * {@inheritDoc}
+     */
     protected String getClassifier()
     {
         return classifier;
     }
 
     /**
-     * @return type of the generated artifact
+     * {@inheritDoc}
      */
     protected String getType()
     {
@@ -66,7 +69,7 @@ public class JarMojo
     }
 
     /**
-     * Return the main classes directory, so it's used as the root of the jar.
+     * {@inheritDoc}
      */
     protected File getClassesDirectory()
     {
