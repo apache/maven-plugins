@@ -40,7 +40,7 @@ public class TestJarMojo
 {
 
     /**
-     * Set this to <code>true</code> to bypass unit tests entirely. Its use is <b>NOT RECOMMENDED</b>, but quite
+     * Set this to <code>true</code> to bypass test-jar generation. Its use is <b>NOT RECOMMENDED</b>, but quite
      * convenient on occasion.
      */
     @Parameter( property = "maven.test.skip" )
@@ -55,16 +55,19 @@ public class TestJarMojo
     /**
      * Classifier to used for {@code test-jar}.
      */
-    @Parameter( property = "maven.jar.testClassifier", defaultValue = "tests" )
+    @Parameter( defaultValue = "tests" )
     private String classifier;
 
+    /**
+     * {@inheritDoc}
+     */
     protected String getClassifier()
     {
         return classifier;
     }
 
     /**
-     * @return type of the generated artifact
+     * {@inheritDoc}
      */
     protected String getType()
     {
@@ -72,13 +75,16 @@ public class TestJarMojo
     }
 
     /**
-     * Return the test-classes directory, to serve as the root of the tests jar.
+     * {@inheritDoc}
      */
     protected File getClassesDirectory()
     {
         return testClassesDirectory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException
     {

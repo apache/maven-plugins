@@ -132,6 +132,13 @@ under the License.
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources/META-INF/plexus</directory>
+        <filtering>true</filtering>
+        <targetPath>META-INF/plexus</targetPath>
+      </resource>
+    </resources>
     <pluginManagement>
       <plugins>
         <plugin>
