@@ -215,27 +215,16 @@ public class TestCompilerMojo
 
             if ( hasMainModuleDescriptor )
             {
-                if ( compilerArgs == null )
-                {
-                    compilerArgs = new ArrayList<String>();
-                }
-                
-                try
-                {
-                    // 
-                    String moduleName = new AsmModuleInfoParser().getModuleName( mainOutputDirectory  );
-                    compilerArgs.add( "-Xmodule:" + moduleName );
-                    compilerArgs.add( "-XaddReads:" + moduleName + "=ALL-UNNAMED" );
-                }
-                catch ( IOException e )
-                {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                // maybe some extra analysis required
             }
             else
             {
                 // very odd
+                // Means that main sources must be compiled with -modulesource and -Xmodule:<moduleName>
+                // However, this has a huge impact since you can't simply use it as a classpathEntry 
+                // due to extra folder in between
+                throw new UnsupportedOperationException( "Can't compile test sources "
+                    + "when main sources are missing a module descriptor" );
             }
         }
         else
