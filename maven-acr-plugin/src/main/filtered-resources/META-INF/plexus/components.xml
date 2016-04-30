@@ -20,6 +20,9 @@
  */-->
 <component-set>
   <components>
+    <!--
+     | ACR
+     |-->
     <component>
       <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
       <role-hint>app-client</role-hint>
@@ -31,6 +34,14 @@
         <addedToClasspath>true</addedToClasspath>
       </configuration>
     </component>
+    <!--
+      | Defining the phases with their appropriate plugins
+      ! and versions which will be executed during the 'default'
+      ! life cycle.
+    -->
+    <!--
+     | ACR
+     |-->
     <component>
       <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
       <role-hint>app-client</role-hint>
@@ -44,19 +55,19 @@
                 org.apache.maven.plugins:maven-resources-plugin:2.7:resources
               </process-resources>
               <compile>
-                org.apache.maven.plugins:maven-compiler-plugin:3.3:compile
+                org.apache.maven.plugins:maven-compiler-plugin:3.5.1:compile
               </compile>
               <process-test-resources>
                 org.apache.maven.plugins:maven-resources-plugin:2.7:testResources
               </process-test-resources>
               <test-compile>
-                org.apache.maven.plugins:maven-compiler-plugin:2.3.2:testCompile
+                org.apache.maven.plugins:maven-compiler-plugin:3.5.1:testCompile
               </test-compile>
               <test>
                 org.apache.maven.plugins:maven-surefire-plugin:2.18.1:test
               </test>
               <package>
-                org.apache.maven.plugins:maven-acr-plugin:acr
+                org.apache.maven.plugins:maven-acr-plugin:${project.version}:acr
               </package>
               <install>
                 org.apache.maven.plugins:maven-install-plugin:2.5.2:install

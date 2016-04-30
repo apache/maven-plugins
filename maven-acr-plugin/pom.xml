@@ -125,6 +125,14 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/filtered-resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
   <profiles>
     <profile>
       <id>run-its</id>
