@@ -224,6 +224,13 @@ public class CompilerMojo
     {
         return target;
     }
+    
+    @Override
+    protected String getRelease()
+    {
+        return release;
+    }
+    
 
     protected String getCompilerArgument()
     {
