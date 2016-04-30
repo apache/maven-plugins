@@ -1920,11 +1920,7 @@ public abstract class AbstractInvokerMojo
     {
         BuildJob[] buildJobs;
 
-        if ( ( pom != null ) && pom.exists() )
-        {
-            buildJobs = new BuildJob[] { new BuildJob( pom.getAbsolutePath(), BuildJob.Type.NORMAL ) };
-        }
-        else if ( invokerTest != null )
+        if ( invokerTest != null )
         {
             String[] testRegexes = StringUtils.split( invokerTest, "," );
             List<String> includes = new ArrayList<String>( testRegexes.length );
