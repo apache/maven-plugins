@@ -1920,30 +1920,7 @@ public abstract class AbstractInvokerMojo
     {
         BuildJob[] buildJobs;
 
-        if ( invokerTest != null )
-        {
-            String[] testRegexes = StringUtils.split( invokerTest, "," );
-            List<String> includes = new ArrayList<String>( testRegexes.length );
-            List<String> excludes = new ArrayList<String>();
-
-            for ( String regex : testRegexes )
-            {
-                // user just use -Dinvoker.test=MWAR191,MNG111 to use a directory thats the end is not pom.xml
-                if ( regex.startsWith( "!" ) )
-                {
-                    excludes.add( regex.substring( 1 ) );
-                }
-                else
-                {
-                    includes.add( regex );
-                }
-            }
-
-            // it would be nice if we could figure out what types these are... but perhaps
-            // not necessary for the -Dinvoker.test=xxx t
-            buildJobs = scanProjectsDirectory( includes, excludes, BuildJob.Type.DIRECT );
-        }
-        else
+        if ( invokerTest == null )
         {
             List<String> excludes =
                 ( pomExcludes != null ) ? new ArrayList<String>( pomExcludes ) : new ArrayList<String>();
@@ -1979,6 +1956,29 @@ public abstract class AbstractInvokerMojo
             }
 
             buildJobs = uniquePoms.values().toArray( new BuildJob[uniquePoms.size()] );
+        }
+        else
+        {
+            String[] testRegexes = StringUtils.split( invokerTest, "," );
+            List<String> includes = new ArrayList<String>( testRegexes.length );
+            List<String> excludes = new ArrayList<String>();
+
+            for ( String regex : testRegexes )
+            {
+                // user just use -Dinvoker.test=MWAR191,MNG111 to use a directory thats the end is not pom.xml
+                if ( regex.startsWith( "!" ) )
+                {
+                    excludes.add( regex.substring( 1 ) );
+                }
+                else
+                {
+                    includes.add( regex );
+                }
+            }
+
+            // it would be nice if we could figure out what types these are... but perhaps
+            // not necessary for the -Dinvoker.test=xxx t
+            buildJobs = scanProjectsDirectory( includes, excludes, BuildJob.Type.DIRECT );
         }
 
         relativizeProjectPaths( buildJobs );
