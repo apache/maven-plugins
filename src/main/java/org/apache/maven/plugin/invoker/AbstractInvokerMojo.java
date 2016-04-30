@@ -617,24 +617,8 @@ public abstract class AbstractInvokerMojo
             reportsDirectory.mkdirs();
         }
 
-        // CHECKSTYLE_OFF: LineLength
-
         BuildJob[] buildJobs;
-        if ( pom != null )
-        {
-            try
-            {
-                projectsDirectory = pom.getCanonicalFile().getParentFile();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Failed to discover projectsDirectory from pom File parameter. Reason: "
-                    + e.getMessage(), e );
-            }
-
-            buildJobs = new BuildJob[] { new BuildJob( pom.getName(), BuildJob.Type.NORMAL ) };
-        }
-        else
+        if ( pom == null )
         {
             try
             {
@@ -642,11 +626,24 @@ public abstract class AbstractInvokerMojo
             }
             catch ( final IOException e )
             {
-                throw new MojoExecutionException( "Error retrieving POM list from includes, excludes, and projects directory. Reason: "
-                    + e.getMessage(), e );
+                throw new MojoExecutionException( "Error retrieving POM list from includes, "
+                    + "excludes, and projects directory. Reason: " + e.getMessage(), e );
             }
         }
-        // CHECKSTYLE_ON: LineLength
+        else
+        {
+            try
+            {
+                projectsDirectory = pom.getCanonicalFile().getParentFile();
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to discover projectsDirectory from "
+                    + "pom File parameter. Reason: " + e.getMessage(), e );
+            }
+
+            buildJobs = new BuildJob[] { new BuildJob( pom.getName(), BuildJob.Type.NORMAL ) };
+        }
 
         if ( ( buildJobs == null ) || ( buildJobs.length < 1 ) )
         {
