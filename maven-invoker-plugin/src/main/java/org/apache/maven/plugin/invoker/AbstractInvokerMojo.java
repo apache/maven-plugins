@@ -605,6 +605,12 @@ public abstract class AbstractInvokerMojo
             return;
         }
 
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                + ", i.e. build is platform dependent!" );
+        }
+
         // done it here to prevent issues with concurrent access in case of parallel run
         if ( !disableReports && !reportsDirectory.exists() )
         {
@@ -648,12 +654,6 @@ public abstract class AbstractInvokerMojo
 
             getLog().info( "No projects were selected for execution." );
             return;
-        }
-
-        if ( StringUtils.isEmpty( encoding ) )
-        {
-            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                + ", i.e. build is platform dependent!" );
         }
 
         final List<String> scriptClassPath;
