@@ -653,30 +653,7 @@ public abstract class AbstractInvokerMojo
             return;
         }
 
-        final List<String> scriptClassPath;
-        if ( addTestClassPath )
-        {
-            scriptClassPath = new ArrayList<String>( testClassPath );
-            for ( Artifact pluginArtifact : pluginArtifacts )
-            {
-                scriptClassPath.remove( pluginArtifact.getFile().getAbsolutePath() );
-            }
-        }
-        else
-        {
-            scriptClassPath = null;
-        }
-        scriptRunner = new ScriptRunner( getLog() );
-        scriptRunner.setScriptEncoding( encoding );
-        scriptRunner.setGlobalVariable( "localRepositoryPath", localRepositoryPath );
-        if ( scriptVariables != null )
-        {
-            for ( Entry<String, String> entry : scriptVariables.entrySet() )
-            {
-                scriptRunner.setGlobalVariable( entry.getKey(), entry.getValue() );
-            }
-        }
-        scriptRunner.setClassPath( scriptClassPath );
+        handleScriptRunnerWithScriptClassPath();
 
         Collection<String> collectedProjects = new LinkedHashSet<String>();
         for ( BuildJob buildJob : buildJobs )
@@ -702,6 +679,34 @@ public abstract class AbstractInvokerMojo
 
         processResults( new InvokerSession( buildJobs ) );
 
+    }
+
+    private void handleScriptRunnerWithScriptClassPath()
+    {
+        final List<String> scriptClassPath;
+        if ( addTestClassPath )
+        {
+            scriptClassPath = new ArrayList<String>( testClassPath );
+            for ( Artifact pluginArtifact : pluginArtifacts )
+            {
+                scriptClassPath.remove( pluginArtifact.getFile().getAbsolutePath() );
+            }
+        }
+        else
+        {
+            scriptClassPath = null;
+        }
+        scriptRunner = new ScriptRunner( getLog() );
+        scriptRunner.setScriptEncoding( encoding );
+        scriptRunner.setGlobalVariable( "localRepositoryPath", localRepositoryPath );
+        if ( scriptVariables != null )
+        {
+            for ( Entry<String, String> entry : scriptVariables.entrySet() )
+            {
+                scriptRunner.setGlobalVariable( entry.getKey(), entry.getValue() );
+            }
+        }
+        scriptRunner.setClassPath( scriptClassPath );
     }
 
     private void writeSummaryFile( BuildJob[] buildJobs )
