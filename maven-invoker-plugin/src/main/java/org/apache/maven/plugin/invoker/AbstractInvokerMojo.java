@@ -612,8 +612,21 @@ public abstract class AbstractInvokerMojo
         }
 
         // done it here to prevent issues with concurrent access in case of parallel run
-        if ( !disableReports && !reportsDirectory.exists() )
+        if ( !disableReports )
         {
+            // If it exists from previous run...
+            if ( reportsDirectory.exists() )
+            {
+                try
+                {
+                    FileUtils.deleteDirectory( reportsDirectory );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Failure while trying to delete "
+                        + reportsDirectory.getAbsolutePath(), e );
+                }
+            }
             reportsDirectory.mkdirs();
         }
 
