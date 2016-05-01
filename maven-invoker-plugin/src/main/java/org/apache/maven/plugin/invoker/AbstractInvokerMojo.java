@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -686,12 +687,50 @@ public abstract class AbstractInvokerMojo
             getLog().warn( "Filtering of parent/child POMs is not supported without cloning the projects" );
         }
 
-        runBuilds( projectsDir, buildJobs );
+        // First run setup jobs.
+        BuildJob[] setupBuildJobs = null;
+        try
+        {
+            setupBuildJobs = getSetupBuildJobsFromFolders();
+        }
+        catch ( IOException e )
+        {
+            getLog().error( "Failure...", e );
+        }
 
-        writeSummaryFile( buildJobs );
+        if ( setupBuildJobs != null )
+        {
+            // parallelThreads = 1 for this call
+            // run all setup jobs only single thread.
+            //
+            // Some Idea about ordering?
+            getLog().info( "Running Setup Jobs" );
+            runBuilds( projectsDir, setupBuildJobs, 1 );
+        }
 
-        processResults( new InvokerSession( buildJobs ) );
+        // Afterwards run all other jobs.
+        BuildJob[] nonSetupBuildJobs = getNonSetupJobs( buildJobs );
+        // parallelThreads run the rest with parallel sets...
+        runBuilds( projectsDir, nonSetupBuildJobs, parallelThreads );
 
+        writeSummaryFile( nonSetupBuildJobs );
+
+        processResults( new InvokerSession( nonSetupBuildJobs ) );
+
+    }
+
+    private BuildJob[] getNonSetupJobs( BuildJob[] buildJobs )
+    {
+        List<BuildJob> result = new LinkedList<BuildJob>();
+        for ( int i = 0; i < buildJobs.length; i++ )
+        {
+            if ( !buildJobs[i].getType().equals( BuildJob.Type.SETUP ) )
+            {
+                result.add( buildJobs[i] );
+            }
+        }
+        BuildJob[] buildNonSetupJobs = result.toArray( new BuildJob[result.size()] );
+        return buildNonSetupJobs;
     }
 
     private void handleScriptRunnerWithScriptClassPath()
@@ -1085,7 +1124,7 @@ public abstract class AbstractInvokerMojo
      * @param buildJobs The build jobs to run must not be <code>null</code> nor contain <code>null</code> elements.
      * @throws org.apache.maven.plugin.MojoExecutionException If any build could not be launched.
      */
-    private void runBuilds( final File projectsDir, BuildJob[] buildJobs )
+    private void runBuilds( final File projectsDir, BuildJob[] buildJobs, int runWithParallelThreads )
         throws MojoExecutionException
     {
         if ( !localRepositoryPath.exists() )
@@ -1201,11 +1240,12 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            if ( isParallelRun() )
+            // TODO: Think about running SETUP jobs only single thread.
+            if ( runWithParallelThreads > 1 )
             {
-                getLog().info( "use parallelThreads " + parallelThreads );
+                getLog().info( "use parallelThreads " + runWithParallelThreads );
 
-                ExecutorService executorService = Executors.newFixedThreadPool( parallelThreads );
+                ExecutorService executorService = Executors.newFixedThreadPool( runWithParallelThreads );
                 for ( final BuildJob job : buildJobs )
                 {
                     executorService.execute( new Runnable()
@@ -1922,6 +1962,43 @@ public abstract class AbstractInvokerMojo
         }
     }
 
+    private List<String> calculateExcludes()
+        throws IOException
+    {
+        List<String> excludes =
+            ( pomExcludes != null ) ? new ArrayList<String>( pomExcludes ) : new ArrayList<String>();
+        if ( this.settingsFile != null )
+        {
+            String exclude = relativizePath( this.settingsFile, projectsDirectory.getCanonicalPath() );
+            if ( exclude != null )
+            {
+                excludes.add( exclude.replace( '\\', '/' ) );
+                getLog().debug( "Automatically excluded " + exclude + " from project scanning" );
+            }
+        }
+        return excludes;
+
+    }
+
+    /**
+     * @return The list of setupUp jobs.
+     * @throws IOException
+     * @see {@link #setupIncludes}
+     */
+    private BuildJob[] getSetupBuildJobsFromFolders()
+        throws IOException
+    {
+        List<String> excludes = calculateExcludes();
+
+        BuildJob[] setupPoms = scanProjectsDirectory( setupIncludes, excludes, BuildJob.Type.SETUP );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Setup projects: " + Arrays.asList( setupPoms ) );
+        }
+
+        return setupPoms;
+    }
+
     /**
      * Gets the build jobs that should be processed. Note that the order of the returned build jobs is significant.
      *
@@ -1935,17 +2012,7 @@ public abstract class AbstractInvokerMojo
 
         if ( invokerTest == null )
         {
-            List<String> excludes =
-                ( pomExcludes != null ) ? new ArrayList<String>( pomExcludes ) : new ArrayList<String>();
-            if ( this.settingsFile != null )
-            {
-                String exclude = relativizePath( this.settingsFile, projectsDirectory.getCanonicalPath() );
-                if ( exclude != null )
-                {
-                    excludes.add( exclude.replace( '\\', '/' ) );
-                    getLog().debug( "Automatically excluded " + exclude + " from project scanning" );
-                }
-            }
+            List<String> excludes = calculateExcludes();
 
             BuildJob[] setupPoms = scanProjectsDirectory( setupIncludes, excludes, BuildJob.Type.SETUP );
             if ( getLog().isDebugEnabled() )
