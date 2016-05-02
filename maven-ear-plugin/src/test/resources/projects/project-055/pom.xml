@@ -43,8 +43,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
-        <version>@project.version@</version>
-        <configuration>
+                <version>@project.version@</version>
+                <configuration>
+                  <version>1.3</version>
 					<includeLibInApplicationXml>true</includeLibInApplicationXml>
 				</configuration>
 			</plugin>

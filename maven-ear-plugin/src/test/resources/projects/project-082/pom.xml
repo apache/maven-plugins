@@ -40,9 +40,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
-        <configuration>
-          <version>7</version>
-        </configuration>
       </plugin>
     </plugins>
   </build>

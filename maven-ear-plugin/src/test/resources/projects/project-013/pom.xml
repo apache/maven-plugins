@@ -42,6 +42,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <earSourceDirectory>src/main/ear</earSourceDirectory>
+          <version>1.3</version>
         </configuration>
       </plugin>
     </plugins>

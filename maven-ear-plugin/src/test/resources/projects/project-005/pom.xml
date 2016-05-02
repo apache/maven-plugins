@@ -54,6 +54,7 @@ under the License.
               <uri>libs/another-name.jar</uri>
             </jarModule>
           </modules>
+          <version>1.3</version>
         </configuration>
       </plugin>
     </plugins>

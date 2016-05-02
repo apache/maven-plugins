@@ -91,6 +91,7 @@ under the License.
               <bundleDir>foo</bundleDir>
             </ejbModule>
           </modules>
+          <version>1.3</version>
         </configuration>
       </plugin>
     </plugins>

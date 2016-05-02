@@ -40,6 +40,8 @@ public class JavaEEVersion
     private static final String VERSION_6 = "6";
 
     private static final String VERSION_7 = "7";
+    
+    private static final String VERSION_8 = "8";
 
     private static final Map<String, JavaEEVersion> VERSION_MAP = new HashMap<String, JavaEEVersion>();
 
@@ -67,6 +69,11 @@ public class JavaEEVersion
      * Represents the JavaEE 7 version.
      */
     public static final JavaEEVersion SEVEN = new JavaEEVersion( Integer.valueOf( 4 ), VERSION_7 );
+
+    /**
+     * Represents the JavaEE 8 version.
+     */
+    public static final JavaEEVersion EIGHT = new JavaEEVersion( Integer.valueOf( 5 ), VERSION_8 );
 
     private final Integer index;
 
@@ -176,7 +183,8 @@ public class JavaEEVersion
             || VERSION_1_4.equals( paramVersion )
             || VERSION_5.equals( paramVersion ) 
             || VERSION_6.equals( paramVersion ) 
-            || VERSION_7.equals( paramVersion );
+            || VERSION_7.equals( paramVersion )
+            || VERSION_8.equals( paramVersion );
         // @formatter:on
     }
 

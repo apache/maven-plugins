@@ -76,6 +76,7 @@ under the License.
               <unpack>false</unpack>
             </jarModule>
           </modules>
+          <version>1.3</version>
         </configuration>
       </plugin>
     </plugins>

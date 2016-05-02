@@ -59,6 +59,7 @@ under the License.
               <bundleDir>/</bundleDir>
             </jarModule>
           </modules>
+          <version>1.3</version>
         </configuration>
       </plugin>
     </plugins>

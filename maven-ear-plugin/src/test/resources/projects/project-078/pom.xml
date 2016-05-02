@@ -52,6 +52,7 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <version>1.3</version>
           <fileNameMapping>no-version-for-ejb</fileNameMapping>
         </configuration>
       </plugin>

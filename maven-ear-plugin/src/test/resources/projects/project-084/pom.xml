@@ -41,7 +41,6 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <version>7</version>
           <applicationId>myapp</applicationId>
         </configuration>
       </plugin>

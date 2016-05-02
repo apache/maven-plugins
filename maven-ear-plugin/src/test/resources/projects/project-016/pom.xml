@@ -42,6 +42,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <manifestFile>src/main/ear/MANIFEST.MF</manifestFile>
+          <version>1.3</version>
         </configuration>
       </plugin>
     </plugins>

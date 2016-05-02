@@ -47,6 +47,7 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <version>1.3</version>
           <jboss>
             <version>5</version>
             <loader-repository loaderRepositoryClass="def">abc</loader-repository>

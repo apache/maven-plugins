@@ -63,9 +63,9 @@ public abstract class AbstractEarMojo
     public static final String UTF_8 = "UTF-8";
 
     /**
-     * The version of the application.xml to generate. Valid values are 1.3, 1.4, 5, 6 and 7.
+     * The version of the application.xml to generate. Valid values are 1.3, 1.4, 5, 6, 7 and 8.
      */
-    @Parameter( defaultValue = "1.3" )
+    @Parameter( defaultValue = "7" )
     protected String version;
 
     /**
