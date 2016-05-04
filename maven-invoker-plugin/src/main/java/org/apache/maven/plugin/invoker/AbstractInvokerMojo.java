@@ -628,7 +628,10 @@ public abstract class AbstractInvokerMojo
                         + reportsDirectory.getAbsolutePath(), e );
                 }
             }
-            reportsDirectory.mkdirs();
+            if ( !reportsDirectory.mkdirs() )
+            {
+                throw new MojoExecutionException( "Failure while creating the " + reportsDirectory.getAbsolutePath() );
+            }
         }
 
         BuildJob[] buildJobs;
@@ -695,13 +698,13 @@ public abstract class AbstractInvokerMojo
         }
         catch ( IOException e )
         {
-            getLog().error( "Failure...", e );
+            getLog().error( "Failure during scanning of folders.", e );
         }
 
         if ( setupBuildJobs != null )
         {
-            // parallelThreads = 1 for this call
-            // run all setup jobs only single thread.
+            // Run setup jobs in single thread
+            // mode.
             //
             // Some Idea about ordering?
             getLog().info( "Running Setup Jobs" );
@@ -710,7 +713,8 @@ public abstract class AbstractInvokerMojo
 
         // Afterwards run all other jobs.
         BuildJob[] nonSetupBuildJobs = getNonSetupJobs( buildJobs );
-        // parallelThreads run the rest with parallel sets...
+        // We will run the non setup jobs with the configured
+        // parallelThreads number.
         runBuilds( projectsDir, nonSetupBuildJobs, parallelThreads );
 
         writeSummaryFile( nonSetupBuildJobs );
@@ -1240,7 +1244,6 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            // TODO: Think about running SETUP jobs only single thread.
             if ( runWithParallelThreads > 1 )
             {
                 getLog().info( "use parallelThreads " + runWithParallelThreads );
