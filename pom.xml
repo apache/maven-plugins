@@ -70,7 +70,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenArchiverVersion>3.0.1</mavenArchiverVersion>
+    <mavenArchiverVersion>3.0.2</mavenArchiverVersion>
     <mavenVersion>3.0</mavenVersion>
   </properties>
 
@@ -134,9 +134,8 @@ under the License.
   <build>
     <resources>
       <resource>
-        <directory>src/main/resources/META-INF/plexus</directory>
+        <directory>src/main/filtered-resources</directory>
         <filtering>true</filtering>
-        <targetPath>META-INF/plexus</targetPath>
       </resource>
     </resources>
     <pluginManagement>
