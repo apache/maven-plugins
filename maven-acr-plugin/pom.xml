@@ -84,7 +84,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-archiver</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -104,7 +104,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>3.1</version>
+      <version>3.1.1</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
