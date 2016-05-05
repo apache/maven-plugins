@@ -76,21 +76,25 @@ public class TestResourcesMojo
         }
     }
 
+    /** {@inheritDoc} */
     public File getOutputDirectory()
     {
         return outputDirectory;
     }
 
+    /** {@inheritDoc} */
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    /** {@inheritDoc} */
     public List<Resource> getResources()
     {
         return resources;
     }
 
+    /** {@inheritDoc} */
     public void setResources( List<Resource> resources )
     {
         this.resources = resources;

@@ -26,36 +26,56 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 /**
- * This class is duplicated from maven-model-builder from
- * maven core. (See MRESOURCES-99).
- *
+ * This class is duplicated from maven-model-builder from maven core. (See MRESOURCES-99).
  */
 public class MavenBuildTimestamp
 {
-    // ISO 8601-compliant timestamp for machine readability
+    /**
+     * ISO 8601-compliant timestamp for machine readability
+     */
     public static final String DEFAULT_BUILD_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
+    /**
+     * The property name.
+     */
     public static final String BUILD_TIMESTAMP_FORMAT_PROPERTY = "maven.build.timestamp.format";
 
+    /**
+     * The default time zone {@code Etc/UTC}.
+     */
     public static final TimeZone DEFAULT_BUILD_TIME_ZONE = TimeZone.getTimeZone( "Etc/UTC" );
 
     private String formattedTimestamp;
 
+    /**
+     * Create an instance.
+     */
     public MavenBuildTimestamp()
     {
         this( new Date() );
     }
 
+    /**
+     * @param time The time to use.
+     */
     public MavenBuildTimestamp( Date time )
     {
         this( time, DEFAULT_BUILD_TIMESTAMP_FORMAT );
     }
 
+    /**
+     * @param time The time to use.
+     * @param properties the properties which can be define. can be {@code null}
+     */
     public MavenBuildTimestamp( Date time, Properties properties )
     {
         this( time, properties != null ? properties.getProperty( BUILD_TIMESTAMP_FORMAT_PROPERTY ) : null );
     }
 
+    /**
+     * @param time The time to use.
+     * @param timestampFormat The format for {@link SimpleDateFormat}.
+     */
     public MavenBuildTimestamp( Date time, String timestampFormat )
     {
         if ( timestampFormat == null )
@@ -72,6 +92,9 @@ public class MavenBuildTimestamp
         formattedTimestamp = dateFormat.format( time );
     }
 
+    /**
+     * @return The formatted time stamp.
+     */
     public String formattedTimestamp()
     {
         return formattedTimestamp;
