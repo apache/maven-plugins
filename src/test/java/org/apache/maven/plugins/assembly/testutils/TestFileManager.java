@@ -157,6 +157,9 @@ public class TestFileManager
             writer = new FileWriter( file ); // platform encoding
 
             writer.write( contents );
+
+            writer.close();
+            writer = null;
         }
         finally
         {
@@ -182,6 +185,9 @@ public class TestFileManager
             reader = new FileReader( file ); // platform encoding
 
             result = IOUtil.toString( reader );
+
+            reader.close();
+            reader = null;
         }
         finally
         {

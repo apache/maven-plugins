@@ -92,6 +92,9 @@ abstract class AbstractLineAggregatingHandler
                 {
                     writer.println( line );
                 }
+
+                writer.close();
+                writer = null;
             }
             catch ( final IOException e )
             {
@@ -159,14 +162,16 @@ abstract class AbstractLineAggregatingHandler
         {
             reader = new BufferedReader( new InputStreamReader( fileInfo.getContents(), getEncoding() ) );
 
-            String line;
-            while ( ( line = reader.readLine() ) != null )
+            for ( String line = reader.readLine(); line != null; line = reader.readLine() )
             {
                 if ( !lines.contains( line ) )
                 {
                     lines.add( line );
                 }
             }
+
+            reader.close();
+            reader = null;
         }
         finally
         {

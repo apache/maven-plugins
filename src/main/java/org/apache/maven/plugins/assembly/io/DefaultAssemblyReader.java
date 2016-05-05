@@ -230,7 +230,8 @@ public class DefaultAssemblyReader
         {
             reader = ReaderFactory.newXmlReader( resourceAsStream );
             final Assembly assembly = readAssembly( reader, ref, null, configSource );
-
+            reader.close();
+            reader = null;
             assemblies.add( assembly );
             return assembly;
         }
@@ -267,8 +268,12 @@ public class DefaultAssemblyReader
         try
         {
             r = ReaderFactory.newXmlReader( descriptor );
+
             final Assembly assembly =
                 readAssembly( r, descriptor.getAbsolutePath(), descriptor.getParentFile(), configSource );
+
+            r.close();
+            r = null;
 
             assemblies.add( assembly );
 
@@ -319,6 +324,9 @@ public class DefaultAssemblyReader
 
             final Assembly assembly = readAssembly( r, spec, dir, configSource );
 
+            r.close();
+            r = null;
+
             assemblies.add( assembly );
 
             return assembly;
@@ -334,9 +342,9 @@ public class DefaultAssemblyReader
 
     }
 
-    public Assembly readAssembly( final Reader reader, final String locationDescription, final File assemblyDir,
+    public Assembly readAssembly( Reader reader, final String locationDescription, final File assemblyDir,
                                   final AssemblerConfigurationSource configSource )
-                                      throws AssemblyReadException, InvalidAssemblerConfigurationException
+        throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         Assembly assembly;
 
@@ -364,6 +372,8 @@ public class DefaultAssemblyReader
 
             AssemblyInterpolator.checkErrors( AssemblyId.createAssemblyId( assembly ), is, getLogger() );
 
+            reader.close();
+            reader = null;
         }
         catch ( final IOException e )
         {

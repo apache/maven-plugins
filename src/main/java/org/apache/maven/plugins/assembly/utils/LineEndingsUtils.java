@@ -140,7 +140,10 @@ public final class LineEndingsUtils
                 }
             }
 
-            out.flush();
+            out.close();
+            out = null;
+            in.close();
+            in = null;
         }
         finally
         {

@@ -39,7 +39,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Collections;
@@ -108,9 +107,10 @@ public class ComponentsXmlArchiverFileFilter
             final File f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            final Writer fileWriter = WriterFactory.newXmlWriter( new FileOutputStream( f ) );
+            Writer fileWriter = null;
             try
             {
+                fileWriter = WriterFactory.newXmlWriter( new FileOutputStream( f ) );
                 final Xpp3Dom dom = new Xpp3Dom( "component-set" );
                 final Xpp3Dom componentDom = new Xpp3Dom( "components" );
                 dom.addChild( componentDom );
@@ -121,6 +121,9 @@ public class ComponentsXmlArchiverFileFilter
                 }
 
                 Xpp3DomWriter.write( fileWriter, dom );
+
+                fileWriter.close();
+                fileWriter = null;
             }
             finally
             {
@@ -189,14 +192,13 @@ public class ComponentsXmlArchiverFileFilter
 
             if ( ComponentsXmlArchiverFileFilter.COMPONENTS_XML_PATH.equals( entry ) )
             {
-                InputStream stream = null;
                 Reader reader = null;
-
                 try
                 {
-                    stream = fileInfo.getContents();
-                    reader = ReaderFactory.newXmlReader( stream );
-                    addComponentsXml( new BufferedReader( reader ) );
+                    reader = new BufferedReader( ReaderFactory.newXmlReader( fileInfo.getContents() ) );
+                    addComponentsXml( reader );
+                    reader.close();
+                    reader = null;
                 }
                 catch ( final XmlPullParserException e )
                 {
@@ -208,7 +210,6 @@ public class ComponentsXmlArchiverFileFilter
                 }
                 finally
                 {
-                    IOUtil.close( stream );
                     IOUtil.close( reader );
                 }
 

@@ -86,6 +86,8 @@ public class ManifestCreationFinalizer
                     {
                         manifestFileReader = new InputStreamReader( new FileInputStream( manifestFile ), "UTF-8" );
                         manifest = new Manifest( manifestFileReader );
+                        manifestFileReader.close();
+                        manifestFileReader = null;
                     }
                     catch ( final FileNotFoundException e )
                     {
