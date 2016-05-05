@@ -185,7 +185,7 @@ public abstract class AbstractChangesReport
         }
 
         // TODO: push to a helper? Could still be improved by taking more of the site information from the site plugin
-        FileOutputStream fileOutputStream = null;
+        Writer writer = null;
         try
         {
             DecorationModel model = new DecorationModel();
@@ -205,10 +205,12 @@ public abstract class AbstractChangesReport
             outputDirectory.mkdirs();
 
             File file = new File( outputDirectory, getOutputName() + ".html" );
-            fileOutputStream = new FileOutputStream( file );
-            Writer writer = new OutputStreamWriter( fileOutputStream, getOutputEncoding() );
+            writer = new OutputStreamWriter( new FileOutputStream( file ), getOutputEncoding() );
 
             siteRenderer.generateDocument( writer, sink, siteContext );
+
+            writer.close();
+            writer = null;
 
             siteRenderer.copyResources( siteContext, new File( project.getBasedir(), "src/site/resources" ),
                                         outputDirectory );
@@ -230,7 +232,7 @@ public abstract class AbstractChangesReport
         }
         finally
         {
-            IOUtils.closeQuietly( fileOutputStream );
+            IOUtils.closeQuietly( writer );
         }
     }
 

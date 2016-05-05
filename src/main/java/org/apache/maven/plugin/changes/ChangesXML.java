@@ -100,6 +100,8 @@ public class ChangesXML
 
             fileInputStream = new FileInputStream( xmlPath );
             changesDocument = reader.read( fileInputStream, false );
+            fileInputStream.close();
+            fileInputStream = null;
 
             if ( changesDocument == null )
             {

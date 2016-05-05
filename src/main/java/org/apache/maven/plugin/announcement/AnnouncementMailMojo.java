@@ -365,20 +365,21 @@ public class AnnouncementMailMojo
         throws MojoExecutionException
     {
         InputStreamReader reader = null;
-        FileInputStream inputStream = null;
         try
         {
-            inputStream = new FileInputStream( file );
-
             if ( StringUtils.isEmpty( templateEncoding ) )
             {
                 templateEncoding = ReaderFactory.FILE_ENCODING;
                 getLog().warn( "File encoding has not been set, using platform encoding '" + templateEncoding
-                    + "', i.e. build is platform dependent!" );
+                                   + "', i.e. build is platform dependent!" );
+
             }
 
-            reader = new InputStreamReader( inputStream, templateEncoding );
-            return IOUtil.toString( reader );
+            reader = new InputStreamReader( new FileInputStream( file ), templateEncoding );
+            final String announcement = IOUtil.toString( reader );
+            reader.close();
+            reader = null;
+            return announcement;
         }
         catch ( FileNotFoundException fnfe )
         {
@@ -394,7 +395,6 @@ public class AnnouncementMailMojo
         }
         finally
         {
-            IOUtil.close( inputStream );
             IOUtil.close( reader );
         }
     }
