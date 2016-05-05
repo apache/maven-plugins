@@ -51,31 +51,37 @@ public class CopyResourcesMojo
     private List<Resource> resources;
 
 
+    /** {@inheritDoc} */
     public File getOutputDirectory()
     {
         return outputDirectory;
     }
 
+    /** {@inheritDoc} */
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    /** {@inheritDoc} */
     public List<Resource> getResources()
     {
         return resources;
     }
 
+    /** {@inheritDoc} */
     public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }
 
+    /** {@inheritDoc} */
     public List<String> getFilters()
     {
         return filters;
     }
 
+    /** {@inheritDoc} */
     public void setFilters( List<String> filters )
     {
         this.filters = filters;

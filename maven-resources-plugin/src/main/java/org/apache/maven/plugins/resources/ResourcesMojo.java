@@ -281,12 +281,14 @@ public class ResourcesMojo
     @Parameter( property = "maven.resources.skip", defaultValue = "false" )
     private boolean skip;
 
+    /** {@inheritDoc} */
     public void contextualize( Context context )
         throws ContextException
     {
         plexusContainer = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
+    /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException
     {
@@ -305,10 +307,10 @@ public class ResourcesMojo
         try
         {
 
-            List<String> filters = getCombinedFiltersList();
+            List<String> combinedFilters = getCombinedFiltersList();
 
             MavenResourcesExecution mavenResourcesExecution =
-                new MavenResourcesExecution( getResources(), getOutputDirectory(), project, encoding, filters,
+                new MavenResourcesExecution( getResources(), getOutputDirectory(), project, encoding, combinedFilters,
                                              Collections.<String>emptyList(), session );
 
             mavenResourcesExecution.setEscapeWindowsPaths( escapeWindowsPaths );
@@ -373,6 +375,9 @@ public class ResourcesMojo
     }
 
     /**
+     * @param mavenResourcesExecution {@link MavenResourcesExecution} 
+     * @throws MojoExecutionException in case of wrong lookup.
+     * @throws MavenFilteringException in case of failure.
      * @since 2.5
      */
     protected void executeUserFilterComponents( MavenResourcesExecution mavenResourcesExecution )
@@ -411,6 +416,9 @@ public class ResourcesMojo
         }
     }
 
+    /**
+     * @return The combined filters.
+     */
     protected List<String> getCombinedFiltersList()
     {
         if ( filters == null || filters.isEmpty() )
@@ -435,14 +443,14 @@ public class ResourcesMojo
     /**
      * Determines whether filtering has been enabled for any resource.
      *
-     * @param resources The set of resources to check for filtering, may be <code>null</code>.
+     * @param theResources The set of resources to check for filtering, may be <code>null</code>.
      * @return <code>true</code> if at least one resource uses filtering, <code>false</code> otherwise.
      */
-    private boolean isFilteringEnabled( Collection<Resource> resources )
+    private boolean isFilteringEnabled( Collection<Resource> theResources )
     {
-        if ( resources != null )
+        if ( theResources != null )
         {
-            for ( Resource resource : resources )
+            for ( Resource resource : theResources )
             {
                 if ( resource.isFiltering() )
                 {
@@ -453,76 +461,121 @@ public class ResourcesMojo
         return false;
     }
 
+    /**
+     * @return {@link #resources}
+     */
     public List<Resource> getResources()
     {
         return resources;
     }
 
+    /**
+     * @param resources set {@link #resources}
+     */
     public void setResources( List<Resource> resources )
     {
         this.resources = resources;
     }
 
+    /**
+     * @return {@link #outputDirectory}
+     */
     public File getOutputDirectory()
     {
         return outputDirectory;
     }
 
+    /**
+     * @param outputDirectory the output folder.
+     */
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    /**
+     * @return {@link #overwrite}
+     */
     public boolean isOverwrite()
     {
         return overwrite;
     }
 
+    /**
+     * @param overwrite true to overwrite false otherwise.
+     */
     public void setOverwrite( boolean overwrite )
     {
         this.overwrite = overwrite;
     }
 
+    /**
+     * @return {@link #includeEmptyDirs}
+     */
     public boolean isIncludeEmptyDirs()
     {
         return includeEmptyDirs;
     }
 
+    /**
+     * @param includeEmptyDirs true/false.
+     */
     public void setIncludeEmptyDirs( boolean includeEmptyDirs )
     {
         this.includeEmptyDirs = includeEmptyDirs;
     }
 
+    /**
+     * @return {@link #filters}
+     */
     public List<String> getFilters()
     {
         return filters;
     }
 
+    /**
+     * @param filters The filters to use.
+     */
     public void setFilters( List<String> filters )
     {
         this.filters = filters;
     }
 
+    /**
+     * @return {@link #delimiters}
+     */
     public LinkedHashSet<String> getDelimiters()
     {
         return delimiters;
     }
 
+    /**
+     * @param delimiters The delimiters to use.
+     */
     public void setDelimiters( LinkedHashSet<String> delimiters )
     {
         this.delimiters = delimiters;
     }
 
+    /**
+     * @return {@link #useDefaultDelimiters}
+     */
     public boolean isUseDefaultDelimiters()
     {
         return useDefaultDelimiters;
     }
 
+    /**
+     * @param useDefaultDelimiters true to use {@code ${*}}
+     */
     public void setUseDefaultDelimiters( boolean useDefaultDelimiters )
     {
         this.useDefaultDelimiters = useDefaultDelimiters;
     }
 
+    /**
+     * @return {@link #skip}
+     */
     public boolean isSkip()
     {
         return skip;
