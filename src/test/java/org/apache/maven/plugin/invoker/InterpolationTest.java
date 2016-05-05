@@ -94,12 +94,14 @@ public class InterpolationTest
             String content = IOUtil.toString( reader );
             assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
             reader.close();
+            reader = null;
             // recreate it to test delete if exists before creation
             invokerMojo.buildInterpolatedFile( new File( dirPath, "pom.xml" ), interpolatedPomFile );
             reader = ReaderFactory.newXmlReader( interpolatedPomFile );
             content = IOUtil.toString( reader );
             assertTrue( content.indexOf( "<interpolateValue>bar</interpolateValue>" ) > 0 );
             reader.close();
+            reader = null;
         }
         finally
         {

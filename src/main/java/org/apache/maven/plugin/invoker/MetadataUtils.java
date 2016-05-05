@@ -145,17 +145,18 @@ class MetadataUtils
             return null;
         }
 
-        Reader reader = ReaderFactory.newXmlReader( metadataFile );
+        Reader reader = null;
         try
         {
-            try
-            {
-                return Xpp3DomBuilder.build( reader );
-            }
-            catch ( XmlPullParserException e )
-            {
-                throw (IOException) new IOException( e.getMessage() ).initCause( e );
-            }
+            reader = ReaderFactory.newXmlReader( metadataFile );
+            final Xpp3Dom xpp3Dom = Xpp3DomBuilder.build( reader );
+            reader.close();
+            reader = null;
+            return xpp3Dom;
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw (IOException) new IOException( e.getMessage() ).initCause( e );
         }
         finally
         {
@@ -168,10 +169,13 @@ class MetadataUtils
     {
         metadataFile.getParentFile().mkdirs();
 
-        Writer writer = WriterFactory.newXmlWriter( metadataFile );
+        Writer writer = null;
         try
         {
+            writer = WriterFactory.newXmlWriter( metadataFile );
             Xpp3DomWriter.write( writer, metadata );
+            writer.close();
+            writer = null;
         }
         finally
         {
