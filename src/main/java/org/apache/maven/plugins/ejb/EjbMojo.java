@@ -539,7 +539,10 @@ public class EjbMojo
         try
         {
             xmlReader = new XmlStreamReader( xmlFile );
-            return xmlReader.getEncoding();
+            final String encoding = xmlReader.getEncoding();
+            xmlReader.close();
+            xmlReader = null;
+            return encoding;
         }
         finally
         {
