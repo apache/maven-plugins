@@ -79,6 +79,8 @@ public class WarManifestMojo
             Manifest mf = ma.getManifest( getSession(), getProject(), getArchive() );
             printWriter = new PrintWriter( WriterFactory.newWriter( manifestFile, WriterFactory.UTF_8 ) );
             mf.write( printWriter );
+            printWriter.close();
+            printWriter = null;
         }
         catch ( ManifestException e )
         {
