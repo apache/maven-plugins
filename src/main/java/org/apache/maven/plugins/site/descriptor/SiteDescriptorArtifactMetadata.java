@@ -83,6 +83,8 @@ public class SiteDescriptorArtifactMetadata
         {
             writer = WriterFactory.newXmlWriter( destination );
             new DecorationXpp3Writer().write( writer, decoration );
+            writer.close();
+            writer = null;
         }
         catch ( IOException e )
         {

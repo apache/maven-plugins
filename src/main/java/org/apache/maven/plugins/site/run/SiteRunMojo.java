@@ -129,6 +129,10 @@ public class SiteRunMojo
             inStream = getClass().getResourceAsStream( "/run/web.xml" );
             outStream = new FileOutputStream( webXml );
             IOUtil.copy( inStream, outStream );
+            outStream.close();
+            outStream = null;
+            inStream.close();
+            inStream = null;
         }
         catch ( FileNotFoundException e )
         {

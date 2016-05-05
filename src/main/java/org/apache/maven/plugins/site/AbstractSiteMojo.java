@@ -106,10 +106,14 @@ public abstract class AbstractSiteMojo
         // if this ever changes, we will have to revisit this code.
         final Properties properties = new Properties();
         final String corePomProperties = "META-INF/maven/org.apache.maven/maven-core/pom.properties";
-        final InputStream in = MavenProject.class.getClassLoader().getResourceAsStream( corePomProperties );
-       try
+
+        InputStream in = null;
+        try
         {
+            in = MavenProject.class.getClassLoader().getResourceAsStream( corePomProperties );
             properties.load( in );
+            in.close();
+            in = null;
         }
         catch ( IOException ioe )
         {
