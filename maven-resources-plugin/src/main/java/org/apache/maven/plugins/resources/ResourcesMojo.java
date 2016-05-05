@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
@@ -323,6 +324,10 @@ public class ResourcesMojo
             mavenResourcesExecution.setFilterFilenames( fileNameFiltering );
             mavenResourcesExecution.setAddDefaultExcludes( addDefaultExcludes );
 
+            // Handle subject of MRESOURCES-99
+            Properties additionalProperties = addSeveralSpecialProperties();
+            mavenResourcesExecution.setAdditionalProperties( additionalProperties );
+
             // if these are NOT set, just use the defaults, which are '${*}' and '@'.
             mavenResourcesExecution.setDelimiters( delimiters, useDefaultDelimiters );
 
@@ -338,6 +343,33 @@ public class ResourcesMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+
+    /**
+     * This solves https://issues.apache.org/jira/browse/MRESOURCES-99.<br/>
+     * BUT:<br/>
+     * This should be done different than defining those properties a second time, cause they have already being defined
+     * in Maven Model Builder (package org.apache.maven.model.interpolation) via BuildTimestampValueSource. But those
+     * can't be found in the context which can be got from the maven core.<br/>
+     * A solution could be to put those values into the context by Maven core so they are accessible everywhere. (I'm
+     * not sure if this is a good idea). Better ideas are always welcome.
+     * 
+     * The problem at the moment is that maven core handles usage of properties and replacements in 
+     * the model, but does not the resource filtering which needed some of the properties.
+     * 
+     * @return the new instance with those properties.
+     */
+    private Properties addSeveralSpecialProperties()
+    {
+        String timeStamp = new MavenBuildTimestamp().formattedTimestamp();
+        Properties additionalProperties = new Properties();
+        additionalProperties.put( "maven.build.timestamp", timeStamp );
+        if ( project.getBasedir() != null )
+        {
+            additionalProperties.put( "project.baseUri", project.getBasedir().getAbsoluteFile().toURI().toString() );
+        }
+
+        return additionalProperties;
     }
 
     /**
