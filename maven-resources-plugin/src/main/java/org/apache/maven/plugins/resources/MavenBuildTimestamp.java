@@ -78,18 +78,29 @@ public class MavenBuildTimestamp
      */
     public MavenBuildTimestamp( Date time, String timestampFormat )
     {
+        SimpleDateFormat dateFormat;
+
         if ( timestampFormat == null )
         {
-            timestampFormat = DEFAULT_BUILD_TIMESTAMP_FORMAT;
+            dateFormat = new SimpleDateFormat( DEFAULT_BUILD_TIMESTAMP_FORMAT );
         }
-        if ( time == null )
+        else
         {
-            time = new Date();
+            dateFormat = new SimpleDateFormat( timestampFormat );
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat( timestampFormat );
+
         dateFormat.setCalendar( new GregorianCalendar() );
         dateFormat.setTimeZone( DEFAULT_BUILD_TIME_ZONE );
-        formattedTimestamp = dateFormat.format( time );
+
+        if ( time == null )
+        {
+            formattedTimestamp = dateFormat.format( new Date() );
+        }
+        else
+        {
+            formattedTimestamp = dateFormat.format( time );
+        }
+
     }
 
     /**
