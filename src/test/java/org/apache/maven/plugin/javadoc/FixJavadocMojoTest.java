@@ -721,7 +721,10 @@ public class FixJavadocMojoTest
         try
         {
             fileReader = ReaderFactory.newReader( file, "UTF-8" );
-            return IOUtil.toString( fileReader );
+            final String content = IOUtil.toString( fileReader );
+            fileReader.close();
+            fileReader = null;
+            return content;
         }
         finally
         {

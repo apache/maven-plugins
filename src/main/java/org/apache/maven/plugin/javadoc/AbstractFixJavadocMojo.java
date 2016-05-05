@@ -55,7 +55,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -738,14 +737,12 @@ public abstract class AbstractFixJavadocMojo
         clirrNewClasses = new LinkedList<String>();
         clirrNewMethods = new LinkedHashMap<String, List<String>>();
 
-        BufferedReader input = null;
-        Reader reader = null;
+        BufferedReader reader = null;
         try
         {
-            reader = ReaderFactory.newReader( clirrTextOutputFile, "UTF-8" );
-            input = new BufferedReader( reader );
-            String line;
-            while ( ( line = input.readLine() ) != null )
+            reader = new BufferedReader( ReaderFactory.newReader( clirrTextOutputFile, "UTF-8" ) );
+
+            for ( String line = reader.readLine(); line != null; line = reader.readLine() )
             {
                 String[] split = StringUtils.split( line, ":" );
                 if ( split.length != 4 )
@@ -818,11 +815,13 @@ public abstract class AbstractFixJavadocMojo
                 }
                 // CHECKSTYLE_ON: MagicNumber
             }
+
+            reader.close();
+            reader = null;
         }
         finally
         {
             IOUtils.closeQuietly( reader );
-            IOUtils.closeQuietly( input );
         }
         if ( clirrNewClasses.isEmpty() && clirrNewMethods.isEmpty() )
         {
@@ -986,9 +985,8 @@ public abstract class AbstractFixJavadocMojo
         {
             reader = new BufferedReader( new StringReader( originalContent ) );
 
-            String line;
             int lineNumber = 0;
-            while ( ( line = reader.readLine() ) != null )
+            for ( String line = reader.readLine(); line != null; line = reader.readLine() )
             {
                 lineNumber++;
                 final String indent = autodetectIndentation( line );
@@ -1047,6 +1045,9 @@ public abstract class AbstractFixJavadocMojo
                 stringWriter.write( line );
                 stringWriter.write( EOL );
             }
+
+            reader.close();
+            reader = null;
         }
         finally
         {
@@ -2941,6 +2942,8 @@ public abstract class AbstractFixJavadocMojo
         {
             writer = WriterFactory.newWriter( javaFile, encoding );
             writer.write( StringUtils.unifyLineSeparators( content ) );
+            writer.close();
+            writer = null;
         }
         finally
         {
@@ -2970,7 +2973,8 @@ public abstract class AbstractFixJavadocMojo
             {
                 Properties properties = new Properties();
                 properties.load( resourceAsStream );
-
+                resourceAsStream.close();
+                resourceAsStream = null;
                 if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
                 {
                     clirrVersion = properties.getProperty( "version" );

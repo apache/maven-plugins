@@ -780,8 +780,10 @@ public class JavadocUtil
         try
         {
             osw = new OutputStreamWriter( ost, charsetName );
+            osw.close();
+            osw = null;
         }
-        catch ( UnsupportedEncodingException exc )
+        catch ( IOException exc )
         {
             return false;
         }
@@ -895,29 +897,35 @@ public class JavadocUtil
             throw new IOException( "The url could not be null." );
         }
 
-        InputStream is = url.openStream();
-        if ( is == null )
-        {
-            throw new IOException( "The resource " + url + " doesn't exists." );
-        }
-
         if ( !file.getParentFile().exists() )
         {
             file.getParentFile().mkdirs();
         }
 
-        OutputStream os = null;
+        InputStream in = null;
+        OutputStream out = null;
         try
         {
-            os = new FileOutputStream( file );
+            in = url.openStream();
 
-            IOUtil.copy( is, os );
+            if ( in == null )
+            {
+                throw new IOException( "The resource " + url + " doesn't exists." );
+            }
+
+            out = new FileOutputStream( file );
+
+            IOUtil.copy( in, out );
+
+            out.close();
+            out = null;
+            in.close();
+            in = null;
         }
         finally
         {
-            IOUtil.close( is );
-
-            IOUtil.close( os );
+            IOUtil.close( in );
+            IOUtil.close( out );
         }
     }
 
@@ -1150,8 +1158,9 @@ public class JavadocUtil
         try
         {
             jarStream = new JarInputStream( new FileInputStream( jarFile ) );
-            JarEntry jarEntry = jarStream.getNextJarEntry();
-            while ( jarEntry != null )
+
+            for ( JarEntry jarEntry = jarStream.getNextJarEntry(); jarEntry != null;
+                  jarEntry = jarStream.getNextJarEntry() )
             {
                 if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
                 {
@@ -1161,8 +1170,10 @@ public class JavadocUtil
                 }
 
                 jarStream.closeEntry();
-                jarEntry = jarStream.getNextJarEntry();
             }
+
+            jarStream.close();
+            jarStream = null;
         }
         finally
         {
@@ -1731,8 +1742,7 @@ public class JavadocUtil
 
             if ( validateContent )
             {
-                String line;
-                while ( ( line = reader.readLine() ) != null )
+                for ( String line = reader.readLine(); line != null; line = reader.readLine() )
                 {
                     if ( !isValidPackageName( line ) )
                     {
@@ -1740,6 +1750,9 @@ public class JavadocUtil
                     }
                 }
             }
+
+            reader.close();
+            reader = null;
 
             return true;
         }

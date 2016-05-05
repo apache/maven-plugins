@@ -343,6 +343,8 @@ public class JavadocReportTest
         {
             reader = ReaderFactory.newPlatformReader( options );
             contentOptions = IOUtil.toString( reader );
+            reader.close();
+            reader = null;
         }
         finally
         {

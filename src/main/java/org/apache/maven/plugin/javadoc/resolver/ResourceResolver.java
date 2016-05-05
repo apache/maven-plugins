@@ -196,7 +196,8 @@ public final class ResourceResolver
             {
                 stream = new FileInputStream( optionsFile );
                 JavadocOptions options = new JavadocOptionsXpp3Reader().read( stream );
-                
+                stream.close();
+                stream = null;
                 bundles.add( new JavadocBundle( options, new File( project.getBasedir(),
                                                                    options.getJavadocResourcesDirectory() ) ) );
             }
