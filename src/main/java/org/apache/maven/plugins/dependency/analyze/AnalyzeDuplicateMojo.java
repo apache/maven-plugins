@@ -84,6 +84,8 @@ public class AnalyzeDuplicateMojo
         {
             reader = ReaderFactory.newXmlReader( project.getFile() );
             model = pomReader.read( reader );
+            reader.close();
+            reader = null;
         }
         catch ( Exception e )
         {

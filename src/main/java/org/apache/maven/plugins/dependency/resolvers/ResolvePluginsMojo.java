@@ -131,6 +131,12 @@ public class ResolvePluginsMojo
                     }
                 }
             }
+
+            if ( outputWriter != null )
+            {
+                outputWriter.close();
+                outputWriter = null;
+            }
         }
         catch ( final IOException e )
         {

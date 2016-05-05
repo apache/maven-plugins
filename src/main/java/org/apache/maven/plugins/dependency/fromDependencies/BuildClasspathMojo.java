@@ -332,6 +332,8 @@ public class BuildClasspathMojo
         {
             w = new BufferedWriter( new FileWriter( out ) );
             w.write( cpString );
+            w.close();
+            w = null;
             getLog().info( "Wrote classpath file '" + out + "'." );
         }
         catch ( IOException ex )
@@ -371,11 +373,14 @@ public class BuildClasspathMojo
         try
         {
             r = new BufferedReader( new FileReader( outputFile ) );
-            String l;
-            while ( ( l = r.readLine() ) != null )
+
+            for ( String line = r.readLine(); line != null; line = r.readLine() )
             {
-                sb.append( l );
+                sb.append( line );
             }
+
+            r.close();
+            r = null;
 
             return sb.toString();
         }
