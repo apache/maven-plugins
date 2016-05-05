@@ -131,7 +131,10 @@ public class Project001Stub
         try
         {
             reader = ReaderFactory.newXmlReader( file );
-            return pomReader.read( reader );
+            final Model model = pomReader.read( reader );
+            reader.close();
+            reader = null;
+            return model;
         }
         finally
         {
