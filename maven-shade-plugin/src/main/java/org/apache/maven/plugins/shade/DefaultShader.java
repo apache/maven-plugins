@@ -197,7 +197,7 @@ public class DefaultShader
                                  JarEntry entry, String name )
         throws IOException, MojoExecutionException
     {
-        InputStream in =null;
+        InputStream in = null;
         try
         {
             in = jarFile.getInputStream( entry );
