@@ -24,6 +24,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -505,7 +506,7 @@ public class DefaultCheckstyleExecutor
         throws CheckstyleExecutorException
     {
         Properties p = new Properties();
-
+        InputStream in = null;
         try
         {
             if ( request.getPropertiesLocation() != null )
@@ -518,17 +519,12 @@ public class DefaultCheckstyleExecutor
                 File propertiesFile = locator.getResourceAsFile( request.getPropertiesLocation(),
                                                                  "checkstyle-checker.properties" );
 
-                FileInputStream properties = new FileInputStream( propertiesFile );
-                try
+                if ( propertiesFile != null )
                 {
-                    if ( propertiesFile != null )
-                    {
-                        p.load( properties );
-                    }
-                }
-                finally
-                {
-                    IOUtils.closeQuietly( properties );
+                    in = new FileInputStream( propertiesFile );
+                    p.load( in );
+                    in.close();
+                    in = null;
                 }
             }
 
@@ -583,6 +579,10 @@ public class DefaultCheckstyleExecutor
         catch ( IOException | ResourceNotFoundException | FileResourceCreationException e )
         {
             throw new CheckstyleExecutorException( "Failed to get overriding properties", e );
+        }
+        finally
+        {
+            IOUtils.closeQuietly( in );
         }
         if ( request.getSuppressionsFileExpression() != null )
         {

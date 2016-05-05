@@ -274,9 +274,11 @@ public class CheckstyleReportTest
         {
             outputHtml.getParentFile().mkdirs();
             writer = WriterFactory.newXmlWriter( outputHtml );
-          
+
             mojo.execute();
-            
+
+            writer.close();
+            writer = null;
         }
         finally
         {

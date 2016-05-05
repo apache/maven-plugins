@@ -592,6 +592,9 @@ public class CheckstyleViolationCheckMojo
 
                 getLog().warn( "checkstyle:check violations detected but failOnViolation set to false" );
             }
+
+            reader.close();
+            reader = null;
         }
         catch ( IOException | XmlPullParserException e )
         {
