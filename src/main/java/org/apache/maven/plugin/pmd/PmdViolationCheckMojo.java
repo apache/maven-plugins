@@ -100,6 +100,8 @@ public class PmdViolationCheckMojo
         {
             fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) );
             props.load( fileInputStream );
+            fileInputStream.close();
+            fileInputStream = null;
         }
         catch ( final IOException e )
         {

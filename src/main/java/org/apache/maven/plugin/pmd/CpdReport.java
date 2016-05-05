@@ -339,6 +339,9 @@ public class CpdReport
             writer = new OutputStreamWriter( tStream, getOutputEncoding() );
             writer.write( buffer );
             writer.close();
+            writer = null;
+            tStream.close();
+            tStream = null;
 
             if ( includeXmlInSite )
             {

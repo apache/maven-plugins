@@ -333,29 +333,28 @@ public class PmdReportTest
     private String readFile( File file )
         throws IOException
     {
-        String strTmp;
-        StringBuilder str = new StringBuilder( (int) file.length() );
-        FileReader reader = null;
-        BufferedReader in = null;
+        BufferedReader reader = null;
         try
         {
-            reader = new FileReader( file );
-            in = new BufferedReader( reader );
+            reader = new BufferedReader( new FileReader( file ) );
 
-            while ( ( strTmp = in.readLine() ) != null )
+            final StringBuilder str = new StringBuilder( (int) file.length() );
+
+            for ( String line = reader.readLine(); line != null; line = reader.readLine() )
             {
                 str.append( ' ' );
-                str.append( strTmp );
+                str.append( line );
             }
-            in.close();
+
+            reader.close();
+            reader = null;
+
+            return str.toString();
         }
         finally
         {
-            IOUtil.close( in );
             IOUtil.close( reader );
         }
-
-        return str.toString();
     }
 
     /**
