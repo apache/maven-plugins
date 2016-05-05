@@ -137,6 +137,8 @@ public class SiteInvoker
         {
             writer = WriterFactory.newXmlWriter( tmpProjectFile );
             clone.writeOriginalModel( writer );
+            writer.close();
+            writer = null;
         }
         finally
         {
@@ -225,6 +227,8 @@ public class SiteInvoker
         {
             reader = ReaderFactory.newReader( invokerLog, "UTF-8" );
             invokerLogContent = IOUtil.toString( reader );
+            reader.close();
+            reader = null;
         }
         catch ( IOException e )
         {

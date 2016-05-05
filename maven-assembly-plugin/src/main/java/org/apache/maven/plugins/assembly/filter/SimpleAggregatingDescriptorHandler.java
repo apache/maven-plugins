@@ -109,11 +109,9 @@ public class SimpleAggregatingDescriptorHandler
             f = File.createTempFile( "maven-assembly-plugin", "tmp" );
             f.deleteOnExit();
 
-            boolean isProperty = AssemblyFileUtils.isPropertyFile( f );
-            FileOutputStream fos = new FileOutputStream( f );
-            writer = isProperty
-                ? new OutputStreamWriter( fos, "ISO-8859-1" )
-                : new OutputStreamWriter( fos ); // Still platform encoding
+            writer = AssemblyFileUtils.isPropertyFile( f )
+                         ? new OutputStreamWriter( new FileOutputStream( f ), "ISO-8859-1" )
+                         : new OutputStreamWriter( new FileOutputStream( f ) ); // Still platform encoding
 
             writer.write( commentChars + " Aggregated on " + new Date() + " from: " );
 
@@ -125,6 +123,9 @@ public class SimpleAggregatingDescriptorHandler
             writer.write( "\n\n" );
 
             writer.write( aggregateWriter.toString() );
+
+            writer.close();
+            writer = null;
         }
         catch ( final IOException e )
         {
@@ -188,27 +189,33 @@ public class SimpleAggregatingDescriptorHandler
     private void readProperties( final FileInfo fileInfo )
         throws IOException
     {
-        final StringWriter writer = new StringWriter();
         Reader reader = null;
+        StringWriter writer = null;
         try
         {
-            boolean isProperty = AssemblyFileUtils.isPropertyFile( fileInfo.getName() );
+            writer = new StringWriter();
 
-            reader = isProperty
-                ? new InputStreamReader( fileInfo.getContents(), "ISO-8859-1" )
-                : new InputStreamReader( fileInfo.getContents() ); // platform encoding
+            reader = AssemblyFileUtils.isPropertyFile( fileInfo.getName() )
+                         ? new InputStreamReader( fileInfo.getContents(), "ISO-8859-1" )
+                         : new InputStreamReader( fileInfo.getContents() ); // platform encoding
 
             IOUtil.copy( reader, writer );
+
+            writer.close();
+            final String content = writer.toString();
+            writer = null;
+
+            reader.close();
+            reader = null;
+
+            aggregateWriter.write( "\n" );
+            aggregateWriter.write( content );
         }
         finally
         {
+            IOUtil.close( writer );
             IOUtil.close( reader );
         }
-
-        final String content = writer.toString();
-
-        aggregateWriter.write( "\n" );
-        aggregateWriter.write( content );
     }
 
     protected final Logger getLogger()

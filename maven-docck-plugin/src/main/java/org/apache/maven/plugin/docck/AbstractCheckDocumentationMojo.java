@@ -285,7 +285,8 @@ public abstract class AbstractCheckDocumentationMojo
             {
                 writer = new FileWriter( output );
                 writer.write( messages );
-                writer.flush();
+                writer.close();
+                writer = null;
             }
             finally
             {

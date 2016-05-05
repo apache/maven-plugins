@@ -74,6 +74,9 @@ public class DefaultChangesSchemaValidator
 
             validator.validate( new StreamSource( reader ) );
 
+            reader.close();
+            reader = null;
+
             return baseHandler;
         }
         catch ( IOException e )
@@ -95,7 +98,7 @@ public class DefaultChangesSchemaValidator
     }
 
     public Schema getSchema( String schemaPath )
-        throws SAXException
+        throws SAXException, IOException
     {
         if ( this.compiledSchemas.containsKey( schemaPath ) )
         {
@@ -114,24 +117,26 @@ public class DefaultChangesSchemaValidator
      * @throws Exception
      */
     private Schema compileJAXPSchema( String uriSchema )
-        throws SAXException, NullPointerException
+        throws IOException, SAXException, NullPointerException
     {
-
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream( uriSchema );
-
-        if ( is == null )
-        {
-            throw new NullPointerException( " impossible to load schema with path " + uriSchema );
-        }
-
+        InputStream in = null;
         try
         {
+            in = Thread.currentThread().getContextClassLoader().getResourceAsStream( uriSchema );
+            if ( in == null )
+            {
+                throw new NullPointerException( " impossible to load schema with path " + uriSchema );
+            }
+
             //newInstance de SchemaFactory not ThreadSafe
-            return SchemaFactory.newInstance( W3C_XML_SCHEMA ).newSchema( new StreamSource( is ) );
+            final Schema schema = SchemaFactory.newInstance( W3C_XML_SCHEMA ).newSchema( new StreamSource( in ) );
+            in.close();
+            in = null;
+            return schema;
         }
         finally
         {
-            IOUtil.close( is );
+            IOUtil.close( in );
         }
     }
 
@@ -145,6 +150,10 @@ public class DefaultChangesSchemaValidator
         catch ( SAXException e )
         {
             throw new SchemaValidatorException( "SAXException : " + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            throw new SchemaValidatorException( "IOException : " + e.getMessage(), e );
         }
 
     }

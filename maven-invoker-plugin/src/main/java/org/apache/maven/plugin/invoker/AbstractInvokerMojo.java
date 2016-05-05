@@ -1202,6 +1202,8 @@ public abstract class AbstractInvokerMojo
                 {
                     fileWriter = new FileWriter( mergedSettingsFile );
                     settingsWriter.write( fileWriter, mergedSettings );
+                    fileWriter.close();
+                    fileWriter = null;
                 }
                 finally
                 {
@@ -1871,6 +1873,8 @@ public abstract class AbstractInvokerMojo
 
                 Properties loadedProperties = new Properties();
                 loadedProperties.load( fin );
+                fin.close();
+                fin = null;
                 collectedTestProperties.putAll( loadedProperties );
             }
             catch ( IOException e )
@@ -2286,11 +2290,13 @@ public abstract class AbstractInvokerMojo
             Map<String, Object> composite = getInterpolationValueSource();
             reader = new BufferedReader( new InterpolationFilterReader( newReader( tokenFile ), composite ) );
 
-            String line;
-            while ( ( line = reader.readLine() ) != null )
+            for ( String line = reader.readLine(); line != null; line = reader.readLine() )
             {
                 result.addAll( collectListFromCSV( line ) );
             }
+
+            reader.close();
+            reader = null;
         }
         finally
         {
@@ -2346,9 +2352,13 @@ public abstract class AbstractInvokerMojo
             {
                 // interpolation with token @...@
                 Map<String, Object> composite = getInterpolationValueSource();
-                reader = ReaderFactory.newXmlReader( originalFile );
-                reader = new InterpolationFilterReader( reader, composite, "@", "@" );
+                reader = 
+                    new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ), composite, "@", "@" );
+
                 xml = IOUtil.toString( reader );
+
+                reader.close();
+                reader = null;
             }
             finally
             {
@@ -2361,7 +2371,8 @@ public abstract class AbstractInvokerMojo
                 interpolatedFile.getParentFile().mkdirs();
                 writer = WriterFactory.newXmlWriter( interpolatedFile );
                 writer.write( xml );
-                writer.flush();
+                writer.close();
+                writer = null;
             }
             finally
             {
@@ -2395,6 +2406,8 @@ public abstract class AbstractInvokerMojo
                 {
                     in = new FileInputStream( propertiesFile );
                     props.load( in );
+                    in.close();
+                    in = null;
                 }
                 catch ( IOException e )
                 {

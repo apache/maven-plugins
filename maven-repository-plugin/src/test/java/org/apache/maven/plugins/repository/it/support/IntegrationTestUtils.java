@@ -29,8 +29,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -142,24 +142,14 @@ public class IntegrationTestUtils
     {
         URL resource = Thread.currentThread().getContextClassLoader().getResource( "META-INF/maven/plugin.xml" );
 
-        InputStream stream = null;
+        Reader reader = null;
         try
         {
-            stream = resource.openStream();
+            reader = new InputStreamReader( resource.openStream() );
             Xpp3Dom pluginDom;
-            try
-            {
-                pluginDom = Xpp3DomBuilder.build( new InputStreamReader( stream ) );
-            }
-            catch ( XmlPullParserException e )
-            {
-                IOException err = new IOException(
-                                                   "Failed to parse plugin descriptor for groupId:artifactId:version prefix. Reason: "
-                                                       + e.getMessage() );
-                err.initCause( e );
-
-                throw err;
-            }
+            pluginDom = Xpp3DomBuilder.build( reader );
+            reader.close();
+            reader = null;
 
             pluginArtifactId = pluginDom.getChild( "artifactId" ).getValue();
             pluginGroupId = pluginDom.getChild( "groupId" ).getValue();
@@ -167,9 +157,15 @@ public class IntegrationTestUtils
 
             cliPluginPrefix = pluginGroupId + ":" + pluginArtifactId + ":" + pluginVersion + ":";
         }
+        catch ( XmlPullParserException e )
+        {
+            throw (IOException) new IOException(
+                "Failed to parse plugin descriptor for groupId:artifactId:version prefix." ).initCause( e );
+
+        }
         finally
         {
-            close( stream );
+            close( reader );
         }
     }
 }

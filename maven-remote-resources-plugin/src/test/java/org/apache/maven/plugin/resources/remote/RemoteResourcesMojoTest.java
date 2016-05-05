@@ -239,7 +239,7 @@ public class RemoteResourcesMojoTest
 
         InputStream in = new FileInputStream( file );
         byte[] data = IOUtil.toByteArray( in );
-        IOUtil.close( in );
+        in.close();
 
         byte[] expected = "\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF".getBytes( "UTF-8" );
         assertTrue( Arrays.equals( expected, data ) );
@@ -280,7 +280,7 @@ public class RemoteResourcesMojoTest
 
         InputStream in = new FileInputStream( file );
         byte[] data = IOUtil.toByteArray( in );
-        IOUtil.close( in );
+        in.close();
 
         byte[] expected = "\u00E4\u00F6\u00FC\u00C4\u00D6\u00DC\u00DF".getBytes( "ISO-8859-1" );
         assertTrue( Arrays.equals( expected, data ) );
@@ -405,8 +405,8 @@ public class RemoteResourcesMojoTest
                 InputStream in = new FileInputStream(resource);
                 jar.putNextEntry(new ZipEntry(resourceName));
                 IOUtil.copy(in, jar);
-                IOUtil.close(in);
                 jar.closeEntry();
+                in.close();
             }
             jar.close();
         }

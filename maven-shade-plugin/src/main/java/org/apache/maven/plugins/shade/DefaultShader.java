@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -89,19 +90,18 @@ public class DefaultShader
 
         // noinspection ResultOfMethodCallIgnored
         shadeRequest.getUberJar().getParentFile().mkdirs();
-        FileOutputStream fileOutputStream = new FileOutputStream( shadeRequest.getUberJar() );
-        JarOutputStream jos = new JarOutputStream( new BufferedOutputStream( fileOutputStream ) );
 
+        JarOutputStream out = null;
         try
         {
-
-            goThroughAllJarEntriesForManifestTransformer( shadeRequest, resources, manifestTransformer, jos );
+            out = new JarOutputStream( new BufferedOutputStream( new FileOutputStream( shadeRequest.getUberJar() ) ) );
+            goThroughAllJarEntriesForManifestTransformer( shadeRequest, resources, manifestTransformer, out );
 
             // CHECKSTYLE_OFF: MagicNumber
             Multimap<String, File> duplicates = HashMultimap.create( 10000, 3 );
             // CHECKSTYLE_ON: MagicNumber
 
-            shadeJars( shadeRequest, resources, transformers, remapper, jos, duplicates );
+            shadeJars( shadeRequest, resources, transformers, remapper, out, duplicates );
 
             // CHECKSTYLE_OFF: MagicNumber
             Multimap<Collection<File>, String> overlapping = HashMultimap.create( 20, 15 );
@@ -128,14 +128,16 @@ public class DefaultShader
             {
                 if ( transformer.hasTransformedResource() )
                 {
-                    transformer.modifyOutputStream( jos );
+                    transformer.modifyOutputStream( out );
                 }
             }
 
+            out.close();
+            out = null;
         }
         finally
         {
-            IOUtil.close( jos );
+            IOUtil.close( out );
         }
 
         for ( Filter filter : shadeRequest.getFilters() )
@@ -195,11 +197,10 @@ public class DefaultShader
                                  JarEntry entry, String name )
         throws IOException, MojoExecutionException
     {
-        InputStream is = jarFile.getInputStream( entry );
-
+        InputStream in =null;
         try
         {
-
+            in = jarFile.getInputStream( entry );
             String mappedName = remapper.map( name );
 
             int idx = mappedName.lastIndexOf( '/' );
@@ -216,7 +217,7 @@ public class DefaultShader
             if ( name.endsWith( ".class" ) )
             {
                 duplicates.put( name, jar );
-                addRemappedClass( remapper, jos, jar, name, is );
+                addRemappedClass( remapper, jos, jar, name, in );
             }
             else if ( shadeRequest.isShadeSourcesContent() && name.endsWith( ".java" ) )
             {
@@ -226,11 +227,11 @@ public class DefaultShader
                     return;
                 }
 
-                addJavaSource( resources, jos, mappedName, is, shadeRequest.getRelocators() );
+                addJavaSource( resources, jos, mappedName, in, shadeRequest.getRelocators() );
             }
             else
             {
-                if ( !resourceTransformed( transformers, mappedName, is, shadeRequest.getRelocators() ) )
+                if ( !resourceTransformed( transformers, mappedName, in, shadeRequest.getRelocators() ) )
                 {
                     // Avoid duplicates that aren't accounted for by the resource transformers
                     if ( resources.contains( mappedName ) )
@@ -238,14 +239,16 @@ public class DefaultShader
                         return;
                     }
 
-                    addResource( resources, jos, mappedName, is );
+                    addResource( resources, jos, mappedName, in );
                 }
             }
 
+            in.close();
+            in = null;
         }
         finally
         {
-            IOUtil.close( is );
+            IOUtil.close( in );
         }
     }
 
@@ -516,7 +519,7 @@ public class DefaultShader
             sourceContent = relocator.applyToSourceContent( sourceContent );
         }
 
-        OutputStreamWriter writer = new OutputStreamWriter( jos, "UTF-8" );
+        final Writer writer = new OutputStreamWriter( jos, "UTF-8" );
         IOUtil.copy( sourceContent, writer );
         writer.flush();
 

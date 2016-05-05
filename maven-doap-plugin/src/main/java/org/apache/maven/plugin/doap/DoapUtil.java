@@ -531,6 +531,8 @@ public class DoapUtil
             try
             {
                 in = url.openStream();
+                in.close();
+                in = null;
             }
             finally
             {
@@ -814,6 +816,9 @@ public class DoapUtil
             }
 
             pomProperties.load( is );
+
+            is.close();
+            is = null;
 
             return pomProperties.getProperty( "version", "<unknown>" );
         }

@@ -63,6 +63,9 @@ public abstract class AbstractPmdReportTest
             writer = WriterFactory.newXmlWriter( outputHtml );
 
             mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(), context );
+
+            writer.close();
+            writer = null;
         }
         finally
         {

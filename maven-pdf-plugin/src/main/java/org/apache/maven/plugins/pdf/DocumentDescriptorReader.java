@@ -137,10 +137,13 @@ public class DocumentDescriptorReader
 
             final String interpolatedDoc = interpolator.interpolate( IOUtil.toString( reader ) );
 
+            reader.close();
+            reader = null;
+
             if ( log != null && log.isDebugEnabled() )
             {
                 log.debug( "Interpolated document descriptor ("
-                        + docDescriptor.getAbsolutePath() + ")\n" + interpolatedDoc );
+                               + docDescriptor.getAbsolutePath() + ")\n" + interpolatedDoc );
             }
 
             // No Strict

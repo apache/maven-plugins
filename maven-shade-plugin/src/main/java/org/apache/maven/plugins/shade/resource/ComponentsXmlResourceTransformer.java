@@ -166,6 +166,9 @@ public class ComponentsXmlResourceTransformer
             }
 
             Xpp3DomWriter.write( writer, dom );
+
+            writer.close();
+            writer = null;
         }
         finally
         {

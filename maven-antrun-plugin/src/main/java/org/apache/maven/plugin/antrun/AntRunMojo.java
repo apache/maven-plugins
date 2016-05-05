@@ -647,15 +647,20 @@ public class AntRunMojo
         try
         {
             reader = new LineNumberReader( ReaderFactory.newXmlReader( antFile ) );
-            String line;
-            while ( ( line = reader.readLine() ) != null )
+
+            for ( String line = reader.readLine(); line != null; line = reader.readLine() )
             {
                 if ( reader.getLineNumber() == buildException.getLocation().getLineNumber() )
                 {
                     return "around Ant part ..." + line.trim() + "... @ " + buildException.getLocation().getLineNumber()
-                        + ":" + buildException.getLocation().getColumnNumber() + " in " + antFile.getAbsolutePath();
+                               + ":" + buildException.getLocation().getColumnNumber() + " in "
+                               + antFile.getAbsolutePath();
+
                 }
             }
+
+            reader.close();
+            reader = null;
         }
         catch ( Exception e )
         {

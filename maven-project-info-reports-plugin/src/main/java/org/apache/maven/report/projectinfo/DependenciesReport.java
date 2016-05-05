@@ -19,6 +19,15 @@ package org.apache.maven.report.projectinfo;
  * under the License.
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
@@ -41,14 +50,6 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.jar.classes.JarClassesAnalysis;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.util.Locale;
 
 /**
  * Generates the Project Dependencies report.
@@ -244,7 +245,9 @@ public class DependenciesReport
         throws IOException
     {
         InputStream resourceList = null;
-        LineNumberReader reader = null;
+        InputStream in = null;
+        BufferedReader reader = null;
+        OutputStream out = null;
         try
         {
             resourceList = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/resources.txt" );
@@ -253,13 +256,11 @@ public class DependenciesReport
             {
                 reader = new LineNumberReader( new InputStreamReader( resourceList, ReaderFactory.US_ASCII ) );
 
-                String line = reader.readLine();
-
-                while ( line != null )
+                for ( String line = reader.readLine(); line != null; line = reader.readLine() )
                 {
-                    InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/" + line );
+                    in = getClass().getClassLoader().getResourceAsStream( RESOURCES_DIR + "/" + line );
 
-                    if ( is == null )
+                    if ( in == null )
                     {
                         throw new IOException( "The resource " + line + " doesn't exist." );
                     }
@@ -271,27 +272,24 @@ public class DependenciesReport
                         outputFile.getParentFile().mkdirs();
                     }
 
-                    FileOutputStream w = null;
-                    try
-                    {
-                        w = new FileOutputStream( outputFile );
-                        IOUtil.copy( is, w );
-                    }
-                    finally
-                    {
-                        IOUtil.close( is );
-
-                        IOUtil.close( w );
-                    }
-
-                    line = reader.readLine();
+                    out = new FileOutputStream( outputFile );
+                    IOUtil.copy( in, out );
+                    out.close();
+                    out = null;
+                    in.close();
+                    in = null;
                 }
+
+                reader.close();
+                reader = null;
             }
         }
         finally
         {
-            IOUtil.close( resourceList );
+            IOUtil.close( out );
             IOUtil.close( reader );
+            IOUtil.close( in );
+            IOUtil.close( resourceList );
         }
     }
 }

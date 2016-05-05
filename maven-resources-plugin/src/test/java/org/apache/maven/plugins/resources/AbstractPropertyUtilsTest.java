@@ -95,6 +95,8 @@ public abstract class AbstractPropertyUtilsTest
         {
             in = new FileInputStream( validationPropFile );
             validationProp.load( in );
+            in.close();
+            in = null;
         }
         catch ( IOException ex )
         {

@@ -65,6 +65,8 @@ public class AnnouncementMojoTest
         FileReader fileReader = new FileReader( new File( announcementDirectory, "announcement.vm" ) );
         String result = IOUtil.toString( fileReader );
 
+        fileReader.close();
+
         assertContains( "Nice library", result );
 
         assertContains( "Changes in this version include:", result );

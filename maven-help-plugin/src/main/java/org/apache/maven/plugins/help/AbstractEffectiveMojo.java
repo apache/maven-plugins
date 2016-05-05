@@ -95,7 +95,8 @@ public abstract class AbstractEffectiveMojo
 
             out.write( content );
 
-            out.flush();
+            out.close();
+            out = null;
         }
         finally
         {

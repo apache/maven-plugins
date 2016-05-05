@@ -285,11 +285,19 @@ public class ReportDocumentRenderer
                 {
                     out = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
                     renderer.generateDocument( out, mySink, siteRenderingContext );
+                    mySink.close();
+                    mySink = null;
+                    out.close();
+                    out = null;
                 }
                 finally
                 {
-                    mySink.close();
                     IOUtil.close( out );
+
+                    if ( mySink != null )
+                    {
+                        mySink.close();
+                    }
                 }
             }
         }

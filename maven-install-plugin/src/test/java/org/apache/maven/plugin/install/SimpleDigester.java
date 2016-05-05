@@ -57,17 +57,16 @@ public class SimpleDigester
     public String calculate( File file )
         throws MojoExecutionException
     {
-        FileInputStream fis = null;
-        BufferedInputStream bis = null;
-
+        InputStream in = null;
         try
         {
-            fis = new FileInputStream( file );
-            int bufsiz = (int) Math.min( file.length(), bufsize );
-            bis = new BufferedInputStream( fis, bufsiz );
+            in = new BufferedInputStream( new FileInputStream( file ), (int) Math.min( file.length(), bufsize ) );
             messageDigest.reset();
-            update( bis );
-            return Hex.encodeHexString( messageDigest.digest() );
+            update( in );
+            final String hexString = Hex.encodeHexString( messageDigest.digest() );
+            in.close();
+            in = null;
+            return hexString;
         }
         catch ( IOException e )
         {
@@ -76,8 +75,7 @@ public class SimpleDigester
         }
         finally
         {
-            IOUtil.close( bis );
-            IOUtil.close( fis );
+            IOUtil.close( in );
         }
     }
 

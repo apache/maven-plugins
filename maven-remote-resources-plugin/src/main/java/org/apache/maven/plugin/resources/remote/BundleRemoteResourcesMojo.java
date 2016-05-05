@@ -150,6 +150,9 @@ public class BundleRemoteResourcesMojo
             writer = new FileWriter( f );
 
             w.write( writer, remoteResourcesBundle );
+
+            writer.close();
+            writer = null;
         }
         catch ( IOException e )
         {

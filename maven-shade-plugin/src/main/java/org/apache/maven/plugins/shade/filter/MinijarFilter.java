@@ -116,6 +116,8 @@ public class MinijarFilter
         {
             is = new FileInputStream( dependency.getFile() );
             clazzpathUnit = cp.addClazzpathUnit( is, dependency.toString() );
+            is.close();
+            is = null;
         }
         catch ( ZipException e )
         {

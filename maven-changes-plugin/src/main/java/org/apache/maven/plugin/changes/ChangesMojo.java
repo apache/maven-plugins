@@ -408,6 +408,8 @@ public class ChangesMojo
                                                 false, encoding, session, additionalProperties );
                 mavenFileFilter.copyFile( mavenFileFilterRequest );
                 changesXml = resultFile;
+                xmlStreamReader.close();
+                xmlStreamReader = null;
             }
             catch ( IOException e )
             {
@@ -419,10 +421,7 @@ public class ChangesMojo
             }
             finally
             {
-                if ( xmlStreamReader != null )
-                {
-                    IOUtil.close( xmlStreamReader );
-                }
+                IOUtil.close( xmlStreamReader );
             }
 
         }

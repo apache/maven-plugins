@@ -63,6 +63,9 @@ public class DoapProjectStub
             model =
                 pomReader.read( reader );
             setModel( model );
+
+            reader.close();
+            reader = null;
         }
         catch ( Exception e )
         {

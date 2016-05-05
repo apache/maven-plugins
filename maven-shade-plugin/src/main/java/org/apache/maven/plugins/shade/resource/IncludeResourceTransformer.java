@@ -60,10 +60,19 @@ public class IncludeResourceTransformer
     public void modifyOutputStream( JarOutputStream jos )
         throws IOException
     {
-        jos.putNextEntry( new JarEntry( resource ) );
+        InputStream in = null;
+        try
+        {
+            jos.putNextEntry( new JarEntry( resource ) );
 
-        InputStream in = new FileInputStream( file );
-        IOUtil.copy( in, jos );
-        in.close();
+            in = new FileInputStream( file );
+            IOUtil.copy( in, jos );
+            in.close();
+            in = null;
+        }
+        finally
+        {
+            IOUtil.close( in );
+        }
     }
 }

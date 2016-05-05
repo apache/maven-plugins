@@ -538,7 +538,10 @@ public class SignAndDeployFileMojo
         try
         {
             reader = ReaderFactory.newXmlReader( pomFile );
-            return new MavenXpp3Reader().read( reader );
+            final Model model = new MavenXpp3Reader().read( reader );
+            reader.close();
+            reader = null;
+            return model;
         }
         catch ( FileNotFoundException e )
         {
@@ -576,7 +579,11 @@ public class SignAndDeployFileMojo
             tempFile.deleteOnExit();
 
             fw = WriterFactory.newXmlWriter( tempFile );
+
             new MavenXpp3Writer().write( fw, model );
+
+            fw.close();
+            fw = null;
 
             return tempFile;
         }

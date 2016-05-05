@@ -222,7 +222,7 @@ public class DefaultRepositoryCopier
             rw.print( s + "\n" );
         }
 
-        IOUtil.close( rw );
+        rw.close();
 
         ZipEntry e = new ZipEntry( renameScript.getName() );
 
@@ -232,9 +232,8 @@ public class DefaultRepositoryCopier
 
         IOUtil.copy( is, zos );
 
-        IOUtil.close( is );
-
-        IOUtil.close( zos );
+        zos.close();
+        is.close();
 
         sourceWagon.disconnect();
 
@@ -325,7 +324,7 @@ public class DefaultRepositoryCopier
 
                 IOUtil.copy( is, zos );
 
-                IOUtil.close( is );
+                is.close();
 
                 int idx = s.indexOf( IN_PROCESS_MARKER );
 
@@ -364,11 +363,10 @@ public class DefaultRepositoryCopier
 
         this.writer.write( writer, existing );
 
-        IOUtil.close( writer );
+        writer.close();
+        stagedMetadataReader.close();
+        existingMetadataReader.close();
 
-        IOUtil.close( stagedMetadataReader );
-
-        IOUtil.close( existingMetadataReader );
 
         // Mark all metadata as in-process and regenerate the checksums as they will be different
         // after the merger
@@ -414,12 +412,12 @@ public class DefaultRepositoryCopier
 
         int i;
 
-        while ( ( i = is.read( buf ) ) > 0 )
+        while ( ( i = is.read( buf ) ) >= 0 )
         {
             md5.update( buf, 0, i );
         }
 
-        IOUtil.close( is );
+        is.close();
 
         return encode( md5.digest() );
     }

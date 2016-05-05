@@ -267,6 +267,11 @@ public class DeployFileMojo
                             
                             IOUtil.copy( pomInputStream, pomOutputStream );
 
+                            pomOutputStream.close();
+                            pomOutputStream = null;
+                            pomInputStream.close();
+                            pomInputStream = null;
+
                             processModel( readModel( pomFile ) );
 
                             break;
@@ -556,7 +561,10 @@ public class DeployFileMojo
         try
         {
             reader = ReaderFactory.newXmlReader( pomFile );
-            return new MavenXpp3Reader().read( reader );
+            final Model model = new MavenXpp3Reader().read( reader );
+            reader.close();
+            reader = null;
+            return model;
         }
         catch ( FileNotFoundException e )
         {
@@ -594,7 +602,11 @@ public class DeployFileMojo
             tempFile.deleteOnExit();
 
             fw = WriterFactory.newXmlWriter( tempFile );
+
             new MavenXpp3Writer().write( fw, model );
+
+            fw.close();
+            fw = null;
 
             return tempFile;
         }

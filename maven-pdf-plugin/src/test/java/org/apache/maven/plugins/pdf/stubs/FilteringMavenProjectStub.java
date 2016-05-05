@@ -48,8 +48,10 @@ public class FilteringMavenProjectStub
         try
         {
             reader = ReaderFactory.newXmlReader( getFile() );
-            Model model = pomReader.read( reader );
+            final Model model = pomReader.read( reader );
             setModel( model );
+            reader.close();
+            reader = null;
         }
         catch ( Exception e )
         {

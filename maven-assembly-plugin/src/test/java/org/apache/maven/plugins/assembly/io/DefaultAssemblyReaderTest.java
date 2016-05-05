@@ -479,7 +479,8 @@ public class DefaultAssemblyReaderTest
             final ComponentXpp3Writer componentWriter = new ComponentXpp3Writer();
 
             componentWriter.write( writer, component );
-            writer.flush();
+            writer.close();
+            writer = null;
         }
         finally
         {
@@ -641,6 +642,8 @@ public class DefaultAssemblyReaderTest
         {
             fw = new OutputStreamWriter( new FileOutputStream( componentsFile ), "UTF-8" );
             new ComponentXpp3Writer().write( fw, component );
+            fw.close();
+            fw = null;
         }
         finally
         {
@@ -704,6 +707,8 @@ public class DefaultAssemblyReaderTest
         {
             fw = new OutputStreamWriter( new FileOutputStream( componentsFile ), "UTF-8" );
             new ComponentXpp3Writer().write( fw, component );
+            fw.close();
+            fw = null;
         }
         finally
         {
@@ -814,6 +819,8 @@ public class DefaultAssemblyReaderTest
         {
             writer = new OutputStreamWriter( new FileOutputStream( assemblyFile ), "UTF-8" );
             new AssemblyXpp3Writer().write( writer, assembly );
+            writer.close();
+            writer = null;
         }
         finally
         {
@@ -1064,6 +1071,8 @@ public class DefaultAssemblyReaderTest
             {
                 writer = new OutputStreamWriter( new FileOutputStream( assemblyFile ), "UTF-8" );
                 new AssemblyXpp3Writer().write( writer, assembly );
+                writer.close();
+                writer = null;
             }
             finally
             {

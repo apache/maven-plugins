@@ -47,8 +47,11 @@ public class ModelBuilderMavenProjectStub
         {
             reader = new XmlStreamReader( getFile() );
 
-            Model model = new MavenXpp3Reader().read( reader );
+            final Model model = new MavenXpp3Reader().read( reader );
             setModel( model );
+
+            reader.close();
+            reader = null;
 
             setGroupId( model.getGroupId() );
             setArtifactId( model.getArtifactId() );

@@ -90,9 +90,12 @@ public class WindowsLineFeedInputStreamTest
         try
         {
             lf = new WindowsLineFeedInputStream( baos, ensure );
-            byte[] buf = new byte[100];
+            byte[] buf = new byte[ 100 ];
             final int read = lf.read( buf );
-            return new String( buf, 0, read );
+            final String string = new String( buf, 0, read );
+            lf.close();
+            lf = null;
+            return string;
         }
         finally
         {

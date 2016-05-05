@@ -180,7 +180,8 @@ public class EffectiveSiteMojo
 
             out.write( content );
 
-            out.flush();
+            out.close();
+            out = null;
         }
         finally
         {

@@ -202,8 +202,8 @@ public class ScmPublishPublishScmMojo
         {
             in = new BufferedReader( new InputStreamReader( new FileInputStream( srcFile ), siteOutputEncoding ) );
             out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( destFile ), siteOutputEncoding ) );
-            String line;
-            while ( ( line = in.readLine() ) != null )
+
+            for ( String line = in.readLine(); line != null; line = in.readLine() )
             {
                 if ( in.ready() )
                 {
@@ -214,6 +214,11 @@ public class ScmPublishPublishScmMojo
                     out.print( line );
                 }
             }
+
+            out.close();
+            out = null;
+            in.close();
+            in = null;
         }
         finally
         {

@@ -28,7 +28,6 @@ import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOC;
-import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.plugins.pdf.stubs.ModelBuilderMavenProjectStub;
@@ -118,15 +117,17 @@ public class DocumentModelBuilderTest
     }
 
     private DecorationModel getDecorationModelFromFile( File descriptorFile )
-            throws IOException, XmlPullParserException
+        throws IOException, XmlPullParserException
     {
         Reader reader = null;
 
         try
         {
             reader = ReaderFactory.newXmlReader( descriptorFile );
-
-            return new DecorationXpp3Reader().read( reader );
+            final DecorationModel decorationModel = new DecorationXpp3Reader().read( reader );
+            reader.close();
+            reader = null;
+            return decorationModel;
         }
         finally
         {

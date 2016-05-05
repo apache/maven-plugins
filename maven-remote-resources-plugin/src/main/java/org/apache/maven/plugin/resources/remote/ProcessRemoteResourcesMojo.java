@@ -836,6 +836,10 @@ public class ProcessRemoteResourcesMojo
                         }
 
                         velocity.evaluate( context, writer, "", reader );
+                        writer.close();
+                        writer = null;
+                        reader.close();
+                        reader = null;
                     }
                     catch ( ParseErrorException e )
                     {
@@ -909,16 +913,20 @@ public class ProcessRemoteResourcesMojo
 
         if ( file.exists() )
         {
-            InputStream is = new FileInputStream( file );
-            InputStream newContents = new ByteArrayInputStream( outStream.getData() );
+            InputStream is = null;
             try
             {
+                is = new FileInputStream( file );
+                final InputStream newContents = new ByteArrayInputStream( outStream.getData() );
                 needOverwrite = !IOUtil.contentEquals( is, newContents );
                 if ( getLog().isDebugEnabled() )
                 {
                     getLog().debug( "File " + file + " contents "
-                            + ( needOverwrite ? "differs" : "does not differ" ) );
+                                        + ( needOverwrite ? "differs" : "does not differ" ) );
                 }
+
+                is.close();
+                is = null;
             }
             finally
             {
@@ -936,6 +944,8 @@ public class ProcessRemoteResourcesMojo
         try
         {
             outStream.writeTo( os );
+            os.close();
+            os = null;
         }
         finally
         {
@@ -1141,8 +1151,6 @@ public class ProcessRemoteResourcesMojo
     protected void processResourceBundles( RemoteResourcesClassLoader classLoader, VelocityContext context )
         throws MojoExecutionException
     {
-        InputStreamReader reader = null;
-
         try
         {
             // CHECKSTYLE_OFF: LineLength
@@ -1150,6 +1158,10 @@ public class ProcessRemoteResourcesMojo
             {
                 URL url = e.nextElement();
 
+                InputStream in = null;
+                OutputStream out = null;
+                Reader reader = null;
+                Writer writer = null;
                 try
                 {
                     reader = new InputStreamReader( url.openStream() );
@@ -1157,6 +1169,9 @@ public class ProcessRemoteResourcesMojo
                     RemoteResourcesBundleXpp3Reader bundleReader = new RemoteResourcesBundleXpp3Reader();
 
                     RemoteResourcesBundle bundle = bundleReader.read( reader );
+
+                    reader.close();
+                    reader = null;
 
                     for ( String bundleResource : bundle.getRemoteResources() )
                     {
@@ -1180,38 +1195,27 @@ public class ProcessRemoteResourcesMojo
                             if ( doVelocity )
                             {
                                 DeferredFileOutputStream os =
-                                        new DeferredFileOutputStream( velocityFilterInMemoryThreshold, f );
-                                Writer writer;
+                                    new DeferredFileOutputStream( velocityFilterInMemoryThreshold, f );
+
+                                writer = bundle.getSourceEncoding() == null
+                                             ? new OutputStreamWriter( os )
+                                             : new OutputStreamWriter( os, bundle.getSourceEncoding() );
+
                                 if ( bundle.getSourceEncoding() == null )
                                 {
-                                    writer = new OutputStreamWriter( os );
+                                    // TODO: Is this correct? Shouldn't we behave like the rest of maven and fail
+                                    // down to JVM default instead ISO-8859-1 ?
+                                    velocity.mergeTemplate( bundleResource, "ISO-8859-1", context, writer );
                                 }
                                 else
                                 {
-                                    writer =
-                                        new OutputStreamWriter( os,
-                                                                bundle.getSourceEncoding() );
+                                    velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(), context,
+                                                            writer );
+
                                 }
 
-                                try
-                                {
-                                    if ( bundle.getSourceEncoding() == null )
-                                    {
-                                        // TODO: Is this correct? Shouldn't we behave like the rest of maven and fail
-                                        // down to JVM default instead ISO-8859-1 ?
-                                        velocity.mergeTemplate( bundleResource, "ISO-8859-1", context, writer );
-                                    }
-                                    else
-                                    {
-                                        velocity.mergeTemplate( bundleResource, bundle.getSourceEncoding(), context,
-                                                                writer );
-
-                                    }
-                                }
-                                finally
-                                {
-                                    IOUtil.close( writer );
-                                }
+                                writer.close();
+                                writer = null;
                                 fileWriteIfDiffers( os );
                             }
                             else
@@ -1225,25 +1229,20 @@ public class ProcessRemoteResourcesMojo
                             File appendedResourceFile = new File( appendedResourcesDirectory, projectResource );
                             File appendedVmResourceFile =
                                 new File( appendedResourcesDirectory, projectResource + ".vm" );
+
                             if ( appendedResourceFile.exists() )
                             {
-                                final InputStream in = new FileInputStream( appendedResourceFile );
-                                final OutputStream append = new FileOutputStream( f, true );
-
-                                try
-                                {
-                                    IOUtil.copy( in, append );
-                                }
-                                finally
-                                {
-                                    IOUtil.close( in );
-                                    IOUtil.close( append );
-                                }
+                                in = new FileInputStream( appendedResourceFile );
+                                out = new FileOutputStream( f, true );
+                                IOUtil.copy( in, out );
+                                out.close();
+                                out = null;
+                                in.close();
+                                in = null;
                             }
                             else if ( appendedVmResourceFile.exists() )
                             {
-                                PrintWriter writer;
-                                FileReader freader = new FileReader( appendedVmResourceFile );
+                                reader = new FileReader( appendedVmResourceFile );
 
                                 if ( bundle.getSourceEncoding() == null )
                                 {
@@ -1256,24 +1255,22 @@ public class ProcessRemoteResourcesMojo
                                                                                  bundle.getSourceEncoding() ) );
                                 }
 
-                                try
-                                {
-                                    Velocity.init();
-                                    Velocity.evaluate( context, writer, "remote-resources", freader );
-                                }
-                                finally
-                                {
-                                    IOUtil.close( writer );
-                                    IOUtil.close( freader );
-                                }
+                                Velocity.init();
+                                Velocity.evaluate( context, writer, "remote-resources", reader );
+                                writer.close();
+                                writer = null;
+                                reader.close();
+                                reader = null;
                             }
-
                         }
                     }
                 }
                 finally
                 {
-                    reader.close();
+                    IOUtil.close( out );
+                    IOUtil.close( in );
+                    IOUtil.close( writer );
+                    IOUtil.close( reader );
                 }
                 // CHECKSTYLE_ON: LineLength
             }

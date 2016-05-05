@@ -846,6 +846,10 @@ public class PdfMojo
                     String enc = reader.getEncoding();
 
                     String siteDescriptorContent = IOUtil.toString( reader );
+
+                    reader.close();
+                    reader = null;
+
                     siteDescriptorContent =
                         siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>( 2 ), project,
                                                                        siteDescriptorContent );
@@ -966,7 +970,8 @@ public class PdfMojo
             {
                 w = WriterFactory.newXmlWriter( doc );
                 xpp3.write( w, docModel );
-
+                w.close();
+                w = null;
                 getLog().debug( "Generated a default document model: " + doc.getAbsolutePath() );
             }
             catch ( IOException e )
@@ -1417,6 +1422,9 @@ public class PdfMojo
             reader = ReaderFactory.newXmlReader( f );
 
             doxia.parse( reader, f.getParentFile().getName(), titleSink );
+
+            reader.close();
+            reader = null;
         }
         catch ( ParseException e )
         {
@@ -1457,6 +1465,9 @@ public class PdfMojo
             reader = ReaderFactory.newXmlReader( generatedReport );
 
             doxia.parse( reader, generatedReport.getParentFile().getName(), sinkAdapter );
+
+            reader.close();
+            reader = null;
         }
         catch ( ParseException e )
         {
@@ -1633,12 +1644,16 @@ public class PdfMojo
         // and that should have a pom.properties file
         // if this ever changes, we will have to revisit this code.
         final Properties properties = new Properties();
-        final InputStream in =
-            MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/"
-                                                                         + "pom.properties" );
+
+        InputStream in = null;
         try
         {
+            in = MavenProject.class.getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven/maven-core/"
+                                                                              + "pom.properties" );
+
             properties.load( in );
+            in.close();
+            in = null;
         }
         catch ( IOException ioe )
         {
@@ -1681,6 +1696,9 @@ public class PdfMojo
             writer = WriterFactory.newXmlWriter( toFile );
             // see PdfSink#table()
             writer.write( StringUtils.replace( content, "<table><table", "<table" ) );
+
+            writer.close();
+            writer = null;
         }
         finally
         {

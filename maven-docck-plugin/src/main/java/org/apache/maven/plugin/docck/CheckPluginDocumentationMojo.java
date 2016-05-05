@@ -150,6 +150,9 @@ public class CheckPluginDocumentationMojo
 
                 String siteHtml = IOUtil.toString( streamReader );
 
+                streamReader.close();
+                streamReader = null;
+
                 if ( !siteHtml.contains( "href=\"index.html\"" ) )
                 {
                     reporter.error( "site.xml is missing the link to: index.html \"Introduction\"." );

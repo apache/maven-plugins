@@ -250,6 +250,9 @@ public final class DependencyUtil
             writer = new FileWriter( file, append );
 
             writer.write( string );
+
+            writer.close();
+            writer = null;
         }
         finally
         {

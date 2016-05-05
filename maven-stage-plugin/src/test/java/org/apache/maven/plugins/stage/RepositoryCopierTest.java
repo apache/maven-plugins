@@ -21,7 +21,6 @@ package org.apache.maven.plugins.stage;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.wagon.repository.Repository;
@@ -126,6 +125,6 @@ public class RepositoryCopierTest
 
         assertTrue( versions.contains( "2.0.5" ) );
 
-        IOUtil.close( r );
+        r.close();
     }
 }

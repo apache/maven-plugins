@@ -124,6 +124,8 @@ public class PdfMojoTest
         {
             reader = ReaderFactory.newXmlReader( foFile );
             foContent = IOUtil.toString( reader );
+            reader.close();
+            reader = null;
         }
         finally
         {

@@ -75,7 +75,10 @@ public class WebappStructureSerializer
         try
         {
             reader = ReaderFactory.newXmlReader( file );
-            return (WebappStructure) XSTREAM.fromXML( reader );
+            final WebappStructure webappStructure = (WebappStructure) XSTREAM.fromXML( reader );
+            reader.close();
+            reader = null;
+            return webappStructure;
         }
         finally
         {
@@ -108,6 +111,8 @@ public class WebappStructureSerializer
             }
             writer = WriterFactory.newXmlWriter( targetFile );
             XSTREAM.toXML( webappStructure, writer );
+            writer.close();
+            writer = null;
         }
         finally
         {

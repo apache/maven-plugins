@@ -413,6 +413,8 @@ public class BundlePackMojo
         {
             reader = ReaderFactory.newXmlReader( pom );
             model = new MavenXpp3Reader().read( reader );
+            reader.close();
+            reader = null;
         }
         catch ( XmlPullParserException e )
         {

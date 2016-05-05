@@ -438,6 +438,9 @@ public class DoapMojoTest
             reader = new FileReader( file );
 
             result = IOUtil.toString( reader );
+
+            reader.close();
+            reader = null;
         }
         finally
         {

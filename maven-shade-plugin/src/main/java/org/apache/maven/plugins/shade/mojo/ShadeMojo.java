@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -682,16 +684,22 @@ public class ShadeMojo
     private void copyFiles( File source, File target )
         throws IOException
     {
-        FileOutputStream fout = new FileOutputStream( target );
-        FileInputStream fin = new FileInputStream( source );
+        InputStream in = null;
+        OutputStream out = null;
         try
         {
-            IOUtil.copy( fin, fout );
+            in = new FileInputStream( source );
+            out = new FileOutputStream( target );
+            IOUtil.copy( in, out );
+            out.close();
+            out = null;
+            in.close();
+            in = null;
         }
         finally
         {
-            IOUtil.close( fin );
-            IOUtil.close( fout );
+            IOUtil.close( in );
+            IOUtil.close( out );
         }
     }
 

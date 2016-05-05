@@ -113,6 +113,9 @@ public class VerifierMojo
             VerificationsXpp3Reader xppReader = new VerificationsXpp3Reader();
             Verifications verifications = xppReader.read( reader );
 
+            reader.close();
+            reader = null;
+
             for ( org.apache.maven.plugin.verifier.model.File file : verifications.getFiles() )
             {
                 // Transform the file to check into an absolute path prefixing the basedir if

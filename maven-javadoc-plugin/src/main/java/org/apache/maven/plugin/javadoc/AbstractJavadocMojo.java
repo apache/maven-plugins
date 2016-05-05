@@ -5226,14 +5226,17 @@ public abstract class AbstractJavadocMojo
         throws IOException
     {
         final String fixData;
-        final InputStream in = this.getClass().getResourceAsStream( "frame-injection-fix.txt" );
-        if ( in == null )
-        {
-            throw new FileNotFoundException( "Missing resource 'frame-injection-fix.txt' in classpath." );
-        }
+        InputStream in = null;
         try
         {
+            in = this.getClass().getResourceAsStream( "frame-injection-fix.txt" );
+            if ( in == null )
+            {
+                throw new FileNotFoundException( "Missing resource 'frame-injection-fix.txt' in classpath." );
+            }
             fixData = StringUtils.unifyLineSeparators( IOUtil.toString( in, "US-ASCII" ) ).trim();
+            in.close();
+            in = null;
         }
         finally
         {
@@ -5412,7 +5415,8 @@ public abstract class AbstractJavadocMojo
             {
                 Properties properties = new Properties();
                 properties.load( resourceAsStream );
-
+                resourceAsStream.close();
+                resourceAsStream = null;
                 if ( StringUtils.isNotEmpty( properties.getProperty( "version" ) ) )
                 {
                     javadocPluginVersion = properties.getProperty( "version" );
@@ -5699,12 +5703,17 @@ public abstract class AbstractJavadocMojo
         link.setLocation( javaApiPackageListFile.getParentFile().getAbsolutePath() );
         link.setUrl( javaApiLink );
 
-        InputStream in = this.getClass().getResourceAsStream( "java-api-package-list-" + apiVersion );
+        InputStream in = null;
         OutputStream out = null;
         try
         {
+            in = this.getClass().getResourceAsStream( "java-api-package-list-" + apiVersion );
             out = new FileOutputStream( javaApiPackageListFile );
             IOUtil.copy( in, out );
+            out.close();
+            out = null;
+            in.close();
+            in = null;
         }
         catch ( IOException ioe )
         {

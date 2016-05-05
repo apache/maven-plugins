@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -693,11 +692,13 @@ public class ResourcesMojoTest
     {
         assertTrue( FileUtils.fileExists( fileName ) );
 
-        Reader reader = null;
+        BufferedReader reader = null;
         try
         {
-            reader = new FileReader( fileName );
-            assertEquals( data, new BufferedReader( reader ).readLine() );
+            reader = new BufferedReader( new FileReader( fileName ) );
+            assertEquals( data, reader.readLine() );
+            reader.close();
+            reader = null;
         }
         finally
         {

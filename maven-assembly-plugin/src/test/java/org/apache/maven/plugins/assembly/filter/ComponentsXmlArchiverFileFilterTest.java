@@ -262,6 +262,7 @@ public class ComponentsXmlArchiverFileFilterTest
         archiver.createArchive();
 
         ZipFile zf = null;
+        FileOutputStream out = null;
         try
         {
             zf = new ZipFile( archiveFile );
@@ -270,16 +271,27 @@ public class ComponentsXmlArchiverFileFilterTest
 
             assertNotNull( ze );
 
-            final FileOutputStream fileStream = new FileOutputStream( descriptorFile );
+            out = new FileOutputStream( descriptorFile );
 
-            IOUtil.copy( zf.getInputStream( ze ), fileStream );
-            IOUtil.close( fileStream );
+            IOUtil.copy( zf.getInputStream( ze ), out );
+            out.close();
+            out = null;
+            zf.close();
+            zf = null;
         }
         finally
         {
-            if ( zf != null )
+            IOUtil.close( out );
+            try
             {
-                zf.close();
+                if ( zf != null )
+                {
+                    zf.close();
+                }
+            }
+            catch ( final IOException e )
+            {
+                // Suppressed.
             }
         }
         

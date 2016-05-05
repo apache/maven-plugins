@@ -50,6 +50,8 @@ public class SiteMavenProjectStub
         {
             reader = ReaderFactory.newXmlReader( new File( getBasedir(), "pom.xml" ) );
             setModel( new MavenXpp3Reader().read( reader ) );
+            reader.close();
+            reader = null;
         }
         catch ( Exception e )
         {

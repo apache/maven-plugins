@@ -52,7 +52,10 @@ class PomUtils
         try
         {
             reader = ReaderFactory.newXmlReader( pomFile );
-            return new MavenXpp3Reader().read( reader, false );
+            final Model model = new MavenXpp3Reader().read( reader, false );
+            reader.close();
+            reader = null;
+            return model;
         }
         catch ( XmlPullParserException e )
         {

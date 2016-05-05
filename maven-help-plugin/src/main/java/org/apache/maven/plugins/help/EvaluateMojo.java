@@ -593,8 +593,8 @@ public class EvaluateMojo
         try
         {
             jarStream = new JarInputStream( new FileInputStream( jarFile ) );
-            JarEntry jarEntry = jarStream.getNextJarEntry();
-            while ( jarEntry != null )
+            for ( JarEntry jarEntry = jarStream.getNextJarEntry(); jarEntry != null;
+                  jarEntry = jarStream.getNextJarEntry() )
             {
                 if ( jarEntry.getName().toLowerCase( Locale.ENGLISH ).endsWith( ".class" ) )
                 {
@@ -621,8 +621,10 @@ public class EvaluateMojo
                 }
 
                 jarStream.closeEntry();
-                jarEntry = jarStream.getNextJarEntry();
             }
+
+            jarStream.close();
+            jarStream = null;
         }
         catch ( IOException e )
         {

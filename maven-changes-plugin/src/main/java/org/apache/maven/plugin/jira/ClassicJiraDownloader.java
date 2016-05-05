@@ -343,6 +343,8 @@ public final class ClassicJiraDownloader
      */
     private void download( final HttpClient cl, final String link )
     {
+        InputStream in = null;
+        OutputStream out = null;
         try
         {
             GetMethod gm = new GetMethod( link );
@@ -383,7 +385,7 @@ public final class ClassicJiraDownloader
 
             if ( gm.getStatusCode() == HttpStatus.SC_OK )
             {
-                final InputStream responseBodyStream = gm.getResponseBodyAsStream();
+                in = gm.getResponseBodyAsStream();
 
                 if ( !output.getParentFile().exists() )
                 {
@@ -391,17 +393,12 @@ public final class ClassicJiraDownloader
                 }
 
                 // write the response to file
-                OutputStream out = null;
-                try
-                {
-                    out = new FileOutputStream( output );
-                    IOUtil.copy( responseBodyStream, out );
-                }
-                finally
-                {
-                    IOUtil.close( out );
-                    IOUtil.close( responseBodyStream );
-                }
+                out = new FileOutputStream( output );
+                IOUtil.copy( in, out );
+                out.close();
+                out = null;
+                in.close();
+                in = null;
 
                 getLog().debug( "Downloading from JIRA was successful" );
             }
@@ -432,6 +429,11 @@ public final class ClassicJiraDownloader
             {
                 getLog().error( "Error downloading issues from JIRA. Cause is " + e.getLocalizedMessage() );
             }
+        }
+        finally
+        {
+            IOUtil.close( out );
+            IOUtil.close( in );
         }
     }
 

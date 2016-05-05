@@ -241,6 +241,9 @@ public abstract class AbstractProjectInfoReport
 
             siteRenderer.copyResources( siteContext, new File( project.getBasedir(), "src/site/resources" ),
                                         outputDirectory );
+
+            writer.close();
+            writer = null;
         }
         catch ( RendererException e )
         {

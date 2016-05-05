@@ -518,7 +518,8 @@ public class ApplyMojo
                 }
             }
 
-            writer.flush();
+            writer.close();
+            writer = null;
         }
         catch ( IOException e )
         {

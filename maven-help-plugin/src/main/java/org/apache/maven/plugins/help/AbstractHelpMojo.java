@@ -87,7 +87,8 @@ public abstract class AbstractHelpMojo
 
             out.write( content );
 
-            out.flush();
+            out.close();
+            out = null;
         }
         finally
         {

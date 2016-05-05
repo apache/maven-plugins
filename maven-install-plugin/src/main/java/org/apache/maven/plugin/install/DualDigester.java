@@ -19,7 +19,6 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -65,12 +64,13 @@ public class DualDigester
         throws MojoExecutionException
     {
         FileInputStream fis = null;
-        BufferedInputStream bis = null;
 
         try
         {
             fis = new FileInputStream( file );
             calculate( fis );
+            fis.close();
+            fis = null;
         }
         catch ( IOException e )
         {
@@ -78,7 +78,6 @@ public class DualDigester
         }
         finally
         {
-            IOUtil.close( bis );
             IOUtil.close( fis );
         }
     }

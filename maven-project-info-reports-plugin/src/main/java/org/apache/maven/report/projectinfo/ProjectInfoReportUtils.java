@@ -139,7 +139,12 @@ public class ProjectInfoReportUtils
                 URLConnection conn = url.openConnection();
                 in = conn.getInputStream();
 
-                return IOUtil.toString( in, encoding );
+                final String content = IOUtil.toString( in, encoding );
+
+                in.close();
+                in = null;
+
+                return content;
             }
             finally
             {
@@ -193,7 +198,12 @@ public class ProjectInfoReportUtils
             URLConnection conn = getURLConnection( url, project, settings );
             in = conn.getInputStream();
 
-            return IOUtil.toString( in, encoding );
+            final String string = IOUtil.toString( in, encoding );
+
+            in.close();
+            in = null;
+
+            return string;
         }
         finally
         {
