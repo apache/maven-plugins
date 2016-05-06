@@ -294,6 +294,8 @@ public class LineEndingsUtilsTest
 
             IOUtil.copy( destReader, destWriter );
 
+            assertEquals( check, destWriter.toString() );
+
             destWriter.close();
             destWriter = null;
             destReader.close();
@@ -304,8 +306,6 @@ public class LineEndingsUtilsTest
             IOUtil.close( destWriter );
             IOUtil.close( destReader );
         }
-
-        assertEquals( check, destWriter.toString() );
     }
 
 }
