@@ -22,40 +22,15 @@ import java.net.*;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
-
-
-boolean result = true;
-
-try
-{
-    File zipFile = new File( basedir, "target/project2-0.0.1-SNAPSHOT-deployable.zip" );
+File zipFile = new File( basedir, "target/project2-0.0.1-SNAPSHOT-deployable.zip" );
     
-    if ( !zipFile.exists() || zipFile.isDirectory() )
-    {
-        System.err.println( "zip-file is missing or a directory." );
-        result = false;
-    }
+assert zipFile.exists() && zipFile.isFile()
     
-    ZipFile zf = new ZipFile( zipFile );
+ZipFile zf = new ZipFile( zipFile );
 
-    ZipArchiveEntry ze = zf.getEntry( "project2-0.0.1-SNAPSHOT/symlinks/src/symDir" );
-    if ( ze == null )
-    {
-        System.err.println( "symDir is missing." );
-        result = false;
-    }
+ZipArchiveEntry ze = zf.getEntry( "project2-0.0.1-SNAPSHOT/symlinks/src/symDir" );
+assert ze != null
 
-    if (!ze.isUnixSymlink()) {
-        System.err.println( "symDir is not a symnlink." );
-        result = false;
-    }
+assert ze.isUnixSymlink()
 
-    zf.close();
-}
-catch( IOException e )
-{
-    e.printStackTrace();
-    result = false;
-}
-
-return result;
+zf.close();
