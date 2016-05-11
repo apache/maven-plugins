@@ -69,6 +69,13 @@ public class UnpackDependenciesMojo
     private String excludes;
 
     /**
+     * Encoding of artifact.
+     *
+     */
+    @Parameter( property = "mdep.unpack.encoding" )
+    private String encoding;
+
+    /**
      * Main entry into mojo. This method gets the dependencies and iterates
      * through each one passing it to DependencyUtil.unpackFile().
      *
@@ -89,7 +96,7 @@ public class UnpackDependenciesMojo
             destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
                                                                   useSubDirectoryPerArtifact, useRepositoryLayout,
                                                                   stripVersion, outputDirectory, artifact );
-            unpack( artifact, destDir, getIncludes(), getExcludes() );
+            unpack( artifact, destDir, getIncludes(), getExcludes(), getEncoding() );
             DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifact, this.markersDirectory );
             handler.setMarker();
         }
@@ -139,5 +146,21 @@ public class UnpackDependenciesMojo
     public void setIncludes( String includes )
     {
         this.includes = includes;
+    }
+
+    /**
+     * @param encoding The encoding to set.
+     */
+    public void setEncoding( String encoding )
+    {
+        this.encoding = encoding;
+    }    
+
+    /**
+     * @return Returns the encoding.
+     */
+    public String getEncoding()
+    {
+        return this.encoding;
     }
 }
