@@ -21,8 +21,7 @@ import java.nio.file.Files
 
 import static org.apache.commons.io.FileUtils.write;
 
-File root = new File( "target/it/projects/bugs/massembly-731/symlinks" );
-//File root = new File( "symlinks" );
+File root = new File( basedir, "symlinks" );
 root.mkdirs();
 
 File srcDir = new File(root, "/src");
