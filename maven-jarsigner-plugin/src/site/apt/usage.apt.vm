@@ -69,7 +69,7 @@ Usage
 +-----------------+
 
   <<Since version 1.3>> you can encrypt <<<keypass>>> and <<<storepass>>> using the
-  maven encryption mecanism.
+  maven encryption mechanism.
 
   See {{{Maven encryption guide}http://maven.apache.org/guides/mini/guide-encryption.html}}.
 
@@ -126,4 +126,4 @@ mvn ... -Djarsigner.skip=true
 
 * How to use encrypted password
 
-  Since version 1.3, you can pass to the plugin some password encrypted by the maven encryption mecanism.
+  Since version 1.3, you can pass to the plugin some password encrypted by the maven encryption mechanism.
