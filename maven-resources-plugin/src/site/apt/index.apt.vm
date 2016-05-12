@@ -86,7 +86,7 @@ ${project.name}
 * Examples
 
    The following examples show how to use the Resources Plugin in more advanced
-   usecases:
+   use cases:
 
    * {{{./examples/encoding.html}Specifying a character encoding scheme}}
 
@@ -99,5 +99,9 @@ ${project.name}
    * {{{./examples/escape-filtering.html}Escape filtering}}
 
    * {{{./examples/copy-resources.html}Copy resources}}
+
+   * {{{./examples/binaries-filtering.html}Binaries filtering}}
+
+   * {{{./examples/custom-resource-filters.html}Custom resources filters}}
 
    []
