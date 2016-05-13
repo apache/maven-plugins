@@ -2,8 +2,9 @@
  Specifying a character encoding scheme
  ------
  Franz Allan See
+ Karl Heinz Marbaise
  ------
- 2008-09-05
+ 2016-05-13
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,9 +32,28 @@ Specifying a character encoding scheme
  A character encoding scheme such as <<<ASCII>>>, <<<UTF-8>>> or <<<UTF-16>>> can be chosen to be
  used for the reading and writing of files.
 
- For example, if we want to specify that the character encoding scheme be <<<UTF-8>>>,
- we would simply have to modify the POM.
+ The best practice is to define {{{https://maven.apache.org/general.html#encoding-warning}encoding}} for copying
+ files via the property <<<${project.build.sourceEncoding}>>> which should be defined in the pom
+ properties section like this:
+ 
++-----+
+<project ...>
+ ...
+ <properties>
+   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   ...
+ </properties>
+ ..
+</project>
++-----+
 
+ By using the above property <<<maven-resources-plugin>>> will automatically
+ use this {{{./resources-mojo.html#encoding}encoding}}.
+ 
+ Occasionally you need to change the encoding explicitly for different purposes.
+ This can be done by defining the encoding via the configuration
+ like this: 
+ 
 +-----+
 <project>
   ...
@@ -55,3 +75,6 @@ Specifying a character encoding scheme
   ...
 </project>
 +-----+
+
+
+ 
