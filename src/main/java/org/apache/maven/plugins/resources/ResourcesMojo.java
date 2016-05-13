@@ -177,7 +177,7 @@ public class ResourcesMojo
     /**
      * <p>
      * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the form
-     * 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * {@code beginToken*endToken}. If no {@code *} is given, the delimiter is assumed to be the same for start and end.
      * </p>
      * <p>
      * So, the default filtering delimiters might be specified as:
@@ -190,7 +190,7 @@ public class ResourcesMojo
      * &lt;/delimiters&gt;
      * </pre>
      * <p>
-     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * Since the {@code @} delimiter is the same on both ends, we don't need to specify {@code @*@} (though we can).
      * </p>
      *
      * @since 2.4
