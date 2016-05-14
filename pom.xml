@@ -265,8 +265,8 @@ under the License.
         <configuration>
           <version>${mdoVersion}</version>
           <models>
-            <model>src/main/mdo/descriptor.mdo</model>
-            <model>src/main/mdo/component.mdo</model>
+            <model>src/main/mdo/assembly.mdo</model>
+            <model>src/main/mdo/assembly-component.mdo</model>
           </models>
         </configuration>
         <executions>
