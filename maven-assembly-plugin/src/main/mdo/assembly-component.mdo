@@ -24,9 +24,9 @@
 <model xmlns="http://codehaus-plexus.github.io/MODELLO/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://codehaus-plexus.github.io/MODELLO/1.8.0 http://codehaus-plexus.github.io/modello/xsd/modello-1.8.0.xsd"
        xml.namespace="http://maven.apache.org/ASSEMBLY-COMPONENT/${version}"
-       xml.schemaLocation="http://maven.apache.org/xsd/component-${version}.xsd">
+       xml.schemaLocation="http://maven.apache.org/xsd/assembly-component-${version}.xsd">
 
-  <id>component</id>
+  <id>assembly-component</id>
   <name>Component</name>
   <description>
     <![CDATA[
