@@ -30,7 +30,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
-
+import org.apache.maven.shared.utils.PathTool;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -43,6 +43,7 @@ import org.codehaus.plexus.util.FileUtils;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
+ * @since 2.0
  */
 @Mojo( name = "attach-descriptor", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true )
 public class SiteDescriptorAttachMojo
@@ -61,6 +62,10 @@ public class SiteDescriptorAttachMojo
     @Component
     private MavenProjectHelper projectHelper;
 
+    /**
+     * Attach site descriptor only if packaging is pom.
+     * @since 3.0
+     */
     @Parameter( defaultValue = "true" )
     private boolean pomPackagingOnly;
 
@@ -69,7 +74,8 @@ public class SiteDescriptorAttachMojo
     {
         if ( pomPackagingOnly && !"pom".equals( project.getPackaging() ) )
         {
-            // http://jira.codehaus.org/browse/MSITE-597
+            // https://issues.apache.org/jira/browse/MSITE-597
+            getLog().info( "Skipping because packaging '" + project.getPackaging() + "' is not pom." );
             return;
         }
 
@@ -90,8 +96,9 @@ public class SiteDescriptorAttachMojo
                     // Copy the site descriptor to a file
                     FileUtils.copyFile( descriptorFile, targetDescriptorFile );
                     // Attach the site descriptor
-                    getLog().debug( "Attaching the site descriptor '" + targetDescriptorFile.getAbsolutePath()
-                        + "' with classifier '" + classifier + "' to the project." );
+                    getLog().info( "Attaching '"
+                        + PathTool.getRelativeFilePath( basedir.getAbsolutePath(), descriptorFile.getAbsolutePath() )
+                        + "' site descriptor with classifier '" + classifier + "'." );
                     projectHelper.attachArtifact( project, "xml", classifier, targetDescriptorFile );
                 }
                 catch ( IOException e )
