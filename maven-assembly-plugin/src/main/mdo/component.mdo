@@ -21,11 +21,11 @@
      Modello currently does not have capability to share files
 -->
 
-<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd"
-       xml.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}" 
+<model xmlns="http://codehaus-plexus.github.io/MODELLO/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://codehaus-plexus.github.io/MODELLO/1.8.0 http://codehaus-plexus.github.io/modello/xsd/modello-1.8.0.xsd"
+       xml.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/component/${version}"
        xml.schemaLocation="http://maven.apache.org/xsd/component-${version}.xsd">
-       
+
   <id>component</id>
   <name>Component</name>
   <description>
@@ -211,7 +211,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -229,13 +229,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -327,7 +327,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -431,7 +431,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -449,13 +449,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -515,7 +515,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.0.0+</version>              
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -554,7 +554,7 @@
           Determines whether transitive dependencies will be included in the processing of
           the current dependency set. If true, includes/excludes/useTransitiveFiltering
           will apply to transitive dependency artifacts in addition to the main project
-          dependency artifacts. If false, useTransitiveFiltering is meaningless, and 
+          dependency artifacts. If false, useTransitiveFiltering is meaningless, and
           includes/excludes only affect the immediate dependencies of the project.
           By default, this value is true. (Since 2.2)
           </description>
@@ -567,7 +567,7 @@
           <description>
           Determines whether the include/exclude patterns in this dependency set will be applied to
           the transitive path of a given artifact. If true, and the current artifact is a transitive
-          dependency brought in by another artifact which matches an inclusion or exclusion pattern, 
+          dependency brought in by another artifact which matches an inclusion or exclusion pattern,
           then the current artifact has the same inclusion/exclusion logic applied to it as well. By
           default, this value is false, in order to preserve backward compatibility with version 2.1.
           This means that includes/excludes only apply directly to the current artifact, and not to
@@ -598,7 +598,7 @@
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
-          If set to true, the plugin will include all projects in the current reactor for processing 
+          If set to true, the plugin will include all projects in the current reactor for processing
           in this ModuleSet. These will be subject to include/exclude rules.
           Default value is true. (Since 2.2)
           </description>
@@ -740,7 +740,7 @@
           <name>fileMode</name>
           <version>1.1.2+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -758,13 +758,13 @@
           <name>directoryMode</name>
           <version>1.1.2+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -794,7 +794,7 @@
           <defaultValue>true</defaultValue>
           <description>
             <![CDATA[
-            Specifies whether the module's finalName should be prepended to the outputDirectory 
+            Specifies whether the module's finalName should be prepended to the outputDirectory
             values of any fileSets applied to it. Default value is true. (Since 2.2)
             ]]>
           </description>
@@ -809,7 +809,7 @@
             Specifies whether sub-module directories below the current module should be excluded
             from fileSets applied to that module. This might be useful if you only mean to copy
             the sources for the exact module list matched by this ModuleSet, ignoring (or processing
-            separately) the modules which exist in directories below the current one. 
+            separately) the modules which exist in directories below the current one.
             Default value is true. (Since 2.2)
             ]]>
           </description>
@@ -889,7 +889,7 @@
           <name>fileMode</name>
           <version>1.1.2+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -907,13 +907,13 @@
           <name>directoryMode</name>
           <version>1.1.2+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -977,7 +977,7 @@
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
           unpacked from a module artifact. (Since 2.2)
-          </description> 
+          </description>
           <association>
             <type>UnpackOptions</type>
           </association>
@@ -991,7 +991,7 @@
             Sets the mapping pattern for all NON-UNPACKED dependencies included
             in this assembly.
             Default is ${module.artifactId}-${module.version}${dashClassifier?}.${module.extension}.
-            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the 
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}) NOTE: If the
             dependencySet specifies unpack == true, outputFileNameMapping WILL NOT BE USED; in these cases, use outputDirectory.
             See the plugin FAQ for more details about entries usable in the outputFileNameMapping parameter.
           </description>
@@ -1068,7 +1068,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -1086,13 +1086,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -1129,7 +1129,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.1.0+</version>              
+          <version>1.1.0+</version>
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -1194,7 +1194,7 @@
           <version>1.1.0+</version>
           <description>
             <![CDATA[
-            Set of file and/or directory patterns for matching items to be included from an archive as it is unpacked. 
+            Set of file and/or directory patterns for matching items to be included from an archive as it is unpacked.
             Each item is specified as &lt;include&gt;some/path&lt;/include&gt; (Since 2.2)
             ]]>
           </description>

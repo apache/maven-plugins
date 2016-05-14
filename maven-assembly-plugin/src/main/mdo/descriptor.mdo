@@ -23,11 +23,11 @@
   to "component.mdo".
 -->
 
-<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd"
-       xml.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${version}" 
+<model xmlns="http://codehaus-plexus.github.io/MODELLO/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://codehaus-plexus.github.io/MODELLO/1.8.0 http://codehaus-plexus.github.io/modello/xsd/modello-1.8.0.xsd"
+       xml.namespace="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${version}"
        xml.schemaLocation="http://maven.apache.org/xsd/assembly-${version}.xsd">
-       
+
   <id>assembly</id>
   <name>Assembly</name>
   <description>
@@ -92,12 +92,12 @@
           </association>
           <description>
             <![CDATA[
-            Specifies the formats of the assembly. 
-            
+            Specifies the formats of the assembly.
+
             It is often better to specify the formats via the goal parameter rather
             than here. For example, that allows different profiles to generate
             different types of archives.
-            
+
             Multiple formats can be
             supplied and the Assembly Plugin will generate an archive for each
             of the desired formats. When deploying your project, all file formats
@@ -248,10 +248,10 @@
             <![CDATA[
             Specifies the shared components xml file locations to include in the
             assembly. The locations specified must be relative to the base location
-            of the descriptor. If the descriptor was found via a &lt;descriptorRef/&gt; 
+            of the descriptor. If the descriptor was found via a &lt;descriptorRef/&gt;
             element in the
             classpath, any components it specifies will also be found on the classpath.
-            If it is found by pathname via a &lt;descriptor/&gt; element 
+            If it is found by pathname via a &lt;descriptor/&gt; element
             the value here will be interpreted
             as a path relative to the project basedir.
             When multiple componentDescriptors are found, their
@@ -328,7 +328,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -346,13 +346,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -445,7 +445,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -520,7 +520,7 @@
             When &lt;include&gt; subelements are present, they define a set of
             artifact coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
-            
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -539,7 +539,7 @@
             When &lt;exclude&gt; subelements are present, they define a set of
             dependency artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
-            
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -550,7 +550,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -568,13 +568,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -603,7 +603,7 @@
           <description>
             Sets the mapping pattern for all dependencies included in this
             assembly. (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension}
-            as default value). 
+            as default value).
             See the plugin FAQ for more details about entries usable in the outputFileNameMapping parameter.
           </description>
         </field>
@@ -632,7 +632,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.0.0+</version>              
+          <version>1.0.0+</version>
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
@@ -669,7 +669,7 @@
           Determines whether transitive dependencies will be included in the processing of
           the current dependency set. If true, includes/excludes/useTransitiveFiltering
           will apply to transitive dependency artifacts in addition to the main project
-          dependency artifacts. If false, useTransitiveFiltering is meaningless, and 
+          dependency artifacts. If false, useTransitiveFiltering is meaningless, and
           includes/excludes only affect the immediate dependencies of the project.
           By default, this value is true. (Since 2.2-beta-1)
           </description>
@@ -682,7 +682,7 @@
           <description>
           Determines whether the include/exclude patterns in this dependency set will be applied to
           the transitive path of a given artifact. If true, and the current artifact is a transitive
-          dependency brought in by another artifact which matches an inclusion or exclusion pattern, 
+          dependency brought in by another artifact which matches an inclusion or exclusion pattern,
           then the current artifact has the same inclusion/exclusion logic applied to it as well. By
           default, this value is false, in order to preserve backward compatibility with version 2.1.
           This means that includes/excludes only apply directly to the current artifact, and not to
@@ -713,7 +713,7 @@
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
-          If set to true, the plugin will include all projects in the current reactor for processing 
+          If set to true, the plugin will include all projects in the current reactor for processing
           in this ModuleSet. These will be subject to include/exclude rules. (Since 2.2)
           </description>
         </field>
@@ -739,7 +739,7 @@
             When &lt;include&gt; subelements are present, they define a set of
             project coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
-          
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -758,7 +758,7 @@
             When &lt;exclude&gt; subelements are present, they define a set of
             project artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
-          
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -789,7 +789,7 @@
         </field>
       </fields>
     </class>
-    
+
     <class>
       <name>ModuleSources</name>
       <version>1.0.0+</version>
@@ -853,7 +853,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -871,13 +871,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -907,7 +907,7 @@
           <defaultValue>true</defaultValue>
           <description>
             <![CDATA[
-            Specifies whether the module's finalName should be prepended to the outputDirectory 
+            Specifies whether the module's finalName should be prepended to the outputDirectory
             values of any fileSets applied to it. (Since 2.2-beta-1)
             ]]>
           </description>
@@ -971,7 +971,7 @@
             When &lt;include&gt; subelements are present, they define a set of
             artifact coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
-            
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -990,7 +990,7 @@
             When &lt;exclude&gt; subelements are present, they define a set of
             dependency artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
-            
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -1001,7 +1001,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -1019,13 +1019,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -1088,7 +1088,7 @@
           <description>
           Allows the specification of includes and excludes, along with filtering options, for items
           unpacked from a module artifact. (Since 2.2-beta-1)
-          </description> 
+          </description>
           <association>
             <type>UnpackOptions</type>
           </association>
@@ -1109,7 +1109,7 @@
         </field>
       </fields>
     </class>
-    
+
     <class>
       <name>Repository</name>
       <version>1.0.0+</version>
@@ -1149,7 +1149,7 @@
             When &lt;include&gt; subelements are present, they define a set of
             artifact coordinates to include. If none is present, then
             &lt;includes&gt; represents all valid values.
-            
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -1168,7 +1168,7 @@
             When &lt;exclude&gt; subelements are present, they define a set of
             dependency artifact coordinates to exclude. If none is present, then
             &lt;excludes&gt; represents no exclusions.
-            
+
             Artifact coordinates may be given in simple groupId:artifactId form,
             or they may be fully qualified in the form groupId:artifactId:type[:classifier]:version.
             Additionally, wildcards can be used, as in *:maven-*
@@ -1179,7 +1179,7 @@
           <name>fileMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0644</defaultValue>
           -->
           <description>
@@ -1197,13 +1197,13 @@
           <name>directoryMode</name>
           <version>1.0.0+</version>
           <type>String</type>
-          <!-- 
+          <!--
           <defaultValue>0755</defaultValue>
           -->
           <description>
             <![CDATA[
             Similar to a UNIX permission, sets the directory mode of the directories
-            included. 
+            included.
             THIS IS AN OCTAL VALUE.
             Format: (User)(Group)(Other) where each component is a sum of
             Read = 4, Write = 2, and Execute = 1.  For example, the value
@@ -1240,7 +1240,7 @@
         </field>
         <field>
           <name>scope</name>
-          <version>1.1.0+</version>              
+          <version>1.1.0+</version>
           <type>String</type>
           <defaultValue>runtime</defaultValue>
           <required>true</required>
