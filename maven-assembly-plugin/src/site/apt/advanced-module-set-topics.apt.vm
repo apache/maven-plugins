@@ -76,9 +76,9 @@ Advanced Module-Set Topics
   We can select <<just>> the child1 module using the following <<<moduleSet>>>:
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     [...]
@@ -160,9 +160,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   reference for your project to users.
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     [...]
@@ -188,9 +188,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   own.
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     [...]
@@ -232,9 +232,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   multimodule hierarchy.
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     [...]
@@ -337,9 +337,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   <<<excludeSubModuleDirectories>>> flag, as follows:
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     [...]
@@ -419,9 +419,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   of the main project artifact.
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     <moduleSet>
@@ -474,9 +474,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   module's dependencies in the current assembly.
 
 ---
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   [...]
   <moduleSets>
     <moduleSet>
