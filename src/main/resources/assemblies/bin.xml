@@ -19,9 +19,9 @@
 -->
 
 <!-- START SNIPPET: bin -->
-<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion}" 
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
   <id>bin</id>
   <formats>
     <format>tar.gz</format>
