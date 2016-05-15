@@ -30,9 +30,9 @@ under the License.
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jar-site-attach-descriptor</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>no-descriptor-attach-descriptor</artifactId>
+  <packaging>pom</packaging>
 
   <name>site-attach-descriptor IT for jar</name>
-  <description>the site descriptor should not be attached: only when packaging = pom, see https://issues.apache.org/jira/browse/MSITE-597</description>
+  <description>No site descriptor to attach: must not fail, just explain.</description>
 </project>
