@@ -57,7 +57,7 @@ public class TestResourcesMojo
      * Its use is NOT RECOMMENDED, but quite convenient on occasion.
      * @since 2.6
      */
-    @Parameter( property = "maven.test.skip" )
+    @Parameter( property = "maven.test.skip", defaultValue = "false" )
     private boolean skip;
 
     /**
