@@ -32,7 +32,7 @@ under the License.
       <item name="Limitations" href="limitations.html"/>
       <item name="FAQ" href="faq.html"/>
       <item name="PDF" href="maven-pdf-plugin.pdf"/>
-      <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
+      <!-- According to https://issues.apache.org/jira/browse/MNGSITE-152 -->
       <item name="License" href="http://www.apache.org/licenses/"/>
       <item name="Download" href="download.html"/>
     </menu>
