@@ -73,7 +73,7 @@ public class ServiceResourceTransformerTest {
             InputStream entryStream = jarFile.getInputStream( jarEntry );
             try {
                 String xformedContent = IOUtils.toString(entryStream, "utf-8");
-                assertEquals("borg.foo.Service\n", xformedContent);
+                assertEquals("borg.foo.Service" + System.getProperty( "line.separator" ), xformedContent);
             } finally {
                 IOUtils.closeQuietly( entryStream );
                 jarFile.close();
@@ -124,7 +124,7 @@ public class ServiceResourceTransformerTest {
             try {
                 String xformedContent = IOUtils.toString(entryStream, "utf-8");
                 // must be two lines, with our two classes.
-                String[] classes = xformedContent.split("\n");
+                String[] classes = xformedContent.split("\r?\n");
                 boolean h1 = false;
                 boolean h2 = false;
                 for ( String name : classes )
