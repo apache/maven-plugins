@@ -66,7 +66,7 @@ public class ResourcesMojo
     /**
      * The character encoding scheme to be applied when filtering resources.
      */
-    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
+    @Parameter( defaultValue = "${project.build.sourceEncoding}" )
     protected String encoding;
 
     /**
@@ -139,7 +139,7 @@ public class ResourcesMojo
      * <b>Note: With 3.0.0 a default value has been defined.</b>
      * @since 2.3
      */
-    @Parameter( property = "maven.resources.escapeString", defaultValue = "\\" )
+    @Parameter( defaultValue = "\\" )
     protected String escapeString;
 
     /**
@@ -147,7 +147,7 @@ public class ResourcesMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.resources.overwrite", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean overwrite;
 
     /**
@@ -155,7 +155,7 @@ public class ResourcesMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.resources.includeEmptyDirs", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     protected boolean includeEmptyDirs;
 
     /**
@@ -171,7 +171,7 @@ public class ResourcesMojo
      *
      * @since 2.4
      */
-    @Parameter( property = "maven.resources.escapeWindowsPaths", defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     protected boolean escapeWindowsPaths;
 
     /**
@@ -263,7 +263,7 @@ public class ResourcesMojo
      *
      * @since 2.5
      */
-    @Parameter( property = "maven.resources.supportMultiLineFiltering", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean supportMultiLineFiltering;
 
     /**
