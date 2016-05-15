@@ -60,7 +60,7 @@ Fixing Javadoc Comments
 ** Current limitations
 
  The <fix> and <test-fix> goals use intensively {{{http://qdox.codehaus.org/}Qdox}} to extract class/interface/method
- Javadoc from source files. Unfortunately, Qdox has {{{http://jira.codehaus.org/browse/QDOX}some known issues}}.
+ Javadoc from source files. Unfortunately, Qdox has {{{https://issues.apache.org/jira/browse/QDOX}some known issues}}.
 
 * Example Call
 
