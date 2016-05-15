@@ -597,7 +597,7 @@ mvn dependency:analyze
 * The <<<dependency:analyze-dep-mgt>>> mojo
 
   This mojo looks at the dependencies after final resolution and looks for mismatches in your dependencyManagement section. 
-  In versions of maven prior to 2.0.6, it was possible to inherit versions that didn't match your dependencyManagement. See {{{http://jira.codehaus.org/browse/MNG-1577}MNG-1577}} for more info.
+  In versions of maven prior to 2.0.6, it was possible to inherit versions that didn't match your dependencyManagement. See {{{https://issues.apache.org/jira/browse/MNG-1577}MNG-1577}} for more info.
 
   If this mojo detects issues, you should attempt to resolve the discrepancies before upgrading to 2.0.6 to avoid any surprises. This can be done by upgrading or downgrading the version in dependencyManagement to match what is actually
   being included at runtime, or you can specify a dependency in your project to override what is being included. You can check the results by rerunning this mojo.

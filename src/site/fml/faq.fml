@@ -61,7 +61,7 @@ under the License.
     <faq id="question">
       <question>Why is Maven resolving "dependency:xxx" to the older org.codehaus.mojo:dependency-maven-plugin?</question>
       <answer><p>
-        Due to a bug in Maven in versions prior to 2.0.7 (<a href="http://jira.codehaus.org/browse/MNG-2926">MNG-2926</a>), the search order was reversed and caused Mojo plugins to supercede ones with the same prefix at Apache.
+        Due to a bug in Maven in versions prior to 2.0.7 (<a href="https://issues.apache.org/jira/browse/MNG-2926">MNG-2926</a>), the search order was reversed and caused Mojo plugins to supercede ones with the same prefix at Apache.
         The metadata at Mojo was cleaned up when the maven-dependency-plugin was released at Apache. If you are still experiencing this error, chances are you have
         old metadata in your local repository or in a proxy / internal repository. Removing <code>/org/codehaus/mojo/maven-metadata.*</code> from your repo/proxy will cause it to
         be refreshed. Alternatively, you can specify the groupId explicitely in your pom (if you are using a bound goal), or on the command line, use groupId:artifactId:version:mojo, ie
