@@ -79,12 +79,15 @@ public class SiteDescriptorAttachMojo
             return;
         }
 
+        boolean attachedSiteDescriptor = false;
         for ( Locale locale : getLocales() )
         {
             File descriptorFile = siteTool.getSiteDescriptor( siteDirectory, locale );
 
             if ( descriptorFile.exists() )
             {
+                attachedSiteDescriptor = true;
+
                 // Calculate the classifier to use
                 String classifier = getClassifier( descriptorFile );
                 // Prepare a file for the interpolated site descriptor
@@ -106,6 +109,11 @@ public class SiteDescriptorAttachMojo
                     throw new MojoExecutionException( "Unable to copy site descriptor", e );
                 }
             }
+        }
+
+        if ( !attachedSiteDescriptor )
+        {
+            getLog().info( "No site descriptor found: nothing to attach." );
         }
     }
 
