@@ -25,7 +25,7 @@ under the License.
       <question>Is it possible to customize the labels of the Project Reports Menu?</question>
       <answer>
         <p>
-        Not yet. See the related issue: <a href="http://jira.codehaus.org/browse/MPIR-35">MPIR-35</a>
+        Not yet. See the related issue: <a href="https://issues.apache.org/jira/browse/MPIR-35">MPIR-35</a>
         </p>
       </answer>
     </faq>

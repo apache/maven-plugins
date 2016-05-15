@@ -25,13 +25,13 @@
 
 Overview
 
-	With the change done as part of {{{http://jira.codehaus.org/browse/MECLIPSE-443}MECLIPSE-443 "Only include **/*.java in Java source directories"}} 
+	With the change done as part of {{{https://issues.apache.org/jira/browse/MECLIPSE-443}MECLIPSE-443 "Only include **/*.java in Java source directories"}} 
 	the .classpath entries for classpathentry kind="src" now specify an <<<including>>> attribute with a value of <<<"**/*.java">>>.
 	Previously this attribute was not specified	which meant that eclipse would include any file in this src directory as being on the classpath and hence compiled.
 	
-	This broke Ajdt support as <<<"**/*.aj">>> files were no longer included on the classpath and {{{http://jira.codehaus.org/browse/MECLIPSE-538}MECLIPSE-538}} fixed this.
+	This broke Ajdt support as <<<"**/*.aj">>> files were no longer included on the classpath and {{{https://issues.apache.org/jira/browse/MECLIPSE-538}MECLIPSE-538}} fixed this.
 	
-	{{{http://jira.codehaus.org/browse/MECLIPSE-104}MECLIPSE-104 "Add the ability to specify source inclusions/exclusions"}} was added put back this flexibility.
+	{{{https://issues.apache.org/jira/browse/MECLIPSE-104}MECLIPSE-104 "Add the ability to specify source inclusions/exclusions"}} was added put back this flexibility.
 	
 	In summary:
 	

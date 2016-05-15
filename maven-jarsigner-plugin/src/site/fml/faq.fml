@@ -64,7 +64,7 @@ under the License.
             To fix the problem, just move the assembly execution so it comes <strong>after</strong> the jarsigner execution in the pom.
           </p>
           <p>
-           The whole story of the problem can be found in <a href="http://jira.codehaus.org/browse/MJARSIGNER-13">MJARSIGNER-13</a> issue.
+           The whole story of the problem can be found in <a href="https://issues.apache.org/jira/browse/MJARSIGNER-13">MJARSIGNER-13</a> issue.
           </p>
         </answer>
       </faq>

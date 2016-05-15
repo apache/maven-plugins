@@ -159,7 +159,7 @@ under the License.
         </p>
         <p>
           There is an
-          <a href="http://jira.codehaus.org/browse/MSITE-159">issue for this in JIRA</a>,
+          <a href="https://issues.apache.org/jira/browse/MSITE-159">issue for this in JIRA</a>,
           where you can read more about this.
         </p>
       </answer>
@@ -195,7 +195,7 @@ under the License.
           <a href="#Can_I_validate_xml">validation</a> run.
           Therefore, if you want to use entities, you <strong>have</strong> to switch on
           validation for your xml source files.
-          See <a href="http://jira.codehaus.org/browse/MSITE-483">MSITE-483</a>.
+          See <a href="https://issues.apache.org/jira/browse/MSITE-483">MSITE-483</a>.
         </p>
       </answer>
     </faq>

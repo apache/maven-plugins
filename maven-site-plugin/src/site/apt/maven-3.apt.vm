@@ -32,7 +32,7 @@ Using maven-site-plugin with Maven 3
   A major aim of the refactoring in Maven 3 was to decouple the Maven core from {{{/doxia/}Doxia}}
   and to allow arbitrary reporting systems to be developed. For this reason, all reporting
   related code has been removed from the core of Maven 3
-  ({{{http://jira.codehaus.org/browse/MNG-4162}MNG-4162}}).
+  ({{{https://issues.apache.org/jira/browse/MNG-4162}MNG-4162}}).
 
   As a result, the 2.x versions of the Maven Site Plugin will not work with Maven 3.
   Using such versions of Maven Site Plugin with Maven 3 won't generate any reports from reporting plugins,
@@ -97,7 +97,7 @@ Using maven-site-plugin with Maven 3
   []
 
   Notice that Maven 3.0.x reports a misleading warning in case of empty report plugin version: see
-  {{{http://jira.codehaus.org/browse/MNG-5477}MNG-5477}}, fixed in Maven 3.1.0.
+  {{{https://issues.apache.org/jira/browse/MNG-5477}MNG-5477}}, fixed in Maven 3.1.0.
 
 * Site descriptor attachment
 
@@ -287,7 +287,7 @@ Using maven-site-plugin with Maven 3
   public only to help people who used it in previous versions understand why they need to migrate back to classic configuration.
 
   <Explanation:> The (former) new format did not support report plugins configuration inheritance, which is crucial for
-  usability: see {{{http://jira.codehaus.org/browse/MSITE-484}MSITE-484}}. This field is technically necessary to remove
+  usability: see {{{https://issues.apache.org/jira/browse/MSITE-484}MSITE-484}}. This field is technically necessary to remove
   most reporting logic from Maven 3, but a new inheritance mechanism still needs to be added to make it as flexible as the old format:
   we made the field public before finding this crucial limitation and required to explain later why end-users must not use it, then
   cannot use it since <<<maven-site-plugin>>> 3.3.
@@ -348,4 +348,4 @@ Using maven-site-plugin with Maven 3
 
   []
 
-  For more info see {{{http://jira.codehaus.org/browse/MSITE-596}MSITE-596}}.
+  For more info see {{{https://issues.apache.org/jira/browse/MSITE-596}MSITE-596}}.
