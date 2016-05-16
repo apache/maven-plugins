@@ -67,8 +67,6 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 public abstract class AbstractWarMojo
     extends AbstractMojo
 {
-    private static final String[] EMPTY_STRING_ARRAY = {};
-
     private static final String META_INF = "META-INF";
 
     private static final String WEB_INF = "WEB-INF";

@@ -32,6 +32,11 @@ public class InvalidOverlayConfigurationException
 {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -9048144470408031414L;
+
+    /**
      * @param string Set the message of the exception.
      */
     public InvalidOverlayConfigurationException( String string )
