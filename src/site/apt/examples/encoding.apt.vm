@@ -48,7 +48,7 @@ Specifying a character encoding scheme
 +-----+
 
  By using the above property <<<maven-resources-plugin>>> will automatically
- use this {{{./resources-mojo.html#encoding}encoding}}.
+ use this {{{../resources-mojo.html#encoding}encoding}}.
  
  Occasionally you need to change the encoding explicitly for different purposes.
  This can be done by defining the encoding via the configuration
