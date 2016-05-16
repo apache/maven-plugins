@@ -66,7 +66,7 @@ public class ResourcesMojo
     /**
      * The character encoding scheme to be applied when filtering resources.
      */
-    @Parameter( property = "encoding", defaultValue = "${project.build.sourceEncoding}" )
+    @Parameter( defaultValue = "${project.build.sourceEncoding}" )
     protected String encoding;
 
     /**
@@ -133,11 +133,13 @@ public class ResourcesMojo
     protected MavenSession session;
 
     /**
-     * Expression preceded with the String won't be interpolated \${foo} will be replaced with ${foo}
-     *
+     * Expression preceded with the String won't be interpolated. For
+     * example {@code \${foo}} will be replaced with {@code ${foo}}.
+     * <br/>
+     * <b>Note: With 3.0.0 a default value has been defined.</b>
      * @since 2.3
      */
-    @Parameter( property = "maven.resources.escapeString" )
+    @Parameter( defaultValue = "\\" )
     protected String escapeString;
 
     /**
@@ -145,7 +147,7 @@ public class ResourcesMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.resources.overwrite", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean overwrite;
 
     /**
@@ -153,7 +155,7 @@ public class ResourcesMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.resources.includeEmptyDirs", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     protected boolean includeEmptyDirs;
 
     /**
@@ -169,13 +171,13 @@ public class ResourcesMojo
      *
      * @since 2.4
      */
-    @Parameter( property = "maven.resources.escapeWindowsPaths", defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     protected boolean escapeWindowsPaths;
 
     /**
      * <p>
      * Set of delimiters for expressions to filter within the resources. These delimiters are specified in the form
-     * 'beginToken*endToken'. If no '*' is given, the delimiter is assumed to be the same for start and end.
+     * {@code beginToken*endToken}. If no {@code *} is given, the delimiter is assumed to be the same for start and end.
      * </p>
      * <p>
      * So, the default filtering delimiters might be specified as:
@@ -188,7 +190,7 @@ public class ResourcesMojo
      * &lt;/delimiters&gt;
      * </pre>
      * <p>
-     * Since the '@' delimiter is the same on both ends, we don't need to specify '@*@' (though we can).
+     * Since the {@code @} delimiter is the same on both ends, we don't need to specify {@code @*@} (though we can).
      * </p>
      *
      * @since 2.4
@@ -261,7 +263,7 @@ public class ResourcesMojo
      *
      * @since 2.5
      */
-    @Parameter( property = "maven.resources.supportMultiLineFiltering", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean supportMultiLineFiltering;
 
     /**

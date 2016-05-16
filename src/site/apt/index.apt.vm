@@ -66,9 +66,7 @@ ${project.name}
 * Usage
 
   General instructions on how to use the Resources Plugin can be found on the {{{./usage.html}usage page}}. Some more
-  specific use cases are described in the examples given below. Last but not least, users occasionally contribute
-  additional examples, tips or errata to the
-  {{{http://docs.codehaus.org/display/MAVENUSER/Resources+Plugin}plugin's wiki page}}.
+  specific use cases are described in the examples given below.
 
   In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
   free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
@@ -86,7 +84,7 @@ ${project.name}
 * Examples
 
    The following examples show how to use the Resources Plugin in more advanced
-   usecases:
+   use cases:
 
    * {{{./examples/encoding.html}Specifying a character encoding scheme}}
 
@@ -99,5 +97,9 @@ ${project.name}
    * {{{./examples/escape-filtering.html}Escape filtering}}
 
    * {{{./examples/copy-resources.html}Copy resources}}
+
+   * {{{./examples/binaries-filtering.html}Binaries filtering}}
+
+   * {{{./examples/custom-resource-filters.html}Custom resources filters}}
 
    []

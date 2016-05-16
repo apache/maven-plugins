@@ -165,10 +165,12 @@ your.name = world
     ...
 +-----+
 
-  <<Warning:>> Do not filter files with binary content like images! This will most likely result in corrupt output. If
-  you have both text files and binary files as resources, you need to declare two mutually exclusive resource sets. The
-  first resource set defines the files to be filtered and the other resource set defines the files to copy
-  unaltered as illustrated below:
+  
+  <<Warning:>> Do not filter files with binary content like images! This will most likely result in corrupt output. 
+
+  If you have both text files and binary files as resources it is recommended to have two separated
+  folders. One folder <<<src/main/resources>>> (default) for the resources which are not filtered and 
+  another folder <<<src/main/resources-filtered>>> for the resources which are filtered.
 
 +-----+
 <project>
@@ -177,18 +179,8 @@ your.name = world
     ...
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>src/main/resources-filtered</directory>
         <filtering>true</filtering>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>**/*.xml</exclude>
-        </excludes>
       </resource>
       ...
     </resources>
@@ -197,3 +189,11 @@ your.name = world
   ...
 </project>
 +-----+
+
+  Now you can put those files into <<<src/main/resources>>> which should not filtered and the other files
+  into <<<src/main/resources-filtered>>>.
+  
+  As already mentioned filtering binary files like images,pdf`s  etc. could result in corrupted output.
+  To prevent such problems you can {{{./binaries-filtering.html}configure file extensions}}
+  which will not being filtered. 
+

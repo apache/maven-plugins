@@ -26,14 +26,13 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Binaries filtering
+Binary filtering
 
- Now the plugin will prevent binaries files filtering without adding some excludes configuration.
+ The plugin will prevent binary files filtering without adding some <<<excludes>>> configuration
+ for the following file extensions <<<jpg>>>, <<<jpeg>>>, <<<gif>>>, <<<bmp>>> and <<<png>>>.
  
- By default, files with extensions (jpg, jpeg, gif, bmp and png) won't be filtered anymore.
- 
- Users can add some extra file extensions to not apply filtering with the following configuration :
- 
+ If you like to add supplemental file extensions this can simply achieved by
+ using a configuration like the following:
 
 +-----+
 <project>
