@@ -63,12 +63,13 @@ import org.apache.maven.doxia.module.xdoc.XdocSink;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkAdapter;
-import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.sink.impl.SinkAdapter;
+import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
@@ -813,7 +814,7 @@ public class PdfMojo
     {
         if ( this.localesList == null )
         {
-            this.localesList = siteTool.getAvailableLocales( locales );
+            this.localesList = siteTool.getSiteLocales( locales );
         }
 
         return this.localesList;
@@ -830,11 +831,7 @@ public class PdfMojo
         {
             final Locale locale = getDefaultLocale();
 
-            final File basedir = project.getBasedir();
-            final String relativePath =
-                siteTool.getRelativePath( siteDirectory.getAbsolutePath(), basedir.getAbsolutePath() );
-
-            final File descriptorFile = siteTool.getSiteDescriptorFromBasedir( relativePath, basedir, locale );
+            final File descriptorFile = siteTool.getSiteDescriptor( siteDirectory, locale );
             DecorationModel decoration = null;
 
             if ( descriptorFile.exists() )
@@ -843,7 +840,6 @@ public class PdfMojo
                 try
                 {
                     reader = new XmlStreamReader( descriptorFile );
-                    String enc = reader.getEncoding();
 
                     String siteDescriptorContent = IOUtil.toString( reader );
 
@@ -921,18 +917,19 @@ public class PdfMojo
         try
         {
             final SiteRenderingContext context =
-                siteRenderer.createContextForSkin( skinFile, new HashMap( 2 ), decorationModel, project.getName(),
-                                                   locale );
+                siteRenderer.createContextForSkin( skinFile, new HashMap<String, Object>( 2 ), decorationModel,
+                                                   project.getName(), locale );
             context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
 
-            for ( final File siteDirectoryFile : context.getSiteDirectories() )
-            {
-                siteRenderer.copyResources( context, new File( siteDirectoryFile, "resources" ), workingDirectory );
-            }
+            siteRenderer.copyResources( context, workingDirectory );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "IOException: " + e.getMessage(), e );
+        }
+        catch ( RendererException e )
+        {
+            throw new MojoExecutionException( "RendererException: " + e.getMessage(), e );
         }
     }
 
