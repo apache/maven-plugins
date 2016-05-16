@@ -108,7 +108,7 @@ public class WarMojo
      * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or deploy
      * it to the local repository instead of the default one in an execution.
      */
-    @Parameter( property = "primaryArtifact", defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     private boolean primaryArtifact = true;
 
     /**
@@ -118,7 +118,7 @@ public class WarMojo
      *
      * @since 2.1-alpha-2
      */
-    @Parameter( property = "failOnMissingWebXml", defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     private boolean failOnMissingWebXml = true;
 
     /**

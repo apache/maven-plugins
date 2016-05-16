@@ -90,7 +90,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.0.1
      */
-    @Parameter( property = "archiveClasses", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean archiveClasses;
 
     /**
@@ -98,7 +98,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "resourceEncoding", defaultValue = "${project.build.sourceEncoding}" )
+    @Parameter( defaultValue = "${project.build.sourceEncoding}" )
     private String resourceEncoding;
 
     /**
@@ -166,7 +166,7 @@ public abstract class AbstractWarMojo
     /**
      * The path to the web.xml file to use.
      */
-    @Parameter( property = "maven.war.webxml" )
+    @Parameter
     private File webXml;
 
     /**
@@ -174,7 +174,7 @@ public abstract class AbstractWarMojo
      * different servlet containers. Apache Tomcat uses a configuration file named context.xml. The file will be copied
      * to the META-INF directory.
      */
-    @Parameter( property = "maven.war.containerConfigXML" )
+    @Parameter
     private File containerConfigXML;
 
     /**
@@ -206,7 +206,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.1-alpha-1
      */
-    @Parameter( property = "useCache", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean useCache = false;
 
     /**
@@ -233,13 +233,13 @@ public abstract class AbstractWarMojo
     /**
      * The comma separated list of tokens to include when copying the content of the warSourceDirectory.
      */
-    @Parameter( alias = "includes", defaultValue = "**" )
+    @Parameter( defaultValue = "**" )
     private String warSourceIncludes;
 
     /**
      * The comma separated list of tokens to exclude when copying the content of the warSourceDirectory.
      */
-    @Parameter( alias = "excludes" )
+    @Parameter
     private String warSourceExcludes;
 
     /**
@@ -282,7 +282,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.1-alpha-2
      */
-    @Parameter( property = "maven.war.filteringDeploymentDescriptors", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean filteringDeploymentDescriptors = false;
 
     /**
@@ -291,7 +291,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.1-alpha-2
      */
-    @Parameter( property = "maven.war.escapedBackslashesInFilePath", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean escapedBackslashesInFilePath = false;
 
     /**
@@ -300,7 +300,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.1-beta-1
      */
-    @Parameter( property = "maven.war.escapeString" )
+    @Parameter
     protected String escapeString;
 
     /**
@@ -323,7 +323,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.4
      */
-    @Parameter( property = "maven.war.supportMultiLineFiltering", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean supportMultiLineFiltering = false;
 
     /**
@@ -331,7 +331,7 @@ public abstract class AbstractWarMojo
      *
      * @since 2.4
      */
-    @Parameter( property = "maven.war.useJvmChmod", defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     private boolean useJvmChmod;
 
     /**
