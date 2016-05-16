@@ -32,9 +32,9 @@ Specifying a character encoding scheme
  A character encoding scheme such as <<<ASCII>>>, <<<UTF-8>>> or <<<UTF-16>>> can be chosen to be
  used for the reading and writing of files.
 
- The best practice is to define {{{https://maven.apache.org/general.html#encoding-warning}encoding}} for copying
- files via the property <<<${project.build.sourceEncoding}>>> which should be defined in the pom
- properties section like this:
+ The best practice is to {{{https://maven.apache.org/general.html#encoding-warning}define encoding}}
+ for copying filtered resources via the property <<<$\{project.build.sourceEncoding}>>> which should be
+ defined in the pom properties section like this:
  
 +-----+
 <project ...>
