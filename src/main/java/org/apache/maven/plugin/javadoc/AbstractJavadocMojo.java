@@ -2536,7 +2536,33 @@ public abstract class AbstractJavadocMojo
 
         populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
-        if ( isAggregator() && project.isExecutionRoot() )
+        if ( isAggregator() && project.isExecutionRoot() ) 
+        {
+            getAggregatorClasspath( classpathElements, compileArtifactMap );
+        }
+        
+        for ( Artifact a : compileArtifactMap.values() )
+        {
+            classpathElements.add( a.getFile().getPath() );
+        }
+
+        if ( additionalDependencies != null )
+        {
+            for ( Dependency dependency : additionalDependencies )
+            {
+                Artifact artifact = resolveDependency( dependency );
+                String path = artifact.getFile().getPath();
+                getLog().debug( "add additional artifact with path " + path );
+                classpathElements.add( path );
+            }
+        }
+
+        return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
+    }
+
+    private void getAggregatorClasspath( List<String> classpathElements, Map<String, Artifact> compileArtifactMap )
+        throws MavenReportException
+    {
         {
             List<Artifact> reactorArtifacts = new ArrayList<Artifact>();
             for ( MavenProject p : reactorProjects )
@@ -2603,7 +2629,7 @@ public abstract class AbstractJavadocMojo
                                 sb.append( subProject.getVersion() ).append( '\n' );
                                 for ( Artifact a : compileArtifactMap.values() )
                                 {
-                                    sb.append( a.getFile() ).append( '\n' );
+                                    sb.append( a.getFile().getPath() ).append( '\n' );
                                 }
 
                                 getLog().debug( sb.toString() );
@@ -2617,24 +2643,6 @@ public abstract class AbstractJavadocMojo
                 throw new MavenReportException( e.getMessage(), e );
             }
         }
-
-        for ( Artifact a : compileArtifactMap.values() )
-        {
-            classpathElements.add( a.getFile().toString() );
-        }
-
-        if ( additionalDependencies != null )
-        {
-            for ( Dependency dependency : additionalDependencies )
-            {
-                Artifact artifact = resolveDependency( dependency );
-                String path = artifact.getFile().toString();
-                getLog().debug( "add additional artifact with path " + path );
-                classpathElements.add( path );
-            }
-        }
-
-        return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
     }
 
     /**
