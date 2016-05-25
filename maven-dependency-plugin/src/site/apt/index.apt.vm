@@ -70,6 +70,8 @@ ${project.name}
   *{{{./go-offline-mojo.html}dependency:go-offline}} tells Maven to resolve everything this project is dependent on
   (dependencies, plugins, reports) in preparation for going offline.
 
+  *{{{./link-mojo.html}dependency:link}} like copy but creates symbolic links.
+
   *{{{./list-mojo.html}dependency:list}} alias for resolve that lists the dependencies for this project.
 
   *{{{./list-repositories-mojo.html}dependency:list-repositories}} displays all project dependencies and then lists the repositories used.
