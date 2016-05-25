@@ -29,31 +29,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugins.deploy.stubs.ArtifactDeployerStub;
 import org.apache.maven.plugins.deploy.stubs.ArtifactRepositoryStub;
 import org.apache.maven.plugins.deploy.stubs.DeployArtifactStub;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.Assume;
 import org.junit.Ignore;
-import org.junit.internal.builders.IgnoredBuilder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
-import org.sonatype.aether.repository.LocalRepositoryManager;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -467,10 +460,6 @@ public class DeployMojoTest
                               "deploy-test-file-1.0-SNAPSHOT.jar" );
         
         artifact.setFile( file );
-        
-        for( Artifact attachment :project.getAttachedArtifacts() )
-        {}
-        
         
         ArtifactRepositoryStub repo = getRepoStub( mojo );
         

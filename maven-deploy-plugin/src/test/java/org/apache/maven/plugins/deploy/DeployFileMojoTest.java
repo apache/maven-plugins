@@ -292,12 +292,6 @@ public class DeployFileMojoTest
 
         String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
 
-        String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
-
-        String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
-
-        String version = (String) getVariableValueFromObject( mojo, "version" );
-
         assertEquals( "legacy", repositoryLayout );
 
         try
