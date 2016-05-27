@@ -29,7 +29,6 @@ import org.codehaus.plexus.component.configurator.converters.ConfigurationConver
 import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.configuration.PlexusConfigurationException;
 
 /**
  * Custom Plexus ConfigurationConverter to instantiate <code>ToolchainRequirement</code> from configuration.
@@ -85,14 +84,7 @@ public class ToolchainConverter
             Map<String, String> parameters = new HashMap<String, String>();
             for ( PlexusConfiguration param : params )
             {
-                try
-                {
                     parameters.put( param.getName(), param.getValue() );
-                }
-                catch ( PlexusConfigurationException ex )
-                {
-                    throw new ComponentConfigurationException( ex );
-                }
             }
             map.put( type, parameters );
         }
