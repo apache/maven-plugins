@@ -60,7 +60,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenVersion>3.0</mavenVersion>
   </properties>
 
   <dependencies>
@@ -71,12 +71,13 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-toolchain</artifactId>
+      <artifactId>maven-core</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
