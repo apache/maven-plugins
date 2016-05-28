@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-toolchains-plugin</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Toolchains Plugin</name>
