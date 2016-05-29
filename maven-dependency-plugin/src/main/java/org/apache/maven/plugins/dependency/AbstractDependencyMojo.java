@@ -37,6 +37,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.archiver.zip.AbstractZipUnArchiver;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
@@ -176,10 +177,10 @@ public abstract class AbstractDependencyMojo
         }
     }
 
-    protected void unpack( Artifact artifact, File location )
+    protected void unpack( Artifact artifact, File location, String encoding )
         throws MojoExecutionException
     {
-        unpack( artifact, location, null, null );
+        unpack( artifact, location, null, null, encoding );
     }
 
     /**
@@ -191,14 +192,16 @@ public abstract class AbstractDependencyMojo
      *                 **&#47;*.properties</code>
      * @param excludes Comma separated list of file patterns to exclude i.e. <code>**&#47;*.xml,
      *                 **&#47;*.properties</code>
+     * @param encoding Encoding of artifact. Set {@code null} for default encoding.
      */
-    protected void unpack( Artifact artifact, File location, String includes, String excludes )
+    protected void unpack( Artifact artifact, File location, String includes, String excludes, String encoding )
         throws MojoExecutionException
     {
-        unpack( artifact, artifact.getType(), location, includes, excludes );
+        unpack( artifact, artifact.getType(), location, includes, excludes, encoding );
     }
     
-    protected void unpack( Artifact artifact, String type, File location, String includes, String excludes )
+    protected void unpack( Artifact artifact, String type, File location, String includes, String excludes,
+        String encoding )
                     throws MojoExecutionException
     {
         File file = artifact.getFile(); 
@@ -226,6 +229,12 @@ public abstract class AbstractDependencyMojo
             {
                 unArchiver = archiverManager.getUnArchiver( file );
                 getLog().debug( "Found unArchiver by extension: " + unArchiver );
+            }
+
+            if ( encoding != null && unArchiver instanceof AbstractZipUnArchiver )
+            {
+                ( ( AbstractZipUnArchiver ) unArchiver ).setEncoding( encoding );
+                getLog().info( "Unpacks with encoding '" + encoding + "'." );
             }
 
             unArchiver.setUseJvmChmod( useJvmChmod );
