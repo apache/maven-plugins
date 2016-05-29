@@ -89,7 +89,7 @@ public abstract class AbstractFromConfigurationMojo
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId, artifactId, version, type, classifier,
-     * outputDirectory, destFileName and overWrite.) See <a href="./usage.html">Usage</a> for details.
+     * outputDirectory, destFileName, overWrite and encoding.) See <a href="./usage.html">Usage</a> for details.
      *
      * @since 1.0
      */

@@ -95,6 +95,13 @@ public class ArtifactItem implements DependencyCoordinate
     private String overWrite;
 
     /**
+     * Encoding of artifact. Overrides default encoding.
+     *
+     * @parameter
+     */
+    private String encoding;
+
+    /**
      *
      */
     private boolean needsProcessing;
@@ -313,6 +320,24 @@ public class ArtifactItem implements DependencyCoordinate
     public void setOverWrite( String overWrite )
     {
         this.overWrite = overWrite;
+    }
+
+    /**
+     * @return Returns the encoding.
+     * @since 3.0
+     */
+    public String getEncoding()
+    {
+        return this.encoding;
+    }
+
+    /**
+     * @param encoding The encoding to set.
+     * @since 3.0
+     */
+    public void setEncoding( String encoding )
+    {
+        this.encoding = encoding;
     }
 
     /**

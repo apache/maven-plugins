@@ -126,7 +126,7 @@ public class UnpackMojo
         MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
         
         unpack( artifactItem.getArtifact(), artifactItem.getType(), artifactItem.getOutputDirectory(),
-                artifactItem.getIncludes(), artifactItem.getExcludes() );
+                artifactItem.getIncludes(), artifactItem.getExcludes(), artifactItem.getEncoding() );
         handler.setMarker();
     }
 
