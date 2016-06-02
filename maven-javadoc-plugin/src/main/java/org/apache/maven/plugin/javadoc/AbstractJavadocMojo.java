@@ -4731,7 +4731,7 @@ public abstract class AbstractJavadocMojo
 
         addArgIf( arguments, verbose, "-verbose" );
 
-        addArgIfNotEmpty( arguments, null, additionalparam );
+        addArgIfNotEmpty( arguments, null, additionalparam, false, false );
     }
 
     /**
