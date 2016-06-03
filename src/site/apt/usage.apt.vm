@@ -4,8 +4,9 @@
  Jerome Lacoste
  Dennis Lundberg
  Olivier Lamy
+ Karl Heinz Marbaise
  ------
- 2011-08-17
+ 2016-06-03
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -39,11 +40,8 @@ Usage
   To handle archiving this version of Maven JAR Plugin uses
   {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
 
-  <<Note:>> Originally, this plugin was meant to sign JARs as well. As of version 2.3, the corresponding goals are no
-  longer supported and users are advised to use the dedicated
-  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead. As of the
-  current version 2.5, the corresponding goals were removed.
-
+  <<Note:>> If you need to sign your JAR files you should use the 
+  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead. 
 
 * How to build a JAR file
 
