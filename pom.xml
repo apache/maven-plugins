@@ -67,11 +67,6 @@ under the License.
   <properties>
     <mavenFilteringVersion>3.1.1</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
-    <!--
-      ! Here we start with JDK 6 for release 3.X
-    -->
-    <maven.compiler.target>1.6</maven.compiler.target>
-    <maven.compiler.source>1.6</maven.compiler.source>
   </properties>
 
   <contributors>
