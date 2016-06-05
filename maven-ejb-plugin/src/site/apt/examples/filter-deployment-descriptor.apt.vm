@@ -57,4 +57,4 @@ Filter the deployment descriptor
 +-------+
 
   You can read more about filtering in the
-  {{{http://maven.apache.org/guides/getting-started/index.html#How_do_I_filter_resource_files}Getting Started Guide}}.
+  {{{/guides/getting-started/index.html#How_do_I_filter_resource_files}Getting Started Guide}}.
