@@ -159,7 +159,6 @@ under the License.
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
-              <version>1.10</version>
               <configuration>
                 <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                 <cloneClean>true</cloneClean>
