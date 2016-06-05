@@ -52,7 +52,7 @@ ${project.name}
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
   {{{./source-repository.html}source repository}} and will find supplementary information in the
-  {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
+  {{{/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 
@@ -67,6 +67,6 @@ ${project.name}
 
 * Related Links
 
-  * {{{http://maven.apache.org/shared/maven-archiver/index.html}How to configure the archive, including its manifest}}
+  * {{{/shared/maven-archiver/index.html}How to configure the archive, including its manifest}}
 
   []
