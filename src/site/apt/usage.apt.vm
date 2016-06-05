@@ -48,10 +48,10 @@ Usage
  []
 
   To handle archiving this version of Maven EJB Plugin uses
-  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+  {{{/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
 
   To handle filtering this version of Maven EJB Plugin uses
-  {{{http://maven.apache.org/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
+  {{{/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
 
   The plugin doesn't do any EJB specific processing during the generation of the JAR except for validating the existence
   of an EJB deployment descriptor if the EJB version is 2.0+, but it provides the following customization:
