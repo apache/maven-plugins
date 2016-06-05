@@ -31,20 +31,20 @@ Manifest customization
 * The Default Manifest
 
   The default contents of the manifest is described in the documentation for
-  {{{http://maven.apache.org/shared/maven-archiver/examples/manifest.html}Maven Archiver}}.
+  {{{/shared/maven-archiver/examples/manifest.html}Maven Archiver}}.
 
   Starting with version 2.1, the maven-jar-plugin uses Maven Archiver ${mavenArchiverVersion}. This
   means that it no longer creates the Specification and Implementation details
   in the manifest by default. If you want them you have to say so explicitly in
   your plugin configuration. This is also is described in the documentation for
-  {{{http://maven.apache.org/shared/maven-archiver/examples/manifest.html}Maven Archiver}}.
+  {{{/shared/maven-archiver/examples/manifest.html}Maven Archiver}}.
 
 * Customization the Manifest
 
   The default manifest can be altered with the <<<archive>>> configuration
   element. Below you will find some of the configuration options that are
   available. For more info see the
-  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver reference}}.
+  {{{/shared/maven-archiver/index.html}Maven Archiver reference}}.
 
 +-----------------+
 <project>

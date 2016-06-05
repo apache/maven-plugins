@@ -31,7 +31,7 @@ under the License.
           The archive parameter is a class that resides outside of this plugin,
           in the Maven Archiver component. You can find the documentation for
           Maven Archiver
-          <a href="http://maven.apache.org/shared/maven-archiver/index.html">here</a>.
+          <a href="/shared/maven-archiver/index.html">here</a>.
         </p>
       </answer>
     </faq>
