@@ -30,7 +30,7 @@ ${project.name}
 
   This plugin provides the capability to build jars.
   If you like to sign jars please use the 
-  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}}.
+  {{{/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}}.
 
 * Goals Overview
 
@@ -96,9 +96,9 @@ ${project.name}
 
   The plugin use Maven Archiver to handle jar content and manifest configuration.
 
-  You can have a look at the {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver Documentation}} to understand how to setup this.
+  You can have a look at the {{{/shared/maven-archiver/}Maven Archiver Documentation}} to understand how to setup this.
 
-  You might also want to consult the {{{http://maven.apache.org/guides/mini/guide-manifest.html}Guide
+  You might also want to consult the {{{/guides/mini/guide-manifest.html}Guide
   to Working with Manifests}}.
 
 * Examples

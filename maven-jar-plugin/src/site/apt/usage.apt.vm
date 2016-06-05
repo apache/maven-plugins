@@ -35,13 +35,13 @@ Usage
   configurations you should have a look at the 
   {{{./index.html#Examples}Example section}}.
   documentation for
-  {{{http://maven.apache.org/shared/maven-archiver/}Maven Archiver}}.
+  {{{/shared/maven-archiver/}Maven Archiver}}.
 
   To handle archiving this version of Maven JAR Plugin uses
-  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+  {{{/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
 
   <<Note:>> If you need to sign your JAR files you should use the 
-  {{{http://maven.apache.org/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead. 
+  {{{/plugins/maven-jarsigner-plugin/}Maven Jarsigner Plugin}} instead. 
 
 * How to build a JAR file
 
@@ -75,6 +75,6 @@ mvn package
   the files from <<<src/main/resources>>>.
 
   Usually there is no need to mentioned the 'maven-jar-plugin' explicit cause it's bound to
-  the {{{http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html}Maven Build Life Cycle}}.
+  the {{{/guides/introduction/introduction-to-the-lifecycle.html}Maven Build Life Cycle}}.
 
   For full documentation, click {{{./plugin-info.html}here}}.
