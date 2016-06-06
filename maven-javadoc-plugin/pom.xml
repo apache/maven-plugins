@@ -380,33 +380,10 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
-              <pomIncludes>
-                <pomInclude>additional-dependencies*/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-110/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-126/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-137/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-172/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-180/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-194/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-206/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-226/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-97/pom.xml</pomInclude>
-                <!-- pomInclude>**/MJAVADOC-181/pom.xml</pomInclude--><!-- seems to be wrong, see comment in Jira issue  -->
-                <pomInclude>MJAVADOC-250/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-257/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-259/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-262/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-275/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-280-*/pom.xml</pomInclude>
-                <pomInclude>site-failOnError/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-320/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-325/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-365/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-369/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-407/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-414/pom.xml</pomInclude>
-                <pomInclude>MJAVADOC-437/pom.xml</pomInclude>
-              </pomIncludes>
+              <pomExcludes>
+                <pomExclude>MJAVADOC-181/pom.xml</pomExclude> <!-- seems to be wrong, see comment in Jira issue  -->
+                <pomExclude>output-encoding/pom.xml</pomExclude>
+              </pomExcludes>
             </configuration>
           </plugin>
         </plugins>
