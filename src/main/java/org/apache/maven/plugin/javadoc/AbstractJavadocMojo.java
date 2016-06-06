@@ -2495,7 +2495,8 @@ public abstract class AbstractJavadocMojo
         // for the specified excludePackageNames
         if ( StringUtils.isNotEmpty( excludePackageNames ) )
         {
-            excluded.addAll( Arrays.asList( excludePackageNames.split( "[,:;]" ) ) );
+            List<String> packageNames = Arrays.asList( excludePackageNames.split( "[,:;]" ) );
+            excluded.addAll( trimValues( packageNames ) );
         }
 
         String[] result = new String[excluded.size()];
@@ -2509,6 +2510,21 @@ public abstract class AbstractJavadocMojo
             }
         }
 
+        return result;
+    }
+
+    private static List<String> trimValues( List<String> items )
+    {
+        List<String> result = new ArrayList<String>( items.size() );
+        for ( String item : items )
+        {
+            String trimmed = item.trim();
+            if ( StringUtils.isEmpty( trimmed ) )
+            {
+                continue;
+            }
+            result.add( trimmed );
+        }
         return result;
     }
 
