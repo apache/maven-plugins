@@ -32,12 +32,12 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.AbstractMojo;
@@ -48,6 +48,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.install.ArtifactInstaller;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -105,6 +106,9 @@ public class InstallMojo
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    private MavenSession session;
+    
     /**
      * The set of Maven projects in the reactor build.
      */
@@ -267,7 +271,9 @@ public class InstallMojo
 
             if ( installedArtifacts.add( artifact.getId() ) )
             {
-                installer.install( file, artifact, testRepository );
+                artifact.setFile( file );
+                installer.install( session.getProjectBuildingRequest(), new File( testRepository.getBasedir() ),
+                                   Collections.singletonList( artifact ) );
             }
             else
             {
