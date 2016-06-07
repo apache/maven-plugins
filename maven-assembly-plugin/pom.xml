@@ -62,7 +62,7 @@ under the License.
     <maven.compiler.target>1.6</maven.compiler.target>
 
     <mdoVersion>2.0.0</mdoVersion>
-    <mavenArchiverVersion>3.0.0</mavenArchiverVersion>
+    <mavenArchiverVersion>3.1.0</mavenArchiverVersion>
     <mavenFilteringVersion>3.0.0</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
     <testOutputToFile>true</testOutputToFile>
