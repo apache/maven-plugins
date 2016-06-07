@@ -65,9 +65,12 @@ import org.apache.maven.plugin.registry.TrackableBase;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.MavenSettingsBuilder;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
+import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
+import org.apache.maven.settings.building.SettingsBuilder;
+import org.apache.maven.settings.building.SettingsBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.invoker.CommandLineConfigurationException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -95,7 +98,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Provides common code for mojos invoking sub builds.
@@ -252,7 +254,7 @@ public abstract class AbstractInvokerMojo
     private Invoker invoker;
 
     @Component
-    private MavenSettingsBuilder settingsBuilder;
+    private SettingsBuilder settingsBuilder;
 
     /**
      * Relative path of a selector script to run prior in order to decide if the build should be executed. This script
@@ -1170,18 +1172,17 @@ public abstract class AbstractInvokerMojo
                 // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
                 try
                 {
-                    Settings dominantSettings = settingsBuilder.buildSettings( interpolatedSettingsFile, false );
+                    SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+                    request.setGlobalSettingsFile( interpolatedSettingsFile );
+                    
+                    Settings dominantSettings = settingsBuilder.build( request ).getEffectiveSettings();
                     Settings recessiveSettings = cloneSettings();
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
 
                     mergedSettings = dominantSettings;
                     getLog().debug( "Merged specified settings file with settings of invoking process" );
                 }
-                catch ( XmlPullParserException e )
-                {
-                    throw new MojoExecutionException( "Could not read specified settings file", e );
-                }
-                catch ( IOException e )
+                catch ( SettingsBuildingException e )
                 {
                     throw new MojoExecutionException( "Could not read specified settings file", e );
                 }
