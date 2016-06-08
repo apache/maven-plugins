@@ -60,7 +60,7 @@
   </distributionManagement>
 
   <properties>
-    <mavenArchiverVersion>3.0.2</mavenArchiverVersion>
+    <mavenArchiverVersion>3.1.0</mavenArchiverVersion>
     <mavenFilteringVersion>3.1.0</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
   </properties>
