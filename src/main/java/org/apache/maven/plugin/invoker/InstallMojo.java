@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
@@ -34,8 +33,6 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -49,6 +46,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.install.ArtifactInstaller;
+import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
+import org.apache.maven.shared.dependency.resolve.DependencyResolver;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 import org.apache.maven.shared.repository.RepositoryManager;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -165,17 +165,7 @@ public class InstallMojo
     /**
      */
     @Component
-    private ArtifactResolver resolver;
-
-    /**
-     */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true )
-    private List<ArtifactRepository> remoteArtifactRepositories;
-
-    /**
-     */
-    @Parameter( defaultValue = "${project.pluginArtifactRepositories}", readonly = true )
-    private List<ArtifactRepository> remotePluginRepositories;
+    private DependencyResolver resolver;
 
     /**
      */
@@ -583,8 +573,6 @@ public class InstallMojo
             return;
         }
 
-        Artifact originatingArtifact = project.getArtifact();
-
         for ( String extraArtifact : extraArtifacts )
         {
             String[] gav = extraArtifact.split( ":" );
@@ -609,42 +597,20 @@ public class InstallMojo
                 classifier = gav[4];
             }
 
-            List<ArtifactRepository> remoteRepositories;
-            if ( "maven-plugin".equals( type ) )
-            {
-                remoteRepositories = this.remotePluginRepositories;
-            }
-            else
-            {
-                remoteRepositories = this.remoteArtifactRepositories;
-            }
-
-            Artifact artifact = null;
+            DefaultDependencyCoordinate coordinate = new DefaultDependencyCoordinate();
             try
             {
-                artifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+                coordinate.setGroupId( groupId );
+                coordinate.setArtifactId( artifactId );
+                coordinate.setVersion( version );
+                coordinate.setType( type );
+                coordinate.setClassifier( classifier );
 
-                ArtifactResolutionResult arr =
-                    resolver.resolveTransitively( Collections.singleton( artifact ), originatingArtifact,
-                                                  remoteRepositories, localRepository, artifactMetadataSource );
-
-                if ( !groupId.equals( artifact.getGroupId() ) || !artifactId.equals( artifact.getArtifactId() )
-                    || !version.equals( artifact.getVersion() ) )
-                {
-                    artifact =
-                        artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
-                    copyPoms( artifact );
-                }
-
-                for ( Artifact arrArtifact : arr.getArtifacts() )
-                {
-                    copyArtifact( arrArtifact );
-                }
+                resolver.resolveDependencies( projectBuildingRequest, coordinate, null );
             }
-            catch ( Exception e )
+            catch ( DependencyResolverException e )
             {
-                throw new MojoExecutionException( "Unable to resolve dependencies for: " + artifact, e );
+                throw new MojoExecutionException( "Unable to resolve dependencies for: " + coordinate, e );
             }
         }
     }
