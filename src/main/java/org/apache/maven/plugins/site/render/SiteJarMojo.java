@@ -205,7 +205,7 @@ public class SiteJarMojo
             archiver.getArchiver().addDirectory( siteDirectory, getArchiveIncludes(), getArchiveExcludes() );
         }
 
-        archiver.createArchive( project, archive );
+        archiver.createArchive( getSession(), getProject(), archive );
 
         return siteJar;
     }
