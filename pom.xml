@@ -132,6 +132,12 @@ under the License.
       <artifactId>maven-script-interpreter</artifactId>
       <version>1.1</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-artifact-transfer</artifactId>
+      <version>3.0.0-SNAPSHOT</version>
+    </dependency>
 
     <!-- Doxia -->
     <dependency>
