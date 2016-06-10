@@ -30,9 +30,7 @@ import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -83,12 +81,6 @@ public class InstallMojo
      */
     @Component
     private ArtifactFactory artifactFactory;
-
-    /**
-     * The component used to create artifacts.
-     */
-    @Component
-    private ArtifactRepositoryFactory repositoryFactory;
 
     /**
      */
@@ -166,11 +158,6 @@ public class InstallMojo
      */
     @Component
     private DependencyResolver resolver;
-
-    /**
-     */
-    @Component
-    private ArtifactMetadataSource artifactMetadataSource;
 
     private ProjectBuildingRequest projectBuildingRequest;
 
@@ -250,7 +237,7 @@ public class InstallMojo
             if ( installedArtifacts.add( artifact.getId() ) )
             {
                 artifact.setFile( file );
-                installer.install( session.getProjectBuildingRequest(), localRepositoryPath,
+                installer.install( projectBuildingRequest, localRepositoryPath,
                                    Collections.singletonList( artifact ) );
             }
             else
@@ -432,7 +419,7 @@ public class InstallMojo
         Collection<String> dependencyProjects = new LinkedHashSet<String>();
 
         // index available reactor projects
-        Map<String, MavenProject> projects = new HashMap<String, MavenProject>();
+        Map<String, MavenProject> projects = new HashMap<String, MavenProject>( reactorProjects.size() );
         for ( MavenProject reactorProject : reactorProjects )
         {
             String projectId =
