@@ -83,6 +83,7 @@ under the License.
     <!-- <module>maven-jar-plugin</module> -->
     <module>maven-jarsigner-plugin</module>
     <module>maven-javadoc-plugin</module>
+    <module>maven-jdeps-plugin</module>
     <module>maven-linkcheck-plugin</module>
     <module>maven-patch-plugin</module>
     <module>maven-pdf-plugin</module>
