@@ -145,14 +145,6 @@ public class FixJavadocMojoTest
     public void testFixJdk5()
         throws Exception
     {
-        if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
-        {
-            getContainer().getLogger().warn(
-                                             "JDK 5.0 or more is required to run fix for '" + getClass().getName()
-                                                 + "#" + getName() + "()'." );
-            return;
-        }
-
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk5-test" );
         executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
             "InterfaceWithJavadoc.java", "InterfaceWithNoJavadoc.java", "SubClassWithJavadoc.java" } );
@@ -164,14 +156,6 @@ public class FixJavadocMojoTest
     public void testFixJdk6()
         throws Exception
     {
-        if ( !SystemUtils.isJavaVersionAtLeast( 1.6f ) )
-        {
-            getContainer().getLogger().warn(
-                                             "JDK 6.0 or more is required to run fix for '" + getClass().getName()
-                                                 + "#" + getName() + "()'." );
-            return;
-        }
-
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk6-test" );
         executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "InterfaceWithJavadoc.java" } );
     }
@@ -499,14 +483,6 @@ public class FixJavadocMojoTest
     public void testJavadocCommentJdk5()
         throws Throwable
     {
-        if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
-        {
-            getContainer().getLogger().warn(
-                                             "JDK 5.0 or more is required to run fix for '" + getClass().getName()
-                                                 + "#" + getName() + "()'." );
-            return;
-        }
-
         String content = "/**" + EOL +
                 " * Dummy Class." + EOL +
                 " */" + EOL +
