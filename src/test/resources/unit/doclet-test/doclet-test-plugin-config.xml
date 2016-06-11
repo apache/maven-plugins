@@ -65,7 +65,6 @@ under the License.
           <stylesheet>java</stylesheet>
           <groups/>
           <tags/>
-          <remoteRepositories/>
           <use>true</use>
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Doclet Test 1.0-SNAPSHOT API</windowtitle>
