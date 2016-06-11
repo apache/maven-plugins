@@ -215,6 +215,11 @@ under the License.
       <artifactId>maven-reporting-exec</artifactId>
       <version>1.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>1.12</version>
+    </dependency>
 
     <!-- Maven -->
     <dependency>
