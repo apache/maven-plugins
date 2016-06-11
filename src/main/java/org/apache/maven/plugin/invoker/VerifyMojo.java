@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +132,15 @@ public class VerifyMojo
 
         if ( !suppressSummaries )
         {
-            invokerSession.logSummary( getLog(), ignoreFailures );
+            try
+            {
+                AnsiConsole.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
+                invokerSession.logSummary( getLog(), ignoreFailures );
+            }
+            finally
+            {
+                AnsiConsole.systemUninstall();
+            }
         }
 
         invokerSession.handleFailures( getLog(), ignoreFailures );
