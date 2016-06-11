@@ -836,7 +836,6 @@ public class JavadocReportTest
         legacySupport.setSession( session );
         
         setVariableValueToObject( mojo, "settings", settings );
-        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "session", session );
         mojo.execute();
 
@@ -875,7 +874,6 @@ public class JavadocReportTest
 
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             setVariableValueToObject( mojo, "settings", settings );
-            setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
             setVariableValueToObject( mojo, "session", session );
             mojo.execute();
             readed = readFile( commandLine );
@@ -924,7 +922,6 @@ public class JavadocReportTest
 
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             setVariableValueToObject( mojo, "settings", settings );
-            setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
             setVariableValueToObject( mojo, "session", session );
             mojo.execute();
             readed = readFile( commandLine );
@@ -1043,8 +1040,6 @@ public class JavadocReportTest
         when( session.getRepositorySession() ).thenReturn( repositorySession );
         LegacySupport legacySupport = lookup( LegacySupport.class );
         legacySupport.setSession( session );
-        
-        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "session", session );
 
         mojo.execute();
@@ -1099,8 +1094,6 @@ public class JavadocReportTest
         when( session.getRepositorySession() ).thenReturn( repositorySession );
         LegacySupport legacySupport = lookup( LegacySupport.class );
         legacySupport.setSession( session );
-        
-        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "session", session );
 
         File apidocs = new File( getBasedir(), "target/test/unit/stylesheetfile-test/target/site/apidocs" );
@@ -1208,8 +1201,6 @@ public class JavadocReportTest
         when( session.getRepositorySession() ).thenReturn( repositorySession );
         LegacySupport legacySupport = lookup( LegacySupport.class );
         legacySupport.setSession( session );
-
-        setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
         setVariableValueToObject( mojo, "session", session );
 
         File apidocs = new File( getBasedir(), "target/test/unit/helpfile-test/target/site/apidocs" );

@@ -432,12 +432,6 @@ public abstract class AbstractJavadocMojo
     private ArtifactRepository localRepository;
 
     /**
-     * The remote repositories where artifacts are located.
-     */
-    @Parameter( property = "project.remoteArtifactRepositories" )
-    private List<ArtifactRepository> remoteRepositories;
-
-    /**
      * The projects in the reactor for aggregation report.
      */
     @Parameter( property = "reactorProjects", readonly = true )
