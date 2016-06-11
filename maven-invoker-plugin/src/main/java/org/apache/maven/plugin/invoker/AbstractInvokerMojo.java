@@ -81,6 +81,7 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.project.utils.AnsiUtils;
 import org.apache.maven.shared.scriptinterpreter.RunErrorException;
 import org.apache.maven.shared.scriptinterpreter.RunFailureException;
 import org.apache.maven.shared.scriptinterpreter.ScriptRunner;
@@ -100,7 +101,6 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.fusesource.jansi.AnsiConsole;
 
 /**
  * Provides common code for mojos invoking sub builds.
@@ -1250,7 +1250,7 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            AnsiConsole.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
+            AnsiUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
 
             if ( runWithParallelThreads > 1 )
             {
@@ -1304,7 +1304,7 @@ public abstract class AbstractInvokerMojo
             {
                 mergedSettingsFile.delete();
             }
-            AnsiConsole.systemUninstall();
+            AnsiUtils.systemUninstall();
         }
     }
 
