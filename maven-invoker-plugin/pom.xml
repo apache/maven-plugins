@@ -209,6 +209,11 @@ under the License.
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>1.12</version>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -318,6 +323,20 @@ under the License.
           </plugins>
         </pluginManagement>
 
+      </build>
+    </profile>
+    <profile>
+      <id>dev</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-invoker-plugin</artifactId>
+              <version>${project.version}</version>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
