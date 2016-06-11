@@ -26,9 +26,9 @@ import org.apache.maven.plugin.invoker.model.io.xpp3.BuildJobXpp3Reader;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.project.utils.AnsiUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,12 +134,12 @@ public class VerifyMojo
         {
             try
             {
-                AnsiConsole.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
+                AnsiUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
                 invokerSession.logSummary( getLog(), ignoreFailures );
             }
             finally
             {
-                AnsiConsole.systemUninstall();
+                AnsiUtils.systemUninstall();
             }
         }
 
