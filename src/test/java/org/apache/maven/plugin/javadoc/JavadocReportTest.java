@@ -517,14 +517,6 @@ public class JavadocReportTest
     public void testJdk5()
         throws Exception
     {
-        if ( !SystemUtils.isJavaVersionAtLeast( 1.5f ) )
-        {
-            getContainer().getLogger().warn(
-                                             "JDK 5.0 or more is required to run javadoc for '"
-                                                 + getClass().getName() + "#" + getName() + "()'." );
-            return;
-        }
-
         File testPom = new File( unit, "jdk5-test/jdk5-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
@@ -741,14 +733,6 @@ public class JavadocReportTest
     public void testJdk6()
         throws Exception
     {
-        if ( !SystemUtils.isJavaVersionAtLeast( 1.6f ) )
-        {
-            getContainer().getLogger().warn(
-                                             "JDK 6.0 or more is required to run javadoc for '"
-                                                 + getClass().getName() + "#" + getName() + "()'." );
-            return;
-        }
-
         File testPom = new File( unit, "jdk6-test/jdk6-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         mojo.execute();
