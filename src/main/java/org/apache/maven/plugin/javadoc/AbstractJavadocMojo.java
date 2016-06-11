@@ -814,28 +814,6 @@ public abstract class AbstractJavadocMojo
     private File overview;
 
     /**
-     * Specifies the proxy host where the javadoc web access in <code>-link</code> would pass through.
-     * It defaults to the proxy host of the active proxy set in the <code>settings.xml</code>, otherwise it gets the
-     * proxy configuration set in the pom.
-     * <br/>
-     *
-     * @deprecated since 2.4. Instead of, configure an active proxy host in <code>settings.xml</code>.
-     */
-    @Parameter( property = "proxyHost" )
-    private String proxyHost;
-
-    /**
-     * Specifies the proxy port where the javadoc web access in <code>-link</code> would pass through.
-     * It defaults to the proxy port of the active proxy set in the <code>settings.xml</code>, otherwise it gets the
-     * proxy configuration set in the pom.
-     * <br/>
-     *
-     * @deprecated since 2.4. Instead of, configure an active proxy port in <code>settings.xml</code>.
-     */
-    @Parameter( property = "proxyPort" )
-    private int proxyPort;
-
-    /**
      * Shuts off non-error and non-warning messages, leaving only the warnings and errors appear, making them
      * easier to view.
      * <br/>
@@ -3509,27 +3487,6 @@ public abstract class AbstractJavadocMojo
      */
     private void addProxyArg( Commandline cmd )
     {
-        // backward compatible
-        if ( StringUtils.isNotEmpty( proxyHost ) )
-        {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "The Javadoc plugin parameter 'proxyHost' is deprecated since 2.4. "
-                                   + "Please configure an active proxy in your settings.xml." );
-            }
-            cmd.createArg().setValue( "-J-DproxyHost=" + proxyHost );
-
-            if ( proxyPort > 0 )
-            {
-                if ( getLog().isWarnEnabled() )
-                {
-                    getLog().warn( "The Javadoc plugin parameter 'proxyPort' is deprecated since 2.4. "
-                                       + "Please configure an active proxy in your settings.xml." );
-                }
-                cmd.createArg().setValue( "-J-DproxyPort=" + proxyPort );
-            }
-        }
-
         if ( settings == null || settings.getActiveProxy() == null )
         {
             return;
