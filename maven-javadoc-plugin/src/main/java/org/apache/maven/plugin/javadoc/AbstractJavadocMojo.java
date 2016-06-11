@@ -93,14 +93,16 @@ import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
@@ -302,14 +304,17 @@ public abstract class AbstractJavadocMojo
      */
     @Component
     private ArtifactResolver resolver;
+    
+    @Component
+    private org.apache.maven.shared.artifact.resolve.ArtifactResolver artifactResolver;
 
     /**
      * Project builder
      *
-     * @since 2.5
+     * @since 3.0
      */
     @Component
-    private MavenProjectBuilder mavenProjectBuilder;
+    private ProjectBuilder mavenProjectBuilder;
 
     /** */
     @Component
@@ -2653,13 +2658,9 @@ public abstract class AbstractJavadocMojo
                                                                   dependency.getClassifier() );
         try
         {
-            resolver.resolve( artifact, remoteRepositories, localRepository );
+            artifact = artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), artifact ).getArtifact();
         }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MavenReportException( "artifact not found - " + e.getMessage(), e );
-        }
-        catch ( ArtifactResolutionException e )
+        catch ( ArtifactResolverException e )
         {
             throw new MavenReportException( "artifact resolver problem - " + e.getMessage(), e );
         }
@@ -3423,7 +3424,7 @@ public abstract class AbstractJavadocMojo
 
             // Find its transitive dependencies in the local repo
             MavenProject artifactProject =
-                mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+                mavenProjectBuilder.build( artifact, session.getProjectBuildingRequest() ).getProject();
             Set<Artifact> dependencyArtifacts = artifactProject.createArtifacts( factory, null, null );
             if ( !dependencyArtifacts.isEmpty() )
             {
@@ -3457,7 +3458,7 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Unable to build the Maven project for the artifact:" + javadocArtifact,
                                             e );
         }
-        catch ( InvalidDependencyVersionException e )
+        catch ( ArtifactResolverException e )
         {
             throw new MavenReportException( "Unable to resolve artifact:" + javadocArtifact, e );
         }
@@ -3468,27 +3469,17 @@ public abstract class AbstractJavadocMojo
      *
      * @param javadocArtifact the {@link JavadocPathArtifact} to resolve
      * @return a resolved {@link Artifact}
-     * @throws ArtifactResolutionException if the resolution of the artifact failed.
-     * @throws ArtifactNotFoundException   if the artifact hasn't been found.
-     * @throws ProjectBuildingException    if the artifact POM could not be build.
+     * @throws ArtifactResolverException 
      */
     private Artifact createAndResolveArtifact( JavadocPathArtifact javadocArtifact )
-        throws ArtifactResolutionException, ArtifactNotFoundException, ProjectBuildingException
+        throws ArtifactResolverException
     {
-        Artifact artifact =
-            factory.createProjectArtifact( javadocArtifact.getGroupId(), javadocArtifact.getArtifactId(),
-                                           javadocArtifact.getVersion(), Artifact.SCOPE_COMPILE );
+        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+        coordinate.setGroupId( javadocArtifact.getGroupId() );
+        coordinate.setArtifactId( javadocArtifact.getArtifactId() );
+        coordinate.setVersion( javadocArtifact.getVersion() );
 
-        if ( artifact.getFile() == null )
-        {
-            MavenProject pluginProject =
-                mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
-            artifact = pluginProject.getArtifact();
-
-            resolver.resolve( artifact, remoteRepositories, localRepository );
-        }
-
-        return artifact;
+        return artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), coordinate ).getArtifact();
     }
 
     /**
@@ -4241,17 +4232,9 @@ public abstract class AbstractJavadocMojo
             {
                 artifact = createAndResolveArtifact( item );
             }
-            catch ( ArtifactResolutionException e )
+            catch ( ArtifactResolverException e )
             {
                 throw new MavenReportException( "Unable to resolve artifact:" + item, e );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                throw new MavenReportException( "Unable to find artifact:" + item, e );
-            }
-            catch ( ProjectBuildingException e )
-            {
-                throw new MavenReportException( "Unable to build the Maven project for the artifact:" + item, e );
             }
 
             unArchiver.setSourceFile( artifact.getFile() );
@@ -5033,18 +5016,9 @@ public abstract class AbstractJavadocMojo
                 {
                     artifact = createAndResolveArtifact( aTagletArtifact );
                 }
-                catch ( ArtifactResolutionException e )
+                catch ( ArtifactResolverException e )
                 {
                     throw new MavenReportException( "Unable to resolve artifact:" + aTagletArtifact, e );
-                }
-                catch ( ArtifactNotFoundException e )
-                {
-                    throw new MavenReportException( "Unable to find artifact:" + aTagletArtifact, e );
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    throw new MavenReportException(
-                        "Unable to build the Maven project for the artifact:" + aTagletArtifact, e );
                 }
 
                 tagletsPath.add( artifact.getFile().getAbsolutePath() );
@@ -5589,7 +5563,7 @@ public abstract class AbstractJavadocMojo
             try
             {
                 MavenProject artifactProject =
-                    mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+                    mavenProjectBuilder.build( artifact, session.getProjectBuildingRequest() ).getProject();
 
                 if ( StringUtils.isNotEmpty( artifactProject.getUrl() ) )
                 {

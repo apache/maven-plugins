@@ -19,6 +19,9 @@ package org.apache.maven.plugin.javadoc.stubs;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.stubs.ArtifactStub;
@@ -60,13 +63,17 @@ public class ProxyTestMavenProjectStub
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
 
-        ArtifactStub artifact = new ArtifactStub();
-        artifact.setGroupId( "commons-logging" );
-        artifact.setArtifactId( "commons-logging" );
-        artifact.setVersion( "1.1.1" );
-        artifact.setScope( Artifact.SCOPE_RUNTIME );
-        artifact.setType( "jar" );
-        artifact.setFile( getBasedir() );
+        
+        Artifact artifact = mock( Artifact.class );
+        when( artifact.getGroupId()).thenReturn( "commons-logging" );
+        when( artifact.getArtifactId()).thenReturn( "commons-logging" );
+        when( artifact.getVersion()).thenReturn( "1.1.1" );
+        when( artifact.getScope()).thenReturn( Artifact.SCOPE_RUNTIME );
+        when( artifact.getType()).thenReturn( "jar" );
+        when( artifact.getFile()).thenReturn( getBasedir() );
+        DefaultArtifactHandlerStub artifactHandler = new DefaultArtifactHandlerStub();
+        artifactHandler.setExtension( "jar" );
+        when( artifact.getArtifactHandler()).thenReturn( artifactHandler );
 
         dependencyArtifacts.add( artifact );
     }

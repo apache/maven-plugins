@@ -18,22 +18,34 @@ package org.apache.maven.plugin.javadoc;
  * specific language governing permissions and limitations
  * under the License.
  */
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 
 /**
  * Test {@link org.apache.maven.plugin.javadoc.JavadocReport} class.
@@ -50,6 +62,8 @@ public class JavadocReportTest
     private static boolean TEST_REPO_CREATED = false;
 
     private File unit;
+    
+    private File localRepo;
 
     /** {@inheritDoc} */
     protected void setUp()
@@ -59,6 +73,8 @@ public class JavadocReportTest
 
         unit = new File( getBasedir(), "src/test/resources/unit" );
 
+        localRepo = new File( getBasedir(), "target/local-repo/" );
+        
         createTestRepo();
     }
 
@@ -75,7 +91,6 @@ public class JavadocReportTest
             return;
         }
 
-        File localRepo = new File( getBasedir(), "target/local-repo/" );
         localRepo.mkdirs();
 
         // ----------------------------------------------------------------------
@@ -371,6 +386,20 @@ public class JavadocReportTest
 
         File testPom = new File( unit, "doclet-test/doclet-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        
+        MavenSession session = spy( newMavenSession( mojo.project ) );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.getRemoteRepositories() ).thenReturn( mojo.project.getRemoteArtifactRepositories() );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        when( session.getRepositorySession() ).thenReturn( repositorySession );
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( session );
+        
+        setVariableValueToObject( mojo, "session", session );
+        
         mojo.execute();
 
         File generatedFile = new File( getBasedir(), "target/test/unit/doclet-test/target/site/apidocs/graph.dot" );
@@ -388,6 +417,7 @@ public class JavadocReportTest
 
         testPom = new File( unit, "doclet-path-test/doclet-path-test-plugin-config.xml" );
         mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        setVariableValueToObject( mojo, "session", session );
         mojo.execute();
 
         generatedFile = new File( getBasedir(), "target/test/unit/doclet-test/target/site/apidocs/graph.dot" );
@@ -497,6 +527,20 @@ public class JavadocReportTest
 
         File testPom = new File( unit, "taglet-test/taglet-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        
+        MavenSession session = spy( newMavenSession( mojo.project ) );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.getRemoteRepositories() ).thenReturn( mojo.project.getRemoteArtifactRepositories() );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        when( session.getRepositorySession() ).thenReturn( repositorySession );
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( session );
+        
+        setVariableValueToObject( mojo, "session", session );
+        
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/taglet-test/target/site/apidocs" );
@@ -779,9 +823,21 @@ public class JavadocReportTest
 
         File testPom = new File( getBasedir(), "src/test/resources/unit/proxy-test/proxy-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
-        assertNotNull( mojo );
+        
+        MavenSession session = spy( newMavenSession( mojo.project ) );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.getRemoteRepositories() ).thenReturn( mojo.project.getRemoteArtifactRepositories() );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        when( session.getRepositorySession() ).thenReturn( repositorySession );
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( session );
+        
         setVariableValueToObject( mojo, "settings", settings );
         setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "session", session );
         mojo.execute();
 
         File commandLine = new File( getBasedir(), "target/test/unit/proxy-test/target/site/apidocs/javadoc." + ( SystemUtils.IS_OS_WINDOWS ? "bat" : "sh" ) );
@@ -820,6 +876,7 @@ public class JavadocReportTest
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             setVariableValueToObject( mojo, "settings", settings );
             setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+            setVariableValueToObject( mojo, "session", session );
             mojo.execute();
             readed = readFile( commandLine );
             assertTrue( readed.contains( "-J-Dhttp.proxySet=true" ) );
@@ -868,6 +925,7 @@ public class JavadocReportTest
             mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
             setVariableValueToObject( mojo, "settings", settings );
             setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+            setVariableValueToObject( mojo, "session", session );
             mojo.execute();
             readed = readFile( commandLine );
             assertTrue( readed.contains( "-J-Dhttp.proxySet=true" ) );
@@ -975,7 +1033,19 @@ public class JavadocReportTest
         File testPom = new File( unit, "tagletArtifacts-test/tagletArtifacts-test-plugin-config.xml" );
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
 
+        MavenSession session = spy( newMavenSession( mojo.project ) );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.getRemoteRepositories() ).thenReturn( mojo.project.getRemoteArtifactRepositories() );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        when( session.getRepositorySession() ).thenReturn( repositorySession );
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( session );
+        
         setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "session", session );
 
         mojo.execute();
 
@@ -1019,7 +1089,19 @@ public class JavadocReportTest
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         assertNotNull( mojo );
 
+        MavenSession session = spy( newMavenSession( mojo.project ) );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.getRemoteRepositories() ).thenReturn( mojo.project.getRemoteArtifactRepositories() );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        when( session.getRepositorySession() ).thenReturn( repositorySession );
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( session );
+        
         setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "session", session );
 
         File apidocs = new File( getBasedir(), "target/test/unit/stylesheetfile-test/target/site/apidocs" );
 
@@ -1112,11 +1194,23 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "helpfile-test/pom.xml" );
-
+        
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
         assertNotNull( mojo );
 
+        MavenSession session = spy( newMavenSession( mojo.project ) );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.getRemoteRepositories() ).thenReturn( mojo.project.getRemoteArtifactRepositories() );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        when( session.getRepositorySession() ).thenReturn( repositorySession );
+        LegacySupport legacySupport = lookup( LegacySupport.class );
+        legacySupport.setSession( session );
+
         setVariableValueToObject( mojo, "remoteRepositories", mojo.project.getRemoteArtifactRepositories() );
+        setVariableValueToObject( mojo, "session", session );
 
         File apidocs = new File( getBasedir(), "target/test/unit/helpfile-test/target/site/apidocs" );
 
@@ -1134,6 +1228,9 @@ public class JavadocReportTest
 
         // helpfile defined in a javadoc plugin dependency
         setVariableValueToObject( mojo, "helpfile", "com/mycompany/app/javadoc/helpfile/help-doc.html" );
+        
+        setVariableValueToObject( mojo, "session", session );
+        
         mojo.execute();
 
         content = readFile( helpfile );
