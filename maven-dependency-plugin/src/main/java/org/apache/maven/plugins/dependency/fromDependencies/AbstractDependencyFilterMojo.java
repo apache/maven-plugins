@@ -53,7 +53,7 @@ import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
-import org.apache.maven.shared.dependency.resolve.DependencyResolver;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.util.StringUtils;
 
 /**

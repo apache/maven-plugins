@@ -39,8 +39,8 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
-import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
-import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
@@ -108,7 +108,7 @@ public class ResolvePluginsMojo
 
                 if ( !excludeTransitive )
                 {
-                    DefaultDependencyCoordinate pluginCoordinate = new DefaultDependencyCoordinate();
+                    DefaultDependableCoordinate pluginCoordinate = new DefaultDependableCoordinate();
                     pluginCoordinate.setGroupId( plugin.getGroupId() );
                     pluginCoordinate.setArtifactId( plugin.getArtifactId() );
                     pluginCoordinate.setVersion( plugin.getVersion() );

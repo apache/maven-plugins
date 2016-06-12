@@ -40,9 +40,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
-import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
-import org.apache.maven.shared.dependency.resolve.DependencyResolver;
-import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -77,7 +77,7 @@ public class GetMojo
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
-    private DefaultDependencyCoordinate coordinate = new DefaultDependencyCoordinate();
+    private DefaultDependableCoordinate coordinate = new DefaultDependableCoordinate();
     
     /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.

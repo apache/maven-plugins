@@ -24,7 +24,7 @@ import java.io.File;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
-import org.apache.maven.shared.dependency.DependencyCoordinate;
+import org.apache.maven.shared.dependencies.DependableCoordinate;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-public class ArtifactItem implements DependencyCoordinate
+public class ArtifactItem implements DependableCoordinate
 {
     /**
      * Group Id of Artifact
