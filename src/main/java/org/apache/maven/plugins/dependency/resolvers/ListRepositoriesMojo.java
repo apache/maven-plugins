@@ -29,7 +29,6 @@ import org.apache.maven.shared.dependencies.collect.CollectorResult;
 import org.apache.maven.shared.dependencies.collect.DependencyCollector;
 import org.apache.maven.shared.dependencies.collect.DependencyCollectorException;
 import org.apache.maven.shared.project.DefaultProjectCoordinate;
-import org.apache.maven.shared.project.ProjectCoordinate;
 
 /**
  * Goal that resolves all project dependencies and then lists the repositories

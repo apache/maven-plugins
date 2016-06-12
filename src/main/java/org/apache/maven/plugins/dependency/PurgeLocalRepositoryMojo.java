@@ -42,7 +42,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependencies.TransferUtils;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.apache.maven.shared.project.DefaultProjectCoordinate;
