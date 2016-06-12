@@ -42,9 +42,10 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.TransferUtils;
-import org.apache.maven.shared.dependency.resolve.DependencyResolver;
-import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.dependencies.TransferUtils;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
+import org.apache.maven.shared.project.DefaultProjectCoordinate;
 import org.apache.maven.shared.artifact.filter.resolve.AbstractFilter;
 import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
 import org.apache.maven.shared.artifact.filter.resolve.Node;
@@ -488,10 +489,15 @@ public class PurgeLocalRepositoryMojo
     {
         try
         {
+            DefaultProjectCoordinate coordinate = new DefaultProjectCoordinate();
+            coordinate.setGroupId( project.getGroupId() );
+            coordinate.setArtifactId( project.getArtifactId() );
+            coordinate.setVersion( project.getVersion() );
+            coordinate.setPackaging( project.getPackaging() );
             
             Iterable<ArtifactResult> results =
                 dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(),
-                                              TransferUtils.toDependencyCoordinate( project ), filter );
+                                                        coordinate, filter );
 
             Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
             

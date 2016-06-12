@@ -36,8 +36,8 @@ import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.apache.maven.shared.artifact.resolve.ArtifactResult;
-import org.apache.maven.shared.dependency.DependencyCoordinate;
-import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.dependencies.DependableCoordinate;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
@@ -152,7 +152,7 @@ public abstract class AbstractResolveMojo
      * @return resolved set of dependencies
      * @throws DependencyResolverException
      */
-    protected Set<Artifact> resolveArtifactDependencies( final DependencyCoordinate artifact )
+    protected Set<Artifact> resolveArtifactDependencies( final DependableCoordinate artifact )
         throws DependencyResolverException
     {
         ProjectBuildingRequest buildingRequest =
