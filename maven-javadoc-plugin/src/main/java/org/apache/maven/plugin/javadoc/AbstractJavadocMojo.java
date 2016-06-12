@@ -3404,12 +3404,8 @@ public abstract class AbstractJavadocMojo
                     resolver.resolveTransitively( dependencyArtifacts, artifactProject.getArtifact(),
                                                   artifactProject.getRemoteArtifactRepositories(), localRepository,
                                                   artifactMetadataSource );
-                Set<Artifact> artifacts = result.getArtifacts();
 
-                Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
-                populateCompileArtifactMap( compileArtifactMap, artifacts );
-
-                for ( Artifact a : compileArtifactMap.values() )
+                for ( Artifact a : result.getArtifacts() )
                 {
                     path.add( a.getFile().getAbsolutePath() );
                 }
