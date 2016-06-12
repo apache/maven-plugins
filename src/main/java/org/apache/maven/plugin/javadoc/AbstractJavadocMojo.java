@@ -106,9 +106,9 @@ import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.artifact.resolve.ArtifactResult;
-import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
-import org.apache.maven.shared.dependency.resolve.DependencyResolver;
-import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
@@ -3410,7 +3410,7 @@ public abstract class AbstractJavadocMojo
             Artifact artifact = createAndResolveArtifact( javadocArtifact );
             path.add( artifact.getFile().getAbsolutePath() );
 
-            DefaultDependencyCoordinate coordinate = new DefaultDependencyCoordinate();
+            DefaultDependableCoordinate coordinate = new DefaultDependableCoordinate();
             coordinate.setGroupId( javadocArtifact.getGroupId() );
             coordinate.setArtifactId( javadocArtifact.getArtifactId() );
             coordinate.setVersion( javadocArtifact.getVersion() );
