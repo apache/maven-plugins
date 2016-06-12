@@ -38,16 +38,6 @@ under the License.
           </snapshots>
         </repository>
         <repository>
-          <id>snapshot.codehaus</id>
-          <url>https://nexus.codehaus.org/content/groups/snapshots-group/</url>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
-        <repository>
           <id>apache.snapshot</id>
           <url>https://repository.apache.org/content/groups/snapshots-group/</url>
           <releases>
@@ -72,4 +62,16 @@ under the License.
       </pluginRepositories>
     </profile>
   </profiles>
+  <mirrors>
+    <mirror>
+      <id>local-tlc</id>
+      <mirrorOf>tlc</mirrorOf>
+      <url>@localRepositoryUrl@</url>
+    </mirror>
+    <mirror>
+      <id>apache-plugin-snapshots-new</id>
+      <mirrorOf>apache-plugin-snapshots</mirrorOf>
+      <url>https://repository.apache.org/content/groups/snapshots-group/</url>
+    </mirror>
+  </mirrors>
 </settings>

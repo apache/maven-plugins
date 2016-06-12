@@ -58,17 +58,4 @@
     <module>test2</module>
   </modules>
 
-  <repositories>
-    <repository>
-      <id>codehaus.snapshots</id>
-      <name>CodeHaus Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 </project>
