@@ -20,7 +20,6 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.plugin.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -33,6 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -310,9 +310,9 @@ public class TestJavadocReport
     }
 
     @Override
-    protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
+    protected List<Artifact> getCompileArtifacts( Collection<Artifact> artifacts )
     {
-        return JavadocUtil.getCompileArtifacts( result.getArtifacts(), true );
+        return JavadocUtil.getCompileArtifacts( artifacts, true );
     }
 
     /**
