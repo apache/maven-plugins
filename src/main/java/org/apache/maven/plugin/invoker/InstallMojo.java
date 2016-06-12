@@ -44,9 +44,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.install.ArtifactInstaller;
-import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
-import org.apache.maven.shared.dependency.resolve.DependencyResolver;
-import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
+import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.apache.maven.shared.repository.RepositoryManager;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -584,7 +584,7 @@ public class InstallMojo
                 classifier = gav[4];
             }
 
-            DefaultDependencyCoordinate coordinate = new DefaultDependencyCoordinate();
+            DefaultDependableCoordinate coordinate = new DefaultDependableCoordinate();
             try
             {
                 coordinate.setGroupId( groupId );
