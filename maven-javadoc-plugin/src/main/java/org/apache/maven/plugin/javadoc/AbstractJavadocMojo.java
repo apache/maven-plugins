@@ -58,6 +58,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -312,6 +313,9 @@ public abstract class AbstractJavadocMojo
     
     @Component
     private org.apache.maven.shared.artifact.resolve.ArtifactResolver artifactResolver;
+    
+    @Component
+    private ArtifactHandlerManager artifactHandlerManager;
     
     @Component
     private DependencyResolver dependencyResolver;
@@ -2634,18 +2638,21 @@ public abstract class AbstractJavadocMojo
     public Artifact resolveDependency( Dependency dependency )
         throws MavenReportException
     {
-        Artifact artifact = factory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                                  dependency.getVersion(), dependency.getType(),
-                                                                  dependency.getClassifier() );
+        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+        coordinate.setGroupId( dependency.getGroupId() );
+        coordinate.setArtifactId( dependency.getArtifactId() );
+        coordinate.setVersion( dependency.getVersion() );
+        coordinate.setClassifier( dependency.getClassifier() );
+        coordinate.setExtension( artifactHandlerManager.getArtifactHandler( dependency.getType() ).getExtension() );
+        
         try
         {
-            artifact = artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), artifact ).getArtifact();
+            return artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), coordinate ).getArtifact();
         }
         catch ( ArtifactResolverException e )
         {
             throw new MavenReportException( "artifact resolver problem - " + e.getMessage(), e );
         }
-        return artifact;
     }
 
 
