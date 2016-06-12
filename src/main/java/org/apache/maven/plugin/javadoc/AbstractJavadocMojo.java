@@ -102,7 +102,12 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.apache.maven.shared.artifact.resolve.ArtifactResult;
+import org.apache.maven.shared.dependency.DefaultDependencyCoordinate;
+import org.apache.maven.shared.dependency.resolve.DependencyResolver;
+import org.apache.maven.shared.dependency.resolve.DependencyResolverException;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
@@ -307,6 +312,9 @@ public abstract class AbstractJavadocMojo
     
     @Component
     private org.apache.maven.shared.artifact.resolve.ArtifactResolver artifactResolver;
+    
+    @Component
+    private DependencyResolver dependencyResolver;
 
     /**
      * Project builder
@@ -3394,41 +3402,28 @@ public abstract class AbstractJavadocMojo
             Artifact artifact = createAndResolveArtifact( javadocArtifact );
             path.add( artifact.getFile().getAbsolutePath() );
 
-            // Find its transitive dependencies in the local repo
-            MavenProject artifactProject =
-                mavenProjectBuilder.build( artifact, session.getProjectBuildingRequest() ).getProject();
-            Set<Artifact> dependencyArtifacts = artifactProject.createArtifacts( factory, null, null );
-            if ( !dependencyArtifacts.isEmpty() )
-            {
-                ArtifactResolutionResult result =
-                    resolver.resolveTransitively( dependencyArtifacts, artifactProject.getArtifact(),
-                                                  artifactProject.getRemoteArtifactRepositories(), localRepository,
-                                                  artifactMetadataSource );
+            DefaultDependencyCoordinate coordinate = new DefaultDependencyCoordinate();
+            coordinate.setGroupId( javadocArtifact.getGroupId() );
+            coordinate.setArtifactId( javadocArtifact.getArtifactId() );
+            coordinate.setVersion( javadocArtifact.getVersion() );
 
-                for ( Artifact a : result.getArtifacts() )
-                {
-                    path.add( a.getFile().getAbsolutePath() );
-                }
+            Iterable<ArtifactResult> deps =
+                dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(), coordinate,
+                                                        ScopeFilter.including( "compile", "provided" ) );
+            for ( ArtifactResult a : deps )
+            {
+                path.add( a.getArtifact().getFile().getAbsolutePath() );
             }
 
             return path;
         }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MavenReportException( "Unable to resolve artifact:" + javadocArtifact, e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MavenReportException( "Unable to find artifact:" + javadocArtifact, e );
-        }
-        catch ( ProjectBuildingException e )
-        {
-            throw new MavenReportException( "Unable to build the Maven project for the artifact:" + javadocArtifact,
-                                            e );
-        }
         catch ( ArtifactResolverException e )
         {
             throw new MavenReportException( "Unable to resolve artifact:" + javadocArtifact, e );
+        }
+        catch ( DependencyResolverException e )
+        {
+            throw new MavenReportException( "Unable to resolve dependencies for:" + javadocArtifact, e );
         }
     }
 
