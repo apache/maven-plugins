@@ -226,7 +226,7 @@ public class JavadocUtil
      * @param withTestScope flag to include or not the artifacts with test scope
      * @return list of compile artifacts with or without test scope.
      */
-    protected static List<Artifact> getCompileArtifacts( Set<Artifact> artifacts, boolean withTestScope )
+    protected static List<Artifact> getCompileArtifacts( Collection<Artifact> artifacts, boolean withTestScope )
     {
         List<Artifact> list = new ArrayList<Artifact>( artifacts.size() );
 

@@ -2367,9 +2367,9 @@ public abstract class AbstractJavadocMojo
      * @return the compile artifacts from the result
      * @see JavadocUtil#getCompileArtifacts(Set, boolean)
      */
-    protected List<Artifact> getCompileArtifacts( ArtifactResolutionResult result )
+    protected List<Artifact> getCompileArtifacts( Collection<Artifact> artifacts )
     {
-        return JavadocUtil.getCompileArtifacts( result.getArtifacts(), false );
+        return JavadocUtil.getCompileArtifacts( artifacts, false );
     }
 
     // ----------------------------------------------------------------------
@@ -2579,7 +2579,8 @@ public abstract class AbstractJavadocMojo
                                 continue;
                             }
 
-                            populateCompileArtifactMap( compileArtifactMap, getCompileArtifacts( result ) );
+                            populateCompileArtifactMap( compileArtifactMap,
+                                                        getCompileArtifacts( result.getArtifacts() ) );
 
                             if ( getLog().isDebugEnabled() )
                             {
