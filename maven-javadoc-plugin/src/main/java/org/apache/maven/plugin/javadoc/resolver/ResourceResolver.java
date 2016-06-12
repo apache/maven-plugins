@@ -85,7 +85,6 @@ public final class ResourceResolver
      * @return list of {@link JavadocBundle}.
      * @throws IOException {@link IOException}
      */
-    @SuppressWarnings( "unchecked" )
     public static List<JavadocBundle> resolveDependencyJavadocBundles( final SourceResolverConfig config )
         throws IOException
     {
@@ -128,7 +127,6 @@ public final class ResourceResolver
      * @throws ArtifactResolutionException {@link ArtifactResolutionException}
      * @throws ArtifactNotFoundException {@link ArtifactNotFoundException}
      */
-    @SuppressWarnings( "unchecked" )
     public static List<String> resolveDependencySourcePaths( final SourceResolverConfig config )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
@@ -347,7 +345,6 @@ public final class ResourceResolver
         return a;
     }
 
-    @SuppressWarnings( "unchecked" )
     private static List<String> resolveAndUnpack( final List<Artifact> artifacts, final SourceResolverConfig config,
                                                   final List<String> validClassifiers, final boolean propagateErrors )
         throws ArtifactResolutionException, ArtifactNotFoundException
@@ -374,8 +371,7 @@ public final class ResourceResolver
 
         final ArtifactResolver resolver = config.artifactResolver();
         
-        @SuppressWarnings( "rawtypes" )
-        Map managed = config.project().getManagedVersionMap();
+        Map<String, Artifact> managed = config.project().getManagedVersionMap();
         
         final ArtifactResolutionResult resolutionResult = resolver.resolveTransitively(
                 artifactSet, pomArtifact, managed, localRepo, remoteRepos, metadataSource, resolutionFilter );
@@ -427,7 +423,6 @@ public final class ResourceResolver
         return result;
     }
 
-    @SuppressWarnings( "unchecked" )
     private static List<String> resolveFromProject( final SourceResolverConfig config,
                                                     final MavenProject reactorProject, final Artifact artifact )
     {
