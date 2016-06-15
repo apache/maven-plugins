@@ -3660,7 +3660,7 @@ public abstract class AbstractJavadocMojo
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
             }
             jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
@@ -3669,7 +3669,7 @@ public abstract class AbstractJavadocMojo
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java the version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
             }
             jVersion = SystemUtils.JAVA_VERSION_FLOAT;
         }
