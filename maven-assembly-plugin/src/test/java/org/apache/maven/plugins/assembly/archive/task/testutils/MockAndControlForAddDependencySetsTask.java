@@ -41,7 +41,6 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.easymock.EasyMock;
 import org.easymock.classextension.EasyMockSupport;
-import org.sonatype.aether.RepositorySystemSession;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -70,9 +69,8 @@ public class MockAndControlForAddDependencySetsTask
     private final MavenProject project;
 
     private final MavenSession session;
-
-    private final RepositorySystemSession repositorySession;
-
+    
+    private final ProjectBuildingRequest projectBuildingRequest;
 
     public MockAndControlForAddDependencySetsTask( final EasyMockSupport mockManager )
     {
@@ -84,8 +82,11 @@ public class MockAndControlForAddDependencySetsTask
         this.project = project;
 
         this.session = mockManager.createMock( MavenSession.class );
-        this.repositorySession = mockManager.createMock( RepositorySystemSession.class );
+        
+        this.projectBuildingRequest = mockManager.createMock( ProjectBuildingRequest.class );
+
         archiver = mockManager.createMock( Archiver.class );
+        
         configSource = mockManager.createMock( AssemblerConfigurationSource.class );
 
         projectBuilder = mockManager.createMock( ProjectBuilder.class );
@@ -100,7 +101,7 @@ public class MockAndControlForAddDependencySetsTask
     private void enableDefaultExpectations()
     {
         expect( configSource.getProject() ).andReturn( project ).anyTimes();
-        expect( session.getRepositorySession() ).andReturn( repositorySession ).anyTimes();
+        expect( session.getProjectBuildingRequest() ).andReturn( projectBuildingRequest ).anyTimes();
         expect( session.getSystemProperties() ).andReturn( new Properties() ).anyTimes();
         expect( session.getUserProperties() ).andReturn( new Properties() ).anyTimes();
         expect( session.getExecutionProperties() ).andReturn( new Properties() ).anyTimes();
