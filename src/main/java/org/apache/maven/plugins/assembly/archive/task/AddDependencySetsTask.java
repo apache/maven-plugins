@@ -20,7 +20,6 @@ package org.apache.maven.plugins.assembly.archive.task;
  */
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
@@ -179,12 +178,7 @@ public class AddDependencySetsTask
 
     private ProjectBuildingRequest getProjectBuildingRequest( AssemblerConfigurationSource configSource )
     {
-        MavenSession session = configSource.getMavenSession();
-        ProjectBuildingRequest pbr = ProjectBuildingRequestCreator.create( session );
-        pbr.setRemoteRepositories( configSource.getRemoteRepositories() );
-        pbr.setLocalRepository( configSource.getLocalRepository() );
-        //pbr.setRepositorySession(  configSource.getR''  )
-        return pbr;
+        return configSource.getMavenSession().getProjectBuildingRequest();
     }
 
     private boolean isUnpackWithOptions( DependencySet dependencySet )
