@@ -19,7 +19,16 @@ package org.apache.maven.plugins.assembly.archive.task;
  * under the License.
  */
 
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
@@ -38,19 +47,13 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.components.io.functions.InputStreamTransformer;
 import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.logging.Logger;
-
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @version $Id$
@@ -331,13 +334,42 @@ public class AddDependencySetsTask
             logger.debug( "Filtering dependency artifacts WITHOUT transitive dependency path information." );
         }
 
-        final ScopeArtifactFilter filter = new ScopeArtifactFilter( dependencySet.getScope() );
+        final ArtifactFilter filter = newArtifactFilter( dependencySet );
 
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
                                      dependencySet.isUseStrictFiltering(), dependencySet.isUseTransitiveFiltering(),
                                      logger, filter );
 
         return dependencyArtifacts;
+    }
+
+    private ArtifactFilter newArtifactFilter( final DependencySet dependencySet )
+    {
+        ScopeArtifactFilter filter = new ScopeArtifactFilter( dependencySet.getScope() );
+
+        List<String> includes = new ArrayList<String>();
+        if ( filter.isIncludeCompileScope() )
+        {
+            includes.add( "compile" );
+        }
+        if ( filter.isIncludeProvidedScope() )
+        {
+            includes.add( "provided" );
+        }
+        if ( filter.isIncludeRuntimeScope() )
+        {
+            includes.add( "runtime" );
+        }
+        if ( filter.isIncludeSystemScope() )
+        {
+            includes.add( "system" );
+        }
+        if ( filter.isIncludeTestScope() )
+        {
+            includes.add( "test" );
+        }
+
+        return new ArtifactIncludeFilterTransformer().transform( ScopeFilter.including( includes ) );
     }
 
     private void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,
