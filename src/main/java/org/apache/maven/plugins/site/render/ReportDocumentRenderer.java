@@ -19,7 +19,7 @@ package org.apache.maven.plugins.site.render;
  * under the License.
  */
 
-import static org.fusesource.jansi.Ansi.ansi;
+import static org.apache.maven.shared.project.utils.AnsiUtils.ansi;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -204,11 +204,11 @@ public class ReportDocumentRenderer
         Locale locale = siteRenderingContext.getLocale();
         String localReportName = report.getName( locale );
 
-        String msg = "Generating \"" + ansi().bold().a( localReportName ).reset() + "\" report";
+        String msg = "Generating \"" + ansi().highlight().a( localReportName ).reset() + "\" report";
         // CHECKSTYLE_OFF: MagicNumber
         log.info( reportMojoInfo == null ? ( msg + '.' )
                         : ( StringUtils.rightPad( msg, 40 )
-                            + ansi().bold().a( " --- " ).reset().fgGreen().a( reportMojoInfo ).reset() ) );
+                            + ansi().highlight().a( " --- " ).reset().mojo().a( reportMojoInfo ).reset() ) );
         // CHECKSTYLE_ON: MagicNumber
 
         // main sink
