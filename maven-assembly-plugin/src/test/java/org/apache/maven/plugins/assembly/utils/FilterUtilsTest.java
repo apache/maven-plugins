@@ -19,6 +19,8 @@ package org.apache.maven.plugins.assembly.utils;
  * under the License.
  */
 
+import org.hamcrest.Matchers;
+
 import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -28,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,6 +192,25 @@ public class FilterUtilsTest
         verifyProjectInclusion( "group", "artifact", null, null, null );
     }
 
+    public void testTransitiveScopes()
+    {
+        Assert.assertThat( FilterUtils.newScopeFilter( "compile" ).getIncluded(),
+                           Matchers.containsInAnyOrder( "compile", "provided", "system" ) );
+
+        Assert.assertThat( FilterUtils.newScopeFilter( "provided" ).getIncluded(),
+                           Matchers.containsInAnyOrder( "provided" ) );
+
+        Assert.assertThat( FilterUtils.newScopeFilter( "system" ).getIncluded(),
+                           Matchers.containsInAnyOrder( "system" ) );
+
+        Assert.assertThat( FilterUtils.newScopeFilter( "runtime" ).getIncluded(),
+                           Matchers.containsInAnyOrder( "compile", "runtime" ) );
+
+        Assert.assertThat( FilterUtils.newScopeFilter( "test" ).getIncluded(),
+                           Matchers.containsInAnyOrder( "compile", "provided", "runtime", "system", "test" ) );
+
+    }
+    
     private void verifyArtifactInclusion( final String groupId, final String artifactId, final String inclusionPattern,
                                           final String exclusionPattern, final List<String> depTrail,
                                           final ArtifactFilter additionalFilter )
