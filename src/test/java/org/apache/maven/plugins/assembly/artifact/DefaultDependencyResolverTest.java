@@ -41,7 +41,6 @@ import org.apache.maven.plugins.assembly.model.ModuleSet;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.resolved.AssemblyId;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
@@ -57,9 +56,7 @@ public class DefaultDependencyResolverTest
 
     private ArtifactRepositoryLayout layout;
 
-    private RepositorySystem resolver;
-
-    private ConsoleLogger logger;
+    private DefaultDependencyResolver resolver;
 
     @Override
     public void setUp()
@@ -67,11 +64,11 @@ public class DefaultDependencyResolverTest
     {
         super.setUp();
 
-        resolver = lookup( RepositorySystem.class );
+        resolver = (DefaultDependencyResolver) lookup( DependencyResolver.class );
+
         factory = lookup( ArtifactFactory.class );
         repoFactory = lookup( ArtifactRepositoryFactory.class );
         layout = lookup( ArtifactRepositoryLayout.class, "default" );
-        logger = new ConsoleLogger( Logger.LEVEL_DEBUG, "test" );
     }
 
     public void test_getDependencySetResolutionRequirements()
@@ -90,7 +87,7 @@ public class DefaultDependencyResolverTest
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
 
         final Assembly assembly = new Assembly();
-        new DefaultDependencyResolver( resolver, factory, logger ).updateDependencySetResolutionRequirements( ds1, info,
+        resolver.updateDependencySetResolutionRequirements( ds1, info,
                                                                                                               AssemblyId.createAssemblyId(
                                                                                                                   assembly ),
                                                                                                               project );
@@ -185,7 +182,6 @@ public class DefaultDependencyResolverTest
 
         mm.replayAll();
 
-        final DefaultDependencyResolver resolver = new DefaultDependencyResolver( this.resolver, factory, logger );
         resolver.enableLogging( new ConsoleLogger( Logger.LEVEL_DEBUG, "test" ) );
 
         final Assembly assembly = new Assembly();
@@ -241,7 +237,7 @@ public class DefaultDependencyResolverTest
         assembly.setRepositories( repositories );
 
         final ResolutionManagementInfo info = new ResolutionManagementInfo( project );
-        new DefaultDependencyResolver( resolver, factory, logger ).updateRepositoryResolutionRequirements( assembly,
+        resolver.updateRepositoryResolutionRequirements( assembly,
                                                                                                            info );
 
         assertTrue( info.isResolutionRequired() );
@@ -281,8 +277,7 @@ public class DefaultDependencyResolverTest
         project.setRemoteArtifactRepositories( projectRepos );
 
         final List<ArtifactRepository> aggregated =
-            new DefaultDependencyResolver( resolver, factory, logger ).aggregateRemoteArtifactRepositories(
-                externalRepos, Collections.singleton( project ) );
+            resolver.aggregateRemoteArtifactRepositories( externalRepos, Collections.singleton( project ) );
 
         assertRepositoryWithId( er1.getId(), aggregated, true );
         assertRepositoryWithId( er2.getId(), aggregated, true );

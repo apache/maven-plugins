@@ -19,6 +19,15 @@ package org.apache.maven.plugins.assembly.artifact;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -44,17 +53,7 @@ import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactInclude
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author jdcasey
@@ -65,27 +64,11 @@ public class DefaultDependencyResolver
     extends AbstractLogEnabled
     implements DependencyResolver
 {
-
     @Requirement
     private RepositorySystem resolver;
 
-
     @Requirement
     private ArtifactFactory factory;
-
-    @SuppressWarnings( "UnusedDeclaration" )
-    public DefaultDependencyResolver()
-    {
-        // for plexus init
-    }
-
-    protected DefaultDependencyResolver( final RepositorySystem resolver, final ArtifactFactory factory,
-                                         final Logger logger )
-    {
-        this.resolver = resolver;
-        this.factory = factory;
-        enableLogging( logger );
-    }
 
     @Override
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly, ModuleSet moduleSet,
