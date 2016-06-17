@@ -39,6 +39,7 @@ import org.apache.maven.plugins.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -125,7 +126,7 @@ public class DefaultDependencyResolver
             if ( info.isResolvedTransitively() )
             {
                 getLogger().debug( "Resolving project dependencies transitively." );
-                artifacts = resolveTransitively( artifacts, repos, info, configSource );
+                artifacts = resolveTransitively( artifacts, repos, info.getScopeFilter(), configSource );
             }
             else
             {
@@ -214,13 +215,11 @@ public class DefaultDependencyResolver
 
     private Set<Artifact> resolveTransitively( final Set<Artifact> dependencyArtifacts,
                                                final List<ArtifactRepository> repos,
-                                               final ResolutionManagementInfo info,
+                                               final ArtifactFilter filter,
                                                final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
         final MavenProject project = configSource.getProject();
-
-        final ArtifactFilter filter = info.getScopeFilter();
 
         ArtifactResolutionRequest req = new ArtifactResolutionRequest();
         req.setLocalRepository( configSource.getLocalRepository() );
@@ -259,6 +258,7 @@ public class DefaultDependencyResolver
 
         if ( repositories != null && !repositories.isEmpty() )
         {
+            
             requirements.setResolutionRequired( true );
             for ( final Repository repo : repositories )
             {
@@ -322,7 +322,7 @@ public class DefaultDependencyResolver
 
         requirements.setResolvedTransitively( set.isUseTransitiveDependencies() );
 
-        enableScope( set.getScope(), requirements );
+        ArtifactFilter filter = enableScope( set.getScope(), requirements );
 
         for ( final MavenProject project : projects )
         {
@@ -336,7 +336,7 @@ public class DefaultDependencyResolver
             {
                 try
                 {
-                    dependencyArtifacts = project.createArtifacts( factory, null, requirements.getScopeFilter() );
+                    dependencyArtifacts = project.createArtifacts( factory, null, filter );
                     project.setDependencyArtifacts( dependencyArtifacts );
                 }
                 catch ( final InvalidDependencyVersionException e )
@@ -352,7 +352,7 @@ public class DefaultDependencyResolver
         }
     }
 
-    private void enableScope( final String scope, final ResolutionManagementInfo requirements )
+    private ScopeArtifactFilter enableScope( final String scope, final ResolutionManagementInfo requirements )
     {
         if ( Artifact.SCOPE_COMPILE.equals( scope ) )
         {
@@ -374,6 +374,7 @@ public class DefaultDependencyResolver
         {
             requirements.enableTestScope();
         }
+        return requirements.getScopeFilter();
     }
 
     List<ArtifactRepository> aggregateRemoteArtifactRepositories( final List<ArtifactRepository> remoteRepositories,
