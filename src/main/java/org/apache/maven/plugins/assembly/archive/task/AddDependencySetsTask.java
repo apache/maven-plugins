@@ -46,7 +46,6 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
-import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
 import org.codehaus.plexus.archiver.Archiver;
@@ -334,42 +333,15 @@ public class AddDependencySetsTask
             logger.debug( "Filtering dependency artifacts WITHOUT transitive dependency path information." );
         }
 
-        final ArtifactFilter filter = newArtifactFilter( dependencySet );
+        final ScopeFilter scopeFilter = FilterUtils.newScopeFilter( dependencySet.getScope() );
 
+        final ArtifactFilter filter = new ArtifactIncludeFilterTransformer().transform( scopeFilter );
+        
         FilterUtils.filterArtifacts( dependencyArtifacts, dependencySet.getIncludes(), dependencySet.getExcludes(),
                                      dependencySet.isUseStrictFiltering(), dependencySet.isUseTransitiveFiltering(),
                                      logger, filter );
 
         return dependencyArtifacts;
-    }
-
-    private ArtifactFilter newArtifactFilter( final DependencySet dependencySet )
-    {
-        ScopeArtifactFilter filter = new ScopeArtifactFilter( dependencySet.getScope() );
-
-        List<String> includes = new ArrayList<String>();
-        if ( filter.isIncludeCompileScope() )
-        {
-            includes.add( "compile" );
-        }
-        if ( filter.isIncludeProvidedScope() )
-        {
-            includes.add( "provided" );
-        }
-        if ( filter.isIncludeRuntimeScope() )
-        {
-            includes.add( "runtime" );
-        }
-        if ( filter.isIncludeSystemScope() )
-        {
-            includes.add( "system" );
-        }
-        if ( filter.isIncludeTestScope() )
-        {
-            includes.add( "test" );
-        }
-
-        return new ArtifactIncludeFilterTransformer().transform( ScopeFilter.including( includes ) );
     }
 
     private void addNonArchiveDependency( final Artifact depArtifact, final MavenProject depProject,

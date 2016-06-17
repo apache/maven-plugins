@@ -19,6 +19,13 @@ package org.apache.maven.plugins.assembly.utils;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -26,15 +33,10 @@ import org.apache.maven.plugins.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StatisticsReportingArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.codehaus.plexus.logging.Logger;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @version $Id$
@@ -186,6 +188,41 @@ public final class FilterUtils
                 sFilter.reportFilteredArtifacts( logger );
             }
         }
+    }
+
+    /**
+     * Results in a filter including the rootScope and its transitive scopes 
+     * 
+     * @param rootScope the root scope
+     * @return the filter
+     */
+    public static ScopeFilter newScopeFilter( final String rootScope )
+    {
+        ScopeArtifactFilter filter = new ScopeArtifactFilter( rootScope );
+    
+        List<String> includes = new ArrayList<String>();
+        if ( filter.isIncludeCompileScope() )
+        {
+            includes.add( "compile" );
+        }
+        if ( filter.isIncludeProvidedScope() )
+        {
+            includes.add( "provided" );
+        }
+        if ( filter.isIncludeRuntimeScope() )
+        {
+            includes.add( "runtime" );
+        }
+        if ( filter.isIncludeSystemScope() )
+        {
+            includes.add( "system" );
+        }
+        if ( filter.isIncludeTestScope() )
+        {
+            includes.add( "test" );
+        }
+    
+        return ScopeFilter.including( includes );
     }
 
 }
