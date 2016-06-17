@@ -20,7 +20,10 @@ package org.apache.maven.plugins.assembly.utils;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,7 +36,6 @@ import org.apache.maven.plugins.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
-import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StatisticsReportingArtifactFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.codehaus.plexus.logging.Logger;
@@ -198,31 +200,44 @@ public final class FilterUtils
      */
     public static ScopeFilter newScopeFilter( final String rootScope )
     {
-        ScopeArtifactFilter filter = new ScopeArtifactFilter( rootScope );
+        return newScopeFilter( Collections.singleton( rootScope ) );
+    }
     
-        List<String> includes = new ArrayList<String>();
-        if ( filter.isIncludeCompileScope() )
+    /**
+     * Results in a filter including all rootScopes and their transitive scopes 
+     * 
+     * @param rootScopes all root scopes
+     * @return the filter
+     */
+    public static ScopeFilter newScopeFilter( final Collection<String> rootScopes )
+    {
+        Set<String> scopes = new HashSet<String>();
+        
+        for ( String rootScope : rootScopes )
         {
-            includes.add( "compile" );
+            if ( Artifact.SCOPE_COMPILE.equals( rootScope ) )
+            {
+                scopes.addAll( Arrays.asList( "compile", "provided", "system" ) );
+            }
+            if ( Artifact.SCOPE_PROVIDED.equals( rootScope ) )
+            {
+                scopes.add( "provided" );
+            }
+            if ( Artifact.SCOPE_RUNTIME.equals( rootScope ) )
+            {
+                scopes.addAll( Arrays.asList( "compile", "runtime" ) );
+            }
+            if ( Artifact.SCOPE_SYSTEM.equals( rootScope ) )
+            {
+                scopes.add( "system" );
+            }
+            if ( Artifact.SCOPE_TEST.equals( rootScope ) )
+            {
+                scopes.addAll( Arrays.asList( "compile", "provided", "runtime", "system", "test" ) );
+            }
         }
-        if ( filter.isIncludeProvidedScope() )
-        {
-            includes.add( "provided" );
-        }
-        if ( filter.isIncludeRuntimeScope() )
-        {
-            includes.add( "runtime" );
-        }
-        if ( filter.isIncludeSystemScope() )
-        {
-            includes.add( "system" );
-        }
-        if ( filter.isIncludeTestScope() )
-        {
-            includes.add( "test" );
-        }
-    
-        return ScopeFilter.including( includes );
+        
+        return ScopeFilter.including( scopes );
     }
 
 }
