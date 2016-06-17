@@ -39,7 +39,8 @@ import org.apache.maven.plugins.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -126,7 +127,9 @@ public class DefaultDependencyResolver
             if ( info.isResolvedTransitively() )
             {
                 getLogger().debug( "Resolving project dependencies transitively." );
-                artifacts = resolveTransitively( artifacts, repos, info.getScopeFilter(), configSource );
+                
+                ArtifactFilter filter = new ArtifactIncludeFilterTransformer().transform( info.getScopeFilter() );
+                artifacts = resolveTransitively( artifacts, repos, filter, configSource );
             }
             else
             {
@@ -256,15 +259,19 @@ public class DefaultDependencyResolver
     {
         final List<Repository> repositories = assembly.getRepositories();
 
+        Set<String> rootScopes = new HashSet<String>();
+        
         if ( repositories != null && !repositories.isEmpty() )
         {
             
             requirements.setResolutionRequired( true );
             for ( final Repository repo : repositories )
             {
-                enableScope( repo.getScope(), requirements );
+                rootScopes.add( repo.getScope() );
             }
         }
+        
+        requirements.setScopeFilter( FilterUtils.newScopeFilter( rootScopes ) );
     }
 
 
@@ -322,7 +329,11 @@ public class DefaultDependencyResolver
 
         requirements.setResolvedTransitively( set.isUseTransitiveDependencies() );
 
-        ArtifactFilter filter = enableScope( set.getScope(), requirements );
+        ScopeFilter scopeFilter = FilterUtils.newScopeFilter( set.getScope() );
+        
+        requirements.setScopeFilter( scopeFilter );
+        
+        ArtifactFilter filter = new ArtifactIncludeFilterTransformer().transform( scopeFilter );
 
         for ( final MavenProject project : projects )
         {
@@ -350,31 +361,6 @@ public class DefaultDependencyResolver
             getLogger().debug( "Dependencies for project: " + project.getId() + " are:\n" + StringUtils.join(
                 dependencyArtifacts.iterator(), "\n" ) );
         }
-    }
-
-    private ScopeArtifactFilter enableScope( final String scope, final ResolutionManagementInfo requirements )
-    {
-        if ( Artifact.SCOPE_COMPILE.equals( scope ) )
-        {
-            requirements.enableCompileScope();
-        }
-        else if ( Artifact.SCOPE_PROVIDED.equals( scope ) )
-        {
-            requirements.enableProvidedScope();
-        }
-        else if ( Artifact.SCOPE_RUNTIME.equals( scope ) )
-        {
-            requirements.enableRuntimeScope();
-        }
-        else if ( Artifact.SCOPE_SYSTEM.equals( scope ) )
-        {
-            requirements.enableSystemScope();
-        }
-        else if ( Artifact.SCOPE_TEST.equals( scope ) )
-        {
-            requirements.enableTestScope();
-        }
-        return requirements.getScopeFilter();
     }
 
     List<ArtifactRepository> aggregateRemoteArtifactRepositories( final List<ArtifactRepository> remoteRepositories,

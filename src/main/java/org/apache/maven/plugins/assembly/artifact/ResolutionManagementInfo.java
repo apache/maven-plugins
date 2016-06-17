@@ -21,7 +21,7 @@ package org.apache.maven.plugins.assembly.artifact;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,7 +34,7 @@ import java.util.Set;
  */
 class ResolutionManagementInfo
 {
-    private final ScopeArtifactFilter scopeFilter = new ScopeArtifactFilter();
+    private ScopeFilter scopeFilter;
 
     private final Set<MavenProject> enabledProjects = new LinkedHashSet<MavenProject>();
 
@@ -69,42 +69,17 @@ class ResolutionManagementInfo
         this.resolvedTransitively = this.resolvedTransitively || resolvedTransitively;
     }
 
-    ScopeArtifactFilter getScopeFilter()
+    ScopeFilter getScopeFilter()
     {
         return scopeFilter;
     }
-
-    void enableCompileScope()
+    
+    void setScopeFilter( ScopeFilter scopeFilter )
     {
-        scopeFilter.setIncludeCompileScope( true );
-        scopeFilter.setIncludeProvidedScope( true );
-        scopeFilter.setIncludeSystemScope( true );
+        this.scopeFilter = scopeFilter;
     }
 
-    void enableProvidedScope()
-    {
-        scopeFilter.setIncludeProvidedScope( true );
-    }
 
-    void enableRuntimeScope()
-    {
-        scopeFilter.setIncludeRuntimeScope( true );
-        scopeFilter.setIncludeCompileScope( true );
-    }
-
-    void enableTestScope()
-    {
-        scopeFilter.setIncludeTestScope( true );
-        scopeFilter.setIncludeCompileScope( true );
-        scopeFilter.setIncludeProvidedScope( true );
-        scopeFilter.setIncludeSystemScope( true );
-        scopeFilter.setIncludeRuntimeScope( true );
-    }
-
-    void enableSystemScope()
-    {
-        scopeFilter.setIncludeSystemScope( true );
-    }
 
     void enableProjectResolution( final MavenProject project )
     {

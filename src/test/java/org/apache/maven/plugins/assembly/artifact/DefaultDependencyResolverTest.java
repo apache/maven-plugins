@@ -1,5 +1,7 @@
 package org.apache.maven.plugins.assembly.artifact;
 
+import static org.easymock.EasyMock.expect;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +20,12 @@ package org.apache.maven.plugins.assembly.artifact;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -38,14 +46,6 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.easymock.classextension.EasyMockSupport;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static org.easymock.EasyMock.expect;
 
 public class DefaultDependencyResolverTest
     extends PlexusTestCase
@@ -98,13 +98,13 @@ public class DefaultDependencyResolverTest
         assertTrue( info.isResolutionRequired() );
         assertFalse( info.isResolvedTransitively() );
 
-        assertTrue( info.getScopeFilter().isIncludeCompileScope() );
-        assertTrue( info.getScopeFilter().isIncludeSystemScope() );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_COMPILE ) );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_SYSTEM ) );
 
-        assertTrue( info.getScopeFilter().isIncludeProvidedScope() );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_PROVIDED ) );
 
-        assertFalse( info.getScopeFilter().isIncludeRuntimeScope() );
-        assertFalse( info.getScopeFilter().isIncludeTestScope() );
+        assertFalse( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_RUNTIME ) );
+        assertFalse( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_TEST ) );
     }
 
     public void test_getModuleSetResolutionRequirements()
@@ -209,13 +209,13 @@ public class DefaultDependencyResolverTest
         assertTrue( enabledProjects.contains( module2a ) );
 
         // these are the two we directly set above.
-        assertTrue( info.getScopeFilter().isIncludeTestScope() );
-        assertTrue( info.getScopeFilter().isIncludeCompileScope() );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_TEST ) );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_COMPILE ) );
 
         // this combination should be implied by the two direct scopes set above.
-        assertTrue( info.getScopeFilter().isIncludeRuntimeScope() );
-        assertTrue( info.getScopeFilter().isIncludeProvidedScope() );
-        assertTrue( info.getScopeFilter().isIncludeSystemScope() );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_RUNTIME ) );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_PROVIDED ) );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_SYSTEM ) );
 
         mm.verifyAll();
     }
@@ -246,13 +246,13 @@ public class DefaultDependencyResolverTest
 
         assertTrue( info.isResolutionRequired() );
 
-        assertTrue( info.getScopeFilter().isIncludeCompileScope() );
-        assertTrue( info.getScopeFilter().isIncludeSystemScope() );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_COMPILE ) );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_SYSTEM ) );
 
-        assertTrue( info.getScopeFilter().isIncludeProvidedScope() );
+        assertTrue( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_PROVIDED ) );
 
-        assertFalse( info.getScopeFilter().isIncludeRuntimeScope() );
-        assertFalse( info.getScopeFilter().isIncludeTestScope() );
+        assertFalse( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_RUNTIME ) );
+        assertFalse( info.getScopeFilter().getIncluded().contains( Artifact.SCOPE_TEST ) );
     }
 
     public void test_aggregateRemoteArtifactRepositories()
