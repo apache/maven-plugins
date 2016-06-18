@@ -139,7 +139,7 @@ public abstract class AbstractAssemblyMojo
     /**
      * The filename of the assembled distribution file.
      */
-    @Parameter( defaultValue = "${project.build.finalName}", required = true )
+    @Parameter( defaultValue = "${project.build.finalName}", required = true, readonly = true )
     private String finalName;
 
     /**
