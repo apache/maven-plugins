@@ -194,15 +194,6 @@ public abstract class AbstractAssemblyMojo
     private File archiveBaseDirectory;
 
     /**
-     * Assembly XML Descriptor file. This must be the path to your customized descriptor file.
-     *
-     * @deprecated Please use descriptors instead
-     */
-    @Deprecated
-    @Parameter( property = "descriptor" )
-    private String descriptor;
-
-    /**
      * Sets the TarArchiver behavior on file paths with more than 100 characters length. Valid values are: "warn"
      * (default), "fail", "truncate", "gnu", "posix", "posix_warn" or "omit".
      */
@@ -627,18 +618,6 @@ public abstract class AbstractAssemblyMojo
     public void setBasedir( final File basedir )
     {
         this.basedir = basedir;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated This has been replaced by {@link #getDescriptors()}
-     */
-    @Override
-    @Deprecated
-    public String getDescriptor()
-    {
-        return descriptor;
     }
 
     @Override

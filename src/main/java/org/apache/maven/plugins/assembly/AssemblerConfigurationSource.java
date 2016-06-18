@@ -35,12 +35,6 @@ import java.util.List;
  */
 public interface AssemblerConfigurationSource
 {
-
-    /**
-     * @return The descriptor.
-     */
-    String getDescriptor();
-
     /**
      * @return The descriptors.
      */

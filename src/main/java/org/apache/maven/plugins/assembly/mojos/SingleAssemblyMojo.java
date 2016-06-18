@@ -19,10 +19,15 @@ package org.apache.maven.plugins.assembly.mojos;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
+
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Assemble an application bundle or distribution from an assembly descriptor. This goal is suitable either for binding
@@ -38,6 +43,36 @@ import org.apache.maven.project.MavenProject;
 public class SingleAssemblyMojo
     extends AbstractAssemblyMojo
 {
+    @Parameter( defaultValue = "${plugin}", readonly = true )
+    private PluginDescriptor plugin;
+
+    @Override
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        verifyRemovedParameter( "classifier" );
+        verifyRemovedParameter( "descriptor" );
+        verifyRemovedParameter( "descriptorId" );
+        verifyRemovedParameter( "includeSite" );
+        
+        super.execute();
+    }
+    
+    private void verifyRemovedParameter( String paramName )
+    {
+        Object pluginConfiguration = plugin.getPlugin().getConfiguration();
+        if ( pluginConfiguration instanceof Xpp3Dom )
+        {
+            Xpp3Dom configDom = (Xpp3Dom) pluginConfiguration;
+            
+            if ( configDom.getChild( paramName ) != null )
+            {
+                throw new IllegalArgumentException( "parameter '" + paramName
+                    + "' has been removed from the plugin, please verify documentation." );
+            }
+        }
+    }
+    
     /**
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
