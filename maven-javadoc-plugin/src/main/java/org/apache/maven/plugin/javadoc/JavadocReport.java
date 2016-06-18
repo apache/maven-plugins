@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.maven.doxia.siterenderer.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,6 +35,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -97,7 +98,6 @@ public class JavadocReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    @Override
     public String getName( Locale locale )
     {
         if ( StringUtils.isEmpty( name ) )
@@ -109,7 +109,6 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
-    @Override
     public String getDescription( Locale locale )
     {
         if ( StringUtils.isEmpty( description ) )
@@ -120,9 +119,8 @@ public class JavadocReport
         return description;
     }
 
-    @Override
     /** {@inheritDoc} */
-    public void generate( org.codehaus.doxia.sink.Sink sink, Locale locale )
+    public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
         outputDirectory = getReportOutputDirectory();
@@ -150,14 +148,12 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
-    @Override
     public String getOutputName()
     {
         return destDir + "/index";
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean isExternalReport()
     {
         return true;
@@ -256,14 +252,12 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
-    @Override
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_REPORTS;
     }
 
     /** {@inheritDoc} */
-    @Override
     public File getReportOutputDirectory()
     {
         if ( reportOutputDirectory == null )
@@ -279,7 +273,6 @@ public class JavadocReport
      *
      * @param reportOutputDirectory the directory file to be set
      */
-    @Override
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         updateReportOutputDirectory( reportOutputDirectory, destDir );
@@ -351,5 +344,4 @@ public class JavadocReport
     {
         return ResourceBundle.getBundle( "javadoc-report", locale, getClass().getClassLoader() );
     }
-
 }
