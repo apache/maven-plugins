@@ -383,7 +383,7 @@ public class DefaultAssemblyReader
             IOUtil.close( reader );
         }
 
-        if ( configSource.isSiteIncluded() || assembly.isIncludeSiteDirectory() )
+        if ( assembly.isIncludeSiteDirectory() )
         {
             includeSiteInAssembly( assembly, configSource );
         }
