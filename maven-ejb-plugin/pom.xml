@@ -58,7 +58,7 @@ under the License.
 
   <properties>
     <mavenArchiverVersion>3.0.2</mavenArchiverVersion>
-    <mavenFilteringVersion>3.1.0</mavenFilteringVersion>
+    <mavenFilteringVersion>3.1.1</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
   </properties>
 
