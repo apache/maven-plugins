@@ -560,50 +560,6 @@ public class DefaultAssemblyReaderTest
 
         expect( configSource.getProject() ).andReturn( project ).anyTimes();
 
-        expect( configSource.isSiteIncluded() ).andReturn( false ).anyTimes();
-        DefaultAssemblyArchiverTest.setupInterpolators( configSource );
-
-        mockManager.replayAll();
-
-        final Assembly result = new DefaultAssemblyReader().readAssembly( sr, "testLocation", null, configSource );
-
-        assertEquals( assembly.getId(), result.getId() );
-
-        final List<FileSet> fileSets = result.getFileSets();
-
-        assertEquals( 1, fileSets.size() );
-
-        assertEquals( "/site", fileSets.get( 0 ).getOutputDirectory() );
-
-        mockManager.verifyAll();
-    }
-
-    public void testReadAssembly_ShouldReadAssemblyWithSiteDirInclusionFromConfigWithoutComponentsOrInterpolation()
-        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
-    {
-        final Assembly assembly = new Assembly();
-        assembly.setId( "test" );
-
-        final StringReader sr = writeToStringReader( assembly );
-
-        final File siteDir = fileManager.createTempDir();
-
-        expect( configSource.getSiteDirectory() ).andReturn( siteDir ).anyTimes();
-
-        final File basedir = fileManager.createTempDir();
-
-        expect( configSource.getBasedir() ).andReturn( basedir ).anyTimes();
-
-        final Model model = new Model();
-        model.setGroupId( "group" );
-        model.setArtifactId( "artifact" );
-        model.setVersion( "version" );
-
-        final MavenProject project = new MavenProject( model );
-
-        expect( configSource.getProject() ).andReturn( project ).anyTimes();
-
-        expect( configSource.isSiteIncluded() ).andReturn( true ).anyTimes();
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
@@ -667,7 +623,6 @@ public class DefaultAssemblyReaderTest
         final MavenProject project = new MavenProject( model );
         expect( configSource.getProject() ).andReturn( project ).anyTimes();
 
-        expect( configSource.isSiteIncluded() ).andReturn( false ).anyTimes();
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
@@ -733,7 +688,6 @@ public class DefaultAssemblyReaderTest
 
         expect( configSource.getProject() ).andReturn( project ).atLeastOnce();
 
-        expect( configSource.isSiteIncluded() ).andReturn( false );
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
@@ -782,8 +736,6 @@ public class DefaultAssemblyReaderTest
 
         expect( configSource.getProject() ).andReturn( project ).anyTimes();
 
-        expect( configSource.isSiteIncluded() ).andReturn( false ).anyTimes();
-
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
         mockManager.replayAll();
@@ -809,8 +761,6 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getBasedir() ).andReturn( basedir ).anyTimes();
 
         expect( configSource.getProject() ).andReturn( new MavenProject( new Model() ) ).anyTimes();
-
-        expect( configSource.isSiteIncluded() ).andReturn( false ).anyTimes();
 
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );
 
@@ -844,8 +794,6 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getBasedir() ).andReturn( basedir ).anyTimes();
 
         expect( configSource.getProject() ).andReturn( new MavenProject( new Model() ) ).anyTimes();
-
-        expect( configSource.isSiteIncluded() ).andReturn( false ).anyTimes();
 
         expect( configSource.isIgnoreMissingDescriptor() ).andReturn( false ).anyTimes();
 
@@ -1094,8 +1042,6 @@ public class DefaultAssemblyReaderTest
         expect( configSource.getBasedir() ).andReturn( basedir ).anyTimes();
 
         expect( configSource.getProject() ).andReturn( new MavenProject( new Model() ) ).anyTimes();
-
-        expect( configSource.isSiteIncluded() ).andReturn( false ).anyTimes();
 
         expect( configSource.isIgnoreMissingDescriptor() ).andReturn( ignoreMissing ).anyTimes();
         DefaultAssemblyArchiverTest.setupInterpolators( configSource );

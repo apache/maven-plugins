@@ -67,11 +67,6 @@ public interface AssemblerConfigurationSource
     MavenProject getProject();
 
     /**
-     * @return Site included.
-     */
-    boolean isSiteIncluded();
-
-    /**
      * @return The site directory.
      */
     File getSiteDirectory();
