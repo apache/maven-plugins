@@ -74,6 +74,12 @@ under the License.
       <artifactId>maven-shared-utils</artifactId>
       <version>3.0.1</version>
     </dependency>
+    <!-- Upgrade of transitive dependency of maven-shared-utils. -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.5</version>
+    </dependency>
 
     <!-- dependencies to annotations -->
     <dependency>
