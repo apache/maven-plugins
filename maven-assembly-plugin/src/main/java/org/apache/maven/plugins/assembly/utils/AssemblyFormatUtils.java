@@ -61,19 +61,11 @@ public final class AssemblyFormatUtils
     {
         final String finalName = configSource.getFinalName();
         final boolean appendAssemblyId = configSource.isAssemblyIdAppended();
-        final String classifier = configSource.getClassifier();
 
         String distributionName = finalName;
         if ( appendAssemblyId )
         {
-            if ( !StringUtils.isEmpty( assembly.getId() ) )
-            {
-                distributionName = finalName + "-" + assembly.getId();
-            }
-        }
-        else if ( classifier != null )
-        {
-            distributionName = finalName + "-" + classifier;
+            distributionName = finalName + "-" + assembly.getId();
         }
 
         return distributionName;
