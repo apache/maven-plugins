@@ -42,11 +42,6 @@ public interface AssemblerConfigurationSource
     String getDescriptor();
 
     /**
-     * @return The descriptor id.
-     */
-    String getDescriptorId();
-
-    /**
      * @return The descriptors.
      */
     String[] getDescriptors();
