@@ -194,15 +194,6 @@ public abstract class AbstractAssemblyMojo
     private File archiveBaseDirectory;
 
     /**
-     * Predefined Assembly Descriptor Id's. You can select bin, jar-with-dependencies, or src.
-     *
-     * @deprecated Please use descriptorRefs instead
-     */
-    @Deprecated
-    @Parameter( property = "descriptorId" )
-    private String descriptorId;
-
-    /**
      * Assembly XML Descriptor file. This must be the path to your customized descriptor file.
      *
      * @deprecated Please use descriptors instead
@@ -658,19 +649,6 @@ public abstract class AbstractAssemblyMojo
     {
         return descriptor;
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated This has been replaced by {@link #getDescriptorReferences()}
-     */
-    @Override
-    @Deprecated
-    public String getDescriptorId()
-    {
-        return descriptorId;
-    }
-
 
     @Override
     public String[] getDescriptorReferences()

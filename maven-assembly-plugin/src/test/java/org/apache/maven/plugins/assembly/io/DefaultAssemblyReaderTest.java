@@ -877,7 +877,7 @@ public class DefaultAssemblyReaderTest
 
         final String assemblyFile = files.get( 0 );
 
-        final List<Assembly> assemblies = performReadAssemblies( basedir, assemblyFile, null, null, null, null );
+        final List<Assembly> assemblies = performReadAssemblies( basedir, assemblyFile, null, null, null );
 
         assertNotNull( assemblies );
         assertEquals( 1, assemblies.size() );
@@ -897,7 +897,7 @@ public class DefaultAssemblyReaderTest
 
         try
         {
-            performReadAssemblies( basedir, assemblyFile.getAbsolutePath(), null, null, null, null, false );
+            performReadAssemblies( basedir, assemblyFile.getAbsolutePath(), null, null, null, false );
 
             fail( "Should fail when descriptor file is missing and ignoreDescriptors == false" );
         }
@@ -917,28 +917,13 @@ public class DefaultAssemblyReaderTest
 
         try
         {
-            performReadAssemblies( basedir, assemblyFile.getAbsolutePath(), null, null, null, null, true );
+            performReadAssemblies( basedir, assemblyFile.getAbsolutePath(), null, null, null, true );
         }
         catch ( final AssemblyReadException e )
         {
             fail( "Setting ignoreMissingDescriptor == true (true flag in performReadAssemblies, above) should NOT "
                       + "produce an exception." );
         }
-    }
-
-    public void testReadAssemblies_ShouldGetAssemblyDescriptorFromSingleRef()
-        throws IOException, AssemblyReadException, InvalidAssemblerConfigurationException
-    {
-        final File basedir = fileManager.createTempDir();
-
-        final List<Assembly> assemblies = performReadAssemblies( basedir, null, "bin", null, null, null );
-
-        assertNotNull( assemblies );
-        assertEquals( 1, assemblies.size() );
-
-        final Assembly result = assemblies.get( 0 );
-
-        assertEquals( "bin", result.getId() );
     }
 
     public void testReadAssemblies_ShouldGetAssemblyDescriptorFromFileArray()
@@ -959,7 +944,7 @@ public class DefaultAssemblyReaderTest
         final List<String> files = writeAssembliesToFile( assemblies, basedir );
 
         final List<Assembly> results =
-            performReadAssemblies( basedir, null, null, files.toArray( new String[files.size()] ), null, null );
+            performReadAssemblies( basedir, null, files.toArray( new String[files.size()] ), null, null );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -979,7 +964,7 @@ public class DefaultAssemblyReaderTest
         final File basedir = fileManager.createTempDir();
 
         final List<Assembly> assemblies =
-            performReadAssemblies( basedir, null, null, null, new String[]{ "bin", "src" }, null );
+            performReadAssemblies( basedir, null, null, new String[]{ "bin", "src" }, null );
 
         assertNotNull( assemblies );
         assertEquals( 2, assemblies.size() );
@@ -1010,7 +995,7 @@ public class DefaultAssemblyReaderTest
 
         writeAssembliesToFile( assemblies, basedir );
 
-        final List<Assembly> results = performReadAssemblies( basedir, null, null, null, null, basedir );
+        final List<Assembly> results = performReadAssemblies( basedir, null, null, null, basedir );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -1043,7 +1028,7 @@ public class DefaultAssemblyReaderTest
 
         fileManager.createFile( basedir, "readme.txt", "This is just a readme file, not a descriptor." );
 
-        final List<Assembly> results = performReadAssemblies( basedir, null, null, null, null, basedir );
+        final List<Assembly> results = performReadAssemblies( basedir, null, null, null, basedir );
 
         assertNotNull( results );
         assertEquals( 2, results.size() );
@@ -1086,23 +1071,19 @@ public class DefaultAssemblyReaderTest
     }
 
     private List<Assembly> performReadAssemblies( final File basedir, final String descriptor,
-                                                  final String descriptorRef, final String[] descriptors,
-                                                  final String[] descriptorRefs, final File descriptorDir )
+                                                  final String[] descriptors, final String[] descriptorRefs,
+                                                  final File descriptorDir )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
-        return performReadAssemblies( basedir, descriptor, descriptorRef, descriptors, descriptorRefs, descriptorDir,
-                                      false );
+        return performReadAssemblies( basedir, descriptor, descriptors, descriptorRefs, descriptorDir, false );
     }
 
     private List<Assembly> performReadAssemblies( final File basedir, final String descriptor,
-                                                  final String descriptorRef, final String[] descriptors,
-                                                  final String[] descriptorRefs, final File descriptorDir,
-                                                  final boolean ignoreMissing )
+                                                  final String[] descriptors, final String[] descriptorRefs,
+                                                  final File descriptorDir, final boolean ignoreMissing )
         throws AssemblyReadException, InvalidAssemblerConfigurationException
     {
         expect( configSource.getDescriptor() ).andReturn( descriptor );
-
-        expect( configSource.getDescriptorId() ).andReturn( descriptorRef );
 
         expect( configSource.getDescriptorReferences() ).andReturn( descriptorRefs );
 
