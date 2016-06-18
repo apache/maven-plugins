@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
@@ -46,10 +45,13 @@ import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.resolved.AssemblyId;
 import org.apache.maven.plugins.assembly.utils.FilterUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
+import org.apache.maven.shared.artifact.resolve.ArtifactResult;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
+import org.apache.maven.shared.project.DefaultProjectCoordinate;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -66,9 +68,9 @@ public class DefaultDependencyResolver
 {
     @Requirement
     private RepositorySystem resolver;
-
+    
     @Requirement
-    private ArtifactFactory factory;
+    private org.apache.maven.shared.dependencies.resolve.DependencyResolver dependencyResolver;
 
     @Override
     public Map<DependencySet, Set<Artifact>> resolveDependencySets( final Assembly assembly, ModuleSet moduleSet,
@@ -86,7 +88,9 @@ public class DefaultDependencyResolver
             final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
             updateRepositoryResolutionRequirements( assembly, info );
             final AssemblyId assemblyId = AssemblyId.createAssemblyId( assembly );
-            updateDependencySetResolutionRequirements( dependencySet, info, assemblyId, currentProject );
+            updateDependencySetResolutionRequirements( dependencySet, info, assemblyId,
+                                                       configSource.getMavenSession().getProjectBuildingRequest(),
+                                                       currentProject );
             updateModuleSetResolutionRequirements( assemblyId, moduleSet, dependencySet, info, configSource );
 
             resolve( assembly, configSource, result, dependencySet, info );
@@ -144,7 +148,9 @@ public class DefaultDependencyResolver
             final ResolutionManagementInfo info = new ResolutionManagementInfo( currentProject );
             updateRepositoryResolutionRequirements( assembly, info );
             final AssemblyId assemblyId = AssemblyId.createAssemblyId( assembly );
-            updateDependencySetResolutionRequirements( dependencySet, info, assemblyId, currentProject );
+            updateDependencySetResolutionRequirements( dependencySet, info, assemblyId,
+                                                       configSource.getMavenSession().getProjectBuildingRequest(),
+                                                       currentProject );
 
             resolve( assembly, configSource, result, dependencySet, info );
 
@@ -298,6 +304,7 @@ public class DefaultDependencyResolver
             if ( binaries.isIncludeDependencies() )
             {
                 updateDependencySetResolutionRequirements( dependencySet, requirements, assemblyId,
+                                                           configSource.getMavenSession().getProjectBuildingRequest(),
                                                            projects.toArray( new MavenProject[projects.size()] ) );
             }
         }
@@ -305,6 +312,7 @@ public class DefaultDependencyResolver
 
     void updateDependencySetResolutionRequirements( final DependencySet set,
                                                     final ResolutionManagementInfo requirements, AssemblyId assemblyId,
+                                                    ProjectBuildingRequest buildingRequest,
                                                     final MavenProject... projects )
         throws DependencyResolutionException
     {
@@ -316,8 +324,6 @@ public class DefaultDependencyResolver
         
         requirements.setScopeFilter( scopeFilter );
         
-        ArtifactFilter filter = new ArtifactIncludeFilterTransformer().transform( scopeFilter );
-
         for ( final MavenProject project : projects )
         {
             if ( project == null )
@@ -330,10 +336,26 @@ public class DefaultDependencyResolver
             {
                 try
                 {
-                    dependencyArtifacts = project.createArtifacts( factory, null, filter );
+                    DefaultProjectCoordinate coordinate = new DefaultProjectCoordinate();
+                    coordinate.setGroupId( project.getGroupId() );
+                    coordinate.setArtifactId( project.getArtifactId() );
+                    coordinate.setVersion( project.getVersion() );
+                    coordinate.setPackaging( project.getPackaging() );
+                    
+                    
+                    Iterable<ArtifactResult> artifactResults =
+                        dependencyResolver.resolveDependencies( buildingRequest, coordinate, scopeFilter );
+                    
+                    dependencyArtifacts = new HashSet<Artifact>();
+                    
+                    for ( ArtifactResult artifactResult : artifactResults )
+                    {
+                        dependencyArtifacts.add( artifactResult.getArtifact() );
+                    }
+                    
                     project.setDependencyArtifacts( dependencyArtifacts );
                 }
-                catch ( final InvalidDependencyVersionException e )
+                catch ( final DependencyResolverException e )
                 {
                     throw new DependencyResolutionException(
                         "Failed to create dependency artifacts for resolution. Assembly: " + assemblyId, e );
