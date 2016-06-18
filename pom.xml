@@ -200,10 +200,9 @@ under the License.
       <version>4.2.3</version>
     </dependency>
     <dependency>
-      <!-- MJAVADOC-246 -->
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
+      <version>1.2</version>
     </dependency>
     <!-- Not included in Httpclient -->
     <dependency>
