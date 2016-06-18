@@ -166,16 +166,6 @@ public abstract class AbstractAssemblyMojo
     private List<String> formats;
 
     /**
-     * This is the artifact classifier to be used for the resultant assembly artifact. Normally, you would use the
-     * assembly-id instead of specifying this here.
-     *
-     * @deprecated Please use the Assembly's id for classifier instead
-     */
-    @Deprecated
-    @Parameter( property = "classifier" )
-    private String classifier;
-
-    /**
      * A list of descriptor files to generate from.
      */
     @Parameter
@@ -513,7 +503,6 @@ public abstract class AbstractAssemblyMojo
                             this, isRecompressZippedFiles(), getMergeManifestMode() );
 
                     final MavenProject project = getProject();
-                    final String classifier = getClassifier();
                     final String type = project.getArtifact().getType();
 
                     if ( attach && destFile.isFile() )
@@ -521,10 +510,6 @@ public abstract class AbstractAssemblyMojo
                         if ( isAssemblyIdAppended() )
                         {
                             projectHelper.attachArtifact( project, format, assembly.getId(), destFile );
-                        }
-                        else if ( classifier != null )
-                        {
-                            projectHelper.attachArtifact( project, format, classifier, destFile );
                         }
                         else if ( !"pom".equals( type ) && format.equals( type ) )
                         {
@@ -838,18 +823,6 @@ public abstract class AbstractAssemblyMojo
     public void setReactorProjects( final List<MavenProject> reactorProjects )
     {
         this.reactorProjects = reactorProjects;
-    }
-
-    @Override
-    public String getClassifier()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void setClassifier( final String classifier )
-    {
-        this.classifier = classifier;
     }
 
     public void setAppendAssemblyId( final boolean appendAssemblyId )

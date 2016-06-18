@@ -92,11 +92,6 @@ public interface AssemblerConfigurationSource
     boolean isAssemblyIdAppended();
 
     /**
-     * @return The classifier.
-     */
-    String getClassifier();
-
-    /**
      * @return Tar long file mode.
      */
     String getTarLongFileMode();

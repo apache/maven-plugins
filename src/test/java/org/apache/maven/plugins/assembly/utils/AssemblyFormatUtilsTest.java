@@ -68,12 +68,12 @@ public class AssemblyFormatUtilsTest
 
     public void testGetDistroName_ShouldUseJustFinalNameWithNoAppendAssemblyIdOrClassifier()
     {
-        verifyDistroName( "assembly", null, "finalName", false, "finalName" );
+        verifyDistroName( "assembly", "finalName", false, "finalName" );
     }
 
-    public void testGetDistroName_ShouldUseFinalNamePlusClassifierWhenAppendAssemblyIdIsNull()
+    public void testGetDistroName_ShouldUseFinalNamePlusAssemblyIdIsNull()
     {
-        verifyDistroName( "assembly", "classifier", "finalName", false, "finalName-classifier" );
+        verifyDistroName( "assembly", "finalName", true, "finalName-assembly" );
     }
 
     public void testGetOutputDir_ShouldResolveGroupIdInOutDir_UseArtifactInfo()
@@ -764,11 +764,11 @@ public class AssemblyFormatUtilsTest
         mockManager.resetAll();
     }
 
-    private void verifyDistroName( final String assemblyId, final String classifier, final String finalName,
-                                   final boolean appendAssemblyId, final String checkValue )
+    private void verifyDistroName( final String assemblyId, final String finalName, final boolean appendAssemblyId,
+                                   final String checkValue )
     {
         final MockAndControlForGetDistroName mac =
-            new MockAndControlForGetDistroName( finalName, appendAssemblyId, classifier );
+            new MockAndControlForGetDistroName( finalName, appendAssemblyId );
 
         mockManager.replayAll();
 
@@ -800,18 +800,14 @@ public class AssemblyFormatUtilsTest
     {
         final AssemblerConfigurationSource configSource;
 
-        private final String classifier;
-
         private final boolean isAssemblyIdAppended;
 
         private final String finalName;
 
-        public MockAndControlForGetDistroName( final String finalName, final boolean isAssemblyIdAppended,
-                                               final String classifier )
+        public MockAndControlForGetDistroName( final String finalName, final boolean isAssemblyIdAppended )
         {
             this.finalName = finalName;
             this.isAssemblyIdAppended = isAssemblyIdAppended;
-            this.classifier = classifier;
 
             configSource = mockManager.createMock( AssemblerConfigurationSource.class );
 
@@ -820,8 +816,6 @@ public class AssemblyFormatUtilsTest
 
         private void enableExpectations()
         {
-            expect( configSource.getClassifier() ).andReturn( classifier ).atLeastOnce();
-
             expect( configSource.isAssemblyIdAppended() ).andReturn( isAssemblyIdAppended ).atLeastOnce();
 
             expect( configSource.getFinalName() ).andReturn( finalName ).atLeastOnce();
