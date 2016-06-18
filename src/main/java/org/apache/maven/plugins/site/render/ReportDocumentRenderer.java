@@ -204,11 +204,11 @@ public class ReportDocumentRenderer
         Locale locale = siteRenderingContext.getLocale();
         String localReportName = report.getName( locale );
 
-        String msg = "Generating \"" + ansi().highlight().a( localReportName ).reset() + "\" report";
+        String msg = "Generating \"" + ansi().strong().a( localReportName ).reset() + "\" report";
         // CHECKSTYLE_OFF: MagicNumber
         log.info( reportMojoInfo == null ? ( msg + '.' )
                         : ( StringUtils.rightPad( msg, 40 )
-                            + ansi().highlight().a( " --- " ).reset().mojo().a( reportMojoInfo ).reset() ) );
+                            + ansi().strong().a( " --- " ).reset().mojo().a( reportMojoInfo ).reset() ) );
         // CHECKSTYLE_ON: MagicNumber
 
         // main sink
