@@ -103,16 +103,9 @@ public class DefaultAssemblyReader
 
         final List<Assembly> assemblies = new ArrayList<Assembly>();
 
-        final String descriptor = configSource.getDescriptor();
         final String[] descriptors = configSource.getDescriptors();
         final String[] descriptorRefs = configSource.getDescriptorReferences();
         final File descriptorSourceDirectory = configSource.getDescriptorSourceDirectory();
-
-        if ( descriptor != null )
-        {
-            locator.setStrategies( strategies );
-            addAssemblyFromDescriptor( descriptor, locator, configSource, assemblies );
-        }
 
         if ( ( descriptors != null ) && ( descriptors.length > 0 ) )
         {
