@@ -19,7 +19,7 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import static org.fusesource.jansi.Ansi.ansi;
+import static org.apache.maven.shared.project.utils.AnsiUtils.ansi;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1412,7 +1412,7 @@ public abstract class AbstractInvokerMojo
             basedir = pomFile.getParentFile();
         }
 
-        getLog().info( ansi().a( "Building: " ).bold().a( buildJob.getProject() ).reset().toString() );
+        getLog().info( ansi().a( "Building: " ).strong().a( buildJob.getProject() ).reset().toString() );
 
         File interpolatedPomFile = null;
         if ( pomFile != null )
@@ -1460,7 +1460,7 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + ansi().bold().fgGreen().a( "SUCCESS " ).reset()
+                        getLog().info( ".." + ansi().success().a( "SUCCESS " ).reset()
                             + formatTime( buildJob.getTime() ) );
                     }
                 }
@@ -1470,7 +1470,7 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + ansi().bold().fgYellow().a( "SKIPPED " ).reset()
+                        getLog().info( ".." + ansi().warning().a( "SKIPPED " ).reset()
                             + formatTime( buildJob.getTime() ) );
                     }
                 }
@@ -1503,7 +1503,7 @@ public abstract class AbstractInvokerMojo
 
                 if ( !suppressSummaries )
                 {
-                    getLog().info( ".." + ansi().bold().fgYellow().a( "SKIPPED " ).reset() + " due to "
+                    getLog().info( ".." + ansi().warning().a( "SKIPPED " ).reset() + " due to "
                         + message.toString() );
                 }
 
@@ -1519,7 +1519,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + ansi().bold().fgRed().a( "ERROR " ).reset() + formatTime( buildJob.getTime() ) );
+                getLog().info( ".." + ansi().failure().a( "ERROR " ).reset() + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
@@ -1530,7 +1530,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + ansi().bold().fgRed().a( "FAILED " ).reset() + formatTime( buildJob.getTime() ) );
+                getLog().info( ".." + ansi().failure().a( "FAILED " ).reset() + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
