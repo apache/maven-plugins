@@ -1412,7 +1412,7 @@ public abstract class AbstractInvokerMojo
             basedir = pomFile.getParentFile();
         }
 
-        getLog().info( ansi().a( "Building: " ).strong().a( buildJob.getProject() ).reset().toString() );
+        getLog().info( ansi().a( "Building: " ).strong( buildJob.getProject() ).toString() );
 
         File interpolatedPomFile = null;
         if ( pomFile != null )
@@ -1460,8 +1460,7 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + ansi().success().a( "SUCCESS " ).reset()
-                            + formatTime( buildJob.getTime() ) );
+                        getLog().info( ".." + ansi().success( "SUCCESS " ) + formatTime( buildJob.getTime() ) );
                     }
                 }
                 else
@@ -1470,8 +1469,7 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + ansi().warning().a( "SKIPPED " ).reset()
-                            + formatTime( buildJob.getTime() ) );
+                        getLog().info( ".." + ansi().warning( "SKIPPED " ) + formatTime( buildJob.getTime() ) );
                     }
                 }
             }
@@ -1503,8 +1501,7 @@ public abstract class AbstractInvokerMojo
 
                 if ( !suppressSummaries )
                 {
-                    getLog().info( ".." + ansi().warning().a( "SKIPPED " ).reset() + " due to "
-                        + message.toString() );
+                    getLog().info( ".." + ansi().warning( "SKIPPED " ) + " due to " + message.toString() );
                 }
 
                 // Abuse failureMessage, the field in the report which should contain the reason for skipping
@@ -1519,7 +1516,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + ansi().failure().a( "ERROR " ).reset() + formatTime( buildJob.getTime() ) );
+                getLog().info( ".." + ansi().failure( "ERROR " ) + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
@@ -1530,7 +1527,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + ansi().failure().a( "FAILED " ).reset() + formatTime( buildJob.getTime() ) );
+                getLog().info( ".." + ansi().failure( "FAILED " ) + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
