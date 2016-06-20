@@ -19,6 +19,7 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -32,6 +33,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  */
 @Mojo( name = "test-aggregate-jar", defaultPhase = LifecyclePhase.PACKAGE, aggregator = true,
        requiresDependencyResolution = ResolutionScope.TEST )
+@Execute( phase = LifecyclePhase.TEST_COMPILE )
 public class AggregatorTestJavadocJar
     extends TestJavadocJar
 {
