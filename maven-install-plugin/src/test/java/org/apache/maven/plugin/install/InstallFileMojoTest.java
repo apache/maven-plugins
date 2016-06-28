@@ -19,28 +19,23 @@ package org.apache.maven.plugin.install;
  * under the License.
  */
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.File;
+import java.io.Reader;
 
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
-import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.impl.internal.EnhancedLocalRepositoryManager;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
-import java.io.File;
-import java.io.Reader;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author <a href="mailto:aramirez@apache.org">Allan Ramirez</a>
@@ -177,6 +172,8 @@ public class InstallFileMojoTest
         {
             reader = ReaderFactory.newXmlReader( installedPom );
             model = new MavenXpp3Reader().read( reader );
+            reader.close();
+            reader = null;
         }
         finally
         {

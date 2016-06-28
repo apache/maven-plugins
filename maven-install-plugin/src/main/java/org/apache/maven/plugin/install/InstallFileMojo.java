@@ -236,6 +236,12 @@ public class InstallFileMojo
                             
                             IOUtil.copy( pomInputStream, pomOutputStream );
 
+                            pomOutputStream.close();
+                            pomOutputStream = null;
+
+                            pomInputStream.close();
+                            pomInputStream = null;
+
                             processModel( readModel( pomFile ) );
 
                             break;
@@ -395,7 +401,10 @@ public class InstallFileMojo
         try
         {
             reader = ReaderFactory.newXmlReader( pomFile );
-            return new MavenXpp3Reader().read( reader );
+            final Model model = new MavenXpp3Reader().read( reader );
+            reader.close();
+            reader = null;
+            return model;
         }
         catch ( FileNotFoundException e )
         {
@@ -513,6 +522,8 @@ public class InstallFileMojo
 
             writer = WriterFactory.newXmlWriter( pomFile );
             new MavenXpp3Writer().write( writer, model );
+            writer.close();
+            writer = null;
 
             return pomFile;
         }

@@ -66,6 +66,8 @@ public abstract class ProjectInfoProjectStub
         {
             reader = ReaderFactory.newXmlReader( new File( getBasedir(), getPOM() ) );
             model = pomReader.read( reader );
+            reader.close();
+            reader = null;
             setModel( model );
         }
         catch ( Exception e )
