@@ -19,7 +19,7 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import static org.apache.maven.shared.project.utils.AnsiUtils.ansi;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -81,7 +81,7 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.project.utils.AnsiUtils;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.apache.maven.shared.scriptinterpreter.RunErrorException;
 import org.apache.maven.shared.scriptinterpreter.RunFailureException;
 import org.apache.maven.shared.scriptinterpreter.ScriptRunner;
@@ -1250,7 +1250,7 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            AnsiUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
+            MessageUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
 
             if ( runWithParallelThreads > 1 )
             {
@@ -1304,7 +1304,7 @@ public abstract class AbstractInvokerMojo
             {
                 mergedSettingsFile.delete();
             }
-            AnsiUtils.systemUninstall();
+            MessageUtils.systemUninstall();
         }
     }
 
@@ -1412,7 +1412,7 @@ public abstract class AbstractInvokerMojo
             basedir = pomFile.getParentFile();
         }
 
-        getLog().info( ansi().a( "Building: " ).strong( buildJob.getProject() ).toString() );
+        getLog().info( buffer().a( "Building: " ).strong( buildJob.getProject() ).toString() );
 
         File interpolatedPomFile = null;
         if ( pomFile != null )
@@ -1460,7 +1460,7 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + ansi().success( "SUCCESS " ) + formatTime( buildJob.getTime() ) );
+                        getLog().info( ".." + buffer().success( "SUCCESS " ) + formatTime( buildJob.getTime() ) );
                     }
                 }
                 else
@@ -1469,7 +1469,7 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + ansi().warning( "SKIPPED " ) + formatTime( buildJob.getTime() ) );
+                        getLog().info( ".." + buffer().warning( "SKIPPED " ) + formatTime( buildJob.getTime() ) );
                     }
                 }
             }
@@ -1501,7 +1501,7 @@ public abstract class AbstractInvokerMojo
 
                 if ( !suppressSummaries )
                 {
-                    getLog().info( ".." + ansi().warning( "SKIPPED " ) + " due to " + message.toString() );
+                    getLog().info( ".." + buffer().warning( "SKIPPED " ) + " due to " + message.toString() );
                 }
 
                 // Abuse failureMessage, the field in the report which should contain the reason for skipping
@@ -1516,7 +1516,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + ansi().failure( "ERROR " ) + formatTime( buildJob.getTime() ) );
+                getLog().info( ".." + buffer().failure( "ERROR " ) + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
@@ -1527,7 +1527,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + ansi().failure( "FAILED " ) + formatTime( buildJob.getTime() ) );
+                getLog().info( ".." + buffer().failure( "FAILED " ) + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }

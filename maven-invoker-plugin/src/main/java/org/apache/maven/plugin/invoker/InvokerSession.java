@@ -19,7 +19,7 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import static org.fusesource.jansi.Ansi.ansi;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -198,7 +198,7 @@ class InvokerSession
     {
         updateStats();
 
-        String separator = ansi().bold().a( "-------------------------------------------------" ).reset().toString();
+        String separator = buffer().strong( "-------------------------------------------------" ).toString();
 
         logger.info( separator );
         logger.info( "Build Summary:" );
