@@ -41,7 +41,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
-import org.apache.maven.shared.project.utils.AnsiUtils;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 
 /**
  * Generates the site for a single project.
@@ -128,7 +128,7 @@ public class SiteMojo
             Locale defaultLocale = localesList.get( 0 );
             Locale.setDefault( defaultLocale );
 
-            AnsiUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
+            MessageUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
             for ( Locale locale : localesList )
             {
                 renderLocale( locale, reports );
@@ -144,7 +144,7 @@ public class SiteMojo
         }
         finally
         {
-            AnsiUtils.systemUninstall();
+            MessageUtils.systemUninstall();
         }
     }
 
