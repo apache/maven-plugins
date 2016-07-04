@@ -25,14 +25,17 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -53,12 +56,14 @@ import org.apache.maven.shared.dependency.graph.filter.AncestorOrSelfDependencyN
 import org.apache.maven.shared.dependency.graph.filter.AndDependencyNodeFilter;
 import org.apache.maven.shared.dependency.graph.filter.ArtifactDependencyNodeFilter;
 import org.apache.maven.shared.dependency.graph.filter.DependencyNodeFilter;
+import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.BuildingDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.CollectingDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.FilteringDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.SerializingDependencyNodeVisitor;
 import org.apache.maven.shared.dependency.graph.traversal.SerializingDependencyNodeVisitor.GraphTokens;
+import org.apache.maven.shared.utils.StringUtils;
 
 /**
  * Displays the dependency tree for this project.
@@ -120,9 +125,8 @@ public class TreeMojo
     private String scope;
 
     /**
-     * Whether to include omitted nodes in the serialized dependency tree. Notice this feature actually uses Maven 2
-     * algorithm and <a href="http://maven.apache.org/shared/maven-dependency-tree/">may give wrong results when used
-     * with Maven 3</a>.
+     * Whether to include omitted nodes in the serialized dependency tree. Notice this feature actually is experimental
+     * since Maven 3.
      *
      * @since 2.0-alpha-6
      */
@@ -220,13 +224,6 @@ public class TreeMojo
             // TODO: note that filter does not get applied due to MSHARED-4
             ArtifactFilter artifactFilter = createResolvingArtifactFilter();
 
-            if ( verbose )
-            {
-                // To fix we probably need a different DependencyCollector in Aether, which doesn't remove nodes which
-                // have already been resolved.
-                getLog().info( "Verbose not supported since maven-dependency-plugin 3.0" );
-            }
-            
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             
@@ -235,6 +232,14 @@ public class TreeMojo
             // non-verbose mode use dependency graph component, which gives consistent results with Maven version
             // running
             rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, artifactFilter );
+
+            if ( verbose )
+            {
+                // A better and faster solution could be to use a different DependencyCollector in Aether, which doesn't
+                // remove nodes which have already been resolved.
+                getLog().info( "Verbose is experimental since maven-dependency-plugin 3.0" );
+                attachVerbose( 0, rootNode, artifactFilter );
+            }
 
             dependencyTreeString = serializeDependencyTree( rootNode );
 
@@ -432,6 +437,134 @@ public class TreeMojo
         }
 
         return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
+    }
+
+    /**
+     * Attaches already resolved nodes to {@code originalNode}.
+     *
+     * @param indent the indent count used for debug output
+     * @param originalNode the original node
+     * @param filter artifact filter (can be {@code null})
+     * @throws DependencyGraphBuilderException if some of the dependencies could not be resolved.
+     */
+    private void attachVerbose( int indent, DependencyNode originalNode, ArtifactFilter filter )
+            throws DependencyGraphBuilderException
+    {
+
+        DependencyNode newRootNode = buildDependencyGraph( indent + 1, originalNode.getArtifact(),
+                filter );
+        for ( DependencyNode newChild : newRootNode.getChildren() )
+        {
+            DependencyNode originalChild = addChildIfNotFound( indent + 1, originalNode, newChild );
+            attachVerbose( indent + 1, originalChild, filter );
+        }
+    }
+
+    /**
+     * Build the dependency graph of {@code artifact}.
+     *
+     * @param indent the indent count used for debug output
+     * @param artifact the artifact which is used to build the dependency graph
+     * @param filter artifact filter (can be {@code null})
+     * @return the dependency graph
+     * @throws DependencyGraphBuilderException if some of the dependencies could not be resolved.
+     */
+    private DependencyNode buildDependencyGraph( int indent, Artifact artifact, ArtifactFilter filter )
+            throws DependencyGraphBuilderException
+    {
+        if ( getLog().isDebugEnabled() )
+        {
+            String strIndent = StringUtils.repeat( " ", 4 * indent );
+            String strArtifact = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
+            getLog().debug( strIndent + "Build dependency graph of '" + strArtifact + "'" );
+        }
+
+        Dependency dependency = new Dependency();
+        dependency.setGroupId( artifact.getGroupId() );
+        dependency.setArtifactId( artifact.getArtifactId() );
+        dependency.setVersion( artifact.getVersion() );
+        dependency.setType( artifact.getType() );
+        dependency.setClassifier( artifact.getClassifier() );
+        dependency.setScope( artifact.getScope() );
+
+        MavenProject project = this.project.clone();
+        project.setDependencies( Collections.singletonList( dependency ) );
+        project.setDependencyArtifacts( null );
+
+        ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+        buildingRequest.setProject( project );
+
+        DependencyNode rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, filter );
+        return rootNode.getChildren().get( 0 );
+    }
+
+    /**
+     * Adds {@code newChild} to {@code originalParent} if the parent does not already have a child-artifact with
+     * the same coordinates (groupId, artifactId, version, type and classifier).
+     *
+     * @param indent the indent count used for debug output
+     * @param originalParent the original parent
+     * @param newChild the new child which should be added to {@code originalParent} if not found
+     * @return the child node of {@code originalParent} which equals to {@code newChild}
+     */
+    private DependencyNode addChildIfNotFound( int indent, DependencyNode originalParent, DependencyNode newChild )
+    {
+        Artifact originalParentArtifact = originalParent.getArtifact();
+        String strIndent = StringUtils.repeat( " ", 4 * indent );
+        String strNode = originalParentArtifact.getGroupId() + ":" + originalParentArtifact.getArtifactId() + ":"
+                + originalParentArtifact.getVersion();
+        String strChild = newChild.getArtifact().getGroupId() + ":" + newChild.getArtifact().getArtifactId() + ":"
+                + newChild.getArtifact().getVersion();
+        getLog().debug( strIndent + "Check add '" + strChild + "' to '" + strNode + "'" );
+
+        DependencyNode ret = null;
+        for ( DependencyNode originalChild : originalParent.getChildren() )
+        {
+            Artifact originalChildArtifact = originalChild.getArtifact();
+            Artifact newChildArtifact = newChild.getArtifact();
+            if ( StringUtils.equals( originalChildArtifact.getArtifactId(), newChildArtifact.getArtifactId() )
+                    && StringUtils.equals( originalChildArtifact.getGroupId(), newChildArtifact.getGroupId() )
+                    && StringUtils.equals( originalChildArtifact.getVersion(), newChildArtifact.getVersion() )
+                    && StringUtils.equals( originalChildArtifact.getType(), newChildArtifact.getType() )
+                    && StringUtils.equals( originalChildArtifact.getClassifier(), newChildArtifact.getClassifier() ) )
+            {
+                ret = originalChild;
+                break;
+            }
+        }
+        if ( ret == null )
+        {
+            getLog().debug( strIndent + "Add '" + strChild + "' to '" + strNode + "'" );
+            DependencyNode newChildNode = copy( originalParent, newChild );
+            List<DependencyNode> childs = new ArrayList<DependencyNode>( originalParent.getChildren() );
+            childs.add( newChildNode );
+            ( ( DefaultDependencyNode ) originalParent ).setChildren( childs );
+            ret = newChildNode;
+        }
+        return ret;
+    }
+
+    /**
+     * Creates a deep copy of {@code node} with {@code parent} as the new parent.
+     *
+     * @param parent the parent of the new node
+     * @param node the node to copy
+     * @return the copied node
+     */
+    private static DependencyNode copy( DependencyNode parent, DependencyNode node )
+    {
+        DefaultDependencyNode ret = new DefaultDependencyNode( parent, node.getArtifact(),
+                node.getPremanagedVersion(), node.getPremanagedScope(), node.getVersionConstraint(),
+                node.getOptional() );
+
+        List<DependencyNode> childs = new ArrayList<DependencyNode>( node.getChildren().size() );
+        for ( DependencyNode child : node.getChildren() )
+        {
+            childs.add( copy( ret, child ) );
+        }
+        ret.setChildren( Collections.unmodifiableList( childs ) );
+        return ret;
     }
 
     //following is required because the version handling in maven code
