@@ -115,6 +115,27 @@ public class TreeMojo
     private String outputType;
 
     /**
+     * If specified, this parameter will cause that the scope is not included in the output.
+     * <p/>
+     * Note that this is only supported by the outputType "tgf" at the moment.
+     *
+     * @since 3.0
+     */
+    @Parameter( property = "outputScope", defaultValue = "true" )
+    private boolean outputScope;
+
+    /**
+     * If specified, this parameter will cause that dependencies with the same groupId, artifactId, type and classifier
+     * are merged even if the version are different.
+     * <p/>
+     * Note that this is only supported by the outputType "tgf" at the moment.
+     *
+     * @since 3.0
+     */
+    @Parameter( property = "outputMergeVersion", defaultValue = "false" )
+    private boolean outputMergeVersion;
+
+    /**
      * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
      * all scopes. Note that this feature does not currently work due to MSHARED-4
      *
@@ -363,7 +384,7 @@ public class TreeMojo
         }
         else if ( "tgf".equals( outputType ) )
         {
-            return new TGFDependencyNodeVisitor( writer );
+            return new TGFDependencyNodeVisitor( writer, outputScope, outputMergeVersion );
         }
         else if ( "dot".equals( outputType ) )
         {

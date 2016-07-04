@@ -21,8 +21,11 @@ package org.apache.maven.plugins.dependency.tree ;
 
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 
@@ -82,15 +85,22 @@ public class TGFDependencyNodeVisitor
         @Override
         public String toString()
         {
-            StringBuilder result = new StringBuilder( generateId( from ) );
-            result.append( ' ' ).append( generateId( to ) );
+            return asString( false );
+        }
+
+        /**
+         * build a string representing the edge.
+         */
+        public String asString( boolean mergeVersion )
+        {
+            StringBuilder result = new StringBuilder( generateId( from, mergeVersion ) );
+            result.append( ' ' ).append( generateId( to, mergeVersion ) );
             if ( label != null )
             {
                 result.append( ' ' ).append( label );
             }
             return result.toString();
         }
-
     }
 
     /**
@@ -99,13 +109,42 @@ public class TGFDependencyNodeVisitor
     private List<EdgeAppender> edges = new ArrayList<EdgeAppender>();
 
     /**
+     * Set of node ids.
+     */
+    private Set<String> nodeIds = new HashSet<String>();
+
+    /**
+     * See {@link TreeMojo#outputScope}.
+     */
+    private boolean outputScope;
+
+    /**
+     * See {@link TreeMojo#outputMergeVersion}.
+     */
+    private boolean mergeVersion;
+
+    /**
      * Constructor.
      *
      * @param writer the writer to write to.
      */
     public TGFDependencyNodeVisitor( Writer writer )
     {
+        this( writer, true, false );
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param writer the writer to write to.
+     * @param outputScope see {@link TreeMojo#outputScope}.
+     * @param mergeVersion see {@link TreeMojo#outputMergeVersion}.
+     */
+    public TGFDependencyNodeVisitor( Writer writer, boolean outputScope, boolean mergeVersion )
+    {
         super( writer );
+        this.outputScope = outputScope;
+        this.mergeVersion = mergeVersion;
     }
 
     /**
@@ -120,14 +159,19 @@ public class TGFDependencyNodeVisitor
             writer.println( "#" );
             for ( EdgeAppender edge : edges )
             {
-                writer.println( edge.toString() );
+                writer.println( edge.asString( mergeVersion ) );
             }
         }
         else
         {
             DependencyNode p = node.getParent();
-            // using scope as edge label.
-            edges.add( new EdgeAppender( p, node, node.getArtifact().getScope() ) );
+            String label = null;
+            if ( outputScope )
+            {
+                // using scope as edge label.
+                label = node.getArtifact().getScope();
+            }
+            edges.add( new EdgeAppender( p, node, label ) );
         }
         return true;
     }
@@ -139,23 +183,38 @@ public class TGFDependencyNodeVisitor
     public boolean visit( DependencyNode node )
     {
         // write node
-        writer.write( generateId( node ) );
-        writer.write( " " );
-        writer.println( node.toNodeString() );
+        String nodeId = generateId( node, mergeVersion );
+        if ( nodeIds.add( nodeId ) )
+        {
+            writer.write( nodeId );
+            writer.write( " " );
+            writer.println( mergeVersion ? nodeId : node.toNodeString() );
+        }
         return true;
     }
 
     /**
      * Generate a unique id from a DependencyNode.
-     * <p>
-     * Current implementation is rather simple and uses hashcode.
-     * </p>
      *
      * @param node the DependencyNode to use.
      * @return the unique id.
      */
-    private static String generateId( DependencyNode node )
+    private static String generateId( DependencyNode node, boolean mergeVersion )
     {
-        return String.valueOf( node.hashCode() );
+        Artifact artifact = node.getArtifact();
+        String ret = artifact.getGroupId() + ":" + artifact.getArtifactId();
+        if ( !mergeVersion )
+        {
+            ret += ":" + artifact.getVersion();
+        }
+        if ( artifact.getType() != null )
+        {
+            ret += ":" + artifact.getType();
+        }
+        if ( artifact.hasClassifier() )
+        {
+            ret += ":" + artifact.getClassifier();
+        }
+        return ret;
     }
 }
