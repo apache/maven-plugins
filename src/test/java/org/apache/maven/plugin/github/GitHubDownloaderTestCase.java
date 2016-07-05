@@ -49,7 +49,7 @@ public class GitHubDownloaderTestCase
         assertEquals( Integer.toString( githubIssue.getNumber() ), issue.getId() );
         assertEquals( Integer.toString( githubIssue.getNumber() ), issue.getKey() );
         assertEquals( githubIssue.getTitle(), issue.getTitle() );
-        assertEquals( githubIssue.getBody(), issue.getSummary() );
+        assertEquals( githubIssue.getTitle(), issue.getSummary() );
         assertEquals( issueManagement.getUrl() + githubIssue.getNumber(), issue.getLink() );
     }
 }
