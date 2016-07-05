@@ -20,9 +20,9 @@ package org.apache.maven.plugins.dependency.tree ;
  */
 
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -104,9 +104,9 @@ public class TGFDependencyNodeVisitor
     }
 
     /**
-     * List of edges.
+     * Edges by id.
      */
-    private List<EdgeAppender> edges = new ArrayList<EdgeAppender>();
+    private Map<String, EdgeAppender> edges = new LinkedHashMap<String, EdgeAppender>();
 
     /**
      * Set of node ids.
@@ -157,7 +157,7 @@ public class TGFDependencyNodeVisitor
         {
             // dump edges on last node endVisit
             writer.println( "#" );
-            for ( EdgeAppender edge : edges )
+            for ( EdgeAppender edge : edges.values() )
             {
                 writer.println( edge.asString( mergeVersion ) );
             }
@@ -171,7 +171,10 @@ public class TGFDependencyNodeVisitor
                 // using scope as edge label.
                 label = node.getArtifact().getScope();
             }
-            edges.add( new EdgeAppender( p, node, label ) );
+            String fromId = generateId( p, mergeVersion );
+            String toId = generateId( node, mergeVersion );
+            // avoid duplicates (in case of verbose)
+            edges.put( fromId + toId, new EdgeAppender( p, node, label ) );
         }
         return true;
     }
