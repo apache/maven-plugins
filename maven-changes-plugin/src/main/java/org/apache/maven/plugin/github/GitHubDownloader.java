@@ -149,7 +149,7 @@ public class GitHubDownloader
 
         issue.setTitle( githubIssue.getTitle() );
 
-        issue.setSummary( githubIssue.getBody() );
+        issue.setSummary( githubIssue.getTitle() );
 
         if ( githubIssue.getMilestone() != null )
         {
