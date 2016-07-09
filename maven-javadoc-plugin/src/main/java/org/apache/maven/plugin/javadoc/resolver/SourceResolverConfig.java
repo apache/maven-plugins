@@ -19,14 +19,9 @@ package org.apache.maven.plugin.javadoc.resolver;
  * under the License.
  */
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 
 import java.io.File;
 import java.util.List;
@@ -51,40 +46,17 @@ public class SourceResolverConfig
 
     private final ArtifactRepository localRepository;
 
-    private final ArtifactResolver artifactResolver;
-
-    private final ArtifactMetadataSource artifactMetadataSource;
-
-    private final ArchiverManager archiverManager;
-
-    private final ArtifactFactory artifactFactory;
-
-    private final Log log;
-
     /**
-     * @param log {@link Log}
      * @param project {@link MavenProject}
      * @param localRepository {@link ArtifactRepository}
      * @param outputBasedir The output base directory.
-     * @param artifactResolver {@link ArtifactResolver}
-     * @param artifactFactory {@link ArtifactFactory}
-     * @param artifactMetadataSource {@link ArtifactMetadataSource}
-     * @param archiverManager {@link ArchiverManager}
      */
-    public SourceResolverConfig( final Log log, final MavenProject project, final ArtifactRepository localRepository,
-                                 final File outputBasedir, final ArtifactResolver artifactResolver,
-                                 final ArtifactFactory artifactFactory,
-                                 final ArtifactMetadataSource artifactMetadataSource,
-                                 final ArchiverManager archiverManager )
+    public SourceResolverConfig( final MavenProject project, final ArtifactRepository localRepository,
+                                 final File outputBasedir )
     {
-        this.log = log;
         this.project = project;
         this.localRepository = localRepository;
         this.outputBasedir = outputBasedir;
-        this.artifactResolver = artifactResolver;
-        this.artifactFactory = artifactFactory;
-        this.artifactMetadataSource = artifactMetadataSource;
-        this.archiverManager = archiverManager;
     }
 
     /**
@@ -198,45 +170,4 @@ public class SourceResolverConfig
     {
         return testSourceIncluded;
     }
-
-    /**
-     * @return {@link #artifactResolver}
-     */
-    public ArtifactResolver artifactResolver()
-    {
-        return artifactResolver;
-    }
-
-    /**
-     * @return {@link #artifactMetadataSource}
-     */
-    public ArtifactMetadataSource artifactMetadataSource()
-    {
-        return artifactMetadataSource;
-    }
-
-    /**
-     * @return {@link #archiverManager}
-     */
-    public ArchiverManager archiverManager()
-    {
-        return archiverManager;
-    }
-
-    /**
-     * @return {@link #artifactFactory}
-     */
-    public ArtifactFactory artifactFactory()
-    {
-        return artifactFactory;
-    }
-    
-    /**
-     * @return {@link #log}
-     */
-    public Log log()
-    {
-        return log;
-    }
-
 }

@@ -312,6 +312,9 @@ public abstract class AbstractJavadocMojo
     private ArtifactResolver resolver;
     
     @Component
+    private ResourceResolver resourceResolver;
+    
+    @Component
     private org.apache.maven.shared.artifact.resolve.ArtifactResolver artifactResolver;
     
     @Component
@@ -2300,7 +2303,7 @@ public abstract class AbstractJavadocMojo
 
         try
         {
-            return ResourceResolver.resolveDependencySourcePaths( config );
+            return resourceResolver.resolveDependencySourcePaths( config );
         }
         catch ( final ArtifactResolutionException e )
         {
@@ -2341,10 +2344,9 @@ public abstract class AbstractJavadocMojo
      */
     private SourceResolverConfig getDependencySourceResolverConfig()
     {
-        return configureDependencySourceResolution(
-            new SourceResolverConfig( getLog(), project, localRepository, sourceDependencyCacheDir, resolver, factory,
-                                      artifactMetadataSource, archiverManager ).withReactorProjects(
-                reactorProjects ) );
+        return configureDependencySourceResolution( 
+                        new SourceResolverConfig( project, localRepository,
+                                                  sourceDependencyCacheDir ).withReactorProjects( reactorProjects ) );
     }
 
     /**
@@ -4140,7 +4142,7 @@ public abstract class AbstractJavadocMojo
         if ( dependencyJavadocBundles == null )
         {
             dependencyJavadocBundles =
-                ResourceResolver.resolveDependencyJavadocBundles( getDependencySourceResolverConfig() );
+                resourceResolver.resolveDependencyJavadocBundles( getDependencySourceResolverConfig() );
             if ( dependencyJavadocBundles == null )
             {
                 dependencyJavadocBundles = new ArrayList<JavadocBundle>();
