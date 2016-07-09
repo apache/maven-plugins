@@ -65,7 +65,6 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
@@ -2582,18 +2581,6 @@ public abstract class AbstractJavadocMojo
                                                                        localRepository,
                                                                        subProject.getRemoteArtifactRepositories(),
                                                                        artifactMetadataSource );
-                            }
-                            catch ( MultipleArtifactsNotFoundException e )
-                            {
-                                if ( checkMissingArtifactsInReactor( dependencyArtifacts, e.getMissingArtifacts() ) )
-                                {
-                                    getLog().warn( "IGNORED to add some artifacts in the classpath. See above." );
-                                }
-                                else
-                                {
-                                    // we can't find all the artifacts in the reactor so bubble the exception up.
-                                    throw new MavenReportException( e.getMessage(), e );
-                                }
                             }
                             catch ( ArtifactNotFoundException e )
                             {
