@@ -281,11 +281,6 @@ under the License.
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>1.7.1</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
@@ -338,40 +333,6 @@ under the License.
             </property>
           </systemProperties>
         </configuration>
-      </plugin>
-
-      <!-- Backward compatibility with Maven 2.0.x -->
-      <plugin>
-        <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <finalName>${project.build.finalName}</finalName>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
-              </transformers>
-              <artifactSet>
-                <includes>
-                  <include>org.apache.maven.wagon:wagon-provider-api</include>
-                </includes>
-              </artifactSet>
-              <filters>
-                <filter>
-                  <artifact>org.apache.maven.wagon:wagon-provider-api</artifact>
-                  <includes>
-                    <include>org/apache/maven/wagon/proxy/ProxyUtils.class</include>
-                  </includes>
-                </filter>
-              </filters>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
