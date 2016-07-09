@@ -59,7 +59,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <scmVersion>1.9.4</scmVersion>
+    <scmVersion>1.9.5</scmVersion>
     <mavenVersion>3.0</mavenVersion>
 
     <!-- for documentation purpose -->
@@ -151,7 +151,7 @@ under the License.
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-      <version>4.8</version>
+      <version>4.11</version>
     </dependency>
   </dependencies>
  
