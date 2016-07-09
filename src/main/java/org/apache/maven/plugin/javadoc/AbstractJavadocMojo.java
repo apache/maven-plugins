@@ -77,6 +77,8 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugin.javadoc.options.DocletArtifact;
 import org.apache.maven.plugin.javadoc.options.Group;
@@ -359,6 +361,9 @@ public abstract class AbstractJavadocMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
+    
+    @Parameter( defaultValue = "${plugin}", readonly = true )
+    private PluginDescriptor plugin;
 
     /**
      * Specify if the Javadoc should operate in offline mode.
@@ -451,15 +456,6 @@ public abstract class AbstractJavadocMojo
      */
     @Parameter( property = "reactorProjects", readonly = true )
     private List<MavenProject> reactorProjects;
-
-    /**
-     * Whether to build an aggregated report at the root, or build individual reports.
-     *
-     * @deprecated since 2.5. Use the goals <code>javadoc:aggregate</code> and <code>javadoc:test-aggregate</code>
-     * instead.
-     */
-    @Parameter( property = "aggregate", defaultValue = "false" )
-    protected boolean aggregate;
 
     /**
      * Set this to <code>true</code> to debug the Javadoc plugin. With this, <code>javadoc.bat(or.sh)</code>,
@@ -1880,6 +1876,34 @@ public abstract class AbstractJavadocMojo
         return ( StringUtils.isEmpty( encoding ) ) ? ReaderFactory.FILE_ENCODING : encoding;
     }
 
+    @Override
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        verifyRemovedParameter( "aggregator" );
+        verifyRemovedParameter( "proxyHost" );
+        verifyRemovedParameter( "proxyPort" );
+        
+        doExecute();
+    }
+    
+    abstract void doExecute() throws MojoExecutionException, MojoFailureException;
+    
+    private void verifyRemovedParameter( String paramName )
+    {
+        Object pluginConfiguration = plugin.getPlugin().getConfiguration();
+        if ( pluginConfiguration instanceof Xpp3Dom )
+        {
+            Xpp3Dom configDom = (Xpp3Dom) pluginConfiguration;
+            
+            if ( configDom.getChild( paramName ) != null )
+            {
+                throw new IllegalArgumentException( "parameter '" + paramName
+                    + "' has been removed from the plugin, please verify documentation." );
+            }
+        }
+    }
+    
     /**
      * The <a href="package-summary.html">package documentation</a> details the
      * Javadoc Options used by this Plugin.

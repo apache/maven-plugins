@@ -47,7 +47,7 @@ public class AbstractJavadocMojoTest
         mojo = new AbstractJavadocMojo()
         {
             @Override
-            public void execute()
+            public void doExecute()
                 throws MojoExecutionException, MojoFailureException
             {
             }

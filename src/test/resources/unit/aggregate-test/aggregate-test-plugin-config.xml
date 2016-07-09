@@ -67,7 +67,6 @@ under the License.
             <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateProject1TestMavenProjectStub"/>
             <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateProject2TestMavenProjectStub"/>
           </reactorProjects>
-          <aggregate>true</aggregate>
           <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-test/src/main/javadoc</javadocDirectory>
           <debug>true</debug>
           <failOnError>true</failOnError>
