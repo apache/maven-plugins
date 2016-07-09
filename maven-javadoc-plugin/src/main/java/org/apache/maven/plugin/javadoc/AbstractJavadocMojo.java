@@ -65,9 +65,6 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.IncludesArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
@@ -102,9 +99,11 @@ import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
-import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
-import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
+import org.apache.maven.shared.artifact.filter.resolve.PatternExclusionsFilter;
+import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
@@ -2298,7 +2297,7 @@ public abstract class AbstractJavadocMojo
 
         final SourceResolverConfig config = getDependencySourceResolverConfig();
 
-        final AndArtifactFilter andFilter = new AndArtifactFilter();
+        final List<TransformableFilter> andFilters = new ArrayList<TransformableFilter>();
 
         final List<String> dependencyIncludes = dependencySourceIncludes;
         final List<String> dependencyExcludes = dependencySourceExcludes;
@@ -2308,20 +2307,20 @@ public abstract class AbstractJavadocMojo
         {
             if ( !includeTransitiveDependencySources )
             {
-                andFilter.add( createDependencyArtifactFilter() );
+                andFilters.add( createDependencyArtifactFilter() );
             }
 
             if ( isNotEmpty( dependencyIncludes ) )
             {
-                andFilter.add( new PatternIncludesArtifactFilter( dependencyIncludes, false ) );
+                andFilters.add( new PatternInclusionsFilter( dependencyIncludes ) );
             }
 
             if ( isNotEmpty( dependencyExcludes ) )
             {
-                andFilter.add( new PatternExcludesArtifactFilter( dependencyExcludes, false ) );
+                andFilters.add( new PatternExclusionsFilter( dependencyExcludes ) );
             }
 
-            config.withFilter( andFilter );
+            config.withFilter( new AndFilter( andFilters ) );
         }
 
         try
@@ -2346,7 +2345,7 @@ public abstract class AbstractJavadocMojo
      *
      * @return
      */
-    private ArtifactFilter createDependencyArtifactFilter()
+    private TransformableFilter createDependencyArtifactFilter()
     {
         Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
 
@@ -2356,7 +2355,7 @@ public abstract class AbstractJavadocMojo
             artifactPatterns.add( artifact.getGroupId() + ":" + artifact.getArtifactId() );
         }
 
-        return new IncludesArtifactFilter( artifactPatterns );
+        return new PatternInclusionsFilter( artifactPatterns );
     }
 
     /**

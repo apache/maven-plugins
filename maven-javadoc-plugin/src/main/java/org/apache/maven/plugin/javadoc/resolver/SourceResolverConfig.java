@@ -19,12 +19,12 @@ package org.apache.maven.plugin.javadoc.resolver;
  * under the License.
  */
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.util.List;
+
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
 
 /**
  * 
@@ -34,7 +34,7 @@ public class SourceResolverConfig
 
     private final MavenProject project;
 
-    private ArtifactFilter filter;
+    private AndFilter filter;
 
     private List<MavenProject> reactorProjects;
 
@@ -63,7 +63,7 @@ public class SourceResolverConfig
      * @param filter {@link ArtifactFilter}
      * @return {@link SourceResolverConfig}
      */
-    public SourceResolverConfig withFilter( final ArtifactFilter filter )
+    public SourceResolverConfig withFilter( final AndFilter filter )
     {
         this.filter = filter;
         return this;
@@ -132,9 +132,9 @@ public class SourceResolverConfig
     }
 
     /**
-     * @return {@link ArtifactFilter}
+     * @return {@link TransformableFilter}
      */
-    public ArtifactFilter filter()
+    public AndFilter filter()
     {
         return filter;
     }
