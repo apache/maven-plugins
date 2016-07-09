@@ -21,6 +21,18 @@ package org.apache.maven.plugin.javadoc.resolver;
 
 import static org.codehaus.plexus.util.IOUtil.close;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -37,6 +49,8 @@ import org.apache.maven.plugin.javadoc.ResourcesBundleMojo;
 import org.apache.maven.plugin.javadoc.options.JavadocOptions;
 import org.apache.maven.plugin.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
+import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -45,18 +59,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 
@@ -69,6 +71,9 @@ public final class ResourceResolver extends AbstractLogEnabled
     
     @Requirement
     private ArtifactResolver resolver;
+    
+    @Requirement
+    private DependencyResolver dependencyResolver;
 
     @Requirement
     private ArtifactMetadataSource artifactMetadataSource;
@@ -238,7 +243,8 @@ public final class ResourceResolver extends AbstractLogEnabled
 
         for ( final Artifact artifact : artifacts )
         {
-            if ( config.filter() != null && !config.filter().include( artifact ) )
+            if ( config.filter() != null
+                && !new ArtifactIncludeFilterTransformer().transform( config.filter() ).include( artifact ) )
             {
                 continue;
             }
@@ -325,7 +331,8 @@ public final class ResourceResolver extends AbstractLogEnabled
 
         for ( final Artifact artifact : artifacts )
         {
-            if ( config.filter() != null && !config.filter().include( artifact ) )
+            if ( config.filter() != null
+                && !new ArtifactIncludeFilterTransformer().transform( config.filter() ).include( artifact ) )
             {
                 continue;
             }
@@ -370,7 +377,16 @@ public final class ResourceResolver extends AbstractLogEnabled
         final ArtifactRepository localRepo = config.localRepository();
         final List<ArtifactRepository> remoteRepos = config.project().getRemoteArtifactRepositories();
 
-        final ArtifactFilter filter = config.filter();
+        final ArtifactFilter filter;
+        if ( config.filter() != null )
+        {
+            filter = new ArtifactIncludeFilterTransformer().transform( config.filter() );
+        }
+        else
+        {
+            filter = null;
+        }
+        
         ArtifactFilter resolutionFilter = null;
         if ( filter != null )
         {
@@ -438,7 +454,8 @@ public final class ResourceResolver extends AbstractLogEnabled
     {
         final List<String> dirs = new ArrayList<String>();
 
-        if ( config.filter() == null || config.filter().include( artifact ) )
+        if ( config.filter() == null
+            || new ArtifactIncludeFilterTransformer().transform( config.filter() ).include( artifact ) )
         {
             if ( config.includeCompileSources() )
             {
