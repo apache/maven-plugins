@@ -46,7 +46,6 @@ under the License.
           <show>protected</show>
           <groups/>
           <tags/>
-          <aggregate>true</aggregate>
           <quiet>true</quiet>
           <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-resources-test/src/main/javadoc</javadocDirectory>
           <debug>true</debug>

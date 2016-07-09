@@ -60,11 +60,8 @@
             <id>javadoc</id>
             <phase>package</phase>
             <goals>
-              <goal>javadoc</goal>
+              <goal>aggregate</goal>
             </goals>
-            <configuration>
-              <aggregate>true</aggregate>
-            </configuration>
           </execution>
         </executions>
       </plugin>

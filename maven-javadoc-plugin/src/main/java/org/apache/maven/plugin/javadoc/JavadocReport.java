@@ -301,7 +301,7 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
-    public void execute()
+    public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( skip )
@@ -325,13 +325,6 @@ public class JavadocReport
         {
             failOnError( "An error has occurred in " + getName( Locale.ENGLISH ) + " report generation", e );
         }
-    }
-
-    @Override
-    protected boolean isAggregator()
-    {
-        // only here for backward compatibility, this flag does not work reliably
-        return aggregate;
     }
 
     /**

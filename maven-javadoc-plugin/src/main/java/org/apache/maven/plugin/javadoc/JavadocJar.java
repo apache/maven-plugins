@@ -158,7 +158,7 @@ public class JavadocJar
     private String classifier;
 
     /** {@inheritDoc} */
-    public void execute()
+    public void doExecute()
         throws MojoExecutionException
     {
         if ( skip )

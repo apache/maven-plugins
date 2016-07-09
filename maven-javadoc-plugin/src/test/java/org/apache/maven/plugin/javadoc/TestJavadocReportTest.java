@@ -21,6 +21,8 @@ package org.apache.maven.plugin.javadoc;
 
 import java.io.File;
 
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -42,6 +44,12 @@ public class TestJavadocReportTest
             new File( getBasedir(),
                       "src/test/resources/unit/test-javadoc-test/test-javadoc-test-plugin-config.xml" );
         TestJavadocReport mojo = (TestJavadocReport) lookupMojo( "test-javadoc", testPom );
+        
+        PluginDescriptor pluginDescriptor = new PluginDescriptor();
+        pluginDescriptor.setPlugin( new Plugin() );
+        
+        setVariableValueToObject( mojo, "plugin", pluginDescriptor );
+        
         mojo.execute();
 
         File generatedFile =

@@ -41,10 +41,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>@pom.version@</version>
-          <configuration>
-            <aggregate>true</aggregate>
-          </configuration>
+          <version>@project.version@</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -81,14 +78,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>@pom.version@</version>
+        <version>@project.version@</version>
         <inherited>true</inherited>
         <configuration>
           <debug>true</debug>
           <quiet>true</quiet>
           <verbose>false</verbose>
-          <!-- to workaround MJAVADOC-180, aggregate must be false -->
-          <aggregate>true</aggregate>
           <show>protected</show>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>

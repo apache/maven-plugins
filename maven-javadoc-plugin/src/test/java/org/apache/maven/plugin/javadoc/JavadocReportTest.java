@@ -33,8 +33,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -76,6 +78,19 @@ public class JavadocReportTest
         localRepo = new File( getBasedir(), "target/local-repo/" );
         
         createTestRepo();
+    }
+    
+
+    private JavadocReport lookupMojo( File testPom )
+        throws Exception
+    {
+        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+
+        PluginDescriptor pluginDescriptor = new PluginDescriptor();
+        pluginDescriptor.setPlugin( new Plugin() );
+        
+        setVariableValueToObject( mojo, "plugin", pluginDescriptor );
+        return mojo;
     }
 
     /**
@@ -196,7 +211,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "default-configuration/default-configuration-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         // package level generated javadoc files
@@ -238,7 +253,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "subpackages-test/subpackages-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/subpackages-test/target/site/apidocs" );
@@ -258,7 +273,7 @@ public class JavadocReportTest
             throws Exception
     {
         File testPom = new File( unit, "file-include-exclude-test/file-include-exclude-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/file-include-exclude-test/target/site/apidocs" );
@@ -280,7 +295,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "docfiles-test/docfiles-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/docfiles-test/target/site/apidocs/" );
@@ -293,7 +308,7 @@ public class JavadocReportTest
         assertFalse( new File( apidocs, "doc-files/excluded-dir2" ).exists() );
 
         testPom = new File( unit, "docfiles-with-java-test/docfiles-with-java-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         mojo.execute();
     }
 
@@ -307,7 +322,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "custom-configuration/custom-configuration-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/apidocs" );
@@ -385,7 +400,7 @@ public class JavadocReportTest
         // ----------------------------------------------------------------------
 
         File testPom = new File( unit, "doclet-test/doclet-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         
         MavenSession session = spy( newMavenSession( mojo.project ) );
         ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
@@ -416,7 +431,7 @@ public class JavadocReportTest
         // ----------------------------------------------------------------------
 
         testPom = new File( unit, "doclet-path-test/doclet-path-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         setVariableValueToObject( mojo, "session", session );
         mojo.execute();
 
@@ -430,33 +445,7 @@ public class JavadocReportTest
         assertTrue( options.contains( "/target/local-repo/umlgraph/UMLGraph-bis/2.1/UMLGraph-bis-2.1.jar" ) );
     }
 
-    /**
-     * Method to test the aggregate parameter
-     *
-     * @throws Exception if any
-     */
-    public void testAggregate()
-        throws Exception
-    {
-        File testPom = new File( unit, "aggregate-test/aggregate-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "aggregate", testPom );
-        mojo.execute();
-
-        File apidocs = new File( getBasedir(), "target/test/unit/aggregate-test/target/site/apidocs/" );
-
-        // check if project1 api files exist
-        assertTrue( new File( apidocs, "aggregate/test/project1/Project1App.html" ).exists() );
-        assertTrue( new File( apidocs, "aggregate/test/project1/Project1AppSample.html" ).exists() );
-        assertTrue( new File( apidocs, "aggregate/test/project1/Project1Sample.html" ).exists() );
-        assertTrue( new File( apidocs, "aggregate/test/project1/Project1Test.html" ).exists() );
-
-        // check if project2 api files exist
-        assertTrue( new File( apidocs, "aggregate/test/project2/Project2App.html" ).exists() );
-        assertTrue( new File( apidocs, "aggregate/test/project2/Project2AppSample.html" ).exists() );
-        assertTrue( new File( apidocs, "aggregate/test/project2/Project2Sample.html" ).exists() );
-        assertTrue( new File( apidocs, "aggregate/test/project2/Project2Test.html" ).exists() );
-
-    }
+    
 
     /**
      * Method to test when the path to the project sources has an apostrophe (')
@@ -467,7 +456,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "quotedpath'test/quotedpath-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/quotedpath'test/target/site/apidocs" );
@@ -493,7 +482,7 @@ public class JavadocReportTest
         try
         {
             File testPom = new File( unit, "default-configuration/exception-test-plugin-config.xml" );
-            JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+            JavadocReport mojo = lookupMojo( testPom );
             mojo.execute();
 
             fail( "Must throw exception." );
@@ -526,7 +515,7 @@ public class JavadocReportTest
         // ----------------------------------------------------------------------
 
         File testPom = new File( unit, "taglet-test/taglet-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         
         MavenSession session = spy( newMavenSession( mojo.project ) );
         ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
@@ -562,7 +551,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "jdk5-test/jdk5-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/jdk5-test/target/site/apidocs" );
@@ -594,7 +583,7 @@ public class JavadocReportTest
         System.setProperty( "java.home", "foo/bar" );
 
         File testPom = new File( unit, "javaHome-test/javaHome-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         System.setProperty( "java.home", oldJreHome );
@@ -609,7 +598,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "resources-test/resources-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/resources-test/target/site/apidocs/" );
@@ -628,7 +617,7 @@ public class JavadocReportTest
 
         // with excludes
         testPom = new File( unit, "resources-with-excludes-test/resources-with-excludes-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         mojo.execute();
 
         apidocs = new File( getBasedir(), "target/test/unit/resources-with-excludes-test/target/site/apidocs" );
@@ -657,38 +646,6 @@ public class JavadocReportTest
     }
 
     /**
-     * Test the javadoc resources in the aggregation case.
-     *
-     * @throws Exception if any
-     */
-    public void testAggregateJavadocResources()
-        throws Exception
-    {
-        File testPom = new File( unit, "aggregate-resources-test/aggregate-resources-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "aggregate", testPom );
-        mojo.execute();
-
-        File apidocs = new File( getBasedir(), "target/test/unit/aggregate-resources-test/target/site/apidocs" );
-
-        // Test overview
-        File overviewSummary = new File( apidocs, "overview-summary.html" );
-        assertTrue( overviewSummary.exists() );
-        String overview = readFile( overviewSummary ).toLowerCase();
-        assertTrue( overview.contains( "<a href=\"resources/test/package-summary.html\">resources.test</a>" ) );
-        assertTrue( overview.contains( ">blabla</" ) );
-        assertTrue( overview.contains( "<a href=\"resources/test2/package-summary.html\">resources.test2</a>" ) );
-        assertTrue( overview.contains( "<a href=\"resources2/test/package-summary.html\">resources2.test</a>" ) );
-        assertTrue( overview.contains( "<a href=\"resources2/test2/package-summary.html\">resources2.test2</a>" ) );
-
-        // Test doc-files
-        File app = new File( apidocs, "resources/test/App.html" );
-        assertTrue( app.exists() );
-        overview = readFile( app );
-        assertTrue( overview.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
-        assertTrue( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
-    }
-
-    /**
      * Test the javadoc for a POM project.
      *
      * @throws Exception if any
@@ -697,7 +654,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "pom-test/pom-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         assertFalse( new File( getBasedir(), "target/test/unit/pom-test/target/site" ).exists() );
@@ -712,7 +669,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "tag-test/tag-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File app = new File( getBasedir(), "target/test/unit/tag-test/target/site/apidocs/tag/test/App.html" );
@@ -734,7 +691,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "header-footer-test/header-footer-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -756,7 +713,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "newline-test/newline-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -778,7 +735,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "jdk6-test/jdk6-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/jdk6-test/target/site/apidocs" );
@@ -822,7 +779,7 @@ public class JavadocReportTest
         settings.addProxy( proxy );
 
         File testPom = new File( getBasedir(), "src/test/resources/unit/proxy-test/proxy-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         
         MavenSession session = spy( newMavenSession( mojo.project ) );
         ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
@@ -872,7 +829,7 @@ public class JavadocReportTest
             proxy.setProtocol( "http" );
             settings.addProxy( proxy );
 
-            mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+            mojo = lookupMojo( testPom );
             setVariableValueToObject( mojo, "settings", settings );
             setVariableValueToObject( mojo, "session", session );
             mojo.execute();
@@ -920,7 +877,7 @@ public class JavadocReportTest
             proxy.setPassword( "bar" );
             settings.addProxy( proxy );
 
-            mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+            mojo = lookupMojo( testPom );
             setVariableValueToObject( mojo, "settings", settings );
             setVariableValueToObject( mojo, "session", session );
             mojo.execute();
@@ -955,7 +912,7 @@ public class JavadocReportTest
     {
         // encoding
         File testPom = new File( unit, "validate-options-test/wrong-encoding-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -966,7 +923,7 @@ public class JavadocReportTest
             assertTrue( "No wrong encoding catch", e.getMessage().contains( "Unsupported option <encoding/>" ) );
         }
         testPom = new File( unit, "validate-options-test/wrong-docencoding-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -977,7 +934,7 @@ public class JavadocReportTest
             assertTrue( "No wrong docencoding catch", e.getMessage().contains( "Unsupported option <docencoding/>" ) );
         }
         testPom = new File( unit, "validate-options-test/wrong-charset-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -990,7 +947,7 @@ public class JavadocReportTest
 
         // locale
         testPom = new File( unit, "validate-options-test/wrong-locale-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -1001,13 +958,13 @@ public class JavadocReportTest
             assertTrue( "No wrong locale catch", e.getMessage().contains( "Unsupported option <locale/>" ) );
         }
         testPom = new File( unit, "validate-options-test/wrong-locale-with-variant-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         mojo.execute();
         assertTrue( "No wrong locale catch", true );
 
         // conflict options
         testPom = new File( unit, "validate-options-test/conflict-options-test-plugin-config.xml" );
-        mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        mojo = lookupMojo( testPom );
         try
         {
             mojo.execute();
@@ -1028,7 +985,7 @@ public class JavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "tagletArtifacts-test/tagletArtifacts-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
 
         MavenSession session = spy( newMavenSession( mojo.project ) );
         ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
@@ -1081,7 +1038,7 @@ public class JavadocReportTest
     {
         File testPom = new File( unit, "stylesheetfile-test/pom.xml" );
 
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         assertNotNull( mojo );
 
         MavenSession session = spy( newMavenSession( mojo.project ) );
@@ -1188,7 +1145,7 @@ public class JavadocReportTest
     {
         File testPom = new File( unit, "helpfile-test/pom.xml" );
         
-        JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         assertNotNull( mojo );
 
         MavenSession session = spy( newMavenSession( mojo.project ) );

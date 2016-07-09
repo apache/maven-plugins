@@ -19,8 +19,6 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,12 +29,31 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.FileUtils;
+
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  */
 public class JavadocJarTest
     extends AbstractMojoTestCase
 {
+    
+    private JavadocJar lookupMojo( File testPom )
+                    throws Exception
+    {
+        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        
+        PluginDescriptor pluginDescriptor = new PluginDescriptor();
+        pluginDescriptor.setPlugin( new Plugin() );
+        
+        setVariableValueToObject( mojo, "plugin", pluginDescriptor );
+        return mojo;
+    }
+
+
     /**
      * Test when default configuration is provided
      *
@@ -47,7 +64,7 @@ public class JavadocJarTest
     {
         File testPom =
             new File( getBasedir(), "src/test/resources/unit/javadocjar-default/javadocjar-default-plugin-config.xml" );
-        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        JavadocJar mojo = lookupMojo( testPom );
         mojo.execute();
 
         //check if the javadoc jar file was generated
@@ -115,7 +132,7 @@ public class JavadocJarTest
     {
         File testPom = new File( getBasedir(),
                                  "src/test/resources/unit/javadocjar-invalid-destdir/javadocjar-invalid-destdir-plugin-config.xml" );
-        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        JavadocJar mojo = lookupMojo( testPom );
         mojo.execute();
 
         //check if the javadoc jar file was generated
@@ -128,7 +145,7 @@ public class JavadocJarTest
     {
         File testPom =
                 new File( getBasedir(), "src/test/resources/unit/javadocjar-failonerror/javadocjar-failonerror-plugin-config.xml" );
-        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        JavadocJar mojo = lookupMojo( testPom );
         mojo.execute();
 
         //check if the javadoc jar file was generated
@@ -141,7 +158,7 @@ public class JavadocJarTest
     {
         File testPom =
                 new File( getBasedir(), "src/test/resources/unit/javadocjar-archive-config/javadocjar-archive-config.xml" );
-        JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+        JavadocJar mojo = lookupMojo( testPom );
         mojo.execute();
 
         //check if the javadoc jar file was generated
