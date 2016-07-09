@@ -976,11 +976,12 @@ public abstract class AbstractFixJavadocMojo
 
         if ( getLog().isDebugEnabled() )
         {
-            getLog().debug( "Fixing " + javaClass.getFullyQualifiedName() );
+            getLog().debug( "Analyzing " + javaClass.getFullyQualifiedName() );
         }
 
         final StringWriter stringWriter = new StringWriter();
         BufferedReader reader = null;
+        boolean changeDetected = false;
         try
         {
             reader = new BufferedReader( new StringReader( originalContent ) );
@@ -997,7 +998,7 @@ public abstract class AbstractFixJavadocMojo
                 {
                     if ( lineNumber == javaClass.getAnnotations()[0].getLineNumber() )
                     {
-                        fixClassComment( stringWriter, originalContent, javaClass, indent );
+                        changeDetected |= fixClassComment( stringWriter, originalContent, javaClass, indent );
 
                         takeCareSingleComment( stringWriter, originalContent, javaClass );
                     }
@@ -1006,7 +1007,7 @@ public abstract class AbstractFixJavadocMojo
                 {
                     if ( lineNumber == javaClass.getLineNumber() )
                     {
-                        fixClassComment( stringWriter, originalContent, javaClass, indent );
+                        changeDetected |= fixClassComment( stringWriter, originalContent, javaClass, indent );
 
                         takeCareSingleComment( stringWriter, originalContent, javaClass );
                     }
@@ -1015,13 +1016,11 @@ public abstract class AbstractFixJavadocMojo
                 // fixing fields
                 if ( javaClass.getFields() != null )
                 {
-                    for ( int i = 0; i < javaClass.getFields().length; i++ )
+                    for ( JavaField field : javaClass.getFields() )
                     {
-                        JavaField field = javaClass.getFields()[i];
-
                         if ( lineNumber == field.getLineNumber() )
                         {
-                            fixFieldComment( stringWriter, javaClass, field, indent );
+                            changeDetected |= fixFieldComment( stringWriter, javaClass, field, indent );
                         }
                     }
                 }
@@ -1029,13 +1028,11 @@ public abstract class AbstractFixJavadocMojo
                 // fixing methods
                 if ( javaClass.getMethods() != null )
                 {
-                    for ( int i = 0; i < javaClass.getMethods().length; i++ )
+                    for ( JavaMethod method :  javaClass.getMethods() )
                     {
-                        JavaMethod method = javaClass.getMethods()[i];
-
                         if ( lineNumber == method.getLineNumber() )
                         {
-                            fixMethodComment( stringWriter, originalContent, method, indent );
+                            changeDetected |= fixMethodComment( stringWriter, originalContent, method, indent );
 
                             takeCareSingleComment( stringWriter, originalContent, method );
                         }
@@ -1054,20 +1051,30 @@ public abstract class AbstractFixJavadocMojo
             IOUtil.close( reader );
         }
 
-        if ( getLog().isDebugEnabled() )
+        if ( changeDetected )
         {
-            getLog().debug( "Saving " + javaClass.getFullyQualifiedName() );
-        }
+            if ( getLog().isInfoEnabled() )
+            {
+                getLog().info( "Saving changes to " + javaClass.getFullyQualifiedName() );
+            }
 
-        if ( outputDirectory != null && !outputDirectory.getAbsolutePath().equals(
-            getProjectSourceDirectory().getAbsolutePath() ) )
-        {
-            String path = StringUtils.replace( javaFile.getAbsolutePath().replaceAll( "\\\\", "/" ),
-                                               project.getBuild().getSourceDirectory().replaceAll( "\\\\", "/" ), "" );
-            javaFile = new File( outputDirectory, path );
-            javaFile.getParentFile().mkdirs();
+            if ( outputDirectory != null && !outputDirectory.getAbsolutePath().equals(
+                    getProjectSourceDirectory().getAbsolutePath() ) )
+            {
+                String path = StringUtils.replace( javaFile.getAbsolutePath().replaceAll( "\\\\", "/" ),
+                        project.getBuild().getSourceDirectory().replaceAll( "\\\\", "/" ), "" );
+                javaFile = new File( outputDirectory, path );
+                javaFile.getParentFile().mkdirs();
+            }
+            writeFile( javaFile, encoding, stringWriter.toString() );
         }
-        writeFile( javaFile, encoding, stringWriter.toString() );
+        else
+        {
+            if ( getLog().isDebugEnabled() ) 
+            {
+                getLog().debug( "No changes made to " + javaClass.getFullyQualifiedName() );
+            }
+        }
     }
 
     /**
@@ -1097,6 +1104,8 @@ public abstract class AbstractFixJavadocMojo
      * @param stringWriter    not null
      * @param originalContent not null
      * @param entity          not null
+     * @param changeDetected
+     * @return the updated changeDetected flag
      * @throws IOException if any
      * @see #extractOriginalJavadoc(String, AbstractJavaEntity)
      */
@@ -1132,32 +1141,33 @@ public abstract class AbstractFixJavadocMojo
      * @param originalContent
      * @param javaClass
      * @param indent
+     * @return {@code true} if the comment is updated, otherwise {@code false}
      * @throws MojoExecutionException
      * @throws IOException
      */
-    private void fixClassComment( final StringWriter stringWriter, final String originalContent,
+    private boolean fixClassComment( final StringWriter stringWriter, final String originalContent,
                                   final JavaClass javaClass, final String indent )
         throws MojoExecutionException, IOException
     {
         if ( !fixClassComment )
         {
-            return;
+            return false;
         }
 
         if ( !isInLevel( javaClass.getModifiers() ) )
         {
-            return;
+            return false;
         }
 
         // add
         if ( javaClass.getComment() == null )
         {
             addDefaultClassComment( stringWriter, javaClass, indent );
-            return;
+            return true;
         }
 
         // update
-        updateEntityComment( stringWriter, originalContent, javaClass, indent );
+        return updateEntityComment( stringWriter, originalContent, javaClass, indent );
     }
 
     /**
@@ -1267,30 +1277,32 @@ public abstract class AbstractFixJavadocMojo
      * @param javaClass    not null
      * @param field        not null
      * @param indent       not null
+     * @return {@code true} if comment was updated, otherwise {@code false}
      * @throws IOException if any
      */
-    private void fixFieldComment( final StringWriter stringWriter, final JavaClass javaClass, final JavaField field,
+    private boolean fixFieldComment( final StringWriter stringWriter, final JavaClass javaClass, final JavaField field,
                                   final String indent )
         throws IOException
     {
         if ( !fixFieldComment )
         {
-            return;
+            return false;
         }
 
         if ( !javaClass.isInterface() && ( !isInLevel( field.getModifiers() ) || !field.isStatic() ) )
         {
-            return;
+            return false;
         }
 
         // add
         if ( field.getComment() == null )
         {
             addDefaultFieldComment( stringWriter, field, indent );
-            return;
+            return true;
         }
 
         // no update
+        return false;
     }
 
     /**
@@ -1385,32 +1397,33 @@ public abstract class AbstractFixJavadocMojo
      * @param originalContent not null
      * @param javaMethod      not null
      * @param indent          not null
+     * @return {@code true} if comment was updated, otherwise {@code false}
      * @throws MojoExecutionException if any
      * @throws IOException            if any
      */
-    private void fixMethodComment( final StringWriter stringWriter, final String originalContent,
+    private boolean fixMethodComment( final StringWriter stringWriter, final String originalContent,
                                    final JavaMethod javaMethod, final String indent )
         throws MojoExecutionException, IOException
     {
         if ( !fixMethodComment )
         {
-            return;
+            return false;
         }
 
         if ( !javaMethod.getParentClass().isInterface() && !isInLevel( javaMethod.getModifiers() ) )
         {
-            return;
+            return false;
         }
 
         // add
         if ( javaMethod.getComment() == null )
         {
             addDefaultMethodComment( stringWriter, javaMethod, indent );
-            return;
+            return true;
         }
 
         // update
-        updateEntityComment( stringWriter, originalContent, javaMethod, indent );
+        return updateEntityComment( stringWriter, originalContent, javaMethod, indent );
     }
 
     /**
@@ -1525,13 +1538,18 @@ public abstract class AbstractFixJavadocMojo
      * @param originalContent not null
      * @param entity          not null
      * @param indent          not null
+     * @param changeDetected
+     * @return the updated changeDetected flag
      * @throws MojoExecutionException if any
      * @throws IOException            if any
      */
-    private void updateEntityComment( final StringWriter stringWriter, final String originalContent,
-                                      final AbstractInheritableJavaEntity entity, final String indent )
+    private boolean updateEntityComment( final StringWriter stringWriter, final String originalContent,
+                                         final AbstractInheritableJavaEntity entity, final String indent )
         throws MojoExecutionException, IOException
     {
+        boolean changeDetected = false;
+        
+        String old = null;
         String s = stringWriter.toString();
         int i = s.lastIndexOf( START_JAVADOC );
         if ( i != -1 )
@@ -1541,12 +1559,26 @@ public abstract class AbstractFixJavadocMojo
             {
                 tmp = tmp.substring( 0, tmp.lastIndexOf( EOL ) );
             }
+            
+            old = stringWriter.getBuffer().substring( i );
+
             stringWriter.getBuffer().delete( 0, stringWriter.getBuffer().length() );
             stringWriter.write( tmp );
             stringWriter.write( EOL );
         }
+        else
+        {
+            changeDetected = true;
+        }
 
         updateJavadocComment( stringWriter, originalContent, entity, indent );
+        
+        if ( changeDetected )
+        {
+            return true; // return now if we already know there's a change
+        }
+        
+        return !stringWriter.getBuffer().substring( i ).equals( old );
     }
 
     /**
