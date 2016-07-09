@@ -130,10 +130,6 @@ under the License.
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
-                <pomIncludes>
-                  <pomInclude>*/pom.xml</pomInclude>
-                  <pomInclude>sign-and-deploy*</pomInclude>
-                </pomIncludes>
                 <settingsFile>src/it/settings.xml</settingsFile>
                 <goals>
                   <goal>clean</goal>
