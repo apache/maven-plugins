@@ -28,7 +28,6 @@ import java.util.List;
 
 import junitx.util.PrivateAccessor;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.invoker.MavenInvocationException;
@@ -649,10 +648,10 @@ public class FixJavadocMojoTest
     private static void assertEquals( File expected, File actual )
         throws IOException
     {
-        assertTrue( expected.exists() );
+        assertTrue( " Expected file DNE: " + expected, expected.exists() );
         String expectedContent = StringUtils.unifyLineSeparators( readFile( expected ) );
 
-        assertTrue( actual.exists() );
+        assertTrue( " Actual file DNE: " + actual, actual.exists() );
         String actualContent = StringUtils.unifyLineSeparators( readFile( actual ) );
 
         assertEquals( "Expected file: " + expected.getAbsolutePath() + ", actual file: "
