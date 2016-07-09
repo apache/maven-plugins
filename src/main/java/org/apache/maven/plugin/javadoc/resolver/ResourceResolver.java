@@ -23,6 +23,7 @@ import static org.codehaus.plexus.util.IOUtil.close;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -38,7 +39,11 @@ import org.apache.maven.plugin.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
@@ -56,8 +61,20 @@ import java.util.Set;
 /**
  * 
  */
-public final class ResourceResolver
+@Component( role = ResourceResolver.class )
+public final class ResourceResolver extends AbstractLogEnabled
 {
+    @Requirement
+    private ArtifactFactory artifactFactory;
+    
+    @Requirement
+    private ArtifactResolver resolver;
+
+    @Requirement
+    private ArtifactMetadataSource artifactMetadataSource;
+    
+    @Requirement
+    private ArchiverManager archiverManager;
 
     /**
      * The classifier for sources.
@@ -76,16 +93,12 @@ public final class ResourceResolver
         Arrays.asList( AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER,
                        AbstractJavadocMojo.TEST_JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER );
 
-    private ResourceResolver()
-    {
-    }
-
     /**
      * @param config {@link SourceResolverConfig}
      * @return list of {@link JavadocBundle}.
      * @throws IOException {@link IOException}
      */
-    public static List<JavadocBundle> resolveDependencyJavadocBundles( final SourceResolverConfig config )
+    public List<JavadocBundle> resolveDependencyJavadocBundles( final SourceResolverConfig config )
         throws IOException
     {
         final List<JavadocBundle> bundles = new ArrayList<JavadocBundle>();
@@ -127,7 +140,7 @@ public final class ResourceResolver
      * @throws ArtifactResolutionException {@link ArtifactResolutionException}
      * @throws ArtifactNotFoundException {@link ArtifactNotFoundException}
      */
-    public static List<String> resolveDependencySourcePaths( final SourceResolverConfig config )
+    public List<String> resolveDependencySourcePaths( final SourceResolverConfig config )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
         final List<String> dirs = new ArrayList<String>();
@@ -217,7 +230,7 @@ public final class ResourceResolver
         return bundles;
     }
 
-    private static List<JavadocBundle> resolveBundlesFromArtifacts( final SourceResolverConfig config,
+    private List<JavadocBundle> resolveBundlesFromArtifacts( final SourceResolverConfig config,
                                                                     final List<Artifact> artifacts )
         throws IOException
     {
@@ -252,16 +265,16 @@ public final class ResourceResolver
         }
         catch ( ArtifactResolutionException e )
         {
-            if ( config.log().isDebugEnabled() )
+            if ( getLogger().isDebugEnabled() )
             {
-                config.log().debug( e.getMessage(), e );
+                getLogger().debug( e.getMessage(), e );
             }
         }
         catch ( ArtifactNotFoundException e )
         {
-            if ( config.log().isDebugEnabled() )
+            if ( getLogger().isDebugEnabled() )
             {
-                config.log().debug( e.getMessage(), e );
+                getLogger().debug( e.getMessage(), e );
             }
         }
         
@@ -304,7 +317,7 @@ public final class ResourceResolver
         return result;
     }
 
-    private static List<String> resolveFromArtifacts( final SourceResolverConfig config,
+    private List<String> resolveFromArtifacts( final SourceResolverConfig config,
                                                       final List<Artifact> artifacts )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
@@ -331,11 +344,11 @@ public final class ResourceResolver
         return resolveAndUnpack( toResolve, config, SOURCE_VALID_CLASSIFIERS, true );
     }
 
-    private static Artifact createResourceArtifact( final Artifact artifact, final String classifier,
+    private Artifact createResourceArtifact( final Artifact artifact, final String classifier,
                                                     final SourceResolverConfig config )
     {
         final DefaultArtifact a =
-            (DefaultArtifact) config.artifactFactory().createArtifactWithClassifier( artifact.getGroupId(),
+            (DefaultArtifact) artifactFactory.createArtifactWithClassifier( artifact.getGroupId(),
                                                                                      artifact.getArtifactId(),
                                                                                      artifact.getVersion(), "jar",
                                                                                      classifier );
@@ -345,7 +358,7 @@ public final class ResourceResolver
         return a;
     }
 
-    private static List<String> resolveAndUnpack( final List<Artifact> artifacts, final SourceResolverConfig config,
+    private List<String> resolveAndUnpack( final List<Artifact> artifacts, final SourceResolverConfig config,
                                                   final List<String> validClassifiers, final boolean propagateErrors )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
@@ -356,7 +369,6 @@ public final class ResourceResolver
         final Artifact pomArtifact = config.project().getArtifact();
         final ArtifactRepository localRepo = config.localRepository();
         final List<ArtifactRepository> remoteRepos = config.project().getRemoteArtifactRepositories();
-        final ArtifactMetadataSource metadataSource = config.artifactMetadataSource();
 
         final ArtifactFilter filter = config.filter();
         ArtifactFilter resolutionFilter = null;
@@ -369,12 +381,10 @@ public final class ResourceResolver
             resolutionFilter = new ProjectArtifactFilter( pomArtifact, filter );
         }
 
-        final ArtifactResolver resolver = config.artifactResolver();
-        
         Map<String, Artifact> managed = config.project().getManagedVersionMap();
         
         final ArtifactResolutionResult resolutionResult = resolver.resolveTransitively(
-                artifactSet, pomArtifact, managed, localRepo, remoteRepos, metadataSource, resolutionFilter );
+                artifactSet, pomArtifact, managed, localRepo, remoteRepos, artifactMetadataSource, resolutionFilter );
 
         final List<String> result = new ArrayList<String>( artifacts.size() );
         for ( final Artifact a : (Collection<Artifact>) resolutionResult.getArtifacts() )
@@ -394,7 +404,7 @@ public final class ResourceResolver
 
             try
             {
-                final UnArchiver unArchiver = config.archiverManager().getUnArchiver( a.getType() );
+                final UnArchiver unArchiver = archiverManager.getUnArchiver( a.getType() );
 
                 unArchiver.setDestDirectory( d );
                 unArchiver.setSourceFile( a.getFile() );
