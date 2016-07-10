@@ -858,7 +858,7 @@ public abstract class AbstractInvokerMojo
      */
     private void collectProjects( File projectsDir, String projectPath, Collection<String> projectPaths,
                                   boolean included )
-                                      throws MojoExecutionException
+        throws MojoExecutionException
     {
         projectPath = projectPath.replace( '\\', '/' );
         File pomFile = new File( projectsDir, projectPath );
@@ -1177,7 +1177,7 @@ public abstract class AbstractInvokerMojo
                 {
                     SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
                     request.setGlobalSettingsFile( interpolatedSettingsFile );
-                    
+
                     Settings dominantSettings = settingsBuilder.build( request ).getEffectiveSettings();
                     Settings recessiveSettings = cloneSettings();
                     SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
@@ -1390,7 +1390,7 @@ public abstract class AbstractInvokerMojo
      */
     private void runBuild( File projectsDir, BuildJob buildJob, File settingsFile, File actualJavaHome,
                            CharSequence actualJreVersion )
-                               throws MojoExecutionException
+        throws MojoExecutionException
     {
         File pomFile = new File( projectsDir, buildJob.getProject() );
         File basedir;
@@ -1638,7 +1638,7 @@ public abstract class AbstractInvokerMojo
      */
     private boolean runBuild( File basedir, File pomFile, File settingsFile, File actualJavaHome,
                               InvokerProperties invokerProperties )
-                                  throws MojoExecutionException, RunFailureException
+        throws MojoExecutionException, RunFailureException
     {
         if ( getLog().isDebugEnabled() && !invokerProperties.getProperties().isEmpty() )
         {
@@ -1681,7 +1681,7 @@ public abstract class AbstractInvokerMojo
 
             request.setLocalRepositoryDirectory( localRepositoryPath );
 
-            request.setInteractive( false );
+            request.setBatchMode( true );
 
             request.setShowErrors( showErrors );
 
@@ -1909,7 +1909,7 @@ public abstract class AbstractInvokerMojo
      */
     private void verify( InvocationResult result, int invocationIndex, InvokerProperties invokerProperties,
                          FileLogger logger )
-                             throws RunFailureException
+        throws RunFailureException
     {
         if ( result.getExecutionException() != null )
         {
@@ -2359,7 +2359,7 @@ public abstract class AbstractInvokerMojo
             {
                 // interpolation with token @...@
                 Map<String, Object> composite = getInterpolationValueSource();
-                reader = 
+                reader =
                     new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ), composite, "@", "@" );
 
                 xml = IOUtil.toString( reader );

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationRequest.ReactorFailureBehavior;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -192,7 +193,8 @@ class InvokerProperties
         if ( profiles != null )
         {
             // CHECKSTYLE_OFF: LineLength
-            request.setProfiles( new ArrayList<String>( Arrays.asList( StringUtils.split( profiles, ", \t\n\r\f" ) ) ) );
+            request.setProfiles( new ArrayList<String>( Arrays.asList( StringUtils.split( profiles,
+                                                                                          ", \t\n\r\f" ) ) ) );
             // CHECKSTYLE_ON: LineLength
         }
 
@@ -205,7 +207,9 @@ class InvokerProperties
         String failureBehavior = get( InvocationProperty.FAILURE_BEHAVIOR, index );
         if ( failureBehavior != null )
         {
-            request.setFailureBehavior( failureBehavior );
+            ReactorFailureBehavior valueOf =
+                InvocationRequest.ReactorFailureBehavior.valueOfByLongOption( failureBehavior );
+            request.setReactorFailureBehavior( valueOf );
         }
 
         String nonRecursive = get( InvocationProperty.NON_RECURSIVE, index );

@@ -196,13 +196,13 @@ public class InvokerPropertiesTest
 
         InvocationRequest request = new DefaultInvocationRequest();
 
-        request.setFailureBehavior( "fail-at-end" );
+        request.setReactorFailureBehavior( InvocationRequest.ReactorFailureBehavior.FailAtEnd );
         facade.configureInvocation( request, 0 );
-        assertEquals( "fail-at-end", request.getFailureBehavior() );
+        assertEquals( InvocationRequest.ReactorFailureBehavior.FailAtEnd, request.getReactorFailureBehavior() );
 
-        props.setProperty( "invoker.failureBehavior", "fail-never" );
+        props.setProperty( "invoker.failureBehavior", InvocationRequest.ReactorFailureBehavior.FailNever.getLongOption() );
         facade.configureInvocation( request, 0 );
-        assertEquals( "fail-never", request.getFailureBehavior() );
+        assertEquals( "fail-never", request.getReactorFailureBehavior().getLongOption() );
     }
 
     public void testConfigureRequestRecursion()
