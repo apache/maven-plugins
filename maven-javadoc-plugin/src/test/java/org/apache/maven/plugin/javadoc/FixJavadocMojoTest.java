@@ -28,8 +28,10 @@ import java.util.List;
 
 import junitx.util.PrivateAccessor;
 
+import org.apache.maven.plugin.javadoc.AbstractFixJavadocMojo.JavaEntityTags;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -577,6 +579,51 @@ public class FixJavadocMojoTest
         
         assertEquals("return", fixTags[0]);
         assertEquals(1, fixTags.length);
+    }
+    
+    public void testRemoveUnknownExceptions() throws Exception
+    {
+        AbstractFixJavadocMojo mojoInstance = new FixJavadocMojo();
+        setVariableValueToObject( mojoInstance, "fixTagsSplitted", new String[] { "all" } );
+        setVariableValueToObject( mojoInstance, "project", new MavenProjectStub() );
+
+        String source = "package a.b.c;" + EOL
+                        + "public class Clazz {" + EOL
+                        + " /**" + EOL
+                        + " * @throws java.lang.RuntimeException" + EOL
+                        + " * @throws NumberFormatException" + EOL
+                        + " * @throws java.lang.Exception" + EOL // not thrown and no RTE -> remove
+                        + " * @throws com.foo.FatalException" + EOL // not on classpath (?!) -> see removeUnknownThrows
+                        + " */" + EOL
+                        + " public void method() {}" + EOL                        
+                        + "}";
+
+        JavaDocBuilder builder = new JavaDocBuilder();
+        JavaMethod javaMethod = builder.addSource( new StringReader( source ) ).getClasses()[0].getMethods()[0];
+        
+        JavaEntityTags javaEntityTags = mojoInstance.parseJavadocTags( source, javaMethod, "", true );
+        
+        StringBuilder sb = new StringBuilder();
+        mojoInstance.writeThrowsTag( sb, javaMethod, javaEntityTags, new String[] { "java.lang.RuntimeException" } );
+        assertEquals( " * @throws java.lang.RuntimeException", sb.toString() );
+
+        sb = new StringBuilder();
+        mojoInstance.writeThrowsTag( sb, javaMethod, javaEntityTags, new String[] { "NumberFormatException" } );
+        assertEquals( " * @throws java.lang.NumberFormatException", sb.toString() );
+
+        sb = new StringBuilder();
+        mojoInstance.writeThrowsTag( sb, javaMethod, javaEntityTags, new String[] { "java.lang.Exception" } );
+        assertEquals( "", sb.toString() );
+        
+        setVariableValueToObject( mojoInstance, "removeUnknownThrows", true );
+        sb = new StringBuilder();
+        mojoInstance.writeThrowsTag( sb, javaMethod, javaEntityTags, new String[] { "com.foo.FatalException" } );
+        assertEquals( "", sb.toString() );
+
+        setVariableValueToObject( mojoInstance, "removeUnknownThrows", false );
+        sb = new StringBuilder();
+        mojoInstance.writeThrowsTag( sb, javaMethod, javaEntityTags, new String[] { "com.foo.FatalException" } );
+        assertEquals( " * @throws com.foo.FatalException if any.", sb.toString() );
     }
 
     // ----------------------------------------------------------------------
