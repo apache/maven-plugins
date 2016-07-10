@@ -305,6 +305,12 @@ public abstract class AbstractFixJavadocMojo
     private boolean fixMethodComment;
 
     /**
+     * Flag to remove throws tags from unknown classes.
+     */
+    @Parameter ( property = "removeUnknownThrows", defaultValue = "false" )
+    private boolean removeUnknownThrows;
+
+    /**
      * Forcing the goal execution i.e. skip warranty messages (not recommended).
      */
     @Parameter ( property = "force" )
@@ -1881,7 +1887,7 @@ public abstract class AbstractFixJavadocMojo
      * @return an instance of {@link JavaEntityTags}
      * @throws IOException if any
      */
-    private JavaEntityTags parseJavadocTags( final String originalContent, final AbstractInheritableJavaEntity entity,
+    JavaEntityTags parseJavadocTags( final String originalContent, final AbstractInheritableJavaEntity entity,
                                              final String indent, final boolean isJavaMethod )
         throws IOException
     {
@@ -2105,7 +2111,7 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeThrowsTag( final StringBuilder sb, final JavaMethod javaMethod,
+    void writeThrowsTag( final StringBuilder sb, final JavaMethod javaMethod,
                                  final JavaEntityTags javaEntityTags, final String[] params )
     {
         String exceptionClassName = params[0];
@@ -2149,28 +2155,45 @@ public abstract class AbstractFixJavadocMojo
             }
         }
 
-        // Maybe a RuntimeException
-        Class<?> clazz = getRuntimeExceptionClass( javaMethod.getParentClass(), exceptionClassName );
+        Class<?> clazz = getClass( javaMethod.getParentClass(), exceptionClassName );
+        
         if ( clazz != null )
         {
-            sb.append( StringUtils.replace( originalJavadocTag, exceptionClassName, clazz.getName() ) );
+            if ( ClassUtils.isAssignable( clazz, RuntimeException.class ) )
+            {
+                sb.append( StringUtils.replace( originalJavadocTag, exceptionClassName, clazz.getName() ) );
 
-            // added qualified name
-            javaEntityTags.putJavadocThrowsTag( clazz.getName(), originalJavadocTag );
-
-            return;
+                // added qualified name
+                javaEntityTags.putJavadocThrowsTag( clazz.getName(), originalJavadocTag );
+            }
+            else if ( ClassUtils.isAssignable( clazz, Throwable.class ) )
+            {
+                getLog().debug( "Removing '" + originalJavadocTag + "'; Throwable not specified by "
+                    + getJavaMethodAsString( javaMethod ) + " and it is not a RuntimeException." );
+            }
+            else
+            {
+                getLog().debug( "Removing '" + originalJavadocTag + "'; It is not a Throwable" );
+            }
         }
-
-        if ( getLog().isWarnEnabled() )
+        else if ( removeUnknownThrows )
         {
-            getLog().warn( "Unknown throws exception '" + exceptionClassName + "' defined in " + getJavaMethodAsString(
-                javaMethod ) );
+            getLog().warn( "Ignoring unknown throws '" + exceptionClassName + "' defined on "
+                    + getJavaMethodAsString( javaMethod ) );
         }
-
-        sb.append( originalJavadocTag );
-        if ( params.length == 1 )
+        else
         {
-            sb.append( " if any." );
+            getLog().warn( "Found unknown throws '" + exceptionClassName + "' defined on "
+                    + getJavaMethodAsString( javaMethod ) );
+            
+            sb.append( originalJavadocTag );
+            
+            if ( params.length == 1 )
+            {
+                sb.append( " if any." );
+            }
+            
+            javaEntityTags.putJavadocThrowsTag( exceptionClassName, originalJavadocTag );
         }
     }
 
@@ -2906,10 +2929,10 @@ public abstract class AbstractFixJavadocMojo
      *                           <li>exception inner class</li>
      *                           <li>exception class in java.lang package</li>
      *                           </ul>
-     * @return a RuntimeException assignable class.
+     * @return the class if found, otherwise {@code null}.
      * @see #getClass(String)
      */
-    private Class<?> getRuntimeExceptionClass( JavaClass currentClass, String exceptionClassName )
+    private Class<?> getClass( JavaClass currentClass, String exceptionClassName )
     {
         String[] potentialClassNames =
             new String[]{ exceptionClassName, currentClass.getPackage().getName() + "." + exceptionClassName,
@@ -2927,7 +2950,7 @@ public abstract class AbstractFixJavadocMojo
             {
                 // nop
             }
-            if ( clazz != null && ClassUtils.isAssignable( clazz, RuntimeException.class ) )
+            if ( clazz != null )
             {
                 return clazz;
             }
@@ -3615,7 +3638,7 @@ public abstract class AbstractFixJavadocMojo
     /**
      * Wrapper class for the entity's tags.
      */
-    private class JavaEntityTags
+    class JavaEntityTags
     {
         private final AbstractInheritableJavaEntity entity;
 
