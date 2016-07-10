@@ -169,7 +169,7 @@ public abstract class AbstractDeployMojo
             return;
         }
 
-        deployTo( new BugFixedRepository( getDeploySite().getId(), appendSlash( getDeploySite().getUrl() ) ) );
+        deployTo( new BugFixedRepository( getDeploySite().getId(), getDeploySite().getUrl() ) );
     }
 
     /**
