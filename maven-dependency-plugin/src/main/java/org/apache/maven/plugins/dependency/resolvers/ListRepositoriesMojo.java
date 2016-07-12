@@ -28,7 +28,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.dependencies.collect.CollectorResult;
 import org.apache.maven.shared.dependencies.collect.DependencyCollector;
 import org.apache.maven.shared.dependencies.collect.DependencyCollectorException;
-import org.apache.maven.shared.project.DefaultProjectCoordinate;
 
 /**
  * Goal that resolves all project dependencies and then lists the repositories
@@ -59,15 +58,9 @@ public class ListRepositoriesMojo
     {
         try
         {
-            DefaultProjectCoordinate coordinate = new DefaultProjectCoordinate();
-            coordinate.setGroupId( getProject().getGroupId() );
-            coordinate.setArtifactId( getProject().getArtifactId() );
-            coordinate.setVersion( getProject().getVersion() );
-            coordinate.setPackaging( getProject().getPackaging() );
-            
             CollectorResult collectResult =
                 dependencyCollector.collectDependencies( session.getProjectBuildingRequest(),
-                                                         coordinate );
+                                                         getProject().getModel() );
 
             this.getLog().info( "Repositories Used by this build:" );
             
