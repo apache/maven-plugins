@@ -51,7 +51,6 @@ import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
 import org.apache.maven.shared.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
-import org.apache.maven.shared.project.DefaultProjectCoordinate;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -336,15 +335,8 @@ public class DefaultDependencyResolver
             {
                 try
                 {
-                    DefaultProjectCoordinate coordinate = new DefaultProjectCoordinate();
-                    coordinate.setGroupId( project.getGroupId() );
-                    coordinate.setArtifactId( project.getArtifactId() );
-                    coordinate.setVersion( project.getVersion() );
-                    coordinate.setPackaging( project.getPackaging() );
-                    
-                    
                     Iterable<ArtifactResult> artifactResults =
-                        dependencyResolver.resolveDependencies( buildingRequest, coordinate, scopeFilter );
+                        dependencyResolver.resolveDependencies( buildingRequest, project.getModel(), scopeFilter );
                     
                     dependencyArtifacts = new HashSet<Artifact>();
                     
