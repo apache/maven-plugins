@@ -81,10 +81,10 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenCommandLineBuilder;
 import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.apache.maven.shared.scriptinterpreter.RunErrorException;
 import org.apache.maven.shared.scriptinterpreter.RunFailureException;
 import org.apache.maven.shared.scriptinterpreter.ScriptRunner;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
@@ -1160,71 +1160,8 @@ public abstract class AbstractInvokerMojo
             buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
         }
 
-        // -----------------------------------------------
-        // merge settings file
-        // -----------------------------------------------
+        File mergedSettingsFile = mergeSettings( interpolatedSettingsFile );
 
-        SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
-
-        File mergedSettingsFile;
-        Settings mergedSettings = this.settings;
-        if ( mergeUserSettings )
-        {
-            if ( interpolatedSettingsFile != null )
-            {
-                // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
-                try
-                {
-                    SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-                    request.setGlobalSettingsFile( interpolatedSettingsFile );
-
-                    Settings dominantSettings = settingsBuilder.build( request ).getEffectiveSettings();
-                    Settings recessiveSettings = cloneSettings();
-                    SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
-
-                    mergedSettings = dominantSettings;
-                    getLog().debug( "Merged specified settings file with settings of invoking process" );
-                }
-                catch ( SettingsBuildingException e )
-                {
-                    throw new MojoExecutionException( "Could not read specified settings file", e );
-                }
-            }
-        }
-        if ( this.settingsFile != null && !mergeUserSettings )
-        {
-            mergedSettingsFile = interpolatedSettingsFile;
-        }
-        else
-        {
-            try
-            {
-                mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
-
-                FileWriter fileWriter = null;
-                try
-                {
-                    fileWriter = new FileWriter( mergedSettingsFile );
-                    settingsWriter.write( fileWriter, mergedSettings );
-                    fileWriter.close();
-                    fileWriter = null;
-                }
-                finally
-                {
-                    IOUtil.close( fileWriter );
-                }
-
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Created temporary file for invoker settings.xml: "
-                        + mergedSettingsFile.getAbsolutePath() );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
-            }
-        }
         final File finalSettingsFile = mergedSettingsFile;
 
         if ( mavenHome != null )
@@ -1306,6 +1243,89 @@ public abstract class AbstractInvokerMojo
             }
             MessageUtils.systemUninstall();
         }
+    }
+
+    /**
+     * Merge the settings file
+     * 
+     * @param interpolatedSettingsFile The interpolated settings file.
+     * @return The merged settings file.
+     * @throws MojoExecutionException Fail the build in case the merged settings file can't be created.
+     */
+    private File mergeSettings( File interpolatedSettingsFile )
+        throws MojoExecutionException
+    {
+        File mergedSettingsFile;
+        Settings mergedSettings = this.settings;
+        if ( mergeUserSettings )
+        {
+            if ( interpolatedSettingsFile != null )
+            {
+                // Have to merge the specified settings file (dominant) and the one of the invoking Maven process
+                try
+                {
+                    SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+                    request.setGlobalSettingsFile( interpolatedSettingsFile );
+
+                    Settings dominantSettings = settingsBuilder.build( request ).getEffectiveSettings();
+                    Settings recessiveSettings = cloneSettings();
+                    SettingsUtils.merge( dominantSettings, recessiveSettings, TrackableBase.USER_LEVEL );
+
+                    mergedSettings = dominantSettings;
+                    getLog().debug( "Merged specified settings file with settings of invoking process" );
+                }
+                catch ( SettingsBuildingException e )
+                {
+                    throw new MojoExecutionException( "Could not read specified settings file", e );
+                }
+            }
+        }
+
+        if ( this.settingsFile != null && !mergeUserSettings )
+        {
+            mergedSettingsFile = interpolatedSettingsFile;
+        }
+        else
+        {
+            try
+            {
+                mergedSettingsFile = writeMergedSettingsFile( mergedSettings );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Could not create temporary file for invoker settings.xml", e );
+            }
+        }
+        return mergedSettingsFile;
+    }
+
+    private File writeMergedSettingsFile( Settings mergedSettings )
+        throws IOException
+    {
+        File mergedSettingsFile;
+        mergedSettingsFile = File.createTempFile( "invoker-settings", ".xml" );
+
+        SettingsXpp3Writer settingsWriter = new SettingsXpp3Writer();
+
+        FileWriter fileWriter = null;
+        try
+        {
+            fileWriter = new FileWriter( mergedSettingsFile );
+            settingsWriter.write( fileWriter, mergedSettings );
+            fileWriter.close();
+            fileWriter = null;
+        }
+        finally
+        {
+            IOUtil.close( fileWriter );
+        }
+
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Created temporary file for invoker settings.xml: "
+                + mergedSettingsFile.getAbsolutePath() );
+        }
+        return mergedSettingsFile;
     }
 
     private Settings cloneSettings()
@@ -1694,6 +1714,7 @@ public abstract class AbstractInvokerMojo
             if ( mavenHome != null )
             {
                 invoker.setMavenHome( mavenHome );
+                // FIXME: Should we really take care of M2_HOME?
                 request.addShellEnvironment( "M2_HOME", mavenHome.getAbsolutePath() );
             }
 
