@@ -1145,24 +1145,9 @@ public abstract class AbstractInvokerMojo
         // interpolate settings file
         // -----------------------------------------------
 
-        File interpolatedSettingsFile = null;
-        if ( settingsFile != null )
-        {
-            if ( cloneProjectsTo != null )
-            {
-                interpolatedSettingsFile = new File( cloneProjectsTo, "interpolated-" + settingsFile.getName() );
-            }
-            else
-            {
-                interpolatedSettingsFile =
-                    new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
-            }
-            buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
-        }
+        File interpolatedSettingsFile = interpolateSettings();
 
-        File mergedSettingsFile = mergeSettings( interpolatedSettingsFile );
-
-        final File finalSettingsFile = mergedSettingsFile;
+        final File mergedSettingsFile = mergeSettings( interpolatedSettingsFile );
 
         if ( mavenHome != null )
         {
@@ -1202,7 +1187,7 @@ public abstract class AbstractInvokerMojo
                         {
                             try
                             {
-                                runBuild( projectsDir, job, finalSettingsFile, javaHome, actualJreVersion );
+                                runBuild( projectsDir, job, mergedSettingsFile, javaHome, actualJreVersion );
                             }
                             catch ( MojoExecutionException e )
                             {
@@ -1227,7 +1212,7 @@ public abstract class AbstractInvokerMojo
             {
                 for ( BuildJob job : buildJobs )
                 {
-                    runBuild( projectsDir, job, finalSettingsFile, javaHome, actualJreVersion );
+                    runBuild( projectsDir, job, mergedSettingsFile, javaHome, actualJreVersion );
                 }
             }
         }
@@ -1243,6 +1228,31 @@ public abstract class AbstractInvokerMojo
             }
             MessageUtils.systemUninstall();
         }
+    }
+
+    /**
+     * Interpolate settings.xml file.
+     * @return The interpolated settings.xml file.
+     * @throws MojoExecutionException in case of a problem.
+     */
+    private File interpolateSettings()
+        throws MojoExecutionException
+    {
+        File interpolatedSettingsFile = null;
+        if ( settingsFile != null )
+        {
+            if ( cloneProjectsTo != null )
+            {
+                interpolatedSettingsFile = new File( cloneProjectsTo, "interpolated-" + settingsFile.getName() );
+            }
+            else
+            {
+                interpolatedSettingsFile =
+                    new File( settingsFile.getParentFile(), "interpolated-" + settingsFile.getName() );
+            }
+            buildInterpolatedFile( settingsFile, interpolatedSettingsFile );
+        }
+        return interpolatedSettingsFile;
     }
 
     /**
