@@ -458,8 +458,9 @@ public abstract class AbstractInvokerMojo
      *
      * <pre>
      * # A comma or space separated list of goals/phases to execute, may
-     * # specify an empty list to execute the default goal of the IT project
-     * invoker.goals = clean install
+     * # specify an empty list to execute the default goal of the IT project.
+     * # Environment variables used by maven plugins can be added here
+     * invoker.goals = clean install -Dplugin.variable=value
      *
      * # Or you can give things like this if you need.
      * invoker.goals = -T2 clean verify
