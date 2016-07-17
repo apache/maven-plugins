@@ -54,11 +54,20 @@ Including Module Sources
   <includeBaseDirectory>false</includeBaseDirectory>
   <moduleSets>
     <moduleSet>
+      <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
         <include>org.test:child1</include>
       </includes>
       <sources>
-        <outputDirectory>sources/${artifactId}</outputDirectory>
+        <includeModuleDirectory>false</includeModuleDirectory>
+        <fileSets>
+          <fileSet>
+            <outputDirectory>sources/${module.artifactId}</outputDirectory>
+            <excludes>
+              <exclude>${project.build.directory}/**</exclude>
+            </excludes>
+          </fileSet>
+        </fileSets>
       </sources>
     </moduleSet>
   </moduleSets>
@@ -75,11 +84,18 @@ Including Module Sources
   sources should be contained within the directory structure
   <<<sources/child1>>> for this module, since the outputDirectory expression
   will be interpolated on a module-by-module basis.
+  
+  By default, the Assembly Plugin will add the sources under a folder named with the artifactId 
+  of each module; this can be disabled by setting <<<includeModuleDirectory>>> to <<<false>>>.
+  
+  Note that the build directory (<<<target>>> by default) will be included, so it is explicitly excluded 
+  since this is a temporary storage for files produced during the build and it should not contain any 
+  project sources.
 
 * The POM
 
   Now, let's review the POM configuration necessary to enable the building of
-  this assembly via the <assembly:directory> goal:
+  this assembly via the <assembly:single> goal:
 
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
@@ -125,7 +141,7 @@ Including Module Sources
   To build the assembly, we issue the following command:
 
 +---+
-mvn clean assembly:directory
+mvn clean assembly:single
 +---+
 
   This will ensure that the output directory (normally, <<<target>>>), is
