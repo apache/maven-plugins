@@ -182,5 +182,5 @@ variable2=value2
   To generate the distribution assembly, we then use:
 
 +-----
-mvn assembly:assembly
+mvn clean assembly:single
 +-----

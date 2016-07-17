@@ -95,7 +95,7 @@ Using Repositories
   The assembly archive is then created using:
 
 +-----
-mvn assembly:assembly
+mvn clean assembly:single
 +-----
 
   The generated archive can be extracted to an internal repository so users of
