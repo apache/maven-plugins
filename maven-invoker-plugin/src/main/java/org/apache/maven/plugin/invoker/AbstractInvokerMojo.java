@@ -621,23 +621,7 @@ public abstract class AbstractInvokerMojo
         // done it here to prevent issues with concurrent access in case of parallel run
         if ( !disableReports )
         {
-            // If it exists from previous run...
-            if ( reportsDirectory.exists() )
-            {
-                try
-                {
-                    FileUtils.deleteDirectory( reportsDirectory );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Failure while trying to delete "
-                        + reportsDirectory.getAbsolutePath(), e );
-                }
-            }
-            if ( !reportsDirectory.mkdirs() )
-            {
-                throw new MojoExecutionException( "Failure while creating the " + reportsDirectory.getAbsolutePath() );
-            }
+            setupReportsFolder();
         }
 
         BuildJob[] buildJobs;
@@ -705,6 +689,7 @@ public abstract class AbstractInvokerMojo
         catch ( IOException e )
         {
             getLog().error( "Failure during scanning of folders.", e );
+            // TODO: Check shouldn't we fail in case of problems?
         }
 
         if ( setupBuildJobs != null )
@@ -727,6 +712,33 @@ public abstract class AbstractInvokerMojo
 
         processResults( new InvokerSession( nonSetupBuildJobs ) );
 
+    }
+
+    /**
+     * This will create the necessary folders for the reports.
+     * 
+     * @throws MojoExecutionException in case of failure during creation of the reports folder.
+     */
+    private void setupReportsFolder()
+        throws MojoExecutionException
+    {
+        // If it exists from previous run...
+        if ( reportsDirectory.exists() )
+        {
+            try
+            {
+                FileUtils.deleteDirectory( reportsDirectory );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failure while trying to delete "
+                    + reportsDirectory.getAbsolutePath(), e );
+            }
+        }
+        if ( !reportsDirectory.mkdirs() )
+        {
+            throw new MojoExecutionException( "Failure while creating the " + reportsDirectory.getAbsolutePath() );
+        }
     }
 
     private BuildJob[] getNonSetupJobs( BuildJob[] buildJobs )
@@ -1233,6 +1245,7 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Interpolate settings.xml file.
+     * 
      * @return The interpolated settings.xml file.
      * @throws MojoExecutionException in case of a problem.
      */
@@ -1411,6 +1424,34 @@ public abstract class AbstractInvokerMojo
     }
 
     /**
+     * Interpolate the pom file.
+     * 
+     * @param pomFile The pom file.
+     * @param basedir The base directory.
+     * @return interpolated pom file location in case we have interpolated the pom file otherwise the original pom file
+     *         will be returned.
+     * @throws MojoExecutionException
+     */
+    private File interpolatePomFile( File pomFile, File basedir )
+        throws MojoExecutionException
+    {
+        File interpolatedPomFile = null;
+        if ( pomFile != null )
+        {
+            if ( StringUtils.isNotEmpty( filteredPomPrefix ) )
+            {
+                interpolatedPomFile = new File( basedir, filteredPomPrefix + pomFile.getName() );
+                buildInterpolatedFile( pomFile, interpolatedPomFile );
+            }
+            else
+            {
+                interpolatedPomFile = pomFile;
+            }
+        }
+        return interpolatedPomFile;
+    }
+
+    /**
      * Runs the specified project.
      *
      * @param projectsDir The base directory of all projects, must not be <code>null</code>.
@@ -1423,6 +1464,7 @@ public abstract class AbstractInvokerMojo
                            CharSequence actualJreVersion )
         throws MojoExecutionException
     {
+        // FIXME: Think about the following code part -- START
         File pomFile = new File( projectsDir, buildJob.getProject() );
         File basedir;
         if ( pomFile.isDirectory() )
@@ -1443,21 +1485,10 @@ public abstract class AbstractInvokerMojo
             basedir = pomFile.getParentFile();
         }
 
-        getLog().info( buffer().a( "Building: " ).strong( buildJob.getProject() ).toString() );
+        File interpolatedPomFile = interpolatePomFile( pomFile, basedir );
+        // FIXME: Think about the following code part -- ^^^^^^^ END
 
-        File interpolatedPomFile = null;
-        if ( pomFile != null )
-        {
-            if ( filteredPomPrefix != null )
-            {
-                interpolatedPomFile = new File( basedir, filteredPomPrefix + pomFile.getName() );
-                buildInterpolatedFile( pomFile, interpolatedPomFile );
-            }
-            else
-            {
-                interpolatedPomFile = pomFile;
-            }
-        }
+        getLog().info( buffer().a( "Building: " ).strong( buildJob.getProject() ).toString() );
 
         InvokerProperties invokerProperties = getInvokerProperties( basedir );
 
@@ -1564,11 +1595,21 @@ public abstract class AbstractInvokerMojo
         }
         finally
         {
-            if ( interpolatedPomFile != null && StringUtils.isNotEmpty( filteredPomPrefix ) )
-            {
-                interpolatedPomFile.delete();
-            }
+            deleteInterpolatedPomFile( interpolatedPomFile );
             writeBuildReport( buildJob );
+        }
+    }
+
+    /**
+     * Delete the interpolated pom file if it has been created before.
+     * 
+     * @param interpolatedPomFile The interpolated pom file.
+     */
+    private void deleteInterpolatedPomFile( File interpolatedPomFile )
+    {
+        if ( interpolatedPomFile != null && StringUtils.isNotEmpty( filteredPomPrefix ) )
+        {
+            interpolatedPomFile.delete();
         }
     }
 
@@ -1688,7 +1729,7 @@ public abstract class AbstractInvokerMojo
 
         Map<String, Object> context = new LinkedHashMap<String, Object>();
 
-        FileLogger logger = setupLogger( basedir );
+        FileLogger logger = setupBuildLogFile( basedir );
         try
         {
             try
@@ -1831,13 +1872,14 @@ public abstract class AbstractInvokerMojo
     }
 
     /**
-     * Initializes the build logger for the specified project.
+     * Initializes the build logger for the specified project. This will write the logging information into
+     * {@code build.log}.
      *
      * @param basedir The base directory of the project, must not be <code>null</code>.
      * @return The build logger or <code>null</code> if logging has been disabled.
      * @throws org.apache.maven.plugin.MojoExecutionException If the log file could not be created.
      */
-    private FileLogger setupLogger( File basedir )
+    private FileLogger setupBuildLogFile( File basedir )
         throws MojoExecutionException
     {
         FileLogger logger = null;
