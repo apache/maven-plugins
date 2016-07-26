@@ -84,7 +84,6 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.scriptinterpreter.RunErrorException;
 import org.apache.maven.shared.scriptinterpreter.RunFailureException;
 import org.apache.maven.shared.scriptinterpreter.ScriptRunner;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
@@ -1185,8 +1184,6 @@ public abstract class AbstractInvokerMojo
 
         try
         {
-            MessageUtils.systemInstall(); // prepare JAnsi if not run with Maven 3.4+
-
             if ( runWithParallelThreads > 1 )
             {
                 getLog().info( "use parallelThreads " + runWithParallelThreads );
@@ -1239,7 +1236,6 @@ public abstract class AbstractInvokerMojo
             {
                 mergedSettingsFile.delete();
             }
-            MessageUtils.systemUninstall();
         }
     }
 
