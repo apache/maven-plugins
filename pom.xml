@@ -63,7 +63,7 @@ under the License.
       ! The following property is used in the integration tests MCOMPILER-157
     -->
     <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
-    <plexusCompilerVersion>2.8-jigsaw-SNAPSHOT</plexusCompilerVersion>
+    <plexusCompilerVersion>2.8</plexusCompilerVersion>
     <groovyVersion>1.8.0</groovyVersion>
     <groovyEclipseCompilerVersion>2.7.0-01</groovyEclipseCompilerVersion>
     <groovy-eclipse-batch>2.0.4-04</groovy-eclipse-batch>
@@ -117,7 +117,7 @@ under the License.
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>5.1</version>
+      <version>6.0_ALPHA</version>
     </dependency>
 
     <dependency>
@@ -210,6 +210,11 @@ under the License.
               </configuration>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.5-SNAPSHOT</version> 
         </plugin>
       </plugins>
     </pluginManagement>
