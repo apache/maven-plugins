@@ -72,7 +72,9 @@ public abstract class AbstractAssemblyMojo
     protected FixedStringSearchInterpolator rootInterpolator;
 
     /**
-     * Set to false to exclude the assembly id from the assembly final name.
+     * Set to false to exclude the assembly id from the assembly final name, and to create the resultant assembly
+     * artifacts without classifier. As such, an assembly artifact having the same format as the packaging of the
+     * current Maven project will replace the file for this main project artifact.
      */
     @Parameter( property = "assembly.appendAssemblyId", defaultValue = "true" )
     boolean appendAssemblyId;
