@@ -490,8 +490,7 @@ public abstract class AbstractAssemblyMojo
                             {
                                 final StringBuilder message = new StringBuilder();
 
-                                message.append( "Configuration options: 'appendAssemblyId' is set to false, "
-                                                    + "and 'classifier' is missing." );
+                                message.append( "Configuration option 'appendAssemblyId' is set to false." );
                                 message.append( "\nInstead of attaching the assembly file: " ).append( destFile );
                                 message.append( ", it will become the file for main project artifact." );
                                 message.append( "\nNOTE: If multiple descriptors or descriptor-formats are provided "
