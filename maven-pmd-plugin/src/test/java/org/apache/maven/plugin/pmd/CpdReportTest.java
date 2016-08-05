@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -83,17 +82,16 @@ public class CpdReportTest
 
         // check the contents of cpd.html
         String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "AppSample.java".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "AppSample.java" ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "App.java".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "App.java" ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "public String dup( String str )".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "public String dup( String str )" ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "tmp = tmp + str.substring( i, i + 1);".toLowerCase() ) );
-
+        assertTrue( lowerCaseContains( str, "tmp = tmp + str.substring( i, i + 1);" ) );
     }
 
     /**
@@ -120,21 +118,20 @@ public class CpdReportTest
 
         // Contents that should NOT be in the report
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( !str.toLowerCase().contains( "/Sample.java".toLowerCase() ) );
+        assertFalse( lowerCaseContains( str, "/Sample.java" ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( !str.toLowerCase().contains( "public void duplicateMethod( int i )".toLowerCase() ) );
+        assertFalse( lowerCaseContains( str, "public void duplicateMethod( int i )" ) );
 
         // Contents that should be in the report
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "AnotherSample.java".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "AnotherSample.java" ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "public static void main( String[] args )".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "public static void main( String[] args )" ) );
 
         str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/cpd.html" ) );
-        assertTrue( str.toLowerCase().contains( "private String unusedMethod(".toLowerCase() ) );
-
+        assertTrue( lowerCaseContains( str, "private String unusedMethod(" ) );
     }
 
     /**
@@ -246,7 +243,7 @@ public class CpdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" ) );
-        assertTrue( !str.toLowerCase().contains( "Hello.java".toLowerCase() ) );
+        assertFalse( lowerCaseContains( str, "Hello.java" ) );
     }
 
     public void testCpdEncodingConfiguration()
@@ -267,7 +264,7 @@ public class CpdReportTest
             File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
             assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
             String str = readFile( generatedFile );
-            assertTrue( str.toLowerCase().contains( "AppSample.java".toLowerCase() ) );
+            assertTrue( lowerCaseContains( str, "AppSample.java" ) );
         }
         finally
         {
@@ -287,8 +284,8 @@ public class CpdReportTest
             File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
             assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
             String str = readFile( generatedFile );
-            assertTrue( str.toLowerCase(Locale.ROOT).contains( "Sample.js".toLowerCase(Locale.ROOT) ) );
-            assertTrue( str.toLowerCase(Locale.ROOT).contains( "SampleDup.js".toLowerCase(Locale.ROOT) ) );
+            assertTrue( lowerCaseContains( str, "Sample.js" ) );
+            assertTrue( lowerCaseContains( str, "SampleDup.js" ) );
     }
 
     public void testCpdJspConfiguration()
@@ -303,8 +300,8 @@ public class CpdReportTest
             File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
             assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
             String str = readFile( generatedFile );
-            assertTrue( str.toLowerCase(Locale.ROOT).contains( "sample.jsp".toLowerCase(Locale.ROOT) ) );
-            assertTrue( str.toLowerCase(Locale.ROOT).contains( "sampleDup.jsp".toLowerCase(Locale.ROOT) ) );
+            assertTrue( lowerCaseContains( str, "sample.jsp" ) );
+            assertTrue( lowerCaseContains( str, "sampleDup.jsp" ) );
     }
 
     public static class MockCpd

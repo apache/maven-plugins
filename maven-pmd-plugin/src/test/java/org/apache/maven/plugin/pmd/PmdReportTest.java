@@ -222,18 +222,18 @@ public class PmdReportTest
 
         // check if custom ruleset was applied
         String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
-        assertTrue( str.toLowerCase().contains( "Avoid using if statements without curly braces".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "Avoid using if statements without curly braces" ) );
 
         // Must be false as IfElseStmtsMustUseBraces is excluded!
-        assertFalse( str.toLowerCase().contains( "Avoid using if...else statements without curly braces".toLowerCase() ) );
+        assertFalse( lowerCaseContains( str, "Avoid using if...else statements without curly braces" ) );
 
-        assertTrue( "unnecessary constructor should not be triggered because of low priority",
-                    !str.toLowerCase().contains( "Avoid unnecessary constructors - the compiler will generate these for you".toLowerCase() ) );
+        assertFalse( "unnecessary constructor should not be triggered because of low priority",
+                    lowerCaseContains( str, "Avoid unnecessary constructors - the compiler will generate these for you" ) );
 
         // veryLongVariableNameWithViolation is really too long
-        assertTrue( str.toLowerCase().contains( "veryLongVariableNameWithViolation".toLowerCase() ) );
+        assertTrue( lowerCaseContains( str, "veryLongVariableNameWithViolation" ) );
         // notSoLongVariableName should not be reported
-        assertFalse( str.toLowerCase().contains( "notSoLongVariableName".toLowerCase() ) );
+        assertFalse( lowerCaseContains( str, "notSoLongVariableName" ) );
     }
 
     /**
@@ -283,7 +283,7 @@ public class PmdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" ) );
-        assertTrue( !str.toLowerCase().contains( "Hello.java".toLowerCase() ) );
+        assertFalse( lowerCaseContains( str, "Hello.java" ) );
     }
 
     public void testInvalidFormat()
