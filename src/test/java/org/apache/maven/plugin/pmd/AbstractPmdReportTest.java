@@ -72,4 +72,17 @@ public abstract class AbstractPmdReportTest
             IOUtil.close( writer );
         }
     }
+
+    /**
+     * Checks, whether the string <code>contained</code> is contained in
+     * the given <code>text</code> ignoring case.
+     *
+     * @param text the string in which the search is executed
+     * @param contained the string, the should be searched
+     * @return <code>true</code> if the string is contained, otherwise <code>false</code>.
+     */
+    public static boolean lowerCaseContains( String text, String contains )
+    {
+        return text.toLowerCase( Locale.ROOT ).contains( contains.toLowerCase( Locale.ROOT ) );
+    }
 }
