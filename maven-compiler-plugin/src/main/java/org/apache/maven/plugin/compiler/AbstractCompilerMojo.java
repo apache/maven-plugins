@@ -97,6 +97,14 @@ public abstract class AbstractCompilerMojo
     private boolean failOnError = true;
 
     /**
+     * Indicates whether the build will continue even if there are compilation warnings.
+     *
+     * @since 3.4
+     */
+    @Parameter( property = "maven.compiler.failOnWarning", defaultValue = "false" )
+    private boolean failOnWarning = false;
+
+    /**
      * Set to <code>true</code> to include debugging information in the compiled class files.
      */
     @Parameter( property = "maven.compiler.debug", defaultValue = "true" )
@@ -611,7 +619,7 @@ public abstract class AbstractCompilerMojo
         String effectiveCompilerArgument = getCompilerArgument();
 
         if ( ( effectiveCompilerArguments != null ) || ( effectiveCompilerArgument != null )
-                        || ( compilerArgs != null ) )
+                        || ( compilerArgs != null ) || failOnWarning )
         {
             LinkedHashMap<String, String> cplrArgsCopy = new LinkedHashMap<String, String>();
             if ( effectiveCompilerArguments != null )
@@ -645,6 +653,10 @@ public abstract class AbstractCompilerMojo
                 {
                     cplrArgsCopy.put( arg, null );
                 }
+            }
+            if ( failOnWarning )
+            {
+                cplrArgsCopy.put( "-Werror", null );
             }
             compilerConfiguration.setCustomCompilerArguments( cplrArgsCopy );
         }

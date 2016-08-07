@@ -38,15 +38,22 @@ public class CompilerStub
     implements org.codehaus.plexus.compiler.Compiler
 {
     private boolean shouldFail;
+    private boolean shouldWarn;
 
     public CompilerStub()
     {
-        this( false );
+        this( false, false );
     }
 
     public CompilerStub( boolean shouldFail )
     {
+        this( shouldFail, false );
+    }
+
+    public CompilerStub( boolean shouldFail, boolean shouldWarn )
+    {
         this.shouldFail = shouldFail;
+        this.shouldWarn = shouldWarn;
     }
 
     public CompilerOutputStyle getCompilerOutputStyle()
@@ -120,7 +127,7 @@ public class CompilerStub
         {
             throw new CompilerException( "An exception occurred while creating output file", e );
         }
-        
+
         return new CompilerResult( !shouldFail,
             Collections.singletonList( new CompilerMessage( "message 1", CompilerMessage.Kind.OTHER ) ) );
     }
@@ -128,6 +135,13 @@ public class CompilerStub
     public String[] createCommandLine( CompilerConfiguration compilerConfiguration )
         throws CompilerException
     {
+        if ( shouldWarn )
+        {
+            if ( ! compilerConfiguration.getCustomCompilerArguments().containsKey("-Werror") )
+            {
+                throw new CompilerException( "Compiler should error on warnings but no Werror flag found" );
+            }
+        }
         return new String[0];
     }
 }
