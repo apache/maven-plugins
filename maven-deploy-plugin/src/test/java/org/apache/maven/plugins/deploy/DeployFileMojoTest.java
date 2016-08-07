@@ -26,12 +26,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.mockito.InjectMocks;
@@ -53,8 +51,6 @@ public class DeployFileMojoTest
 
     private File remoteRepo;
 
-    MavenProjectStub projectStub = new MavenProjectStub();
-    
     @Mock
     private MavenSession session;
     
@@ -72,8 +68,6 @@ public class DeployFileMojoTest
         {
             remoteRepo.mkdirs();
         }
-        
-        projectStub.setAttachedArtifacts( new ArrayList<Artifact>() );
     }
 
     public void testDeployTestEnvironment()
@@ -103,8 +97,6 @@ public class DeployFileMojoTest
         repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
         when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
         
-        setVariableValueToObject( mojo, "project", projectStub );
-
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
 
         String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
@@ -206,8 +198,6 @@ public class DeployFileMojoTest
         repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
         when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
 
-        setVariableValueToObject( mojo, "project", projectStub );
-
         String classifier = ( String ) getVariableValueFromObject( mojo, "classifier" );
 
         String groupId = ( String ) getVariableValueFromObject( mojo, "groupId" );
@@ -256,8 +246,6 @@ public class DeployFileMojoTest
         repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
         when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
 
-        setVariableValueToObject( mojo, "project", projectStub );
-
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
 
         String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
@@ -287,8 +275,6 @@ public class DeployFileMojoTest
         AbstractDeployMojo mojo = (AbstractDeployMojo) lookupMojo( "deploy-file", testPom );
 
         assertNotNull( mojo );
-
-        setVariableValueToObject( mojo, "project", projectStub );
 
         String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
 
