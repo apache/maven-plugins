@@ -46,7 +46,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -329,19 +328,11 @@ public class CpdReport
         }
 
         String buffer = r.render( cpd.getMatches() );
-        FileOutputStream tStream = null;
-        Writer writer = null;
-        try
+        File targetFile = new File( targetDirectory, "cpd." + format );
+        targetDirectory.mkdirs();
+        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), getOutputEncoding() ) )
         {
-            targetDirectory.mkdirs();
-            File targetFile = new File( targetDirectory, "cpd." + format );
-            tStream = new FileOutputStream( targetFile );
-            writer = new OutputStreamWriter( tStream, getOutputEncoding() );
             writer.write( buffer );
-            writer.close();
-            writer = null;
-            tStream.close();
-            tStream = null;
 
             if ( includeXmlInSite )
             {
@@ -353,11 +344,6 @@ public class CpdReport
         catch ( IOException ioe )
         {
             throw new MavenReportException( ioe.getMessage(), ioe );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-            IOUtil.close( tStream );
         }
     }
 

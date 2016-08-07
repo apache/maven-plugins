@@ -63,7 +63,6 @@ import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -363,7 +362,7 @@ public class PmdReport
         }
         pmdConfiguration.setSourceEncoding( encoding );
 
-        List<DataSource> dataSources = new ArrayList<DataSource>( filesToProcess.size() );
+        List<DataSource> dataSources = new ArrayList<>( filesToProcess.size() );
         for ( File f : filesToProcess.keySet() )
         {
             dataSources.add( new FileDataSource( f ) );
@@ -411,22 +410,13 @@ public class PmdReport
 
         if ( benchmark )
         {
-            PrintStream benchmarkFileStream = null;
-            try
+            try ( PrintStream benchmarkFileStream = new PrintStream( benchmarkOutputFilename ) )
             {
-                benchmarkFileStream = new PrintStream( benchmarkOutputFilename );
                 ( new TextReport() ).generate( Benchmarker.values(), benchmarkFileStream );
             }
             catch ( FileNotFoundException fnfe )
             {
                 getLog().error( "Unable to generate benchmark file: " + benchmarkOutputFilename, fnfe );
-            }
-            finally
-            {
-                if ( null != benchmarkFileStream )
-                {
-                    benchmarkFileStream.close();
-                }
             }
         }
     }
@@ -502,23 +492,15 @@ public class PmdReport
             return;
         }
 
-        Writer writer = null;
-        FileOutputStream tStream = null;
-        try
+        File targetFile = new File( targetDirectory, "pmd." + format );
+        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), getOutputEncoding() ) )
         {
             targetDirectory.mkdirs();
-            File targetFile = new File( targetDirectory, "pmd." + format );
-            tStream = new FileOutputStream( targetFile );
-            writer = new OutputStreamWriter( tStream, getOutputEncoding() );
 
             r.setWriter( writer );
             r.start();
             r.renderFileReport( report );
             r.end();
-            writer.close();
-            writer = null;
-            tStream.close();
-            tStream = null;
 
             if ( includeXmlInSite )
             {
@@ -530,11 +512,6 @@ public class PmdReport
         catch ( IOException ioe )
         {
             throw new MavenReportException( ioe.getMessage(), ioe );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-            IOUtil.close( tStream );
         }
     }
 

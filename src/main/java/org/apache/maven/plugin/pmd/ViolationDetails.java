@@ -31,9 +31,9 @@ import java.util.List;
  */
 public class ViolationDetails<D>
 {
-    private List<D> warningDetails = new ArrayList<D>();
+    private List<D> warningDetails = new ArrayList<>();
 
-    private List<D> failureDetails = new ArrayList<D>();
+    private List<D> failureDetails = new ArrayList<>();
 
     /**
      * @return the warningDetails, never {@code null}

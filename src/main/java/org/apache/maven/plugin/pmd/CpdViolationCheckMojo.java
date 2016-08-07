@@ -58,7 +58,7 @@ public class CpdViolationCheckMojo
     @Parameter( property = "cpd.skip", defaultValue = "false" )
     private boolean skip;
 
-    private final List<Set<String>> exclusionList = new ArrayList<Set<String>>();
+    private final List<Set<String>> exclusionList = new ArrayList<>();
 
     /**
      * Whether to fail the build if the validation check fails.
@@ -121,7 +121,7 @@ public class CpdViolationCheckMojo
     @Override
     protected boolean isExcludedFromFailure( final Duplication errorDetail )
     {
-        final Set<String> uniquePaths = new HashSet<String>();
+        final Set<String> uniquePaths = new HashSet<>();
         for ( final CpdFile cpdFile : errorDetail.getFiles() )
         {
             uniquePaths.add( cpdFile.getPath() );
@@ -166,10 +166,8 @@ public class CpdViolationCheckMojo
     protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
         throws MojoExecutionException
     {
-        LineNumberReader reader = null;
-        try
+        try ( LineNumberReader reader = new LineNumberReader( new FileReader( excludeFromFailureFile ) ) )
         {
-            reader = new LineNumberReader( new FileReader( excludeFromFailureFile ) );
             String line;
             while ( ( line = reader.readLine() ) != null )
             {
@@ -180,26 +178,11 @@ public class CpdViolationCheckMojo
         {
             throw new MojoExecutionException( "Cannot load file " + excludeFromFailureFile, e );
         }
-        finally
-        {
-            if ( reader != null )
-            {
-                try
-                {
-                    reader.close();
-                }
-                catch ( final IOException e )
-                {
-                    getLog().warn( "Cannot close file " + excludeFromFailureFile, e );
-                }
-            }
-        }
-
     }
 
     private Set<String> createSetFromExclusionLine( final String line )
     {
-        final Set<String> result = new HashSet<String>();
+        final Set<String> result = new HashSet<>();
         for ( final String className : line.split( "," ) )
         {
             result.add( className.trim() );
@@ -216,7 +199,7 @@ public class CpdViolationCheckMojo
     @Override
     protected ViolationDetails<Duplication> newViolationDetailsInstance()
     {
-        return new ViolationDetails<Duplication>();
+        return new ViolationDetails<>();
     }
 
     @Override

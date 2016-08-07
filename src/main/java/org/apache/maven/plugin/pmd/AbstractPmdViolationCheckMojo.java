@@ -179,8 +179,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     private ViolationDetails<D> getViolations( final File analysisFile, final int failurePriority )
         throws XmlPullParserException, IOException
     {
-        final List<D> failures = new ArrayList<D>();
-        final List<D> warnings = new ArrayList<D>();
+        final List<D> failures = new ArrayList<>();
+        final List<D> warnings = new ArrayList<>();
 
         final List<D> violations = getErrorDetails( analysisFile );
 

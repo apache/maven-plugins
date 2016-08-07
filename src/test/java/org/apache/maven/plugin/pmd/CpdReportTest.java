@@ -194,7 +194,7 @@ public class CpdReportTest
 
         TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 34 );
         TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 55 );
-        List<Match> tList = new ArrayList<Match>();
+        List<Match> tList = new ArrayList<>();
         Mark tFirstMark = new Mark( tFirstEntry );
         Mark tSecondMark = new Mark( tSecondEntry );
         tFirstMark.setSoureCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
