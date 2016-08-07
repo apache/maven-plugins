@@ -25,7 +25,7 @@
 
 ${project.name}
 
-  The PMD Plugin allows you to automatically run the {{{http://pmd.sourceforge.net/}PMD}} code analysis tool
+  The PMD Plugin allows you to automatically run the {{{https://pmd.github.io/}PMD}} code analysis tool
   on your project's source code and generate a site report with its results. It also supports the separate
   Copy/Paste Detector tool (or CPD) distributed with PMD.
 
@@ -53,9 +53,7 @@ ${project.name}
 * Usage
 
   General instructions on how to use the PMD Plugin can be found on the {{{./usage.html}usage page}}. Some more
-  specific use cases are described in the examples given below. Last but not least, users occasionally contribute
-  additional examples, tips or errata to the
-  {{{http://docs.codehaus.org/display/MAVENUSER/PMD+Plugin}plugin's wiki page}}.
+  specific use cases are described in the examples given below.
 
   In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
   free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could

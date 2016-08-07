@@ -25,7 +25,7 @@ under the License.
 
   <!--
     Customized PMD ruleset for Maven, see [0] for more information
-    [0] http://pmd.sourceforge.net/howtomakearuleset.html
+    [0] https://pmd.github.io/latest/customizing/howtomakearuleset.html
   -->
 
   <description>

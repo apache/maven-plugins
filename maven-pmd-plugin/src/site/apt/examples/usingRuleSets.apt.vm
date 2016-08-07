@@ -28,10 +28,11 @@
 
 Using Rule Sets
 
- The PMD plugin uses three default rule sets: <basic.xml>, <unusedcode.xml> and <imports.xml>. These rule sets are
- bundled in the PMD code analysis tool 
- (see the {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/pmd-java/rules/index.html}ruleset index for java}} and
- the {{{http://pmd.sourceforge.net/pmd-${pmdVersion}/pmd-javascript/rules/index.html}ruleset index for javascript}}).
+ The PMD plugin uses five default rule sets: <basic.xml>, <empty.xml>, <imports.xml>, <unnecessary.xml>
+ and <unusedcode.xml>. These rule sets are bundled in the PMD code analysis tool
+ (see the {{{https://pmd.github.io/pmd-${pmdVersion}/pmd-java/rules/index.html}ruleset index for java}},
+ the {{{https://pmd.github.io/pmd-${pmdVersion}/pmd-javascript/rules/index.html}ruleset index for javascript}}
+ and {{{https://pmd.github.io/pmd-${pmdVersion}/pmd-jsp/rules/index.html}ruleset index for jsp}}).
  To use other rule sets, you can configure it in the plugin as shown below.
 
  The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the PMD tool,
