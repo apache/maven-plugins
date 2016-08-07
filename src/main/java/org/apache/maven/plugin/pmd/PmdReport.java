@@ -152,7 +152,7 @@ public class PmdReport
     /**
      * Source level marker used to indicate whether a RuleViolation should be suppressed. If it is not set, PMD's
      * default will be used, which is <code>NOPMD</code>. See also <a
-     * href="http://pmd.sourceforge.net/usage/suppressing.html">PMD &#x2013; Suppressing warnings</a>.
+     * href="https://pmd.github.io/latest/usage/suppressing.html">PMD &#x2013; Suppressing warnings</a>.
      *
      * @since 3.4
      */

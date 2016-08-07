@@ -55,5 +55,18 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="no report in site">
+      <question>
+        I have add the PMD/CPD reports, but they do not show up in the generated site. Has the plugin been executed?
+      </question>
+      <answer>
+        <p>
+          If there are no violations, then by default no reports are created and the entire PMD or CPD section
+          is not rendered in the site. To change this behaviour, set the
+          <a href="pmd-mojo.xml#skipEmptyReport">skipEmptyReport for PMD</a> or <a href="cpd-mojo#skipEmptyReport">skipEmptyReport for CPD</a>
+          to <code>false</code>.
+        </p>
+      </answer>
+    </faq>
   </part>
 </faqs>
