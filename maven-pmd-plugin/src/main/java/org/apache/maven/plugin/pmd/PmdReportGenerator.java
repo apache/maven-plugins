@@ -52,7 +52,7 @@ public class PmdReportGenerator
 
     private ResourceBundle bundle;
 
-    private HashSet<RuleViolation> violations = new HashSet<RuleViolation>();
+    private HashSet<RuleViolation> violations = new HashSet<>();
 
     private boolean aggregate;
 
@@ -78,12 +78,12 @@ public class PmdReportGenerator
 
     public void setViolations( Collection<RuleViolation> violations )
     {
-        this.violations = new HashSet<RuleViolation>( violations );
+        this.violations = new HashSet<>( violations );
     }
 
     public List<RuleViolation> getViolations()
     {
-        return new ArrayList<RuleViolation>( violations );
+        return new ArrayList<>( violations );
     }
 
     // public List<Metric> getMetrics()
@@ -163,7 +163,7 @@ public class PmdReportGenerator
         throws IOException
     {
         fileCount = files.size();
-        ArrayList<RuleViolation> violations2 = new ArrayList<RuleViolation>( violations );
+        ArrayList<RuleViolation> violations2 = new ArrayList<>( violations );
         Collections.sort( violations2, new Comparator<RuleViolation>()
         {
             /** {@inheritDoc} */

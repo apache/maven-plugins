@@ -41,7 +41,7 @@ public class CustomConfigurationMavenProjectStub
 {
     private Build build;
 
-    private List<ReportPlugin> reportPlugins = new ArrayList<ReportPlugin>();
+    private List<ReportPlugin> reportPlugins = new ArrayList<>();
 
     public CustomConfigurationMavenProjectStub()
     {
@@ -80,7 +80,7 @@ public class CustomConfigurationMavenProjectStub
         setReportPlugins( model.getReporting().getPlugins() );
 
         String basedir = getBasedir().getAbsolutePath();
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( basedir + "/src/test/resources/unit/custom-configuration/custom/configuration" );
         setCompileSourceRoots( compileSourceRoots );
 

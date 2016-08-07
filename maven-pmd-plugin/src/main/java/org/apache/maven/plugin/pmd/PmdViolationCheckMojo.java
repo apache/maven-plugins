@@ -71,7 +71,7 @@ public class PmdViolationCheckMojo
     @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
-    private final Map<String, Set<String>> excludeFromFailureClasses = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -113,7 +113,7 @@ public class PmdViolationCheckMojo
         }
         for ( final Entry<Object, Object> propEntry : props.entrySet() )
         {
-            final Set<String> excludedRuleSet = new HashSet<String>();
+            final Set<String> excludedRuleSet = new HashSet<>();
             final String className = propEntry.getKey().toString();
             final String[] excludedRules = propEntry.getValue().toString().split( "," );
             for ( final String excludedRule : excludedRules )
@@ -188,7 +188,7 @@ public class PmdViolationCheckMojo
             PmdXpp3Reader reader = new PmdXpp3Reader();
             PmdErrorDetail details = reader.read( reader1, false );
 
-            List<Violation> violations = new ArrayList<Violation>();
+            List<Violation> violations = new ArrayList<>();
             for ( PmdFile file : details.getFiles() )
             {
                 String fullPath = file.getName();
@@ -216,7 +216,7 @@ public class PmdViolationCheckMojo
     @Override
     protected ViolationDetails<Violation> newViolationDetailsInstance()
     {
-        return new ViolationDetails<Violation>();
+        return new ViolationDetails<>();
     }
 
     private String getFilename( String fullpath, String pkg )

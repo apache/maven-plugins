@@ -108,7 +108,7 @@ public class PmdCollectingRenderer extends AbstractRenderer
      */
     public String getErrorsAsString()
     {
-        List<String> errorsAsString = new ArrayList<String>( errors.size() );
+        List<String> errorsAsString = new ArrayList<>( errors.size() );
         for ( ProcessingError error : errors )
         {
             errorsAsString.add( error.getFile() + ": " + error.getMsg() );
