@@ -114,11 +114,14 @@ public class PmdReport
     private boolean skip;
 
     /**
-     * The PMD rulesets to use. See the <a href="http://pmd.sourceforge.net/rules/index.html">Stock Rulesets</a> for a
-     * list of some included. Defaults to the java-basic, java-imports and java-unusedcode rulesets.
+     * The PMD rulesets to use. See the
+     * <a href="http://pmd.github.io/pmd-5.5.1/pmd-java/rules/index.html">Stock Java Rulesets</a> for a
+     * list of some included. Defaults to the java-basic, java-empty, java-imports, java-unnecessary
+     * and java-unusedcode rulesets.
      */
     @Parameter
-    private String[] rulesets = new String[] { "java-basic", "java-unusedcode", "java-imports" };
+    private String[] rulesets = new String[] { "java-basic", "java-empty", "java-imports",
+            "java-unnecessary", "java-unusedcode" };
 
     /**
      * Controls whether the project's compile/test classpath should be passed to PMD to enable its type resolution

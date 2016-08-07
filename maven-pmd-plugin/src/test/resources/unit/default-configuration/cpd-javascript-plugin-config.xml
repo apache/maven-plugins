@@ -38,7 +38,7 @@ under the License.
           <format>xml</format>
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
-          <minimumTokens>100</minimumTokens>
+          <minimumTokens>10</minimumTokens>
           <language>javascript</language>
           <includes>
             <include>**/*.js</include>
