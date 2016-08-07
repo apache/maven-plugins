@@ -304,20 +304,13 @@ public class PmdReport
 
         renderer = new PmdCollectingRenderer();
         PMDConfiguration pmdConfiguration = getPMDConfiguration();
-        RuleContext ruleContext = new RuleContext();
 
-        RuleSetFactory ruleSetFactory = new RuleSetFactory();
-        ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
-
-        // Workaround for https://sourceforge.net/p/pmd/bugs/1155/: add a dummy ruleset.
-        String[] presentRulesets = rulesets.length > 0 ? rulesets : new String[] { "/rulesets/dummy.xml" };
-
-        String[] sets = new String[presentRulesets.length];
+        String[] sets = new String[rulesets.length];
         try
         {
-            for ( int idx = 0; idx < presentRulesets.length; idx++ )
+            for ( int idx = 0; idx < rulesets.length; idx++ )
             {
-                String set = presentRulesets[idx];
+                String set = rulesets[idx];
                 getLog().debug( "Preparing ruleset: " + set );
                 RuleSetReferenceId id = new RuleSetReferenceId( set );
                 File ruleset = locator.getResourceAsFile( id.getRuleSetFileName(), getLocationTemp( set ) );
@@ -371,25 +364,13 @@ public class PmdReport
             dataSources.add( new FileDataSource( f ) );
         }
 
-        try
+        if ( sets.length > 0 )
         {
-            getLog().debug( "Executing PMD..." );
-            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
-                              Arrays.<Renderer>asList( renderer ) );
-
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "PMD finished. Found " + renderer.getViolations().size() + " violations." );
-            }
+            processFilesWithPMD( pmdConfiguration, dataSources );
         }
-        catch ( Exception e )
+        else
         {
-            String message = "Failure executing PMD: " + e.getLocalizedMessage();
-            if ( !skipPmdError )
-            {
-                throw new MavenReportException( message, e );
-            }
-            getLog().warn( message, e );
+            getLog().debug( "Skipping PMD execution as no rulesets are defined." );
         }
 
         if ( renderer.hasErrors() )
@@ -421,6 +402,35 @@ public class PmdReport
             {
                 getLog().error( "Unable to generate benchmark file: " + benchmarkOutputFilename, fnfe );
             }
+        }
+    }
+
+    private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources )
+            throws MavenReportException
+    {
+        RuleSetFactory ruleSetFactory = new RuleSetFactory();
+        ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
+        RuleContext ruleContext = new RuleContext();
+
+        try
+        {
+            getLog().debug( "Executing PMD..." );
+            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
+                              Arrays.<Renderer>asList( renderer ) );
+
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "PMD finished. Found " + renderer.getViolations().size() + " violations." );
+            }
+        }
+        catch ( Exception e )
+        {
+            String message = "Failure executing PMD: " + e.getLocalizedMessage();
+            if ( !skipPmdError )
+            {
+                throw new MavenReportException( message, e );
+            }
+            getLog().warn( message, e );
         }
     }
 
