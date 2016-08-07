@@ -87,7 +87,7 @@ under the License.
     <module>maven-linkcheck-plugin</module>
     <module>maven-patch-plugin</module>
     <module>maven-pdf-plugin</module>
-    <!-- Moved to java-6 profile because it requires Java 6 -->
+    <!-- Moved to java-7 profile because it requires Java 7 -->
     <!-- <module>maven-pmd-plugin</module> -->
     <!--Moved to maven-3 profile as a workaround for MNG-3814
     <module>maven-project-info-reports-plugin</module>-->
@@ -110,7 +110,6 @@ under the License.
       <id>java-6</id>
       <modules>
         <module>maven-doap-plugin</module>
-        <module>maven-pmd-plugin</module>
         <module>maven-invoker-plugin</module>
         <module>maven-jar-plugin</module>
       </modules>
@@ -124,6 +123,7 @@ under the License.
       <id>java-7</id>
       <modules>
         <module>maven-checkstyle-plugin</module>
+        <module>maven-pmd-plugin</module>
       </modules>
       <activation>
         <jdk>[1.7,)</jdk>

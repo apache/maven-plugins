@@ -82,8 +82,8 @@ under the License.
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <doxiaVersion>1.4</doxiaVersion>
-    <!-- Because PMD 5.1+ requires Java 6 -->
-    <javaVersion>1.6</javaVersion>
+    <!-- Because PMD 5.4+ requires Java 7 -->
+    <javaVersion>1.7</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <pmdVersion>5.3.5</pmdVersion>
