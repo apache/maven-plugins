@@ -20,7 +20,7 @@ package org.apache.maven.plugin.ear;
  */
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -790,7 +790,7 @@ public class EarMojo
             }
 
             // Read the manifest from disk
-            Manifest mf = new Manifest( new FileReader( newCreatedManifestFile ) );
+            Manifest mf = new Manifest( new FileInputStream( newCreatedManifestFile ) );
             Attribute classPath = mf.getMainSection().getAttribute( "Class-Path" );
             List<String> classPathElements = new ArrayList<String>();
 
