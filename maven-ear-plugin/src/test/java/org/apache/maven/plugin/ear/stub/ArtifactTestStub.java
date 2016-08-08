@@ -143,7 +143,7 @@ public class ArtifactTestStub
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
 
-    public Collection getMetadataList()
+    public Collection<ArtifactMetadata> getMetadataList()
     {
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
@@ -188,12 +188,12 @@ public class ArtifactTestStub
         return new ArtifactHandlerTestStub( "jar" );
     }
 
-    public List getDependencyTrail()
+    public List<String> getDependencyTrail()
     {
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
 
-    public void setDependencyTrail( List list )
+    public void setDependencyTrail( List<String> list )
     {
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
@@ -263,12 +263,12 @@ public class ArtifactTestStub
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
 
-    public List getAvailableVersions()
+    public List<ArtifactVersion> getAvailableVersions()
     {
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }
 
-    public void setAvailableVersions( List list )
+    public void setAvailableVersions( List<ArtifactVersion> list )
     {
         throw new UnsupportedOperationException( "not implemented ; fake artifact stub" );
     }

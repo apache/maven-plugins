@@ -90,7 +90,6 @@ public class EarExecutionContext
         return artifactRepository;
     }
 
-    @SuppressWarnings( "unchecked" )
     private void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir,
                              JbossConfiguration jbossConfiguration, String fileNameMappingName,
                              ArtifactTypeMappingService typeMappingService )
