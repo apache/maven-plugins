@@ -95,7 +95,7 @@ public abstract class AbstractFromDependenciesMojo
      * @since 2.0-alpha-2
      */
     @Parameter( property = "mdep.failOnMissingClassifierArtifact", defaultValue = "false" )
-    protected boolean failOnMissingClassifierArtifact = true;
+    protected boolean failOnMissingClassifierArtifact;
 
     /**
      * @return Returns the outputDirectory.
