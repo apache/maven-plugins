@@ -30,7 +30,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
@@ -300,8 +299,7 @@ public class CopyDependenciesMojo
         // Resolve the pom artifact using repos
         try
         {
-            ProjectBuildingRequest buildingRequest =
-                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
 
             pomArtifact = getArtifactResolver().resolveArtifact( buildingRequest, coordinate ).getArtifact();
         }
