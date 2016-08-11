@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,7 +33,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.utils.DependencySilentLog;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -79,6 +82,12 @@ public abstract class AbstractDependencyMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
+    
+    /**
+     * Remote repositories which will be searched for artifacts.
+     */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true )
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * Contains the full list of projects in the reactor.
@@ -298,6 +307,20 @@ public abstract class AbstractDependencyMojo
         {
             // was a nice try. Don't bother logging because the log is silent.
         }
+    }
+
+    /**
+     * @return Returns a new ProjectBuildingRequest populated from the current session and the current project remote
+     *         repositories, used to resolve artifacts.
+     */
+    public ProjectBuildingRequest newResolveArtifactProjectBuildingRequest()
+    {
+        ProjectBuildingRequest buildingRequest =
+            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+
+        buildingRequest.setRemoteRepositories( remoteRepositories );
+
+        return buildingRequest;
     }
 
     /**

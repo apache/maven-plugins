@@ -27,7 +27,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.dependency.fromDependencies.AbstractDependencyFilterMojo;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
@@ -155,8 +154,7 @@ public abstract class AbstractResolveMojo
     protected Set<Artifact> resolveArtifactDependencies( final DependableCoordinate artifact )
         throws DependencyResolverException
     {
-        ProjectBuildingRequest buildingRequest =
-            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+        ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
 
         Iterable<ArtifactResult> artifactResults =
             getDependencyResolver().resolveDependencies( buildingRequest, artifact, null );
