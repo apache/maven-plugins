@@ -373,6 +373,7 @@ public class WarMojoTest
         setVariableValueToObject( mojo, "warName", warName );
         mojo.setWebXml( new File( xmlSource, "web.xml" ) );
         mojo.setAttachClasses( true );
+        mojo.setClassesClassifier( "classes" );
 
         mojo.execute();
 
