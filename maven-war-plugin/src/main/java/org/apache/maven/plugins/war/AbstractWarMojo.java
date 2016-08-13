@@ -283,7 +283,7 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */
     @Parameter( defaultValue = "false" )
-    private boolean filteringDeploymentDescriptors = false;
+    private boolean filteringDeploymentDescriptors;
 
     /**
      * To escape interpolated values with Windows path <code>c:\foo\bar</code> will be replaced with
@@ -292,7 +292,7 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-2
      */
     @Parameter( defaultValue = "false" )
-    private boolean escapedBackslashesInFilePath = false;
+    private boolean escapedBackslashesInFilePath;
 
     /**
      * Expression preceded with this String won't be interpolated. <code>\${foo}</code> will be replaced with
@@ -324,7 +324,7 @@ public abstract class AbstractWarMojo
      * @since 2.4
      */
     @Parameter( defaultValue = "false" )
-    private boolean supportMultiLineFiltering = false;
+    private boolean supportMultiLineFiltering;
 
     /**
      * use jvmChmod rather that cli chmod and forking process
