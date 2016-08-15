@@ -207,7 +207,7 @@ public abstract class AbstractWarMojo
      * @since 2.1-alpha-1
      */
     @Parameter( defaultValue = "false" )
-    private boolean useCache = false;
+    private boolean useCache;
 
     /**
      */
