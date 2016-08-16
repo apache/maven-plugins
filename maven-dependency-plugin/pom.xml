@@ -367,6 +367,10 @@ under the License.
                 <!-- verbose was using Maven2 code, removed with MDEP-494, requires MSHARED-339 to be fixed first -->
                 <pomExclude>tree-verbose/pom.xml</pomExclude>
               </pomExcludes>
+              <pomIncludes>
+                <pomInclude>*/pom.xml</pomInclude>
+                <pomInclude>purge-local-repository-without-pom</pomInclude>
+              </pomIncludes>
               <!-- for mrm -->
               <settingsFile>src/it/mrm/settings.xml</settingsFile>
               <filterProperties>

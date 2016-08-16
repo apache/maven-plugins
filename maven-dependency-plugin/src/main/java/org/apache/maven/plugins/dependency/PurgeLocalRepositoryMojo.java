@@ -59,13 +59,14 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Remove the project dependencies from the local repository, and optionally re-resolve them.
+ * When run on a project, remove the project dependencies from the local repository, and optionally re-resolve them.
+ * Outside of a project, remove the manually given dependencies.
  * 
  * @author jdcasey
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "purge-local-repository", threadSafe = true )
+@Mojo( name = "purge-local-repository", threadSafe = true, requiresProject = false )
 public class PurgeLocalRepositoryMojo
     extends AbstractMojo
 {
