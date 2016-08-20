@@ -412,8 +412,7 @@ public abstract class AbstractWarMojo
     }
 
     /**
-     * Builds the webapp for the specified project with the new packaging task thingy
-     * <p/>
+     * Builds the webapp for the specified project with the new packaging task thingy.
      * Classes, libraries and tld files are copied to the <tt>webappDirectory</tt> during this phase.
      *
      * @param mavenProject the maven project

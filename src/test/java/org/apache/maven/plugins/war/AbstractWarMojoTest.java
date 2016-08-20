@@ -55,13 +55,13 @@ public abstract class AbstractWarMojoTest
     /**
      * initialize required parameters
      *
-     * @param mojo
-     * @param filters
-     * @param classesDir
-     * @param webAppSource
-     * @param webAppDir
-     * @param project
-     * @throws Exception
+     * @param mojo The mojo to be tested.
+     * @param filters The list of filters.
+     * @param classesDir The classes directory.
+     * @param webAppSource The webAppSource.
+     * @param webAppDir The webAppDir folder.
+     * @param project The Maven project.
+     * @throws Exception in case of errors
      */
     protected void configureMojo( AbstractWarMojo mojo, List<String> filters, File classesDir, File webAppSource,
                                   File webAppDir, MavenProjectBasicStub project )
@@ -87,10 +87,10 @@ public abstract class AbstractWarMojoTest
     /**
      * create an isolated xml dir
      *
-     * @param id
-     * @param xmlFiles
-     * @return
-     * @throws Exception
+     * @param id The id.
+     * @param xmlFiles array of xml files.
+     * @return The created file.
+     * @throws Exception in case of errors.
      */
     protected File createXMLConfigDir( String id, String[] xmlFiles )
         throws Exception
@@ -128,9 +128,10 @@ public abstract class AbstractWarMojoTest
     /**
      * create an isolated web source with a sample jsp file
      *
-     * @param id
-     * @return
-     * @throws Exception
+     * @param id The id.
+     * @param createSamples Create example files yes or no.
+     * @return The created file.
+     * @throws Exception in case of errors.
      */
     protected File createWebAppSource( String id, boolean createSamples )
         throws Exception
@@ -156,10 +157,10 @@ public abstract class AbstractWarMojoTest
     /**
      * create a class directory with or without a sample class
      *
-     * @param id
-     * @param empty
-     * @return
-     * @throws Exception
+     * @param id The id.
+     * @param empty true to create a class files false otherwise.
+     * @return The created class file.
+     * @throws Exception in case of errors.
      */
     protected File createClassesDir( String id, boolean empty )
         throws Exception
@@ -200,8 +201,7 @@ public abstract class AbstractWarMojoTest
     }
 
     /**
-     * Generates test war
-     * <p/>
+     * Generates test war.
      * Generates war with such a structure:
      * <ul>
      * <li>jsp
@@ -238,7 +238,6 @@ public abstract class AbstractWarMojoTest
      * </ul>
      * </li>
      * </ul>
-     * <p/>
      * Each of the files will contain: id+'-'+path
      *
      * @param id the id of the overlay containing the full structure

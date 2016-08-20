@@ -49,7 +49,7 @@ public class WarExplodedMojoFilteringTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithResourceFiltering()
         throws Exception

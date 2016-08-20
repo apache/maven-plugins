@@ -55,9 +55,6 @@ public class WarInPlaceMojoTest
         // see setUp
     }
 
-    /**
-     * @throws Exception
-     */
     public void testSimpleExplodedInplaceWar()
         throws Exception
     {
