@@ -161,7 +161,7 @@ public class WarOverlaysTest
 
     /**
      * Merge a dependent WAR when a file in the war source directory overrides one found in the WAR.
-     * <p/>
+     * 
      * It also tests completeness of the resulting war as well as the proper order of dependencies.
      *
      * @throws Exception if any error occurs
@@ -186,7 +186,7 @@ public class WarOverlaysTest
 
     /**
      * Tests that specifying the overlay explicitely has the same behavior as the default (i.e. order, etc).
-     * <p/>
+     * 
      * The default project is not specified in this case so it is processed first by default
      *
      * @throws Exception if an error occurs
@@ -219,7 +219,7 @@ public class WarOverlaysTest
 
     /**
      * Tests that specifying the overlay explicitely has the same behavior as the default (i.e. order, etc).
-     * <p/>
+     * 
      * The default project is explicitely specified so this should match the default.
      *
      * @throws Exception if an error occurs
@@ -555,7 +555,7 @@ public class WarOverlaysTest
 
     /**
      * Asserts that the content of an overlayed file is correct.
-     * <p/>
+     * 
      * Note that the <tt>filePath</tt> is relative to both the webapp directory and the overlayed directory, defined by
      * the <tt>overlayId</tt>.
      *
@@ -576,7 +576,7 @@ public class WarOverlaysTest
 
     /**
      * Asserts that the content of an overlayed file is correct.
-     * <p/>
+     * 
      * Note that the <tt>filePath</tt> is relative to both the webapp directory and the overlayed directory, defined by
      * the <tt>overlayId</tt>.
      *

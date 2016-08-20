@@ -35,7 +35,7 @@ import java.util.Set;
 /**
  * Represents the structure of a web application composed of multiple overlays. Each overlay is registered within this
  * structure with the set of files it holds.
- * <p/>
+ * 
  * Note that this structure is persisted to disk at each invocation to store which owner holds which path (file).
  *
  * @author Stephane Nicoll
@@ -149,10 +149,10 @@ public class WebappStructure
     /**
      * Forces the registration of the specified path for the specified owner. If the file is not registered yet, a
      * simple registration is performed. If the file already exists, the owner changes to the specified one.
-     * <p/>
+     * <p>
      * Beware that the semantic of the return boolean is different than the one from
      * {@link #registerFile(String, String)}; returns <tt>true</tt> if an owner replacement was made and <tt>false</tt>
-     * if the file was simply registered for the first time.
+     * if the file was simply registered for the first time.</p>
      *
      * @param id the owner of the path
      * @param path the relative path from the webapp root directory
@@ -249,9 +249,10 @@ public class WebappStructure
     /**
      * Returns the owners. Note that this the returned {@link Set} may be inconsistent since it represents a persistent
      * cache across multiple invocations.
-     * <p/>
+     * <p>
      * For instance, if an overlay was removed in this execution, it will be still be there till the cache is cleaned.
      * This happens when the clean mojo is invoked.
+     * </p>
      *
      * @return the list of owners
      */
@@ -384,8 +385,9 @@ public class WebappStructure
     /**
      * Returns the cached target file name that matches the specified dependency, that is the target file name of the
      * previous run.
-     * <p/>
+     * <p>
      * The dependency object may have changed so the comparison is based on basic attributes of the dependency.
+     * </p>
      *
      * @param dependency a dependency
      * @return the target file name of the last run for this dependency
@@ -492,7 +494,7 @@ public class WebappStructure
 
         /**
          * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been registered successfully.
-         * <p/>
+         * 
          * This means that the <tt>targetFilename</tt> was unknown and has been registered successfully.
          *
          * @param ownerId the ownerId
@@ -504,7 +506,7 @@ public class WebappStructure
 
         /**
          * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has already been registered.
-         * <p/>
+         * 
          * This means that the <tt>targetFilename</tt> was known and belongs to the specified owner.
          *
          * @param ownerId the ownerId
@@ -515,9 +517,10 @@ public class WebappStructure
             throws IOException;
 
         /**
+         * <p>
          * Called if the registration of the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been refused
          * since the path already belongs to the <tt>actualOwnerId</tt>.
-         * <p/>
+         * </p> 
          * This means that the <tt>targetFilename</tt> was known and does not belong to the specified owner.
          *
          * @param ownerId the ownerId
@@ -531,7 +534,7 @@ public class WebappStructure
         /**
          * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been registered successfully by
          * superseding a <tt>deprecatedOwnerId</tt>, that is the previous owner of the file.
-         * <p/>
+         * 
          * This means that the <tt>targetFilename</tt> was known but for another owner. This usually happens after a
          * project's configuration change. As a result, the file has been registered successfully to the new owner.
          *
@@ -546,7 +549,7 @@ public class WebappStructure
         /**
          * Called if the <tt>targetFilename</tt> for the specified <tt>ownerId</tt> has been registered successfully by
          * superseding a <tt>unknownOwnerId</tt>, that is an owner that does not exist anymore in the current project.
-         * <p/>
+         * 
          * This means that the <tt>targetFilename</tt> was known but for an owner that does not exist anymore. Hence the
          * file has been registered successfully to the new owner.
          *

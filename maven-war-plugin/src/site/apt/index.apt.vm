@@ -29,49 +29,59 @@
 ${project.name}
 
  The WAR Plugin is responsible for collecting all artifact dependencies, classes
- and resources of the web application and packaging them into a web application archive.
+ and resources of the web application and packaging them into a web application 
+ archive.
 
 * Goals Overview
 
- * {{{./war-mojo.html}war:war}} is the default goal invoked during the <<<package>>> phase for projects with a packaging
-   type of <<<war>>>. It builds a WAR file.
+ * {{{./war-mojo.html}war:war}} is the default goal invoked during the 
+   <<<package>>> phase for projects with a packaging type of <<<war>>>. 
+   It builds a WAR file.
 
- * {{{./exploded-mojo.html}war:exploded}} is generally used to speed up testing during the developement phase by creating
-   an exploded webapp in a specified directory.
+ * {{{./exploded-mojo.html}war:exploded}} is generally used to speed up 
+   testing during the developement phase by creating an exploded webapp 
+   in a specified directory.
 
- * {{{./inplace-mojo.html}war:inplace}} another variation of <<<war:explode>>> where the webapp is instead generated in the
-   web application source directory, which is <<<src/main/webapp>>> by default.
-
- * {{{./manifest-mojo.html}war:manifest}} generates a manifest for this webapp. The manifest file is created in the
-   web application source directory.
+ * {{{./inplace-mojo.html}war:inplace}} another variation of <<<war:explode>>> 
+   where the webapp is instead generated in the web application source directory, 
+   which is <<<src/main/webapp>>> by default.
 
  []
 
+ Hint for release 3.0.0: The goal <<<war:manifest>>> has been removed
+ cause it violated the principle generating files into <<<src/>>> folder.
+ Furthermore everything can be done by using an appropriate configuration
+ for the {{{./war-mojo.html#archive}war:war archive}}.
+
+
 * Usage
 
-  General instructions on how to use the WAR Plugin can be found on the {{{./usage.html}usage page}}. Some more
-  specific use cases are described in the examples given below. To share common resources across multiple web
-  applications, see the documentation about using {{{./overlays.html}overlays}}. Last but not least, users occasionally
-  contribute additional examples, tips or errata to the
-  {{{http://docs.codehaus.org/display/MAVENUSER/WAR+Plugin}plugin's wiki page}}.
+  General instructions on how to use the WAR Plugin can be found on the 
+  {{{./usage.html}usage page}}. Some more specific use cases are described in the 
+  examples given below. To share common resources across multiple web applications, 
+  see the documentation about using {{{./overlays.html}overlays}}.
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
-  free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
-  already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
+  In case you still have questions regarding the plugin's usage, please have a look at the 
+  {{{./faq.html}FAQ}} and feel free to contact the {{{./mail-lists.html}user mailing list}}. 
+  The posts to the mailing list are archived and could already contain the answer to your 
+  question as part of an older thread. Hence, it is also worth browsing/searching
   the {{{./mail-lists.html}mail archive}}.
 
-  If you feel like the plugin is missing a feature or has a defect, you can fill a feature request or bug report in our
-  {{{./issue-tracking.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
-  concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
-  entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
-  Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{./source-repository.html}source repository}} and will find supplementary information in the
+  If you feel like the plugin is missing a feature or has a defect, you can fill a 
+  feature request or bug report in our {{{./issue-tracking.html}issue tracker}}. 
+  When creating a new issue, please provide a comprehensive description of your
+  concern. Especially for fixing bugs it is crucial that the developers can 
+  reproduce your problem. For this reason, entire debug logs, POMs or most 
+  preferably little demo projects attached to the issue are very much appreciated.
+  Of course, patches are welcome, too. Contributors can check out the project from 
+  our {{{./source-repository.html}source repository}} and will find supplementary 
+  information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 
- To provide you with better understanding on some usages of the Maven WAR Plugin,
- you can take a look into the following examples:
+  To provide you with better understanding on some usages of the Maven WAR Plugin,
+  you can take a look into the following examples:
 
  * {{{./examples/adding-filtering-webresources.html}Adding and Filtering External Web Resources}}
 

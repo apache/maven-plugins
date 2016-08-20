@@ -33,7 +33,7 @@ public interface WarPostPackagingTask
 
     /**
      * Executes the post packaging task.
-     * <p/>
+     * 
      * The packaging context hold all information regarding the webapp that has been packaged.
      *
      * @param context the packaging context

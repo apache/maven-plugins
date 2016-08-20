@@ -32,9 +32,14 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Handles the project own resources, that is: <ul <li>The list of web resources, if any</li> <li>The content of the
- * webapp directory if it exists</li> <li>The custom deployment descriptor(s), if any</li> <li>The content of the
- * classes directory if it exists</li> <li>The dependencies of the project</li> </ul>
+ * Handles the project own resources, that is: 
+ * <ul>
+ * <li>The list of web resources, if any</li>
+ * <li>The content of the webapp directory if it exists</li>
+ * <li>The custom deployment descriptor(s), if any</li>
+ * <li>The content of the classes directory if it exists</li>
+ * <li>The dependencies of the project</li>
+ * </ul>
  *
  * @author Stephane Nicoll
  * @version $Id$

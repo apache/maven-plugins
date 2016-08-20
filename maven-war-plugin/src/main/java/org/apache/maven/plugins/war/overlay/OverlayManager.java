@@ -46,7 +46,7 @@ public class OverlayManager
 
     /**
      * Creates a manager with the specified overlays.
-     * <p/>
+     * 
      * Note that the list is potentially updated by the manager so a new list is created based on the overlays.
      *
      * @param overlays the overlays
@@ -157,7 +157,7 @@ public class OverlayManager
 
     /**
      * Returns the Artifact associated to the specified overlay.
-     * <p/>
+     * 
      * If the overlay defines the current project, <tt>null</tt> is returned. If no artifact could not be found for the
      * overlay a InvalidOverlayConfigurationException is thrown.
      *

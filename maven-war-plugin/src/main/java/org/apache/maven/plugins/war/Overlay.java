@@ -26,14 +26,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * <p>
  * An overlay is a skeleton WAR added to another WAR project in order to inject a functionality, resources or any other
- * shared component.
- * <p/>
- * Note that a particular WAR dependency can be added multiple times as an overlay with different includes/excludes
- * filter; this allows building a fine grained overwriting policy.
- * <p/>
- * The current project can also be described as an overlay and can not be specified twice. An overlay with no groupId
- * and no artifactId represents the current project.
+ * shared component.</p>
+ * 
+ * <p>Note that a particular WAR dependency can be added multiple times as an overlay with different includes/excludes
+ * filter; this allows building a fine grained overwriting policy.</p>
+ * 
+ * <p>The current project can also be described as an overlay and can not be specified twice. An overlay with no groupId
+ * and no artifactId represents the current project.</p>
  *
  * @author Stephane Nicoll
  * @version $Id$

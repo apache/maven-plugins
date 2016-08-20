@@ -72,10 +72,10 @@ public abstract class AbstractWarPackagingTask
 
     /**
      * Copies the files if possible with an optional target prefix.
-     * <p/>
+     * 
      * Copy uses a first-win strategy: files that have already been copied by previous tasks are ignored. This method
      * makes sure to update the list of protected files which gives the list of files that have already been copied.
-     * <p/>
+     * 
      * If the structure of the source directory is not the same as the root of the webapp, use the <tt>targetPrefix</tt>
      * parameter to specify in which particular directory the files should be copied. Use <tt>null</tt> to copy the
      * files with the same structure
@@ -120,7 +120,7 @@ public abstract class AbstractWarPackagingTask
 
     /**
      * Copies the files if possible as is.
-     * <p/>
+     * 
      * Copy uses a first-win strategy: files that have already been copied by previous tasks are ignored. This method
      * makes sure to update the list of protected files which gives the list of files that have already been copied.
      *
@@ -141,7 +141,7 @@ public abstract class AbstractWarPackagingTask
 
     /**
      * Copy the specified file if the target location has not yet already been used.
-     * <p/>
+     * 
      * The <tt>targetFileName</tt> is the relative path according to the root of the generated web application.
      *
      * @param sourceId the source id
@@ -229,7 +229,7 @@ public abstract class AbstractWarPackagingTask
     /**
      * Copy the specified file if the target location has not yet already been used and filter its content with the
      * configured filter properties.
-     * <p/>
+     * 
      * The <tt>targetFileName</tt> is the relative path according to the root of the generated web application.
      *
      * @param sourceId the source id
@@ -323,7 +323,6 @@ public abstract class AbstractWarPackagingTask
      * don't already exist. if the <code>onlyIfModified</code> flag is <tt>false</tt>, <code>destination</code> will be
      * overwritten if it already exists. If the flag is <tt>true</tt> destination will be overwritten if it's not up to
      * date.
-     * <p/>
      *
      * @param context the packaging context
      * @param source an existing non-directory <code>File</code> to copy bytes from
@@ -455,7 +454,7 @@ public abstract class AbstractWarPackagingTask
 
     /**
      * Returns the final name of the specified artifact.
-     * <p/>
+     * 
      * If the <tt>outputFileNameMapping</tt> is set, it is used, otherwise the standard naming scheme is used.
      *
      * @param context the packaging context

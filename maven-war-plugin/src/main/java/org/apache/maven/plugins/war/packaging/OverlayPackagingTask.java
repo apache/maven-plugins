@@ -105,7 +105,7 @@ public class OverlayPackagingTask
 
     /**
      * Unpacks the specified overlay.
-     * <p/>
+     * 
      * Makes sure to skip the unpack process if the overlay has already been unpacked.
      *
      * @param context the packaging context

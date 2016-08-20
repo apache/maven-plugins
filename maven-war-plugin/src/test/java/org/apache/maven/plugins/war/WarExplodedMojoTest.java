@@ -58,7 +58,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testSimpleExplodedWar()
         throws Exception
@@ -103,7 +103,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testSimpleExplodedWarWTargetPath()
         throws Exception
@@ -147,7 +147,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithCustomWebXML()
         throws Exception
@@ -185,7 +185,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithContainerConfigXML()
         throws Exception
@@ -223,7 +223,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithSimpleExternalWARFile()
         throws Exception
@@ -270,6 +270,7 @@ public class WarExplodedMojoTest
 
     /**
      * Merge a dependent WAR when a file in the war source directory overrides one found in the WAR.
+     * @throws Exception in case of an error.
      */
     public void testExplodedWarMergeWarLocalFileOverride()
         throws Exception
@@ -374,7 +375,7 @@ public class WarExplodedMojoTest
     // }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithEJB()
         throws Exception
@@ -449,7 +450,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithEJBClient()
         throws Exception
@@ -487,7 +488,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithTLD()
         throws Exception
@@ -525,7 +526,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithPAR()
         throws Exception
@@ -562,6 +563,9 @@ public class WarExplodedMojoTest
         expectedPARArtifact.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWarWithAar()
         throws Exception
     {
@@ -599,6 +603,9 @@ public class WarExplodedMojoTest
         expectedJarArtifact.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWarWithMar()
         throws Exception
     {
@@ -636,6 +643,9 @@ public class WarExplodedMojoTest
         expectedJarArtifact.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWarWithXar()
         throws Exception
     {
@@ -674,7 +684,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithDuplicateDependencies()
         throws Exception
@@ -720,7 +730,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_DuplicateWithClassifier()
         throws Exception
@@ -772,7 +782,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWar_WithClasses()
         throws Exception
@@ -804,6 +814,9 @@ public class WarExplodedMojoTest
         expectedClass.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWar_WithSourceIncludeExclude()
         throws Exception
     {
@@ -838,6 +851,9 @@ public class WarExplodedMojoTest
         expectedMETAINFDir.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWar_WithWarDependencyIncludeExclude()
         throws Exception
     {
@@ -892,6 +908,9 @@ public class WarExplodedMojoTest
         expectedExcludedWarfile.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWarWithSourceModificationCheck()
         throws Exception
     {
@@ -945,6 +964,9 @@ public class WarExplodedMojoTest
         expectedWebSource2File.delete();
     }
 
+    /**
+     * @throws Exception in case of an error.
+     */
     public void testExplodedWarWithOutputFileNameMapping()
         throws Exception
     {
@@ -983,7 +1005,7 @@ public class WarExplodedMojoTest
     }
 
     /**
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testExplodedWarWithOutputFileNameMappingAndDuplicateDependencies()
         throws Exception
