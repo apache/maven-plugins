@@ -48,11 +48,15 @@ ${project.name}
 
  []
 
- Hint for release 3.0.0: The goal <<<war:manifest>>> has been removed
+* Hint for release 3.0.0
+
+ The goal <<<war:manifest>>> has been removed
  cause it violated the principle generating files into <<<src/>>> folder.
  Furthermore everything can be done by using an appropriate configuration
  for the {{{./war-mojo.html#archive}war:war archive}}.
 
+ The default value for <<<failOnMissingWebXml>>> has been changed from
+ <<<true>>> to <<<false>>>.
 
 * Usage
 

@@ -118,7 +118,7 @@ public class WarMojo
      *
      * @since 2.1-alpha-2
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter( defaultValue = "false" )
     private boolean failOnMissingWebXml;
 
     /**
