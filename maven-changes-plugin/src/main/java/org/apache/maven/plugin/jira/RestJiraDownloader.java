@@ -142,7 +142,7 @@ public class RestJiraDownloader
 
             // CHECKSTYLE_OFF: LineLength
             String jqlQuery =
-                new JqlQueryBuilder( log ).urlEncode( false ).project( jiraProject ).fixVersion( getFixFor() ).fixVersionIds( resolvedFixVersionIds ).statusIds( resolvedStatusIds ).priorityIds( resolvedPriorityIds ).resolutionIds( resolvedResolutionIds ).components( resolvedComponentIds ).typeIds( resolvedTypeIds ).sortColumnNames( sortColumnNames ).build();
+                new JqlQueryBuilder( log ).urlEncode( false ).project( jiraProject ).fixVersion( getFixFor() ).fixVersionIds( resolvedFixVersionIds ).statusIds( resolvedStatusIds ).priorityIds( resolvedPriorityIds ).resolutionIds( resolvedResolutionIds ).components( resolvedComponentIds ).typeIds( resolvedTypeIds ).sortColumnNames( sortColumnNames ).filter( filter ).build();
             // CHECKSTYLE_ON: LineLength
 
             StringWriter searchParamStringWriter = new StringWriter();
