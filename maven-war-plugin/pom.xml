@@ -215,6 +215,7 @@
         <configuration>
           <systemPropertyVariables>
             <project.build.directory>${project.build.directory}</project.build.directory>
+            <project.build.outputDirectory>${project.build.outputDirectory}</project.build.outputDirectory>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -251,6 +252,7 @@
                 <configuration>
                   <extraArtifacts>
                     <extraArtifact>javax.servlet:servlet-api:2.4:jar</extraArtifact>
+                    <extraArtifact>javax.servlet:javax.servlet-api:3.0.1:jar</extraArtifact>
                     <extraArtifact>org.apache.struts:struts-core:1.3.9:jar</extraArtifact>
                     <extraArtifact>org.codehaus.plexus:plexus-utils:1.4.7:jar:sources</extraArtifact>
                   </extraArtifacts>

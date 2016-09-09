@@ -29,9 +29,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.war.WarMojo;
+import org.apache.maven.plugins.war.stub.JarArtifactStub;
 import org.apache.maven.plugins.war.stub.MavenProject4CopyConstructor;
+import org.apache.maven.plugins.war.stub.MavenProjectArtifactsStub;
 import org.apache.maven.plugins.war.stub.ProjectHelperStub;
 import org.apache.maven.plugins.war.stub.WarArtifact4CCStub;
 import org.codehaus.plexus.util.IOUtil;
@@ -347,6 +351,75 @@ public class WarMojoTest
         {
             mojo.execute();
             fail( "Building of the war isn't possible because web.xml is missing" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            // expected behaviour
+        }
+    }
+    
+    public void testFailOnMissingWebXmlNotSpecifiedAndServlet30Used()
+        throws Exception
+    {
+        String testId = "SimpleWarUnderServlet30";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+
+        final ArtifactHandler artifactHandler = (ArtifactHandler) lookup( ArtifactHandler.ROLE, "jar" );
+        JarArtifactStub jarArtifactStub = new JarArtifactStub( getBasedir(), artifactHandler );
+        jarArtifactStub.setFile( new File( getBasedir(),
+                                           "/target/test-classes/unit/sample_wars/javax.servlet-api-3.0.1.jar" ) );
+        jarArtifactStub.setScope( Artifact.SCOPE_PROVIDED );
+        project.addArtifact( jarArtifactStub );
+
+        project.setArtifact( warArtifact );
+        project.setFile( warArtifact.getFile() );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+
+        mojo.execute();
+
+        // validate war file
+        File expectedWarFile = new File( outputDir, "simple.war" );
+        final Map<String, JarEntry> jarContent =
+            assertJarContent( expectedWarFile,
+                              new String[] { "META-INF/MANIFEST.MF", "pansit.jsp", "org/web/app/last-exile.jsp",
+                                  "META-INF/maven/org.apache.maven.plugin.test/maven-war-plugin-test/pom.xml",
+                                  "META-INF/maven/org.apache.maven.plugin.test/maven-war-plugin-test/pom.properties" },
+                              new String[] { null, null, null, null, null } );
+
+        assertFalse( "web.xml should be missing", jarContent.containsKey( "WEB-INF/web.xml" ) );
+    }
+
+    public void testFailOnMissingWebXmlNotSpecifiedAndServlet30NotUsed()
+        throws Exception
+    {
+        String testId = "SimpleWarNotUnderServlet30";
+        MavenProjectArtifactsStub project = new MavenProjectArtifactsStub();
+        String outputDir = getTestDirectory().getAbsolutePath() + "/" + testId + "-output";
+        File webAppDirectory = new File( getTestDirectory(), testId );
+        WarArtifact4CCStub warArtifact = new WarArtifact4CCStub( getBasedir() );
+        String warName = "simple";
+        File webAppSource = createWebAppSource( testId );
+        File classesDir = createClassesDir( testId, true );
+
+        project.setArtifact( warArtifact );
+        project.setFile( warArtifact.getFile() );
+        this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "outputDirectory", outputDir );
+        setVariableValueToObject( mojo, "warName", warName );
+
+        try
+        {
+            mojo.execute();
+            fail( "Building of the war isn't possible because no 'failOnMissingWebXml' policy was set and the project "
+                + "does not depend on Servlet 3.0" );
         }
         catch ( MojoExecutionException e )
         {

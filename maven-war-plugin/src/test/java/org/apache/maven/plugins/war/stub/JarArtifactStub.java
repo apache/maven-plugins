@@ -37,6 +37,7 @@ public class JarArtifactStub
 
     protected String scope;
 
+    private File file;
 
     private ArtifactHandler artifactHandler;
 
@@ -131,7 +132,16 @@ public class JarArtifactStub
 
     public File getFile()
     {
-        return new File( basedir, "/target/test-classes/unit/sample_wars/simple.jar" );
+        if ( file == null )
+        {
+            return new File( basedir, "/target/test-classes/unit/sample_wars/simple.jar" );
+        }
+        return file;
+    }
+
+    public void setFile( File file )
+    {
+        this.file = file;
     }
 
     public ArtifactHandler getArtifactHandler()

@@ -116,6 +116,7 @@ public class MavenProjectBasicStub
         Build build = super.getBuild();
 
         build.setDirectory( System.getProperty( "project.build.directory" ) );
+        build.setOutputDirectory( System.getProperty( "project.build.outputDirectory" ) );
 
         return build;
     }
