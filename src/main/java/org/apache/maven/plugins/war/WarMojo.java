@@ -21,7 +21,11 @@ package org.apache.maven.plugins.war;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
@@ -49,7 +53,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  */
 // CHECKSTYLE_OFF: LineLength
-@Mojo( name = "war", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.RUNTIME )
+@Mojo( name = "war", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME )
 // CHECKSTYLE_ON: LineLength
 public class WarMojo
     extends AbstractWarMojo
@@ -113,13 +117,16 @@ public class WarMojo
 
     /**
      * Whether or not to fail the build if the <code>web.xml</code> file is missing. Set to <code>false</code> if you
-     * want you WAR built without a <code>web.xml</code> file. This may be useful if you are building an overlay that
+     * want your WAR built without a <code>web.xml</code> file. This may be useful if you are building an overlay that
      * has no web.xml file.
+     * <p>
+     * Starting with <b>3.0.1</b>, this property defaults to <code>false</code> if the project depends on the Servlet
+     * 3.0 API or newer.
      *
      * @since 2.1-alpha-2
      */
-    @Parameter( defaultValue = "false" )
-    private boolean failOnMissingWebXml;
+    @Parameter
+    private Boolean failOnMissingWebXml;
 
     /**
      * Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the project as an
@@ -250,7 +257,8 @@ public class WarMojo
 
         warArchiver.setIncludeEmptyDirs( isIncludeEmptyDirectories() );
 
-        if ( !failOnMissingWebXml )
+        if ( Boolean.FALSE.equals( failOnMissingWebXml )
+            || ( failOnMissingWebXml == null && isProjectUsingAtLeastServlet30() ) )
         {
             getLog().debug( "Build won't fail if web.xml file is missing." );
             warArchiver.setExpectWebXml( false );
@@ -298,6 +306,38 @@ public class WarMojo
             {
                 artifact.setFile( warFile );
             }
+        }
+    }
+
+    /**
+     * Determines if the current Maven project being built uses the Servlet 3.0 API (JSR 315). If it does then the
+     * <code>web.xml</code> file can be omitted.
+     * <p>
+     * This is done by checking if the interface <code>javax.servlet.annotation.WebServlet</code> is in the compile-time
+     * dependencies (which includes provided dependencies) of the Maven project.
+     * 
+     * @return <code>true</code> if the project being built depends on Servlet 3.0 API, <code>false</code> otherwise.
+     * @throws DependencyResolutionRequiredException if the compile elements can't be resolved.
+     * @throws MalformedURLException if the path to a dependency file can't be transformed to a URL.
+     */
+    private boolean isProjectUsingAtLeastServlet30()
+        throws DependencyResolutionRequiredException, MalformedURLException
+    {
+        List<String> classpathElements = getProject().getCompileClasspathElements();
+        URL[] urls = new URL[classpathElements.size()];
+        for ( int i = 0; i < urls.length; i++ )
+        {
+            urls[i] = new File( classpathElements.get( i ) ).toURI().toURL();
+        }
+        ClassLoader loader = new URLClassLoader( urls, Thread.currentThread().getContextClassLoader() );
+        try
+        {
+            Class.forName( "javax.servlet.annotation.WebServlet", false, loader );
+            return true;
+        }
+        catch ( ClassNotFoundException e )
+        {
+            return false;
         }
     }
 
