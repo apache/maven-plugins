@@ -197,86 +197,7 @@ public class InstallFileMojo
         }
         else
         {
-            boolean foundPom = false;
-
-            JarFile jarFile = null;
-            try
-            {
-                Pattern pomEntry = Pattern.compile( "META-INF/maven/.*/pom\\.xml" );
-
-                jarFile = new JarFile( file );
-
-                Enumeration<JarEntry> jarEntries = jarFile.entries();
-
-                while ( jarEntries.hasMoreElements() )
-                {
-                    JarEntry entry = jarEntries.nextElement();
-
-                    if ( pomEntry.matcher( entry.getName() ).matches() )
-                    {
-                        getLog().debug( "Using " + entry.getName() + " as pomFile" );
-
-                        foundPom = true;
-
-                        InputStream pomInputStream = null;
-                        OutputStream pomOutputStream = null;
-
-                        try
-                        {
-                            pomInputStream = jarFile.getInputStream( entry );
-                            
-                            String base = file.getName();
-                            if ( base.indexOf( '.' ) > 0 )
-                            {
-                                base = base.substring( 0, base.lastIndexOf( '.' ) );
-                            }
-                            pomFile = new File( file.getParentFile(), base + ".pom" );
-                            
-                            pomOutputStream = new FileOutputStream( pomFile );
-                            
-                            IOUtil.copy( pomInputStream, pomOutputStream );
-
-                            pomOutputStream.close();
-                            pomOutputStream = null;
-
-                            pomInputStream.close();
-                            pomInputStream = null;
-
-                            processModel( readModel( pomFile ) );
-
-                            break;
-                        }
-                        finally
-                        {
-                            IOUtil.close( pomInputStream );
-                            IOUtil.close( pomOutputStream );
-                        }
-                    }
-                }
-
-                if ( !foundPom )
-                {
-                    getLog().info( "pom.xml not found in " + file.getName() );
-                }
-            }
-            catch ( IOException e )
-            {
-                // ignore, artifact not packaged by Maven
-            }
-            finally
-            {
-                if ( jarFile != null )
-                {
-                    try
-                    {
-                        jarFile.close();
-                    }
-                    catch ( IOException e )
-                    {
-                        // we did our best
-                    }
-                }
-            }
+            readingPomFromJarFile();
         }
 
         validateArtifactInformation();
@@ -385,6 +306,91 @@ public class InstallFileMojo
         }
 
         installChecksums( metadataFiles );
+    }
+
+    private void readingPomFromJarFile()
+        throws MojoExecutionException
+    {
+        boolean foundPom = false;
+
+        JarFile jarFile = null;
+        try
+        {
+            Pattern pomEntry = Pattern.compile( "META-INF/maven/.*/pom\\.xml" );
+
+            jarFile = new JarFile( file );
+
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+
+            while ( jarEntries.hasMoreElements() )
+            {
+                JarEntry entry = jarEntries.nextElement();
+
+                if ( pomEntry.matcher( entry.getName() ).matches() )
+                {
+                    getLog().debug( "Using " + entry.getName() + " as pomFile" );
+
+                    foundPom = true;
+
+                    InputStream pomInputStream = null;
+                    OutputStream pomOutputStream = null;
+
+                    try
+                    {
+                        pomInputStream = jarFile.getInputStream( entry );
+                        
+                        String base = file.getName();
+                        if ( base.indexOf( '.' ) > 0 )
+                        {
+                            base = base.substring( 0, base.lastIndexOf( '.' ) );
+                        }
+                        pomFile = new File( file.getParentFile(), base + ".pom" );
+                        
+                        pomOutputStream = new FileOutputStream( pomFile );
+                        
+                        IOUtil.copy( pomInputStream, pomOutputStream );
+
+                        pomOutputStream.close();
+                        pomOutputStream = null;
+
+                        pomInputStream.close();
+                        pomInputStream = null;
+
+                        processModel( readModel( pomFile ) );
+
+                        break;
+                    }
+                    finally
+                    {
+                        IOUtil.close( pomInputStream );
+                        IOUtil.close( pomOutputStream );
+                    }
+                }
+            }
+
+            if ( !foundPom )
+            {
+                getLog().info( "pom.xml not found in " + file.getName() );
+            }
+        }
+        catch ( IOException e )
+        {
+            // ignore, artifact not packaged by Maven
+        }
+        finally
+        {
+            if ( jarFile != null )
+            {
+                try
+                {
+                    jarFile.close();
+                }
+                catch ( IOException e )
+                {
+                    // we did our best
+                }
+            }
+        }
     }
 
     /**
