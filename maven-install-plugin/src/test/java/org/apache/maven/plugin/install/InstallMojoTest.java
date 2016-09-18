@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
@@ -127,7 +128,7 @@ public class InstallMojoTest
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
         setVariableValueToObject( mojo, "session", createMavenSession() );
 
-        List attachedArtifacts = project.getAttachedArtifacts();
+        List<Artifact> attachedArtifacts = project.getAttachedArtifacts();
 
         mojo.execute();
 
