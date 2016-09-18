@@ -19,10 +19,8 @@ package org.apache.maven.plugins.deploy;
  * under the License.
  */
 
-import java.util.Collection;
 import java.util.Map;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
@@ -34,8 +32,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 
 /**
  * @version $Id$
@@ -43,11 +39,6 @@ import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 public abstract class AbstractDeployMojo
     extends AbstractMojo
 {
-    /**
-     */
-    @Component
-    private ArtifactDeployer deployer;
-
     /**
      * Component used to create an artifact.
      */
@@ -86,16 +77,6 @@ public abstract class AbstractDeployMojo
     
     /* Setters and Getters */
 
-    public ArtifactDeployer getDeployer()
-    {
-        return deployer;
-    }
-
-    public void setDeployer( ArtifactDeployer deployer )
-    {
-        this.deployer = deployer;
-    }
-
     void failIfOffline()
         throws MojoFailureException
     {
@@ -126,56 +107,6 @@ public abstract class AbstractDeployMojo
     int getRetryFailedDeploymentCount()
     {
         return retryFailedDeploymentCount;
-    }
-
-    /**
-     * Deploy an artifact from a particular file.
-     * @param artifacts the artifact definitions
-     * @param deploymentRepository the repository to deploy to
-     * @param localRepository the local repository to install into
-     * @param retryFailedDeploymentCount TODO
-     * 
-     * @throws ArtifactDeployerException if an error occurred deploying the artifact
-     */
-    protected void deploy( Collection<Artifact> artifacts, ArtifactRepository deploymentRepository,
-                           int retryFailedDeploymentCount )
-        throws ArtifactDeployerException
-    {
-
-        // for now retry means redeploy the complete artifacts collection
-        int retryFailedDeploymentCounter = Math.max( 1, Math.min( 10, retryFailedDeploymentCount ) );
-        ArtifactDeployerException exception = null;
-        for ( int count = 0; count < retryFailedDeploymentCounter; count++ )
-        {
-            try
-            {
-                if ( count > 0 )
-                {
-                    getLog().info( "Retrying deployment attempt " + ( count + 1 ) + " of "
-                                       + retryFailedDeploymentCounter );
-                }
-                
-                getDeployer().deploy( session.getProjectBuildingRequest(), deploymentRepository, artifacts );
-                exception = null;
-                break;
-            }
-            catch ( ArtifactDeployerException e )
-            {
-                if ( count + 1 < retryFailedDeploymentCounter )
-                {
-                    getLog().warn( "Encountered issue during deployment: " + e.getLocalizedMessage() );
-                    getLog().debug( e );
-                }
-                if ( exception == null )
-                {
-                    exception = e;
-                }
-            }
-        }
-        if ( exception != null )
-        {
-            throw exception;
-        }
     }
 
     protected ArtifactRepository createDeploymentArtifactRepository( String id, String url,

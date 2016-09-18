@@ -41,6 +41,7 @@ import org.apache.maven.plugins.deploy.stubs.DeployArtifactStub;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.shared.project.deploy.ProjectDeployerRequest;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Ignore;
 import org.mockito.InjectMocks;
@@ -405,6 +406,13 @@ public class DeployMojoTest
                                  "target/test-classes/unit/basic-deploy-test/plugin-config.xml" );
         
         DeployMojo mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
+
+        MockitoAnnotations.initMocks( this );
+
+        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        
+        setVariableValueToObject( mojo, "session", session );
         
         assertNotNull( mojo );
         
@@ -598,9 +606,12 @@ public class DeployMojoTest
 
         project.setVersion( "1.0-SNAPSHOT" );
 
+        ProjectDeployerRequest pdr =
+                        new ProjectDeployerRequest()
+                            .setProject( project )
+                            .setAltDeploymentRepository( "altSnapshotDeploymentRepository::default::http://localhost" );
         assertEquals( repository,
-                      mojo.getDeploymentRepository( project, null, null,
-                                                    "altSnapshotDeploymentRepository::default::http://localhost" ) );
+                      mojo.getDeploymentRepository( pdr ));
     }
 
     public void testAltReleaseDeploymentRepository()
@@ -618,9 +629,13 @@ public class DeployMojoTest
 
         project.setVersion( "1.0" );
 
+        ProjectDeployerRequest pdr =
+                        new ProjectDeployerRequest()
+                            .setProject( project )
+                            .setAltReleaseDeploymentRepository( "altReleaseDeploymentRepository::default::http://localhost" );
+
         assertEquals( repository,
-                      mojo.getDeploymentRepository( project, null,
-                                                    "altReleaseDeploymentRepository::default::http://localhost", null ) );
+                      mojo.getDeploymentRepository( pdr ));
     }
     
     private void addFileToList( File file, List<String> fileList )

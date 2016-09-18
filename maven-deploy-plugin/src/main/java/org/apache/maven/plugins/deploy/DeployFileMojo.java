@@ -61,6 +61,7 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
+import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 import org.apache.maven.shared.repository.RepositoryManager;
 import org.codehaus.plexus.util.FileUtils;
@@ -79,13 +80,15 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class DeployFileMojo
     extends AbstractDeployMojo
 {
+    @Component
+    private ArtifactDeployer artifactDeployer;
 
     /**
      * Used for attaching the artifacts to deploy to the project.
      */
     @Component
     private MavenProjectHelper projectHelper;
-    
+
     /**
      * Used for creating the project to which the artifacts to deploy will be attached.
      */
@@ -218,10 +221,10 @@ public class DeployFileMojo
      */
     @Parameter( property = "files" )
     private String files;
-    
+
     @Component
     private RepositoryManager repoManager;
-    
+
     void initProperties()
         throws MojoExecutionException
     {
@@ -258,16 +261,16 @@ public class DeployFileMojo
                         try
                         {
                             pomInputStream = jarFile.getInputStream( entry );
-                            
+
                             String base = file.getName();
                             if ( base.indexOf( '.' ) > 0 )
                             {
                                 base = base.substring( 0, base.lastIndexOf( '.' ) );
                             }
                             pomFile = new File( file.getParentFile(), base + ".pom" );
-                            
+
                             pomOutputStream = new FileOutputStream( pomFile );
-                            
+
                             IOUtil.copy( pomInputStream, pomOutputStream );
 
                             pomOutputStream.close();
@@ -494,18 +497,19 @@ public class DeployFileMojo
 
         try
         {
-            deploy( deployableArtifacts, deploymentRepository, getRetryFailedDeploymentCount() );
+            artifactDeployer.deploy( getSession().getProjectBuildingRequest(), deploymentRepository,
+                                     deployableArtifacts );
         }
         catch ( ArtifactDeployerException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
     }
-    
+
     /**
-     * Creates a Maven project in-memory from the user-supplied groupId, artifactId and version.
-     * When a classifier is supplied, the packaging must be POM because the project with only have attachments.
-     * This project serves as basis to attach the artifacts to deploy to.
+     * Creates a Maven project in-memory from the user-supplied groupId, artifactId and version. When a classifier is
+     * supplied, the packaging must be POM because the project with only have attachments. This project serves as basis
+     * to attach the artifacts to deploy to.
      * 
      * @return The created Maven project, never <code>null</code>.
      * @throws MojoFailureException When building the project failed.
@@ -513,14 +517,10 @@ public class DeployFileMojo
     private MavenProject createMavenProject()
         throws MojoFailureException
     {
-        ModelSource modelSource = new StringModelSource( 
-                "<project>"
-              +   "<modelVersion>4.0.0</modelVersion>"
-              +   "<groupId>" + groupId + "</groupId>"
-              +   "<artifactId>" + artifactId + "</artifactId>"
-              +   "<version>" + version + "</version>"
-              +   "<packaging>" + ( classifier == null ? packaging : "pom" ) + "</packaging>"
-              + "</project>" );
+        ModelSource modelSource =
+            new StringModelSource( "<project>" + "<modelVersion>4.0.0</modelVersion>" + "<groupId>" + groupId
+                + "</groupId>" + "<artifactId>" + artifactId + "</artifactId>" + "<version>" + version + "</version>"
+                + "<packaging>" + ( classifier == null ? packaging : "pom" ) + "</packaging>" + "</project>" );
         DefaultProjectBuildingRequest buildingRequest =
             new DefaultProjectBuildingRequest( getSession().getProjectBuildingRequest() );
         buildingRequest.setProcessPlugins( false );
@@ -533,10 +533,10 @@ public class DeployFileMojo
             throw new MojoFailureException( e.getMessage(), e );
         }
     }
-    
+
     /**
-     * Gets the path of the artifact constructed from the supplied groupId, artifactId, version, classifier
-     * and packaging within the local repository. Note that the returned path need not exist (yet).
+     * Gets the path of the artifact constructed from the supplied groupId, artifactId, version, classifier and
+     * packaging within the local repository. Note that the returned path need not exist (yet).
      * 
      * @return The absolute path to the artifact when installed, never <code>null</code>.
      */
@@ -673,7 +673,7 @@ public class DeployFileMojo
         ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
 
         DeployModelProblemCollector problemCollector = new DeployModelProblemCollector();
-        
+
         modelValidator.validateEffectiveModel( model, buildingRequest, problemCollector );
 
         if ( problemCollector.getMessageCount() > 0 )
@@ -763,15 +763,16 @@ public class DeployFileMojo
     {
         this.classifier = classifier;
     }
-    
-    private static class DeployModelProblemCollector implements ModelProblemCollector
+
+    private static class DeployModelProblemCollector
+        implements ModelProblemCollector
     {
         /** */
         private static final String NEWLINE = System.getProperty( "line.separator" );
 
         /** */
         private List<String> messages = new ArrayList<String>();
-        
+
         @Override
         public void add( Severity severity, String message, InputLocation location, Exception cause )
         {
