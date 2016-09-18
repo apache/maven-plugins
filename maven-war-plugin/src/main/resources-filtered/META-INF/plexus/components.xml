@@ -55,13 +55,13 @@
             <!-- START SNIPPET: war-lifecycle -->
             <phases>
               <process-resources>
-                org.apache.maven.plugins:maven-resources-plugin:2.7:resources
+                org.apache.maven.plugins:maven-resources-plugin:3.0.1:resources
               </process-resources>
               <compile>
                 org.apache.maven.plugins:maven-compiler-plugin:3.5.1:compile
               </compile>
               <process-test-resources>
-                org.apache.maven.plugins:maven-resources-plugin:2.7:testResources
+                org.apache.maven.plugins:maven-resources-plugin:3.0.1:testResources
               </process-test-resources>
               <test-compile>
                 org.apache.maven.plugins:maven-compiler-plugin:3.5.1:testCompile
