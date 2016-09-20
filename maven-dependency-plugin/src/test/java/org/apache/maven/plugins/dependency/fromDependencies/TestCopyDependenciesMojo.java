@@ -583,7 +583,8 @@ public class TestCopyDependenciesMojo
 
         mojo.execute();
 
-        assertTrue( time < copiedFile.lastModified() );
+        assertTrue( "time = " + time + " should be < to " + copiedFile.lastModified(),
+                    time < copiedFile.lastModified() );
     }
 
     public void testDontOverWriteSnap()
