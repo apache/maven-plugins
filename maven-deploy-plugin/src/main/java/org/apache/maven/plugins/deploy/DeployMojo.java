@@ -195,7 +195,7 @@ public class DeployMojo
     {
         try
         {
-            projectDeployer.deployProject( pbr, pir, repo );
+            projectDeployer.deploy( pbr, pir, repo );
         }
         catch ( IOException e )
         {
