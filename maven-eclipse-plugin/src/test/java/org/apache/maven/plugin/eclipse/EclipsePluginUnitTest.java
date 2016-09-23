@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.maven.execution.DefaultRuntimeInformation;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -35,6 +33,8 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.ide.AbstractIdeSupportMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.tools.easymock.TestFileManager;
+
+import junit.framework.TestCase;
 
 public class EclipsePluginUnitTest
     extends TestCase
@@ -100,7 +100,7 @@ public class EclipsePluginUnitTest
         field.setAccessible( true );
         field.set( mojo, sourceExcludes );
 
-        EclipseSourceDir[] result = mojo.buildDirectoryList( project, basedir, new File( "target/classes" ) );
+        EclipseSourceDir[] result = mojo.buildDirectoryList( project, basedir, new File( "target/classes" ), new ArrayList() );
 
         assertEquals( "should have added 1 resource.", 1, result.length );
 
