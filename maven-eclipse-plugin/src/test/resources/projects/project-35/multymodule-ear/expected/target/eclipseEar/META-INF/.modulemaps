@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<modulemap:EARProjectMap xmlns:xmi="http://www.omg.org/XMI" xmlns:application="application.xmi" xmi:version="2.0" xmlns:modulemap="modulemap.xmi" xmi:id="EARProjectMap_6059828">
-  <utilityJARMappings uri="maven-core-98.0.jar" projectName="maven-core-98.0" xmi:id="UtilityJARMapping_00000000"/>
-  <mappings projectName="multymodule-war-1.0" xmi:id="ModuleMapping_16748627">
-    <module xmi:type="application:WebModule" href="META-INF/application.xml#WebModule_00000000"/>
-  </mappings>
-</modulemap:EARProjectMap>

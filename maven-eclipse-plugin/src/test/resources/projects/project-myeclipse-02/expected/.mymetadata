@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-module type="WEB" name="maven-eclipse-plugin-test-project-myeclipse-02" id="maven-eclipse-plugin-test-project-myeclipse-02" context-root="/myapp" j2ee-spec="1.4" archive="maven-eclipse-plugin-test-project-myeclipse-02.war">
-  <attributes>
-    <attribute name="webrootdir" value="src/main/webapp"/>
-  </attributes>
-</project-module>
