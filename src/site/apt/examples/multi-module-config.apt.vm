@@ -1,0 +1,204 @@
+ ------
+ Multimodule Configuration
+ ------
+ ------
+ 2016-09-25
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Multimodule Configuration
+
+  If you have a multimodule project with many modules and you want to share the PMD ruleset configuration,
+  so that each module uses the same PMD rules, this is possible, but requires a little setup.
+  
+  The setup is very similar to the one described for Checkstyle, see
+  {{{https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/multi-module-config.html}Multimodule Configuration for Checkstyle}}.
+
+  This example will use the same mysterious project called <whizbang>. This is what
+  the structure of that project looks like:
+
++-----+
+whizbang
+|-- pom.xml
+|-- core
+|   `-- pom.xml
+|-- gui
+|   `-- pom.xml
+|-- jmx
+|   `-- pom.xml
+`-- src
++-----+
+
+* Create a subproject for the PMD rulesets
+
+  We'll start by adding another sub project that will house our common
+  configuration for PMD. Let's call it <build-tools>.
+  In it we put the resources that we want to share between our whizbang modules.
+  In this example, we will add our custom PMD ruleset to be used by the PMD Plugin.
+  The same subproject can be used to house shared configurations for Checkstyle.
+
++-----+
+whizbang
+|-- pom.xml
+|-- build-tools
+|   |-- src
+|   |   `-- main
+|   |       `-- resources
+|   |           `-- whizbang
+|   |               `-- pmd-ruleset.xml
+|   `-- pom.xml
+|-- core
+|-- gui
+|-- jmx
+`-- src
++-----+
+
+  <<Tip:>> put the resources into a subdirectory that you can ensure will be
+  unique and not conflict with anyone else.
+
+  The <<<pom.xml>>> file for <build-tools> should look like this:
+
++-----+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example.whizbang</groupId>
+  <artifactId>build-tools</artifactId>
+  <version>1.0</version>
+  <name>Build Tools</name>
+</project>
++-----+
+
+  A sample <<<pmd-ruleset.xml>>> could look lke this:
+
++-----+
+<?xml version="1.0"?>
+<ruleset name="whizbang PMD ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+    <description>
+        This ruleset defines the PMD rules for project "whizbang".
+    </description>
+
+    <rule ref="rulesets/java/basic.xml"/>
+    <rule ref="rulesets/java/imports.xml"/>
+    <rule ref="rulesets/java/unnecessary.xml"/>
+</ruleset>
++-----+
+
+  The ruleset references the default rulesets. For more information about rulesets, see
+  {{{http://pmd.github.io/pmd-5.5.1/customizing/howtomakearuleset.html}How to make a new ruleset}}.
+
+* Configure the other projects to use it
+
+  Now we can include the PMD configuration in the top level
+  <<<pom.xml>>>.
+
+  <<Note:>> You have to specify a plugin dependency on <<<build-tools>>> in the
+  <<<\<build\>>>> element of your <<<pom.xml>>>. It will not work inside the
+  <<<\<reporting\>>>> element, because <<<\<reporting\>>>> does not support
+  plugin dependencies. The rest of the configuration is done in the normal way
+  in the <<<\<reporting\>>>> element.
+
++-----+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example.whizbang</groupId>
+  <artifactId>whizbang-parent</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+  <name>WhizBang Parent</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <rulesets>
+            <ruleset>whizbang/pmd-ruleset.xml</ruleset>
+          </rulesets>
+          <printFailingErrors>true</printFailingErrors>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.example.whizbang</groupId>
+            <artifactId>build-tools</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <rulesets>
+            <ruleset>whizbang/pmd-ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <modules>
+    <module>build-tools</module>
+    <module>core</module>
+    <module>jmx</module>
+    <module>gui</module>
+  </modules>
+</project>
++-----+
+
+  Once you are done with that, ensure that you do not include
+  the Maven PMD Plugin in your sub modules, as their definition and
+  configuration, will override the top level parent pom's definition.
+
+  Based on the PMD Plugin configuration above, the values of
+  <<<rulesets>>> will be resolved from the classpath.
+  The <build-tools> JAR was included in the classpath when it was
+  declared as a dependency to the plugin.
+
+  Lastly, kick off a build of the site.
+
++-----+
+mvn site
++-----+
+
+  Or run the check goal of the PMD plugin via verify:
+
++-----+
+mvn verify
++-----+
+
+  Every sub project will now use the same PMD setup and configuration.
