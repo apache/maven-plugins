@@ -21,7 +21,6 @@ package org.apache.maven.plugins.deploy;
 
 import java.util.Map;
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
@@ -39,11 +38,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 public abstract class AbstractDeployMojo
     extends AbstractMojo
 {
-    /**
-     * Component used to create an artifact.
-     */
-    @Component
-    protected ArtifactFactory artifactFactory;
 
     /**
      * Map that contains the layouts.
