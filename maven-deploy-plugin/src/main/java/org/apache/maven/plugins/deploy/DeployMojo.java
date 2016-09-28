@@ -151,6 +151,7 @@ public class DeployMojo
                 .setProject( project )
                 .setUpdateReleaseInfo( isUpdateReleaseInfo() )
                 .setRetryFailedDeploymentCount( getRetryFailedDeploymentCount() )
+                .setRetryFailedDeploymentDelay( getRetryFailedDeploymentDelay() )
                 .setAltReleaseDeploymentRepository( altReleaseDeploymentRepository )
                 .setAltSnapshotDeploymentRepository( altSnapshotDeploymentRepository )
                 .setAltDeploymentRepository( altDeploymentRepository );
