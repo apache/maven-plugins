@@ -52,6 +52,13 @@ under the License.
         </pluginRepository>
       </pluginRepositories>
     </profile>
+    <profile>
+      <!-- Used for MPIR-349 ITS (variables from settings interpolation) -->
+      <id>site-location</id>
+      <properties>
+        <sitePublishLocation>file://tmp/sitePublish</sitePublishLocation>
+      </properties>
+    </profile>
   </profiles>
   <mirrors>
     <mirror>

@@ -1,5 +1,8 @@
 package org.apache.maven.report.projectinfo;
 
+import java.io.File;
+import java.lang.reflect.Field;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,11 +24,17 @@ package org.apache.maven.report.projectinfo;
 
 import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.maven.report.projectinfo.stubs.SubProject1Stub;
+import org.codehaus.plexus.util.ReflectionUtils;
+
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.TextBlock;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * @author ltheussl
@@ -62,8 +71,7 @@ public class ModulesReportTest
         assertTrue( response.getContentLength() > 0 );
 
         // Test the Page title
-        String expectedTitle = prepareTitle( getString( "report.modules.name" ),
-            getString( "report.modules.title" ) );
+        String expectedTitle = prepareTitle( getString( "report.modules.name" ), getString( "report.modules.title" ) );
         assertEquals( expectedTitle, response.getTitle() );
 
         // Test the texts
@@ -81,5 +89,42 @@ public class ModulesReportTest
         assertEquals( "-", cellTexts[1][1] );
         assertEquals( "project2", cellTexts[2][0] );
         assertEquals( "project2 description", cellTexts[2][1] );
+    }
+
+    /**
+     * Test report with variable from settings interpolation in modules URL links (MPIR-349)
+     *
+     * @throws Exception if any
+     */
+    public void testReportModuleLinksVariableSettingsInterpolated()
+        throws Exception
+    {
+        String pluginXml = "modules-variable-settings-interpolated-plugin-config.xml";
+        File pluginXmlFile = new File( getBasedir(), "src/test/resources/plugin-configs/" + pluginXml );
+        AbstractProjectInfoReport mojo = createReportMojo( "modules", pluginXmlFile );
+
+        class SubProjectStub
+            extends SubProject1Stub
+        {
+            @Override
+            public File getBasedir()
+            {
+                return new File( "src/test/resources/plugin-configs/subproject-site-url" ).getAbsoluteFile();
+            }
+
+            @Override
+            protected String getPOM()
+            {
+                return "pom.xml";
+            }
+        }
+        Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( "reactorProjects", mojo.getClass() );
+        field.setAccessible( true );
+        field.set( mojo, Collections.singletonList( new SubProjectStub() ) );
+
+        generateReport( mojo, pluginXmlFile );
+
+        assertFalse( "Variable 'sitePublishLocation' should be interpolated",
+                     FileUtils.readFileToString( getGeneratedReport( "modules.html" ) ).contains( "sitePublishLocation" ) );
     }
 }

@@ -22,11 +22,13 @@ package org.apache.maven.report.projectinfo;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.plexus.i18n.I18N;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -70,10 +72,9 @@ public class IndexReport
     @Override
     public void executeReport( Locale locale )
     {
-        ProjectIndexRenderer r =
-            new ProjectIndexRenderer( project, mavenProjectBuilder, localRepository,
-                                      getName( locale ), getDescription( locale ), getSink(),
-                                      getI18N( locale ), locale, siteTool );
+        ProjectIndexRenderer r = new ProjectIndexRenderer( project, getReactorProjects(), mavenProjectBuilder,
+                                                           localRepository, getName( locale ), getDescription( locale ),
+                                                           getSink(), getI18N( locale ), locale, getLog(), siteTool );
 
         r.render();
     }
@@ -106,11 +107,11 @@ public class IndexReport
 
         private boolean modules = false;
 
-        ProjectIndexRenderer( MavenProject project, MavenProjectBuilder mavenProjectBuilder,
-                              ArtifactRepository localRepository, String title, String description,
-                              Sink sink, I18N i18n, Locale locale, SiteTool siteTool )
+        ProjectIndexRenderer( MavenProject project, List<MavenProject> reactorProjects,
+                              MavenProjectBuilder mavenProjectBuilder, ArtifactRepository localRepository, String title,
+                              String description, Sink sink, I18N i18n, Locale locale, Log log, SiteTool siteTool )
         {
-            super( sink, project, mavenProjectBuilder, localRepository, i18n, locale, siteTool );
+            super( sink, project, reactorProjects, mavenProjectBuilder, localRepository, i18n, locale, log, siteTool );
 
             this.title = title;
 
