@@ -86,7 +86,10 @@ public class ServicesResourceTransformer
             String relContent = line;
             for ( Relocator relocator : relocators )
             {
-                relContent = relocator.applyToSourceContent( relContent );
+                if ( relocator.canRelocateClass( relContent ) )
+                {
+                    relContent = relocator.applyToSourceContent( relContent );
+                }
             }
             fout.append( relContent + "\n" );
         }
