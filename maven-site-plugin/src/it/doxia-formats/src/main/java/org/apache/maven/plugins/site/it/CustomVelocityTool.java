@@ -1,3 +1,4 @@
+package org.apache.maven.plugins.site.it;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -18,26 +19,13 @@
  * under the License.
  */
 
-content = new File( basedir, 'target/site/markdown.html' ).text;
+import org.apache.velocity.tools.config.DefaultKey;
 
-assert content.contains( 'Markdown Format works' );
-
-assert !content.contains( ' quotes and double quotes were stripped' );
-
-assert !content.contains( 'MACRO' );
-assert content.contains( 'href="#Subsection"' );
-
-ignore = new File( basedir, 'target/site/ignore.txt' );
-assert !ignore.exists();
-
-velocity = new File( basedir, 'target/generated-site/processed/velocity-context.apt' );
-assert velocity.exists();
-content = velocity.text;
-
-assert content.contains( '= <<<val1>>>' ); // MSITE-550
-
-assert !content.replace('<<<$value', '').contains( '<<<$' );
-
-assert new File( basedir, 'target/site/markdown2.html' ).exists(); // DOXIA-535
-
-return true;
+@DefaultKey("custom")
+public class CustomVelocityTool
+{
+    public static String test()
+    {
+        return "ok";
+    }
+}
