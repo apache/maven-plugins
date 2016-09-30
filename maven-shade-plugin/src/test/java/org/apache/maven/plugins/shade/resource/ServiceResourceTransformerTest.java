@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -46,10 +47,11 @@ public class ServiceResourceTransformerTest {
 
     @Test
     public void relocatedClasses() throws Exception {
-        SimpleRelocator relocator = new SimpleRelocator("org.foo", "borg.foo", null, null);
+        SimpleRelocator relocator =
+            new SimpleRelocator( "org.foo", "borg.foo", null, Arrays.asList( "org.foo.exclude.*" ) );
         List<Relocator> relocators = Lists.<Relocator>newArrayList( relocator );
 
-        String content = "org.foo.Service\n";
+        String content = "org.foo.Service\norg.foo.exclude.OtherService\n";
         byte[] contentBytes = content.getBytes( "UTF-8" );
         InputStream contentStream = new ByteArrayInputStream( contentBytes );
         String contentResource = "META-INF/services/org.foo.something.another";
@@ -72,8 +74,9 @@ public class ServiceResourceTransformerTest {
             assertNotNull( jarEntry );
             InputStream entryStream = jarFile.getInputStream( jarEntry );
             try {
-                String xformedContent = IOUtils.toString(entryStream, "utf-8");
-                assertEquals("borg.foo.Service" + System.getProperty( "line.separator" ), xformedContent);
+                String xformedContent = IOUtils.toString( entryStream, "utf-8" );
+                assertEquals( "borg.foo.Service" + System.getProperty( "line.separator" )
+                    + "org.foo.exclude.OtherService" + System.getProperty( "line.separator" ), xformedContent );
             } finally {
                 IOUtils.closeQuietly( entryStream );
                 jarFile.close();
