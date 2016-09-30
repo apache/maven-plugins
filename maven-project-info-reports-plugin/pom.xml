@@ -557,6 +557,7 @@ under the License.
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
+                <pomInclude>*/parent/pom.xml</pomInclude>
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>pom.xml</pomExclude>

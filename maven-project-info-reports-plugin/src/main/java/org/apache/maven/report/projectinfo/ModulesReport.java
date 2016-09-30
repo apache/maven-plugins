@@ -20,6 +20,7 @@ package org.apache.maven.report.projectinfo;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Locale;
@@ -28,8 +29,8 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -57,7 +58,7 @@ public class ModulesReport
         boolean result = super.canGenerateReport();
         if ( result && skipEmptyReport )
         {
-            result = !isEmpty( getProject().getModel().getModules() ) ;
+            result = !isEmpty( getProject().getModel().getModules() );
         }
 
         return result;
@@ -66,8 +67,8 @@ public class ModulesReport
     @Override
     public void executeReport( Locale locale )
     {
-        new ModulesRenderer( getSink(), getProject(), mavenProjectBuilder, localRepository,
-                             getI18N( locale ), locale, siteTool ).render();
+        new ModulesRenderer( getSink(), getProject(), getReactorProjects(), mavenProjectBuilder, localRepository,
+                             getI18N( locale ), locale, getLog(), siteTool ).render();
     }
 
     /** {@inheritDoc} */
@@ -92,7 +93,12 @@ public class ModulesReport
     static class ModulesRenderer
         extends AbstractProjectInfoRenderer
     {
+
+        protected final Log log;
+
         protected MavenProject project;
+
+        protected List<MavenProject> reactorProjects;
 
         protected MavenProjectBuilder mavenProjectBuilder;
 
@@ -100,16 +106,18 @@ public class ModulesReport
 
         protected SiteTool siteTool;
 
-        ModulesRenderer( Sink sink, MavenProject project, MavenProjectBuilder mavenProjectBuilder,
-                         ArtifactRepository localRepository, I18N i18n, Locale locale,
-                         SiteTool siteTool )
+        ModulesRenderer( Sink sink, MavenProject project, List<MavenProject> reactorProjects,
+                         MavenProjectBuilder mavenProjectBuilder, ArtifactRepository localRepository, I18N i18n,
+                         Locale locale, Log log, SiteTool siteTool )
         {
             super( sink, i18n, locale );
 
             this.project = project;
+            this.reactorProjects = reactorProjects;
             this.mavenProjectBuilder = mavenProjectBuilder;
             this.localRepository = localRepository;
             this.siteTool = siteTool;
+            this.log = log;
         }
 
         @Override
@@ -124,15 +132,15 @@ public class ModulesReport
             List<String> modules = project.getModel().getModules();
 
             if ( modules == null || modules.isEmpty() )
-             {
-                 startSection( getTitle() );
+            {
+                startSection( getTitle() );
 
-                 paragraph( getI18nString( "nolist" ) );
+                paragraph( getI18nString( "nolist" ) );
 
-                 endSection();
+                endSection();
 
-                 return;
-             }
+                return;
+            }
 
             startSection( getTitle() );
 
@@ -148,32 +156,39 @@ public class ModulesReport
 
             for ( String module : modules )
             {
-                Model moduleModel;
-                File f = new File( project.getBasedir(), module + "/pom.xml" );
-                if ( f.exists() )
-                {
-                    try
-                    {
-                        moduleModel = mavenProjectBuilder.build( f, localRepository, null ).getModel();
-                    }
-                    catch ( ProjectBuildingException e )
-                    {
-                       throw new IllegalStateException( "Unable to read local module POM", e );
-                    }
-                }
-                else
-                {
-                    moduleModel = new Model();
-                    moduleModel.setName( module );
-                    setDistMgmntSiteUrl( moduleModel, module );
-                }
+                MavenProject moduleProject = getModuleFromReactor( project, reactorProjects, module );
 
+                if ( moduleProject == null )
+                {
+                    log.warn( "Module " + module + " not found in reactor: loading locally" );
+
+                    File f = new File( project.getBasedir(), module + "/pom.xml" );
+                    if ( f.exists() )
+                    {
+                        try
+                        {
+                            moduleProject = mavenProjectBuilder.build( f, localRepository, null );
+                        }
+                        catch ( ProjectBuildingException e )
+                        {
+                            throw new IllegalStateException( "Unable to read local module POM", e );
+                        }
+                    }
+                    else
+                    {
+                        moduleProject = new MavenProject();
+                        moduleProject.setName( module );
+                        moduleProject.setDistributionManagement( new DistributionManagement() );
+                        moduleProject.getDistributionManagement().setSite( new Site() );
+                        moduleProject.getDistributionManagement().getSite().setUrl( module );
+                    }
+                }
                 final String moduleName =
-                    ( moduleModel.getName() == null ) ? moduleModel.getArtifactId() : moduleModel.getName();
-                final String moduleHref = getRelativeLink( baseUrl, getDistMgmntSiteUrl( moduleModel ),
-                                            moduleModel.getArtifactId() );
+                    ( moduleProject.getName() == null ) ? moduleProject.getArtifactId() : moduleProject.getName();
+                final String moduleHref =
+                    getRelativeLink( baseUrl, getDistMgmntSiteUrl( moduleProject ), moduleProject.getArtifactId() );
 
-                tableRow( new String[] { linkedName( moduleName, moduleHref ), moduleModel.getDescription() } );
+                tableRow( new String[] { linkedName( moduleName, moduleHref ), moduleProject.getDescription() } );
             }
 
             endTable();
@@ -181,19 +196,32 @@ public class ModulesReport
             endSection();
         }
 
-        private static void setDistMgmntSiteUrl( Model model, String url )
+        private MavenProject getModuleFromReactor( MavenProject project, List<MavenProject> reactorProjects,
+                                                   String module )
         {
-            if ( model.getDistributionManagement() == null )
+            // Mainly case of unit test
+            if ( reactorProjects == null )
             {
-                model.setDistributionManagement( new DistributionManagement() );
+                return null;
             }
-
-            if ( model.getDistributionManagement().getSite() == null )
+            try
             {
-                model.getDistributionManagement().setSite( new Site() );
-            }
+                File moduleBasedir = new File( project.getBasedir(), module ).getCanonicalFile();
 
-            model.getDistributionManagement().getSite().setUrl( url );
+                for ( MavenProject reactorProject : reactorProjects )
+                {
+                    if ( moduleBasedir.equals( reactorProject.getBasedir() ) )
+                    {
+                        return reactorProject;
+                    }
+                }
+            }
+            catch ( IOException e )
+            {
+                log.error( "Error while populating modules menu: " + e.getMessage(), e );
+            }
+            // module not found in reactor
+            return null;
         }
 
         /**
@@ -205,17 +233,6 @@ public class ModulesReport
         private static String getDistMgmntSiteUrl( MavenProject project )
         {
             return getDistMgmntSiteUrl( project.getDistributionManagement() );
-        }
-
-        /**
-         * Return distributionManagement.site.url if defined, null otherwise.
-         *
-         * @param model not null
-         * @return could be null
-         */
-        private static String getDistMgmntSiteUrl( Model model )
-        {
-            return getDistMgmntSiteUrl( model.getDistributionManagement() );
         }
 
         private static String getDistMgmntSiteUrl( DistributionManagement distMgmnt )
