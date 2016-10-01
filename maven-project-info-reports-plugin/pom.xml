@@ -86,6 +86,9 @@ under the License.
       <name>Simon Wang</name>
       <email>wangyf2010@gmail.com</email>
     </contributor>
+    <contributor>
+      <name>Alix Lourme</name>
+    </contributor>
   </contributors>
 
   <prerequisites>
@@ -557,6 +560,7 @@ under the License.
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
+                <pomInclude>*/parent/pom.xml</pomInclude>
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>pom.xml</pomExclude>
