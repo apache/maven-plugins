@@ -19,6 +19,12 @@ package org.apache.maven.plugin.pmd;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.pmd.model.PmdErrorDetail;
@@ -29,22 +35,8 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Fail the build if there were any PMD violations in the source code.
@@ -71,7 +63,7 @@ public class PmdViolationCheckMojo
     @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
-    private final Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
+    private final ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
 
     /**
      * {@inheritDoc}
@@ -89,63 +81,13 @@ public class PmdViolationCheckMojo
     protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
         throws MojoExecutionException
     {
-        File file = new File( excludeFromFailureFile );
-        if ( !file.exists() )
-        {
-            return;
-        }
-        final Properties props = new Properties();
-        FileInputStream fileInputStream = null;
-        try
-        {
-            fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) );
-            props.load( fileInputStream );
-            fileInputStream.close();
-            fileInputStream = null;
-        }
-        catch ( final IOException e )
-        {
-            throw new MojoExecutionException( "Cannot load properties file " + excludeFromFailureFile, e );
-        }
-        finally
-        {
-            IOUtil.close( fileInputStream );
-        }
-        for ( final Entry<Object, Object> propEntry : props.entrySet() )
-        {
-            final Set<String> excludedRuleSet = new HashSet<>();
-            final String className = propEntry.getKey().toString();
-            final String[] excludedRules = propEntry.getValue().toString().split( "," );
-            for ( final String excludedRule : excludedRules )
-            {
-                excludedRuleSet.add( excludedRule.trim() );
-            }
-            excludeFromFailureClasses.put( className, excludedRuleSet );
-        }
+        excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
     }
 
     @Override
     protected boolean isExcludedFromFailure( final Violation errorDetail )
     {
-        final String className = extractClassName( errorDetail );
-        final Set<String> excludedRuleSet = excludeFromFailureClasses.get( className );
-        return excludedRuleSet != null && excludedRuleSet.contains( errorDetail.getRule() );
-    }
-
-    private String extractClassName( final Violation errorDetail )
-    {
-        // for some reason, some violations don't contain the package name, so we have to guess the full class name
-        if ( errorDetail.getViolationPackage() != null && errorDetail.getViolationClass() != null )
-        {
-            return errorDetail.getViolationPackage() + "." + errorDetail.getViolationClass();
-        }
-        else
-        {
-            final String fileName = errorDetail.getFileName();
-            final int javaIdx = fileName.indexOf( File.separator + "java" + File.separator );
-            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 ).replace(
-                File.separatorChar, '.' );
-        }
+        return excludeFromFile.isExcludedFromFailure( errorDetail );
     }
 
     /**
