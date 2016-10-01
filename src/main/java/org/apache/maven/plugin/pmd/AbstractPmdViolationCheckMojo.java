@@ -92,6 +92,18 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
     private String excludeFromFailureFile;
 
+    /** Helper to exclude violations from the result. */
+    private final ExcludeFromFile<D> excludeFromFile;
+
+    /**
+     * Initialize this abstact check mojo by giving the correct ExcludeFromFile helper.
+     * @param excludeFromFile the needed helper, for the specific violation type
+     */
+    protected AbstractPmdViolationCheckMojo( ExcludeFromFile<D> excludeFromFile )
+    {
+        this.excludeFromFile = excludeFromFile;
+    }
+
     /**
      * The project to analyze.
      */
@@ -112,7 +124,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
             return;
         }
 
-        loadExcludeFromFailuresData( excludeFromFailureFile );
+        excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
         final File outputFile = new File( targetDirectory, filename );
 
         if ( outputFile.exists() )
@@ -162,9 +174,6 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         }
     }
 
-    protected abstract void loadExcludeFromFailuresData( String excludeFromFailureFile )
-        throws MojoExecutionException;
-
     /**
      * Method for collecting the violations found by the PMD tool
      *
@@ -185,7 +194,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
         for ( final D violation : violations )
         {
             final int priority = getPriority( violation );
-            if ( priority <= failurePriority && !isExcludedFromFailure( violation ) )
+            if ( priority <= failurePriority && !excludeFromFile.isExcludedFromFailure( violation ) )
             {
                 failures.add( violation );
                 if ( printFailingErrors )
@@ -206,8 +215,6 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     }
 
     protected abstract int getPriority( D errorDetail );
-
-    protected abstract boolean isExcludedFromFailure( D errorDetail );
 
     protected abstract ViolationDetails<D> newViolationDetailsInstance();
 
