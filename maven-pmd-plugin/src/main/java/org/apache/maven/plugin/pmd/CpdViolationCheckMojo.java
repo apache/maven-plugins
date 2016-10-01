@@ -47,6 +47,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class CpdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Duplication>
 {
+    /**
+     * Default constructor. Initializes with the correct {@link ExcludeDuplicationsFromFile}.
+     */
+    public CpdViolationCheckMojo()
+    {
+        super( new ExcludeDuplicationsFromFile() );
+    }
 
     /**
      * Skip the CPD violation checks. Most useful on the command line via "-Dcpd.skip=true".
@@ -61,9 +68,6 @@ public class CpdViolationCheckMojo
      */
     @Parameter( property = "cpd.failOnViolation", defaultValue = "true", required = true )
     protected boolean failOnViolation;
-
-    /** Helper to exclude duplications from the result. */
-    private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
 
     /**
      * {@inheritDoc}
@@ -113,19 +117,6 @@ public class CpdViolationCheckMojo
         CpdXpp3Reader reader = new CpdXpp3Reader();
         CpdErrorDetail details = reader.read( new FileReader( cpdFile ), false );
         return details.getDuplications();
-    }
-
-    @Override
-    protected boolean isExcludedFromFailure( final Duplication errorDetail )
-    {
-        return excludeDuplicationsFromFile.isExcludedFromFailure( errorDetail );
-    }
-
-    @Override
-    protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
-        throws MojoExecutionException
-    {
-        excludeDuplicationsFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
     }
 
     @Override

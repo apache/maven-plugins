@@ -50,6 +50,14 @@ public class PmdViolationCheckMojo
     extends AbstractPmdViolationCheckMojo<Violation>
 {
     /**
+     * Default constructor. Initializes with the correct {@link ExcludeViolationsFromFile}.
+     */
+    public PmdViolationCheckMojo()
+    {
+        super( new ExcludeViolationsFromFile() );
+    }
+
+    /**
      * What priority level to fail the build on. Failures at or above this level will stop the build. Anything below
      * will be warnings and will be displayed in the build output if verbose=true. Note: Minimum Priority = 5 Maximum
      * Priority = 0
@@ -63,9 +71,6 @@ public class PmdViolationCheckMojo
     @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
-    /** Helper to exclude violations from the result. */
-    private final ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
-
     /**
      * {@inheritDoc}
      */
@@ -76,19 +81,6 @@ public class PmdViolationCheckMojo
         {
             executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
         }
-    }
-
-    @Override
-    protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
-        throws MojoExecutionException
-    {
-        excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
-    }
-
-    @Override
-    protected boolean isExcludedFromFailure( final Violation errorDetail )
-    {
-        return excludeFromFile.isExcludedFromFailure( errorDetail );
     }
 
     /**
