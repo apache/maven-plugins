@@ -128,7 +128,7 @@ public abstract class AbstractPmdReport
     /**
      * Specifies the location of the source directories to be used for PMD.
      * Defaults to <code>project.compileSourceRoots</code>.
-     * @since 3.5
+     * @since 3.7
      */
     @Parameter( defaultValue = "${project.compileSourceRoots}" )
     private List<String> compileSourceRoots;
@@ -136,7 +136,7 @@ public abstract class AbstractPmdReport
     /**
      * The directories containing the test-sources to be used for PMD.
      * Defaults to <code>project.testCompileSourceRoots</code>
-     * @since 3.5
+     * @since 3.7
      */
     @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
     private List<String> testSourceRoots;
