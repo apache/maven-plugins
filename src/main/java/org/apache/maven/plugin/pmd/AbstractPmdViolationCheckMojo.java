@@ -83,8 +83,10 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     private boolean printFailingErrors;
 
     /**
-     * File that lists classes and rules to be excluded from failures For PMD, this is a properties file For CPD, this
-     * is a text file that contains comma-separated lists of classes that are allowed to duplicate
+     * File that lists classes and rules to be excluded from failures.
+     * For PMD, this is a properties file. For CPD, this
+     * is a text file that contains comma-separated lists of classes
+     * that are allowed to duplicate.
      *
      * @since 3.0
      */

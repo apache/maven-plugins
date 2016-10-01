@@ -20,6 +20,7 @@ package org.apache.maven.plugin.pmd;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,10 +29,16 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
@@ -40,6 +47,7 @@ import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetReferenceId;
+import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.benchmark.Benchmarker;
 import net.sourceforge.pmd.benchmark.TextReport;
 import net.sourceforge.pmd.lang.LanguageRegistry;
@@ -53,6 +61,7 @@ import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -63,6 +72,7 @@ import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -297,6 +307,18 @@ public class PmdReport
             return;
         }
 
+        if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
+        {
+            try
+            {
+                loadExcludeFromFailuresData( excludeFromFailureFile );
+            }
+            catch ( MojoExecutionException e )
+            {
+                throw new MavenReportException( "Unable to load exclusions", e );
+            }
+        }
+
         // configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
@@ -383,6 +405,16 @@ public class PmdReport
             }
             getLog().warn( "There are " + renderer.getErrors().size() + " PMD processing errors:" );
             getLog().warn( renderer.getErrorsAsString() );
+        }
+
+        Iterator<RuleViolation> violationIt = renderer.getViolations().iterator();
+        while ( violationIt.hasNext() )
+        {
+            RuleViolation rv = violationIt.next();
+            if ( isExcludedFromFailure( rv ) )
+            {
+                violationIt.remove();
+            }
         }
 
         // if format is XML, we need to output it even if the file list is empty or we have no violations
@@ -643,6 +675,78 @@ public class PmdReport
         }
 
         return renderer;
+    }
+
+    private final Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
+
+    protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
+        throws MojoExecutionException
+    {
+        File file = new File( excludeFromFailureFile );
+        if ( !file.exists() )
+        {
+            return;
+        }
+        final Properties props = new Properties();
+        FileInputStream fileInputStream = null;
+        try
+        {
+            fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) );
+            props.load( fileInputStream );
+            fileInputStream.close();
+            fileInputStream = null;
+        }
+        catch ( final IOException e )
+        {
+            throw new MojoExecutionException( "Cannot load properties file " + excludeFromFailureFile, e );
+        }
+        finally
+        {
+            IOUtil.close( fileInputStream );
+        }
+        for ( final Entry<Object, Object> propEntry : props.entrySet() )
+        {
+            final Set<String> excludedRuleSet = new HashSet<>();
+            final String className = propEntry.getKey().toString();
+            final String[] excludedRules = propEntry.getValue().toString().split( "," );
+            for ( final String excludedRule : excludedRules )
+            {
+                excludedRuleSet.add( excludedRule.trim() );
+            }
+            excludeFromFailureClasses.put( className, excludedRuleSet );
+        }
+    }
+
+    protected boolean isExcludedFromFailure( final RuleViolation errorDetail )
+    {
+        final String className = extractClassName( errorDetail );
+        final Set<String> excludedRuleSet = excludeFromFailureClasses.get( className );
+        return excludedRuleSet != null && excludedRuleSet.contains( errorDetail.getRule().getName() );
+    }
+
+    private String extractClassName( final RuleViolation errorDetail )
+    {
+        // for some reason, some violations don't contain the package name, so we have to guess the full class name
+        // this looks like a bug in PMD - at least for UnusedImport rule.
+        if ( StringUtils.isNotEmpty( errorDetail.getPackageName() )
+                && StringUtils.isNotEmpty( errorDetail.getClassName() ) )
+        {
+            return errorDetail.getPackageName() + "." + errorDetail.getClassName();
+        }
+        else if ( StringUtils.isNotEmpty( errorDetail.getPackageName() ) )
+        {
+            String fileName = errorDetail.getFilename();
+            fileName = fileName.substring( fileName.lastIndexOf( File.separatorChar ) + 1 );
+            fileName = fileName.substring( 0, fileName.length() - 5 );
+            return errorDetail.getPackageName() + "." + fileName;
+        }
+        else
+        {
+            final String fileName = errorDetail.getFilename();
+            final int javaIdx = fileName.indexOf( File.separator + "java" + File.separator );
+            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 ).replace(
+                File.separatorChar, '.' );
+        }
     }
 
 }

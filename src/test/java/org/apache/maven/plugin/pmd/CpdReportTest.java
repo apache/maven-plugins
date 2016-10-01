@@ -37,6 +37,7 @@ import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.TokenEntry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.w3c.dom.Document;
 
@@ -302,6 +303,22 @@ public class CpdReportTest
             String str = readFile( generatedFile );
             assertTrue( lowerCaseContains( str, "sample.jsp" ) );
             assertTrue( lowerCaseContains( str, "sampleDup.jsp" ) );
+    }
+
+    public void testExclusionsConfiguration()
+            throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml" );
+        final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        mojo.execute();
+
+        // verify  the generated file to exist and no duplications are reported
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( generatedFile );
+        assertEquals( 0, StringUtils.countMatches( str, "<duplication" ) );
     }
 
     public static class MockCpd

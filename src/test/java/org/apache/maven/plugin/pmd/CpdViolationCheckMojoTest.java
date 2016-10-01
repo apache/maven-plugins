@@ -106,10 +106,10 @@ public class CpdViolationCheckMojoTest
 
         testPom =
             new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/pmd-check-cpd-exclusions-configuration-plugin-config.xml" );
+                      "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml" );
         final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
-        cpdViolationMojo.execute();
 
-        assertTrue( true );
+        // this call shouldn't throw an exception, as the classes with duplications have been excluded
+        cpdViolationMojo.execute();
     }
 }
