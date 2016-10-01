@@ -29,10 +29,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.pmd.model.Violation;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.RuleViolation;
 
@@ -56,6 +56,11 @@ public class ExcludeViolationsFromFile
     public void loadExcludeFromFailuresData( final String excludeFromFailureFile )
         throws MojoExecutionException
     {
+        if ( StringUtils.isEmpty( excludeFromFailureFile ) )
+        {
+            return;
+        }
+
         File file = new File( excludeFromFailureFile );
         if ( !file.exists() )
         {
@@ -117,6 +122,20 @@ public class ExcludeViolationsFromFile
         final String className = extractClassName( errorDetail.getPackageName(), errorDetail.getClassName(),
                 errorDetail.getFilename() );
         return isExcludedFromFailure( className, errorDetail.getRule().getName() );
+    }
+
+    /**
+     * Determines how many exclusions are considered.
+     * @return the number of active exclusions
+     */
+    public int countExclusions()
+    {
+        int result = 0;
+        for ( Set<String> rules : excludeFromFailureClasses.values() )
+        {
+            result += rules.size();
+        }
+        return result;
     }
 
     private boolean isExcludedFromFailure( String className, String ruleName )

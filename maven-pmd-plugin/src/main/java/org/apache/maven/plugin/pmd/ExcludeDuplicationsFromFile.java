@@ -153,4 +153,13 @@ public class ExcludeDuplicationsFromFile
         }
         return result;
     }
+
+    /**
+     * Determines how many exclusions are considered.
+     * @return the number of active exclusions
+     */
+    public int countExclusions()
+    {
+        return exclusionList.size();
+    }
 }
