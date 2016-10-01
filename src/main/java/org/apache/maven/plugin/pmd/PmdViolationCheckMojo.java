@@ -63,6 +63,7 @@ public class PmdViolationCheckMojo
     @Parameter( property = "pmd.skip", defaultValue = "false" )
     private boolean skip;
 
+    /** Helper to exclude violations from the result. */
     private final ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
 
     /**

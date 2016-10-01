@@ -29,7 +29,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -113,10 +112,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
             return;
         }
 
-        if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
-        {
-            loadExcludeFromFailuresData( excludeFromFailureFile );
-        }
+        loadExcludeFromFailuresData( excludeFromFailureFile );
         final File outputFile = new File( targetDirectory, filename );
 
         if ( outputFile.exists() )

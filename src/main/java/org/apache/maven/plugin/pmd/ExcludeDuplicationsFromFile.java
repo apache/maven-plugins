@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.pmd.model.CpdFile;
 import org.apache.maven.plugin.pmd.model.Duplication;
@@ -41,18 +42,12 @@ import net.sourceforge.pmd.cpd.Match;
  *
  * @author Andreas Dangel
  */
-public class ExcludeDuplicationsFromFile
+public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
 {
 
     private final List<Set<String>> exclusionList = new ArrayList<>();
 
-    /**
-     * Checks whether the given {@link Duplication} is excluded.
-     * Note: The exclusion must have been loaded before via {@link #loadExcludeFromFailuresData(String)}.
-     * 
-     * @param errorDetail the duplication to check
-     * @return <code>true</code> if the given duplication should be excluded, <code>false</code> otherwise.
-     */
+    @Override
     public boolean isExcludedFromFailure( final Duplication errorDetail )
     {
         final Set<String> uniquePaths = new HashSet<>();
@@ -118,15 +113,15 @@ public class ExcludeDuplicationsFromFile
         return false;
     }
 
-    /**
-     * Loads the CPD exclusions from the given file.
-     *
-     * @param excludeFromFailureFile the file to load the exclusions from
-     * @throws MojoExecutionException if the file couldn't be loaded
-     */
+    @Override
     public void loadExcludeFromFailuresData( final String excludeFromFailureFile )
             throws MojoExecutionException
     {
+        if ( StringUtils.isEmpty( excludeFromFailureFile ) )
+        {
+            return;
+        }
+
         try ( LineNumberReader reader = new LineNumberReader( new FileReader( excludeFromFailureFile ) ) )
         {
             String line;
@@ -154,10 +149,7 @@ public class ExcludeDuplicationsFromFile
         return result;
     }
 
-    /**
-     * Determines how many exclusions are considered.
-     * @return the number of active exclusions
-     */
+    @Override
     public int countExclusions()
     {
         return exclusionList.size();
