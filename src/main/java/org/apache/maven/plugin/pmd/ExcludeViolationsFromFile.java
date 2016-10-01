@@ -1,0 +1,151 @@
+package org.apache.maven.plugin.pmd;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.pmd.model.Violation;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+
+import net.sourceforge.pmd.RuleViolation;
+
+/**
+ * This class contains utility for loading property files, which define which PMD violations
+ * from which classes should be ignored and not cause a failure.
+ * See property <code>pmd.excludeFromFailureFile</code>.
+ *
+ * @author Andreas Dangel
+ */
+public class ExcludeViolationsFromFile
+{
+    private Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
+    
+    /**
+     * Loads the exclude definitions from the given file.
+     *
+     * @param excludeFromFailureFile the path to the properties file
+     * @throws MojoExecutionException if the properties file couldn't be loaded
+     */
+    public void loadExcludeFromFailuresData( final String excludeFromFailureFile )
+        throws MojoExecutionException
+    {
+        File file = new File( excludeFromFailureFile );
+        if ( !file.exists() )
+        {
+            return;
+        }
+        final Properties props = new Properties();
+        FileInputStream fileInputStream = null;
+        try
+        {
+            fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) );
+            props.load( fileInputStream );
+            fileInputStream.close();
+            fileInputStream = null;
+        }
+        catch ( final IOException e )
+        {
+            throw new MojoExecutionException( "Cannot load properties file " + excludeFromFailureFile, e );
+        }
+        finally
+        {
+            IOUtil.close( fileInputStream );
+        }
+        for ( final Entry<Object, Object> propEntry : props.entrySet() )
+        {
+            final Set<String> excludedRuleSet = new HashSet<>();
+            final String className = propEntry.getKey().toString();
+            final String[] excludedRules = propEntry.getValue().toString().split( "," );
+            for ( final String excludedRule : excludedRules )
+            {
+                excludedRuleSet.add( excludedRule.trim() );
+            }
+            excludeFromFailureClasses.put( className, excludedRuleSet );
+        }
+    }
+
+    /**
+     * Checks whether the given {@link Violation} is excluded. Note: the exclusions must have been
+     * loaded before via {@link #loadExcludeFromFailuresData(String)}.
+     *
+     * @param errorDetail the violation to check
+     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
+     */
+    public boolean isExcludedFromFailure( final Violation errorDetail )
+    {
+        final String className = extractClassName( errorDetail.getViolationPackage(), errorDetail.getViolationClass(),
+                errorDetail.getFileName() );
+        return isExcludedFromFailure( className, errorDetail.getRule() );
+    }
+
+    /**
+     * Checks whether the given {@link RuleViolation} is excluded. Note: the exclusions must have been
+     * loaded before via {@link #loadExcludeFromFailuresData(String)}.
+     *
+     * @param errorDetail the violation to check
+     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
+     */
+    public boolean isExcludedFromFailure( final RuleViolation errorDetail )
+    {
+        final String className = extractClassName( errorDetail.getPackageName(), errorDetail.getClassName(),
+                errorDetail.getFilename() );
+        return isExcludedFromFailure( className, errorDetail.getRule().getName() );
+    }
+
+    private boolean isExcludedFromFailure( String className, String ruleName )
+    {
+        final Set<String> excludedRuleSet = excludeFromFailureClasses.get( className );
+        return excludedRuleSet != null && excludedRuleSet.contains( ruleName );
+    }
+
+    private String extractClassName( String packageName, String className, String fullPath )
+    {
+        // for some reason, some violations don't contain the package name, so we have to guess the full class name
+        // this looks like a bug in PMD - at least for UnusedImport rule.
+        if ( StringUtils.isNotEmpty( packageName ) && StringUtils.isNotEmpty( className ) )
+        {
+            return packageName + "." + className;
+        }
+        else if ( StringUtils.isNotEmpty( packageName ) )
+        {
+            String fileName = fullPath;
+            fileName = fileName.substring( fileName.lastIndexOf( File.separatorChar ) + 1 );
+            fileName = fileName.substring( 0, fileName.length() - 5 );
+            return packageName + "." + fileName;
+        }
+        else
+        {
+            final String fileName = fullPath;
+            final int javaIdx = fileName.indexOf( File.separator + "java" + File.separator );
+            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 ).replace(
+                File.separatorChar, '.' );
+        }
+    }
+}

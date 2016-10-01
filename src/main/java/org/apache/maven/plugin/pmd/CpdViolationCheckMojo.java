@@ -22,11 +22,7 @@ package org.apache.maven.plugin.pmd;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -57,8 +53,6 @@ public class CpdViolationCheckMojo
      */
     @Parameter( property = "cpd.skip", defaultValue = "false" )
     private boolean skip;
-
-    private final List<Set<String>> exclusionList = new ArrayList<>();
 
     /**
      * Whether to fail the build if the validation check fails.
@@ -118,76 +112,18 @@ public class CpdViolationCheckMojo
         return details.getDuplications();
     }
 
+    private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
     @Override
     protected boolean isExcludedFromFailure( final Duplication errorDetail )
     {
-        final Set<String> uniquePaths = new HashSet<>();
-        for ( final CpdFile cpdFile : errorDetail.getFiles() )
-        {
-            uniquePaths.add( cpdFile.getPath() );
-        }
-        for ( final Set<String> singleExclusionGroup : exclusionList )
-        {
-            if ( uniquePaths.size() == singleExclusionGroup.size()
-                && duplicationExcludedByGroup( uniquePaths, singleExclusionGroup ) )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean duplicationExcludedByGroup( final Set<String> uniquePaths, final Set<String> singleExclusionGroup )
-    {
-        for ( final String path : uniquePaths )
-        {
-            if ( !fileExcludedByGroup( path, singleExclusionGroup ) )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean fileExcludedByGroup( final String path, final Set<String> singleExclusionGroup )
-    {
-        final String formattedPath = path.replace( '\\', '.' ).replace( '/', '.' );
-        for ( final String className : singleExclusionGroup )
-        {
-            if ( formattedPath.contains( className ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return excludeDuplicationsFromFile.isExcludedFromFailure( errorDetail );
     }
 
     @Override
     protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
         throws MojoExecutionException
     {
-        try ( LineNumberReader reader = new LineNumberReader( new FileReader( excludeFromFailureFile ) ) )
-        {
-            String line;
-            while ( ( line = reader.readLine() ) != null )
-            {
-                exclusionList.add( createSetFromExclusionLine( line ) );
-            }
-        }
-        catch ( final IOException e )
-        {
-            throw new MojoExecutionException( "Cannot load file " + excludeFromFailureFile, e );
-        }
-    }
-
-    private Set<String> createSetFromExclusionLine( final String line )
-    {
-        final Set<String> result = new HashSet<>();
-        for ( final String className : line.split( "," ) )
-        {
-            result.add( className.trim() );
-        }
-        return result;
+        excludeDuplicationsFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
     }
 
     @Override
