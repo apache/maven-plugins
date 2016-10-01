@@ -62,6 +62,9 @@ public class CpdViolationCheckMojo
     @Parameter( property = "cpd.failOnViolation", defaultValue = "true", required = true )
     protected boolean failOnViolation;
 
+    /** Helper to exclude duplications from the result. */
+    private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
+
     /**
      * {@inheritDoc}
      */
@@ -112,7 +115,6 @@ public class CpdViolationCheckMojo
         return details.getDuplications();
     }
 
-    private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
     @Override
     protected boolean isExcludedFromFailure( final Duplication errorDetail )
     {

@@ -43,16 +43,11 @@ import net.sourceforge.pmd.RuleViolation;
  *
  * @author Andreas Dangel
  */
-public class ExcludeViolationsFromFile
+public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation>
 {
     private Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
-    
-    /**
-     * Loads the exclude definitions from the given file.
-     *
-     * @param excludeFromFailureFile the path to the properties file
-     * @throws MojoExecutionException if the properties file couldn't be loaded
-     */
+
+    @Override
     public void loadExcludeFromFailuresData( final String excludeFromFailureFile )
         throws MojoExecutionException
     {
@@ -96,13 +91,7 @@ public class ExcludeViolationsFromFile
         }
     }
 
-    /**
-     * Checks whether the given {@link Violation} is excluded. Note: the exclusions must have been
-     * loaded before via {@link #loadExcludeFromFailuresData(String)}.
-     *
-     * @param errorDetail the violation to check
-     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
-     */
+    @Override
     public boolean isExcludedFromFailure( final Violation errorDetail )
     {
         final String className = extractClassName( errorDetail.getViolationPackage(), errorDetail.getViolationClass(),
@@ -124,10 +113,7 @@ public class ExcludeViolationsFromFile
         return isExcludedFromFailure( className, errorDetail.getRule().getName() );
     }
 
-    /**
-     * Determines how many exclusions are considered.
-     * @return the number of active exclusions
-     */
+    @Override
     public int countExclusions()
     {
         int result = 0;
