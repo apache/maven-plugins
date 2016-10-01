@@ -65,3 +65,7 @@ Analyzing JavaScript Code
   ...
 </project>
 +-----+
+
+ <<Note:>> Configuring <<<compileSourceRoots>>> only works with Maven 3.3.9 and later. For older versions,
+ you'll need to use <build-helper-maven-plugin> with the <<<add-source>>> goal in order to add
+ the additional source directories, so that PMD finds the JavaScript files.
