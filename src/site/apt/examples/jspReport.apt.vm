@@ -33,36 +33,12 @@ Analyzing JSP Code
   The example assumes that the JSP source code is stored in various subdirectories under the source directory
   <<<src/main/webapp>>> and enables the built-in JSP ruleset (<basic>).
 
- Note that you have to make sure that the build-helper-maven-plugin is executed, so that the additional source
- directory is actually added. To generate the site report, you can include e.g. the <generate-sources> phase:
-
- <<<mvn generate-sources site>>>
+ Note that you have to make sure that you configure <<<compileSourceRoots>>> and <<<includes>>>, so that
+ PMD finds the JSP files.
 
 +-----+
 <project>
   ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
-        <configuration>
-          <sources>
-            <source>${basedir}/src/main/webapp</source>
-          </sources>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
   <reporting>
     <plugins>
       <plugin>
@@ -77,6 +53,9 @@ Analyzing JSP Code
           <includes>
             <include>**/*.jsp</include>
           </includes>
+          <compileSourceRoots>
+            <compileSourceRoot>${basedir}/src/main/webapp</compileSourceRoot>
+          </compileSourceRoots>
         </configuration>
       </plugin>
     </plugins>

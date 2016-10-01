@@ -126,13 +126,17 @@ public abstract class AbstractPmdReport
     private List<String> includes;
 
     /**
-     * The directories containing the sources to be compiled.
+     * Specifies the location of the source directories to be used for PMD.
+     * Defaults to <code>project.compileSourceRoots</code>.
+     * @since 3.5
      */
     @Parameter( defaultValue = "${project.compileSourceRoots}" )
     private List<String> compileSourceRoots;
 
     /**
-     * The directories containing the test-sources to be compiled.
+     * The directories containing the test-sources to be used for PMD.
+     * Defaults to <code>project.testCompileSourceRoots</code>
+     * @since 3.5
      */
     @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
     private List<String> testSourceRoots;
@@ -306,6 +310,10 @@ public abstract class AbstractPmdReport
 
         List<PmdFileInfo> directories = new ArrayList<>();
 
+        if ( null == compileSourceRoots )
+        {
+            compileSourceRoots = project.getCompileSourceRoots();
+        }
         if ( compileSourceRoots != null )
         {
             for ( String root : compileSourceRoots )
@@ -317,7 +325,11 @@ public abstract class AbstractPmdReport
                     directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
                 }
             }
+        }
 
+        if ( null == testSourceRoots )
+        {
+            testSourceRoots = project.getTestCompileSourceRoots();
         }
         if ( includeTests )
         {
