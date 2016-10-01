@@ -200,6 +200,18 @@ public abstract class AbstractPmdReport
     @Parameter( defaultValue = "true" )
     protected boolean skipEmptyReport;
 
+    /**
+     * File that lists classes and rules to be excluded from failures.
+     * For PMD, this is a properties file. For CPD, this
+     * is a text file that contains comma-separated lists of classes
+     * that are allowed to duplicate.
+     *
+     * @since 3.7
+     */
+    @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
+    protected String excludeFromFailureFile;
+
+
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
 

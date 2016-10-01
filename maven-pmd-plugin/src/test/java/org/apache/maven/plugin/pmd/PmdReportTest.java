@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -457,4 +458,20 @@ public class PmdReportTest
         assertFalse( "Exclusion of an exact source directory not working", str.contains( "OverrideBothEqualsAndHashcode" ) );
         assertFalse( "Exclusion of basedirectory with subdirectories not working (MPMD-178)", str.contains( "JumbledIncrementer") );
     }
+
+    public void testViolationExclusion()
+            throws Exception
+        {
+            File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/default-configuration/pmd-report-pmd-exclusions-configuration-plugin-config.xml" );
+            final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+            mojo.execute();
+
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            String str = readFile( generatedFile );
+
+            assertEquals(0, StringUtils.countMatches(str, "<violation"));
+        }
 }

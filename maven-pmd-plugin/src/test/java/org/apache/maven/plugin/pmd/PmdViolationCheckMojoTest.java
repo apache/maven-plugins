@@ -151,8 +151,8 @@ public class PmdViolationCheckMojoTest
             new File( getBasedir(),
                       "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml" );
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
-        pmdViolationMojo.execute();
 
-        assertTrue( true );
+        // this call shouldn't throw an exception, as the classes with violations have been excluded
+        pmdViolationMojo.execute();
     }
 }
