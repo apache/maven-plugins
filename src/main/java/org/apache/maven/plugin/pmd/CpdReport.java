@@ -110,6 +110,9 @@ public class CpdReport
     /** The CPD instance used to analyze the files. Will itself collect the duplicated code matches. */
     private CPD cpd;
 
+    /** Helper to exclude duplications from the result. */
+    private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
+
     /**
      * {@inheritDoc}
      */
@@ -244,16 +247,13 @@ public class CpdReport
                 filesToProcess = getFilesToProcess();
             }
 
-            if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
+            try
             {
-                try
-                {
-                    loadExcludeFromFailuresData( excludeFromFailureFile );
-                }
-                catch ( MojoExecutionException e )
-                {
-                    throw new MavenReportException( "Error loading exclusions", e );
-                }
+                excludeDuplicationsFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
+            }
+            catch ( MojoExecutionException e )
+            {
+                throw new MavenReportException( "Error loading exclusions", e );
             }
 
             String encoding = determineEncoding( !filesToProcess.isEmpty() );
@@ -309,15 +309,25 @@ public class CpdReport
 
     private Iterator<Match> filterMatches( Iterator<Match> matches )
     {
+        getLog().debug( "Filtering duplications. Using " + excludeDuplicationsFromFile.countExclusions()
+            + " configured exclusions." );
+
         List<Match> filteredMatches = new ArrayList<>();
+        int excludedDuplications = 0;
         while ( matches.hasNext() )
         {
             Match match = matches.next();
-            if ( !isExcludedFromFailure( match ) )
+            if ( excludeDuplicationsFromFile.isExcludedFromFailure( match ) )
+            {
+                excludedDuplications++;
+            }
+            else
             {
                 filteredMatches.add( match );
             }
         }
+
+        getLog().debug( "Excluded " + excludedDuplications + " duplications." );
         return filteredMatches.iterator();
     }
 
@@ -424,20 +434,5 @@ public class CpdReport
         }
 
         return renderer;
-    }
-
-
-
-
-    private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
-    protected boolean isExcludedFromFailure( final Match errorDetail )
-    {
-        return excludeDuplicationsFromFile.isExcludedFromFailure( errorDetail );
-    }
-
-    protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
-        throws MojoExecutionException
-    {
-        excludeDuplicationsFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
     }
 }

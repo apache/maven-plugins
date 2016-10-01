@@ -170,6 +170,9 @@ public class PmdReport
     /** The PMD renderer for collecting violations. */
     private PmdCollectingRenderer renderer;
 
+    /** Helper to exclude violations given as a properties file. */
+    private final ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
+
     /**
      * per default pmd executions error are ignored to not break the whole
      *
@@ -300,16 +303,13 @@ public class PmdReport
             return;
         }
 
-        if ( !StringUtils.isEmpty( excludeFromFailureFile ) )
+        try
         {
-            try
-            {
-                loadExcludeFromFailuresData( excludeFromFailureFile );
-            }
-            catch ( MojoExecutionException e )
-            {
-                throw new MavenReportException( "Unable to load exclusions", e );
-            }
+            excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
+        }
+        catch ( MojoExecutionException e )
+        {
+            throw new MavenReportException( "Unable to load exclusions", e );
         }
 
         // configure ResourceManager
@@ -400,15 +400,7 @@ public class PmdReport
             getLog().warn( renderer.getErrorsAsString() );
         }
 
-        Iterator<RuleViolation> violationIt = renderer.getViolations().iterator();
-        while ( violationIt.hasNext() )
-        {
-            RuleViolation rv = violationIt.next();
-            if ( isExcludedFromFailure( rv ) )
-            {
-                violationIt.remove();
-            }
-        }
+        removeExcludedViolations( renderer.getViolations() );
 
         // if format is XML, we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
@@ -428,6 +420,26 @@ public class PmdReport
                 getLog().error( "Unable to generate benchmark file: " + benchmarkOutputFilename, fnfe );
             }
         }
+    }
+
+    private void removeExcludedViolations( List<RuleViolation> violations )
+    {
+        getLog().debug( "Removing excluded violations. Using " + excludeFromFile.countExclusions()
+            + " configured exclusions." );
+        int violationsBefore = violations.size();
+
+        Iterator<RuleViolation> iterator = violations.iterator();
+        while ( iterator.hasNext() )
+        {
+            RuleViolation rv = iterator.next();
+            if ( excludeFromFile.isExcludedFromFailure( rv ) )
+            {
+                iterator.remove();
+            }
+        }
+
+        int numberOfExcludedViolations = violationsBefore - violations.size();
+        getLog().debug( "Excluded " + numberOfExcludedViolations + " violations." );
     }
 
     private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources )
@@ -636,28 +648,28 @@ public class PmdReport
     public final Renderer createRenderer()
         throws MavenReportException
     {
-        Renderer renderer = null;
+        Renderer result = null;
         if ( "xml".equals( format ) )
         {
-            renderer = new XMLRenderer( getOutputEncoding() );
+            result = new XMLRenderer( getOutputEncoding() );
         }
         else if ( "txt".equals( format ) )
         {
-            renderer = new TextRenderer();
+            result = new TextRenderer();
         }
         else if ( "csv".equals( format ) )
         {
-            renderer = new CSVRenderer();
+            result = new CSVRenderer();
         }
         else if ( "html".equals( format ) )
         {
-            renderer = new HTMLRenderer();
+            result = new HTMLRenderer();
         }
         else if ( !"".equals( format ) && !"none".equals( format ) )
         {
             try
             {
-                renderer = (Renderer) Class.forName( format ).getConstructor( Properties.class ).
+                result = (Renderer) Class.forName( format ).getConstructor( Properties.class ).
                                 newInstance( new Properties() );
             }
             catch ( Exception e )
@@ -667,19 +679,6 @@ public class PmdReport
             }
         }
 
-        return renderer;
-    }
-
-    private final ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
-
-    protected void loadExcludeFromFailuresData( final String excludeFromFailureFile )
-        throws MojoExecutionException
-    {
-        excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
-    }
-
-    protected boolean isExcludedFromFailure( final RuleViolation errorDetail )
-    {
-        return excludeFromFile.isExcludedFromFailure( errorDetail );
+        return result;
     }
 }
