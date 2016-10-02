@@ -117,8 +117,7 @@ public class PmdViolationCheckMojo
     protected List<Violation> getErrorDetails( File pmdFile )
         throws XmlPullParserException, IOException
     {
-        final FileReader reader1 = new FileReader( pmdFile );
-        try
+        try ( FileReader reader1 = new FileReader( pmdFile ) )
         {
             PmdXpp3Reader reader = new PmdXpp3Reader();
             PmdErrorDetail details = reader.read( reader1, false );
@@ -135,10 +134,6 @@ public class PmdViolationCheckMojo
                 }
             }
             return violations;
-        }
-        finally
-        {
-            reader1.close();
         }
     }
 

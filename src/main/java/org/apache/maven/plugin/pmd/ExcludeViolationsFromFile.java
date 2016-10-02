@@ -32,7 +32,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.pmd.model.Violation;
-import org.codehaus.plexus.util.IOUtil;
 
 import net.sourceforge.pmd.RuleViolation;
 
@@ -62,21 +61,13 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation>
             return;
         }
         final Properties props = new Properties();
-        FileInputStream fileInputStream = null;
-        try
+        try ( FileInputStream fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) ) )
         {
-            fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) );
             props.load( fileInputStream );
-            fileInputStream.close();
-            fileInputStream = null;
         }
         catch ( final IOException e )
         {
             throw new MojoExecutionException( "Cannot load properties file " + excludeFromFailureFile, e );
-        }
-        finally
-        {
-            IOUtil.close( fileInputStream );
         }
         for ( final Entry<Object, Object> propEntry : props.entrySet() )
         {

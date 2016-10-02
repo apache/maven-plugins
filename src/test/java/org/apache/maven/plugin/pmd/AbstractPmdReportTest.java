@@ -29,7 +29,6 @@ import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
@@ -51,25 +50,16 @@ public abstract class AbstractPmdReportTest
     protected void renderer( AbstractPmdReport mojo, File outputHtml )
         throws RendererException, IOException
     {
-        Writer writer = null;
         SiteRenderingContext context = new SiteRenderingContext();
         context.setDecoration( new DecorationModel() );
         context.setTemplateName( "org/apache/maven/doxia/siterenderer/resources/default-site.vm" );
         context.setLocale( Locale.ENGLISH );
+        
+        outputHtml.getParentFile().mkdirs();
 
-        try
+        try ( Writer writer = WriterFactory.newXmlWriter( outputHtml ) )
         {
-            outputHtml.getParentFile().mkdirs();
-            writer = WriterFactory.newXmlWriter( outputHtml );
-
             mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(), context );
-
-            writer.close();
-            writer = null;
-        }
-        finally
-        {
-            IOUtil.close( writer );
         }
     }
 
