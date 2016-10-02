@@ -261,6 +261,10 @@ public class ChangesReportGenerator
         // no null check needed classes from modello return a new ArrayList
         if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )
         {
+            if ( StringUtils.isNotEmpty( action.getAction() ) )
+            {
+                sink.text( "." );
+            }
             sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
             // Try to get the issue management system specified in the changes.xml file
