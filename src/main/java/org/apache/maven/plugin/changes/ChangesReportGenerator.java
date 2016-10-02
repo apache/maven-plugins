@@ -249,18 +249,24 @@ public class ChangesReportGenerator
 
         sink.tableCell();
 
+        String actionDescription = action.getAction();
+
         if ( escapeHTML )
         {
-            sink.text( action.getAction() );
+            sink.text( actionDescription );
         }
         else
         {
-            sink.rawText( action.getAction() );
+            sink.rawText( actionDescription );
         }
 
         // no null check needed classes from modello return a new ArrayList
         if ( StringUtils.isNotEmpty( action.getIssue() ) || ( !action.getFixedIssues().isEmpty() ) )
         {
+            if ( StringUtils.isNotBlank( actionDescription ) && !actionDescription.endsWith( "." ) )
+            {
+                sink.text( "." );
+            }
             sink.text( " " + bundle.getString( "report.changes.text.fixes" ) + " " );
 
             // Try to get the issue management system specified in the changes.xml file
