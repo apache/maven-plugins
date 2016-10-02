@@ -172,14 +172,14 @@ public class CpdReportTest
     {
         String strTmp;
         StringBuilder str = new StringBuilder( (int) file.length() );
-        BufferedReader in = new BufferedReader( new FileReader( file ) );
-
-        while ( ( strTmp = in.readLine() ) != null )
+        try ( BufferedReader in = new BufferedReader( new FileReader( file ) ) )
         {
-            str.append( ' ' );
-            str.append( strTmp );
+            while ( ( strTmp = in.readLine() ) != null )
+            {
+                str.append( ' ' );
+                str.append( strTmp );
+            }
         }
-        in.close();
 
         return str.toString();
     }

@@ -30,7 +30,6 @@ import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -337,11 +336,8 @@ public class PmdReportTest
     private String readFile( File file )
         throws IOException
     {
-        BufferedReader reader = null;
-        try
+        try ( BufferedReader reader = new BufferedReader( new FileReader( file ) ) )
         {
-            reader = new BufferedReader( new FileReader( file ) );
-
             final StringBuilder str = new StringBuilder( (int) file.length() );
 
             for ( String line = reader.readLine(); line != null; line = reader.readLine() )
@@ -349,15 +345,7 @@ public class PmdReportTest
                 str.append( ' ' );
                 str.append( line );
             }
-
-            reader.close();
-            reader = null;
-
             return str.toString();
-        }
-        finally
-        {
-            IOUtil.close( reader );
         }
     }
 
