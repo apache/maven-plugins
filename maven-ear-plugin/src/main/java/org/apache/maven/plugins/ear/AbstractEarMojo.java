@@ -165,7 +165,7 @@ public abstract class AbstractEarMojo
 
     private List<EarModule> earModules;
 
-    private List<EarModule> allModules;
+    private List<JarModule> allJarModules;
 
     private JbossConfiguration jbossConfiguration;
 
@@ -211,7 +211,7 @@ public abstract class AbstractEarMojo
         }
 
         getLog().debug( "Resolving ear modules ..." );
-        allModules = new ArrayList<EarModule>();
+        List<EarModule> allModules = new ArrayList<EarModule>();
         try
         {
             if ( modules != null && modules.length > 0 )
@@ -240,9 +240,8 @@ public abstract class AbstractEarMojo
                     continue;
                 }
 
-                // Artifact is not yet registered and it has neither test, nor a
-                // provided scope, not is it optional
-                ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+                // Artifact is not yet registered and it has not test scope, nor is it optional
+                ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_COMPILE_PLUS_RUNTIME );
                 if ( !isArtifactRegistered( artifact, allModules ) && !artifact.isOptional()
                     && filter.include( artifact ) )
                 {
@@ -259,6 +258,8 @@ public abstract class AbstractEarMojo
         }
 
         // Now we have everything let's built modules which have not been excluded
+        ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+        allJarModules = new ArrayList<JarModule>();
         earModules = new ArrayList<EarModule>();
         for ( EarModule earModule : allModules )
         {
@@ -268,14 +269,21 @@ public abstract class AbstractEarMojo
             }
             else
             {
-                earModules.add( earModule );
+                if ( earModule instanceof JarModule )
+                {
+                    allJarModules.add( (JarModule) earModule );
+                }
+                if ( filter.include( earModule.getArtifact() ) )
+                {
+                    earModules.add( earModule );
+                }
             }
         }
 
     }
 
     /**
-     * @return The list of {@link #earModules}.
+     * @return The list of {@link #earModules}. This corresponds to modules needed at runtime.
      */
     protected List<EarModule> getModules()
     {
@@ -284,6 +292,18 @@ public abstract class AbstractEarMojo
             throw new IllegalStateException( "Ear modules have not been initialized" );
         }
         return earModules;
+    }
+    
+    /**
+     * @return The list of {@link #allJarModules}. This corresponds to all JAR modules (compile + runtime).
+     */
+    protected List<JarModule> getAllJarModules()
+    {
+        if ( allJarModules == null )
+        {
+            throw new IllegalStateException( "Jar modules have not been initialized" );
+        }
+        return allJarModules;
     }
 
     /**

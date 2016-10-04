@@ -803,32 +803,35 @@ public class EarMojo
                 classPath = new Attribute( "Class-Path", "" );
             }
 
+            // Remove JAR modules
+            for ( JarModule jm : getAllJarModules() )
+            {
+                if ( module.getLibDir() != null )
+                {
+                    // MEAR-189:
+                    // We use the original name, cause in case of fileNameMapping to no-version/full
+                    // we could not not delete it and it will end up in the resulting EAR and the WAR
+                    // will not be cleaned up.
+                    File artifact =
+                        new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
+
+                    if ( artifact.exists() )
+                    {
+                        getLog().debug( " -> Artifact to delete: " + artifact );
+                        if ( !artifact.delete() )
+                        {
+                            getLog().error( "Could not delete '" + artifact + "'" );
+                        }
+                    }
+                }
+            }
+
             // Modify the classpath entries in the manifest
             for ( EarModule o : getModules() )
             {
                 if ( o instanceof JarModule )
                 {
                     JarModule jm = (JarModule) o;
-
-                    if ( module.getLibDir() != null )
-                    {
-                        // MEAR-189:
-                        // We use the original name, cause in case of fileNameMapping to no-version/full
-                        // we could not not delete it and it will end up in the resulting EAR and the WAR
-                        // will not be cleaned up.
-                        File artifact =
-                            new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
-
-                        if ( artifact.exists() )
-                        {
-                            getLog().debug( " -> Artifact to delete: " + artifact );
-                            if ( !artifact.delete() )
-                            {
-                                getLog().error( "Could not delete '" + artifact + "'" );
-                            }
-                        }
-                    }
-
                     if ( classPathElements.contains( jm.getBundleFileName() ) )
                     {
                         classPathElements.set( classPathElements.indexOf( jm.getBundleFileName() ), jm.getUri() );
