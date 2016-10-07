@@ -36,8 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugin.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>false</failOnViolation>
-            <verbose>false</verbose>  
-          <language>java</language>
+          <verbose>false</verbose>
         </configuration>
       </plugin>
     </plugins>
