@@ -54,12 +54,6 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     protected boolean failOnViolation;
 
     /**
-     * The project language, for determining whether to run the report.
-     */
-    @Parameter( property = "project.artifact.artifactHandler.language", required = true, readonly = true )
-    private String language;
-
-    /**
      * Whether to build an aggregated report at the root, or build individual reports.
      *
      * @since 2.2

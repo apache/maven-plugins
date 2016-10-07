@@ -38,7 +38,6 @@ under the License.
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
           <verbose>false</verbose>
-          <language>java</language>
           <printFailingErrors>true</printFailingErrors>
           <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/pmd_exclude.properties</excludeFromFailureFile>
         </configuration>

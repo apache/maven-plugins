@@ -36,9 +36,8 @@ under the License.
            <project implementation="org.apache.maven.plugin.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
            <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
            <failOnViolation>true</failOnViolation>
-           <failurePriority>3</failurePriority>  
-           <verbose>true</verbose>  
-          <language>java</language>
+           <failurePriority>3</failurePriority>
+           <verbose>true</verbose>
         </configuration>
       </plugin>
     </plugins>
