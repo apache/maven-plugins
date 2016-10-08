@@ -21,6 +21,7 @@ package org.apache.maven.plugin.install;
 
 import java.io.File;
 import java.io.Reader;
+import java.util.Map;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
@@ -32,6 +33,7 @@ import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.sonatype.aether.impl.internal.EnhancedLocalRepositoryManager;
+import org.sonatype.aether.util.ChecksumUtils;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 import static org.mockito.Mockito.mock;
@@ -44,8 +46,6 @@ public class InstallFileMojoTest
     extends AbstractMojoTestCase
 {
     private String groupId;
-
-    private String legacyGroupId;
 
     private String artifactId;
 
@@ -272,27 +272,20 @@ public class InstallFileMojoTest
 
         mojo.execute();
 
-        //get the actual checksum of the artifact
-        mojo.digester.calculate( file );
-        String actualMd5Sum = mojo.digester.getMd5();
-        String actualSha1Sum = mojo.digester.getSha1();
-
         String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifactId + "/" + version + "/" +
-            artifactId + "-" + version;
-
+                        artifactId + "-" + version;
+        
         File installedArtifact = new File( localPath + "." + "jar" );
-
-        File md5 = new File( localPath + ".jar.md5" );
-        File sha1 = new File( localPath + ".jar.sha1" );
-
-        assertTrue( md5.exists() );
-        assertTrue( sha1.exists() );
-
-        String generatedMd5 = FileUtils.fileRead( md5, "UTF-8" );
-        String generatedSha1 = FileUtils.fileRead( sha1, "UTF-8" );
-
-        assertEquals( actualMd5Sum, generatedMd5 );
-        assertEquals( actualSha1Sum, generatedSha1 );
+        
+        //get the actual checksum of the artifact
+        Map<String, Object> csums = ChecksumUtils.calc( file, Utils.CHECKSUM_ALGORITHMS );
+        for (Map.Entry<String, Object> csum : csums.entrySet()) {
+            Object actualSum = csum.getValue();
+            File sum = new File( localPath + ".jar." + csum.getKey().toLowerCase().replace( "-", "" ) );
+            assertTrue( sum.exists() );
+            String generatedSum = FileUtils.fileRead( sum, "UTF-8" );
+            assertEquals( actualSum, generatedSum );
+        }
 
         assertTrue( installedArtifact.exists() );
         
@@ -303,8 +296,6 @@ public class InstallFileMojoTest
         throws Exception
     {
         this.groupId = dotToSlashReplacer( (String) getVariableValueFromObject( obj, "groupId" ) );
-
-        this.legacyGroupId = (String) getVariableValueFromObject( obj, "groupId" );
 
         this.artifactId = (String) getVariableValueFromObject( obj, "artifactId" );
 

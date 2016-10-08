@@ -110,12 +110,6 @@
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>2.1</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>plexus-container-default</artifactId>
-          <groupId>org.codehaus.plexus</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency> <!-- used by maven-plugin-testing-harness, don't give it compile scope! -->
       <groupId>org.apache.maven</groupId>

@@ -21,9 +21,12 @@ package org.apache.maven.plugin.install;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.FileUtils;
+import org.sonatype.aether.util.ChecksumUtils;
 
 /**
  * A utility class to assist testing.
@@ -31,37 +34,31 @@ import org.codehaus.plexus.util.FileUtils;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-@SuppressWarnings( "UnusedDeclaration" )
 public class Utils
 {
 
+    public static final List<String> CHECKSUM_ALGORITHMS = Arrays.asList( "MD5", "SHA-1" );
+
     /**
-     * Verifies a checksum file in the local repo.
+     * Verifies the checksum files in the local repo for the given file.
      *
-     * @param checksumFile The checksum file to verify, must not be <code>null</code>.
+     * @param file The file to verify its checksum with, must not be <code>null</code>.
+     * @throws MojoExecutionException In case the checksums were incorrect.
+     * @throws IOException If the files couldn't be read.
      */
-    public static void verifyChecksum( File checksumFile )
+    public static void verifyChecksum( File file )
         throws MojoExecutionException, IOException
     {
-        File dataFile;
-        SimpleDigester digester;
-        if ( checksumFile.getName().endsWith( ".md5" ) )
+        Map<String, Object> checksums = ChecksumUtils.calc( file, CHECKSUM_ALGORITHMS );
+        for ( Map.Entry<String, Object> entry : checksums.entrySet() )
         {
-            digester = SimpleDigester.md5();
-            dataFile = new File( checksumFile.getPath().substring( 0, checksumFile.getPath().length() - 4 ) );
+            File cksumFile = new File( file + "." + entry.getKey().toLowerCase().replace( "-", "" ) );
+            String actualChecksum = ChecksumUtils.read( cksumFile );
+            if ( !actualChecksum.equals( entry.getValue() ) )
+            {
+                throw new MojoExecutionException( "Incorrect " + entry.getKey() + " checksum for file: " + file );
+            }
         }
-        else if ( checksumFile.getName().endsWith( ".sha1" ) )
-        {
-            digester = SimpleDigester.sha1();
-            dataFile = new File( checksumFile.getPath().substring( 0, checksumFile.getPath().length() - 5 ) );
-        }
-        else
-        {
-            throw new IllegalArgumentException( "Unsupported checksum file: " + checksumFile );
-        }
-
-        String expected = FileUtils.fileRead( checksumFile, "UTF-8" );
-        digester.verify( dataFile, expected );
     }
 
 }

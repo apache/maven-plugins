@@ -20,13 +20,11 @@
 import java.io.*;
 import java.util.*;
 
-import org.apache.maven.plugin.install.*;
+import org.apache.maven.plugin.install.Utils;
 
 String[] paths =
 {
     "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml",
-//    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.md5",
-//    "org/apache/maven/its/install/gpa1/test/maven-metadata-local.xml.sha1",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar.md5",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar.sha1",
@@ -34,6 +32,12 @@ String[] paths =
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.pom.md5",
     "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.pom.sha1",
 };
+
+Set cksumToCheckPaths = new HashSet( Arrays.asList( new String[]
+{
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.jar",
+    "org/apache/maven/its/install/gpa1/test/0.1/test-0.1.pom",
+} ) );
 
 for ( String path : paths )
 {
@@ -43,8 +47,8 @@ for ( String path : paths )
     {
         throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
     }
-    if ( file.getName().endsWith( ".md5" ) || file.getName().endsWith( ".sha1" ) )
-    {
+    if ( cksumToCheckPaths.contains( path ) )
+    {    
         System.out.println( "Verifying " + file );
         Utils.verifyChecksum( file );
     }

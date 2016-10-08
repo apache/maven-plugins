@@ -20,21 +20,15 @@ package org.apache.maven.plugin.install;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.shared.artifact.install.ArtifactInstaller;
+import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.repository.RepositoryManager;
-import org.apache.maven.shared.utils.io.FileUtils;
 
 /**
  * Common fields for installation mojos.
@@ -46,16 +40,6 @@ public abstract class AbstractInstallMojo
     extends AbstractMojo
 {
 
-    /**
-     */
-    @Component
-    protected ArtifactFactory artifactFactory;
-
-    /**
-     */
-    @Component
-    protected ArtifactInstaller installer;
-    
     @Component
     protected RepositoryManager repositoryManager;
 
@@ -77,8 +61,6 @@ public abstract class AbstractInstallMojo
      */
     @Parameter( property = "updateReleaseInfo", defaultValue = "false" )
     protected boolean updateReleaseInfo;
-
-    protected final DualDigester digester = new DualDigester();
 
     @Parameter( defaultValue = "${session}", required = true, readonly = true )
     protected MavenSession session;
@@ -103,116 +85,10 @@ public abstract class AbstractInstallMojo
      * @param metadata The artifact metadata whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact metadata when installed, never <code>null</code>.
      */
-    protected File getLocalRepoFile( ArtifactMetadata metadata )
+    protected File getLocalRepoFile( ProjectArtifactMetadata metadata )
     {
         String path = localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository );
         return new File( localRepository.getBasedir(), path );
-    }
-
-    /**
-     * Installs the checksums for the specified artifact if this has been enabled in the plugin configuration. This
-     * method creates checksums for files that have already been installed to the local repo to account for on-the-fly
-     * generated/updated files. For example, in Maven 2.0.4- the <code>ProjectArtifactMetadata</code> did not install
-     * the original POM file (cf. MNG-2820). While the plugin currently requires Maven 2.0.6, we continue to hash the
-     * installed POM for robustness with regard to future changes like re-introducing some kind of POM filtering.
-     *
-     * @param artifact The artifact for which to create checksums, must not be <code>null</code>.
-     * @param createChecksum {@code true} if checksum should be created, otherwise {@code false}.
-     * @throws MojoExecutionException If the checksums could not be installed.
-     */
-    protected void installChecksums( Artifact artifact, boolean createChecksum )
-        throws MojoExecutionException
-    {
-        if ( !createChecksum )
-        {
-            return;
-        }
-
-        File artifactFile = getLocalRepoFile( artifact );
-        installChecksums( artifactFile );
-    }
-
-    // CHECKSTYLE_OFF: LineLength
-    protected void addMetaDataFilesForArtifact( Artifact artifact, Collection<File> targetMetadataFiles, boolean createChecksum )
-    // CHECKSTYLE_ON: LineLength
-    {
-        if ( !createChecksum )
-        {
-            return;
-        }
-
-        Collection<ArtifactMetadata> metadatas = artifact.getMetadataList();
-        if ( metadatas != null )
-        {
-            for ( ArtifactMetadata metadata : metadatas )
-            {
-                File metadataFile = getLocalRepoFile( metadata );
-                targetMetadataFiles.add( metadataFile );
-            }
-        }
-    }
-
-    /**
-     * Installs the checksums for the specified metadata files.
-     *
-     * @param metadataFiles The collection of metadata files to install checksums for, must not be <code>null</code>.
-     * @throws MojoExecutionException If the checksums could not be installed.
-     */
-    protected void installChecksums( Collection<File> metadataFiles )
-        throws MojoExecutionException
-    {
-        for ( File metadataFile : metadataFiles )
-        {
-            installChecksums( metadataFile );
-        }
-    }
-
-    /**
-     * Installs the checksums for the specified file (if it exists).
-     *
-     * @param installedFile The path to the already installed file in the local repo for which to generate checksums,
-     *                      must not be <code>null</code>.
-     * @throws MojoExecutionException If the checksums could not be installed.
-     */
-    private void installChecksums( File installedFile )
-        throws MojoExecutionException
-    {
-        boolean signatureFile = installedFile.getName().endsWith( ".asc" );
-        if ( installedFile.isFile() && !signatureFile )
-        {
-
-            getLog().debug( "Calculating checksums for " + installedFile );
-            digester.calculate( installedFile );
-            installChecksum( installedFile, ".md5", digester.getMd5() );
-            installChecksum( installedFile, ".sha1", digester.getSha1() );
-        }
-    }
-
-    /**
-     * Installs a checksum for the specified file.
-     *
-     * @param installedFile The base path from which the path to the checksum files is derived by appending the given
-     *                      file extension, must not be <code>null</code>.
-     * @param ext           The file extension (including the leading dot) to use for the checksum file, must not be
-     *                      <code>null</code>.
-     * @param checksum      the checksum to write
-     * @throws MojoExecutionException If the checksum could not be installed.
-     */
-    private void installChecksum( File installedFile, String ext, String checksum )
-        throws MojoExecutionException
-    {
-        File checksumFile = new File( installedFile.getAbsolutePath() + ext );
-        getLog().debug( "Installing checksum to " + checksumFile );
-        try
-        {
-            //noinspection ResultOfMethodCallIgnored
-            checksumFile.getParentFile().mkdirs();
-            FileUtils.fileWrite( checksumFile.getAbsolutePath(), "UTF-8", checksum );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to install checksum to " + checksumFile, e );
-        }
     }
 
 }

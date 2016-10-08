@@ -28,17 +28,13 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -46,6 +42,8 @@ import org.apache.maven.model.building.DefaultModelBuildingRequest;
 import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.model.building.ModelProblem.Severity;
 import org.apache.maven.model.building.ModelProblemCollector;
+import org.apache.maven.model.building.ModelSource;
+import org.apache.maven.model.building.StringModelSource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.model.validation.ModelValidator;
@@ -54,9 +52,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.apache.maven.shared.artifact.install.ArtifactInstallerException;
+import org.apache.maven.shared.project.install.ProjectInstaller;
+import org.apache.maven.shared.project.install.ProjectInstallerRequest;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.WriterFactory;
 import org.apache.maven.shared.utils.io.IOUtil;
@@ -78,28 +82,28 @@ public class InstallFileMojo
      * {@code pom.xml} in jar if available.
      */
     @Parameter( property = "groupId" )
-    protected String groupId;
+    private String groupId;
 
     /**
      * ArtifactId of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
      * {@code pom.xml} in jar if available.
      */
     @Parameter( property = "artifactId" )
-    protected String artifactId;
+    private String artifactId;
 
     /**
      * Version of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
      * {@code pom.xml} in jar if available.
      */
     @Parameter( property = "version" )
-    protected String version;
+    private String version;
 
     /**
      * Packaging type of the artifact to be installed. Retrieved from POM file if one is specified or extracted from
      * {@code pom.xml} in jar if available.
      */
     @Parameter( property = "packaging" )
-    protected String packaging;
+    private String packaging;
 
     /**
      * Classifier type of the artifact to be installed. For example, "sources" or "javadoc". Defaults to none which
@@ -108,7 +112,7 @@ public class InstallFileMojo
      * @since 2.2
      */
     @Parameter( property = "classifier" )
-    protected String classifier;
+    private String classifier;
 
     /**
      * The file to be installed in the local repository.
@@ -166,6 +170,24 @@ public class InstallFileMojo
     private ModelValidator modelValidator;
     
     /**
+     * Used for attaching the artifacts to install to the project.
+     */
+    @Component
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * Used for creating the project to which the artifacts to install will be attached.
+     */
+    @Component
+    private ProjectBuilder projectBuilder;
+    
+    /**
+     * Used to install the project created.
+     */
+    @Component
+    private ProjectInstaller installer;
+    
+    /**
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -202,34 +224,57 @@ public class InstallFileMojo
 
         validateArtifactInformation();
         
-        Artifact artifact =
-            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, packaging, classifier );
-
+        MavenProject project = createMavenProject();
+        Artifact artifact = project.getArtifact();
+        
         if ( file.equals( getLocalRepoFile( artifact ) ) )
         {
             throw new MojoFailureException( "Cannot install artifact. "
                 + "Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
         }
-        artifact.setFile( file );
-
-        File generatedPomFile = null;
+        
+        if ( classifier == null )
+        {
+            artifact.setFile( file );
+            if ( "pom".equals( packaging ) )
+            {
+                project.setFile( file );
+            }
+        }
+        else
+        {
+            projectHelper.attachArtifact( project, packaging, classifier, file );
+        }
 
         if ( !"pom".equals( packaging ) )
         {
             if ( pomFile != null )
             {
-                ArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, pomFile );
-                artifact.addMetadata( pomMetadata );
+                if ( classifier == null )
+                {
+                    artifact.addMetadata( new ProjectArtifactMetadata( artifact, pomFile ) );
+                }
+                else
+                {
+                    project.setFile( pomFile );
+                }
             }
             else
             {
-                generatedPomFile = generatePomFile();
-                ArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
+                File generatedPomFile = generatePomFile();
+                ProjectArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
                 if ( Boolean.TRUE.equals( generatePom )
                     || ( generatePom == null && !getLocalRepoFile( pomMetadata ).exists() ) )
                 {
                     getLog().debug( "Installing generated POM" );
-                    artifact.addMetadata( pomMetadata );
+                    if ( classifier == null )
+                    {
+                        artifact.addMetadata( pomMetadata );
+                    }
+                    else
+                    {
+                        project.setFile( generatedPomFile );
+                    }
                 }
                 else if ( generatePom == null )
                 {
@@ -238,74 +283,57 @@ public class InstallFileMojo
             }
         }
 
-        if ( updateReleaseInfo )
-        {
-            artifact.setRelease( true );
-        }
-
-        Collection<File> metadataFiles = new LinkedHashSet<File>();
-
-        // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id,
-        // we don't
-        try
-        {
-//            installer.install( file, artifact, localRepository );
-            installer.install( buildingRequest, Collections.singletonList( artifact ) );
-            installChecksums( artifact, createChecksum );
-            addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
-
-        }
-        catch ( ArtifactInstallerException e )
-        {
-            throw new MojoExecutionException( "Error installing artifact '" + artifact.getDependencyConflictId()
-                + "': " + e.getMessage(), e );
-        }
-        finally
-        {
-            if ( generatedPomFile != null )
-            {
-                // noinspection ResultOfMethodCallIgnored
-                generatedPomFile.delete();
-            }
-        }
-
         if ( sources != null )
         {
-            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "sources" );
-            artifact.setFile( sources );
-            try
-            {
-//                installer.install( sources, artifact, localRepository );
-                installer.install( buildingRequest, Collections.singletonList( artifact ) );
-                installChecksums( artifact, createChecksum );
-                addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
-
-            }
-            catch ( ArtifactInstallerException e )
-            {
-                throw new MojoExecutionException( "Error installing sources " + sources + ": " + e.getMessage(), e );
-            }
+            projectHelper.attachArtifact( project, "jar", "sources", sources );
         }
 
         if ( javadoc != null )
         {
-            artifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", "javadoc" );
-            artifact.setFile( javadoc );
-            try
-            {
-//                installer.install( javadoc, artifact, localRepository );
-                installer.install( buildingRequest, Collections.singletonList( artifact ) );                
-                installChecksums( artifact, createChecksum );
-                addMetaDataFilesForArtifact( artifact, metadataFiles, createChecksum );
-
-            }
-            catch ( ArtifactInstallerException e )
-            {
-                throw new MojoExecutionException( "Error installing API docs " + javadoc + ": " + e.getMessage(), e );
-            }
+            projectHelper.attachArtifact( project, "jar", "javadoc", javadoc );
         }
+        
+        try
+        {
+            // CHECKSTYLE_OFF: LineLength
+            ProjectInstallerRequest projectInstallerRequest =
+                new ProjectInstallerRequest().setProject( project ).setCreateChecksum( createChecksum ).setUpdateReleaseInfo( updateReleaseInfo );
+            // CHECKSTYLE_ON: LineLength
 
-        installChecksums( metadataFiles );
+            installer.install( buildingRequest, projectInstallerRequest, localRepository );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+    
+    /**
+     * Creates a Maven project in-memory from the user-supplied groupId, artifactId and version. When a classifier is
+     * supplied, the packaging must be POM because the project with only have attachments. This project serves as basis
+     * to attach the artifacts to install to.
+     * 
+     * @return The created Maven project, never <code>null</code>.
+     * @throws MojoFailureException When building the project failed.
+     */
+    private MavenProject createMavenProject()
+        throws MojoFailureException
+    {
+        ModelSource modelSource =
+            new StringModelSource( "<project>" + "<modelVersion>4.0.0</modelVersion>" + "<groupId>" + groupId
+                + "</groupId>" + "<artifactId>" + artifactId + "</artifactId>" + "<version>" + version + "</version>"
+                + "<packaging>" + ( classifier == null ? packaging : "pom" ) + "</packaging>" + "</project>" );
+        DefaultProjectBuildingRequest buildingRequest =
+            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+        buildingRequest.setProcessPlugins( false );
+        try
+        {
+            return projectBuilder.build( modelSource, buildingRequest ).getProject();
+        }
+        catch ( ProjectBuildingException e )
+        {
+            throw new MojoFailureException( e.getMessage(), e );
+        }
     }
 
     private void readingPomFromJarFile()

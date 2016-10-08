@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
@@ -39,6 +40,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.sonatype.aether.impl.internal.EnhancedLocalRepositoryManager;
+import org.sonatype.aether.util.ChecksumUtils;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 /**
@@ -293,45 +295,32 @@ public class InstallMojoTest
 
         assertTrue( pom.exists() );
 
+        String groupId = dotToSlashReplacer( artifact.getGroupId() );
+        String packaging = project.getPackaging();
+        String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
+                        artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion();
+        
         //get the actual checksum of the pom
-        mojo.digester.calculate( pom );
-        String actualPomMd5Sum = mojo.digester.getMd5();
-        String actualPomSha1Sum = mojo.digester.getSha1();
+        Map<String, Object> csums = ChecksumUtils.calc( pom, Utils.CHECKSUM_ALGORITHMS );
+        for (Map.Entry<String, Object> csum : csums.entrySet()) {
+            Object actualPomSum = csum.getValue();
+            File pomSum = new File( localPath + ".pom." + csum.getKey().toLowerCase().replace( "-", "" ) );
+            assertTrue( pomSum.exists() );
+            String generatedPomSum = FileUtils.fileRead( pomSum, "UTF-8" );
+            assertEquals( actualPomSum, generatedPomSum );
+        }
 
         //get the actual checksum of the artifact
-        mojo.digester.calculate( file );
-        String actualMd5Sum = mojo.digester.getMd5();
-        String actualSha1Sum = mojo.digester.getSha1();
-
-        String groupId = dotToSlashReplacer( artifact.getGroupId() );
-
-        String packaging = project.getPackaging();
-
-        String localPath = getBasedir() + "/" + LOCAL_REPO + groupId + "/" + artifact.getArtifactId() + "/" +
-            artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact.getVersion();
+        csums = ChecksumUtils.calc( file, Utils.CHECKSUM_ALGORITHMS );
+        for (Map.Entry<String, Object> csum : csums.entrySet()) {
+            Object actualSum = csum.getValue();
+            File sum = new File( localPath + "." + packaging + "." + csum.getKey().toLowerCase().replace( "-", "" ) );
+            assertTrue( sum.exists() );
+            String generatedSum = FileUtils.fileRead( sum, "UTF-8" );
+            assertEquals( actualSum, generatedSum );
+        }
 
         File installedArtifact = new File( localPath + "." + packaging );
-
-        File pomMd5 = new File( localPath + ".pom.md5" );
-        File pomSha1 = new File( localPath + ".pom.sha1" );
-
-        File md5 = new File( localPath + "." + packaging + ".md5" );
-        File sha1 = new File( localPath + "." + packaging + ".sha1" );
-
-        assertTrue( pomMd5.exists() );
-        assertTrue( pomSha1.exists() );
-        assertTrue( md5.exists() );
-        assertTrue( sha1.exists() );
-
-        String generatedMd5 = FileUtils.fileRead( md5, "UTF-8" );
-        String generatedSha1 = FileUtils.fileRead( sha1, "UTF-8" );
-        String generatedPomMd5 = FileUtils.fileRead( pomMd5, "UTF-8" );
-        String generatedPomSha1 = FileUtils.fileRead( pomSha1, "UTF-8" );
-
-        assertEquals( actualMd5Sum, generatedMd5 );
-        assertEquals( actualSha1Sum, generatedSha1 );
-        assertEquals( actualPomMd5Sum, generatedPomMd5 );
-        assertEquals( actualPomSha1Sum, generatedPomSha1 );
 
         assertTrue( installedArtifact.exists() );
         
