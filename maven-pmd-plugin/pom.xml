@@ -135,26 +135,13 @@ under the License.
       <artifactId>doxia-site-renderer</artifactId>
       <version>${doxiaVersion}</version>
       <!--
-        pmd 4.3 requires version 1.6.1 of dom4j
-        doxia-site-renderer 1.3 brings in dom4j 1.1 if we don't exclude it here
+        doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
+        PMD requires a newer version of jaxen, which is not compatible.
       -->
       <exclusions>
         <exclusion>
-          <groupId>dom4j</groupId>
           <artifactId>dom4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- adding back dependency to dom4j for doxia-site-renderer -->
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>xml-apis</artifactId>
-          <groupId>xml-apis</groupId>
+          <groupId>dom4j</groupId>
         </exclusion>
       </exclusions>
     </dependency>
