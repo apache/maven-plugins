@@ -240,16 +240,6 @@ under the License.
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <!-- Temporary workaround for MRELEASE-925, to get the release out -->
-          <version>2.5.3</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <!-- Override the Java version inherited from maven-parent -->
       <plugin>
