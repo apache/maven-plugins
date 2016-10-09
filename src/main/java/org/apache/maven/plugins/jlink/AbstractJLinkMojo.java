@@ -167,7 +167,7 @@ public abstract class AbstractJLinkMojo
                 if ( StringUtils.isNotEmpty( output ) )
                 {
                     //Reconsider to use WARN / ERROR ?
-                    getLog().info( output );
+                    getLog().error( output );
                 }
 
                 StringBuilder msg = new StringBuilder( "\nExit code: " );
