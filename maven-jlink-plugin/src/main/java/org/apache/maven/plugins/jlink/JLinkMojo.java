@@ -1,5 +1,24 @@
 package org.apache.maven.plugins.jlink;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import java.io.File;
 
 /*
@@ -22,14 +41,18 @@ import java.io.File;
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -58,7 +81,9 @@ import org.codehaus.plexus.util.cli.Commandline;
 // TODO: Think if ResultionScope is needed here? May be we need to reconsider package phase?
 // May be it would be wise to put into PREPARE-PACKAGE and the generation of the final jimage in the package phase?
 // Furthermore It could make sense so we can change the conf files if needed...
-@Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PACKAGE )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
+// CHECKSTYLE_ON: LineLength
 public class JLinkMojo
     extends AbstractJLinkMojo
 {
@@ -75,10 +100,11 @@ public class JLinkMojo
     private Integer compression;
 
     /**
-     * Define the modulepath for the <code>JLink</code> call. <code>--module-path &lt;modulepath&gt;</code>
+     * Define the modulepath for the <code>JLink</code> call. <code>--module-path &lt;modulepath&gt;</code> TODO: The
+     * default should be the jmods folder of the JDK...
      */
-    @Parameter( required = true )
-    private File modulePath;
+    @Parameter
+    private List<String> modulePaths;
 
     /**
      * Limit the univers of observable modules. <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
@@ -99,12 +125,11 @@ public class JLinkMojo
     private File pluginModulePath;
 
     /**
-     * <code>--output &lt;path&gt;</code> 
+     * <code>--output &lt;path&gt;</code>
      * </p>
-     * TODO: Think about the default value? I'm not sure if something different would
-     * be better?
+     * TODO: Think about the default value? I'm not sure if something different would be better?
      */
-    @Parameter( defaultValue = "${project.build.output}/link-result" )
+    @Parameter( defaultValue = "${project.build.directory}/link-result" )
     private File outputDirectory;
 
     /**
@@ -119,27 +144,98 @@ public class JLinkMojo
         throws MojoExecutionException, MojoFailureException
     {
 
-        failIfParametersAreNotInTheirValidValueRanges();
-
-        String jLinkExecutable;
+        String jLinkExec;
         try
         {
-            jLinkExecutable = getJLinkExecutable();
+            jLinkExec = getJLinkExecutable();
         }
         catch ( IOException e )
         {
             throw new MojoFailureException( "Unable to find jlink command: " + e.getMessage(), e );
         }
 
+        getLog().info( "Toolchain in maven-jlink-plugin: jlink [ " + jLinkExec + " ]" );
+
+        // TODO: Find a more better and cleaner way?
+        File jLinkExecuteable = new File( jLinkExec );
+
+        // Really Hacky...
+        File jLinkParent = jLinkExecuteable.getParentFile().getParentFile();
+        File jmodsFolder = new File( jLinkParent, "jmods" );
+
+        getLog().debug( " Parent: " + jLinkParent.getAbsolutePath() );
+        getLog().debug( " jmodsFolder: " + jmodsFolder.getAbsolutePath() );
+
+        failIfParametersAreNotInTheirValidValueRanges();
+
         deleteOutputDirectoryIfItAlreadyExists();
+
+        List<MavenProject> sortedProjects = getSession().getProjectDependencyGraph().getSortedProjects();
+        for ( MavenProject mavenProject : sortedProjects )
+        {
+            getLog().info( "MavenProject: " + mavenProject.getBasedir() );
+        }
+
+        List<Dependency> dependencies = getSession().getCurrentProject().getDependencies();
+
+        List<MavenProject> modulesToAdd = new ArrayList<>();
+        for ( Dependency dependency : dependencies )
+        {
+            if ( "jmod".equals( dependency.getType() ) )
+            {
+                MavenProject mp = findDependencyInProjects( dependency );
+                // TODO: What about module name != artifactId which has been
+                // defined in module-info.java file!
+                modulesToAdd.add( mp );
+            }
+        }
+
+        if ( addModules == null )
+        {
+            addModules = new ArrayList<>();
+        }
+        for ( MavenProject mavenProject : modulesToAdd )
+        {
+            addModules.add( mavenProject.getArtifactId() );
+        }
+
+        if ( modulePaths == null )
+        {
+            modulePaths = new ArrayList<>();
+        }
+
+        // JDK mods folder
+        modulePaths.add( jmodsFolder.getAbsolutePath() );
+
+        for ( MavenProject mavenProject : modulesToAdd )
+        {
+            File output = new File( mavenProject.getBuild().getDirectory(), "jmods" );
+            modulePaths.add( output.getAbsolutePath() );
+        }
 
         // Synopsis
         // Usage: jlink <options> --module-path <modulepath> --add-modules <mods> --output <path>
         Commandline cmd = createJLinkCommandLine();
-        cmd.setExecutable( jLinkExecutable );
+        cmd.setExecutable( jLinkExec );
 
         executeCommand( cmd, outputDirectory );
-        
+
+    }
+
+    private MavenProject findDependencyInProjects( Dependency dep )
+    {
+        List<MavenProject> sortedProjects = getSession().getProjectDependencyGraph().getSortedProjects();
+        MavenProject result = null;
+        for ( MavenProject mavenProject : sortedProjects )
+        {
+            if ( dep.getGroupId().equals( mavenProject.getGroupId() )
+                && dep.getArtifactId().equals( mavenProject.getArtifactId() )
+                && dep.getVersion().equals( mavenProject.getVersion() ) )
+            {
+                result = mavenProject;
+            }
+        }
+        return result;
     }
 
     private void failIfParametersAreNotInTheirValidValueRanges()
@@ -152,6 +248,18 @@ public class JLinkMojo
             getLog().error( message );
             throw new MojoFailureException( message );
         }
+
+        // CHECK if this assumption here is correct?
+        // if ( modulePaths != null && ( !modulePaths.isEmpty() ) )
+        // {
+        //
+        // // FIXME: Need to check if the given paths exists? and if they are
+        // // folders?
+        // // String message = "The given module-paths parameter " + modulePath.getAbsolutePath()
+        // // + " is not a directory or does not exist.";
+        // // getLog().error( message );
+        // // throw new MojoFailureException( message );
+        // }
     }
 
     private void deleteOutputDirectoryIfItAlreadyExists()
@@ -163,6 +271,7 @@ public class JLinkMojo
             // otherwise JLink will fail with a message "Error: directory already exists: ..."
             try
             {
+                getLog().debug( "Deleting existing " + outputDirectory.getAbsolutePath() );
                 FileUtils.forceDelete( outputDirectory );
             }
             catch ( IOException e )
@@ -174,7 +283,7 @@ public class JLinkMojo
         }
     }
 
-    private Commandline createJLinkCommandLine()
+    Commandline createJLinkCommandLine()
     {
         Commandline cmd = new Commandline();
 
@@ -189,11 +298,11 @@ public class JLinkMojo
             cmd.createArg().setValue( compression.toString() );
         }
 
-        // CHECK if this assumption here is correct?
-        if ( modulePath != null && modulePath.exists() && modulePath.isDirectory() )
+        if ( modulePaths != null )
         {
             cmd.createArg().setValue( "--module-path" );
-            cmd.createArg().setFile( modulePath );
+            StringBuilder sb = getColonSeparateList( modulePaths );
+            cmd.createArg().setValue( sb.toString() );
         }
 
         if ( limitModules != null && !limitModules.isEmpty() )
@@ -217,6 +326,28 @@ public class JLinkMojo
         }
 
         return cmd;
+    }
+
+    private StringBuilder getColonSeparateList( List<String> modulePaths )
+    {
+        StringBuilder sb = new StringBuilder();
+        for ( String module : modulePaths )
+        {
+            if ( sb.length() > 0 )
+            {
+                // FIXME: Check this ?
+                if ( SystemUtils.IS_OS_WINDOWS )
+                {
+                    sb.append( ';' );
+                }
+                else
+                {
+                    sb.append( ':' );
+                }
+            }
+            sb.append( module );
+        }
+        return sb;
     }
 
     private StringBuilder getCommaSeparatedList( List<String> modules )
