@@ -200,7 +200,7 @@ public abstract class AbstractSiteRenderingMojo
     }
 
     /**
-     * Whether to save Velocity processed Doxia content (<code>*.<ext>.vm</code>)
+     * Whether to save Velocity processed Doxia content (<code>*.&lt;ext&gt;.vm</code>)
      * to <code>${generatedSiteDirectory}/processed</code>.
      *
      * @since 3.5
