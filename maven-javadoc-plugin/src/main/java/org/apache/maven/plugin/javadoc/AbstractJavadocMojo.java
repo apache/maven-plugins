@@ -279,6 +279,15 @@ public abstract class AbstractJavadocMojo
      */
     private static final float SINCE_JAVADOC_1_6 = 1.6f;
 
+    /**
+     * For Javadoc options appears since Java 8.0.
+     * See <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/javadoc/index.html">
+     * Javadoc Technology</a>
+     *
+     * @since 3.0.0
+     */
+    private static final float SINCE_JAVADOC_1_8 = 1.8f;
+
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
@@ -310,16 +319,16 @@ public abstract class AbstractJavadocMojo
      */
     @Component
     private ArtifactResolver resolver;
-    
+
     @Component
     private ResourceResolver resourceResolver;
-    
+
     @Component
     private org.apache.maven.shared.artifact.resolve.ArtifactResolver artifactResolver;
-    
+
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
-    
+
     @Component
     private DependencyResolver dependencyResolver;
 
@@ -359,7 +368,7 @@ public abstract class AbstractJavadocMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
-    
+
     @Parameter( defaultValue = "${plugin}", readonly = true )
     private PluginDescriptor plugin;
 
@@ -964,6 +973,16 @@ public abstract class AbstractJavadocMojo
      */
     @Parameter( property = "docfilessubdirs", defaultValue = "false" )
     private boolean docfilessubdirs;
+
+    /**
+     * Specifies specific checks to be performed on Javadoc comments.
+     * <br/>
+     * See <a href="http://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html#BEJEFABE">doclint</a>.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( property = "doclint" )
+    private String doclint;
 
     /**
      * Specifies the title to be placed near the top of the overview summary file.
@@ -1827,6 +1846,14 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
+     * @return the doclint specific checks configuration
+     */
+    protected String getDoclint()
+    {
+        return doclint;
+    }
+
+    /**
      * @return the title to be placed near the top of the overview summary file
      */
     protected String getDoctitle()
@@ -1881,19 +1908,19 @@ public abstract class AbstractJavadocMojo
         verifyRemovedParameter( "aggregator" );
         verifyRemovedParameter( "proxyHost" );
         verifyRemovedParameter( "proxyPort" );
-        
+
         doExecute();
     }
-    
+
     abstract void doExecute() throws MojoExecutionException, MojoFailureException;
-    
+
     private void verifyRemovedParameter( String paramName )
     {
         Object pluginConfiguration = plugin.getPlugin().getConfiguration();
         if ( pluginConfiguration instanceof Xpp3Dom )
         {
             Xpp3Dom configDom = (Xpp3Dom) pluginConfiguration;
-            
+
             if ( configDom.getChild( paramName ) != null )
             {
                 throw new IllegalArgumentException( "parameter '" + paramName
@@ -1901,7 +1928,7 @@ public abstract class AbstractJavadocMojo
             }
         }
     }
-    
+
     /**
      * The <a href="package-summary.html">package documentation</a> details the
      * Javadoc Options used by this Plugin.
@@ -2046,7 +2073,7 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
 
         // MJAVADOC-365 if includes/excludes are specified, these take precedence over the default
-        // package-based mode and force javadoc into file-based mode unless subpackages are 
+        // package-based mode and force javadoc into file-based mode unless subpackages are
         // specified. Subpackages take precedence over file-based include/excludes. Why? Because
         // getFiles(...) returns an empty list when subpackages are specified.
         boolean includesExcludesActive =
@@ -2366,7 +2393,7 @@ public abstract class AbstractJavadocMojo
      */
     private SourceResolverConfig getDependencySourceResolverConfig()
     {
-        return configureDependencySourceResolution( 
+        return configureDependencySourceResolution(
                         new SourceResolverConfig( project, localRepository,
                                                   sourceDependencyCacheDir ).withReactorProjects( reactorProjects ) );
     }
@@ -2656,7 +2683,7 @@ public abstract class AbstractJavadocMojo
         coordinate.setVersion( dependency.getVersion() );
         coordinate.setClassifier( dependency.getClassifier() );
         coordinate.setExtension( artifactHandlerManager.getArtifactHandler( dependency.getType() ).getExtension() );
-        
+
         try
         {
             return artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), coordinate ).getArtifact();
@@ -3452,7 +3479,7 @@ public abstract class AbstractJavadocMojo
      *
      * @param javadocArtifact the {@link JavadocPathArtifact} to resolve
      * @return a resolved {@link Artifact}
-     * @throws ArtifactResolverException 
+     * @throws ArtifactResolverException
      */
     private Artifact createAndResolveArtifact( JavadocPathArtifact javadocArtifact )
         throws ArtifactResolverException
@@ -4717,6 +4744,8 @@ public abstract class AbstractJavadocMojo
         addArgIfNotEmpty( arguments, "-docencoding", JavadocUtil.quotedArgument( getDocencoding() ) );
 
         addArgIf( arguments, docfilessubdirs, "-docfilessubdirs", SINCE_JAVADOC_1_4 );
+
+        addArgIf( arguments, StringUtils.isNotEmpty( doclint ), "-Xdoclint:" + getDoclint(), SINCE_JAVADOC_1_8 );
 
         addArgIfNotEmpty( arguments, "-doctitle", JavadocUtil.quotedArgument( getDoctitle() ), false, false );
 
