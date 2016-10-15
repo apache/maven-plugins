@@ -145,6 +145,8 @@ Doxia Site Renderer Velocity Context
 | <<<xml>>>             | = <<<$xml>>>
 *-----------------------+-------------------------------------------------------+
 
- <<< $custom>>> TODO: remove space once MSITE-782 is fixed
+* Velocity custom tool declared in <<</META-INF/maven/site-tools.xml>>>
 
- <<< $custom.test()>>>
+ <<<custom>>> = <<<$custom>>>
+
+ <<<custom.test()>>> = <<<$custom.test()>>>
