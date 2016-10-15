@@ -394,8 +394,11 @@ public abstract class AbstractJavadocMojo
     /**
      * Set an additional parameter(s) on the command line. This value should include quotes as necessary for
      * parameters that include spaces. Useful for a custom doclet.
+     *
+     * @deprecated Does not properly support multiple options at once and has a bad name
      */
     @Parameter( property = "additionalparam" )
+    @Deprecated
     private String additionalparam;
 
     /**
