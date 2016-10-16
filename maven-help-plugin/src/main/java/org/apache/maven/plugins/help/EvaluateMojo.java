@@ -19,10 +19,18 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.collections.PropertiesConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.artifact.Artifact;
@@ -36,7 +44,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -56,18 +63,10 @@ import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.collections.PropertiesConverter;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * Evaluates Maven expressions given by the user in an interactive mode.
@@ -78,7 +77,7 @@ import java.util.jar.JarInputStream;
  */
 @Mojo( name = "evaluate", requiresProject = false )
 public class EvaluateMojo
-    extends AbstractMojo
+    extends AbstractHelpMojo
 {
     // ----------------------------------------------------------------------
     // Mojo components
@@ -121,6 +120,18 @@ public class EvaluateMojo
     // ----------------------------------------------------------------------
     // Mojo parameters
     // ----------------------------------------------------------------------
+    
+    // we need to hide the 'output' defined in AbstractHelpMojo to have a correct "since".
+    /**
+     * Optional parameter to write the output of this help in a given file, instead of writing to the console.
+     * This parameter will be ignored if no <code>expression</code> is specified.
+     * <br/>
+     * <b>Note</b>: Could be a relative path.
+     * 
+     * @since 2.2.1
+     */
+    @Parameter( property = "output" )
+    private File output;
 
     /**
      * An artifact for evaluating Maven expressions.
@@ -211,6 +222,11 @@ public class EvaluateMojo
 
         if ( expression == null )
         {
+            if ( output != null )
+            {
+                getLog().warn( "When prompting for input, the result will be written to the console, "
+                    + "ignoring 'output'." );
+            }
             while ( true )
             {
                 getLog().info( "Enter the Maven expression i.e. ${project.groupId} or 0 to exit?:" );
@@ -223,7 +239,7 @@ public class EvaluateMojo
                         break;
                     }
 
-                    handleResponse( userExpression );
+                    handleResponse( userExpression, null );
                 }
                 catch ( IOException e )
                 {
@@ -233,7 +249,7 @@ public class EvaluateMojo
         }
         else
         {
-            handleResponse( "${" + expression + "}" );
+            handleResponse( "${" + expression + "}", output );
         }
     }
 
@@ -354,10 +370,11 @@ public class EvaluateMojo
 
     /**
      * @param expr the user expression asked.
+     * @param output the file where to write the result, or <code>null</code> to print in standard output.
      * @throws MojoExecutionException if any
      * @throws MojoFailureException if any reflection exceptions occur or missing components.
      */
-    private void handleResponse( String expr )
+    private void handleResponse( String expr, File output )
         throws MojoExecutionException, MojoFailureException
     {
         StringBuilder response = new StringBuilder();
@@ -466,7 +483,22 @@ public class EvaluateMojo
             response.append( toXML( expr, obj ) );
         }
 
-        getLog().info( "\n" + response.toString() );
+        if ( output != null )
+        {
+            try
+            {
+                writeFile( output, response );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Cannot write evaluation of expression to output: " + output, e );
+            }
+            getLog().info( "Result of evaluation written to: " + output );
+        }
+        else
+        {
+            getLog().info( "\n" + response.toString() );
+        }
     }
 
     /**
