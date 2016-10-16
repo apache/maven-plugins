@@ -19,7 +19,6 @@ package org.apache.maven.plugin.changes;
  * under the License.
  */
 
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -29,42 +28,40 @@ import org.apache.maven.project.MavenProject;
  * @version $Id$
  * @since 2.4
  */
-public class ProjectUtils
+public final class ProjectUtils
 {
+
+    private ProjectUtils()
+    {
+    }
+
     /**
      * Check if the issue management system has been properly configured in the Maven project.
      *
      * @param project The Maven project
      * @param issueManagementSystem The name of the issue management system that is required
      * @param mojoResult What the calling mojo produces, used in the error messages
-     * @param log A log
-     * @return <code>true</code> if the &lt;issueManagement&gt; element of the POM is complete, otherwise
-     *         <code>false</code>
+     * @return <code>null</code> if the &lt;issueManagement&gt; element of the POM is complete, otherwise a String
+     *         containing the reason of the failed validation.
      */
-    public static boolean validateIfIssueManagementComplete( MavenProject project, String issueManagementSystem,
-                                                             String mojoResult, Log log )
+    public static String validateIssueManagement( MavenProject project, String issueManagementSystem,
+                                                  String mojoResult )
     {
         if ( project.getIssueManagement() == null )
         {
-            log.error( "No Issue Management set. No " + mojoResult + " will be generated." );
-
-            return false;
+            return "No Issue Management set. No " + mojoResult + " will be generated.";
         }
         else if ( ( project.getIssueManagement().getUrl() == null )
             || ( project.getIssueManagement().getUrl().trim().equals( "" ) ) )
         {
-            log.error( "No URL set in Issue Management. No " + mojoResult + " will be generated." );
-
-            return false;
+            return "No URL set in Issue Management. No " + mojoResult + " will be generated.";
         }
         else if ( ( project.getIssueManagement().getSystem() != null )
             && !( project.getIssueManagement().getSystem().equalsIgnoreCase( issueManagementSystem ) ) )
         {
-            log.error( "The " + mojoResult + " only supports " + issueManagementSystem + ".  No " + mojoResult
-                + " will be generated." );
-
-            return false;
+            return "The " + mojoResult + " only supports " + issueManagementSystem + ".  No " + mojoResult
+                + " will be generated.";
         }
-        return true;
+        return null;
     }
 }

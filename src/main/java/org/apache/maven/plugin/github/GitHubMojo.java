@@ -19,6 +19,13 @@ package org.apache.maven.plugin.github;
  * under the License.
  */
 
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
 import org.apache.maven.plugin.issues.Issue;
@@ -29,13 +36,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
-
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Goal which downloads issues from GitHub and generates a report.
@@ -151,7 +151,12 @@ public class GitHubMojo
             getLog().info( "Skipping the GitHub Report in this project because it's not the Execution Root" );
             return false;
         }
-        return ProjectUtils.validateIfIssueManagementComplete( project, "GitHub", "GitHub Report", getLog() );
+        String message = ProjectUtils.validateIssueManagement( project, "GitHub", "GitHub Report" );
+        if ( message != null )
+        {
+            getLog().warn( message );
+        }
+        return message == null;
     }
 
     @Override

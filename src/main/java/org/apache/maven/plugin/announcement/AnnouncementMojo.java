@@ -19,6 +19,15 @@ package org.apache.maven.plugin.announcement;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.changes.ChangesXML;
 import org.apache.maven.plugin.changes.IssueAdapter;
@@ -49,15 +58,6 @@ import org.apache.velocity.tools.ToolManager;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Goal which generate an announcement from the announcement template.
@@ -524,7 +524,8 @@ public class AnnouncementMojo
 
             if ( issueManagementSystems.contains( JIRA ) )
             {
-                if ( ProjectUtils.validateIfIssueManagementComplete( project, JIRA, "JIRA announcement", getLog() ) )
+                String message = ProjectUtils.validateIssueManagement( project, JIRA, "JIRA announcement" );
+                if ( message == null )
                 {
                     List<Release> jiraReleases = getJiraReleases();
                     releases = releaseUtils.mergeReleases( releases, jiraReleases );
@@ -533,13 +534,14 @@ public class AnnouncementMojo
                 else
                 {
                     throw new MojoExecutionException( "Something is wrong with the Issue Management section. "
-                        + "See previous error messages." );
+                        + message );
                 }
             }
 
             if ( issueManagementSystems.contains( TRAC ) )
             {
-                if ( ProjectUtils.validateIfIssueManagementComplete( project, TRAC, "Trac announcement", getLog() ) )
+                String message = ProjectUtils.validateIssueManagement( project, TRAC, "Trac announcement" );
+                if ( message == null )
                 {
                     List<Release> tracReleases = getTracReleases();
                     releases = releaseUtils.mergeReleases( releases, tracReleases );
@@ -548,14 +550,14 @@ public class AnnouncementMojo
                 else
                 {
                     throw new MojoExecutionException( "Something is wrong with the Issue Management section. "
-                        + "See previous error messages." );
+                                    + message );
                 }
             }
 
             if ( issueManagementSystems.contains( GIT_HUB ) )
             {
-                if ( ProjectUtils.validateIfIssueManagementComplete( project, GIT_HUB, "GitHub announcement",
-                                                                     getLog() ) )
+                String message = ProjectUtils.validateIssueManagement( project, GIT_HUB, "GitHub announcement" );
+                if ( message == null )
                 {
                     List<Release> gitHubReleases = getGitHubReleases();
                     releases = releaseUtils.mergeReleases( releases, gitHubReleases );
@@ -564,7 +566,7 @@ public class AnnouncementMojo
                 else
                 {
                     throw new MojoExecutionException( "Something is wrong with the Issue Management section. "
-                        + "See previous error messages." );
+                                    + message );
                 }
             }
 
