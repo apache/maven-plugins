@@ -57,10 +57,16 @@ public class ProjectUtils
 
             return false;
         }
-        else if ( ( project.getIssueManagement().getSystem() != null )
-            && !( project.getIssueManagement().getSystem().equalsIgnoreCase( issueManagementSystem ) ) )
+        else if ( ( project.getIssueManagement().getSystem() == null )
+            || ( project.getIssueManagement().getSystem().trim().equals("") ) )
         {
-            log.error( "The " + mojoResult + " only supports " + issueManagementSystem + ".  No " + mojoResult
+            log.error( "No System set in Issue Management. No " + mojoResult + " will be generated." );
+
+            return false;
+        }
+        else if ( !( project.getIssueManagement().getSystem().equalsIgnoreCase( issueManagementSystem ) ) )
+        {
+            log.debug( "The " + mojoResult + " only supports " + issueManagementSystem + ".  No " + mojoResult
                 + " will be generated." );
 
             return false;
