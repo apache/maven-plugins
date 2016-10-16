@@ -19,6 +19,13 @@ package org.apache.maven.plugin.jira;
  * under the License.
  */
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.changes.AbstractChangesReport;
 import org.apache.maven.plugin.changes.ProjectUtils;
@@ -30,13 +37,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Goal which downloads issues from the Issue Tracking System and generates a report.
@@ -308,7 +308,12 @@ public class JiraMojo
         {
             return true;
         }
-        return ProjectUtils.validateIfIssueManagementComplete( project, "JIRA", "JIRA Report", getLog() );
+        String message = ProjectUtils.validateIssueManagement( project, "JIRA", "JIRA Report" );
+        if ( message != null )
+        {
+            getLog().warn( message );
+        }
+        return message == null;
     }
 
     public void executeReport( Locale locale )

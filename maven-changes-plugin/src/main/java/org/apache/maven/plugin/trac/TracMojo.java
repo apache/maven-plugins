@@ -135,7 +135,12 @@ public class TracMojo
             getLog().info( "Skipping the Trac Report in this project because it's not the Execution Root" );
             return false;
         }
-        return ProjectUtils.validateIfIssueManagementComplete( project, "Trac", "Trac Report", getLog() );
+        String message = ProjectUtils.validateIssueManagement( project, "Trac", "Trac Report" );
+        if ( message != null )
+        {
+            getLog().warn( message );
+        }
+        return message == null;
     }
 
     public void executeReport( Locale locale )
