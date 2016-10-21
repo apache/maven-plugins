@@ -279,15 +279,15 @@ public class DependencyStatusSets
         }
         catch ( IllegalAccessException e )
         {
-            e.printStackTrace();
+            // do nothing
         }
         catch ( IllegalArgumentException e )
         {
-            e.printStackTrace();
+            // do nothing
         }
         catch ( InvocationTargetException e )
         {
-            e.printStackTrace();
+            // do nothing
         }
         return moduleName;
     }
