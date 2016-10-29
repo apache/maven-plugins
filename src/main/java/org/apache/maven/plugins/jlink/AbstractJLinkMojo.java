@@ -21,6 +21,10 @@ package org.apache.maven.plugins.jlink;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.SystemUtils;
@@ -45,13 +49,23 @@ import org.codehaus.plexus.util.cli.Commandline;
 public abstract class AbstractJLinkMojo
     extends AbstractMojo
 {
+    /**
+     * <p>
+     * Specify the requirements for this jdk toolchain.
+     * This overrules the toolchain selected by the maven-toolchain-plugin.
+     * </p>
+     * <strong>note:</strong> requires at least Maven 3.3.1
+     * 
+     */
+    @Parameter
+    private Map<String, String> jdkToolchain;
 
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
 
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
-
+    
     @Component
     private ToolchainManager toolchainManager;
     
@@ -197,20 +211,62 @@ public abstract class AbstractJLinkMojo
     private Toolchain getToolchain()
     {
         Toolchain tc = null;
-        if ( toolchainManager != null )
+        
+        if ( jdkToolchain != null )
+        {
+            // Maven 3.3.1 has plugin execution scoped Toolchain Support
+            try
+            {
+                Method getToolchainsMethod =
+                    toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class, String.class,
+                                                           Map.class );
+
+                @SuppressWarnings( "unchecked" )
+                List<Toolchain> tcs =
+                    (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
+                                                                  jdkToolchain );
+
+                if ( tcs != null && tcs.size() > 0 )
+                {
+                    tc = tcs.get( 0 );
+                }
+            }
+            catch ( NoSuchMethodException e )
+            {
+                // ignore
+            }
+            catch ( SecurityException e )
+            {
+                // ignore
+            }
+            catch ( IllegalAccessException e )
+            {
+                // ignore
+            }
+            catch ( IllegalArgumentException e )
+            {
+                // ignore
+            }
+            catch ( InvocationTargetException e )
+            {
+                // ignore
+            }
+        }
+        
+        if ( tc == null )
         {
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
-
+        
         return tc;
     }
 
-    public MavenProject getProject()
+    protected MavenProject getProject()
     {
         return project;
     }
 
-    public MavenSession getSession()
+    protected MavenSession getSession()
     {
         return session;
     }
