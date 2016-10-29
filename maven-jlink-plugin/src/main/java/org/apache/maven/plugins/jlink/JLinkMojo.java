@@ -41,6 +41,7 @@ import java.io.File;
  */
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +83,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 // May be it would be wise to put into PREPARE-PACKAGE and the generation of the final jimage in the package phase?
 // Furthermore It could make sense so we can change the conf files if needed...
 // CHECKSTYLE_OFF: LineLength
-@Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
+@Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
 // CHECKSTYLE_ON: LineLength
 public class JLinkMojo
     extends AbstractJLinkMojo
@@ -98,13 +99,6 @@ public class JLinkMojo
      */
     @Parameter
     private Integer compression;
-
-    /**
-     * Define the modulepath for the <code>JLink</code> call. <code>--module-path &lt;modulepath&gt;</code> TODO: The
-     * default should be the jmods folder of the JDK...
-     */
-    @Parameter
-    private List<String> modulePaths;
 
     /**
      * Limit the univers of observable modules. <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
@@ -127,9 +121,8 @@ public class JLinkMojo
     /**
      * <code>--output &lt;path&gt;</code>
      * </p>
-     * TODO: Think about the default value? I'm not sure if something different would be better?
      */
-    @Parameter( defaultValue = "${project.build.directory}/link-result" )
+    @Parameter( defaultValue = "${project.build.directory}/jlink" )
     private File outputDirectory;
 
     /**
@@ -139,6 +132,9 @@ public class JLinkMojo
      */
     @Parameter( defaultValue = "native" )
     private String endian;
+
+    @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
+    private List<String> modulePaths;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -194,6 +190,7 @@ public class JLinkMojo
         {
             addModules = new ArrayList<>();
         }
+        
         for ( MavenProject mavenProject : modulesToAdd )
         {
             addModules.add( mavenProject.getArtifactId() );
@@ -215,7 +212,15 @@ public class JLinkMojo
 
         // Synopsis
         // Usage: jlink <options> --module-path <modulepath> --add-modules <mods> --output <path>
-        Commandline cmd = createJLinkCommandLine();
+        Commandline cmd;
+        try
+        {
+            cmd = createJLinkCommandLine();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage() );
+        }
         cmd.setExecutable( jLinkExec );
 
         executeCommand( cmd, outputDirectory );
@@ -283,71 +288,77 @@ public class JLinkMojo
         }
     }
 
-    Commandline createJLinkCommandLine()
+    Commandline createJLinkCommandLine() throws IOException
     {
-        Commandline cmd = new Commandline();
-
+        File file = new File( outputDirectory.getParentFile(), "jlinkArgs" );
+        if ( !getLog().isDebugEnabled() )
+        {
+            file.deleteOnExit();
+        }
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        
+        PrintStream argsFile = new PrintStream( file );
+        
         if ( stripDebug )
         {
-            cmd.createArg().setValue( "--strip-debug" );
+            argsFile.println( "--strip-debug" );
         }
 
         if ( compression != null )
         {
-            cmd.createArg().setValue( "--compression" );
-            cmd.createArg().setValue( compression.toString() );
+            argsFile.println( "--compression" );
+            argsFile.println( compression );
         }
 
         if ( modulePaths != null )
         {
-            cmd.createArg().setValue( "--module-path" );
-            StringBuilder sb = getColonSeparateList( modulePaths );
-            cmd.createArg().setValue( sb.toString() );
+            argsFile.println( "--module-path" );
+            argsFile.append( '"' )
+                    .append( getColonSeparateList( modulePaths ).replace( "\\", "\\\\" ) )
+                    .println( '"' );
         }
 
         if ( limitModules != null && !limitModules.isEmpty() )
         {
-            cmd.createArg().setValue( "--limit-modules" );
+            argsFile.println( "--limit-modules" );
             StringBuilder sb = getCommaSeparatedList( limitModules );
-            cmd.createArg().setValue( sb.toString() );
+            argsFile.println( sb.toString() );
         }
 
         if ( addModules != null && !addModules.isEmpty() )
         {
-            cmd.createArg().setValue( "--add-modules" );
+            argsFile.println( "--add-modules" );
             StringBuilder sb = getCommaSeparatedList( addModules );
-            cmd.createArg().setValue( sb.toString() );
+            argsFile.println( sb.toString() );
         }
 
         if ( outputDirectory != null )
         {
-            cmd.createArg().setValue( "--output" );
-            cmd.createArg().setFile( outputDirectory );
+            argsFile.println( "--output" );
+            argsFile.println( outputDirectory );
         }
+        
+        argsFile.close();
+
+        Commandline cmd = new Commandline();
+        cmd.createArg().setValue( '@' + file.getAbsolutePath() );
 
         return cmd;
     }
 
-    private StringBuilder getColonSeparateList( List<String> modulePaths )
+    private String getColonSeparateList( List<String> modulePaths )
     {
         StringBuilder sb = new StringBuilder();
         for ( String module : modulePaths )
         {
             if ( sb.length() > 0 )
             {
-                // FIXME: Check this ?
-                if ( SystemUtils.IS_OS_WINDOWS )
-                {
-                    sb.append( ';' );
-                }
-                else
-                {
-                    sb.append( ':' );
-                }
+                sb.append( SystemUtils.PATH_SEPARATOR );
             }
             sb.append( module );
         }
-        return sb;
+        return sb.toString();
     }
 
     private StringBuilder getCommaSeparatedList( List<String> modules )
