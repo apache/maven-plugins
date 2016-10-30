@@ -29,7 +29,6 @@ under the License.
           <classifier>sources</classifier>
           <file>${basedir}/target/test-classes/unit/install-file-with-classifier/target/maven-install-test-1.0-SNAPSHOT.jar
           </file>
-          <localRepository>${localRepository}</localRepository>
         </configuration>
       </plugin>
     </plugins>

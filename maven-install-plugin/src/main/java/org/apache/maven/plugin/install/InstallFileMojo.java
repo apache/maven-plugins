@@ -227,7 +227,7 @@ public class InstallFileMojo
         MavenProject project = createMavenProject();
         Artifact artifact = project.getArtifact();
         
-        if ( file.equals( getLocalRepoFile( artifact ) ) )
+        if ( file.equals( getLocalRepoFile( buildingRequest, artifact ) ) )
         {
             throw new MojoFailureException( "Cannot install artifact. "
                 + "Artifact is already in the local repository.\n\nFile in question is: " + file + "\n" );
@@ -264,7 +264,7 @@ public class InstallFileMojo
                 File generatedPomFile = generatePomFile();
                 ProjectArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
                 if ( Boolean.TRUE.equals( generatePom )
-                    || ( generatePom == null && !getLocalRepoFile( pomMetadata ).exists() ) )
+                    || ( generatePom == null && !getLocalRepoFile( buildingRequest, pomMetadata ).exists() ) )
                 {
                     getLog().debug( "Installing generated POM" );
                     if ( classifier == null )
@@ -300,7 +300,7 @@ public class InstallFileMojo
                 new ProjectInstallerRequest().setProject( project ).setCreateChecksum( createChecksum ).setUpdateReleaseInfo( updateReleaseInfo );
             // CHECKSTYLE_ON: LineLength
 
-            installer.install( buildingRequest, projectInstallerRequest, localRepository );
+            installer.install( buildingRequest, projectInstallerRequest );
         }
         catch ( Exception e )
         {

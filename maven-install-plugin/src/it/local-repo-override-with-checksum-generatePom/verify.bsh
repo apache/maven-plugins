@@ -27,10 +27,14 @@ String[] paths =
     "gid/test/0.1/test-0.1.jar",
     "gid/test/0.1/test-0.1.jar.md5",
     "gid/test/0.1/test-0.1.jar.sha1",
+    "gid/test/0.1/test-0.1.pom",
+    "gid/test/0.1/test-0.1.pom.md5",
+    "gid/test/0.1/test-0.1.pom.sha1",
 };
 
 Set cksumToCheckPaths = new HashSet( Arrays.asList( new String[]
 {
+    "gid/test/0.1/test-0.1.pom",
     "gid/test/0.1/test-0.1.jar"
 } ) );
 

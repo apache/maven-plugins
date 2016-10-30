@@ -20,33 +20,10 @@
 import java.io.*;
 import java.util.*;
 
-import org.apache.maven.plugin.install.Utils;
+import org.codehaus.plexus.util.*;
 
-String[] paths =
-{
-    "gid/test/0.1/test-0.1.jar",
-    "gid/test/0.1/test-0.1.jar.md5",
-    "gid/test/0.1/test-0.1.jar.sha1",
-};
-
-Set cksumToCheckPaths = new HashSet( Arrays.asList( new String[]
-{
-    "gid/test/0.1/test-0.1.jar"
-} ) );
-
-for ( String path : paths )
-{
-    File file = new File( new File( basedir, "target/local-repo" ), path );
-    System.out.println( "Checking for existence of " + file );
-    if ( !file.isFile() )
-    {
-        throw new FileNotFoundException( "Existing: " + file.getAbsolutePath() );
-    }
-    if ( cksumToCheckPaths.contains( path ) )
-    {    
-        System.out.println( "Verifying " + file );
-        Utils.verifyChecksum( file );
-    }
-}
+File file = new File( basedir, "target" );
+System.out.println( "Deleting " + file );
+FileUtils.deleteDirectory( file );
 
 return true;

@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
@@ -38,6 +37,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.repository.RepositoryManager;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.sonatype.aether.impl.internal.EnhancedLocalRepositoryManager;
 import org.sonatype.aether.util.ChecksumUtils;
@@ -264,10 +264,11 @@ public class InstallMojoTest
         File file = new File( getBasedir(), "target/test-classes/unit/basic-install-checksum/" + "maven-test-jar.jar" );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        MavenSession mavenSession = createMavenSession();
         updateMavenProject( project );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
-        setVariableValueToObject( mojo, "session", createMavenSession() );
+        setVariableValueToObject( mojo, "session", mavenSession );
 
         artifact = (InstallArtifactStub) project.getArtifact();
 
@@ -289,9 +290,12 @@ public class InstallMojoTest
             }
         }
 
-        ArtifactRepository localRepo = (ArtifactRepository) getVariableValueFromObject( mojo, "localRepository" );
+        RepositoryManager repoManager = (RepositoryManager) getVariableValueFromObject( mojo, "repositoryManager" );
+        
+        ProjectBuildingRequest pbr = mavenSession.getProjectBuildingRequest();
 
-        File pom = new File( localRepo.getBasedir(), localRepo.pathOfLocalRepositoryMetadata( metadata, localRepo ) );
+        File pom = new File( repoManager.getLocalRepositoryBasedir( pbr ),
+                             repoManager.getPathForLocalMetadata( pbr, metadata ) );
 
         assertTrue( pom.exists() );
 

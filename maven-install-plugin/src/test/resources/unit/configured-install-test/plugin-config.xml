@@ -23,7 +23,6 @@ under the License.
         <artifactId>maven-install-plugin</artifactId>
         <configuration>
           <updateReleaseInfo>true</updateReleaseInfo>
-          <localRepository>${localRepository}</localRepository>
           <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub">
             <file>${basedir}/src/test/resources/unit/configured-install-test/plugin-config.xml</file>
             <packaging>jar</packaging>

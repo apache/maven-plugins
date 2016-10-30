@@ -28,7 +28,6 @@ under the License.
           <packaging>jar</packaging>
           <file>${basedir}/target/test-classes/unit/install-file-basic-test/target/maven-install-test-1.0-SNAPSHOT.jar
           </file>
-          <localRepository>${localRepository}</localRepository>
         </configuration>
       </plugin>
     </plugins>

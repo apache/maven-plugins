@@ -27,7 +27,6 @@ under the License.
           <version>1.0-SNAPSHOT</version>
           <packaging>jar</packaging>
           <file>${basedir}/src/test/resources/unit/install-file-with-checksum/maven-test-jar.jar</file>
-          <localRepository>${localRepository}</localRepository>
           <createChecksum>true</createChecksum>
           <generatePom>true</generatePom>
         </configuration>

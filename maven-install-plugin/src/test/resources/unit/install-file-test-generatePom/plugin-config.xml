@@ -30,7 +30,6 @@ under the License.
             ${basedir}/src/test/resources/unit/install-file-test-generatePom/target/maven-install-test-1.0-SNAPSHOT.jar
           </file>
           <generatePom>true</generatePom>
-          <localRepository>${localRepository}</localRepository>
         </configuration>
       </plugin>
     </plugins>

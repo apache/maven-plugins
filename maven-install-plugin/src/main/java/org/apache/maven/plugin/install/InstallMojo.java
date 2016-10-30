@@ -138,8 +138,7 @@ public class InstallMojo
     {
         try
         {
-            installer.install( session.getProjectBuildingRequest(), pir,
-                                      localRepository );
+            installer.install( session.getProjectBuildingRequest(), pir );
         }
         catch ( IOException e )
         {

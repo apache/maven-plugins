@@ -22,11 +22,11 @@ package org.apache.maven.plugin.install;
 import java.io.File;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.maven.shared.repository.RepositoryManager;
 
@@ -42,11 +42,6 @@ public abstract class AbstractInstallMojo
 
     @Component
     protected RepositoryManager repositoryManager;
-
-    /**
-     */
-    @Parameter( property = "localRepository", required = true, readonly = true )
-    protected ArtifactRepository localRepository;
 
     /**
      * Flag whether to create checksums (MD5, SHA-1) or not.
@@ -72,10 +67,10 @@ public abstract class AbstractInstallMojo
      * @param artifact The artifact whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact when installed, never <code>null</code>.
      */
-    protected File getLocalRepoFile( Artifact artifact )
+    protected File getLocalRepoFile( ProjectBuildingRequest buildingRequest, Artifact artifact )
     {
-        String path = repositoryManager.getPathForLocalArtifact( session.getProjectBuildingRequest(), artifact );
-        return new File( localRepository.getBasedir(), path );
+        String path = repositoryManager.getPathForLocalArtifact( buildingRequest, artifact );
+        return new File( repositoryManager.getLocalRepositoryBasedir( buildingRequest ), path );
     }
 
     /**
@@ -85,10 +80,10 @@ public abstract class AbstractInstallMojo
      * @param metadata The artifact metadata whose local repo path should be determined, must not be <code>null</code>.
      * @return The absolute path to the artifact metadata when installed, never <code>null</code>.
      */
-    protected File getLocalRepoFile( ProjectArtifactMetadata metadata )
+    protected File getLocalRepoFile( ProjectBuildingRequest buildingRequest, ProjectArtifactMetadata metadata )
     {
-        String path = localRepository.pathOfLocalRepositoryMetadata( metadata, localRepository );
-        return new File( localRepository.getBasedir(), path );
+        String path = repositoryManager.getPathForLocalMetadata( buildingRequest, metadata );
+        return new File( repositoryManager.getLocalRepositoryBasedir( buildingRequest ), path );
     }
 
 }

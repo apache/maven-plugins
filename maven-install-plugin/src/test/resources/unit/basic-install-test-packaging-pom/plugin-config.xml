@@ -22,7 +22,6 @@ under the License.
       <plugin>
         <artifactId>maven-install-plugin</artifactId>
         <configuration>
-          <localRepository>${localRepository}</localRepository>
           <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub">
             <file>${basedir}/src/test/resources/unit/basic-install-test-packaging-pom/plugin-config.xml</file>
             <packaging>pom</packaging>
