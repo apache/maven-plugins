@@ -53,7 +53,7 @@ public class EvaluateMojoTest
         throws Exception
     {
         super.setUp();
-        interceptingLogger = new InterceptingLog( container.getLoggerManager().getLoggerForComponent( Mojo.ROLE ) );
+        interceptingLogger = new InterceptingLog( getContainer().getLoggerManager().getLoggerForComponent( Mojo.ROLE ) );
     }
 
     /**
