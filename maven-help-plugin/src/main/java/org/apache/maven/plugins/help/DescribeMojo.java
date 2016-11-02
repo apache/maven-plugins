@@ -19,9 +19,12 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +38,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
@@ -60,6 +64,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.tools.plugin.util.PluginUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
@@ -108,6 +113,14 @@ public class DescribeMojo
      */
     @Component
     private ArtifactFactory artifactFactory;
+    
+    /**
+     * Maven Artifact Resolver component.
+     *
+     * @since 2.2.1
+     */
+    @Component
+    private ArtifactResolver artifactResolver;
 
     /**
      * The Plugin manager instance used to resolve Plugin descriptors.
@@ -656,6 +669,11 @@ public class DescribeMojo
             append( buffer, "Deprecated. " + deprecation, 1 );
         }
 
+        if ( isReportGoal( md ) )
+        {
+            append( buffer, "Note", "This goal should be used as a Maven report.", 1 );
+        }
+
         if ( !fullDescription )
         {
             return;
@@ -1079,6 +1097,40 @@ public class DescribeMojo
         for ( String line : l2 )
         {
             sb.append( line ).append( '\n' );
+        }
+    }
+
+    /**
+     * Determines if this Mojo should be used as a report or not. This resolves the plugin project along with all of its
+     * transitive dependencies to determine if the Java class of this goal implements <code>MavenReport</code>.
+     * 
+     * @param md Mojo descriptor
+     * @return Whether or not this goal should be used as a report.
+     */
+    private boolean isReportGoal( MojoDescriptor md )
+    {
+        PluginDescriptor d = md.getPluginDescriptor();
+        Artifact jar = artifactFactory.createArtifact( d.getGroupId(), d.getArtifactId(), d.getVersion(), "", "jar" );
+        Artifact pom = artifactFactory.createArtifact( d.getGroupId(), d.getArtifactId(), d.getVersion(), "", "pom" );
+        List<URL> urls = new ArrayList<URL>();
+        try
+        {
+            artifactResolver.resolve( jar, remoteRepositories, localRepository );
+            artifactResolver.resolve( pom, remoteRepositories, localRepository );
+            MavenProject project = projectBuilder.buildWithDependencies( pom.getFile(), localRepository, null );
+            urls.add( jar.getFile().toURI().toURL() );
+            for ( Object artifact : project.getCompileClasspathElements() )
+            {
+                urls.add( new File( (String) artifact ).toURI().toURL() );
+            }
+            ClassLoader classLoader =
+                new URLClassLoader( urls.toArray( new URL[urls.size()] ), getClass().getClassLoader() );
+            return MavenReport.class.isAssignableFrom( Class.forName( md.getImplementation(), false, classLoader ) );
+        }
+        catch ( Exception e )
+        {
+            getLog().warn( "Couldn't identify if this goal is a report goal.", e );
+            return false;
         }
     }
 
