@@ -17,16 +17,13 @@
  * under the License.
  */
 
-import java.io.*
-import java.util.*
-import java.util.regex.*
+import java.io.File
 import org.apache.commons.io.FileUtils
 
-File srcIt = new File (basedir, "src/it");
-File originalFolder = new File (srcIt, "minvoker-test");
-File destinationFolder = new File(srcIt, "test-\u00c9\u00e9\u00ea- & -\u00c9\u00e9\u00ea-test");
-FileUtils.deleteQuietly(destinationFolder);
-// rename old one into new one with special characters.
-if (!originalFolder.renameTo(destinationFolder)) {
-  throw new IOException("Rename didn't work.")
-}
+// Previous potential target 'content' has impact on IT execution
+// (Some new file should be created by verify.sh) 
+FileUtils.deleteQuietly( new File( basedir, "target/invoker-reports" ) );
+FileUtils.deleteQuietly( new File( basedir, "src/it/jre-version-match/target" ) );
+FileUtils.deleteQuietly( new File( basedir, "src/it/maven-version-match/target" ) );
+FileUtils.deleteQuietly( new File( basedir, "src/it/os-family-match/target" ) );
+return true;
