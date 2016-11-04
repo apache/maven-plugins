@@ -127,7 +127,7 @@ under the License.
       <artifactId>maven-script-interpreter</artifactId>
       <version>1.1</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-artifact-transfer</artifactId>
@@ -309,7 +309,29 @@ under the License.
             </plugin>
           </plugins>
         </pluginManagement>
-
+      </build>
+    </profile>
+    <profile>
+      <!-- MINVOKER-209 workaround, until sustainable fix for MNG-4559 -->
+      <!-- Unix vs Windows quote resolution in MAVEN_OPTS -->
+      <id>windows-its</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-invoker-plugin</artifactId>
+              <configuration>
+                <mavenOpts>-Djava.io.tmpdir="${project.build.directory}"</mavenOpts>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
     <profile>
