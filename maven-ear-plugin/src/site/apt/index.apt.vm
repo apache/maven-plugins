@@ -76,8 +76,7 @@ ${project.name}
 
   General instructions on how to use the EAR Plugin can be found on the {{{./usage.html}usage page}}. Some more
   specific use cases are described in the examples given below. Further real-life examples are given in the plugin's
-  {{{./tests.html}test suite}}. Last but not least, users occasionally contribute additional examples, tips or errata to
-  the {{{http://docs.codehaus.org/display/MAVENUSER/EAR+Plugin}plugin's wiki page}}.
+  {{{./tests.html}test suite}}.
 
   In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
   free to contact the {{{./mail-lists.html}user mailing list}}. The posts to the mailing list are archived and could
