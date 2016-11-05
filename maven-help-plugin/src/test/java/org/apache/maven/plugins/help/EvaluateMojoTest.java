@@ -76,8 +76,10 @@ public class EvaluateMojoTest
         setUpMojo( mojo, inputHandler, expressionEvaluator );
 
         mojo.execute();
+        
+        String ls = System.getProperty( "line.separator" );
 
-        assertTrue( interceptingLogger.infoLogs.contains( "\nMy result" ) );
+        assertTrue( interceptingLogger.infoLogs.contains( ls + "My result" ) );
         assertTrue( interceptingLogger.warnLogs.isEmpty() );
         verify( expressionEvaluator ).evaluate( "${project.groupId}" );
         verify( inputHandler, times( 2 ) ).readLine();
@@ -103,8 +105,10 @@ public class EvaluateMojoTest
         setUpMojo( mojo, inputHandler, expressionEvaluator );
 
         mojo.execute();
+        
+        String ls = System.getProperty( "line.separator" );
 
-        assertTrue( interceptingLogger.infoLogs.contains( "\nMy result" ) );
+        assertTrue( interceptingLogger.infoLogs.contains( ls + "My result" ) );
         assertFalse( interceptingLogger.warnLogs.isEmpty() );
         verify( expressionEvaluator ).evaluate( "${project.artifactId}" );
         verify( inputHandler, times( 2 ) ).readLine();

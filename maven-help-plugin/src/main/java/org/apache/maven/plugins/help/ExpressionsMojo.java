@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -66,12 +68,12 @@ public class ExpressionsMojo
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append( "Maven supports the following Plugin expressions:\n\n" );
+        sb.append( "Maven supports the following Plugin expressions:" ).append( LS ).append( LS );
         for ( String expression : getExpressionsRoot() )
         {
             sb.append( "${" ).append( expression ).append( "}: " );
             sb.append( NO_DESCRIPTION_AVAILABLE );
-            sb.append( "\n\n" );
+            sb.append( LS ).append( LS );
         }
 
         for ( Map.Entry<String, Expression> entry : m.entrySet() )
@@ -81,7 +83,7 @@ public class ExpressionsMojo
 
             sb.append( "${" ).append( key ).append( "}: " );
             sb.append( trimCDATA( expression.getDescription() ) );
-            sb.append( "\n\n" );
+            sb.append( LS ).append( LS );
         }
 
         if ( output != null )

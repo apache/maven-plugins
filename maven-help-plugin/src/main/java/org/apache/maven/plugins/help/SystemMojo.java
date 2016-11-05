@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -52,37 +54,37 @@ public class SystemMojo
     {
         StringBuilder message = new StringBuilder();
 
-        message.append( '\n' );
-        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( LS );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
         message.append( StringUtils.repeat( "=", REPEAT ) );
         message.append( " Platform Properties Details " );
-        message.append( StringUtils.repeat( "=", REPEAT ) ).append( '\n' );
-        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
-        message.append( '\n' );
+        message.append( StringUtils.repeat( "=", REPEAT ) ).append( LS );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
+        message.append( LS );
 
-        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
-        message.append( "System Properties" ).append( '\n' );
-        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
+        message.append( "System Properties" ).append( LS );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
 
         Properties systemProperties = System.getProperties();
         for ( Object o1 : systemProperties.keySet() )
         {
             String key = o1.toString();
-            message.append( "\n" );
+            message.append( LS );
             message.append( key ).append( "=" ).append( systemProperties.get( key ) );
         }
 
-        message.append( '\n' ).append( '\n' );
-        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
-        message.append( "Environment Variables" ).append( '\n' );
-        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( '\n' );
+        message.append( LS ).append( LS );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
+        message.append( "Environment Variables" ).append( LS );
+        message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
         try
         {
             Properties envVars = CommandLineUtils.getSystemEnvVars();
             for ( Object o : envVars.keySet() )
             {
                 String key = o.toString();
-                message.append( "\n" );
+                message.append( LS );
                 message.append( key ).append( "=" ).append( envVars.get( key ) );
             }
         }
@@ -94,14 +96,14 @@ public class SystemMojo
             }
         }
 
-        message.append( "\n" );
+        message.append( LS );
 
         if ( output != null )
         {
             String formattedDateTime = DateFormatUtils.ISO_DATETIME_FORMAT.format( System.currentTimeMillis() );
             StringBuilder sb = new StringBuilder();
-            sb.append( "Created by: " ).append( getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " ).append( formattedDateTime ).append( "\n" ).append( "\n" );
+            sb.append( "Created by: " ).append( getClass().getName() ).append( LS );
+            sb.append( "Created on: " ).append( formattedDateTime ).append( LS ).append( LS );
             sb.append( message.toString() );
 
             try

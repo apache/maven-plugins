@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -68,15 +70,15 @@ public class ActiveProfilesMojo
         {
             getActiveProfileStatement( project, message );
 
-            message.append( "\n\n" );
+            message.append( LS ).append( LS );
         }
 
         if ( output != null )
         {
             String formattedDateTime = DateFormatUtils.ISO_DATETIME_FORMAT.format( System.currentTimeMillis() );
             StringBuilder sb = new StringBuilder();
-            sb.append( "Created by: " ).append( getClass().getName() ).append( "\n" );
-            sb.append( "Created on: " ).append( formattedDateTime ).append( "\n" ).append( "\n" );
+            sb.append( "Created by: " ).append( getClass().getName() ).append( LS );
+            sb.append( "Created on: " ).append( formattedDateTime ).append( LS ).append( LS );
             sb.append( message.toString() );
 
             try
@@ -138,9 +140,10 @@ public class ActiveProfilesMojo
         }
 
 
-        message.append( "\n" );
+        message.append( LS );
 
-        message.append( "Active Profiles for Project \'" ).append( project.getId() ).append( "\': \n\n" );
+        message.append( "Active Profiles for Project \'" ).append( project.getId() ).append( "\':" );
+        message.append( LS ).append( LS );
 
         if ( activeProfileIds.isEmpty() )
         {
@@ -148,19 +151,19 @@ public class ActiveProfilesMojo
         }
         else
         {
-            message.append( "The following profiles are active:\n" );
+            message.append( "The following profiles are active:" ).append( LS );
 
             for ( Map.Entry<String, List<String>> entry : activeProfileIds.entrySet() )
             {
                 for ( String profileId : entry.getValue() )
                 {
-                    message.append( "\n - " ).append( profileId );
+                    message.append( LS ).append( " - " ).append( profileId );
                     message.append( " (source: " ).append( entry.getKey() ).append( ")" );
                 }
             }
         }
 
-        message.append( "\n" );
+        message.append( LS );
     }
 
     @SuppressWarnings( "unchecked" )

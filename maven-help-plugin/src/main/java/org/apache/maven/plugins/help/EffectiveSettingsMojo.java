@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -121,9 +123,9 @@ public class EffectiveSettingsMojo
         {
             StringBuilder message = new StringBuilder();
 
-            message.append( "\nEffective user-specific configuration settings:\n\n" );
+            message.append( LS ).append( "Effective user-specific configuration settings:" ).append( LS ).append( LS );
             message.append( effectiveSettings );
-            message.append( "\n" );
+            message.append( LS );
 
             if ( getLog().isInfoEnabled() )
             {

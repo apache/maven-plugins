@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -84,7 +86,7 @@ public class AllProfilesMojo
 
         for ( MavenProject project : projects )
         {
-            descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( "\n" );
+            descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( LS );
 
             DefaultProfileManager pm =
                 new DefaultProfileManager( session.getContainer(), session.getExecutionProperties() );
@@ -134,14 +136,16 @@ public class AllProfilesMojo
                 for ( Profile p : activeProfiles )
                 {
                     descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
-                    descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")\n" );
+                    descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")" );
+                    descriptionBuffer.append( LS );
                 }
 
                 // display inactive profiles
                 for ( Profile p : allProfilesByIds.values() )
                 {
                     descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
-                    descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")\n" );
+                    descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")" );
+                    descriptionBuffer.append( LS );
                 }
             }
         }

@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -142,9 +144,11 @@ public class EffectivePomMojo
         {
             StringBuilder message = new StringBuilder();
 
-            message.append( "\nEffective POMs, after inheritance, interpolation, and profiles are applied:\n\n" );
+            message.append( LS );
+            message.append( "Effective POMs, after inheritance, interpolation, and profiles are applied:" );
+            message.append( LS ).append( LS );
             message.append( effectivePom );
-            message.append( "\n" );
+            message.append( LS );
 
             if ( getLog().isInfoEnabled() )
             {

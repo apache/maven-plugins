@@ -45,6 +45,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class HelpUtil
 {
     
+    public static final String LS = System.getProperty( "line.separator" );
+    
     private HelpUtil()
     {
         // Utility classes should not have a public or default constructor.
@@ -133,7 +135,7 @@ public class HelpUtil
             PrintWriter writer = new PrintWriter( s );
             e.printStackTrace( writer );
 
-            throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() + "\n" + s.toString() );
+            throw new MojoFailureException( "InvocationTargetException: " + e.getMessage() + LS + s.toString() );
         }
     }
 }

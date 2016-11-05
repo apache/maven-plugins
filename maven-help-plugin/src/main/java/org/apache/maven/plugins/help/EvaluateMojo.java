@@ -19,6 +19,8 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
+import static org.apache.maven.plugins.help.HelpUtil.LS;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -392,7 +394,7 @@ public class EvaluateMojo
         }
         else
         {
-            getLog().info( "\n" + response.toString() );
+            getLog().info( LS + response.toString() );
         }
     }
 

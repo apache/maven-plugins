@@ -64,16 +64,18 @@ public class DescribeMojoTest
         parameter.setExpression( "${valid.expression}" );
         md.addParameter( parameter );
         
+        String ls = System.getProperty( "line.separator" );
+        
         try
         {
             PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[] { MojoDescriptor.class,
                 StringBuilder.class }, new Object[] { md, sb } );
             
-            assertEquals( "  Available parameters:\n" +
-            		      "\n" +
-            		      "    name\n" +
-            		      "      User property: valid.expression\n" +
-            		      "      (no description available)\n", sb.toString() );
+            assertEquals( "  Available parameters:" + ls
+            		      + ls +
+            		      "    name" + ls +
+            		      "      User property: valid.expression" + ls +
+            		      "      (no description available)" + ls, sb.toString() );
         }
         catch ( Throwable e )
         {
@@ -91,16 +93,18 @@ public class DescribeMojoTest
         parameter.setExpression( "${project.build.directory}/generated-sources/foobar" ); //this is a defaultValue
         md.addParameter( parameter );
         
+        String ls = System.getProperty( "line.separator" );
+        
         try
         {
             PrivateAccessor.invoke( new DescribeMojo(), "describeMojoParameters", new Class[] { MojoDescriptor.class,
                 StringBuilder.class }, new Object[] { md, sb } );
             
-            assertEquals( "  Available parameters:\n" +
-                          "\n" +
-                          "    name\n" +
-                          "      Expression: ${project.build.directory}/generated-sources/foobar\n" +
-                          "      (no description available)\n", sb.toString() );
+            assertEquals( "  Available parameters:" + ls +
+                          ls +
+                          "    name" + ls +
+                          "      Expression: ${project.build.directory}/generated-sources/foobar" + ls +
+                          "      (no description available)" + ls, sb.toString() );
         }
         catch ( Throwable e )
         {
