@@ -34,9 +34,6 @@ import java.util.jar.JarInputStream;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -53,7 +50,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.path.PathTranslator;
 import org.apache.maven.settings.Settings;
@@ -84,22 +80,10 @@ public class EvaluateMojo
     // ----------------------------------------------------------------------
 
     /**
-     * Maven Artifact Factory component.
-     */
-    @Component
-    private ArtifactFactory artifactFactory;
-
-    /**
      * Input handler, needed for command line handling.
      */
     @Component
     private InputHandler inputHandler;
-
-    /**
-     * Maven Project Builder component.
-     */
-    @Component
-    private MavenProjectBuilder mavenProjectBuilder;
 
     /**
      */
@@ -136,7 +120,7 @@ public class EvaluateMojo
     /**
      * An artifact for evaluating Maven expressions.
      * <br/>
-     * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version][:classifier]</code>. The
+     * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version]</code>. The
      * latest version of the artifact will be used when no version is specified.
      */
     @Parameter( property = "artifact" )
@@ -149,22 +133,10 @@ public class EvaluateMojo
     private String expression;
 
     /**
-     * Local Repository.
-     */
-    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
-    protected ArtifactRepository localRepository;
-
-    /**
      * Maven project built from the given {@link #artifact}. Otherwise, the current Maven project or the super pom.
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
-
-    /**
-     * Remote repositories used for the project.
-     */
-    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true )
-    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * The system settings for Maven.
@@ -208,17 +180,7 @@ public class EvaluateMojo
 
         if ( StringUtils.isNotEmpty( artifact ) )
         {
-            Artifact artifactObj = getArtifact( artifact );
-
-            try
-            {
-                project = getMavenProject( artifactObj );
-            }
-            catch ( ProjectBuildingException e )
-            {
-                throw new MojoExecutionException( "Unable to get the POM for the artifact '" + artifact
-                    + "'. Verify the artifact parameter." );
-            }
+            project = getMavenProject( artifact );
         }
 
         if ( expression == null )
@@ -268,82 +230,6 @@ public class EvaluateMojo
             // using project if found or super-pom
             getLog().info( "No artifact parameter specified, using '" + project.getId() + "' as project." );
         }
-    }
-
-    /**
-     * @param artifactString should respect the format <code>groupId:artifactId[:version][:classifier]</code>
-     * @return the <code>Artifact</code> object for the <code>artifactString</code> parameter.
-     * @throws MojoExecutionException if the <code>artifactString</code> doesn't respect the format.
-     */
-    private Artifact getArtifact( String artifactString )
-        throws MojoExecutionException
-    {
-        if ( StringUtils.isEmpty( artifactString ) )
-        {
-            throw new IllegalArgumentException( "artifact parameter could not be empty" );
-        }
-
-        String groupId; // required
-        String artifactId; // required
-        String version; // optional
-        String classifier = null; // optional
-
-        String[] artifactParts = artifactString.split( ":" );
-
-        switch ( artifactParts.length )
-        {
-            case 2:
-                groupId = artifactParts[0];
-                artifactId = artifactParts[1];
-                version = Artifact.LATEST_VERSION;
-                break;
-            case 3:
-                groupId = artifactParts[0];
-                artifactId = artifactParts[1];
-                version = artifactParts[2];
-                break;
-            case 4:
-                groupId = artifactParts[0];
-                artifactId = artifactParts[1];
-                version = artifactParts[2];
-                classifier = artifactParts[3];
-                break;
-            default:
-                throw new MojoExecutionException( "The artifact parameter '" + artifactString
-                    + "' should be conform to: " + "'groupId:artifactId[:version][:classifier]'." );
-        }
-
-        if ( StringUtils.isNotEmpty( classifier ) )
-        {
-            return artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", classifier );
-        }
-
-        return artifactFactory.createArtifact( groupId, artifactId, version, Artifact.SCOPE_COMPILE, "jar" );
-    }
-
-    /**
-     * @param artifactObj not null
-     * @return the POM for the given artifact.
-     * @throws MojoExecutionException if the artifact has a system scope.
-     * @throws ProjectBuildingException when building pom.
-     */
-    private MavenProject getMavenProject( Artifact artifactObj )
-        throws MojoExecutionException, ProjectBuildingException
-    {
-        if ( Artifact.SCOPE_SYSTEM.equals( artifactObj.getScope() ) )
-        {
-            throw new MojoExecutionException( "System artifact is not be handled." );
-        }
-
-        Artifact copyArtifact = ArtifactUtils.copyArtifact( artifactObj );
-        if ( !"pom".equals( copyArtifact.getType() ) )
-        {
-            copyArtifact =
-                artifactFactory.createProjectArtifact( copyArtifact.getGroupId(), copyArtifact.getArtifactId(),
-                                                       copyArtifact.getVersion(), copyArtifact.getScope() );
-        }
-
-        return mavenProjectBuilder.buildFromRepository( copyArtifact, remoteRepositories, localRepository );
     }
 
     /**
@@ -770,36 +656,33 @@ public class EvaluateMojo
         String resource = "META-INF/maven/org.apache.maven.plugins/maven-help-plugin/pom.properties";
 
         InputStream resourceAsStream = EvaluateMojo.class.getClassLoader().getResourceAsStream( resource );
-        Artifact helpPluginArtifact = null;
-        if ( resourceAsStream != null )
-        {
-            Properties properties = new Properties();
-            try
-            {
-                properties.load( resourceAsStream );
-            }
-            catch ( IOException e )
-            {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "IOException: " + e.getMessage(), e );
-                }
-            }
-
-            String artifactString =
-                properties.getProperty( "groupId", "unknown" ) + ":"
-                    + properties.getProperty( "artifactId", "unknown" ) + ":"
-                    + properties.getProperty( "version", "unknown" );
-
-            helpPluginArtifact = getArtifact( artifactString );
-        }
-
-        if ( helpPluginArtifact == null )
+        if ( resourceAsStream == null )
         {
             throw new MojoExecutionException( "The help plugin artifact was not found." );
         }
+        Properties properties = new Properties();
+        try
+        {
+            properties.load( resourceAsStream );
+        }
+        catch ( IOException e )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "IOException: " + e.getMessage(), e );
+            }
+        }
+        finally
+        {
+            IOUtil.close( resourceAsStream );
+        }
 
-        return getMavenProject( helpPluginArtifact );
+        String artifactString =
+            properties.getProperty( "groupId", "unknown" ) + ":"
+                + properties.getProperty( "artifactId", "unknown" ) + ":"
+                + properties.getProperty( "version", "unknown" );
+
+        return getMavenProject( artifactString );
     }
 
     /**

@@ -19,14 +19,25 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.WriterFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Base class with some Help Mojo functionalities.
@@ -40,6 +51,30 @@ public abstract class AbstractHelpMojo
 {
     /** The maximum length of a display line. */
     protected static final int LINE_LENGTH = 79;
+    
+    /**
+     * Maven Artifact Factory component.
+     */
+    @Component
+    private ArtifactFactory artifactFactory;
+    
+    /**
+     * Maven Project Builder component.
+     */
+    @Component
+    private MavenProjectBuilder mavenProjectBuilder;
+    
+    /**
+     * Remote repositories used for the project.
+     */
+    @Parameter( defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true )
+    protected List<ArtifactRepository> remoteRepositories;
+    
+    /**
+     * Local Repository.
+     */
+    @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
+    protected ArtifactRepository localRepository;
 
     /**
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
@@ -95,4 +130,85 @@ public abstract class AbstractHelpMojo
             IOUtil.close( out );
         }
     }
+    
+    /**
+     * @param artifactString should respect the format <code>groupId:artifactId[:version][:classifier]</code>
+     * @return the <code>Artifact</code> object for the <code>artifactString</code> parameter.
+     * @throws MojoExecutionException if the <code>artifactString</code> doesn't respect the format.
+     */
+    protected Artifact getArtifact( String artifactString )
+        throws MojoExecutionException
+    {
+        if ( StringUtils.isEmpty( artifactString ) )
+        {
+            throw new IllegalArgumentException( "artifact parameter could not be empty" );
+        }
+
+        String groupId; // required
+        String artifactId; // required
+        String version; // optional
+        String classifier = null; // optional
+
+        String[] artifactParts = artifactString.split( ":" );
+
+        switch ( artifactParts.length )
+        {
+            case 2:
+                groupId = artifactParts[0];
+                artifactId = artifactParts[1];
+                version = Artifact.LATEST_VERSION;
+                break;
+            case 3:
+                groupId = artifactParts[0];
+                artifactId = artifactParts[1];
+                version = artifactParts[2];
+                break;
+            case 4:
+                groupId = artifactParts[0];
+                artifactId = artifactParts[1];
+                version = artifactParts[2];
+                classifier = artifactParts[3];
+                break;
+            default:
+                throw new MojoExecutionException( "The artifact parameter '" + artifactString
+                    + "' should be conform to: " + "'groupId:artifactId[:version][:classifier]'." );
+        }
+
+        if ( StringUtils.isNotEmpty( classifier ) )
+        {
+            return artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", classifier );
+        }
+
+        return artifactFactory.createArtifact( groupId, artifactId, version, Artifact.SCOPE_COMPILE, "jar" );
+    }
+
+    protected MavenProject getMavenProject( String artifactString )
+        throws MojoExecutionException
+    {
+        Artifact artifactObj = getArtifact( artifactString );
+        
+        if ( Artifact.SCOPE_SYSTEM.equals( artifactObj.getScope() ) )
+        {
+            throw new MojoExecutionException( "System artifact is not be handled." );
+        }
+
+        Artifact copyArtifact = ArtifactUtils.copyArtifact( artifactObj );
+        if ( !"pom".equals( copyArtifact.getType() ) )
+        {
+            copyArtifact =
+                artifactFactory.createProjectArtifact( copyArtifact.getGroupId(), copyArtifact.getArtifactId(),
+                                                       copyArtifact.getVersion(), copyArtifact.getScope() );
+        }
+
+        try
+        {
+            return mavenProjectBuilder.buildFromRepository( copyArtifact, remoteRepositories, localRepository );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            throw new MojoExecutionException( "Unable to get the POM for the artifact '" + artifactString
+                + "'. Verify the artifact parameter." );
+        }
+    }
+
 }

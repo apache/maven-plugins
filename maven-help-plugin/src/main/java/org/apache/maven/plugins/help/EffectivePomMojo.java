@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Displays the effective POM as an XML for this build, with the active profiles factored in.
+ * Displays the effective POM as an XML for this build, with the active profiles factored in, or a specified artifact.
  *
  * @version $Id$
  * @since 2.0
@@ -69,6 +69,17 @@ public class EffectivePomMojo
      */
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> projects;
+    
+    /**
+     * The artifact for which to display the effective POM.
+     * <br/>
+     * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version]</code>. The
+     * latest version of the artifact will be used when no version is specified.
+     * 
+     * @since 2.2.1
+     */
+    @Parameter( property = "artifact" )
+    private String artifact;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -78,6 +89,11 @@ public class EffectivePomMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( StringUtils.isNotEmpty( artifact ) )
+        {
+            project = getMavenProject( artifact );
+        }
+
         StringWriter w = new StringWriter();
         XMLWriter writer =
             new PrettyPrintXMLWriter( w, StringUtils.repeat( " ", XmlWriterUtil.DEFAULT_INDENTATION_SIZE ),
