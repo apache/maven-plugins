@@ -154,7 +154,7 @@ public class EvaluateMojo
     protected ArtifactRepository localRepository;
 
     /**
-     * The current Maven project or the super pom.
+     * Maven project built from the given {@link #artifact}. Otherwise, the current Maven project or the super pom.
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
@@ -359,10 +359,18 @@ public class EvaluateMojo
             MojoDescriptor mojoDescriptor =
                 HelpUtil.getMojoDescriptor( "help:evaluate", session, project, "help:evaluate", true, false );
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor );
-            evaluator =
-                new PluginParameterExpressionEvaluator( session, mojoExecution, pathTranslator,
-                                                        loggerRetriever.getLogger(), project,
-                                                        session.getExecutionProperties() );
+
+            MavenProject currentProject = session.getCurrentProject();
+            // Maven3: PluginParameterExpressionEvaluator ignores the project parameter and gets the current project
+            // from the session: synchronize in case another thread wants to fetch the real current project in between
+            synchronized ( session )
+            {
+                session.setCurrentProject( project );
+                evaluator = new PluginParameterExpressionEvaluator( session, mojoExecution, pathTranslator,
+                                                                    loggerRetriever.getLogger(), project,
+                                                                    session.getExecutionProperties() );
+                session.setCurrentProject( currentProject );
+            }
         }
 
         return evaluator;
