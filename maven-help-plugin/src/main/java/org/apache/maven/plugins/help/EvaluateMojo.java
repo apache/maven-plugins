@@ -136,7 +136,8 @@ public class EvaluateMojo
     /**
      * An artifact for evaluating Maven expressions.
      * <br/>
-     * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version][:classifier]</code>.
+     * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version][:classifier]</code>. The
+     * latest version of the artifact will be used when no version is specified.
      */
     @Parameter( property = "artifact" )
     private String artifact;
