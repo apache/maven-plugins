@@ -345,6 +345,7 @@ under the License.
               <exclude>src/it/**/*.file</exclude>
               <exclude>src/it/projects/filtering-feature/filters-defined-in-build/src/main/config/**</exclude>
               <exclude>src/it/projects/bugs/massembly-731/**</exclude>
+              <exclude>.java-version</exclude>
             </excludes>
           </configuration>
         </plugin>
