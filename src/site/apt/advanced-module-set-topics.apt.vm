@@ -128,9 +128,9 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
   Will result in a file called <<<org.test-project-1.0.jar>>> being created
   within the assembly.
 
-  <NOTE: The expression <<<$\{module.extension\}>>> is mapped to the file extension
-  supplied by the ArtifactHandler for the type <<<jar>>>. It's important to
-  remember that the file extension <<need not be .jar>>.>
+  <NOTE: The expression> <<<$\{module.extension\}>>> <is mapped to the file extension
+  supplied by the ArtifactHandler for the type> <<<jar>>>. <It's important to
+  remember that the file extension> <<need not be .jar>><.>
 
 * {Including Module Sources}
 
@@ -362,7 +362,7 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
 
 * {Including Module Binaries}
 
-  *WARNING!* Using the <<<binaries>>> section of a <<<moduleSet>>> definition
+  <<WARNING!>> Using the <<<binaries>>> section of a <<<moduleSet>>> definition
   involves some tricky considerations that are a result of the way Maven
   sorts and executes project builds within a multimodule context. Please
   read {{{./faq.html#module-binaries}this FAQ entry}} if you decide to use them.
@@ -494,7 +494,7 @@ ${module.groupId}-${module.artifactId}-${module.version}.${module.extension}
 </assembly>
 ---
 
-  <NOTE: The <<<binaries>>> section still accommodates direct <<<\<includes/\>>>>
-  and <<<\<excludes/\>>>> subsections, for specifying which module-dependencies
+  <NOTE: The> <<<binaries>>> <section still accommodates direct> <<<\<includes/\>>>>
+  <and> <<<\<excludes/\>>>> <subsections, for specifying which module-dependencies
   to include in the assembly. However, these are deprecated, and only provided
   for backward compatibility.>
