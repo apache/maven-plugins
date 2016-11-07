@@ -205,8 +205,6 @@ Advanced Assembly-Descriptor Topics
 
 * Using Regular Expressions to Exclude Files
 
-  <<Since: 2.2-beta-4>>
-
   Sometimes, you may find you need to specify an extremely fine-grained inclusion or
   exclusion pattern for a <<<fileSet>>>. In these cases, you have the option of specifying
   your pattern in the form of a regular expression by using the <<<%regex[...]>>> syntax.

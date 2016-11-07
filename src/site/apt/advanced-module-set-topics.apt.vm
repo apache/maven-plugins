@@ -37,7 +37,7 @@ Advanced Module-Set Topics
 
 * Including and Excluding Modules using a ModuleSet
 
-  As you are no doubt aware, Maven 2.0 introduces advanced handling of
+  As you are no doubt aware, Maven introduces advanced handling of
   multimodule builds. These are builds which contain multiple, often
   interrelated projects. In these builds, project hierarchy is established
   through use of the <<<modules>>> section of the POM, where parent POMs specify

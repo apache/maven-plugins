@@ -41,12 +41,6 @@ Usage
   styles. For the sake of clarity, we'll cover configuration before execution.
 
 
-* Deprecation notice
-
-  All goals except <<<assembly:single>>> have been <<deprecated>>. See the
-  {{{./index.html}introduction page}} for more details.
-
-
 * Configuration
 
   Getting started with the Assembly Plugin is pretty simple. If you want to use
@@ -60,7 +54,7 @@ Usage
   to customize the suite of binaries your project produces. When the assembly is
   created it will use the assemblyId as the artifact's classifier and will attach
   the created assembly to the project so that it will be uploaded into the repository
-  on the install and deploy goals.
+  in the install and deploy phase.
 
   For example, imagine that our project produces a JAR. If we want to create an
   assembly binary that includes our project's dependencies, we can take

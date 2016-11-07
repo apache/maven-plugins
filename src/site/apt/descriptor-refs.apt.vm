@@ -30,9 +30,8 @@
 
 Pre-defined Descriptor Files
 
-  As of version 2.2, there are four predefined descriptor formats available
-  for reuse, packaged within the Assembly Plugin, instead of the original three.
-  Their descriptorIds are:
+  There are four predefined descriptor formats available for reuse, packaged
+  within the Assembly Plugin. Their descriptorIds are:
   
 %{toc|fromDepth=2|toDepth=2}
 
@@ -80,8 +79,6 @@ Pre-defined Descriptor Files
 %{snippet|id=src|file=target/classes/assemblies/src.xml}
 
 * project
-
-  (Since 2.2)
 
   Using the <<<project>>> <<<\<descriptorRef\>>>> in your Assembly Plugin
   configuration will produce an assembly containing your entire project, minus

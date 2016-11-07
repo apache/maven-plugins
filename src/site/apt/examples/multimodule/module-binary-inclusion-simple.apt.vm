@@ -35,7 +35,7 @@ Including Module Binaries
   sorts and executes project builds within a multimodule context. Please
   read {{{../../faq.html#module-binaries}this FAQ entry}} if you decide to use them.
   
-  <<NOTE:>> The new (since 2.2) <<<useAllReactorProjects>>> flag in the <<<moduleSet>>> section
+  <<NOTE:>> The new <<<useAllReactorProjects>>> flag in the <<<moduleSet>>> section
   allows you to consume module binaries from child modules in a multimodule build. This
   is an important to resolve the conflict between Maven's build ordering and the old
   approach to module binaries, where the assembly was build from the parent POM.
