@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-site-plugin</artifactId>
-  <version>3.7-SNAPSHOT</version>
+  <version>3.6-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Site Plugin</name>
