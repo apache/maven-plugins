@@ -26,7 +26,6 @@ under the License.
 
   <body>
     <menu name="Reference">
-      <item name="Features" href="./features.html"/>
       <item name="Descriptor Format" href="./assembly.html"/>
       <item name="Predefined Descriptors" href="./descriptor-refs.html"/>
     </menu>
