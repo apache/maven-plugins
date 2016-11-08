@@ -126,7 +126,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.21</version>
+      <version>1.24-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -352,6 +352,19 @@ under the License.
       </plugins>
     </pluginManagement>
   </build>
+
+  <repositories>
+    <repository>
+      <id>plexus-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/plexus-snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <profiles>
     <profile>
