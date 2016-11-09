@@ -1,0 +1,259 @@
+ ------
+ Usage
+ ------
+ John Casey
+ ------
+ 2011-02-07
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Usage
+
+  To handle filtering this version of Maven Assembly Plugin uses
+  {{{http://maven.apache.org/shared/maven-filtering/index.html}Maven Filtering}} ${mavenFilteringVersion}.
+
+  To handle archiving this version of Maven Assembly Plugin uses
+  {{{http://maven.apache.org/shared/maven-archiver/index.html}Maven Archiver}} ${mavenArchiverVersion}.
+
+  This document is intended to provide instructions for using the
+  maven-assembly-plugin. In order for this discussion to be useful, it's
+  critical to cover two topics: configuration of the plugin - both inside the
+  POM and, where possible, from the command line - and the different execution
+  styles. For the sake of clarity, we'll cover configuration before execution.
+
+
+* Configuration
+
+  Getting started with the Assembly Plugin is pretty simple. If you want to use
+  one of the prefabricated assembly descriptors, you configure which descriptor
+  to use with the \<<<<descriptorRefs\>>>>/\<<<<descriptorRef\>>>> parameter.
+  If you want to use a custom assembly descriptor, you configure the path to your
+  descriptor using the \<<<<descriptors\>>>>/\<<<<descriptor\>>>> parameter.
+
+  Note that a single invocation of the Assembly Plugin can actually
+  produce assemblies from multiple descriptors, allowing you maximum flexibility
+  to customize the suite of binaries your project produces. When the assembly is
+  created it will use the assemblyId as the artifact's classifier and will attach
+  the created assembly to the project so that it will be uploaded into the repository
+  in the install and deploy phase.
+
+  For example, imagine that our project produces a JAR. If we want to create an
+  assembly binary that includes our project's dependencies, we can take
+  advantage of one of the Assembly Plugin's prefabricated descriptors. You
+  configure it as follows in your project's <<<pom.xml>>>:
+  
++---+
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <!-- NOTE: We don't need a groupId specification because the group is
+             org.apache.maven.plugins ...which is assumed by default.
+         -->
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        [...]
+</project>
++---+
+
+  Note that the Assembly Plugin allows you to specify multiple
+  <<<descriptorRefs>>> at once, to produce multiple types of assemblies in a
+  single invocation.
+  
+  Alternatively, we've created a custom assembly descriptor called
+  <<<src.xml>>> in the <<<src/assembly>>> directory (see the
+  {{{Resources}Resources}} section for more information). We can tell the
+  Assembly Plugin to use that instead:
+  
++---+
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/src.xml</descriptor>
+          </descriptors>
+        </configuration>
+        [...]
+</project>
++---+
+
+  Again, note that we could specify multiple custom assembly descriptors here.
+  Additionally, it's possible to specify a mixture of <<<descriptors>>> and
+  <<<descriptorRefs>>> within the same configuration.
+  
+  <<Note:>> Many other configuration options are available for the various goals
+  in the Assembly Plugin. For more information, see the
+  {{{./examples/index.html}examples section}} or the {{{./plugin-info.html}plugin
+  parameter documentation}}.
+
+
+* Execution: Building an Assembly
+
+  Once you've configured the various <<<descriptors>>> and <<<descriptorRefs>>>
+  for the assemblies you want the project to produce, it's time to build them.
+  
+  In most cases, you'll want to make sure your assemblies are created as part
+  of your normal build process. This ensures the assembly archives are made 
+  available for installation and deployment, and that they are created during
+  the release of your project. This is handled by the <<<assembly:single>>> goal.
+
+  To bind the <<<single>>> goal to a project's build lifecycle, you can add
+  this configuration (assuming you're using the <<<jar-with-dependencies>>>
+  prefabricated descriptor):
+  
++---+
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      [...]
+</project>
++---+
+
+  Then, to create a project assembly, simple execute the normal <<<package>>>
+  phase from the default lifecycle:
+  
++---+
+mvn package
++---+
+
+  When this build completes, you should see a file in the <<<target>>> directory with
+  a name similar to the following:
+  
++---+
+target/sample-1.0-SNAPSHOT-jar-with-dependencies.jar
++---+
+
+  Notice the artifact classifier, between the end of the version and the
+  beginning of the file extension, <<<jar-with-dependencies>>>. This is the
+  <<<id>>> of the assembly descriptor used to create this artifact.
+  
+** GOTCHA!
+
+  In most cases, the <<<single>>> goal should be bound to the <<<package>>> phase
+  of the build. However, if your assembly doesn't require binaries, or if you need
+  to use one assembly as input for another, you may need to change this. While it's
+  possible to assign the <<<single>>> goal to any phase of the build lifecycle, you should
+  be careful to make sure the resources included in your assembly exist before that
+  assembly is created.
+
+
+* Advanced Configuration
+
+** Creating an Executable JAR
+
+  As you've no doubt noticed, the Assembly Plugin can be a very useful way to
+  create a self-contained binary artifact for your project, among many other
+  things. However, once you've created this self-contained JAR, you will
+  probably want the ability to execute it using the <<<-jar>>> JVM switch.
+  
+  To accommodate this, the Assembly Plugin supports configuration of an
+  <<<\<archive\>>>> element which is handled by <<<maven-archiver>>>
+  (see {{{Resources}Resources}}). Using this
+  configuration, it's easy to configure the <<<Main-Class>>> attribute of the
+  JAR manifest:
+  
++---+
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          [...]
+          <archive>
+            <manifest>
+              <mainClass>org.sample.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        [...]
+      </plugin>
+      [...]
+</project>
++---+
+
+  If we add this configuration to the <<<single>>> goal example above and
+  rebuild, we will see an entry like this in the <<<META-INF/MANIFEST.MF>>> file of
+  the resulting JAR:
+  
++---+
+[...]
+Main-Class: org.sample.App
++---+
+
+  For more information on advanced configuration for the Assembly Plugin, see
+  the {{{Resources}Resources}} section.
+  
+** GOTCHA!
+
+  At this point, only the <<<jar>>> and <<<war>>> assembly formats support the <<<\<archive\>>>>
+  configuration element.
+
+
+* {Resources}
+
+  [[1]] For more information on writing your own assembly descriptor, read the 
+        {{{./assembly.html}Assembly Descriptor}}
+        
+  [[2]] For more information about <<<maven-archiver>>>, look
+        {{{http://maven.apache.org/shared/maven-archiver/index.html}here}}.
+        
+  [[3]] For more information on advanced <<<maven-assembly-plugin>>>
+        configuration, see the {{{./examples/index.html}examples}}.
+  
+  []

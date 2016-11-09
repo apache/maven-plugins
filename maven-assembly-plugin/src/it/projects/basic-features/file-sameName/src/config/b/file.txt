@@ -1,0 +1,3 @@
+file B
+${testProp}
+
