@@ -25,12 +25,6 @@ under the License.
   xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
   id="FAQ" title="Frequently Asked Questions">
   <part id="General">
-    <faq id="getting-started">
-      <question>There seem to be a large number of mojos available in the assembly plugin. Which goal should I use to build my assembly?</question>
-      <answer>
-        <p>You should use the <code>single</code> mojo. All mojos except for <code>single</code> have been deprecated.</p>
-      </answer>
-    </faq>
     <faq id="deploy">
       <question>If the Assembly Plugin is run during the package phase, do my assemblies get deployed during the deploy phase?</question>
       <answer>
@@ -74,21 +68,8 @@ under the License.
            some code was introduced in version 2.2-beta-2 that allowed this parameter to reference descriptors on the classpath, instead of being forced to 
            use <code>&lt;descriptorRefs/&gt;</code> as is the intention of the design. In version 2.2, this bug was fixed.
         </p>
-        <p>It is important to note that the correct form, <code>&lt;descriptorRefs/&lt;</code> has always worked, and continues to work. The documentation 
+        <p>It is important to note that the correct form, <code>&lt;descriptorRefs/&gt;</code> has always worked, and continues to work. The documentation 
            has now been fixed to reflect the correct configuration.
-        </p>
-      </answer>
-    </faq>
-    <faq id="binding">
-      <question>What goal should I use to create an assembly as part of my normal build process?</question>
-      <answer>
-        <p>Use the <a href="single-mojo.html">single</a> goal.</p>
-        <p><b>NOTE:</b> All other mojos have been deprecated, either because they can cause strange and unpredictable behavior in a variety of situations, or
-           because they are redundant given the availability of the <code>dir</code> assembly format and the <code>maven-dependency-plugin</code>.
-        </p>
-        <p>Since the <a href="assembly-mojo.html">assembly</a>, <a href="attached-mojo.html">attached</a>, <a href="directory-mojo.html">directory</a>, and <a href="directory-inline-mojo.html">directory-inline</a> goals are all aggregators, they will execute at most once
-           per execution of Maven. See <a href="http://docs.codehaus.org/display/MAVEN/Atypical+Plugin+Use+Cases">Atypical+Plugin+Use+Cases</a> (wiki) for more
-           information on the problems associated with aggregator mojos.
         </p>
       </answer>
     </faq>

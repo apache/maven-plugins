@@ -101,22 +101,9 @@ ${project.name}
 * Goals
 
   The main goal in the assembly plugin is the {{{./single-mojo.html}single}} goal. It is used to create all assemblies.
-  <<All other goals are deprecated and will be removed in a future release.>>
 
   For more information about the goals that are available in the Assembly Plugin,
   see {{{./plugin-info.html}the plugin documentation page}}.
-
-  Usage of the <<<assembly:assembly>>>, <<<assembly:attached>>>,
-  <<<assembly:directory>>>, and <<<assembly:directory-inline>>> are <<deprecated>>,
-  since they wreak havoc with normal build processes and promote non-standard
-  build practices.
-
-  The <<<assembly:single-directory>>> goal is redundant, and has been <<deprecated>>
-  in favor of the <<<dir>>> assembly format.
-
-  Finally, the <<<assembly:unpack>>> goal has been <<deprecated>> in favor of the far
-  more comprehensive {{{http://maven.apache.org/plugins/maven-dependency-plugin/}Maven
-  Dependency Plugin}}.
 
 
 * Assembly and Component Descriptor Schemas (XSD)
