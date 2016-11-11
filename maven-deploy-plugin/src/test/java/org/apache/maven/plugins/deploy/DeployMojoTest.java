@@ -600,9 +600,8 @@ public class DeployMojoTest
         setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
 
         ArtifactRepository repository = mock( ArtifactRepository.class );
-        when(
-              mojo.createDeploymentArtifactRepository( "altSnapshotDeploymentRepository", "http://localhost",
-                                                       repositoryLayout, true ) ).thenReturn( repository );
+        when( mojo.createDeploymentArtifactRepository( "altSnapshotDeploymentRepository", "http://localhost",
+                                                       repositoryLayout ) ).thenReturn( repository );
 
         project.setVersion( "1.0-SNAPSHOT" );
 
@@ -623,9 +622,8 @@ public class DeployMojoTest
         setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
 
         ArtifactRepository repository = mock( ArtifactRepository.class );
-        when(
-              mojo.createDeploymentArtifactRepository( "altReleaseDeploymentRepository", "http://localhost",
-                                                       repositoryLayout, true ) ).thenReturn( repository );
+        when( mojo.createDeploymentArtifactRepository( "altReleaseDeploymentRepository", "http://localhost",
+                                                       repositoryLayout ) ).thenReturn( repository );
 
         project.setVersion( "1.0" );
 

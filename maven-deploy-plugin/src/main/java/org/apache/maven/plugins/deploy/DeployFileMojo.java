@@ -191,9 +191,13 @@ public class DeployFileMojo
 
     /**
      * Whether to deploy snapshots with a unique version or not.
+     * 
+     * @deprecated As of Maven 3, this isn't supported anymore and this parameter is only present to break the build
+     * if you use it!
      */
-    @Parameter( property = "uniqueVersion", defaultValue = "true" )
-    private boolean uniqueVersion;
+    @Parameter( property = "uniqueVersion" )
+    @Deprecated
+    private Boolean uniqueVersion;
 
     /**
      * The component used to validate the user-supplied artifact coordinates.
@@ -324,6 +328,13 @@ public class DeployFileMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( uniqueVersion != null )
+        {
+            throw new MojoExecutionException( "You are using 'uniqueVersion' which has been removed"
+                + " from the maven-deploy-plugin. "
+                + "Please see the >>Major Version Upgrade to version 3.0.0<< on the plugin site." );
+        }
+
         failIfOffline();
 
         if ( !file.exists() )
@@ -338,7 +349,7 @@ public class DeployFileMojo
         ArtifactRepositoryLayout layout = getLayout( repositoryLayout );
 
         ArtifactRepository deploymentRepository =
-            createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
+            createDeploymentArtifactRepository( repositoryId, url, layout );
 
         String protocol = deploymentRepository.getProtocol();
 

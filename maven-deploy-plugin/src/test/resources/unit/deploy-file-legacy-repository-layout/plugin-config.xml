@@ -30,7 +30,6 @@ under the License.
           <file>${basedir}/src/test/resources/unit/deploy-file-legacy-repository-layout/target/deploy-test-file-1.0-SNAPSHOT.jar</file>
           <repositoryId>deploy-test</repositoryId>
           <url>file://${basedir}/target/remote-repo/deploy-file-legacy-repository-layout</url>
-          <uniqueVersion>true</uniqueVersion>
           <repositoryLayout>legacy</repositoryLayout>
           <generatePom>true</generatePom>
         </configuration>

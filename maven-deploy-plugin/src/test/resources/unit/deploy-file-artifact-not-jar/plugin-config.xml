@@ -29,7 +29,6 @@ under the License.
           <file>${basedir}/src/test/resources/unit/deploy-file-artifact-not-jar/target/deploy-test-file.zip</file>
           <repositoryId>deploy-test</repositoryId>
           <url>file://${basedir}/target/remote-repo/deploy-file-artifact-not-jar</url>
-          <uniqueVersion>true</uniqueVersion>
           <repositoryLayout>default</repositoryLayout>
           <generatePom>true</generatePom>
         </configuration>

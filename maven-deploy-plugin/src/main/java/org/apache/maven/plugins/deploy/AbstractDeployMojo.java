@@ -104,8 +104,7 @@ public abstract class AbstractDeployMojo
     }
 
     protected ArtifactRepository createDeploymentArtifactRepository( String id, String url,
-                                                                     ArtifactRepositoryLayout layout,
-                                                                     boolean uniqueVersion2 )
+                                                                     ArtifactRepositoryLayout layout )
     {
         return new MavenArtifactRepository( id, url, layout, new ArtifactRepositoryPolicy(),
                                             new ArtifactRepositoryPolicy() );

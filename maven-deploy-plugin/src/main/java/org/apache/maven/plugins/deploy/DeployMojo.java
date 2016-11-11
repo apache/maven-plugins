@@ -252,7 +252,7 @@ public class DeployMojo
 
                 ArtifactRepositoryLayout repoLayout = getLayout( layout );
 
-                repo = createDeploymentArtifactRepository( id, url, repoLayout, true );
+                repo = createDeploymentArtifactRepository( id, url, repoLayout );
             }
         }
 

@@ -38,8 +38,6 @@ File Deployment
 
   * {{{./examples/deploying-sources-javadoc.html}Deploy an artifact with sources and javadoc jars}}
 
-  * {{{./examples/disabling-timestamps-suffix.html}Disable timestamps suffix in an artifact}}
-
   * {{{./examples/deploying-in-legacy-layout.html}Deploy an artifact in legacy layout}}
 
   []

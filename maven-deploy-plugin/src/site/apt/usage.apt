@@ -119,8 +119,7 @@ mvn deploy:deploy-file -Durl=file://C:\m2-repo \
                        [-Dclassifier=test] \
                        [-DgeneratePom=true] \
                        [-DgeneratePom.description="My Project Description"] \
-                       [-DrepositoryLayout=legacy] \
-                       [-DuniqueVersion=false]
+                       [-DrepositoryLayout=legacy]
 +---+
 
   If the following required information is not specified in some way, the goal

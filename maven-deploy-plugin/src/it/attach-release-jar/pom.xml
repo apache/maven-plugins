@@ -40,7 +40,6 @@ under the License.
     <repository>
       <id>it</id>
       <url>file:///${basedir}/target/repo</url>
-      <uniqueVersion>false</uniqueVersion>
     </repository>
   </distributionManagement>
 
