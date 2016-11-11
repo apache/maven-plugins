@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.help;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,24 +17,10 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.logging.Logger;
+def result = new File(basedir, 'result.txt').text;
 
-/**
- * A helper to expose a Plexus logger via ordinary dependency injection instead of accessing the container API directly
- * which is problematic with regard to future changes of the container as in Maven 3.
- * 
- * @author Benjamin Bentmann
- */
-@Component( role = LoggerRetriever.class, hint = "default", instantiationStrategy = "per-lookup" )
-public class LoggerRetriever
-    extends AbstractLogEnabled
-{
+assert result.contains( '<id>deep-clone</id>' )
+assert result.contains( '<password>server-password</password>' )
+assert result.contains( '<passphrase>server-passphrase</passphrase>' )
 
-    public Logger getLogger()
-    {
-        return super.getLogger();
-    }
-
-}
+return true;

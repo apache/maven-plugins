@@ -38,6 +38,7 @@ import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.LoggerManager;
 
 /**
  * Test class for the evaluate mojo of the Help Plugin.
@@ -53,7 +54,8 @@ public class EvaluateMojoTest
         throws Exception
     {
         super.setUp();
-        interceptingLogger = new InterceptingLog( getContainer().getLoggerManager().getLoggerForComponent( Mojo.ROLE ) );
+        interceptingLogger =
+            new InterceptingLog( getContainer().lookup( LoggerManager.class ).getLoggerForComponent( Mojo.ROLE ) );
     }
 
     /**

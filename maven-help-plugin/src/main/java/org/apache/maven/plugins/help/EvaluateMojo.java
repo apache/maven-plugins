@@ -19,8 +19,6 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import static org.apache.maven.plugins.help.HelpUtil.LS;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,11 +33,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.execution.MavenSession;
+import org.apache.maven.lifecycle.internal.MojoDescriptorCreator;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -51,11 +45,14 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.path.PathTranslator;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.components.interactivity.InputHandler;
 import org.codehaus.plexus.util.IOUtil;
@@ -88,20 +85,10 @@ public class EvaluateMojo
     private InputHandler inputHandler;
 
     /**
+     * Component used to get mojo descriptors.
      */
     @Component
-    private PathTranslator pathTranslator;
-
-    /**
-     * Artifact Resolver component.
-     */
-    @Component
-    private ArtifactResolver resolver;
-
-    /**
-     */
-    @Component
-    private LoggerRetriever loggerRetriever;
+    private MojoDescriptorCreator mojoDescriptorCreator;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -114,7 +101,7 @@ public class EvaluateMojo
      * <br/>
      * <b>Note</b>: Could be a relative path.
      * 
-     * @since 2.2.1
+     * @since 3.0.0
      */
     @Parameter( property = "output" )
     private File output;
@@ -138,19 +125,13 @@ public class EvaluateMojo
      * Maven project built from the given {@link #artifact}. Otherwise, the current Maven project or the super pom.
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * The system settings for Maven.
      */
     @Parameter( defaultValue = "${settings}", readonly = true, required = true )
-    protected Settings settings;
-
-    /**
-     * The current Maven session.
-     */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
-    private MavenSession session;
+    private Settings settings;
 
     // ----------------------------------------------------------------------
     // Instance variables
@@ -238,26 +219,30 @@ public class EvaluateMojo
      * @return a lazy loading evaluator object.
      * @throws MojoExecutionException if any
      * @throws MojoFailureException if any reflection exceptions occur or missing components.
-     * @see #getMojoDescriptor(String, MavenSession, MavenProject, String, boolean, boolean)
      */
     private PluginParameterExpressionEvaluator getEvaluator()
         throws MojoExecutionException, MojoFailureException
     {
         if ( evaluator == null )
         {
-            MojoDescriptor mojoDescriptor =
-                HelpUtil.getMojoDescriptor( "help:evaluate", session, project, "help:evaluate", true, false );
+            MojoDescriptor mojoDescriptor;
+            try
+            {
+                mojoDescriptor = mojoDescriptorCreator.getMojoDescriptor( "help:evaluate", session, project );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoFailureException( "Failure while evaluating.", e );
+            }
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor );
 
             MavenProject currentProject = session.getCurrentProject();
-            // Maven3: PluginParameterExpressionEvaluator ignores the project parameter and gets the current project
-            // from the session: synchronize in case another thread wants to fetch the real current project in between
+            // Maven 3: PluginParameterExpressionEvaluator gets the current project from the session:
+            // synchronize in case another thread wants to fetch the real current project in between
             synchronized ( session )
             {
                 session.setCurrentProject( project );
-                evaluator = new PluginParameterExpressionEvaluator( session, mojoExecution, pathTranslator,
-                                                                    loggerRetriever.getLogger(), project,
-                                                                    session.getExecutionProperties() );
+                evaluator = new PluginParameterExpressionEvaluator( session, mojoExecution );
                 session.setCurrentProject( currentProject );
             }
         }
@@ -486,18 +471,11 @@ public class EvaluateMojo
                 getLog().debug( "MojoExecutionException: " + e.getMessage(), e );
             }
         }
-        catch ( ArtifactResolutionException e )
+        catch ( ArtifactResolverException e )
         {
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug( "ArtifactResolutionException: " + e.getMessage(), e );
-            }
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            if ( getLog().isDebugEnabled() )
-            {
-                getLog().debug( "ArtifactNotFoundException: " + e.getMessage(), e );
+                getLog().debug( "ArtifactResolverException: " + e.getMessage(), e );
             }
         }
         catch ( ProjectBuildingException e )
@@ -572,12 +550,10 @@ public class EvaluateMojo
      * @return the <code>org.apache.maven:maven-model</code> artifact jar file in the local repository.
      * @throws MojoExecutionException if any
      * @throws ProjectBuildingException if any
-     * @throws ArtifactResolutionException if any
-     * @throws ArtifactNotFoundException if any
+     * @throws ArtifactResolverException if any
      */
     private File getMavenModelJarFile()
-        throws MojoExecutionException, ProjectBuildingException, ArtifactResolutionException,
-        ArtifactNotFoundException
+        throws MojoExecutionException, ProjectBuildingException, ArtifactResolverException
     {
         return getArtifactFile( true );
     }
@@ -586,32 +562,26 @@ public class EvaluateMojo
      * @return the <code>org.apache.maven:maven-settings</code> artifact jar file in the local repository.
      * @throws MojoExecutionException if any
      * @throws ProjectBuildingException if any
-     * @throws ArtifactResolutionException if any
-     * @throws ArtifactNotFoundException if any
+     * @throws ArtifactResolverException if any
      */
     private File getMavenSettingsJarFile()
-        throws MojoExecutionException, ProjectBuildingException, ArtifactResolutionException,
-        ArtifactNotFoundException
+        throws MojoExecutionException, ProjectBuildingException, ArtifactResolverException
     {
         return getArtifactFile( false );
     }
 
     /**
-     *
-     * @param isPom <code>true</code> to lookup the <code>maven-model</code> artifact jar, <code>false</code> to
-     * lookup the <code>maven-settings</code> artifact jar.
+     * @param isPom <code>true</code> to lookup the <code>maven-model</code> artifact jar, <code>false</code> to lookup
+     *            the <code>maven-settings</code> artifact jar.
      * @return the <code>org.apache.maven:maven-model|maven-settings</code> artifact jar file for this current
-     * HelpPlugin pom.
+     *         HelpPlugin pom.
      * @throws MojoExecutionException if any
      * @throws ProjectBuildingException if any
-     * @throws ArtifactResolutionException if any
-     * @throws ArtifactNotFoundException if any
+     * @throws ArtifactResolverException if any
      */
     private File getArtifactFile( boolean isPom )
-        throws MojoExecutionException, ProjectBuildingException, ArtifactResolutionException,
-        ArtifactNotFoundException
+        throws MojoExecutionException, ProjectBuildingException, ArtifactResolverException
     {
-        @SuppressWarnings( "unchecked" )
         List<Dependency> dependencies = getHelpPluginPom().getDependencies();
         for ( Dependency depependency : dependencies )
         {
@@ -635,12 +605,12 @@ public class EvaluateMojo
                 }
             }
 
-            Artifact mavenArtifact =
-                getArtifact( depependency.getGroupId() + ":" + depependency.getArtifactId() + ":"
-                    + depependency.getVersion() );
-            resolver.resolveAlways( mavenArtifact, remoteRepositories, localRepository );
-
-            return mavenArtifact.getFile();
+            ArtifactCoordinate coordinate =
+                getArtifactCoordinate( depependency.getGroupId(), depependency.getArtifactId(),
+                                       depependency.getVersion(), "jar" );
+            ProjectBuildingRequest pbr = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            pbr.setRemoteRepositories( remoteRepositories );
+            return artifactResolver.resolveArtifact( pbr, coordinate ).getArtifact().getFile();
         }
 
         throw new MojoExecutionException( "Unable to find the 'org.apache.maven:"

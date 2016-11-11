@@ -19,8 +19,6 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import static org.apache.maven.plugins.help.HelpUtil.LS;
-
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -67,11 +65,10 @@ public class SystemMojo
         message.append( StringUtils.repeat( "=", LINE_LENGTH ) ).append( LS );
 
         Properties systemProperties = System.getProperties();
-        for ( Object o1 : systemProperties.keySet() )
+        for ( String key : systemProperties.stringPropertyNames() )
         {
-            String key = o1.toString();
             message.append( LS );
-            message.append( key ).append( "=" ).append( systemProperties.get( key ) );
+            message.append( key ).append( "=" ).append( systemProperties.getProperty( key ) );
         }
 
         message.append( LS ).append( LS );
@@ -81,19 +78,15 @@ public class SystemMojo
         try
         {
             Properties envVars = CommandLineUtils.getSystemEnvVars();
-            for ( Object o : envVars.keySet() )
+            for ( String key : envVars.stringPropertyNames() )
             {
-                String key = o.toString();
                 message.append( LS );
-                message.append( key ).append( "=" ).append( envVars.get( key ) );
+                message.append( key ).append( "=" ).append( envVars.getProperty( key ) );
             }
         }
         catch ( IOException e )
         {
-            if ( getLog().isWarnEnabled() )
-            {
-                getLog().warn( "IOException: " + e.getMessage() );
-            }
+            getLog().warn( "Unable to get the environment variables: " + e.getMessage() );
         }
 
         message.append( LS );
@@ -115,17 +108,11 @@ public class SystemMojo
                 throw new MojoExecutionException( "Cannot write system report to output: " + output, e );
             }
 
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "System report written to: " + output );
-            }
+            getLog().info( "System report written to: " + output );
         }
         else
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( message );
-            }
+            getLog().info( message );
         }
     }
 }

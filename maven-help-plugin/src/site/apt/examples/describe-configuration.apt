@@ -226,10 +226,6 @@ help:evaluate
     interactive mode.
   Deprecated. No reason given
 
-help:expressions
-  Description: Displays the supported Plugin expressions used by Maven.
-  Deprecated. No reason given
-
 help:help
   Description: Display help information on maven-help-plugin.
     Call

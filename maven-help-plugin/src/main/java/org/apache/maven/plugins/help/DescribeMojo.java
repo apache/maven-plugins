@@ -19,8 +19,6 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import static org.apache.maven.plugins.help.HelpUtil.LS;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,47 +26,39 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.lifecycle.DefaultLifecycleExecutor;
+import org.apache.maven.lifecycle.DefaultLifecycles;
 import org.apache.maven.lifecycle.Lifecycle;
-import org.apache.maven.lifecycle.LifecycleExecutionException;
-import org.apache.maven.lifecycle.LifecycleExecutor;
+import org.apache.maven.lifecycle.internal.MojoDescriptorCreator;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.InvalidPluginException;
+import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.PluginManager;
-import org.apache.maven.plugin.PluginManagerException;
-import org.apache.maven.plugin.PluginNotFoundException;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.Parameter;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugin.version.PluginVersionNotFoundException;
+import org.apache.maven.plugin.prefix.NoPluginFoundForPrefixException;
+import org.apache.maven.plugin.version.DefaultPluginVersionRequest;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
+import org.apache.maven.plugin.version.PluginVersionResolver;
+import org.apache.maven.plugin.version.PluginVersionResult;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.exec.MavenPluginManagerHelper;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.tools.plugin.generator.GeneratorUtils;
 import org.apache.maven.tools.plugin.util.PluginUtils;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -107,36 +97,36 @@ public class DescribeMojo
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
-
-    /**
-     * Maven Artifact Factory component.
-     *
-     * @since 2.1
-     */
-    @Component
-    private ArtifactFactory artifactFactory;
     
     /**
-     * Maven Artifact Resolver component.
-     *
-     * @since 2.2.1
+     * Component used to get a plugin descriptor from a given plugin.
      */
     @Component
-    private ArtifactResolver artifactResolver;
-
+    private MavenPluginManagerHelper pluginManager;
+    
     /**
-     * The Plugin manager instance used to resolve Plugin descriptors.
+     * Component used to get a plugin by its prefix and get mojo descriptors.
      */
-    @Component( role = PluginManager.class )
-    private PluginManager pluginManager;
-
+    @Component
+    private MojoDescriptorCreator mojoDescriptorCreator;
+    
     /**
-     * The project builder instance used to retrieve the super-project instance
-     * in the event there is no current MavenProject instance. Some MavenProject
-     * instance has to be present to use in the plugin manager APIs.
+     * Component used to resolve the version for a plugin.
      */
-    @Component( role = MavenProjectBuilder.class )
-    private MavenProjectBuilder projectBuilder;
+    @Component
+    private PluginVersionResolver pluginVersionResolver;
+    
+    /**
+     * The Maven default built-in lifecycles.
+     */
+    @Component
+    private DefaultLifecycles defaultLifecycles;
+    
+    /**
+     * A map from each packaging to its lifecycle mapping.
+     */
+    @Component
+    private Map<String, LifecycleMapping> lifecycleMappings;
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -150,30 +140,6 @@ public class DescribeMojo
      */
     @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
-
-    /**
-     * The current build session instance. This is used for
-     * plugin manager API calls.
-     */
-    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${session}", readonly = true, required = true )
-    private MavenSession session;
-
-    /**
-     * The local repository ArtifactRepository instance. This is used
-     * for plugin manager API calls.
-     */
-    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${localRepository}", required = true,
-                    readonly = true )
-    private ArtifactRepository localRepository;
-
-    /**
-     * Remote repositories used for the project.
-     *
-     * @since 2.1
-     */
-    @org.apache.maven.plugins.annotations.Parameter( defaultValue = "${project.remoteArtifactRepositories}",
-                    required = true, readonly = true )
-    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * The Maven Plugin to describe. This must be specified in one of three ways:
@@ -267,18 +233,6 @@ public class DescribeMojo
     {
         validateParameters();
 
-        if ( project == null )
-        {
-            try
-            {
-                project = projectBuilder.buildStandaloneSuperProject( session.getProjectBuilderConfiguration() );
-            }
-            catch ( ProjectBuildingException e )
-            {
-                throw new MojoExecutionException( "Error while retrieving the super-project.", e );
-            }
-        }
-
         StringBuilder descriptionBuffer = new StringBuilder();
 
         boolean describePlugin = true;
@@ -289,21 +243,16 @@ public class DescribeMojo
 
         if ( describePlugin )
         {
-            PluginInfo pi = new PluginInfo();
-
-            parsePluginLookupInfo( pi );
-
+            PluginInfo pi = parsePluginLookupInfo();
             PluginDescriptor descriptor = lookupPluginDescriptor( pi );
-
             if ( StringUtils.isNotEmpty( goal ) )
             {
                 MojoDescriptor mojo = descriptor.getMojo( goal );
                 if ( mojo == null )
                 {
-                    throw new MojoFailureException(
-                        "The mojo '" + goal + "' does not exist in the plugin '" + pi.getPrefix() + "'" );
+                    throw new MojoFailureException( "The mojo '" + goal + "' does not exist in the plugin '"
+                        + pi.getPrefix() + "'" );
                 }
-
                 describeMojo( mojo, descriptionBuffer );
             }
             else
@@ -325,15 +274,15 @@ public class DescribeMojo
     private void validateParameters()
     {
         // support legacy parameters "mojo" and "full"
-        if ( goal == null && session.getExecutionProperties().get( "mojo" ) != null )
+        if ( goal == null && session.getUserProperties().get( "mojo" ) != null )
         {
-            goal = session.getExecutionProperties().getProperty( "mojo" );
+            goal = session.getUserProperties().getProperty( "mojo" );
         }
 
-        if ( !detail && session.getExecutionProperties().get( "full" ) != null )
+        if ( !detail && session.getUserProperties().get( "full" ) != null )
         {
-            String full = session.getExecutionProperties().getProperty( "full" );
-            detail = Boolean.valueOf( full );
+            String full = session.getUserProperties().getProperty( "full" );
+            detail = Boolean.parseBoolean( full );
         }
 
         if ( detail || minimal )
@@ -362,17 +311,11 @@ public class DescribeMojo
                 throw new MojoExecutionException( "Cannot write plugin/mojo description to output: " + output, e );
             }
 
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Wrote descriptions to: " + output );
-            }
+            getLog().info( "Wrote descriptions to: " + output );
         }
         else
         {
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( descriptionBuffer.toString() );
-            }
+            getLog().info( descriptionBuffer.toString() );
         }
     }
 
@@ -387,31 +330,25 @@ public class DescribeMojo
     private PluginDescriptor lookupPluginDescriptor( PluginInfo pi )
         throws MojoExecutionException, MojoFailureException
     {
-        PluginDescriptor descriptor = null;
-
         Plugin forLookup = null;
-
         if ( StringUtils.isNotEmpty( pi.getPrefix() ) )
         {
-            descriptor = pluginManager.getPluginDescriptorForPrefix( pi.getPrefix() );
-            if ( descriptor == null )
+            try
             {
-                forLookup = pluginManager.getPluginDefinitionForPrefix( pi.getPrefix(), session, project );
+                forLookup = mojoDescriptorCreator.findPluginForPrefix( pi.getPrefix(), session );
+            }
+            catch ( NoPluginFoundForPrefixException e )
+            {
+                throw new MojoExecutionException( "Unable to find the plugin with prefix: " + pi.getPrefix(), e );
             }
         }
         else if ( StringUtils.isNotEmpty( pi.getGroupId() ) && StringUtils.isNotEmpty( pi.getArtifactId() ) )
         {
             forLookup = new Plugin();
-
             forLookup.setGroupId( pi.getGroupId() );
             forLookup.setArtifactId( pi.getArtifactId() );
-
-            if ( StringUtils.isNotEmpty( pi.getVersion() ) )
-            {
-                forLookup.setVersion( pi.getVersion() );
-            }
         }
-        else
+        if ( forLookup == null )
         {
             String msg =
                 "You must specify either: both 'groupId' and 'artifactId' parameters OR a 'plugin' parameter"
@@ -427,88 +364,48 @@ public class DescribeMojo
             throw new MojoFailureException( msg );
         }
 
-        if ( descriptor == null && forLookup != null )
+        if ( StringUtils.isNotEmpty( pi.getVersion() ) )
+        {
+            forLookup.setVersion( pi.getVersion() );
+        }
+        else
         {
             try
             {
-                descriptor = pluginManager.loadPluginDescriptor( forLookup, project, session );
-            }
-            catch ( ArtifactResolutionException e )
-            {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:" + LS
-                    + LS + "groupId: '" + groupId + "'"
-                    + LS + "artifactId: '" + artifactId + "'"
-                    + LS + "version: '" + version + "'" + LS + LS, e );
-            }
-            catch ( PluginManagerException e )
-            {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:" + LS
-                    + LS + "groupId: '" + groupId + "'"
-                    + LS + "artifactId: '" + artifactId + "'"
-                    + LS + "version: '" + version + "'" + LS + LS, e );
+                PluginVersionResult versionResult =
+                    pluginVersionResolver.resolve( new DefaultPluginVersionRequest( forLookup, session ) );
+                forLookup.setVersion( versionResult.getVersion() );
             }
             catch ( PluginVersionResolutionException e )
             {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:" + LS
-                    + LS + "groupId: '" + groupId + "'"
-                    + LS + "artifactId: '" + artifactId + "'"
-                    + LS + "version: '" + version + "'" + LS + LS, e );
-            }
-            catch ( ArtifactNotFoundException e )
-            {
-                throw new MojoExecutionException( "Plugin dependency does not exist: " + e.getMessage(), e );
-            }
-            catch ( InvalidVersionSpecificationException e )
-            {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:" + LS
-                    + LS + "groupId: '" + groupId + "'"
-                    + LS + "artifactId: '" + artifactId + "'"
-                    + LS + "version: '" + version + "'" + LS + LS, e );
-            }
-            catch ( InvalidPluginException e )
-            {
-                throw new MojoExecutionException( "Error retrieving plugin descriptor for:" + LS
-                    + LS + "groupId: '" + groupId + "'"
-                    + LS + "artifactId: '" + artifactId + "'"
-                    + LS + "version: '" + version + "'" + LS + LS, e );
-            }
-            catch ( PluginNotFoundException e )
-            {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Unable to find plugin", e );
-                }
-                throw new MojoFailureException( "Plugin does not exist: " + e.getMessage() );
-            }
-            catch ( PluginVersionNotFoundException e )
-            {
-                if ( getLog().isDebugEnabled() )
-                {
-                    getLog().debug( "Unable to find plugin version", e );
-                }
-                throw new MojoFailureException( e.getMessage() );
+                throw new MojoExecutionException( "Unable to resolve the version of the plugin with prefix: "
+                    + pi.getPrefix(), e );
             }
         }
 
-        if ( descriptor == null )
+        try
         {
-            throw new MojoFailureException( "Plugin could not be found. If you believe it is correct,"
-                + " check your pluginGroups setting, and run with -U to update the remote configuration" );
+            return pluginManager.getPluginDescriptor( forLookup, session );
         }
-
-        return descriptor;
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Error retrieving plugin descriptor for:" + LS + LS + "groupId: '"
+                + groupId + "'" + LS + "artifactId: '" + artifactId + "'" + LS + "version: '" + version + "'" + LS
+                + LS, e );
+        }
     }
 
     /**
      * Method for parsing the plugin parameter
      *
-     * @param pi contains information about the plugin whose description is to be retrieved
+     * @return Plugin info containing information about the plugin whose description is to be retrieved
      * @throws MojoFailureException if <code>plugin<*code> parameter is not conform to
      *                              <code>groupId:artifactId[:version]</code>
      */
-    private void parsePluginLookupInfo( PluginInfo pi )
+    private PluginInfo parsePluginLookupInfo()
         throws MojoFailureException
     {
+        PluginInfo pi = new PluginInfo();
         if ( StringUtils.isNotEmpty( plugin ) )
         {
             if ( plugin.indexOf( ':' ) > -1 )
@@ -517,14 +414,14 @@ public class DescribeMojo
 
                 switch ( pluginParts.length )
                 {
-                    case ( 1 ):
+                    case 1:
                         pi.setPrefix( pluginParts[0] );
                         break;
-                    case ( 2 ):
+                    case 2:
                         pi.setGroupId( pluginParts[0] );
                         pi.setArtifactId( pluginParts[1] );
                         break;
-                    case ( 3 ):
+                    case 3:
                         pi.setGroupId( pluginParts[0] );
                         pi.setArtifactId( pluginParts[1] );
                         pi.setVersion( pluginParts[2] );
@@ -545,6 +442,7 @@ public class DescribeMojo
             pi.setArtifactId( artifactId );
             pi.setVersion( version );
         }
+        return pi;
     }
 
     /**
@@ -564,21 +462,21 @@ public class DescribeMojo
         String name = pd.getName();
         if ( name == null )
         {
-            // Always null see MPLUGIN-137
-            // TODO remove when maven-plugin-tools-api:2.4.4
+            // Can be null because of MPLUGIN-137 (and descriptors generated with maven-plugin-tools-api <= 2.4.3)
+            ArtifactCoordinate coordinate = toArtifactCoordinate( pd, "jar" );
+            ProjectBuildingRequest pbr = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            pbr.setRemoteRepositories( remoteRepositories );
+            pbr.setProject( null );
+            pbr.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL );
             try
             {
-                Artifact artifact = artifactFactory.createPluginArtifact( pd.getGroupId(), pd.getArtifactId(),
-                                                                          VersionRange.createFromVersion(
-                                                                              pd.getVersion() ) );
-                MavenProject pluginProject =
-                    projectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
-
-                name = pluginProject.getName();
+                Artifact artifact = artifactResolver.resolveArtifact( pbr, coordinate ).getArtifact();
+                name = projectBuilder.build( artifact, pbr ).getProject().getName();
             }
-            catch ( ProjectBuildingException e )
+            catch ( Exception e )
             {
                 // oh well, we tried our best.
+                getLog().warn( "Unable to get the name of the plugin " + pd.getId() + ": " + e.getMessage() );
                 name = pd.getId();
             }
         }
@@ -590,7 +488,6 @@ public class DescribeMojo
         append( buffer, "Goal Prefix", pd.getGoalPrefix(), 0 );
         buffer.append( LS );
 
-        @SuppressWarnings( "unchecked" )
         List<MojoDescriptor> mojos = pd.getMojos();
 
         if ( mojos == null )
@@ -742,7 +639,6 @@ public class DescribeMojo
     private void describeMojoParameters( MojoDescriptor md, StringBuilder buffer )
         throws MojoFailureException, MojoExecutionException
     {
-        @SuppressWarnings( "unchecked" )
         List<Parameter> params = md.getParameters();
 
         if ( params == null || params.isEmpty() )
@@ -752,15 +648,7 @@ public class DescribeMojo
         }
 
         params = new ArrayList<Parameter>( params );
-        // TODO remove when maven-plugin-tools-api:2.4.4 is out see PluginUtils.sortMojoParameters()
-        Collections.sort( params, new Comparator<Parameter>()
-        {
-            /** {@inheritDoc} */
-            public int compare( Parameter parameter1, Parameter parameter2 )
-            {
-                return parameter1.getName().compareToIgnoreCase( parameter2.getName() );
-            }
-        } );
+        PluginUtils.sortMojoParameters( params );
 
         append( buffer, "Available parameters:", 1 );
 
@@ -847,106 +735,96 @@ public class DescribeMojo
         if ( cmd.indexOf( ':' ) == -1 )
         {
             // phase
-            try
+            Lifecycle lifecycle = defaultLifecycles.getPhaseToLifecycleMap().get( cmd );
+            if ( lifecycle == null )
             {
-                DefaultLifecycleExecutor lifecycleExecutor =
-                    (DefaultLifecycleExecutor) session.lookup( LifecycleExecutor.ROLE );
+                throw new MojoExecutionException( "The given phase '" + cmd + "' is an unknown phase." );
+            }
 
-                Lifecycle lifecycle = (Lifecycle) lifecycleExecutor.getPhaseToLifecycleMap().get( cmd );
-                if ( lifecycle == null )
+            Map<String, String> defaultLifecyclePhases =
+                lifecycleMappings.get( project.getPackaging() ).getLifecycles().get( "default" ).getPhases();
+            List<String> phases = lifecycle.getPhases();
+
+            if ( lifecycle.getDefaultPhases() == null )
+            {
+                descriptionBuffer.append( "'" ).append( cmd );
+                descriptionBuffer.append( "' is a phase corresponding to this plugin:" ).append( LS );
+                for ( String key : phases )
                 {
-                    throw new MojoExecutionException( "The given phase '" + cmd + "' is an unknown phase." );
+                    if ( !key.equals( cmd ) )
+                    {
+                        continue;
+                    }
+                    if ( defaultLifecyclePhases.get( key ) != null )
+                    {
+                        descriptionBuffer.append( defaultLifecyclePhases.get( key ) );
+                        descriptionBuffer.append( LS );
+                    }
                 }
 
-                LifecycleMapping lifecycleMapping =
-                    (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, project.getPackaging() );
-                @SuppressWarnings( "unchecked" )
-                List<String> phases = lifecycle.getPhases();
-
-                if ( lifecycle.getDefaultPhases() == null )
+                descriptionBuffer.append( LS );
+                descriptionBuffer.append( "It is a part of the lifecycle for the POM packaging '" );
+                descriptionBuffer.append( project.getPackaging() );
+                descriptionBuffer.append( "'. This lifecycle includes the following phases:" );
+                descriptionBuffer.append( LS );
+                for ( String key : phases )
                 {
-                    descriptionBuffer.append( "'" ).append( cmd );
-                    descriptionBuffer.append( "' is a phase corresponding to this plugin:" ).append( LS );
-                    for ( String key : phases )
+                    descriptionBuffer.append( "* " ).append( key ).append( ": " );
+                    String value = defaultLifecyclePhases.get( key );
+                    if ( StringUtils.isNotEmpty( value ) )
                     {
-                        if ( !key.equals( cmd ) )
+                        for ( StringTokenizer tok = new StringTokenizer( value, "," ); tok.hasMoreTokens(); )
                         {
-                            continue;
-                        }
+                            descriptionBuffer.append( tok.nextToken().trim() );
 
-                        if ( lifecycleMapping.getPhases( "default" ).get( key ) != null )
-                        {
-                            descriptionBuffer.append( lifecycleMapping.getPhases( "default" ).get( key ) );
-                            descriptionBuffer.append( LS );
-                        }
-                    }
-
-                    descriptionBuffer.append( LS );
-                    descriptionBuffer.append( "It is a part of the lifecycle for the POM packaging '" );
-                    descriptionBuffer.append( project.getPackaging() );
-                    descriptionBuffer.append( "'. This lifecycle includes the following phases:" );
-                    descriptionBuffer.append( LS );
-                    for ( String key : phases )
-                    {
-                        descriptionBuffer.append( "* " ).append( key ).append( ": " );
-                        String value = (String) lifecycleMapping.getPhases( "default" ).get( key );
-                        if ( StringUtils.isNotEmpty( value ) )
-                        {
-                            for ( StringTokenizer tok = new StringTokenizer( value, "," ); tok.hasMoreTokens(); )
+                            if ( !tok.hasMoreTokens() )
                             {
-                                descriptionBuffer.append( tok.nextToken().trim() );
-
-                                if ( !tok.hasMoreTokens() )
-                                {
-                                    descriptionBuffer.append( LS );
-                                }
-                                else
-                                {
-                                    descriptionBuffer.append( ", " );
-                                }
+                                descriptionBuffer.append( LS );
+                            }
+                            else
+                            {
+                                descriptionBuffer.append( ", " );
                             }
                         }
-                        else
-                        {
-                            descriptionBuffer.append( NOT_DEFINED ).append( LS );
-                        }
                     }
-                }
-                else
-                {
-                    descriptionBuffer.append( "'" ).append( cmd );
-                    descriptionBuffer.append( "' is a lifecycle with the following phases: " );
-                    descriptionBuffer.append( LS );
-
-                    for ( String key : phases )
+                    else
                     {
-                        descriptionBuffer.append( "* " ).append( key ).append( ": " );
-                        if ( lifecycle.getDefaultPhases().get( key ) != null )
-                        {
-                            descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( LS );
-                        }
-                        else
-                        {
-                            descriptionBuffer.append( NOT_DEFINED ).append( LS );
-                        }
+                        descriptionBuffer.append( NOT_DEFINED ).append( LS );
                     }
                 }
             }
-            catch ( ComponentLookupException e )
+            else
             {
-                throw new MojoFailureException( "ComponentLookupException: " + e.getMessage() );
-            }
-            catch ( LifecycleExecutionException e )
-            {
-                throw new MojoFailureException( "LifecycleExecutionException: " + e.getMessage() );
-            }
+                descriptionBuffer.append( "'" ).append( cmd );
+                descriptionBuffer.append( "' is a lifecycle with the following phases: " );
+                descriptionBuffer.append( LS );
 
+                for ( String key : phases )
+                {
+                    descriptionBuffer.append( "* " ).append( key ).append( ": " );
+                    if ( lifecycle.getDefaultPhases().get( key ) != null )
+                    {
+                        descriptionBuffer.append( lifecycle.getDefaultPhases().get( key ) ).append( LS );
+                    }
+                    else
+                    {
+                        descriptionBuffer.append( NOT_DEFINED ).append( LS );
+                    }
+                }
+            }
             return false;
         }
 
         // goals
-        MojoDescriptor mojoDescriptor = HelpUtil.getMojoDescriptor( cmd, session, project, cmd, true, false );
-
+        MojoDescriptor mojoDescriptor;
+        try
+        {
+            mojoDescriptor = mojoDescriptorCreator.getMojoDescriptor( cmd, session, project );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Unable to get descriptor for " + cmd, e );
+        }
         descriptionBuffer.append( "'" ).append( cmd ).append( "' is a plugin goal (aka mojo)" ).append( "." );
         descriptionBuffer.append( LS );
         plugin = mojoDescriptor.getPluginDescriptor().getId();
@@ -977,6 +855,7 @@ public class DescribeMojo
                                                          new Class[]{ String.class, Integer.TYPE, Integer.TYPE,
                                                              Integer.TYPE } );
             m.setAccessible( true );
+            @SuppressWarnings( "unchecked" )
             List<String> output = (List<String>) m.invoke( HelpMojo.class, text, indent, indentSize, lineLength );
 
             if ( output == null )
@@ -1122,15 +1001,18 @@ public class DescribeMojo
      */
     private boolean isReportGoal( MojoDescriptor md )
     {
-        PluginDescriptor d = md.getPluginDescriptor();
-        Artifact jar = artifactFactory.createArtifact( d.getGroupId(), d.getArtifactId(), d.getVersion(), "", "jar" );
-        Artifact pom = artifactFactory.createArtifact( d.getGroupId(), d.getArtifactId(), d.getVersion(), "", "pom" );
+        PluginDescriptor pd = md.getPluginDescriptor();
         List<URL> urls = new ArrayList<URL>();
+        ProjectBuildingRequest pbr = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+        pbr.setRemoteRepositories( remoteRepositories );
+        pbr.setResolveDependencies( true );
+        pbr.setProject( null );
+        pbr.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL );
         try
         {
-            artifactResolver.resolve( jar, remoteRepositories, localRepository );
-            artifactResolver.resolve( pom, remoteRepositories, localRepository );
-            MavenProject project = projectBuilder.buildWithDependencies( pom.getFile(), localRepository, null );
+            Artifact jar = artifactResolver.resolveArtifact( pbr, toArtifactCoordinate( pd, "jar" ) ).getArtifact();
+            Artifact pom = artifactResolver.resolveArtifact( pbr, toArtifactCoordinate( pd, "pom" ) ).getArtifact();
+            MavenProject project = projectBuilder.build( pom.getFile(), pbr ).getProject();
             urls.add( jar.getFile().toURI().toURL() );
             for ( Object artifact : project.getCompileClasspathElements() )
             {
@@ -1142,9 +1024,22 @@ public class DescribeMojo
         }
         catch ( Exception e )
         {
-            getLog().warn( "Couldn't identify if this goal is a report goal.", e );
+            getLog().warn( "Couldn't identify if this goal is a report goal: " + e.getMessage() );
             return false;
         }
+    }
+
+    /**
+     * Transforms the given plugin descriptor into an artifact coordinate. It is formed by its GAV information, along
+     * with the given type.
+     * 
+     * @param pd Plugin descriptor.
+     * @param type Extension for the coordinate.
+     * @return Coordinate of an artifact having the same GAV as the given plugin descriptor, with the given type.
+     */
+    private ArtifactCoordinate toArtifactCoordinate( PluginDescriptor pd, String type )
+    {
+        return getArtifactCoordinate( pd.getGroupId(), pd.getArtifactId(), pd.getVersion(), type );
     }
 
     /**
@@ -1157,7 +1052,7 @@ public class DescribeMojo
     {
         if ( StringUtils.isNotEmpty( description ) )
         {
-            return PluginUtils.toText( description );
+            return GeneratorUtils.toText( description );
         }
 
         return "(no description available)";
@@ -1175,12 +1070,6 @@ public class DescribeMojo
         private String artifactId;
 
         private String version;
-
-        private String mojo;
-
-        private Plugin plugin;
-
-        private PluginDescriptor pluginDescriptor;
 
         /**
          * @return the prefix
@@ -1246,52 +1135,5 @@ public class DescribeMojo
             this.version = version;
         }
 
-        /**
-         * @return the mojo
-         */
-        public String getMojo()
-        {
-            return mojo;
-        }
-
-        /**
-         * @param mojo the mojo to set
-         */
-        public void setMojo( String mojo )
-        {
-            this.mojo = mojo;
-        }
-
-        /**
-         * @return the plugin
-         */
-        public Plugin getPlugin()
-        {
-            return plugin;
-        }
-
-        /**
-         * @param plugin the plugin to set
-         */
-        public void setPlugin( Plugin plugin )
-        {
-            this.plugin = plugin;
-        }
-
-        /**
-         * @return the pluginDescriptor
-         */
-        public PluginDescriptor getPluginDescriptor()
-        {
-            return pluginDescriptor;
-        }
-
-        /**
-         * @param pluginDescriptor the pluginDescriptor to set
-         */
-        public void setPluginDescriptor( PluginDescriptor pluginDescriptor )
-        {
-            this.pluginDescriptor = pluginDescriptor;
-        }
     }
 }

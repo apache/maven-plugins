@@ -25,16 +25,20 @@ import java.io.Writer;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -52,17 +56,20 @@ public abstract class AbstractHelpMojo
     /** The maximum length of a display line. */
     protected static final int LINE_LENGTH = 79;
     
-    /**
-     * Maven Artifact Factory component.
-     */
-    @Component
-    private ArtifactFactory artifactFactory;
+    /** The line separator for the current OS. */
+    protected static final String LS = System.getProperty( "line.separator" );
     
     /**
      * Maven Project Builder component.
      */
     @Component
-    private MavenProjectBuilder mavenProjectBuilder;
+    protected ProjectBuilder projectBuilder;
+    
+    /**
+     * Component used to resolve artifacts and download their files from remote repositories.
+     */
+    @Component
+    protected ArtifactResolver artifactResolver;
     
     /**
      * Remote repositories used for the project.
@@ -75,10 +82,17 @@ public abstract class AbstractHelpMojo
      */
     @Parameter( defaultValue = "${localRepository}", required = true, readonly = true )
     protected ArtifactRepository localRepository;
+    
+    /**
+     * The current build session instance. This is used for
+     * plugin manager API calls.
+     */
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    protected MavenSession session;
 
     /**
      * Optional parameter to write the output of this help in a given file, instead of writing to the console.
-     * <br/>
+     * <br>
      * <b>Note</b>: Could be a relative path.
      */
     @Parameter( property = "output" )
@@ -132,11 +146,14 @@ public abstract class AbstractHelpMojo
     }
     
     /**
-     * @param artifactString should respect the format <code>groupId:artifactId[:version][:classifier]</code>
+     * Parses the given String into GAV artifact coordinate information, adding the given type.
+     * 
+     * @param artifactString should respect the format <code>groupId:artifactId[:version]</code>
+     * @param type The extension for the artifact, must not be <code>null</code>.
      * @return the <code>Artifact</code> object for the <code>artifactString</code> parameter.
      * @throws MojoExecutionException if the <code>artifactString</code> doesn't respect the format.
      */
-    protected Artifact getArtifact( String artifactString )
+    protected ArtifactCoordinate getArtifactCoordinate( String artifactString, String type )
         throws MojoExecutionException
     {
         if ( StringUtils.isEmpty( artifactString ) )
@@ -147,10 +164,8 @@ public abstract class AbstractHelpMojo
         String groupId; // required
         String artifactId; // required
         String version; // optional
-        String classifier = null; // optional
 
         String[] artifactParts = artifactString.split( ":" );
-
         switch ( artifactParts.length )
         {
             case 2:
@@ -163,51 +178,50 @@ public abstract class AbstractHelpMojo
                 artifactId = artifactParts[1];
                 version = artifactParts[2];
                 break;
-            case 4:
-                groupId = artifactParts[0];
-                artifactId = artifactParts[1];
-                version = artifactParts[2];
-                classifier = artifactParts[3];
-                break;
             default:
                 throw new MojoExecutionException( "The artifact parameter '" + artifactString
-                    + "' should be conform to: " + "'groupId:artifactId[:version][:classifier]'." );
+                    + "' should be conform to: " + "'groupId:artifactId[:version]'." );
         }
-
-        if ( StringUtils.isNotEmpty( classifier ) )
-        {
-            return artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "jar", classifier );
-        }
-
-        return artifactFactory.createArtifact( groupId, artifactId, version, Artifact.SCOPE_COMPILE, "jar" );
+        return getArtifactCoordinate( groupId, artifactId, version, type );
     }
 
+    protected ArtifactCoordinate getArtifactCoordinate( String groupId, String artifactId, String version, String type )
+    {
+        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+        coordinate.setGroupId( groupId );
+        coordinate.setArtifactId( artifactId );
+        coordinate.setVersion( version );
+        coordinate.setExtension( type );
+        return coordinate;
+    }
+
+    /**
+     * Retrieves the Maven Project associated with the given artifact String, in the form of
+     * <code>groupId:artifactId[:version]</code>. This resolves the POM artifact at those coordinates and then builds
+     * the Maven project from it.
+     * 
+     * @param artifactString Coordinates of the Maven project to get.
+     * @return New Maven project.
+     * @throws MojoExecutionException If there was an error while getting the Maven project.
+     */
     protected MavenProject getMavenProject( String artifactString )
         throws MojoExecutionException
     {
-        Artifact artifactObj = getArtifact( artifactString );
-        
-        if ( Artifact.SCOPE_SYSTEM.equals( artifactObj.getScope() ) )
-        {
-            throw new MojoExecutionException( "System artifact is not be handled." );
-        }
-
-        Artifact copyArtifact = ArtifactUtils.copyArtifact( artifactObj );
-        if ( !"pom".equals( copyArtifact.getType() ) )
-        {
-            copyArtifact =
-                artifactFactory.createProjectArtifact( copyArtifact.getGroupId(), copyArtifact.getArtifactId(),
-                                                       copyArtifact.getVersion(), copyArtifact.getScope() );
-        }
-
+        ArtifactCoordinate coordinate = getArtifactCoordinate( artifactString, "pom" );
         try
         {
-            return mavenProjectBuilder.buildFromRepository( copyArtifact, remoteRepositories, localRepository );
+            ProjectBuildingRequest pbr = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            pbr.setRemoteRepositories( remoteRepositories );
+            pbr.setProject( null );
+            pbr.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL );
+            pbr.setResolveDependencies( true );
+            Artifact artifact = artifactResolver.resolveArtifact( pbr, coordinate ).getArtifact();
+            return projectBuilder.build( artifact.getFile(), pbr ).getProject();
         }
-        catch ( ProjectBuildingException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Unable to get the POM for the artifact '" + artifactString
-                + "'. Verify the artifact parameter." );
+                + "'. Verify the artifact parameter.", e );
         }
     }
 

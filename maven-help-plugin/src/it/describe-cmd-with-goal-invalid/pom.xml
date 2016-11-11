@@ -33,18 +33,4 @@ under the License.
     <plugins>
     </plugins>
   </build>
-  
-  <profiles>
-    <profile>
-      <id>profile-active-from-pom</id>
-      <activation>
-        <file>
-          <exists>pom.xml</exists>
-        </file>
-      </activation>
-    </profile>
-    <profile>
-      <id>profile-inactive-from-pom</id>
-    </profile>
-  </profiles>
 </project>

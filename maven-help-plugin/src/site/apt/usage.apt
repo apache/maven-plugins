@@ -120,36 +120,6 @@ Usage
 
  <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
 
-* The <<<expressions>>> Goal
-
-  When you develop a new Maven Plugin, you could need to use some expressions given by Maven. To list them, just call
-  the {{{./expressions-mojo.html}expressions}} goal:
-
-+-----+
-# mvn help:expressions
-...
-[INFO] [help:expressions]
-[INFO] Maven supports the following Plugin expressions:
-
-${project}: No description available.
-
-${settings}: No description available.
-
-${session}: No description available.
-
-${plugin}: No description available.
-
-${rootless}: No description available.
-
-${settings.interactiveMode}: If false, flags the system to skip prompting the
-user for any information, or holding up the build waiting for any input. NOTE:
-It's also possible to switch to batch (ie. non-interactive) mode using the '-B'
-command-line option.
-...
-+-----+
-
- <<Note>>: you could also use the <<<output>>> parameter to redirect output to a file.
-
 * The <<<help:evaluate>>> Goal
 
   You could use this interactive goal to evaluate some Maven expressions. To do it, just call the
@@ -173,5 +143,6 @@ null object or invalid expression
  The <<<artifact>>> parameter refers to ask expressions on the artifact POM. If omitted, the evaluate goal uses the current
  pom.
 
- You could ask for all Maven expressions listed by <<<help:expressions>>> goal, i.e. $\{project\}, $\{project.licenses\},
- $\{settings\}, $\{settings.profiles\}.
+ You could ask for all Maven expressions listed in the Javadoc of the 
+ {{{/ref/current/maven-core/apidocs/org/apache/maven/plugin/PluginParameterExpressionEvaluator.html}
+ <<<PluginParameterExpressionEvaluator>>>}} class.

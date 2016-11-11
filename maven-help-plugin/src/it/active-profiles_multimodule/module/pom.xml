@@ -21,4 +21,18 @@
   
   <artifactId>active-profiles_multimodule-module</artifactId>
   
+  <profiles>
+    <profile>
+      <id>mph79-child</id>
+      <activation>
+        <file>
+          <exists>${basedir}/pom.xml</exists>
+        </file>
+      </activation>
+    </profile>
+    <profile>
+      <id>mph79-child-inactive</id>
+    </profile>
+  </profiles>
+  
 </project>

@@ -16,7 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 def buildLog = new File( basedir, 'build.log' ); 
 assert buildLog.exists()
 
 assert 2 == buildLog.text.count( ' - mph79 (source: org.apache.maven.its.help:active-profiles_multimodule:1.0-SNAPSHOT)' )
+assert 1 == buildLog.text.count( ' - mph79-child (source: org.apache.maven.its.help:active-profiles_multimodule-module:1.0-SNAPSHOT)' )
+assert 0 == buildLog.text.count( ' - mph79-child-inactive' )
+assert 2 == buildLog.text.count( ' - it-repo (source: external)' )

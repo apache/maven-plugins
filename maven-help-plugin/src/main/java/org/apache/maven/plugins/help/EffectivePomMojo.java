@@ -19,8 +19,6 @@ package org.apache.maven.plugins.help;
  * under the License.
  */
 
-import static org.apache.maven.plugins.help.HelpUtil.LS;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -74,11 +72,11 @@ public class EffectivePomMojo
     
     /**
      * The artifact for which to display the effective POM.
-     * <br/>
+     * <br>
      * <b>Note</b>: Should respect the Maven format, i.e. <code>groupId:artifactId[:version]</code>. The
      * latest version of the artifact will be used when no version is specified.
      * 
-     * @since 2.2.1
+     * @since 3.0.0
      */
     @Parameter( property = "artifact" )
     private String artifact;
@@ -135,10 +133,7 @@ public class EffectivePomMojo
                 throw new MojoExecutionException( "Cannot write effective-POM to output: " + output, e );
             }
 
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Effective-POM written to: " + output );
-            }
+            getLog().info( "Effective-POM written to: " + output );
         }
         else
         {
@@ -150,10 +145,7 @@ public class EffectivePomMojo
             message.append( effectivePom );
             message.append( LS );
 
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( message.toString() );
-            }
+            getLog().info( message.toString() );
         }
     }
 
