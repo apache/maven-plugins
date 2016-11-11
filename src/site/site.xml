@@ -28,6 +28,7 @@ under the License.
     <menu name="Reference">
       <item name="Descriptor Format" href="./assembly.html"/>
       <item name="Predefined Descriptors" href="./descriptor-refs.html"/>
+      <item name="Components" href="./assembly-component.html"/>
     </menu>
 
     <menu name="Overview">
