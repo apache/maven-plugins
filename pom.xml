@@ -191,7 +191,7 @@ under the License.
 
   <properties>
     <doxiaVersion>1.7</doxiaVersion>
-    <doxiaSitetoolsVersion>1.7.3</doxiaSitetoolsVersion>
+    <doxiaSitetoolsVersion>1.7.4</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
     <wagonVersion>1.0</wagonVersion>
@@ -287,7 +287,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
-      <version>1.0-beta-7</version>
+      <version>1.0-beta-10</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -304,7 +304,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-classworlds</artifactId>
-      <version>2.2.3</version>
+      <version>2.5.2</version>
     </dependency>
 
     <!-- Doxia -->
