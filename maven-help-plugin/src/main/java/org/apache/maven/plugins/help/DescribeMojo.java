@@ -372,8 +372,9 @@ public class DescribeMojo
         {
             try
             {
-                PluginVersionResult versionResult =
-                    pluginVersionResolver.resolve( new DefaultPluginVersionRequest( forLookup, session ) );
+                DefaultPluginVersionRequest versionRequest = new DefaultPluginVersionRequest( forLookup, session );
+                versionRequest.setPom( project.getModel() );
+                PluginVersionResult versionResult = pluginVersionResolver.resolve( versionRequest );
                 forLookup.setVersion( versionResult.getVersion() );
             }
             catch ( PluginVersionResolutionException e )

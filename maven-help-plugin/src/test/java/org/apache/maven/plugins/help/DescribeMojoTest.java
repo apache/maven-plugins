@@ -36,6 +36,7 @@ import org.apache.maven.plugin.version.PluginVersionRequest;
 import org.apache.maven.plugin.version.PluginVersionResolver;
 import org.apache.maven.plugin.version.PluginVersionResult;
 import org.apache.maven.plugins.help.DescribeMojo.PluginInfo;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.exec.MavenPluginManagerHelper;
 import org.mockito.ArgumentCaptor;
 
@@ -263,6 +264,7 @@ public class DescribeMojoTest
         PrivateAccessor.setField( mojo, "pluginVersionResolver", pluginVersionResolver );
         PrivateAccessor.setField( mojo, "pluginManager", pluginManager );
         PrivateAccessor.setField( mojo, "session", session );
+        PrivateAccessor.setField( mojo, "project", new MavenProject() );
         when( mojoDescriptorCreator.findPluginForPrefix( "help", session ) ).thenReturn( plugin );
         when( pluginVersionResolver.resolve( any( PluginVersionRequest.class ) ) ).thenReturn( versionResult );
         when( versionResult.getVersion() ).thenReturn( "1.0" );
