@@ -21,6 +21,8 @@ package org.apache.maven.plugins.help;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoExecution.Source;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -69,7 +71,13 @@ public class EffectivePomMojo
      */
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     private List<MavenProject> projects;
-    
+
+    /**
+     * This mojo execution, used to determine if it was launched from the lifecycle or the command-line.
+     */
+    @Parameter( defaultValue = "${mojo}", required = true, readonly = true )
+    private MojoExecution mojoExecution;
+
     /**
      * The artifact for which to display the effective POM.
      * <br>
@@ -102,7 +110,7 @@ public class EffectivePomMojo
         writeHeader( writer );
 
         String effectivePom;
-        if ( projects.get( 0 ).equals( project ) && projects.size() > 1 )
+        if ( shouldWriteAllEffectivePOMsInReactor() )
         {
             // outer root element
             writer.startElement( "projects" );
@@ -147,6 +155,21 @@ public class EffectivePomMojo
 
             getLog().info( message.toString() );
         }
+    }
+
+    /**
+     * Determines if all effective POMs of all the projects in the reactor should be written. When this goal is started
+     * on the command-line, it is always the case. However, when it is bound to a phase in the lifecycle, it is only the
+     * case when the current project being built is the head project in the reactor.
+     * 
+     * @return <code>true</code> if all effective POMs should be written, <code>false</code> otherwise.
+     */
+    private boolean shouldWriteAllEffectivePOMsInReactor()
+    {
+        Source source = mojoExecution.getSource();
+        // [MNG-5550] For Maven < 3.2.1, the source is null, instead of LIFECYCLE: only rely on comparisons with CLI
+        return projects.size() > 1
+            && ( source == Source.CLI || source != Source.CLI && projects.get( 0 ).equals( project ) );
     }
 
     // ----------------------------------------------------------------------
