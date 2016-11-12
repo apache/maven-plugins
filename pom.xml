@@ -109,6 +109,13 @@ under the License.
       <artifactId>maven-filtering</artifactId>
       <version>${mavenFilteringVersion}</version>
     </dependency>
+    <!-- Upgrade of transitive commons-io 2.4 of maven-shared-utils of maven-filtering. -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.5</version>
+      <scope>compile</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -126,12 +133,6 @@ under the License.
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>2.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
