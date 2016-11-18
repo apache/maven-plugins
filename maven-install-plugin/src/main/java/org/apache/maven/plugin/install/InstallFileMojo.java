@@ -213,13 +213,16 @@ public class InstallFileMojo
             getLog().debug( "localRepoPath: " + repositoryManager.getLocalRepositoryBasedir( buildingRequest ) );
         }
 
+        File temporaryPom = null;
+
         if ( pomFile != null )
         {
             processModel( readModel( pomFile ) );
         }
         else
         {
-            readingPomFromJarFile();
+            temporaryPom = readingPomFromJarFile();
+            pomFile = temporaryPom;
         }
 
         validateArtifactInformation();
@@ -261,8 +264,8 @@ public class InstallFileMojo
             }
             else
             {
-                File generatedPomFile = generatePomFile();
-                ProjectArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, generatedPomFile );
+                temporaryPom = generatePomFile();
+                ProjectArtifactMetadata pomMetadata = new ProjectArtifactMetadata( artifact, temporaryPom );
                 if ( Boolean.TRUE.equals( generatePom )
                     || ( generatePom == null && !getLocalRepoFile( buildingRequest, pomMetadata ).exists() ) )
                 {
@@ -273,7 +276,7 @@ public class InstallFileMojo
                     }
                     else
                     {
-                        project.setFile( generatedPomFile );
+                        project.setFile( temporaryPom );
                     }
                 }
                 else if ( generatePom == null )
@@ -306,6 +309,14 @@ public class InstallFileMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+        finally
+        {
+            if ( temporaryPom != null )
+            {
+                // noinspection ResultOfMethodCallIgnored
+                temporaryPom.delete();
+            }
+        }
     }
     
     /**
@@ -336,10 +347,10 @@ public class InstallFileMojo
         }
     }
 
-    private void readingPomFromJarFile()
+    private File readingPomFromJarFile()
         throws MojoExecutionException
     {
-        boolean foundPom = false;
+        File pomFile = null;
 
         JarFile jarFile = null;
         try
@@ -358,8 +369,6 @@ public class InstallFileMojo
                 {
                     getLog().debug( "Using " + entry.getName() + " as pomFile" );
 
-                    foundPom = true;
-
                     InputStream pomInputStream = null;
                     OutputStream pomOutputStream = null;
 
@@ -372,7 +381,7 @@ public class InstallFileMojo
                         {
                             base = base.substring( 0, base.lastIndexOf( '.' ) );
                         }
-                        pomFile = new File( file.getParentFile(), base + ".pom" );
+                        pomFile = File.createTempFile( base, ".pom" );
                         
                         pomOutputStream = new FileOutputStream( pomFile );
                         
@@ -396,7 +405,7 @@ public class InstallFileMojo
                 }
             }
 
-            if ( !foundPom )
+            if ( pomFile == null )
             {
                 getLog().info( "pom.xml not found in " + file.getName() );
             }
@@ -419,6 +428,7 @@ public class InstallFileMojo
                 }
             }
         }
+        return pomFile;
     }
 
     /**
