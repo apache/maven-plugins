@@ -37,13 +37,9 @@ import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.apache.maven.model.building.DefaultModelBuildingRequest;
-import org.apache.maven.model.building.ModelBuildingRequest;
-import org.apache.maven.model.building.ModelProblem.Severity;
-import org.apache.maven.model.building.ModelProblemCollector;
+import org.apache.maven.model.building.ModelBuildingException;
 import org.apache.maven.model.building.ModelSource;
 import org.apache.maven.model.building.StringModelSource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -64,6 +60,7 @@ import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
 import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
 import org.apache.maven.shared.repository.RepositoryManager;
+import org.apache.maven.shared.utils.Os;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -192,8 +189,8 @@ public class DeployFileMojo
     /**
      * Whether to deploy snapshots with a unique version or not.
      * 
-     * @deprecated As of Maven 3, this isn't supported anymore and this parameter is only present to break the build
-     * if you use it!
+     * @deprecated As of Maven 3, this isn't supported anymore and this parameter is only present to break the build if
+     *             you use it!
      */
     @Parameter( property = "uniqueVersion" )
     @Deprecated
@@ -344,12 +341,9 @@ public class DeployFileMojo
 
         initProperties();
 
-        validateArtifactInformation();
-
         ArtifactRepositoryLayout layout = getLayout( repositoryLayout );
 
-        ArtifactRepository deploymentRepository =
-            createDeploymentArtifactRepository( repositoryId, url, layout );
+        ArtifactRepository deploymentRepository = createDeploymentArtifactRepository( repositoryId, url, layout );
 
         String protocol = deploymentRepository.getProtocol();
 
@@ -358,13 +352,13 @@ public class DeployFileMojo
             throw new MojoExecutionException( "No transfer protocol found." );
         }
 
+        MavenProject project = createMavenProject();
+        Artifact artifact = project.getArtifact();
+
         if ( file.equals( getLocalRepoFile() ) )
         {
             throw new MojoFailureException( "Cannot deploy artifact from the local repository: " + file );
         }
-
-        MavenProject project = createMavenProject();
-        Artifact artifact = project.getArtifact();
 
         List<Artifact> deployableArtifacts = new ArrayList<Artifact>();
 
@@ -523,11 +517,17 @@ public class DeployFileMojo
      * to attach the artifacts to deploy to.
      * 
      * @return The created Maven project, never <code>null</code>.
+     * @throws MojoExecutionException When the model of the project could not be built.
      * @throws MojoFailureException When building the project failed.
      */
     private MavenProject createMavenProject()
-        throws MojoFailureException
+        throws MojoExecutionException, MojoFailureException
     {
+        if ( groupId == null || artifactId == null || version == null || packaging == null )
+        {
+            throw new MojoExecutionException( "The artifact information is incomplete: 'groupId', 'artifactId', "
+                + "'version' and 'packaging' are required." );
+        }
         ModelSource modelSource =
             new StringModelSource( "<project>" + "<modelVersion>4.0.0</modelVersion>" + "<groupId>" + groupId
                 + "</groupId>" + "<artifactId>" + artifactId + "</artifactId>" + "<version>" + version + "</version>"
@@ -541,7 +541,12 @@ public class DeployFileMojo
         }
         catch ( ProjectBuildingException e )
         {
-            throw new MojoFailureException( e.getMessage(), e );
+            if ( e.getCause() instanceof ModelBuildingException )
+            {
+                throw new MojoExecutionException( "The artifact information is not valid:" + Os.LINE_SEP
+                    + e.getCause().getMessage() );
+            }
+            throw new MojoFailureException( "Unable to create the project.", e );
         }
     }
 
@@ -672,29 +677,6 @@ public class DeployFileMojo
     }
 
     /**
-     * Validates the user-supplied artifact information.
-     * 
-     * @throws MojoExecutionException If any artifact coordinate is invalid.
-     */
-    private void validateArtifactInformation()
-        throws MojoExecutionException
-    {
-        Model model = generateModel();
-
-        ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
-
-        DeployModelProblemCollector problemCollector = new DeployModelProblemCollector();
-
-        modelValidator.validateEffectiveModel( model, buildingRequest, problemCollector );
-
-        if ( problemCollector.getMessageCount() > 0 )
-        {
-            throw new MojoExecutionException( "The artifact information is incomplete or not valid:\n"
-                + problemCollector.render( "  " ) );
-        }
-    }
-
-    /**
      * Generates a minimal model from the user-supplied artifact information.
      * 
      * @return The generated model, never <code>null</code>.
@@ -774,43 +756,5 @@ public class DeployFileMojo
     {
         this.classifier = classifier;
     }
-
-    private static class DeployModelProblemCollector
-        implements ModelProblemCollector
-    {
-        /** */
-        private static final String NEWLINE = System.getProperty( "line.separator" );
-
-        /** */
-        private List<String> messages = new ArrayList<String>();
-
-        @Override
-        public void add( Severity severity, String message, InputLocation location, Exception cause )
-        {
-            messages.add( message );
-        }
-
-        public int getMessageCount()
-        {
-            return messages.size();
-        }
-
-        public String render( String indentation )
-        {
-            if ( messages.size() == 0 )
-            {
-                return indentation + "There were no validation errors.";
-            }
-
-            StringBuilder message = new StringBuilder();
-
-            for ( int i = 0; i < messages.size(); i++ )
-            {
-                message.append( indentation + "[" + i + "]  " + messages.get( i ).toString() + NEWLINE );
-            }
-
-            return message.toString();
-        }
-    };
 
 }
