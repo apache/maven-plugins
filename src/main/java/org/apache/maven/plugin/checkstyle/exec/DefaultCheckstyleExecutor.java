@@ -25,12 +25,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -389,23 +391,28 @@ public class DefaultCheckstyleExecutor
                                       + ", i.e. build is platform dependent!" );
             }
 
+            // MCHECKSTYLE-332 Checkstyle 6.16+ (#569): the cache is moved to the Checker module instead of TreeWalker
+            boolean cacheInChecker = false;
+            for ( Method method : Checker.class.getMethods() )
+            {
+                if ( "setCacheFile".equals( method.getName() )
+                    && Arrays.equals( method.getParameterTypes(), new Class<?>[] { String.class } ) )
+                {
+                    cacheInChecker = true;
+                    break;
+                }
+            }
+
             if ( "Checker".equals( config.getName() )
                     || "com.puppycrawl.tools.checkstyle.Checker".equals( config.getName() ) )
             {
                 if ( config instanceof DefaultConfiguration )
                 {
                     // MCHECKSTYLE-173 Only add the "charset" attribute if it has not been set
-                    try
+                    addAttributeIfNotExists( (DefaultConfiguration) config, "charset", effectiveEncoding );
+                    if ( cacheInChecker )
                     {
-                        if ( config.getAttribute( "charset" ) == null )
-                        {
-                            ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
-                        }
-                    }
-                    catch ( CheckstyleException ex )
-                    {
-                        // Checkstyle 5.4+ throws an exception when trying to access an attribute that doesn't exist
-                        ( (DefaultConfiguration) config ).addAttribute( "charset", effectiveEncoding );
+                        addAttributeIfNotExists( (DefaultConfiguration) config, "cacheFile", request.getCacheFile() );
                     }
                 }
                 else
@@ -421,20 +428,10 @@ public class DefaultCheckstyleExecutor
                 {
                     if ( module instanceof DefaultConfiguration )
                     {
-                        // MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
-                        try
+                        if ( !cacheInChecker )
                         {
-                            if ( module.getAttribute( "cacheFile" ) == null )
-                            {
-                                ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
-                            }
-                        }
-                        catch ( CheckstyleException ex )
-                        {
-                            // MCHECKSTYLE-159 - checkstyle 5.4 throws an exception instead of return null if
-                            // "cacheFile"
-                            // doesn't exist
-                            ( (DefaultConfiguration) module ).addAttribute( "cacheFile", request.getCacheFile() );
+                            addAttributeIfNotExists( (DefaultConfiguration) module, "cacheFile",
+                                                     request.getCacheFile() );
                         }
                     }
                     else
@@ -448,6 +445,23 @@ public class DefaultCheckstyleExecutor
         catch ( CheckstyleException e )
         {
             throw new CheckstyleExecutorException( "Failed during checkstyle configuration", e );
+        }
+    }
+
+    private void addAttributeIfNotExists( DefaultConfiguration config, String name, String value )
+    {
+        try
+        {
+            // MCHECKSTYLE-132 DefaultConfiguration addAttribute has changed in checkstyle 5.3
+            if ( config.getAttribute( name ) == null )
+            {
+                config.addAttribute( name, value );
+            }
+        }
+        catch ( CheckstyleException ex )
+        {
+            // MCHECKSTYLE-159 Checkstyle 5.4+ throws an exception when trying to access an attribute that doesn't exist
+            config.addAttribute( name, value );
         }
     }
 
