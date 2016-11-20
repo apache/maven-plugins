@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.install.stubs;
+package org.apache.maven.plugins.install.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

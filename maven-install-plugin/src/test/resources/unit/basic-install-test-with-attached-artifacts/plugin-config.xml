@@ -25,14 +25,14 @@ under the License.
           <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub">
             <file>${basedir}/src/test/resources/unit/basic-install-test-with-attached-artifacts/plugin-config.xml</file>
             <packaging>jar</packaging>
-            <artifact implementation="org.apache.maven.plugin.install.stubs.InstallArtifactStub">
+            <artifact implementation="org.apache.maven.plugins.install.stubs.InstallArtifactStub">
               <file>${basedir}/src/test/resources/unit/basic-install-test-with-attached-artifacts/plugin-config.xml</file>
             </artifact>
             <attachedArtifacts>
               <attachedArtifact
-                  implementation="org.apache.maven.plugin.install.stubs.AttachedArtifactStub0"/>
+                  implementation="org.apache.maven.plugins.install.stubs.AttachedArtifactStub0"/>
               <attachedArtifact
-                  implementation="org.apache.maven.plugin.install.stubs.AttachedArtifactStub1"/>
+                  implementation="org.apache.maven.plugins.install.stubs.AttachedArtifactStub1"/>
             </attachedArtifacts>
           </project>
         </configuration>

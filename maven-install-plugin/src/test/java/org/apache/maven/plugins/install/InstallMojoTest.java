@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.install;
+package org.apache.maven.plugins.install;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,9 +31,11 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.install.stubs.AttachedArtifactStub0;
-import org.apache.maven.plugin.install.stubs.InstallArtifactStub;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.install.AbstractInstallMojo;
+import org.apache.maven.plugins.install.InstallMojo;
+import org.apache.maven.plugins.install.stubs.AttachedArtifactStub0;
+import org.apache.maven.plugins.install.stubs.InstallArtifactStub;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;

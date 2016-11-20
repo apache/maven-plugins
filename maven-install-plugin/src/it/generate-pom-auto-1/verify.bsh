@@ -20,7 +20,7 @@
 import java.io.*;
 import java.util.*;
 
-import org.apache.maven.plugin.install.Utils;
+import org.apache.maven.plugins.install.Utils;
 
 String[] paths =
 {

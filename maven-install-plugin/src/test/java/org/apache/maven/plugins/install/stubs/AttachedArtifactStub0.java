@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.install.stubs;
+package org.apache.maven.plugins.install.stubs;
 
 import java.io.File;
 
