@@ -36,7 +36,7 @@ import java.util.zip.ZipEntry;
 /**
  * Test for {@link XmlAppendingTransformer}.
  * 
- * @author Benjamin Bentmann
+ * @author Julien Viet
  * @version $Id$
  */
 public class GroovyResourceTransformerTest
