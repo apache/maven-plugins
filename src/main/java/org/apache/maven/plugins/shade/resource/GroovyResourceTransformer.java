@@ -45,9 +45,9 @@ public class GroovyResourceTransformer
 
     private List<String> staticExtensionClassesList = new ArrayList<String>();
 
-    String extModuleName = "no-module-name";
+    private String extModuleName = "no-module-name";
 
-    String extModuleVersion = "1.0";
+    private String extModuleVersion = "1.0";
 
     @Override
     public boolean canTransformResource( String resource )
