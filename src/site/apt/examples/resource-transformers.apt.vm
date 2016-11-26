@@ -51,6 +51,8 @@ Resource Transformers
 *-----------------------------------------+------------------------------------------+
 | {{XmlAppendingTransformer}}             | Adds XML content to an XML resource      | 
 *-----------------------------------------+------------------------------------------+
+| {{GroovyResourceTransformer}}           | Merge Apache Groovy extends modules      |
+*-----------------------------------------+------------------------------------------+
 Transformers in <<<org.apache.maven.plugins.shade.resource>>>
   
 * Merging Plexus Component Descriptors with the {ComponentsXmlResourceTransformer}
@@ -471,4 +473,44 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
   </build>
   ...
 </project>
-+----- 
++-----
+
+** Aggregating Apache Groovy extension modules descriptors with the {GroovyResourceTransformer}
+
+The Apache Groovy language provides extension modules located at
+<<<META-INF/services/org.codehaus.groovy.runtime.ExtensionModule>>>, these modules use the property file format.
+<<<GroovyResourceTransformer>>> automates the assembly of Groovy extension modules <<<NOTICE>>>.
+
+For example, to simply merge the extension modules of several jars:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.GroovyResourceTransformer">
+                  <extModuleName>the-aggregated-module</extModuleName>
+                  <extModuleVersion>1.0.0</extModuleVersion>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+ ...
+</project>
++-----
