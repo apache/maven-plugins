@@ -28,7 +28,7 @@ import java.util.Arrays;
  * Test for {@link SimpleRelocator}.
  *
  * @author Benjamin Bentmann
- * @version $Id$
+ *
  */
 public class SimpleRelocatorTest
     extends TestCase

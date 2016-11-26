@@ -34,7 +34,7 @@ import java.util.Collections;
  * Test for {@link ComponentsXmlResourceTransformer}.
  *
  * @author Brett Porter
- * @version $Id$
+ *
  */
 public class ComponentsXmlResourceTransformerTest
     extends TestCase

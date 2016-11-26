@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * Test for {@link XmlAppendingTransformer}.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
+ *
  */
 public class XmlAppendingTransformerTest
     extends TestCase

@@ -35,13 +35,18 @@ import java.util.jar.JarOutputStream;
 /**
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
-public class GroovyResourceTransformer implements ResourceTransformer
+public class GroovyResourceTransformer
+    implements ResourceTransformer
 {
 
     static final String EXT_MODULE_NAME = "META-INF/services/org.codehaus.groovy.runtime.ExtensionModule";
+
     private List<String> extensionClassesList = new ArrayList<String>();
+
     private List<String> staticExtensionClassesList = new ArrayList<String>();
+
     String extModuleName = "no-module-name";
+
     String extModuleVersion = "1.0";
 
     @Override
@@ -51,27 +56,28 @@ public class GroovyResourceTransformer implements ResourceTransformer
     }
 
     @Override
-    public void processResource( String resource, InputStream is, List<Relocator> relocators ) throws IOException
+    public void processResource( String resource, InputStream is, List<Relocator> relocators )
+        throws IOException
     {
-      Properties out = new Properties();
-      try
-      {
-         out.load( is );
-      }
-      finally
-      {
-          is.close();
-      }
-      String extensionClasses = out.getProperty( "extensionClasses" , "" ).trim();
-      if ( extensionClasses.length() > 0 )
-      {
-          append( extensionClasses, extensionClassesList );
-      }
-      String staticExtensionClasses = out.getProperty( "staticExtensionClasses", "" ).trim();
-      if ( staticExtensionClasses.length() > 0 )
-      {
-         append( staticExtensionClasses, staticExtensionClassesList );
-      }
+        Properties out = new Properties();
+        try
+        {
+            out.load( is );
+        }
+        finally
+        {
+            is.close();
+        }
+        String extensionClasses = out.getProperty( "extensionClasses", "" ).trim();
+        if ( extensionClasses.length() > 0 )
+        {
+            append( extensionClasses, extensionClassesList );
+        }
+        String staticExtensionClasses = out.getProperty( "staticExtensionClasses", "" ).trim();
+        if ( staticExtensionClasses.length() > 0 )
+        {
+            append( staticExtensionClasses, staticExtensionClassesList );
+        }
     }
 
     private void append( String entry, List<String> list )
@@ -89,7 +95,8 @@ public class GroovyResourceTransformer implements ResourceTransformer
     }
 
     @Override
-    public void modifyOutputStream( JarOutputStream os ) throws IOException
+    public void modifyOutputStream( JarOutputStream os )
+        throws IOException
     {
         if ( hasTransformedResource() )
         {
