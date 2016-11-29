@@ -78,13 +78,20 @@ public class GroovyResourceTransformerTest
         JarOutputStream jaos = new JarOutputStream( fos );
         transformer.modifyOutputStream( jaos );
         jaos.close();
-        JarFile jar = new JarFile( tempJar );
         Properties desc = null;
-        ZipEntry entry = jar.getEntry( GroovyResourceTransformer.EXT_MODULE_NAME );
-        if ( entry != null )
+        JarFile jar = new JarFile( tempJar );
+        try
         {
-            desc = new Properties();
-            desc.load( jar.getInputStream( entry ) );
+            ZipEntry entry = jar.getEntry( GroovyResourceTransformer.EXT_MODULE_NAME );
+            if ( entry != null )
+            {
+                desc = new Properties();
+                desc.load( jar.getInputStream( entry ) );
+            }
+        }
+        finally
+        {
+            jar.close();
         }
         return desc;
     }
@@ -110,8 +117,8 @@ public class GroovyResourceTransformerTest
         throws Exception
     {
         GroovyResourceTransformer transformer = new GroovyResourceTransformer();
-        transformer.extModuleName = "the-module-name";
-        transformer.extModuleVersion = "2.0";
+        transformer.setExtModuleName( "the-module-name" );
+        transformer.setExtModuleVersion( "2.0" );
         transformer.processResource( GroovyResourceTransformer.EXT_MODULE_NAME,
                                      module( "mod1", "1.0", "some.ext", "some.staticExt" ),
                                      Collections.<Relocator>emptyList() );

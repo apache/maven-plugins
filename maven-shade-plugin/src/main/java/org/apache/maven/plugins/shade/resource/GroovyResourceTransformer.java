@@ -134,4 +134,14 @@ public class GroovyResourceTransformer
                 return buff.toString();
         }
     }
+
+    public void setExtModuleName( String extModuleName )
+    {
+        this.extModuleName = extModuleName;
+    }
+
+    public void setExtModuleVersion( String extModuleVersion )
+    {
+        this.extModuleVersion = extModuleVersion;
+    }
 }
