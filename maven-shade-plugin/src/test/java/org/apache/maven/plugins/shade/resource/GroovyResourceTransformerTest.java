@@ -36,7 +36,6 @@ import java.util.zip.ZipEntry;
 /**
  * Test for {@link GroovyResourceTransformer}.
  *
- * @author Julien Viet
  */
 public class GroovyResourceTransformerTest
     extends TestCase
