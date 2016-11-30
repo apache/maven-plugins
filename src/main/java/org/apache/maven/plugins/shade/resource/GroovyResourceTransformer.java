@@ -33,7 +33,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 /**
- * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
+ * Aggregate Apache Groovy extension modules descriptors
  */
 public class GroovyResourceTransformer
     implements ResourceTransformer
