@@ -132,7 +132,7 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-plugin-plugin</artifactId>
             <configuration>
-              <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+              <!-- see https://issues.apache.org/jira/browse/MNG-5346 -->
               <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
             </configuration>
             <executions>

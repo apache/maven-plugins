@@ -47,7 +47,7 @@ under the License.
   
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MREPOSITORY</url>
+    <url>https://issues.apache.org/jira/browse/MREPOSITORY</url>
   </issueManagement>
   <licenses>
     <license>

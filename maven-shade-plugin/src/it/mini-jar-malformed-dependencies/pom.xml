@@ -29,7 +29,7 @@ under the License.
 
   <dependencies>  
     <!-- dependencies with "malformed classes" that break asm's ClassReader -->
-    <!-- see also http://jira.codehaus.org/browse/MANIMALSNIFFER-9 -->
+    <!-- see also https://issues.apache.org/jira/browse/MANIMALSNIFFER-9 -->
     <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
