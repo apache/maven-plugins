@@ -48,7 +48,7 @@ public abstract class AbstractInstallMojo
      *
      * @since 2.2
      */
-    @Parameter( property = "createChecksum", defaultValue = "false" )
+    @Parameter( property = "createChecksum", defaultValue = "true" )
     protected boolean createChecksum;
 
     /**
