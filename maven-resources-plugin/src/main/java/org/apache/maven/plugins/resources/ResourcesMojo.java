@@ -133,13 +133,13 @@ public class ResourcesMojo
     protected MavenSession session;
 
     /**
-     * Expression preceded with the String won't be interpolated. For
-     * example {@code \${foo}} will be replaced with {@code ${foo}}.
+     * Expressions preceded with this string won't be interpolated. Anything else preceded with this string will be
+     * passed through unchanged. For example {@code \${foo}} will be replaced with {@code ${foo}} but {@code \\${foo}}
+     * will be replaced with {@code \\value of foo}, if this parameter has been set to the backslash.
      * <br/>
-     * <b>Note: With 3.0.0 a default value has been defined.</b>
      * @since 2.3
      */
-    @Parameter( defaultValue = "\\" )
+    @Parameter
     protected String escapeString;
 
     /**
