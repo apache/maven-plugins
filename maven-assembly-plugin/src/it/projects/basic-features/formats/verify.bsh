@@ -144,4 +144,28 @@ catch( IOException e )
     result = false;
 }
 
+try
+{
+    File assembly = new File( basedir, "target/assemblies/format-test-1.0.tar.xz" );
+    result = result && assembly.exists();
+    result = result && assembly.isFile();
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
+try
+{
+    File assembly = new File( basedir, "target/assemblies/format-test-1.0.txz" );
+    result = result && assembly.exists();
+    result = result && assembly.isFile();
+}
+catch( IOException e )
+{
+    e.printStackTrace();
+    result = false;
+}
+
 return result;
