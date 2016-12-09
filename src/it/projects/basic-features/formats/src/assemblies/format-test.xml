@@ -32,6 +32,8 @@ under the License.
     <format>jar</format>
     <format>war</format>
     <format>tar.snappy</format>
+    <format>tar.xz</format>
+    <format>txz</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <files>

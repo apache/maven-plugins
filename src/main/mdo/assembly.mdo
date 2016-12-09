@@ -109,6 +109,7 @@
               <li><b>"tar.gz"</b> or <b>"tgz"</b> - Creates a gzip'd TAR format</li>
               <li><b>"tar.bz2"</b> or <b>"tbz2"</b> - Creates a bzip'd TAR format</li>
               <li><b>"tar.snappy"</b> - Creates a snappy'd TAR format</li>
+              <li><b>"tar.xz"</b> or <b>"txz"</b> - Creates a xz'd TAR format</li>
               <li><b>"jar"</b> - Creates a JAR format</li>
               <li><b>"dir"</b> - Creates an exploded directory format</li>
               <li><b>"war"</b> - Creates a WAR format</li>

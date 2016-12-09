@@ -293,7 +293,7 @@ public class DefaultAssemblyArchiver
         throws NoSuchArchiverException
     {
         Archiver archiver;
-        if ( "tgz".equals( format ) || "tbz2".equals( format ) || format.startsWith( "tar" ) )
+        if ( "txz".equals( format ) || "tgz".equals( format ) || "tbz2".equals( format ) || format.startsWith( "tar" ) )
         {
             archiver = createTarArchiver( format, TarLongFileMode.valueOf( configSource.getTarLongFileMode() ) );
         }
@@ -514,6 +514,10 @@ public class DefaultAssemblyArchiver
             {
                 tarCompressionMethod = TarArchiver.TarCompressionMethod.bzip2;
             }
+            else if ( "xz".equals( compression ) )
+            {
+                tarCompressionMethod = TarArchiver.TarCompressionMethod.xz;
+            }
             else if ( "snappy".equals( compression ) )
             {
                 tarCompressionMethod = TarArchiver.TarCompressionMethod.snappy;
@@ -532,6 +536,10 @@ public class DefaultAssemblyArchiver
         else if ( "tbz2".equals( format ) )
         {
             tarArchiver.setCompression( TarArchiver.TarCompressionMethod.bzip2 );
+        }
+        else if ( "txz".equals( format ) )
+        {
+            tarArchiver.setCompression( TarArchiver.TarCompressionMethod.xz );
         }
 
         tarArchiver.setLongfile( tarLongFileMode );

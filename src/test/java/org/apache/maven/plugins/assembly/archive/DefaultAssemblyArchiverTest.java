@@ -19,7 +19,6 @@ package org.apache.maven.plugins.assembly.archive;
  * under the License.
  */
 
-import junit.framework.Assert;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
@@ -50,6 +49,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.easymock.classextension.EasyMockSupport;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -476,6 +476,42 @@ public class DefaultAssemblyArchiverTest
         subject.createTarArchiver( "tbz2", TarLongFileMode.fail );
 
         assertEquals( TarArchiver.TarCompressionMethod.bzip2, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
+
+        mm.verifyAll();
+    }
+
+    @Test
+    public void testCreateTarArchiver_TarXzFormat_ShouldInitializeXzCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final EasyMockSupport mm = new EasyMockSupport();
+
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final DefaultAssemblyArchiver subject = createSubject( mm, ttArchiver );
+
+        subject.createTarArchiver( "tar.xz", TarLongFileMode.fail );
+
+        assertEquals( TarArchiver.TarCompressionMethod.xz, ttArchiver.compressionMethod );
+        assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
+
+        mm.verifyAll();
+    }
+
+    @Test
+    public void testCreateTarArchiver_TXzFormat_ShouldInitializeXzCompression()
+        throws NoSuchArchiverException, ArchiverException
+    {
+        final EasyMockSupport mm = new EasyMockSupport();
+
+        final TestTarArchiver ttArchiver = new TestTarArchiver();
+
+        final DefaultAssemblyArchiver subject = createSubject( mm, ttArchiver );
+
+        subject.createTarArchiver( "txz", TarLongFileMode.fail );
+
+        assertEquals( TarArchiver.TarCompressionMethod.xz, ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
 
         mm.verifyAll();
