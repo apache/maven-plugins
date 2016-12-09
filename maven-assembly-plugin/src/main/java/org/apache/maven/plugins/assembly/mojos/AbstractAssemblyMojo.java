@@ -162,6 +162,7 @@ public abstract class AbstractAssemblyMojo
      * <li><em>tar</em> - Creates a TAR format</li>
      * <li><em>tar.gz</em> or <em>tgz</em> - Creates a gzip'd TAR format</li>
      * <li><em>tar.bz2</em> or <em>tbz2</em> - Creates a bzip'd TAR format</li>
+     * <li><em>tar.snappy</em> - Creates a snappy'd TAR format</li>
      * </ul>
      */
     @Parameter
