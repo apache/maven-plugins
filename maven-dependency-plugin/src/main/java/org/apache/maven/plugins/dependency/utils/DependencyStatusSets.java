@@ -218,12 +218,22 @@ public class DependencyStatusSets
             {
                 optionalMarker = " (optional) ";
             }
-            
+
             String moduleNameMarker = "";
-            String moduleName = getModuleName( artifact.getFile() );
-            if ( moduleName != null )
+
+            // dependencies:collect won't download jars
+            if ( artifact.getFile() != null )
             {
-                moduleNameMarker = " -- module " + moduleName;
+                ModuleDescriptor moduleDescriptor = getModuleDescriptor( artifact.getFile() );
+                if ( moduleDescriptor != null )
+                {
+                    moduleNameMarker = " -- module " + moduleDescriptor.name;
+
+                    if ( moduleDescriptor.automatic )
+                    {
+                        moduleNameMarker += " (auto)";
+                    }
+                }
             }
 
             artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
@@ -242,9 +252,9 @@ public class DependencyStatusSets
         return sb;
     }
     
-    private String getModuleName( File artifactFile )
+    private ModuleDescriptor getModuleDescriptor( File artifactFile )
     {
-        String moduleName = null;
+        ModuleDescriptor moduleDescriptor = null;
         try
         {
             // Use Java9 code to get moduleName, don't try to do it better with own implementation
@@ -263,7 +273,13 @@ public class DependencyStatusSets
             Object moduleDescriptorInstance = descriptorMethod.invoke( moduleReference );
             
             Method nameMethod = moduleDescriptorInstance.getClass().getDeclaredMethod( "name" );
-            moduleName = (String) nameMethod.invoke( moduleDescriptorInstance );
+            String name = (String) nameMethod.invoke( moduleDescriptorInstance );
+            
+            moduleDescriptor = new ModuleDescriptor();
+            moduleDescriptor.name = name;
+            
+            Method isAutomaticMethod = moduleDescriptorInstance.getClass().getDeclaredMethod( "isAutomatic" );
+            moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
         }
         catch ( ClassNotFoundException e )
         {
@@ -289,7 +305,14 @@ public class DependencyStatusSets
         {
             // do nothing
         }
-        return moduleName;
+        return moduleDescriptor;
+    }
+    
+    private class ModuleDescriptor
+    {
+        String name;
+        
+        boolean automatic = true;
     }
     
 }
