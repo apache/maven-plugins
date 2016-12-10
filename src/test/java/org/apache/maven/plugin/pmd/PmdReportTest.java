@@ -135,7 +135,7 @@ public class PmdReportTest
                       "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
-        // Additional test case for MPMD-174 (http://jira.codehaus.org/browse/MPMD-174).
+        // Additional test case for MPMD-174 (https://issues.apache.org/jira/browse/MPMD-174).
         WireMockServer mockServer = new WireMockServer( 3456 );
         mockServer.start();
 
