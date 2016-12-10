@@ -54,6 +54,10 @@ ${project.name}
 
     * tar.bz2 (or tbz2)
 
+    * tar.snappy
+
+    * tar.xz (or txz)
+
     * jar
 
     * dir
