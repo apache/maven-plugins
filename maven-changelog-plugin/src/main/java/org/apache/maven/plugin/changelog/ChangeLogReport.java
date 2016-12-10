@@ -337,7 +337,7 @@ public class ChangeLogReport
      *
      * @since 2.2
      */
-    @Parameter( property = "issueLinkUrl", defaultValue = "http://jira.codehaus.org/browse/%ISSUE%", required = true )
+    @Parameter( property = "issueLinkUrl", defaultValue = "https://issues.apache.org/jira/browse/%ISSUE%", required = true )
     private String issueLinkUrl;
 
     /**

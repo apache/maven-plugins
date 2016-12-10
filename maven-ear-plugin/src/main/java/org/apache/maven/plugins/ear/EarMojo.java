@@ -412,7 +412,7 @@ public class EarMojo
             // should be identified by a unique id instead of the
             // the artifactId's only which means this
             // check can be removed.
-            // http://jira.codehaus.org/browse/MEAR-209
+            // https://issues.apache.org/jira/browse/MEAR-209
             checkModuleUniqueness();
 
             for ( EarModule module : getModules() )

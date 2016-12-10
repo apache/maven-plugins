@@ -37,30 +37,30 @@ public class JiraHelperTestCase
     {
         Map<String, String> map;
 
-        map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/DOXIA" );
-        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        map = JiraHelper.getJiraUrlAndProjectId( "https://issues.apache.org/jira/browse/DOXIA" );
+        assertEquals( "https://issues.apache.org/jira", map.get( "url" ) );
 
         // MCHANGES-218
-        map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/DOXIA/" );
-        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        map = JiraHelper.getJiraUrlAndProjectId( "https://issues.apache.org/jira/browse/DOXIA/" );
+        assertEquals( "https://issues.apache.org/jira", map.get( "url" ) );
 
         // MCHANGES-222
         map =
-            JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/secure/IssueNavigator.jspa?pid=11761&reset=true" );
-        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
-        map = JiraHelper.getJiraUrlAndProjectId( "http://jira.codehaus.org/browse/MSHARED/component/13380" );
-        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+            JiraHelper.getJiraUrlAndProjectId( "https://issues.apache.org/jira/secure/IssueNavigator.jspa?pid=11761&reset=true" );
+        assertEquals( "https://issues.apache.org/jira", map.get( "url" ) );
+        map = JiraHelper.getJiraUrlAndProjectId( "https://issues.apache.org/jira/browse/MSHARED/component/13380" );
+        assertEquals( "https://issues.apache.org/jira", map.get( "url" ) );
     }
 
     public void testGetJiraUrlAndProjectName()
     {
         Map<String, String> map;
-        map = JiraHelper.getJiraUrlAndProjectName( "http://jira.codehaus.org/browse/DOXIA/" );
-        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        map = JiraHelper.getJiraUrlAndProjectName( "https://issues.apache.org/jira/browse/DOXIA/" );
+        assertEquals( "https://issues.apache.org/jira", map.get( "url" ) );
         assertEquals( "DOXIA", map.get( "project" ) );
 
-        map = JiraHelper.getJiraUrlAndProjectName( "http://jira.codehaus.org/browse/DOXIA" );
-        assertEquals( "http://jira.codehaus.org", map.get( "url" ) );
+        map = JiraHelper.getJiraUrlAndProjectName( "https://issues.apache.org/jira/browse/DOXIA" );
+        assertEquals( "https://issues.apache.org/jira", map.get( "url" ) );
         assertEquals( "DOXIA", map.get( "project" ) );
     }
 
