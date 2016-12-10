@@ -27,7 +27,7 @@
   <artifactId>multi-sourcefolder</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <url>http://jira.codehaus.org/browse/MCHECKSTYLE-70</url>
+  <url>https://issues.apache.org/jira/browse/MCHECKSTYLE-70</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
