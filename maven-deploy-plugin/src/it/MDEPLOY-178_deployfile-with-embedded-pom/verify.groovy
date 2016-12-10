@@ -26,4 +26,4 @@ assert buildLog.exists()
 assert buildLog.text.contains( "[DEBUG] Using META-INF/maven/org.apache.maven.plugins.deploy.its/mdeploy178/pom.xml as pomFile" )
 
 def pomProject = new XmlSlurper().parse( deployedPom )
-assert "https://jira.codehaus.org/browse/MDEPLOY-178".equals( pomProject.url.text() )
+assert "https://issues.apache.org/jira/browse/MDEPLOY-178".equals( pomProject.url.text() )

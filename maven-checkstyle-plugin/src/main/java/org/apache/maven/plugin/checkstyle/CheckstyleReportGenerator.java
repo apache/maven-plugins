@@ -450,7 +450,7 @@ public class CheckstyleReportGenerator
         // Check the severity. This helps to distinguish between
         // different configurations for the same rule, where each
         // configuration has a different severity, like JavadocMetod.
-        // See also http://jira.codehaus.org/browse/MCHECKSTYLE-41
+        // See also https://issues.apache.org/jira/browse/MCHECKSTYLE-41
         if ( expectedSeverity != null )
         {
             return expectedSeverity.equals( event.getSeverityLevel().getName() );

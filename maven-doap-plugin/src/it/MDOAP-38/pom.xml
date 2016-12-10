@@ -45,7 +45,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MDOAP</url>
+    <url>https://issues.apache.org/jira/browse/MDOAP</url>
   </issueManagement>
   <licenses>
     <license>

@@ -29,7 +29,7 @@ under the License.
 
   <name>MSITE-516 Report Configuration IT</name>
   <description>
-    http://jira.codehaus.org/browse/MSITE-516
+    https://issues.apache.org/jira/browse/MSITE-516
     Checks that report configuration is inherited from build.pluginManagement: see MSHARED-338.
   </description>
   <url>http://maven.apache.org</url>

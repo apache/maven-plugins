@@ -22,7 +22,7 @@ Markdown Format works
 ---------------
 
 But 'quotes' and "double quotes" were stripped from HTML result with DOXIA 1.3:
-see [DOXIA-473](https://jira.codehaus.org/browse/DOXIA-473).
+see [DOXIA-473](https://issues.apache.org/jira/browse/DOXIA-473).
 
 <!-- MACRO{toc|fromDepth=1|toDepth=2} -->
 

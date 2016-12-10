@@ -32,7 +32,7 @@ Known Bugs and Limitations
 
 * Current limitations
 
-  * FML parsing doesn't work due to {{{http://jira.codehaus.org/browse/DOXIA-148}DOXIA-148}}.
+  * FML parsing doesn't work due to {{{https://issues.apache.org/jira/browse/DOXIA-148}DOXIA-148}}.
 
   * Xdoc tables don't work due to a bug in the xdoc parser.
 

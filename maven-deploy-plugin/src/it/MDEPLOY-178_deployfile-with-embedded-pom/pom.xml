@@ -31,7 +31,7 @@ under the License.
     Test to verify that the pom inside the jar in used when deploying the file
   </description>
 
-  <url>https://jira.codehaus.org/browse/MDEPLOY-178</url>
+  <url>https://issues.apache.org/jira/browse/MDEPLOY-178</url>
 
   <build>
     <plugins>

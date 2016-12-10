@@ -132,7 +132,7 @@ public class CustomToolchainFactory
      * 
      * @param model the toolchain model as read from XML
      * @return the properties defined in the <code>provides</code> element
-     * @see <a href="http://jira.codehaus.org/browse/MNG-5718">MNG-5718</a> 
+     * @see <a href="https://issues.apache.org/jira/browse/MNG-5718">MNG-5718</a> 
      */
     protected Properties getProvidesProperties( ToolchainModel model )
     {

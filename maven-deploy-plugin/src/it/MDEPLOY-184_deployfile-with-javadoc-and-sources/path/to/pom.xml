@@ -26,6 +26,6 @@ under the License.
   <artifactId>artifact-name</artifactId>
   <version>1.0</version>
 
-  <url>http://jira.codehaus.org/browse/MDEPLOY-184</url>
+  <url>https://issues.apache.org/jira/browse/MDEPLOY-184</url>
 
 </project>
