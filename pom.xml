@@ -84,8 +84,6 @@ under the License.
     <mavenVersion>3.0</mavenVersion>
     <doxiaVersion>1.4</doxiaVersion>
     <pluginTestingVersion>2.1</pluginTestingVersion>
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -224,7 +222,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-artifact-transfer</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
+      <version>0.9.0</version>
     </dependency>
 
     <dependency>
