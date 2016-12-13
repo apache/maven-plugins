@@ -815,6 +815,15 @@ public class EarMojo
                     File artifact =
                         new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
 
+                    // MEAR-217
+                    // If WAR contains files with timestamps, but EAR strips them away (useBaseVersion=true)
+                    // the artifact is not found. Therefore respect the current fileNameMapping additionally.
+                    if ( !artifact.exists() )
+                    {
+                        artifact =
+                            new File( new File( workDirectory, module.getLibDir() ), jm.getBundleFileName() );
+                    }
+
                     if ( artifact.exists() )
                     {
                         getLog().debug( " -> Artifact to delete: " + artifact );

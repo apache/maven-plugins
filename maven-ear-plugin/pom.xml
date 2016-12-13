@@ -180,6 +180,11 @@
               <exclude>src/test/resources/dtd/jboss-app_4_0.dtd</exclude>
               <exclude>src/test/resources/dtd/jboss-app_4_2.dtd</exclude>
               <exclude>src/test/resources/dtd/jboss-app_5_0.dtd</exclude>
+              <!--
+                ! Within the checksum files no additional data is allowed
+              -->
+              <exclude>src/test/resources/m2snapshots/eartest/jar-sample-one/1.0-SNAPSHOT/jar-sample-one-1.0-20150825.210557-91.jar.sha1</exclude>
+              <exclude>src/test/resources/m2snapshots/eartest/jar-sample-one/1.0-SNAPSHOT/jar-sample-one-1.0-20150825.210557-91.pom.sha1</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -193,6 +198,7 @@
       <id>run-its</id>
       <properties>
         <localRepositoryPath>${project.build.testOutputDirectory}/m2repo</localRepositoryPath>
+        <localSnapshotRepositoryPath>${project.build.testOutputDirectory}/m2snapshots</localSnapshotRepositoryPath>
       </properties>
       <build>
         <resources>
