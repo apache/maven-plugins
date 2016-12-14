@@ -118,6 +118,8 @@ public class ChangeLogReport
 
     public static final String DEFAULT_ISSUE_ID_REGEX_PATTERN = "[a-zA-Z]{2,}-\\d+";
 
+    private static final String DEFAULT_ISSUE_LINK_URL = "https://issues.apache.org/jira/browse/" + ISSUE_TOKEN;
+
     /**
      * Used to specify the format to use for the dates in the headings of the
      * report.
@@ -337,7 +339,7 @@ public class ChangeLogReport
      *
      * @since 2.2
      */
-    @Parameter( property = "issueLinkUrl", defaultValue = "https://issues.apache.org/jira/browse/%ISSUE%", required = true )
+    @Parameter( property = "issueLinkUrl", defaultValue = DEFAULT_ISSUE_LINK_URL, required = true )
     private String issueLinkUrl;
 
     /**
