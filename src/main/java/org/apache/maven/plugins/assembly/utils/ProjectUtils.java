@@ -130,6 +130,9 @@ public final class ProjectUtils
                         // increment the change counter, to show that we
                         // verified a new module on this pass.
                         changed++;
+                        
+                        // We need to move on to the next candidate since this one was just verified
+                        break;
                     }
                 }
             }
