@@ -21,8 +21,8 @@ import java.io.*;
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert buildLog.text.contains( "[INFO] Downloading: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1.0/fake-remote-copy-1.0.jar" )
-assert buildLog.text.contains( "[INFO] Downloaded: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1.0/fake-remote-copy-1.0.jar" )
+assert buildLog.text.contains( "Downloading: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1.0/fake-remote-copy-1.0.jar" )
+assert buildLog.text.contains( "Downloaded: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1.0/fake-remote-copy-1.0.jar" )
 
 File copied = new File( basedir, 'target/dependency/fake-remote-copy-1.0.jar' )
 assert copied.exists()
