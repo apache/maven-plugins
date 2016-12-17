@@ -232,7 +232,8 @@ public class BuildClasspathMojo
                 getLog().debug( outputProperty + " = " + cpString );
             }
         }
-        else if ( outputFile == null )
+
+        if ( outputFile == null )
         {
             getLog().info( "Dependencies classpath:\n" + cpString );
         }
