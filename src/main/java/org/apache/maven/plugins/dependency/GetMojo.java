@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
@@ -39,8 +41,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.artifact.ArtifactCoordinate;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
+import org.apache.maven.shared.dependencies.DependableCoordinate;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -70,6 +76,9 @@ public class GetMojo
     */
    @Component
    private DependencyResolver dependencyResolver;
+
+   @Component
+   private ArtifactHandlerManager artifactHandlerManager;
 
     /**
      * Map that contains the layouts.
@@ -212,24 +221,34 @@ public class GetMojo
             if ( transitive )
             {
                 getLog().info( "Resolving " + coordinate + " with transitive dependencies" );
+                dependencyResolver.resolveDependencies( buildingRequest, coordinate, null );
             }
             else
             {
                 getLog().info( "Resolving " + coordinate );
+                artifactResolver.resolveArtifact( buildingRequest, toArtifactCoordinate( coordinate ) );
             }
-
-            // FIXME
-            // artifactResolver.resolveArtifact( buildingRequest, coordinate );
-
-            if ( transitive )
-            {
-                dependencyResolver.resolveDependencies( buildingRequest, coordinate, null );
-            }
+        }
+        catch ( ArtifactResolverException e )
+        {
+            throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
         }
         catch ( DependencyResolverException e )
         {
             throw new MojoExecutionException( "Couldn't download artifact: " + e.getMessage(), e );
         }
+    }
+
+    private ArtifactCoordinate toArtifactCoordinate( DependableCoordinate dependableCoordinate )
+    {
+        ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler( dependableCoordinate.getType() );
+        DefaultArtifactCoordinate artifactCoordinate = new DefaultArtifactCoordinate();
+        artifactCoordinate.setGroupId( dependableCoordinate.getGroupId() );
+        artifactCoordinate.setArtifactId( dependableCoordinate.getArtifactId() );
+        artifactCoordinate.setVersion( dependableCoordinate.getVersion() );
+        artifactCoordinate.setClassifier( dependableCoordinate.getClassifier() );
+        artifactCoordinate.setExtension( artifactHandler.getExtension() );
+        return artifactCoordinate;
     }
 
     ArtifactRepository parseRepository( String repo, ArtifactRepositoryPolicy policy )
