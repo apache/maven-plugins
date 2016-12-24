@@ -216,13 +216,13 @@ under the License.
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.3.5</version>
-      <scope>test</scope>
+      <!-- scope>test</scope> Required by Doxia transitively. -->
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.5</version>
-      <scope>test</scope>
+      <!-- scope>test</scope> Required by PMD transitively. -->
     </dependency>
   </dependencies>
 
