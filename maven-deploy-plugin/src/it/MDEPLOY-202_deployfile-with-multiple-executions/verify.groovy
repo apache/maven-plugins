@@ -19,4 +19,4 @@
 
 def buildLog = new File ( basedir, "build.log")
 
-assert buildLog.text.matches( /Uploading .* file:target\/repo\/org\/apache\/maven\/plugins\/deploy\/it\/org\.eclipse\.osgi\/1\.0\/org\.eclipse\.osgi-1\.0-sources\.jar/)
+assert buildLog.text =~ /Uploading.*file:target\/repo\/org\/apache\/maven\/plugins\/deploy\/it\/org\.eclipse\.osgi\/1\.0\/org\.eclipse\.osgi-1\.0-sources\.jar/
