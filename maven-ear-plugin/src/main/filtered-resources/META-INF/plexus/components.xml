@@ -58,7 +58,7 @@
                 org.apache.maven.plugins:maven-ear-plugin:${project.version}:generate-application-xml
               </generate-resources>
               <process-resources>
-                org.apache.maven.plugins:maven-resources-plugin:3.0.1:resources
+                org.apache.maven.plugins:maven-resources-plugin:3.0.2:resources
               </process-resources>
               <package>
                 org.apache.maven.plugins:maven-ear-plugin:${project.version}:ear
