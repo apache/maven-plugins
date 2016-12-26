@@ -293,7 +293,43 @@ documentedprojectdependency-1.0-SNAPSHOT.war
 
 * Overlay global settings
 
-   The following settings can be specified globally and modify the way all overlays are applied:
+   The following settings can be specified globally and modify the way all overlays are applied.
+
+   * <<dependentWarIncludes>> - sets the default includes to apply to all overlays. Any overlay that
+    has no specific <<<includes>>> element will inherit this setting by default.
+
++-----------------+
+    ...
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <dependentWarIncludes>**/IncludeME,**/images</dependentWarIncludes>
+        </configuration>
+       </plugin>
+    </plugins>
+    ...
++-----------------+
+
+   * <<dependentWarExcludes>> - sets the default excludes to apply to all overlays. Any overlay that
+    has no specific <<<excludes>>> element will inherit this setting by default.
+
++-----------------+
+    ...
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <dependentWarExcludes>WEB-INF/web.xml,index.*</dependentWarExcludes>
+        </configuration>
+       </plugin>
+    </plugins>
+    ...
++-----------------+
 
    * <<workDirectory>> - sets the directory where overlays will be temporarily extracted.
 

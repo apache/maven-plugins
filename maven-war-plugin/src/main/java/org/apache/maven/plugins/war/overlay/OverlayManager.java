@@ -20,6 +20,7 @@ package org.apache.maven.plugins.war.overlay;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -51,10 +52,13 @@ public class OverlayManager
      *
      * @param overlays the overlays
      * @param project the maven project
+     * @param defaultIncludes the default includes to use
+     * @param defaultExcludes the default excludes to use
      * @param currentProjectOverlay the overlay for the current project
      * @throws InvalidOverlayConfigurationException if the config is invalid
      */
-    public OverlayManager( List<Overlay> overlays, MavenProject project, Overlay currentProjectOverlay )
+    public OverlayManager( List<Overlay> overlays, MavenProject project, String[] defaultIncludes,
+                           String[] defaultExcludes, Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
     {
         this.overlays = new ArrayList<Overlay>();
@@ -67,7 +71,7 @@ public class OverlayManager
         this.artifactsOverlays = getOverlaysAsArtifacts();
 
         // Initialize
-        initialize( currentProjectOverlay );
+        initialize( defaultIncludes, defaultExcludes, currentProjectOverlay );
 
     }
 
@@ -99,11 +103,13 @@ public class OverlayManager
 
     /**
      * Initializes the manager and validates the overlays configuration.
-     * @param currentProjectOverlay the overlay for the current project
      *
+     * @param defaultIncludes the default includes to use
+     * @param defaultExcludes the default excludes to use
+     * @param currentProjectOverlay the overlay for the current project
      * @throws InvalidOverlayConfigurationException if the configuration is invalid
      */
-    void initialize( Overlay currentProjectOverlay )
+    void initialize( String[] defaultIncludes, String[] defaultExcludes, Overlay currentProjectOverlay )
         throws InvalidOverlayConfigurationException
     {
 
@@ -124,6 +130,13 @@ public class OverlayManager
                 overlay = currentProjectOverlay;
                 it.set( overlay );
             }
+            // default includes/excludes - only if the overlay uses the default settings
+            if ( Arrays.equals( Overlay.DEFAULT_INCLUDES, overlay.getIncludes() )
+                && Arrays.equals( Overlay.DEFAULT_EXCLUDES, overlay.getExcludes() ) )
+            {
+                overlay.setIncludes( defaultIncludes );
+                overlay.setExcludes( defaultExcludes );
+            }
 
             final Artifact artifact = getAssociatedArtifact( overlay );
             if ( artifact != null )
@@ -140,7 +153,7 @@ public class OverlayManager
             {
                 // Add a default overlay for the given artifact which will be applied after
                 // the ones that have been configured
-                overlays.add( new DefaultOverlay( artifact ) );
+                overlays.add( new DefaultOverlay( artifact, defaultIncludes, defaultExcludes ) );
             }
         }
 
@@ -184,7 +197,6 @@ public class OverlayManager
         }
 
         // maybe its a project dependencies zip or an other type
-        @SuppressWarnings( "unchecked" )
         Set<Artifact> projectArtifacts = this.project.getDependencyArtifacts();
         if ( projectArtifacts != null )
         {
@@ -227,7 +239,6 @@ public class OverlayManager
     private List<Artifact> getOverlaysAsArtifacts()
     {
         ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-        @SuppressWarnings( "unchecked" )
         final Set<Artifact> artifacts = project.getArtifacts();
 
         final List<Artifact> result = new ArrayList<Artifact>();
