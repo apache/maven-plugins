@@ -23,8 +23,8 @@ File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 String expectedDownloadingPattern = "Downloading.*: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1\\.0/fake-remote-copy-1\\.0\\.jar"
 String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1\\.0/fake-remote-copy-1\\.0\\.jar"
-assert buildLog.text =~ expectedDownloadingPattern}
-assert buildLog.text =~ expectedDownloadedPattern}
+assert buildLog.text =~ expectedDownloadingPattern
+assert buildLog.text =~ expectedDownloadedPattern
 
 File copied = new File( basedir, 'target/dependency/fake-remote-copy-1.0.jar' )
 assert copied.exists()
