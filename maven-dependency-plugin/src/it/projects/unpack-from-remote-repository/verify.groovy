@@ -21,8 +21,10 @@ import java.io.*;
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert buildLog.text.contains( "Downloading: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1.0/fake-remote-unpack-1.0.jar" )
-assert buildLog.text.contains( "Downloaded: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1.0/fake-remote-unpack-1.0.jar" )
+String expectedDownloadingPattern = "Downloading.*: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
+String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
+assert buildLog.text =~ expectedDownloadingPattern
+assert buildLog.text =~ expectedDownloadedPattern
 
 File unpacked = new File( basedir, 'target/dependency/META-INF/MANIFEST.MF' )
 assert unpacked.exists()
