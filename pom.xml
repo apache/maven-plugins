@@ -56,7 +56,10 @@ under the License.
 
   <modules>
     <module>maven-acr-plugin</module>
+    <!--
+    MANT-86 Retire the plugin
     <module>maven-ant-plugin</module>
+    -->
     <module>maven-antrun-plugin</module>
 
     <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
