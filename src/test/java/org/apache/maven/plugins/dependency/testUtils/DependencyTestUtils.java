@@ -34,18 +34,20 @@ import org.apache.maven.plugin.testing.SilentLog;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.codehaus.plexus.util.ReflectionUtils;
+import static junit.framework.Assert.assertTrue;
 
 public class DependencyTestUtils
 {
 
     /**
      * Deletes a directory and its contents.
-     * 
+     *
      * @param dir
-     *            The base directory of the included and excluded files.
+     * The base directory of the included and excluded files.
+     *
      * @throws IOException
      * @throws MojoExecutionException
-     *             When a directory failed to get deleted.
+     * When a directory failed to get deleted.
      */
     public static void removeDirectory( File dir )
         throws IOException
@@ -79,10 +81,11 @@ public class DependencyTestUtils
     /**
      * convience method to set values to variables in objects that don't have
      * setters
-     * 
+     *
      * @param object
      * @param variable
      * @param value
+     *
      * @throws IllegalAccessException
      */
     public static void setVariableValueToObject( Object object, String variable, Object value )
@@ -102,7 +105,9 @@ public class DependencyTestUtils
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        file.setLastModified( time );
+        assertTrue( "Updating last modification time of marker file " + file.getAbsolutePath()
+                        + " failed unexpectedly.", file.setLastModified( time ) );
+
         // wait at least a second for filesystems that only record to the
         // nearest second.
         Thread.sleep( 1000 );

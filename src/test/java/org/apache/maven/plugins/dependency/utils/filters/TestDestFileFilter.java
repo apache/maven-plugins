@@ -192,7 +192,7 @@ public class TestDestFileFilter
         fact.setCreateFiles( true );
         Artifact artifact = fact.getSnapshotArtifact();
         File artifactFile = artifact.getFile();
-        artifactFile.setLastModified( artifactFile.lastModified() );
+        assertTrue( artifactFile.setLastModified( artifactFile.lastModified() ) );
         filter.setOverWriteIfNewer( true );
 
         // should pass because the file doesn't exist yet.
@@ -202,11 +202,11 @@ public class TestDestFileFilter
         File destFile = createFile( artifact, false, false, false );
 
         // set the last modified timestamp to be older than the source
-        destFile.setLastModified( artifactFile.lastModified() - 1000 );
+        assertTrue( destFile.setLastModified( artifactFile.lastModified() - 1000 ) );
         assertTrue( filter.isArtifactIncluded( artifact ) );
 
         // now set the last modified timestamp to be newer than the source
-        destFile.setLastModified( artifactFile.lastModified() + 1000 );
+        assertTrue( destFile.setLastModified( artifactFile.lastModified() + 1000 ) );
 
         assertFalse( filter.isArtifactIncluded( artifact ) );
     }

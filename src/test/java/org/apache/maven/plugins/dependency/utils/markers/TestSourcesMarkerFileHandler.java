@@ -238,7 +238,7 @@ public class TestSourcesMarkerFileHandler
         assertFalse( resolvedHandler.isMarkerOlder( theArtifact ) );
         assertFalse( unResolvedHandler.isMarkerOlder( theArtifact ) );
 
-        theFile.setLastModified( theFile.lastModified() + 60000 );
+        assertTrue( theFile.setLastModified( theFile.lastModified() + 60000 ) );
         assertTrue( resolvedHandler.isMarkerOlder( theArtifact ) );
         assertTrue( unResolvedHandler.isMarkerOlder( theArtifact ) );
 

@@ -133,7 +133,7 @@ public class TestMarkerFileFilter
         tempArtifacts.add( release );
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
-        snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 );
+        assertTrue( snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 ) );
         MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
         Set<Artifact> result = filter.filter( tempArtifacts );
         assertEquals( 2, result.size() );
@@ -144,7 +144,7 @@ public class TestMarkerFileFilter
         assertEquals( 1, result.size() );
         
         // filter won't include snapshot because it is older than marker
-        snap.getFile().setLastModified( snap.getFile().lastModified() - 10000 );
+        assertTrue( snap.getFile().setLastModified( snap.getFile().lastModified() - 10000 ) );
 
         result = filter.filter( tempArtifacts );
         assertEquals( 1, result.size() );

@@ -413,7 +413,7 @@ public class TestUnpackMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( createArtifact( release ) );
 
@@ -433,7 +433,7 @@ public class TestUnpackMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( createArtifact( artifact  ) );
 
@@ -453,7 +453,7 @@ public class TestUnpackMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( createArtifact( release ) );
 
@@ -473,7 +473,7 @@ public class TestUnpackMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( createArtifact( artifact ) );
 
@@ -551,7 +551,7 @@ public class TestUnpackMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        unpackedFile.setLastModified( time );
+        assertTrue( unpackedFile.setLastModified( time ) );
 
         assertEquals( time, unpackedFile.lastModified() );
         mojo.execute();

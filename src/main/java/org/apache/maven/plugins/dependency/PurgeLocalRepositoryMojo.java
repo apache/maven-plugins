@@ -560,7 +560,8 @@ public class PurgeLocalRepositoryMojo
             {
                 if ( !deleteTarget.delete() )
                 {
-                    getLog().warn( "Unable to purge local repository location: " + deleteTarget );
+                    deleteTarget.deleteOnExit();
+                    getLog().warn( "Unable to purge local repository location immediately: " + deleteTarget );
                 }
             }
             artifact.setResolved( false );

@@ -527,7 +527,7 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( release );
 
@@ -544,7 +544,7 @@ public class TestCopyDependenciesMojo
         // round up to the next second
         long time = System.currentTimeMillis() + 1000;
         time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
         Thread.sleep( 100 );
 
         mojo.execute();
@@ -558,7 +558,7 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( release );
 
@@ -576,7 +576,7 @@ public class TestCopyDependenciesMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
         // wait at least a second for filesystems that only record to the
         // nearest second.
         Thread.sleep( 1000 );
@@ -593,7 +593,7 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact snap = stubFactory.getSnapshotArtifact();
-        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( snap.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( snap );
 
@@ -612,7 +612,7 @@ public class TestCopyDependenciesMojo
         // round up to the next second
         long time = System.currentTimeMillis() + 1000;
         time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
         Thread.sleep( 100 );
 
         mojo.execute();
@@ -626,7 +626,7 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact snap = stubFactory.getSnapshotArtifact();
-        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( snap.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( snap );
 
@@ -645,7 +645,7 @@ public class TestCopyDependenciesMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
         // wait at least a second for filesystems that only record to the
         // nearest second.
         Thread.sleep( 1000 );
