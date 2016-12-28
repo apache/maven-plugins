@@ -21,8 +21,10 @@ import java.io.*;
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-String expectedDownloadingPattern = "Downloading.*: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
-String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
+String expectedDownloadingPattern = "Downloading.*: file:///" + basedir.replaceAll( "\\", "/")
+                                        + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
+String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir.replaceAll( "\\", "/")
+                                       + "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
 assert buildLog.text =~ expectedDownloadingPattern
 assert buildLog.text =~ expectedDownloadedPattern
 
