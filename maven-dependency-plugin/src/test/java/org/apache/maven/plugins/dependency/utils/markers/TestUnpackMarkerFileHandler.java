@@ -156,7 +156,7 @@ public class TestUnpackMarkerFileHandler
         handler.setMarker();
         assertFalse( handler.isMarkerOlder( theArtifact ) );
 
-        theFile.setLastModified( theFile.lastModified() + 60000 );
+        assertTrue( theFile.setLastModified( theFile.lastModified() + 60000 ) );
         assertTrue( handler.isMarkerOlder( theArtifact ) );
 
         theFile.delete();

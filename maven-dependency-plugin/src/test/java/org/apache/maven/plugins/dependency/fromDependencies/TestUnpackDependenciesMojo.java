@@ -34,7 +34,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugins.dependency.testUtils.DependencyArtifactStubFactory;
-import org.apache.maven.plugins.dependency.testUtils.DependencyTestUtils;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
 import org.apache.maven.plugins.dependency.utils.markers.DefaultFileMarkerHandler;
 import org.apache.maven.project.MavenProject;
@@ -606,7 +605,7 @@ public class TestUnpackDependenciesMojo
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        unpackedFile.setLastModified( time );
+        assertTrue( unpackedFile.setLastModified( time ) );
         // wait at least a second for filesystems that only record to the
         // nearest second.
         Thread.sleep( 1000 );

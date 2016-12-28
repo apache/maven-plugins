@@ -151,7 +151,10 @@ public class SourcesFileMarkerHandler
             // clear the other file if it exists.
             if ( clearMarker.exists() )
             {
-                clearMarker.delete();
+                if ( !clearMarker.delete() )
+                {
+                    clearMarker.deleteOnExit();
+                }
             }
         }
         catch ( IOException e )

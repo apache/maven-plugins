@@ -307,8 +307,8 @@ public class TestIncludeExcludeUnpackMojo
             new File( mojo.getOutputDirectory().getAbsolutePath(), UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        destFile2.setLastModified( time );
-        destFile3.setLastModified( time );
+        assertTrue( destFile2.setLastModified( time ) );
+        assertTrue( destFile3.setLastModified( time ) );
         assertEquals( time, destFile2.lastModified() );
         assertEquals( time, destFile3.lastModified() );
         Thread.sleep( 100 );

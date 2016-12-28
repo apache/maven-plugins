@@ -102,7 +102,7 @@ public class TestUnpackDependenciesMojo2
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( release );
 
@@ -122,7 +122,7 @@ public class TestUnpackDependenciesMojo2
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( release );
 
@@ -143,7 +143,7 @@ public class TestUnpackDependenciesMojo2
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact snap = stubFactory.getSnapshotArtifact();
-        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( snap.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( snap );
 
@@ -165,7 +165,7 @@ public class TestUnpackDependenciesMojo2
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact snap = stubFactory.getSnapshotArtifact();
-        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( snap.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( snap );
 
@@ -188,7 +188,7 @@ public class TestUnpackDependenciesMojo2
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact snap = stubFactory.getSnapshotArtifact();
-        snap.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( snap.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         artifacts.add( snap );
 
@@ -207,8 +207,8 @@ public class TestUnpackDependenciesMojo2
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
         // set source to be newer and dest to be a known value.
-        snap.getFile().setLastModified( time + 3000 );
-        unpackedFile.setLastModified( time );
+        assertTrue( snap.getFile().setLastModified( time + 3000 ) );
+        assertTrue( unpackedFile.setLastModified( time ) );
         // wait at least a second for filesystems that only record to the
         // nearest second.
         Thread.sleep( 1000 );
@@ -237,7 +237,7 @@ public class TestUnpackDependenciesMojo2
         // round down to the last second
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
-        unpackedFile.setLastModified( time );
+        assertTrue( unpackedFile.setLastModified( time ) );
         // wait at least a second for filesystems that only record to the
         // nearest second.
         Thread.sleep( 1000 );

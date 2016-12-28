@@ -570,7 +570,7 @@ public class TestCopyMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( release );
 
@@ -601,7 +601,7 @@ public class TestCopyMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( artifact );
 
@@ -619,7 +619,7 @@ public class TestCopyMojo
         // round up to the next second
         long time = System.currentTimeMillis() + 1000;
         time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
         Thread.sleep( 100 );
 
         mojo.execute();
@@ -632,7 +632,7 @@ public class TestCopyMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact release = stubFactory.getReleaseArtifact();
-        release.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( release );
 
@@ -648,7 +648,7 @@ public class TestCopyMojo
 
         // round up to the next second
         long time = System.currentTimeMillis() - 2000;
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
 
         mojo.execute();
 
@@ -660,7 +660,7 @@ public class TestCopyMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( artifact );
 
@@ -677,7 +677,7 @@ public class TestCopyMojo
 
         // round up to the next second
         long time = System.currentTimeMillis() - 2000;
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
 
         mojo.execute();
 
@@ -689,7 +689,7 @@ public class TestCopyMojo
     {
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
-        artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 );
+        assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
         ArtifactItem item = new ArtifactItem( artifact );
 
@@ -704,10 +704,10 @@ public class TestCopyMojo
         // set dest to be old
         long time = System.currentTimeMillis() - 10000;
         time = time - ( time % 1000 );
-        copiedFile.setLastModified( time );
+        assertTrue( copiedFile.setLastModified( time ) );
 
         // set source to be newer
-        artifact.getFile().setLastModified( time + 4000 );
+        assertTrue( artifact.getFile().setLastModified( time + 4000 ) );
         mojo.execute();
 
         assertTrue( time < copiedFile.lastModified() );
