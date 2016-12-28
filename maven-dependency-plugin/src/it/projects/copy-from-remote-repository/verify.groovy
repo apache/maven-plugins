@@ -21,9 +21,9 @@ import java.io.*;
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-String expectedDownloadingPattern = "Downloading.*: file:///" + basedir.replaceAll( "\\", "/")
+String expectedDownloadingPattern = "Downloading.*: file:///" + basedir.getPath().replaceAll( "\\", "/")
                                         + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1\\.0/fake-remote-copy-1\\.0\\.jar"
-String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir.replaceAll( "\\", "/")
+String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir.getPath().replaceAll( "\\", "/")
                                        + "/repo/org/apache/maven/its/dependency/fake-remote-copy/1\\.0/fake-remote-copy-1\\.0\\.jar"
 assert buildLog.text =~ expectedDownloadingPattern
 assert buildLog.text =~ expectedDownloadedPattern
