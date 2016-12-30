@@ -19,8 +19,6 @@ package org.apache.maven.plugin.invoker;
  * under the License.
  */
 
-import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,7 +51,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -100,6 +98,7 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Provides common code for mojos invoking sub builds.
@@ -2277,9 +2276,12 @@ public abstract class AbstractInvokerMojo
     /**
      * Returns the map-based value source used to interpolate POMs and other stuff.
      *
+     * @param escapeXml {@code true}, to escape any XML special characters in the property values; {@code false}, to not
+     * escape any property values.
+     *
      * @return The map-based value source for interpolation, never <code>null</code>.
      */
-    private Map<String, Object> getInterpolationValueSource()
+    private Map<String, Object> getInterpolationValueSource( final boolean escapeXml )
     {
         Map<String, Object> props = new HashMap<String, Object>();
 
@@ -2294,6 +2296,19 @@ public abstract class AbstractInvokerMojo
             props.put( "localRepository", settings.getLocalRepository() );
             props.put( "localRepositoryUrl", toUrl( settings.getLocalRepository() ) );
         }
+
+        if ( escapeXml )
+        {
+            final Map<String, Object> escapedProperties = new HashMap<String, Object>( props.size() );
+
+            for ( final Map.Entry<String, Object> e : props.entrySet() )
+            {
+                escapedProperties.put( e.getKey(), StringEscapeUtils.escapeXml( e.getValue().toString() ) );
+            }
+
+            props = escapedProperties;
+        }
+
         return new CompositeMap( this.project, props );
     }
 
@@ -2364,7 +2379,7 @@ public abstract class AbstractInvokerMojo
         BufferedReader reader = null;
         try
         {
-            Map<String, Object> composite = getInterpolationValueSource();
+            Map<String, Object> composite = getInterpolationValueSource( false );
             reader = new BufferedReader( new InterpolationFilterReader( newReader( tokenFile ), composite ) );
 
             for ( String line = reader.readLine(); line != null; line = reader.readLine() )
@@ -2409,10 +2424,14 @@ public abstract class AbstractInvokerMojo
     /**
      * Interpolates the specified POM/settings file to a temporary file. The destination file may be same as the input
      * file, i.e. interpolation can be performed in-place.
+     * <p>
+     * <b>Note:</b>This methods expects the file to be a XML file and applies special XML escaping during interpolation.
+     * </p>
      *
      * @param originalFile The XML file to interpolate, must not be <code>null</code>.
      * @param interpolatedFile The target file to write the interpolated contents of the original file to, must not be
-     *            <code>null</code>.
+     * <code>null</code>.
+     *
      * @throws org.apache.maven.plugin.MojoExecutionException If the target file could not be created.
      */
     void buildInterpolatedFile( File originalFile, File interpolatedFile )
@@ -2428,7 +2447,7 @@ public abstract class AbstractInvokerMojo
             try
             {
                 // interpolation with token @...@
-                Map<String, Object> composite = getInterpolationValueSource();
+                Map<String, Object> composite = getInterpolationValueSource( true );
                 reader =
                     new InterpolationFilterReader( ReaderFactory.newXmlReader( originalFile ), composite, "@", "@" );
 
@@ -2497,7 +2516,7 @@ public abstract class AbstractInvokerMojo
             }
 
             Interpolator interpolator = new RegexBasedInterpolator();
-            interpolator.addValueSource( new MapBasedValueSource( getInterpolationValueSource() ) );
+            interpolator.addValueSource( new MapBasedValueSource( getInterpolationValueSource( false ) ) );
             // CHECKSTYLE_OFF: LineLength
             for ( String key : (Set<String>) ( (Map) props ).keySet() )
             {
