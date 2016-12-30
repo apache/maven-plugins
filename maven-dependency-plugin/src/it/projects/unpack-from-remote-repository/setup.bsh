@@ -19,16 +19,23 @@
 
 import java.io.*;
 
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.exists()
-String expectedDownloadingPattern = "Downloading.*: file:///" + basedir.getPath().replaceAll( "\\\\", "\\\\") +
-                                        "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
-String expectedDownloadedPattern = "Downloaded.*: file:///" + basedir.getPath().replaceAll( "\\\\", "\\\\") +
-                                       "/repo/org/apache/maven/its/dependency/fake-remote-unpack/1\\.0/fake-remote-unpack-1\\.0\\.jar"
-assert buildLog.text =~ expectedDownloadingPattern
-assert buildLog.text =~ expectedDownloadedPattern
+import org.codehaus.plexus.util.*;
 
-File unpacked = new File( basedir, 'target/dependency/META-INF/MANIFEST.MF' )
-assert unpacked.exists()
+String[] foldersToDelete = {
+    "org/apache/maven/its/dependency/fake-remote-unpack"
+};
+
+try
+{
+    for ( String folderToDelete : foldersToDelete )
+    {
+        FileUtils.deleteDirectory( new File( localRepositoryPath, folderToDelete ) );
+    }
+}
+catch ( IOException e )
+{
+    e.printStackTrace();
+    return false;
+}
 
 return true;
