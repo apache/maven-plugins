@@ -367,7 +367,7 @@ under the License.
       </pluginRepositories>
 
       <properties>
-        <invokerPluginVersion>2.0.0</invokerPluginVersion>
+        <invokerPluginVersion>3.0.0-SNAPSHOT</invokerPluginVersion>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
         <it.streamLogs>false</it.streamLogs>
         <testVersion>${project.version}</testVersion>
