@@ -51,7 +51,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -2303,7 +2302,12 @@ public abstract class AbstractInvokerMojo
 
             for ( final Map.Entry<String, Object> e : props.entrySet() )
             {
-                escapedProperties.put( e.getKey(), StringEscapeUtils.escapeXml( e.getValue().toString() ) );
+                escapedProperties.put( e.getKey(), e.getValue().toString().
+                                       replaceAll( "\"", "&quot;" ).
+                                       replaceAll( "<", "&lt;" ).
+                                       replaceAll( ">", "&gt;" ).
+                                       replaceAll( "&", "&amp;" ) );
+
             }
 
             props = escapedProperties;
