@@ -139,6 +139,8 @@ public class TeamReport
 
         private final boolean showAvatarImages;
 
+        private final String protocol;
+
         ProjectTeamRenderer( Sink sink, Model model, I18N i18n, Locale locale, Log log, boolean showAvatarImages )
         {
             super( sink, i18n, locale );
@@ -146,6 +148,16 @@ public class TeamReport
             this.model = model;
             this.log = log;
             this.showAvatarImages = showAvatarImages;
+
+            // prepare protocol for gravatar
+            if ( model.getUrl() != null && model.getUrl().startsWith( "https://" ) )
+            {
+                this.protocol = "https";
+        }
+            else
+            {
+                this.protocol = "http";
+            }
         }
 
         @Override
@@ -336,7 +348,7 @@ public class TeamReport
 
         private String getSpacerGravatarUrl()
         {
-            return "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y&" + AVATAR_SIZE;
+            return protocol + "://www.gravatar.com/avatar/00000000000000000000000000000000?d=blank&f=y&" + AVATAR_SIZE;
         }
 
         private String getGravatarUrl( String email )
@@ -359,7 +371,7 @@ public class TeamReport
                 {
                     sb.append( Integer.toString( ( aByteData & lowerEightBitsOnly ) + 0x100, 16 ).substring( 1 ) );
                 }
-                return "http://www.gravatar.com/avatar/" + sb.toString() + "?d=mm&" + AVATAR_SIZE;
+                return protocol + "://www.gravatar.com/avatar/" + sb.toString() + "?d=mm&" + AVATAR_SIZE;
             }
             catch ( NoSuchAlgorithmException e )
             {
