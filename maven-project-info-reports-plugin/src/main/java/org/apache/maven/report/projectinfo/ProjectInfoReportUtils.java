@@ -394,6 +394,7 @@ public class ProjectInfoReportUtils
      * @param str The string to be checked.
      * @return true if is number false otherwise.
      */
+    @Deprecated
     public static boolean isNumber( String str )
     {
         if ( str.startsWith( "+" ) )
@@ -408,6 +409,7 @@ public class ProjectInfoReportUtils
      * @param defaultValue The default value.
      * @return Converted string.
      */
+    @Deprecated
     public static float toFloat( String str, float defaultValue )
     {
         if ( str.startsWith( "+" ) )
