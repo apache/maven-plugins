@@ -24,7 +24,7 @@ import org.apache.commons.io.FileUtils
 
 File srcIt = new File (basedir, "src/it");
 File originalFolder = new File (srcIt, "minvoker-test");
-File destinationFolder = new File(srcIt, "test-\u00c9\u00e9\u00ea-more-\u00c9\u00e9\u00ea-test");
+File destinationFolder = new File(srcIt, "test-\u00c9\u00e9\u00ea- & -\u00c9\u00e9\u00ea-test");
 FileUtils.deleteQuietly(destinationFolder);
 // rename old one into new one with special characters.
 if (!originalFolder.renameTo(destinationFolder)) {
