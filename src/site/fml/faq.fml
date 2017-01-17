@@ -315,7 +315,7 @@ mvn deploy:deploy-file \
 [INFO] ------------------------------------------------------------------------
 [ERROR] BUILD ERROR
 [INFO] ------------------------------------------------------------------------
-[INFO] An error has occurred in JavaDocs report generation:Exit code: 1 - java.lang.IllegalArgumentException
+[INFO] An error has occurred in Javadoc report generation:Exit code: 1 - java.lang.IllegalArgumentException
   at sun.net.www.ParseUtil.decode(ParseUtil.java:189)
   at sun.misc.URLClassPath$FileLoader.&lt;init&gt;(URLClassPath.java:953)
   at sun.misc.URLClassPath$3.run(URLClassPath.java:326)
