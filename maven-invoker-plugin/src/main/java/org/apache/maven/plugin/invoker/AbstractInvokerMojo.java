@@ -45,7 +45,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
@@ -1710,7 +1709,7 @@ public abstract class AbstractInvokerMojo
         {
             Properties props = invokerProperties.getProperties();
             getLog().debug( "Using invoker properties:" );
-            for ( String key : new TreeSet<String>( (Set) props.keySet() ) )
+            for ( String key : new TreeSet<String>( props.stringPropertyNames() ) )
             {
                 String value = props.getProperty( key );
                 getLog().debug( "  " + key + " = " + value );
@@ -2522,7 +2521,7 @@ public abstract class AbstractInvokerMojo
             Interpolator interpolator = new RegexBasedInterpolator();
             interpolator.addValueSource( new MapBasedValueSource( getInterpolationValueSource( false ) ) );
             // CHECKSTYLE_OFF: LineLength
-            for ( String key : (Set<String>) ( (Map) props ).keySet() )
+            for ( String key : props.stringPropertyNames() )
             {
                 String value = props.getProperty( key );
                 try
