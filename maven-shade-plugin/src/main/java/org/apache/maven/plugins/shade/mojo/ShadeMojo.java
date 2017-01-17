@@ -37,12 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Exclusion;
@@ -70,6 +65,9 @@ import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -128,12 +126,6 @@ public class ShadeMojo
     private ProjectBuilder projectBuilder;
 
     /**
-     * The artifact metadata source to use.
-     */
-    @Component
-    private ArtifactMetadataSource artifactMetadataSource;
-
-    /**
      * Remote repositories which will be searched for source attachments.
      */
     @Parameter( readonly = true, required = true, defaultValue = "${project.remoteArtifactRepositories}" )
@@ -144,12 +136,6 @@ public class ShadeMojo
      */
     @Parameter( readonly = true, required = true, defaultValue = "${localRepository}" )
     protected ArtifactRepository localRepository;
-
-    /**
-     * Artifact factory, needed to download source jars for inclusion in classpath.
-     */
-    @Component
-    protected ArtifactFactory artifactFactory;
 
     /**
      * Artifact resolver, needed to download source jars for inclusion in classpath.
@@ -705,20 +691,20 @@ public class ShadeMojo
 
     private File resolveArtifactSources( Artifact artifact )
     {
-
-        Artifact resolvedArtifact =
-            artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                          artifact.getVersion(), "java-source", "sources" );
-
+        DefaultArtifactCoordinate coordinate = new DefaultArtifactCoordinate();
+        coordinate.setGroupId( artifact.getGroupId() );
+        coordinate.setArtifactId( artifact.getArtifactId() );
+        coordinate.setVersion( artifact.getVersion() );
+        coordinate.setExtension( "jar" );
+        coordinate.setClassifier( "sources" );
+        
+        Artifact resolvedArtifact = null;
         try
         {
-            artifactResolver.resolve( resolvedArtifact, remoteArtifactRepositories, localRepository );
+            resolvedArtifact =
+                artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), coordinate ).getArtifact();
         }
-        catch ( ArtifactNotFoundException e )
-        {
-            // ignore, the jar has not been found
-        }
-        catch ( ArtifactResolutionException e )
+        catch ( ArtifactResolverException e )
         {
             getLog().warn( "Could not get sources for " + artifact );
         }
