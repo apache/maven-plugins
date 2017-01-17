@@ -20,6 +20,8 @@
 import java.io.*;
 import java.util.jar.*;
 
+import org.codehaus.plexus.util.*;
+
 String[] wanted =
 {
     "org/apache/maven/plugins/shade/its/one/AppOne.class",
@@ -38,6 +40,14 @@ for ( String path : wanted )
     }
 }
 
-
-
 jarFile.close();
+
+// MSHADE-225 Writing output only once
+File logFile = new File( basedir, "build.log" );
+String log = FileUtils.fileRead( logFile );
+
+int index = log.indexOf( "[INFO] Dependency-reduced POM written at: " );
+if ( log.indexOf( "[INFO] Dependency-reduced POM written at: ", index+1 ) >= 0 )
+{
+  throw new IllegalStateException( "'[INFO] Dependency-reduced POM written at: ' written more than once" + path );
+}

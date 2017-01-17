@@ -959,7 +959,7 @@ public class ShadeMojo
     {
         if ( modified )
         {
-            while ( modified )
+            for ( int loopCounter = 0; modified; loopCounter++ )
             {
 
                 model.setDependencies( dependencies );
@@ -981,7 +981,12 @@ public class ShadeMojo
                 }
 
                 File f = dependencyReducedPomLocation;
-                getLog().info( "Dependency-reduced POM written at: " + f.getAbsolutePath() );
+                // MSHADE-225 
+                // Works for now, maybe there's a better algorithm where no for-loop is required
+                if ( loopCounter == 0 )
+                {
+                    getLog().info( "Dependency-reduced POM written at: " + f.getAbsolutePath() );
+                }
 
                 if ( f.exists() )
                 {
