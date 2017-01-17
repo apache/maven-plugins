@@ -36,6 +36,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 class InvokerProperties
 {
+    private static final String SELECTOR_PREFIX = "selector.";
 
     private enum InvocationProperty
     {
@@ -60,6 +61,26 @@ class InvokerProperties
         public String toString()
         {
             return key;
+        }
+    }
+    
+    private enum SelectorProperty
+    {
+        JAVA_VERSION( ".java.version" ),
+        MAVEN_VERSION( ".maven.version" ),
+        OS_FAMLY( ".os.family" );
+        
+        private final String suffix;
+        
+        private SelectorProperty( String suffix )
+        {
+            this.suffix = suffix;
+        }
+        
+        @Override
+        public String toString()
+        {
+            return suffix;
         }
     }
 
@@ -120,6 +141,17 @@ class InvokerProperties
     }
 
     /**
+     * Gets the specification of JRE versions on which this build job should be run.
+     *
+     * @return The specification of JRE versions or an empty string if not set.
+     */
+    public String getJreVersion( int index )
+    {
+        return this.properties.getProperty( SELECTOR_PREFIX + index + SelectorProperty.JAVA_VERSION.suffix,
+                                            getJreVersion() );
+    }
+
+    /**
      * Gets the specification of Maven versions on which this build job should be run.
      *
      * @return The specification of Maven versions on which this build job should be run.
@@ -128,6 +160,18 @@ class InvokerProperties
     public String getMavenVersion()
     {
         return this.properties.getProperty( "invoker.maven.version", "" );
+    }
+    
+    /**
+     * 
+     * @param index the selector index
+     * @return The specification of Maven versions on which this build job should be run.
+     * @since 3.0.0
+     */
+    public String getMavenVersion( int index )
+    {
+        return this.properties.getProperty( SELECTOR_PREFIX + index + SelectorProperty.MAVEN_VERSION.suffix,
+                                            getMavenVersion() );
     }
 
     /**
@@ -139,6 +183,20 @@ class InvokerProperties
     {
         return this.properties.getProperty( "invoker.os.family", "" );
     }
+    
+    /**
+     * Gets the specification of OS families on which this build job should be run.
+     *
+     * @param index the selector index
+     * @return The specification of OS families or an empty string if not set.
+     * @since 3.0.0
+     */
+    public String getOsFamily( int index )
+    {
+        return this.properties.getProperty( SELECTOR_PREFIX + index + SelectorProperty.OS_FAMLY.suffix,
+                                            getOsFamily() );
+    }   
+    
 
     /**
      * Determines whether these invoker properties contain a build definition for the specified invocation index.
@@ -151,6 +209,25 @@ class InvokerProperties
         for ( InvocationProperty prop : InvocationProperty.values() )
         {
             if ( properties.getProperty( prop.toString() + '.' + index ) != null )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Determines whether these invoker properties contain a build definition for the specified selector index.
+     * 
+     * @param index the index
+     * @return <code>true</code> if the selector with the specified index is defined, <code>false</code> otherwise.
+     * @since 3.0.0
+     */
+    public boolean isSelectorDefined( int index )
+    {
+        for ( SelectorProperty prop : SelectorProperty.values() )
+        {
+            if ( properties.getProperty( SELECTOR_PREFIX + index + prop.suffix ) != null )
             {
                 return true;
             }
