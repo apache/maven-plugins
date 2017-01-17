@@ -1,7 +1,7 @@
  ------
  Multimodule Configuration
  ------
- 2008-02-05
+ 2016-07-05
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,133 +28,242 @@
 Multimodule Configuration
 
   Configuring the Checkstyle Plugin for use within large multimodule projects
-  can be done, but it requires a little setup.
+  can be done, but it requires a little setup. The recommended approach consists of 3 steps:
 
-  This example will use a mysterious project called <whizbang>. This is what
-  the structure of that project looks like:
+ [[1]] Define a separate Maven project containing the checkstyle configuration files saved
+       below the <<<src/main/resource>>> directory
 
-+-----+
-whizbang
-|-- pom.xml
-|-- core
-|   `-- pom.xml
-|-- gui
-|   `-- pom.xml
-|-- jmx
-|   `-- pom.xml
-`-- src
-+-----+
+ [[2]] Define a checkstyle plugin configuration template within the parent project. Use the configLocation as
+        given in the configuration project above
 
-* Create a subproject to house the resources
+ [[3]] In the artifact projects, define a dependency from the checkstyle plugin to the above mentioned project
 
-  We'll start by adding another sub project that will house our common
-  configuration. Let's call it <build-tools>. In it we put the resources that
-  we want to include. In this example, we will add configuration files for the
-  Checkstyle Plugin. Configuration files for other plugins, like the PMD
-  plugin, can be included in the same subproject if you like.
+  []
 
-+-----+
-whizbang
-|-- pom.xml
-|-- build-tools
-|   |-- src
-|   |   `-- main
-|   |       `-- resources
-|   |           `-- whizbang
-|   |               |-- checkstyle.xml
-|   |               `-- LICENSE.TXT
-|   `-- pom.xml
-|-- core
-|-- gui
-|-- jmx
-`-- src
-+-----+
+  These steps are exemplified within an integration test (called <multimodule-configlocation>) in the codebase
+  of the maven-checkstyle-plugin. Let us walk through the steps in order, and use the code within the integration
+  test as a point of origin. Feel free to examine the source code itself to clarify. The overall structure of the
+  small maven project is seen below (ignore the <invoker.properties> file, which is used only for integration testing):
 
-  <<Tip:>> put the resources into a subdirectory that you can ensure will be
-  unique and not conflict with anyone else.
+[../images/multimodule.png] Multimodule project structure
 
-  The <<<pom.xml>>> file for <build-tools> should look like this:
+  The project consists of a parent project, two modules which produce JARs containing artifacts (<<<module1>>>
+  and <<<module2>>>), and two projects containing checkstyle configuration (<<<codestyle1>>> and <<<codestyle2>>>).
+  The reason for using 2 separate codestyle projects is to illustrate how the maven-checkstyle-plugin handles
+  multiple configuration projects - but we will start out with the simplest possible configuration and expand later on.
 
-+-----+
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example.whizbang</groupId>
-  <artifactId>build-tools</artifactId>
-  <version>1.0</version>
-  <name>Build Tools</name>
-</project>
-+-----+
-  
-* Configure the other projects to use it
+* 1: Define a separate Checkstyle configuration Maven project
 
-  Now we can include the Checkstyle configuration in the top level
-  <<<pom.xml>>>.
+  We will start the process by creating two checkstyle configuration files, namely <<<checkstyle.xml>>> and
+  <<<checkstyle-suppressions.xml>>>. Please refer to the checkstyle project for details of the configuration
+  settings available within these files. Both these files are stored under the <<<src/main/resources>>> directory,
+  as illustrated below:
 
-  <<Note:>> You have to specify a plugin dependency on <<<build-tools>>> in the
-  <<<\<build\>>>> element of your <<<pom.xml>>>. It will not work inside the
-  <<<\<reporting\>>>> element, because <<<\<reporting\>>>> does not support
-  plugin dependencies. The rest of the configuration is done in the normal way
-  in the <<<\<reporting\>>>> element.
+[../images/codestyle1.png] Codestyle1 Project with Checkstyle resources
+
+  Note that the (relative) resource path to the checkstyle.xml file is <<<checkstyle/checkstyle.xml>>> and
+  correspondingly the resource path of the checkstyle-suppressions.xml file
+  is <<<checkstyle/checkstyle-suppressions.xml>>>. This occurs since all files below <<src/main/resources>>> are
+  copied into the resulting JAR artifact.
+
+    <<Recommendation:>> Store checkstyle resources in a subdirectory whose path is
+    unique within the reactor. This avoids potential conflicts (but see also {Configuration resource handling}).
+
+* 2: Define a checkstyle plugin configuration template within the parent project
+
+  It is a good idea to reuse the maven-checkstyle-plugin configuration in multiple projects within the build reactor.
+  A recommended approach is therefore to configure the checkstyle plugin within a <<<pluginManagement>>> element in the
+  pom.xml file in the topmost ("parent") project, and reuse that configuration in the <<<module1>>> and <<<module2>>>
+  projects. Note that the <<configLocation>> property is set to the resource path to the checkstyle.xml file
+  which we defined in the section above, and corresponding for the <<suppressionsLocation>> property.
 
 +-----+
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.example.whizbang</groupId>
-  <artifactId>whizbang-parent</artifactId>
-  <version>1.0</version>
-  <packaging>pom</packaging>
-  <name>WhizBang Parent</name>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${project.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.example.whizbang</groupId>
-            <artifactId>build-tools</artifactId>
-            <version>1.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <configLocation>whizbang/checkstyle.xml</configLocation>
-          <headerLocation>whizbang/LICENSE.txt</headerLocation>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  <modules>
-    <module>build-tools</module>
-    <module>core</module>
-    <module>jmx</module>
-    <module>gui</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>se.west.foobar</groupId>
+    <artifactId>foobar-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>codestyle1</module>
+        <module>module1</module>
+        <module>module2</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <consoleOutput>true</consoleOutput>
+                        <configLocation>/checkstyle/checkstyle.xml</configLocation>
+                        <suppressionsLocation>/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>checkstyle_check</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <id>checkstyle_report</id>
+                            <goals>
+                                <goal>checkstyle</goal>
+                            </goals>
+                            <phase>site</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
 +-----+
 
-  Once you are done with that, ensure that you do not include
-  the Maven Checkstyle Plugin in your sub modules, as their definition and
-  configuration, will override the top level parent pom's definition.
+* 3: Complete the configuration in each artifact project
 
-  Based on the Checkstyle Plugin configuration above, the values of
-  <<<configLocation>>> and <<<headerLocation>>> will be resolved from the
-  classpath. The <build-tools> JAR was included in the classpath when it was
-  declared as a dependency to the plugin.
+    Artifact projects require an active checkstyle plugin configuration.
+    To use the template configuration provided within the parent project's pluginManagement element, include a
+    plugin definition similar within the pom's build element.
 
-  Lastly, kick off a build of the site.
+    The <<<pom.xml>>> within the <<<module1>>> project provides a checkstyle-plugin definition, and adds the
+    checkstyle configuration by declaring a dependency within the checkstyle plugin.
+
+    <<Note:>> You have to specify a plugin dependency on <<<codestyle1>>> in the
+    <<<\<build\>>>> element of your <<<pom.xml>>>. It will not work inside the
+    <<<\<reporting\>>>> element, because <<<\<reporting\>>>> does not support
+    plugin dependencies. The rest of the configuration is done in the normal way
+    in the <<<\<reporting\>>>> element.
 
 +-----+
-mvn site
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>se.west.foobar</groupId>
+        <artifactId>foobar-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>se.west.foobar.module1</groupId>
+    <artifactId>foobar-module1</artifactId>
+    <packaging>jar</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>se.west.foobar.codestyle1</groupId>
+                        <artifactId>foobar-codestyle1</artifactId>
+                        <version>1.0.0-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
 +-----+
 
-  Every sub project will now use the same Checkstyle setup and configuration.
+    The configuration above constitutes a simple but working pom configuration.
+    However, we should illustrate another aspect about multimodule setup for the maven-checkstyle-plugin,
+    namely how the checkstyle-maven-plugin treats overridden configurations.
+
+Multimodule Configuration, part 2: {{Configuration resource handling}}.
+
+    The checkstyle-maven-plugin has a rather simplistic view on configuration resources.
+    The first <<<checkstyle.xml>>> resource which can be loaded by the plugin from its classpath is used,
+    and all other <<<checkstyle.xml>>> files are ignored. This implies that the order of dependencies
+    (to configuration projects) for plugin is important.
+
+    Returning to the full setup of the integration test, you may note that it sports 2 codestyle projects (which is
+    unusual but not impossible in the real world). The reason is to illustrate how the maven-checkstyle-plugin
+    treats multiple checkstyle configuration resources in multi-module projects.
+
+[../images/codestyles.png] Multimodule project structure - 2 Codestyle projects
+
+    Assume that our <<<module1>>> project requires the checkstyle configuration found in <<<codestyle1>>>,
+    and that our <<<module2>>> project requires the checkstyle configuration found in <<<codestyle2>>>.
+    A stable and usable configuration implies either (but not both) of the two codestyle projects are imported
+    as a dependency to the maven-checkstyle-plugin.
+
+    However, as the checkstyle-maven-plugin only uses the first codestyle project in its classpath, we can
+    illustrate the effects on the plugin by the following configuration:
+
++-----+
+<build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <dependencies>
+                <!--
+                    The first of these dependencies override any definitions found in later ones.
+                    Hence, this checkstyle-plugin execution should fetch its '/checkstyle/checkstyle.xml'
+                    configuration from the 'foobar-codestyle1' project.
+                -->
+                <dependency>
+                    <groupId>se.west.foobar.codestyle1</groupId>
+                    <artifactId>foobar-codestyle1</artifactId>
+                    <version>1.0.0-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                    <groupId>se.west.foobar.codestyle2</groupId>
+                    <artifactId>foobar-codestyle2</artifactId>
+                    <version>1.0.0-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+    </plugins>
+</build>
++-----+
+
+    The resource load order can be changed by simply changing the dependency order:
+
++-----+
+<build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <dependencies>
+                <!--
+                    The first of these dependencies override any definitions found in later ones.
+                    Hence, this checkstyle-plugin execution should fetch its '/checkstyle/checkstyle.xml'
+                    configuration from the 'foobar-codestyle2' project.
+                -->
+                <dependency>
+                    <groupId>se.west.foobar.codestyle2</groupId>
+                    <artifactId>foobar-codestyle2</artifactId>
+                    <version>1.0.0-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                    <groupId>se.west.foobar.codestyle1</groupId>
+                    <artifactId>foobar-codestyle1</artifactId>
+                    <version>1.0.0-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+    </plugins>
+</build>
++-----+
+
+    <<Sidenote:>> This is similar to the standard JDK ClassLoader which loads/uses the first
+    class <<<com.foo.bar.Baz>>> it can find in its classpath. Should 2 JARs in the classpath contain a
+    class with the fully qualified class name <<<com.foo.bar.Baz>>> only the first occurrence will be loaded and used.

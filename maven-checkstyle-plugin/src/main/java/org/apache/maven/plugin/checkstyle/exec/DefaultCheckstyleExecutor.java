@@ -887,7 +887,17 @@ public class DefaultCheckstyleExecutor
             {
                 try
                 {
-                    resourceManager.addSearchPath( "jar", "jar:" + licenseArtifact.getFile().toURI().toURL() );
+                    // MCHECKSTYLE-287, MCHECKSTYLE-294: Ignore null licenseArtifacts ...
+                    if ( licenseArtifact != null )
+                    {
+                        if ( getLogger().isDebugEnabled() )
+                        {
+                            getLogger().debug( "Adding licenceArtifact [" + licenseArtifact.getGroupId() + ":"
+                                    + licenseArtifact.getArtifactId() + ":" + licenseArtifact.getVersion()
+                                    + "] to resourceManager." );
+                        }
+                        resourceManager.addSearchPath( "jar", "jar:" + licenseArtifact.getFile().toURI().toURL() );
+                    }
                 }
                 catch ( MalformedURLException e )
                 {

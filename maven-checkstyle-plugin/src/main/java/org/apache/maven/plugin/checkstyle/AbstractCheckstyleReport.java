@@ -467,8 +467,9 @@ public abstract class AbstractCheckstyleReport
 
         try
         {
-            CheckstyleExecutorRequest request = createRequest().setLicenseArtifacts( collectArtifacts( "license" ) )
-                            .setConfigurationArtifacts( collectArtifacts( "configuration" ) );
+            CheckstyleExecutorRequest request = createRequest()
+                    .setLicenseArtifacts( collectArtifacts( "license" ) )
+                    .setConfigurationArtifacts( collectArtifacts( "configuration" ) );
 
             CheckstyleResults results = checkstyleExecutor.executeCheckstyle( request );
 
@@ -540,7 +541,17 @@ public abstract class AbstractCheckstyleReport
             {
              // @todo if we can filter on hints, it should be done here...
                 String depKey = dep.getGroupId() + ":" + dep.getArtifactId();
-                artifacts.add( (Artifact) plugin.getArtifactMap().get( depKey ) );
+                final Artifact artifact = (Artifact) plugin.getArtifactMap().get( depKey );
+
+                if ( artifact != null )
+                {
+                    artifacts.add( artifact );
+                }
+                else if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Got null CheckstylePlugin Dependency Artifact from key ["
+                            + depKey + "]. Excluding null Artifact from return List. " );
+                }
             }
         }
         return artifacts;
