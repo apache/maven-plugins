@@ -107,13 +107,6 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 public abstract class AbstractInvokerMojo
     extends AbstractMojo
 {
-
-    private static final int SELECTOR_MAVENVERSION = 1;
-
-    private static final int SELECTOR_JREVERSION = 2;
-
-    private static final int SELECTOR_OSFAMILY = 4;
-
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
      *
@@ -504,7 +497,7 @@ public abstract class AbstractInvokerMojo
      * # A comma separated list of JRE versions on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.java.version = 1.4+, !1.4.1, 1.7-
-     *
+     * 
      * # A comma separated list of OS families on which this build job should be run.
      * # Since plugin version 1.4
      * invoker.os.family = !windows, unix, mac
@@ -512,7 +505,16 @@ public abstract class AbstractInvokerMojo
      * # A comma separated list of Maven versions on which this build should be run.
      * # Since plugin version 1.5
      * invoker.maven.version = 2.0.10+, !2.1.0, !2.2.0
-     *
+     * 
+     * # For java.version, maven.version and os.family it is possible to define multiple selectors.
+     * # If one of the indexed selectors matches, the test is executed.
+     * # With the invoker.x.y equivalents you can specify global matchers.  
+     * selector.1.java.version = 1.8+
+     * selector.1.maven.version = 3.2.5+
+     * selector.1.os.family = !windows
+     * selector.2.maven.version = 3.0+
+     * selector.3.java.version = 9+
+     * 
      * # A boolean value controlling the debug logging level of Maven, , defaults to &quot;false&quot;
      * # Since plugin version 1.8
      * invoker.debug = true
@@ -1533,25 +1535,32 @@ public abstract class AbstractInvokerMojo
                 buildJob.setResult( BuildJob.Result.SKIPPED );
 
                 StringBuilder message = new StringBuilder();
-                if ( ( selection & SELECTOR_MAVENVERSION ) != 0 )
+                if ( selection == Selector.SELECTOR_MULTI )
                 {
-                    message.append( "Maven version" );
+                    message.append( "non-matching selectors" );
                 }
-                if ( ( selection & SELECTOR_JREVERSION ) != 0 )
+                else
                 {
-                    if ( message.length() > 0 )
+                    if ( ( selection & Selector.SELECTOR_MAVENVERSION ) != 0 )
                     {
-                        message.append( ", " );
+                        message.append( "Maven version" );
                     }
-                    message.append( "JRE version" );
-                }
-                if ( ( selection & SELECTOR_OSFAMILY ) != 0 )
-                {
-                    if ( message.length() > 0 )
+                    if ( ( selection & Selector.SELECTOR_JREVERSION ) != 0 )
                     {
-                        message.append( ", " );
+                        if ( message.length() > 0 )
+                        {
+                            message.append( ", " );
+                        }
+                        message.append( "JRE version" );
                     }
-                    message.append( "OS" );
+                    if ( ( selection & Selector.SELECTOR_OSFAMILY ) != 0 )
+                    {
+                        if ( message.length() > 0 )
+                        {
+                            message.append( ", " );
+                        }
+                        message.append( "OS" );
+                    }
                 }
 
                 if ( !suppressSummaries )
@@ -1615,23 +1624,7 @@ public abstract class AbstractInvokerMojo
      */
     private int getSelection( InvokerProperties invokerProperties, CharSequence actualJreVersion )
     {
-        int selection = 0;
-        if ( !SelectorUtils.isMavenVersion( invokerProperties.getMavenVersion(), actualMavenVersion ) )
-        {
-            selection |= SELECTOR_MAVENVERSION;
-        }
-
-        if ( !SelectorUtils.isJreVersion( invokerProperties.getJreVersion(), actualJreVersion.toString() ) )
-        {
-            selection |= SELECTOR_JREVERSION;
-        }
-
-        if ( !SelectorUtils.isOsFamily( invokerProperties.getOsFamily() ) )
-        {
-            selection |= SELECTOR_OSFAMILY;
-        }
-
-        return selection;
+        return new Selector( actualMavenVersion, actualJreVersion.toString() ).getSelection( invokerProperties );
     }
 
     /**

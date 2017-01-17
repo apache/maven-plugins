@@ -269,4 +269,26 @@ public class InvokerPropertiesTest
         assertTrue( facade.isInvocationDefined( 2 ) );
         assertFalse( facade.isInvocationDefined( 3 ) );
     }
+    
+    public void testIsSelectedDefined()
+    {
+        Properties props = new Properties();
+        InvokerProperties facade = new InvokerProperties( props );
+
+        assertFalse( facade.isSelectorDefined( 1 ) );
+
+        props.setProperty( "invoker.java.version", "1.6+" );
+        props.setProperty( "invoker.maven.version", "3.0+" );
+        props.setProperty( "invoker.os.family", "windows" );
+        assertFalse( facade.isSelectorDefined( 1 ) );
+
+        props.setProperty( "selector.2.java.version", "1.6+" );
+        props.setProperty( "selector.3.maven.version", "3.0+" );
+        props.setProperty( "selector.4.os.family", "windows" );
+        assertFalse( facade.isSelectorDefined( 1 ) );
+        assertTrue( facade.isSelectorDefined( 2 ) );
+        assertTrue( facade.isSelectorDefined( 3 ) );
+        assertTrue( facade.isSelectorDefined( 4 ) );
+        assertFalse( facade.isSelectorDefined( 5 ) );
+    }
 }
