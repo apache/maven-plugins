@@ -41,17 +41,19 @@ Resource Transformers
 *-----------------------------------------+------------------------------------------+
 | {{DontIncludeResourceTransformer}}      | Prevents inclusion of matching resources |
 *-----------------------------------------+------------------------------------------+
+| {{GroovyResourceTransformer}}           | Merges Apache Groovy extends modules     |
+*-----------------------------------------+------------------------------------------+
 | {{IncludeResourceTransformer}}          | Adds files from the project              |
 *-----------------------------------------+------------------------------------------+
 | {{ManifestResourceTransformer}}         | Sets entries in the <<<MANIFEST>>>       |
 *-----------------------------------------+------------------------------------------+
 | {{PluginXmlResourceTransformer}}        | Aggregates Mavens <<<plugin.xml>>>       |
 *-----------------------------------------+------------------------------------------+
+| {{ResourceBundleAppendingTransformer}}  | Merges ResourceBundles                  | 
+*-----------------------------------------+------------------------------------------+
 | {{ServicesResourceTransformer}}         | Relocated class names in <<<META-INF/services>>> resources and merges them. |
 *-----------------------------------------+------------------------------------------+
 | {{XmlAppendingTransformer}}             | Adds XML content to an XML resource      | 
-*-----------------------------------------+------------------------------------------+
-| {{GroovyResourceTransformer}}           | Merge Apache Groovy extends modules      |
 *-----------------------------------------+------------------------------------------+
 Transformers in <<<org.apache.maven.plugins.shade.resource>>>
   
@@ -72,7 +74,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -110,7 +111,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -147,7 +147,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -165,7 +164,7 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
 </project>
 +-----
 
-* Merging Content of Specific Files with {AppendingTransformer} and XmlAppendingTransformer
+* Merging Content of Specific Files with {AppendingTransformer}, XmlAppendingTransformer and ResourceBundleAppendingTransformer
 
   Some jars contain additional resources (such as properties files) that have the same file name. To avoid overwriting, you can
   opt to merge them by appending their content into one file. One good example for this is when aggregating both the spring-context 
@@ -183,7 +182,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -219,7 +217,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -247,6 +244,39 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
   transformation, e.g. when using the Crimson XML parser as used in some JRE 1.4. If the transformed resource uses
   external entities, DTD resolution can either be turned back on or a plugin dependency on <<<xerces:xercesImpl:2.9.1>>>
   is added to the POM.
+  
+  For ResourceBundles properties files, you can use the <<<{ResourceBundleAppendingTransformer}>>> instead, which will respect all available Locales as well:
+
++-----
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ResourceBundleAppendingTransformer">
+                  <!-- the base name of the resource bundle, a fully qualified class name -->
+                  <basename>path/to/Messages</basename>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----   
 
 * Excluding Resources with the {DontIncludeResourceTransformer}
 
@@ -266,7 +296,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -318,7 +347,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -365,7 +393,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -416,7 +443,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -455,7 +481,6 @@ Transformers in <<<org.apache.maven.plugins.shade.resource>>>
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
@@ -494,7 +519,6 @@ For example, to simply merge the extension modules of several jars:
         <version>${project.version}</version>
         <executions>
           <execution>
-            <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
