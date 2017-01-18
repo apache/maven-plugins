@@ -473,6 +473,24 @@ public class ShadeMojo
                     replaceFile( finalFile, outputJar );
                     outputJar = finalFile;
 
+                    // Also support the sources JAR
+                    if ( createSourcesJar )
+                    {
+                        finalFileName = finalName + "-sources.jar";
+                        finalFile = new File( outputDirectory, finalFileName );
+                        replaceFile( finalFile, sourcesJar );
+                        sourcesJar = finalFile;
+                    }
+
+                    // Also support the test JAR
+                    if ( shadeTestJar )
+                    {
+                        finalFileName = finalName + "-tests.jar";
+                        finalFile = new File( outputDirectory, finalFileName );
+                        replaceFile( finalFile, testJar );
+                        testJar = finalFile;
+                    }
+                    
                     renamed = true;
                 }
 
