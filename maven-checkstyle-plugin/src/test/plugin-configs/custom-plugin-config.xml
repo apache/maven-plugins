@@ -37,7 +37,7 @@ under the License.
           <outputFileFormat>plain</outputFileFormat>
           <failsOnError>false</failsOnError>
           <sourceDirectory>${basedir}/src/test/test-sources</sourceDirectory>
-          <project implementation="org.apache.maven.plugin.checkstyle.stubs.MavenProjectWithNoJxrPluginStub"/>
+          <project implementation="org.apache.maven.plugins.checkstyle.stubs.MavenProjectWithNoJxrPluginStub"/>
           <consoleOutput>true</consoleOutput>
           <linkXRef>true</linkXRef>
           <!-- value not really important, just point to an existing dir -->
