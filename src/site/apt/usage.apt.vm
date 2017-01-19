@@ -82,8 +82,7 @@ mvn checkstyle:checkstyle
   the build, you must add an execution of <<<checkstyle::check>>> to the <<<\<build\>>>> element
   and configure any options that you need.
 
-  (Note in that for Maven 3, as per {{{https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+Compatibility+Notes}Maven 3 Compatibility Notes}},
-  in Maven 3, options you set in the <<<\<reporting\>>>> element do not have any effect on executions in the <<<\<build\>>>> element.)
+  Options you set in the <<<\<reporting\>>>> element do not have any effect on executions in the <<<\<build\>>>> element.
 
   Note that the phase that <<<checkstyle::check>>> is bound to is very important.  If bound to the validate phase, it would check the code prior to compiling the code.  If the code is invalid, the parsing errors reported by checkstyle may be different than what would be expected from the javac compiler.  However, it's guaranteed to run.   Another popular option is to bind it to the verify phase which would run much later (and allow the javac compiler to flag invalid code prior to checkstyle).   However, if developers generally just use "mvn test" prior to pushing changes, checkstyle would not run as verify occurs after the test phase.
 

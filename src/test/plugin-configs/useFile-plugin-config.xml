@@ -37,7 +37,7 @@ under the License.
           <outputFileFormat>xml</outputFileFormat>
           <failsOnError>false</failsOnError>
           <sourceDirectory>${basedir}/src/test/test-sources</sourceDirectory>
-          <project implementation="org.apache.maven.plugin.checkstyle.stubs.MinMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.checkstyle.stubs.MinMavenProjectStub"/>
           <consoleOutput>true</consoleOutput>
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/site/xref</xrefLocation>
