@@ -23,6 +23,7 @@ package org.apache.maven.plugins.shade.relocation;
 import junit.framework.TestCase;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Test for {@link SimpleRelocator}.
@@ -140,5 +141,19 @@ public class SimpleRelocatorTest
 
         relocator = new SimpleRelocator( "^META-INF/org.foo.xml$", "META-INF/hidden.org.foo.xml", null, null, true );
         assertEquals( "META-INF/hidden.org.foo.xml", relocator.relocatePath( "META-INF/org.foo.xml" ) );
+    }
+    
+    public void testRelocateMavenFiles()
+    {
+        SimpleRelocator relocator =
+            new SimpleRelocator( "META-INF/maven", "META-INF/shade/maven", null,
+                                 Collections.singletonList( "META-INF/maven/com.foo.bar/artifactId/pom.*" ) );
+        assertEquals( false, relocator.canRelocatePath( "META-INF/maven/com.foo.bar/artifactId/pom.properties" ) );
+        assertEquals( false, relocator.canRelocatePath( "META-INF/maven/com.foo.bar/artifactId/pom.xml" ) );
+        assertEquals( true,  relocator.canRelocatePath( "META-INF/maven/com/foo/bar/artifactId/pom.properties" ) );
+        assertEquals( true,  relocator.canRelocatePath( "META-INF/maven/com/foo/bar/artifactId/pom.xml" ) );
+        assertEquals( true,  relocator.canRelocatePath( "META-INF/maven/com-foo-bar/artifactId/pom.properties" ) );
+        assertEquals( true,  relocator.canRelocatePath( "META-INF/maven/com-foo-bar/artifactId/pom.xml" ) );
+
     }
 }
