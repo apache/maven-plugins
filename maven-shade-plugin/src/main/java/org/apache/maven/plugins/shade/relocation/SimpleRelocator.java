@@ -94,6 +94,17 @@ public class SimpleRelocator
 
         this.includes = normalizePatterns( includes );
         this.excludes = normalizePatterns( excludes );
+
+        // Don't replace all dots to slashes, otherwise /META-INF/maven/${groupId} can't be matched.
+        if ( includes != null && !includes.isEmpty() )
+        {
+            this.includes.addAll( includes );
+        }
+        
+        if ( excludes != null && !excludes.isEmpty() )
+        {
+            this.excludes.addAll( excludes );
+        }
     }
 
     private static Set<String> normalizePatterns( Collection<String> patterns )
