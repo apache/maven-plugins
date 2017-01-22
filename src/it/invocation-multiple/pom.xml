@@ -52,6 +52,10 @@ under the License.
           <filterProperties>
             <invoker.repo.local>${invoker.repo.local}</invoker.repo.local>
           </filterProperties>
+          <properties>
+            <maven.compiler.source>${maven.compiler.source}</maven.compiler.source>
+            <maven.compiler.target>${maven.compiler.target}</maven.compiler.target>
+          </properties>
         </configuration>
         <executions>
           <execution>
