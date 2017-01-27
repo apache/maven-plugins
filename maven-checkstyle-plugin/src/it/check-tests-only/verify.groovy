@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,11 +17,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-assert new File(basedir, 'target/checkstyle-checker.xml').exists();
-assert new File(basedir, 'target/checkstyle-header.txt').exists();
-assert new File(basedir, 'target/checkstyle-result.xml').exists();
-
 def buildLog = new File( basedir, 'build.log' )
-assert buildLog.text =~ /There are \d+ errors reported by Checkstyle/
 
-return true;
+assert buildLog.text =~ /There are \d+ errors reported by Checkstyle/
