@@ -253,7 +253,6 @@ mycompany-checkstyle-checks-1.0.jar
         <version>${project.version}</version>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
-          <packageNamesLocation>com/mycompany/checks/packagenames.xml</packageNamesLocation>
         </configuration>
       </plugin>
     </plugins>

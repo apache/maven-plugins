@@ -31,7 +31,6 @@ under the License.
           <includes>**/*.java</includes>
           <configLocation>google_checks.xml</configLocation>
           <headerLocation>LICENSE.txt</headerLocation>
-          <headerFile>${basedir}/src/test/test-sources/LICENSE.txt</headerFile>
           <cacheFile>${basedir}/target/test-harness/checkstyle/custom/checkstyle-cachefile</cacheFile>
           <outputFile>${basedir}/target/test-harness/checkstyle/custom/checkstyle-result.xml</outputFile>
           <outputFileFormat>plain</outputFileFormat>
