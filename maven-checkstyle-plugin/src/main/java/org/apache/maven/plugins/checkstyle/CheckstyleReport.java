@@ -20,21 +20,15 @@ package org.apache.maven.plugins.checkstyle;
  */
 
 import java.io.File;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.checkstyle.exec.CheckstyleExecutorRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * A reporting task that performs Checkstyle analysis and generates an HTML
@@ -49,96 +43,6 @@ import org.codehaus.plexus.util.StringUtils;
 public class CheckstyleReport
     extends AbstractCheckstyleReport
 {
-    /**
-     * @deprecated Remove with format parameter.
-     */
-    private static final Map<String, String> FORMAT_TO_CONFIG_LOCATION;
-
-    static
-    {
-        Map<String, String> fmt2Cfg = new HashMap<>();
-
-        fmt2Cfg.put( "sun", "sun_checks.xml" );
-
-        FORMAT_TO_CONFIG_LOCATION = Collections.unmodifiableMap( fmt2Cfg );
-    }
-
-    /**
-     * Specifies what predefined check set to use. Available sets are "sun" (for
-     * the Sun coding conventions), and "maven".
-     *
-     * @deprecated Use configLocation instead.
-     */
-    @Parameter( defaultValue = "sun" )
-    private String format;
-
-    /**
-     * Specifies the location of the Checkstyle properties file that will be used to
-     * check the source.
-     *
-     * @deprecated Use propertiesLocation instead.
-     */
-    @Parameter
-    private File propertiesFile;
-
-    /**
-     * Specifies the URL of the Checkstyle properties that will be used to check
-     * the source.
-     *
-     * @deprecated Use propertiesLocation instead.
-     */
-    @Parameter
-    private URL propertiesURL;
-
-    /**
-     * Specifies the location of the License file (a.k.a. the header file) that
-     * is used by Checkstyle to verify that source code has the correct
-     * license header.
-     *
-     * @deprecated Use headerLocation instead.
-     */
-    @Parameter( defaultValue = "${basedir}/LICENSE.txt" )
-    private File headerFile;
-
-    /**
-     * Specifies the location of the suppressions XML file to use. The plugin
-     * defines a Checkstyle property named
-     * <code>checkstyle.suppressions.file</code> with the value of this
-     * property. This allows using the Checkstyle property in your own custom
-     * Checkstyle configuration file when specifying a suppressions file.
-     *
-     * @deprecated Use suppressionsLocation instead.
-     */
-    @Parameter
-    private String suppressionsFile;
-
-    /**
-     * <p>
-     * Specifies the location of the package names XML to be used to configure
-     * the Checkstyle <a
-     * href="http://checkstyle.sourceforge.net/config.html#Packages">Packages</a>.
-     * </p>
-     * <p/>
-     * <p>
-     * This parameter is resolved as resource, URL, then file. If resolved to a
-     * resource, or a URL, the contents of the package names XML is copied into
-     * the <code>${project.build.directory}/checkstyle-packagenames.xml</code>
-     * file before being passed to Checkstyle for loading.
-     * </p>
-     *
-     * @since 2.0-beta-2
-     */
-    @Parameter
-    private String packageNamesLocation;
-
-    /**
-     * Specifies the location of the package names XML to be used to configure
-     * Checkstyle.
-     *
-     * @deprecated Use packageNamesLocation instead.
-     */
-    @Parameter
-    private String packageNamesFile;
 
     /** {@inheritDoc} */
     protected MavenProject getProject()
@@ -150,7 +54,6 @@ public class CheckstyleReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
-        mergeDeprecatedInfo();
         super.executeReport( locale );
     }
 
@@ -232,74 +135,6 @@ public class CheckstyleReport
             }
         }
       return false;
-    }
-
-    /**
-     * Merge in the deprecated parameters to the new ones, unless the new
-     * parameters have values.
-     * @throws MavenReportException 
-     *
-     * @deprecated Remove when deprecated params are removed.
-     */
-    private void mergeDeprecatedInfo()
-        throws MavenReportException
-    {
-        if ( "sun_checks.xml".equals( configLocation ) && !"sun".equals( format ) )
-        {
-            configLocation = FORMAT_TO_CONFIG_LOCATION.get( format );
-
-            throw new MavenReportException( "'format' parameter is deprecated: please replace with <configLocation>"
-                + configLocation + "</configLocation>." );
-        }
-
-        if ( StringUtils.isEmpty( propertiesLocation ) )
-        {
-            if ( propertiesFile != null )
-            {
-                propertiesLocation = propertiesFile.getPath();
-
-                throw new MavenReportException( "'propertiesFile' parameter is deprecated: please replace with "
-                    + "<propertiesLocation>" + propertiesLocation + "</propertiesLocation>." );
-            }
-            else if ( propertiesURL != null )
-            {
-                propertiesLocation = propertiesURL.toExternalForm();
-
-                throw new MavenReportException( "'propertiesURL' parameter is deprecated: please replace with "
-                                + "<propertiesLocation>" + propertiesLocation + "</propertiesLocation>." );
-            }
-        }
-
-        if ( "LICENSE.txt".equals( headerLocation ) )
-        {
-            File defaultHeaderFile = new File( project.getBasedir(), "LICENSE.txt" );
-            if ( !defaultHeaderFile.equals( headerFile ) )
-            {
-                headerLocation = headerFile.getPath();
-            }
-        }
-
-        if ( StringUtils.isEmpty( suppressionsLocation ) )
-        {
-            suppressionsLocation = suppressionsFile;
-
-            if ( StringUtils.isNotEmpty( suppressionsFile ) )
-            {
-                throw new MavenReportException( "'suppressionsFile' parameter is deprecated: please replace with "
-                    + "<suppressionsLocation>" + suppressionsLocation + "</suppressionsLocation>." );
-            }
-        }
-
-        if ( StringUtils.isEmpty( packageNamesLocation ) )
-        {
-            packageNamesLocation = packageNamesFile;
-
-            if ( StringUtils.isNotEmpty( packageNamesFile ) )
-            {
-                throw new MavenReportException( "'packageNamesFile' parameter is deprecated: please replace with "
-                    + "<packageNamesFile>" + suppressionsLocation + "</packageNamesFile>." );
-            }
-        }
     }
 
 }

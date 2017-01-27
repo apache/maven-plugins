@@ -30,7 +30,6 @@ under the License.
           <enableRSS>true</enableRSS>
           <includes>**/*.java</includes>
           <configLocation>sun_checks.xml</configLocation>
-          <format>sun</format>
           <headerLocation>${basedir}/src/test/test-sources/LICENSE.txt</headerLocation>
           <cacheFile>${basedir}/target/test-harness/checkstyle/dep-resolution/checkstyle-cachefile</cacheFile>
           <outputFile>${basedir}/target/test-harness/checkstyle/dep-resolution/checkstyle-result.xml</outputFile>
