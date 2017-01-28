@@ -274,9 +274,11 @@ public abstract class AbstractCheckstyleReport
 
     /**
      * Specifies the location of the source directories to be used for Checkstyle.
+     * Default value is <code>${project.compileSourceRoots}</code>.
      * @since 2.13
      */
-    @Parameter( defaultValue = "${project.compileSourceRoots}" )
+    // Compatibility with all Maven 3: default of 'project.compileSourceRoots' is done manually because of MNG-5440
+    @Parameter
     private List<String> sourceDirectories;
     
     /**
@@ -292,9 +294,11 @@ public abstract class AbstractCheckstyleReport
     
     /**
      * Specifies the location of the test source directories to be used for Checkstyle.
+     * Default value is <code>${project.testCompileSourceRoots}</code>.
      * @since 2.13
      */
-    @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
+    // Compatibility with all Maven 3: default of 'project.testCompileSourceRoots' is done manually because of MNG-5440
+    @Parameter
     private List<String> testSourceDirectories;
 
     /**
@@ -719,6 +723,10 @@ public abstract class AbstractCheckstyleReport
         }
         else
         {
+            if ( sourceDirectories == null )
+            {
+                sourceDirectories = project.getCompileSourceRoots();
+            }
             sourceDirs = new ArrayList<>( sourceDirectories.size() );
             for ( String sourceDir : sourceDirectories )
             {
@@ -737,9 +745,12 @@ public abstract class AbstractCheckstyleReport
         {
             testSourceDirs = Collections.singletonList( testSourceDirectory );
         }
-        // probably null-check only required due to MavenProjectStubs
-        else if ( testSourceDirectories != null )
+        else
         {
+            if ( testSourceDirectories == null )
+            {
+                testSourceDirectories = project.getTestCompileSourceRoots();
+            }
             testSourceDirs = new ArrayList<>( testSourceDirectories.size() );
             for ( String testSourceDir : testSourceDirectories )
             {

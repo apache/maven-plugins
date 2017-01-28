@@ -41,7 +41,7 @@ public class MinMavenProjectStub
     public List<String> getCompileClasspathElements()
         throws DependencyResolutionRequiredException
     {
-        return Collections.singletonList( PlexusTestCase.getBasedir() + "/target/classes" );
+        return getCompileSourceRoots();
     }
 
     /** {@inheritDoc} */
@@ -49,6 +49,20 @@ public class MinMavenProjectStub
         throws DependencyResolutionRequiredException
     {
         List<String> list = new ArrayList<>( getCompileClasspathElements() );
+        list.add( PlexusTestCase.getBasedir() + "/target/test-classes" );
+        return list;
+    }
+
+    /** {@inheritDoc} */
+    public List<String> getCompileSourceRoots()
+    {
+        return Collections.singletonList( PlexusTestCase.getBasedir() + "/target/classes" );
+    }
+
+    /** {@inheritDoc} */
+    public List<String> getTestCompileSourceRoots()
+    {
+        List<String> list = new ArrayList<>( getCompileSourceRoots() );
         list.add( PlexusTestCase.getBasedir() + "/target/test-classes" );
         return list;
     }

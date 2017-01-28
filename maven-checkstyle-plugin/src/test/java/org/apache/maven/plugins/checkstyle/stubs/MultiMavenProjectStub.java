@@ -63,6 +63,18 @@ public class MultiMavenProjectStub
     }
 
     /** {@inheritDoc} */
+    public List<String> getCompileSourceRoots()
+    {
+        return Collections.emptyList();
+    }
+
+    /** {@inheritDoc} */
+    public List<String> getTestCompileSourceRoots()
+    {
+        return Collections.emptyList();
+    }
+
+    /** {@inheritDoc} */
     public File getBasedir()
     {
         return new File( PlexusTestCase.getBasedir() );
