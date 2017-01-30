@@ -30,11 +30,13 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.cpd.CPD;
 import net.sourceforge.pmd.cpd.CPDConfiguration;
 import net.sourceforge.pmd.cpd.JavaLanguage;
 import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.cpd.SourceCode;
 import net.sourceforge.pmd.cpd.TokenEntry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -193,12 +195,21 @@ public class CpdReportTest
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         assertNotNull( mojo );
 
-        TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 34 );
-        TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 55 );
+        TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 2 );
+        TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 2 );
+        String duplicatedCodeFragment = "// ----- duplicated code example -----";
+        SourceCode sourceCodeFirst = new SourceCode(new SourceCode.StringCodeLoader(
+                PMD.EOL + duplicatedCodeFragment + PMD.EOL, "MyClass.java"));
+        SourceCode sourceCodeSecond = new SourceCode(new SourceCode.StringCodeLoader(
+                PMD.EOL + duplicatedCodeFragment + PMD.EOL, "MyClass3.java"));
+
         List<Match> tList = new ArrayList<>();
         Mark tFirstMark = new Mark( tFirstEntry );
+        tFirstMark.setSourceCode(sourceCodeFirst);
+        tFirstMark.setLineCount(1);
         Mark tSecondMark = new Mark( tSecondEntry );
-        tFirstMark.setSoureCodeSlice( "// ----- ACCESSEURS  avec �l�ments -----" );
+        tSecondMark.setSourceCode(sourceCodeSecond);
+        tSecondMark.setLineCount(1);
         Match tMatch = new Match( 2, tFirstMark, tSecondMark );
         tList.add( tMatch );
 
@@ -217,6 +228,11 @@ public class CpdReportTest
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pmdCpdDocument = builder.parse( tReport );
         assertNotNull( pmdCpdDocument );
+
+        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" ) );
+        assertTrue( lowerCaseContains( str, "MyClass.java" ) );
+        assertTrue( lowerCaseContains( str, "MyClass3.java" ) );
+        assertTrue( lowerCaseContains( str, duplicatedCodeFragment ) );
     }
 
     public void testSkipEmptyReportConfiguration()
