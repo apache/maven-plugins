@@ -40,7 +40,6 @@ import org.codehaus.plexus.util.FileUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
 public class WarExplodedMojoTest
@@ -874,13 +873,9 @@ public class WarExplodedMojoTest
         // configure mojo
         project.addArtifact( includeexcludeWarArtifact );
         this.configureMojo( mojo, new LinkedList<String>(), classesDir, webAppSource, webAppDirectory, project );
+        setVariableValueToObject( mojo, "dependentWarIncludes", "**/*Include.jsp,**/*.xml" );
+        setVariableValueToObject( mojo, "dependentWarExcludes", "**/*Exclude*,**/MANIFEST.MF" );
         setVariableValueToObject( mojo, "workDirectory", workDirectory );
-        Overlay overlay = new Overlay( "wartests", "war-include-exclude" );
-        overlay.setIncludes( "**/*Include.jsp,**/*.xml" );
-        overlay.setExcludes( "**/*Exclude*,META-INF/MANIFEST.MF" );
-        List<Overlay> overlays = new LinkedList<Overlay>();
-        overlays.add( overlay );
-        setVariableValueToObject( mojo, "overlays", overlays );
         mojo.execute();
 
         // validate operation

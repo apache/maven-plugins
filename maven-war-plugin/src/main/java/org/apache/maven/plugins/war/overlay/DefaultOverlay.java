@@ -46,4 +46,18 @@ public class DefaultOverlay
         setArtifact( a );
         setType( a.getType() );
     }
+
+    /**
+     * Creates an overlay for the specified artifact.
+     *
+     * @param a the artifact
+     * @param includes the includes to use
+     * @param excludes the excludes to use
+     */
+    public DefaultOverlay( Artifact a, String[] includes, String[] excludes )
+    {
+        this( a );
+        setIncludes( includes );
+        setExcludes( excludes );
+    }
 }
