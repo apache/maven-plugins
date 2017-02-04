@@ -243,6 +243,22 @@ public abstract class AbstractWarMojo
     private String warSourceExcludes;
 
     /**
+     * The comma separated list of tokens to include when doing a WAR overlay. Default is 
+     * {@link org.apache.maven.plugins.war.Overlay#DEFAULT_INCLUDES}
+     *
+     */
+    @Parameter
+    private String dependentWarIncludes = StringUtils.join( Overlay.DEFAULT_INCLUDES, "," );
+
+    /**
+     * The comma separated list of tokens to exclude when doing a WAR overlay. Default is 
+     * {@link org.apache.maven.plugins.war.Overlay#DEFAULT_EXCLUDES}
+     *
+     */
+    @Parameter
+    private String dependentWarExcludes = StringUtils.join( Overlay.DEFAULT_EXCLUDES, "," );
+
+    /**
      * The overlays to apply. Each &lt;overlay&gt; element may contain:
      * <ul>
      * <li>id (defaults to <tt>currentBuild</tt>)</li>
@@ -320,7 +336,7 @@ public abstract class AbstractWarMojo
 
     /**
      * Stop searching endToken at the end of line
-     *
+     * 
      * @since 2.4
      */
     @Parameter( defaultValue = "false" )
@@ -328,7 +344,7 @@ public abstract class AbstractWarMojo
 
     /**
      * use jvmChmod rather that cli chmod and forking process
-     *
+     * 
      * @since 2.4
      */
     @Parameter( defaultValue = "true" )
@@ -392,6 +408,26 @@ public abstract class AbstractWarMojo
     }
 
     /**
+     * Returns a string array of the excludes to be used when adding dependent WAR as an overlay onto this WAR.
+     *
+     * @return an array of tokens to exclude
+     */
+    protected String[] getDependentWarExcludes()
+    {
+        return StringUtils.split( StringUtils.defaultString( dependentWarExcludes ), "," );
+    }
+
+    /**
+     * Returns a string array of the includes to be used when adding dependent WARs as an overlay onto this WAR.
+     *
+     * @return an array of tokens to include
+     */
+    protected String[] getDependentWarIncludes()
+    {
+        return StringUtils.split( StringUtils.defaultString( dependentWarIncludes ), "," );
+    }
+
+    /**
      * @param webapplicationDirectory The web application directory.
      * @throws MojoExecutionException In case of failure.
      * @throws MojoFailureException In case of failure.
@@ -442,7 +478,8 @@ public abstract class AbstractWarMojo
         getLog().info( "Assembling webapp [" + mavenProject.getArtifactId() + "] in [" + webapplicationDirectory + "]" );
 
         final OverlayManager overlayManager =
-            new OverlayManager( overlays, mavenProject, currentProjectOverlay );
+            new OverlayManager( overlays, mavenProject, getDependentWarIncludes(), getDependentWarExcludes(),
+                                currentProjectOverlay );
         final List<WarPackagingTask> packagingTasks = getPackagingTasks( overlayManager );
         // CHECKSTYLE_ON: LineLength
         List<FileUtils.FilterWrapper> defaultFilterWrappers;

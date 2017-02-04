@@ -55,6 +55,13 @@ under the License.
        <p>Give it a "provided" scope.</p>
      </answer>
    </faq>
+   <faq id="dependentwarexclude">
+     <question>What's the difference between using dependentWarExclude and provided scope?</question>
+     <answer>
+       <p><code>dependentWarExclude</code> is used in <a href="overlays.html">overlays</a> for excluding dependent
+       WAR files from the assembled webapp.</p>
+     </answer>
+   </faq>
    <faq id="webresourcesexclude">
      <question>How do I exclude files in my web resources?</question>
      <answer>
@@ -66,7 +73,7 @@ under the License.
    <faq id="waroverlaysexclude">
      <question>How do I exclude files when doing overlays?</question>
      <answer>
-       <p>Use the <code>excludes</code> parameter in <code>overlay</code> to identify the tokens to exclude.</p>
+       <p>Use the <code>dependentWarExcludes</code> parameter to identify the tokens to exclude.</p>
      </answer>
    </faq>
    <faq id="configurationdoc">
