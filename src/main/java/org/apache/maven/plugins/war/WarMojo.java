@@ -120,7 +120,7 @@ public class WarMojo
      * want your WAR built without a <code>web.xml</code> file. This may be useful if you are building an overlay that
      * has no web.xml file.
      * <p>
-     * Starting with <b>3.0.1</b>, this property defaults to <code>false</code> if the project depends on the Servlet
+     * Starting with <b>3.1.0</b>, this property defaults to <code>false</code> if the project depends on the Servlet
      * 3.0 API or newer.
      *
      * @since 2.1-alpha-2
@@ -137,7 +137,7 @@ public class WarMojo
      * </p>
      * <p>
      * If this parameter true, another project can depend on the classes by writing something like:
-     * 
+     *
      * <pre>
      * <![CDATA[<dependency>
      *   <groupId>myGroup</groupId>
@@ -164,7 +164,7 @@ public class WarMojo
     /**
      * You can skip the execution of the plugin if you need to. Its use is NOT RECOMMENDED, but quite convenient on
      * occasion.
-     * 
+     *
      * @since 3.0.0
      */
     @Parameter( property = "maven.war.skip", defaultValue = "false" )
@@ -315,7 +315,7 @@ public class WarMojo
      * <p>
      * This is done by checking if the interface <code>javax.servlet.annotation.WebServlet</code> is in the compile-time
      * dependencies (which includes provided dependencies) of the Maven project.
-     * 
+     *
      * @return <code>true</code> if the project being built depends on Servlet 3.0 API, <code>false</code> otherwise.
      * @throws DependencyResolutionRequiredException if the compile elements can't be resolved.
      * @throws MalformedURLException if the path to a dependency file can't be transformed to a URL.
