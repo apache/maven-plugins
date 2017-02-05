@@ -33,6 +33,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * Assemble an application bundle or distribution from an assembly descriptor. This goal is suitable either for binding
  * to the lifecycle or calling directly from the command line (provided all required files are available before the
  * build starts, or are produced by another goal specified before this one on the command line).
+ * <br />
+ * Note that the parameters {@code descriptors}, {@code descriptorRefs}, and {@code descriptorSourceDirectory}
+ * are disjoint, i.e., they are not combined during descriptor location calculation.
  *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -54,17 +57,17 @@ public class SingleAssemblyMojo
         verifyRemovedParameter( "descriptor" );
         verifyRemovedParameter( "descriptorId" );
         verifyRemovedParameter( "includeSite" );
-        
+
         super.execute();
     }
-    
+
     private void verifyRemovedParameter( String paramName )
     {
         Object pluginConfiguration = plugin.getPlugin().getConfiguration();
         if ( pluginConfiguration instanceof Xpp3Dom )
         {
             Xpp3Dom configDom = (Xpp3Dom) pluginConfiguration;
-            
+
             if ( configDom.getChild( paramName ) != null )
             {
                 throw new IllegalArgumentException( "parameter '" + paramName
@@ -72,7 +75,7 @@ public class SingleAssemblyMojo
             }
         }
     }
-    
+
     /**
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
