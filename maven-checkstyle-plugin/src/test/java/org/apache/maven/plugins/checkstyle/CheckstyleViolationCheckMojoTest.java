@@ -20,6 +20,7 @@ package org.apache.maven.plugins.checkstyle;
  */
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
@@ -151,7 +152,7 @@ public class CheckstyleViolationCheckMojoTest
 
         setVariableValueToObject( mojo, "configLocation", "sun_checks.xml" );
         setVariableValueToObject( mojo, "cacheFile", getBasedir() + "/target/classes/checkstyle-cachefile" );
-        setVariableValueToObject( mojo, "sourceDirectory", new File( getBasedir(), "src/test/plugin-configs/src" ));// new File( getBasedir() + "/target" ) );
+        setVariableValueToObject( mojo, "sourceDirectories", Arrays.asList( getBasedir() + "/src/test/plugin-configs/src" ));// new File( getBasedir() + "/target" ) );
         setVariableValueToObject( mojo, "encoding", "UTF-8" );
         setVariableValueToObject( mojo, "skipExec", Boolean.TRUE );
 

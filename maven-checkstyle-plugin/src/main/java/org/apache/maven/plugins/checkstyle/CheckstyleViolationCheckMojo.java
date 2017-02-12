@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -381,11 +380,11 @@ public class CheckstyleViolationCheckMojo
     private boolean failsOnError;
 
     /**
-     * Specifies the location of the test source directory to be used for
-     * Checkstyle.
+     * Specifies the location of the test source directory to be used for Checkstyle.
      *
      * @since 2.2
-     * @deprecated instead use {@link #testSourceDirectories} 
+     * @deprecated instead use {@link #testSourceDirectories}. For version 3.0.0, this parameter is only defined to
+     *             break the build if you use it!
      */
     @Deprecated
     @Parameter
@@ -411,7 +410,8 @@ public class CheckstyleViolationCheckMojo
     /**
      * Specifies the location of the source directory to be used for Checkstyle.
      * 
-     * @deprecated instead use {@link #sourceDirectories}
+     * @deprecated instead use {@link #sourceDirectories}. For version 3.0.0, this parameter is only defined to break
+     *             the build if you use it!
      */
     @Deprecated
     @Parameter
@@ -480,6 +480,8 @@ public class CheckstyleViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        checkDeprecatedParameterUsage( sourceDirectory, "sourceDirectory", "sourceDirectories" );
+        checkDeprecatedParameterUsage( testSourceDirectory, "testSourceDirectory", "testSourceDirectories" );
         if ( skip )
         {
             return;
@@ -591,6 +593,17 @@ public class CheckstyleViolationCheckMojo
         {
             throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
                                               e );
+        }
+    }
+
+    private void checkDeprecatedParameterUsage( Object parameter, String name, String replacement )
+        throws MojoFailureException
+    {
+        if ( parameter != null )
+        {
+            throw new MojoFailureException( "You are using '" + name + "' which has been removed"
+                + " from the maven-checkstyle-plugin. " + "Please use '" + replacement
+                + "' and refer to the >>Major Version Upgrade to version 3.0.0<< " + "on the plugin site." );
         }
     }
 
@@ -822,49 +835,29 @@ public class CheckstyleViolationCheckMojo
     
     private List<File> getSourceDirectories()
     {
-        List<File> sourceDirs = null;
-        // if sourceDirectory is explicitly set, use it
-        if ( sourceDirectory != null )
+        if ( sourceDirectories == null )
         {
-            sourceDirs = Collections.singletonList( sourceDirectory );
+            sourceDirectories = project.getCompileSourceRoots();
         }
-        else
+        List<File> sourceDirs = new ArrayList<>( sourceDirectories.size() );
+        for ( String sourceDir : sourceDirectories )
         {
-            if ( sourceDirectories == null )
-            {
-                sourceDirectories = project.getCompileSourceRoots();
-            }
-            sourceDirs = new ArrayList<>( sourceDirectories.size() );
-            for ( String sourceDir : sourceDirectories )
-            {
-                sourceDirs.add( FileUtils.resolveFile( project.getBasedir(), sourceDir ) );
-            }
+            sourceDirs.add( FileUtils.resolveFile( project.getBasedir(), sourceDir ) );
         }
-        
         return sourceDirs;
     }
     
     private List<File> getTestSourceDirectories()
     {
-        List<File> testSourceDirs = null;
-        // if testSourceDirectory is explicitly set, use it
-        if ( testSourceDirectory != null )
+        if ( testSourceDirectories == null )
         {
-            testSourceDirs = Collections.singletonList( testSourceDirectory );
+            testSourceDirectories = project.getTestCompileSourceRoots();
         }
-        else
+        List<File> testSourceDirs = new ArrayList<>( testSourceDirectories.size() );
+        for ( String testSourceDir : testSourceDirectories )
         {
-            if ( testSourceDirectories == null )
-            {
-                testSourceDirectories = project.getTestCompileSourceRoots();
-            }
-            testSourceDirs = new ArrayList<>( testSourceDirectories.size() );
-            for ( String testSourceDir : testSourceDirectories )
-            {
-                testSourceDirs.add( FileUtils.resolveFile( project.getBasedir(), testSourceDir ) );
-            }
+            testSourceDirs.add( FileUtils.resolveFile( project.getBasedir(), testSourceDir ) );
         }
-        
         return testSourceDirs;
     }
     
