@@ -63,7 +63,7 @@ under the License.
     <maven.compiler.source>1.${javaVersion}</maven.compiler.source>
     <maven.compiler.target>1.${javaVersion}</maven.compiler.target>
     <mavenVersion>3.0</mavenVersion>
-    <checkstyleVersion>6.11.2</checkstyleVersion>
+    <checkstyleVersion>6.18</checkstyleVersion>
     <doxiaVersion>1.4</doxiaVersion>
     <sitePluginVersion>3.4</sitePluginVersion>
   </properties>
