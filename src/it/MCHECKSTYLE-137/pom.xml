@@ -51,7 +51,9 @@
               <consoleOutput>true</consoleOutput>
               <failsOnError>true</failsOnError>
               <linkXRef>false</linkXRef>
-              <sourceDirectory>${basedir}/src</sourceDirectory>
+              <sourceDirectories>
+                <sourceDirectory>${basedir}/src</sourceDirectory>
+              </sourceDirectories>
             </configuration>
             <goals>
               <goal>checkstyle</goal>

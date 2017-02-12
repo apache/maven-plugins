@@ -22,7 +22,6 @@ package org.apache.maven.plugins.checkstyle.exec;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -213,37 +212,6 @@ public class CheckstyleExecutorRequest
         this.includeTestSourceDirectory = includeTestSourceDirectory;
         return this;
     }
-
-    /**
-     * 
-     * @return first entry of testSourceDirectories, otherwise {@code null}
-     * @deprecated instead use {@link #getTestSourceDirectories()}
-     */
-    @Deprecated
-    public File getTestSourceDirectory()
-    {
-        if ( testSourceDirectories == null || testSourceDirectories.size() == 0 )
-        {
-            return null;
-        }
-        else
-        {
-            return testSourceDirectories.iterator().next();
-        }
-    }
-
-    /**
-     * 
-     * @param testSourceDirectory a single testSourceDirectory
-     * @return this request
-     * @deprecated instead use {@link #setTestSourceDirectories(Collection)}
-     */
-    @Deprecated
-    public CheckstyleExecutorRequest setTestSourceDirectory( File testSourceDirectory )
-    {
-        this.testSourceDirectories = Collections.singletonList( testSourceDirectory );
-        return this;
-    }
     
     public Collection<File> getTestSourceDirectories()
     {
@@ -253,36 +221,6 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setTestSourceDirectories( Collection<File> testSourceDirectories )
     {
         this.testSourceDirectories = testSourceDirectories;
-        return this;
-    }
-    
-    /**
-     * @return first entry of sourceDirectories, otherwise {@code null}
-     * @deprecated instead use {@link #getSourceDirectories()}
-     */
-    @Deprecated
-    public File getSourceDirectory()
-    {
-        if ( sourceDirectories == null || sourceDirectories.size() == 0 )
-        {
-            return null;
-        }
-        else
-        {
-            return sourceDirectories.iterator().next();
-        }
-    }
-
-    /**
-     * 
-     * @param sourceDirectory a single sourceDirectory
-     * @return this request
-     * @deprecated instead use {@link #setSourceDirectories(Collection)}
-     */
-    @Deprecated
-    public CheckstyleExecutorRequest setSourceDirectory( File sourceDirectory )
-    {
-        this.sourceDirectories = Collections.singletonList( sourceDirectory );
         return this;
     }
     

@@ -50,6 +50,14 @@ ${project.name}
 
    * {{{./check-mojo.html}checkstyle:check}} is a goal that performs Checkstyle analysis and outputs violations or a count of violations to the console, potentially failing the build. It can also be configured to re-use an earlier analysis.
 
+* Major Version Upgrade to version 3.0.0
+
+  Please note that the following parameters have been completely removed from the plugin configuration:
+
+   * <<<sourceDirectory>>>: use <<<sourceDirectories>>> instead;
+
+   * <<<testSourceDirectory>>>: use <<<testSourceDirectories>>> instead.
+
 * Usage
 
   General instructions on how to use the Checkstyle Plugin can be found on the {{{./usage.html}usage page}}. Some more

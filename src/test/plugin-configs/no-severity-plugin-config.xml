@@ -35,7 +35,9 @@ under the License.
           <outputFile>${basedir}/target/test-harness/checkstyle/no-severity/checkstyle-result.xml</outputFile>
           <outputFileFormat>xml</outputFileFormat>
           <failsOnError>false</failsOnError>
-          <sourceDirectory>${basedir}/src/test/test-sources</sourceDirectory>
+          <sourceDirectories>
+            <sourceDirectory>${basedir}/src/test/test-sources</sourceDirectory>
+          </sourceDirectories>
           <project implementation="org.apache.maven.plugins.checkstyle.stubs.MinMavenProjectStub"/>
           <consoleOutput>false</consoleOutput>
           <linkXRef>true</linkXRef>
