@@ -17,7 +17,7 @@
   -->
 
 <!-- Note Definitions of FileSet, FileItem, and DependencySet are
-     already defined in descriptor.mdo, but repeated  here since
+     already defined in assembly.mdo, but repeated  here since
      Modello currently does not have capability to share files
 -->
 
