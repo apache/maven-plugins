@@ -63,7 +63,7 @@ public class InterpolationTest
         Properties properties = new Properties();
         properties.put( "foo", "bar" );
         properties.put( "version", "2.0-SNAPSHOT" );
-        CompositeMap compositeMap = new CompositeMap( buildMavenProjectStub(), (Map) properties );
+        CompositeMap compositeMap = new CompositeMap( buildMavenProjectStub(), (Map) properties, false );
         assertEquals( "1.0-SNAPSHOT", compositeMap.get( "pom.version" ) );
         assertEquals( "bar", compositeMap.get( "foo" ) );
         assertEquals( "bar", compositeMap.get( "pom.groupId" ) );
