@@ -49,13 +49,19 @@ class CompositeMap
     private Map<String, Object> properties;
 
     /**
+     * Flag indicating to escape XML special characters.
+     */
+    private final boolean escapeXml;
+
+    /**
      * Creates a new interpolation source backed by the specified Maven project and some user-specified properties.
      *
      * @param mavenProject The Maven project from which to extract interpolated values, must not be <code>null</code>.
      * @param properties The set of additional properties from which to extract interpolated values, may be
      *            <code>null</code>.
+     * @param escapeXml {@code true}, to escape any XML special characters; {@code false}, to not perform any escaping.
      */
-    protected CompositeMap( MavenProject mavenProject, Map<String, Object> properties )
+    protected CompositeMap( MavenProject mavenProject, Map<String, Object> properties, boolean escapeXml )
     {
         if ( mavenProject == null )
         {
@@ -63,6 +69,7 @@ class CompositeMap
         }
         this.mavenProject = mavenProject;
         this.properties = properties == null ? new HashMap<String, Object>() : properties;
+        this.escapeXml = escapeXml;
     }
 
     /**
@@ -147,7 +154,14 @@ class CompositeMap
                 Object evaluated = ReflectionValueExtractor.evaluate( expression, this.mavenProject );
                 if ( evaluated != null )
                 {
-                    return evaluated;
+                    return this.escapeXml
+                               ? evaluated.toString().
+                            replaceAll( "\"", "&quot;" ).
+                            replaceAll( "<", "&lt;" ).
+                            replaceAll( ">", "&gt;" ).
+                            replaceAll( "&", "&amp;" )
+                               : evaluated;
+
                 }
             }
             catch ( Exception e )

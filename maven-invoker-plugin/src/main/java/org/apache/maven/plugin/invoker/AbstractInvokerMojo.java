@@ -2305,7 +2305,7 @@ public abstract class AbstractInvokerMojo
             props = escapedProperties;
         }
 
-        return new CompositeMap( this.project, props );
+        return new CompositeMap( this.project, props, escapeXml );
     }
 
     /**
