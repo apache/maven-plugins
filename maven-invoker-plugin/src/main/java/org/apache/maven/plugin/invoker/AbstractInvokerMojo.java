@@ -2288,23 +2288,6 @@ public abstract class AbstractInvokerMojo
             props.put( "localRepositoryUrl", toUrl( settings.getLocalRepository() ) );
         }
 
-        if ( escapeXml )
-        {
-            final Map<String, Object> escapedProperties = new HashMap<String, Object>( props.size() );
-
-            for ( final Map.Entry<String, Object> e : props.entrySet() )
-            {
-                escapedProperties.put( e.getKey(), e.getValue().toString().
-                                       replaceAll( "\"", "&quot;" ).
-                                       replaceAll( "<", "&lt;" ).
-                                       replaceAll( ">", "&gt;" ).
-                                       replaceAll( "&", "&amp;" ) );
-
-            }
-
-            props = escapedProperties;
-        }
-
         return new CompositeMap( this.project, props, escapeXml );
     }
 
