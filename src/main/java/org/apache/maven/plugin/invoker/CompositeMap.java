@@ -146,6 +146,7 @@ class CompositeMap
             return null;
         }
 
+        Object value = null;
         String expression = (String) key;
         if ( expression.startsWith( "project." ) || expression.startsWith( "pom." ) )
         {
@@ -154,14 +155,7 @@ class CompositeMap
                 Object evaluated = ReflectionValueExtractor.evaluate( expression, this.mavenProject );
                 if ( evaluated != null )
                 {
-                    return this.escapeXml
-                               ? evaluated.toString().
-                            replaceAll( "\"", "&quot;" ).
-                            replaceAll( "<", "&lt;" ).
-                            replaceAll( ">", "&gt;" ).
-                            replaceAll( "&", "&amp;" )
-                               : evaluated;
-
+                    value = evaluated;
                 }
             }
             catch ( Exception e )
@@ -170,10 +164,27 @@ class CompositeMap
             }
         }
 
-        Object value = properties.get( key );
+        if ( value == null )
+        {
+            value = properties.get( key );
+        }
 
-        return ( value != null ? value : this.mavenProject.getProperties().get( key ) );
+        if ( value == null )
+        {
+            value = this.mavenProject.getProperties().get( key );
+        }
 
+        if ( value != null && this.escapeXml )
+        {
+            value = value.toString().
+                replaceAll( "\"", "&quot;" ).
+                replaceAll( "<", "&lt;" ).
+                replaceAll( ">", "&gt;" ).
+                replaceAll( "&", "&amp;" );
+
+        }
+
+        return value;
     }
 
     /**
