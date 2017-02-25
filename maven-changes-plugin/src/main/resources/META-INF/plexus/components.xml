@@ -35,7 +35,7 @@ under the License.
           </property>
           <property>
             <name>file.resource.loader.class</name>
-            <value>org.apache.maven.plugin.resource.loader.ProjectResourceLoader</value>
+            <value>org.apache.maven.plugins.resource.loader.ProjectResourceLoader</value>
           </property>
         </properties>
       </configuration>

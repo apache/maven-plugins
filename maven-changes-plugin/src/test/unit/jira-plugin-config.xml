@@ -25,10 +25,8 @@ under the License.
       <plugin>
         <artifactId>maven-changes-plugin</artifactId>
         <configuration>
-	  <localRepository>${localRepository}</localRepository>
-          <project implementation="org.apache.maven.plugin.jira.JiraUnicodeTestProjectStub"/>
-	  <outputDirectory>target/jira-test-output</outputDirectory>
-	  <columnNames>Key,Summary,Status,Resolution,Assignee,Description</columnNames>
+	      <outputDirectory>target/jira-test-output</outputDirectory>
+	      <columnNames>Key,Summary,Status,Resolution,Assignee,Description</columnNames>
         </configuration>
       </plugin>
     </plugins>

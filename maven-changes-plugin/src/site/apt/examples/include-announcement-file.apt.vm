@@ -57,7 +57,7 @@ Include an Announcement File in Your Packaging
             </goals>
             <configuration>
               <announcementFile>CHANGES.txt</announcementFile>
-              <outputDirectory>\${project.build.outputDirectory}/META-INF</outputDirectory>
+              <announcementDirectory>\${project.build.outputDirectory}/META-INF</announcementDirectory>
             </configuration>
           </execution>
         </executions>

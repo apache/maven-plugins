@@ -68,7 +68,7 @@ Using a Custom Announcement Template
  Next you want to create your own template. A wise thing is to start with the
  default one that is included in the plugin. You can download it from
  Subversion
- {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/src/main/resources/org/apache/maven/plugin/announcement/announcement.vm}here}}.
+ {{{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-changes-plugin/src/main/resources/org/apache/maven/plugins/announcement/announcement.vm}here}}.
  It will provide you with examples on how to iterate over the actions of a
  release among other things.
 
