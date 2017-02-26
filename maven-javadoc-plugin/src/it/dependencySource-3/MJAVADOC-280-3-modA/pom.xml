@@ -37,10 +37,10 @@ under the License.
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <tags>
-            <tag><name>.foo</name><placement>optm</placement><head>Foo:</head></tag>
+            <tag><name>m.foo</name><placement>optm</placement><head>Foo:</head></tag>
             <tag><name>author</name></tag>
             <tag><name>version</name></tag>
-            <tag><name>.bar</name><placement>tcmf</placement><head>Bar:</head></tag>
+            <tag><name>m.bar</name><placement>tcmf</placement><head>Bar:</head></tag>
             <tag><name>see</name></tag>
           </tags>
         </configuration>
