@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.changes.AbstractChangesReport;
@@ -36,6 +37,7 @@ import org.apache.maven.plugins.issues.IssuesReportGenerator;
 import org.apache.maven.plugins.issues.IssuesReportHelper;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
 
 /**
  * Goal which downloads issues from GitHub and generates a report.
@@ -65,6 +67,12 @@ public class GitHubMojo
         githubColumns.put( "Type", IssuesReportHelper.COLUMN_TYPE );
         githubColumns.put( "Updated", IssuesReportHelper.COLUMN_UPDATED );
     }
+
+    /**
+     * Component used to decrypt server information.
+     */
+    @Component
+    private SettingsDecrypter settingsDecrypter;
 
     /**
      * Sets the column names that you want to show in the report. The columns will appear in the report in the same
@@ -179,7 +187,7 @@ public class GitHubMojo
             GitHubDownloader issueDownloader =
                 new GitHubDownloader( project, githubAPIScheme, githubAPIPort, includeOpenIssues, onlyMilestoneIssues );
 
-            issueDownloader.configureAuthentication( githubAPIServerId, settings, getLog() );
+            issueDownloader.configureAuthentication( settingsDecrypter, githubAPIServerId, settings, getLog() );
 
             List<Issue> issueList = issueDownloader.getIssueList();
 

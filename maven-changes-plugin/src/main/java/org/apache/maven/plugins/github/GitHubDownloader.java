@@ -24,7 +24,10 @@ import org.apache.maven.plugins.issues.Issue;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
-
+import org.apache.maven.settings.building.SettingsProblem;
+import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
+import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.eclipse.egit.github.core.Label;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.IssueService;
@@ -212,7 +215,8 @@ public class GitHubDownloader
         return issueList;
     }
 
-    public void configureAuthentication( String githubAPIServerId, Settings settings, Log log )
+    public void configureAuthentication( SettingsDecrypter decrypter, String githubAPIServerId, Settings settings,
+                                         Log log )
     {
         boolean configured = false;
 
@@ -222,6 +226,12 @@ public class GitHubDownloader
         {
             if ( server.getId().equals( githubAPIServerId ) )
             {
+                SettingsDecryptionResult result = decrypter.decrypt( new DefaultSettingsDecryptionRequest( server ) );
+                for ( SettingsProblem problem : result.getProblems() )
+                {
+                    log.error( problem.getMessage(), problem.getException() );
+                }
+                server = result.getServer();
                 String user = server.getUsername();
                 String password = server.getPassword();
                 this.client.setCredentials( user, password );

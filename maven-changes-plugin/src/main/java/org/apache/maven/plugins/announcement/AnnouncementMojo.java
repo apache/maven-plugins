@@ -49,6 +49,7 @@ import org.apache.maven.plugins.trac.TracDownloader;
 import org.apache.maven.plugins.trac.TracIssueManagmentSystem;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
@@ -233,6 +234,12 @@ public class AnnouncementMojo
      */
     @Component( role = VelocityComponent.class, hint = "maven-changes-plugin" )
     private VelocityComponent velocity;
+
+    /**
+     * Component used to decrypt server information.
+     */
+    @Component
+    private SettingsDecrypter settingsDecrypter;
 
     /**
      * Version of the artifact.
@@ -845,7 +852,7 @@ public class AnnouncementMojo
             GitHubDownloader issueDownloader =
                 new GitHubDownloader( project, githubAPIScheme, githubAPIPort, includeOpenIssues, true );
 
-            issueDownloader.configureAuthentication( githubAPIServerId, settings, getLog() );
+            issueDownloader.configureAuthentication( settingsDecrypter, githubAPIServerId, settings, getLog() );
 
             return getReleases( issueDownloader.getIssueList(), new GitHubIssueManagementSystem() );
         }
