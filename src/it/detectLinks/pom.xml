@@ -75,7 +75,11 @@
         <configuration>
           <detectLinks>true</detectLinks>
           <debug>true</debug>
-          <failOnError>true</failOnError>
+          <!--
+            The Javadoc link to a class in module2 on which module1 does not depend on creates an error with
+            Oracle JDK 8, but just a warning with Oracle JDK 7 or OpenJDK 8 ==> setting failOnError to false
+          -->
+          <failOnError>false</failOnError>
         </configuration>
       </plugin>
     </plugins>
