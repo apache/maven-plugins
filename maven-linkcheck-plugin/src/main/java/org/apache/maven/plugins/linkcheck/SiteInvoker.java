@@ -189,7 +189,7 @@ public class SiteInvoker
         InvocationRequest request = new DefaultInvocationRequest();
         request.setLocalRepositoryDirectory( localRepoDir );
         // request.setUserSettingsFile( settingsFile );
-        request.setInteractive( false );
+        request.setBatchMode( true );
         request.setShowErrors( getLog().isErrorEnabled() );
         request.setDebug( getLog().isDebugEnabled() );
         // request.setShowVersion( false );
