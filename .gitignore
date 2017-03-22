@@ -7,3 +7,4 @@ target/
 out/
 .DS_Store
 .java-version
+.checkstyle
