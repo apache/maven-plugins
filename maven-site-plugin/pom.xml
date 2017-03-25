@@ -190,7 +190,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.7</doxiaVersion>
+    <doxiaVersion>1.8-SNAPSHOT</doxiaVersion>
     <doxiaSitetoolsVersion>1.7.4</doxiaSitetoolsVersion>
     <mavenVersion>3.0</mavenVersion>
     <prerequisiteMavenVersion>2.2.1</prerequisiteMavenVersion>
@@ -514,6 +514,27 @@ under the License.
                   </includes>
                 </filter>
               </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-bytecode-version</id>
+            <configuration>
+              <rules>
+                <enforceBytecodeVersion>
+                  <maxJdkVersion>${maven.compiler.target}</maxJdkVersion>
+                  <excludes><!-- DOXIA-554 Markdown parser requires Java 7 (use version 1.7 if you absolutely require Java 6) -->
+                    <exclude>org.apache.maven.doxia:doxia-module-markdown</exclude>
+                    <exclude>org.nibor.autolink:autolink</exclude>
+                  </excludes>
+                </enforceBytecodeVersion>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>
