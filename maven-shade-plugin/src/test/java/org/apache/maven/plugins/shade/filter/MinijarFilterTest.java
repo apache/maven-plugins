@@ -19,6 +19,8 @@ package org.apache.maven.plugins.shade.filter;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,8 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
-
-import junit.framework.Assert;
 
 public class MinijarFilterTest
 {
@@ -69,7 +69,7 @@ public class MinijarFilterTest
 
         verify( log, times( 1 ) ).info( logCaptor.capture() );
 
-        Assert.assertEquals( "Minimized 0 -> 0", logCaptor.getValue() );
+        assertEquals( "Minimized 0 -> 0", logCaptor.getValue() );
 
     }
 
@@ -94,7 +94,7 @@ public class MinijarFilterTest
         // verify no access to project's artifacts
         verify( mavenProject, times(0) ).getArtifacts();
 
-        Assert.assertEquals( "Minimized 0 -> 0", logCaptor.getValue() );
+        assertEquals( "Minimized 0 -> 0", logCaptor.getValue() );
 
     }
 
@@ -145,7 +145,7 @@ public class MinijarFilterTest
 
         verify( log, times( 1 ) ).info( logCaptor.capture() );
 
-        Assert.assertEquals( "Minimized 51 -> 1 (1%)", logCaptor.getValue() );
+        assertEquals( "Minimized 51 -> 1 (1%)", logCaptor.getValue() );
 
     }
 
@@ -162,7 +162,7 @@ public class MinijarFilterTest
 
         verify( log, times( 1 ) ).info( logCaptor.capture() );
 
-        Assert.assertEquals( "Minimized 0 -> 0", logCaptor.getValue() );
+        assertEquals( "Minimized 0 -> 0", logCaptor.getValue() );
 
     }
 }
