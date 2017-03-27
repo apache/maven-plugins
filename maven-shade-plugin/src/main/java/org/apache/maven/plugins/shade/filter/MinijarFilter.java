@@ -86,25 +86,28 @@ public class MinijarFilter
     public MinijarFilter( MavenProject project, Log log, List<SimpleFilter> simpleFilters )
         throws IOException
     {
+      this.log = log;
 
-        this.log = log;
+      File artifactFile = project.getArtifact().getFile();
 
-        Clazzpath cp = new Clazzpath();
-
-        ClazzpathUnit artifactUnit =
-            cp.addClazzpathUnit( new FileInputStream( project.getArtifact().getFile() ), project.toString() );
-
-        for ( Artifact dependency : project.getArtifacts() )
+        if ( artifactFile != null )
         {
-            addDependencyToClasspath( cp, dependency );
-        }
+          Clazzpath cp = new Clazzpath();
 
-        removable = cp.getClazzes();
-        removePackages( artifactUnit );
-        removable.removeAll( artifactUnit.getClazzes() );
-        removable.removeAll( artifactUnit.getTransitiveDependencies() );
-        removeSpecificallyIncludedClasses( project, simpleFilters == null ? Collections.<SimpleFilter>emptyList()
-                        : simpleFilters );
+          ClazzpathUnit artifactUnit = cp.addClazzpathUnit( new FileInputStream( artifactFile ), project.toString() );
+
+            for ( Artifact dependency : project.getArtifacts() )
+            {
+                addDependencyToClasspath( cp, dependency );
+            }
+
+            removable = cp.getClazzes();
+            removePackages( artifactUnit );
+            removable.removeAll( artifactUnit.getClazzes() );
+            removable.removeAll( artifactUnit.getTransitiveDependencies() );
+            removeSpecificallyIncludedClasses( project,
+                simpleFilters == null ? Collections.<SimpleFilter>emptyList() : simpleFilters );
+        }
     }
 
     private ClazzpathUnit addDependencyToClasspath( Clazzpath cp, Artifact dependency )
@@ -214,7 +217,7 @@ public class MinijarFilter
         String className = classFile.replace( '/', '.' ).replaceFirst( "\\.class$", "" );
         Clazz clazz = new Clazz( className );
 
-        if ( removable.contains( clazz ) )
+        if ( removable != null && removable.contains( clazz ) )
         {
             log.debug( "Removing " + className );
             classesRemoved += 1;
