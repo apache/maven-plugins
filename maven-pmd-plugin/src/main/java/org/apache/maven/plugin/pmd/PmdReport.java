@@ -132,7 +132,7 @@ public class PmdReport
      *
      * @since 3.0
      */
-    @Parameter( property = "pmd.typeResolution", defaultValue = "false" )
+    @Parameter( property = "pmd.typeResolution", defaultValue = "true" )
     private boolean typeResolution;
 
     /**
