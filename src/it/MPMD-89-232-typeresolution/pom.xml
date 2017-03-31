@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugin.pmd.it</groupId>
-  <artifactId>mpmd-89</artifactId>
+  <artifactId>MPMD-89-232-typeresolution</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
@@ -56,7 +56,8 @@ under the License.
         <configuration>
           <skipPmdError>false</skipPmdError>
           <includeTests>true</includeTests>
-          <typeResolution>true</typeResolution>
+          <!-- since MPMD-232, the typeResolution option by default true -->
+<!--           <typeResolution>true</typeResolution> -->
           <rulesets>
             <ruleset>src/main/pmd/ruleset.xml</ruleset>
           </rulesets>
