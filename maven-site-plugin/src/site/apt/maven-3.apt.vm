@@ -282,9 +282,11 @@ Using maven-site-plugin with Maven 3
   
   <<This new configuration format is not actually ready for end-users: please don't use it for the moment.>>
 
-  As a consequence, with <<<maven-site-plugin>>> 3.3, the <<<\<reportPlugins\>>>> configuration has simply been removed
-  (more precisely marked private/internal), since it should not be used directly. This documentation has been kept
-  public only to help people who used it in previous versions understand why they need to migrate back to classic configuration.
+  As a consequence, with <<<maven-site-plugin>>> 3.7, the <<<\<reportPlugins\>>>> configuration has simply been removed
+  (and marked marked private/internal since 3.3), and
+  {{{https://issues.apache.org/jira/browse/MNG-6189}Maven 3.5.0 prints a warning if it is used}}.
+  This documentation is kept public only to help people who used it in previous versions
+  understand why they need to migrate back to classic configuration.
 
   <Explanation:> The (former) new format did not support report plugins configuration inheritance, which is crucial for
   usability: see {{{https://issues.apache.org/jira/browse/MSITE-484}MSITE-484}}. This field is technically necessary to remove
@@ -303,7 +305,7 @@ Using maven-site-plugin with Maven 3
         <version>3.2</version><!-- last maven-site-plugin version supporting this reportPlugins configuration -->
         <configuration>
           ...
-          <reportPlugins><!-- not supported any more... (now kept internal) -->
+          <reportPlugins><!-- not supported any more... (removed in 3.7, kept internal in 3.3) -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-project-info-reports-plugin</artifactId>

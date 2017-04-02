@@ -50,17 +50,18 @@ under the License.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>@project.version@</version>
-          <configuration>
-            <reportPlugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins.site.its</groupId>
-                <artifactId>MSITE-627</artifactId>
-                <version>${project.version}</version>
-              </plugin>
-            </reportPlugins>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins.site.its</groupId>
+        <artifactId>MSITE-627</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

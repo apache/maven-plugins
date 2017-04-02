@@ -17,6 +17,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+ 
+// since maven-site-plugin 3.7, this IT is not expected to be successful any more: back to reporting section
+return true;
+
 assert !new File( basedir, 'target/surefire-reports' ).exists();
 assert !new File( basedir, 'target/surefire-reports/org.apache.maven.plugins.site.its.AppTest.txt' ).exists();
 

@@ -41,6 +41,7 @@ import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -50,7 +51,6 @@ import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 import org.apache.maven.reporting.exec.MavenReportExecutor;
 import org.apache.maven.reporting.exec.MavenReportExecutorRequest;
-import org.apache.maven.reporting.exec.ReportPlugin;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -140,18 +140,12 @@ public abstract class AbstractSiteRenderingMojo
     protected MavenSession mavenSession;
 
     /**
-     * <p>Configuration section <b>used internally</b> by Maven 3.</p>
-     * <p>More details available here:
-     * <a href="http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats" target="_blank">
-     * http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
-     * </p>
-     * <p><b>Note:</b> using this field is not mandatory with Maven 3 as Maven core injects usual
-     * <code>&lt;reporting&gt;</code> section into this field.</p>
-     *
-     * @since 3.0-beta-1 (and read-only since 3.3)
+     * replaces previous reportPlugins parameter, that was injected by Maven core from
+     * reporting section: but this new configuration format has been abandoned.
+     * @since 3.7
      */
-    @Parameter( readonly = true )
-    private ReportPlugin[] reportPlugins;
+    @Parameter( defaultValue = "${project.reporting.plugins}", readonly = true )
+    private ReportPlugin[] reportingPlugins;
 
     private PlexusContainer container;
 
@@ -236,7 +230,7 @@ public abstract class AbstractSiteRenderingMojo
             mavenReportExecutorRequest.setLocalRepository( localRepository );
             mavenReportExecutorRequest.setMavenSession( mavenSession );
             mavenReportExecutorRequest.setProject( project );
-            mavenReportExecutorRequest.setReportPlugins( reportPlugins );
+            mavenReportExecutorRequest.setReportPlugins( reportingPlugins );
 
             MavenReportExecutor mavenReportExecutor;
             try

@@ -41,39 +41,30 @@ under the License.
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build>
+  <reporting>
     <plugins>
+      <!-- Adding an additional plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>@project.version@</version>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+      <!-- Overriding an inherited plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.6.1</version>
         <configuration>
-          <reportPlugins combine.children="append">
-            <!-- Adding an additional plugin -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jxr-plugin</artifactId>
-              <version>2.1</version>
-            </plugin>
-            <!-- Overriding an inherited plugin -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <version>2.6.1</version>
-              <configuration>
-                <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
-              </configuration>
-              <reportSets>
-                <reportSet>
-                  <reports>
-                    <report>javadoc</report>
-                  </reports>
-                </reportSet>
-              </reportSets>
-            </plugin>
-          </reportPlugins>
+          <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
-  </build>
+  </reporting>
 </project>
