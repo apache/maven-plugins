@@ -33,6 +33,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.ModelBuildingException;
@@ -58,6 +59,7 @@ import org.apache.maven.shared.utils.Os;
 import org.apache.maven.shared.utils.ReaderFactory;
 import org.apache.maven.shared.utils.WriterFactory;
 import org.apache.maven.shared.utils.io.IOUtil;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -214,6 +216,14 @@ public class InstallFileMojo
         }
 
         MavenProject project = createMavenProject();
+        
+        // We need to set a new ArtifactHandler otherwise 
+        // the extension will be set to the packaging type
+        // which is sometimes wrong.
+        DefaultArtifactHandler ah = new DefaultArtifactHandler( packaging );
+        ah.setExtension( FileUtils.getExtension( file.getName() ) );
+
+        project.getArtifact().setArtifactHandler( ah );
         Artifact artifact = project.getArtifact();
 
         if ( file.equals( getLocalRepoFile( buildingRequest, artifact ) ) )
