@@ -37,6 +37,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -76,6 +77,25 @@ public class AnalyzeDepMgt
      */
     @Parameter( property = "mdep.analyze.ignore.direct", defaultValue = "true" )
     private boolean ignoreDirect = true;
+
+    /**
+     * Ignore excluded dependencies that appear in the dependency tree.
+     * Format is <code>groupId:artifactId</code>.
+     *
+     * E.g.
+     * <pre>
+     *   &lt;ignoredExclusions&gt;
+     *     &lt;ignoredExclusion&gt;*:*&lt;/ignoredExclusion&gt;
+     *     &lt;ignoredExclusion&gt;org.foo.*:*&lt;/ignoredExclusion&gt;
+     *     &lt;ignoredExclusion&gt;com.foo.bar:*&lt;/ignoredExclusion&gt;
+     *     &lt;ignoredExclusion&gt;dot.foo.bar:utilities&lt;/ignoredExclusion&gt;
+     *   &lt;/ignoredExclusions&gt;
+     * </pre>
+     *
+     * @since 3.0
+     */
+    @Parameter
+    private Set<String> ignoredExclusions = new HashSet<String>();
 
     /**
      * Skip plugin execution completely.
@@ -207,10 +227,32 @@ public class AnalyzeDepMgt
         {
             for ( Exclusion exclusion : exclusionList )
             {
-                exclusions.put( getExclusionKey( exclusion ), exclusion );
+                if ( !isExclusionIgnored( exclusion ) )
+                {
+                    exclusions.put( getExclusionKey( exclusion ), exclusion );
+                }
             }
         }
         return exclusions;
+    }
+
+    /**
+     * Checks the exclusion against the list of ignored exclusions
+     *
+     * @return whether the exclusion should be ignored
+     */
+    public boolean isExclusionIgnored( Exclusion exclusion )
+    {
+        String exclusionKey = getExclusionKey( exclusion );
+        for ( String ignoredExclusion : ignoredExclusions )
+        {
+            if ( SelectorUtils.match( ignoredExclusion, exclusionKey ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -360,5 +402,13 @@ public class AnalyzeDepMgt
     public void setIgnoreDirect( boolean theIgnoreDirect )
     {
         this.ignoreDirect = theIgnoreDirect;
+    }
+
+    /**
+     * @param ignoredExclusions the ignoredExclusions to set
+     */
+    public void setIgnoredExclusions( Set<String> ignoredExclusions )
+    {
+        this.ignoredExclusions = ignoredExclusions;
     }
 }

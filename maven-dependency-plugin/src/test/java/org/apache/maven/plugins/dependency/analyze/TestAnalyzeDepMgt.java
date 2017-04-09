@@ -22,7 +22,10 @@ package org.apache.maven.plugins.dependency.analyze;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,12 +50,14 @@ public class TestAnalyzeDepMgt
     DependencyArtifactStubFactory stubFactory;
 
     Dependency exclusion;
+    Dependency exclusionMatchingVersion;
 
     Exclusion ex;
 
     Artifact exclusionArtifact;
 
     DependencyManagement depMgt;
+    DependencyManagement depMgtMatchingVersion;
     DependencyManagement depMgtNoExclusions;
     protected void setUp()
         throws Exception
@@ -87,6 +92,20 @@ public class TestAnalyzeDepMgt
         depMgt = new DependencyManagement();
         depMgt.setDependencies( list );
 
+        exclusionMatchingVersion = new Dependency();
+        exclusionMatchingVersion.setArtifactId( exclusionArtifact.getArtifactId() );
+        exclusionMatchingVersion.setGroupId( exclusionArtifact.getGroupId() );
+        exclusionMatchingVersion.setType( exclusionArtifact.getType() );
+        exclusionMatchingVersion.setClassifier( "" );
+        exclusionMatchingVersion.setVersion( exclusionArtifact.getVersion() );
+
+        exclusionMatchingVersion.addExclusion( ex );
+
+        list = new ArrayList<Dependency>();
+        list.add( exclusionMatchingVersion );
+
+        depMgtMatchingVersion = new DependencyManagement();
+        depMgtMatchingVersion.setDependencies( list );
 
         project.setArtifacts( allArtifacts );
         project.setDependencyArtifacts( directArtifacts );
@@ -159,6 +178,18 @@ public class TestAnalyzeDepMgt
         assertEquals( 1,map.size() );
         assertTrue( map.containsKey( mojo.getExclusionKey( ex ) ) );
         assertSame( ex, map.get( mojo.getExclusionKey( ex ) ) );
+
+        mojo.setIgnoredExclusions( Collections.singleton( mojo.getExclusionKey( ex ) ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
+
+        mojo.setIgnoredExclusions( Collections.singleton( ex.getGroupId() + ":*" ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
+
+        mojo.setIgnoredExclusions( Collections.singleton( "*:" + ex.getArtifactId() ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
+
+        mojo.setIgnoredExclusions( Collections.singleton( "*:*" ) );
+        assertEquals( 0, mojo.addExclusions( list ).size() );
     }
 
     public void testGetExclusionErrors()
@@ -239,6 +270,37 @@ public class TestAnalyzeDepMgt
             // test with exclusion
             mojo.setFailBuild( true );
             mojo.setIgnoreDirect( true );
+            mojo.execute();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            fail( "Caught Unexpected Exception:" + e.getLocalizedMessage() );
+        }
+
+        try
+        {
+            DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
+            project.setDependencyManagement( depMgtMatchingVersion );
+            // test without ignoring the exclusion error
+            mojo.setFailBuild( true );
+            mojo.setIgnoreDirect( false );
+            mojo.execute();
+            fail( "Expected exception to fail the build." );
+        }
+        catch ( Exception e )
+        {
+            System.out.println("Caught Expected Exception:" + e.getLocalizedMessage());
+        }
+
+        try
+        {
+            DependencyProjectStub project = (DependencyProjectStub) mojo.getProject();
+            project.setDependencyManagement( depMgtMatchingVersion );
+            // test with the exclusion error ignored
+            mojo.setFailBuild( true );
+            mojo.setIgnoreDirect( false );
+            mojo.setIgnoredExclusions( Collections.singleton( mojo.getExclusionKey( ex ) ) );
             mojo.execute();
         }
         catch ( Exception e )
