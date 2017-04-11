@@ -20,7 +20,7 @@
   Since Modello does not have the capability to share descriptor,
   if you make changes to FileSet, FileItem, DependendencySet, or
   adding new collection, make sure to propagate your changes
-  to "component.mdo".
+  to "assembly-component.mdo".
 -->
 
 <model xmlns="http://codehaus-plexus.github.io/MODELLO/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -257,7 +257,7 @@
             the value here will be interpreted
             as a path relative to the project basedir.
             When multiple componentDescriptors are found, their
-            contents are merged. Check out the <a href="component.html">
+            contents are merged. Check out the <a href="assembly-component.html">
             descriptor components</a> for more information. A
             componentDescriptor is specified by providing one or more of
             &lt;componentDescriptor&gt; subelements.
