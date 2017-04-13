@@ -67,7 +67,7 @@ import org.apache.maven.shared.dependency.graph.traversal.SerializingDependencyN
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "tree", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+@Mojo( name = "tree", requiresDependencyCollection = ResolutionScope.TEST, threadSafe = true )
 public class TreeMojo
     extends AbstractMojo
 {
@@ -81,6 +81,12 @@ public class TreeMojo
 
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
+
+    /**
+     * Contains the full list of projects in the reactor.
+     */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
+    private List<MavenProject> reactorProjects;
 
     /**
      * The dependency tree builder to use.
@@ -234,7 +240,7 @@ public class TreeMojo
             
             // non-verbose mode use dependency graph component, which gives consistent results with Maven version
             // running
-            rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, artifactFilter );
+            rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, artifactFilter, reactorProjects );
 
             dependencyTreeString = serializeDependencyTree( rootNode );
 
