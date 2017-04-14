@@ -95,8 +95,8 @@ mvn checkstyle:checkstyle
    <version>${project.version}</version>
    <executions>
      <execution>
-       <id>validate</id>
-       <phase>validate</phase>
+       <id>verify</id>
+       <phase>verify</phase>
        <configuration>
          <configLocation>checkstyle.xml</configLocation>
          <encoding>UTF-8</encoding>
