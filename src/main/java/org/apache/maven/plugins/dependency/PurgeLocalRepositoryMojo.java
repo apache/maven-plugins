@@ -16,14 +16,13 @@ package org.apache.maven.plugins.dependency;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,7 +60,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * When run on a project, remove the project dependencies from the local repository, and optionally re-resolve them.
  * Outside of a project, remove the manually given dependencies.
- * 
+ *
  * @author jdcasey
  * @version $Id$
  * @since 2.0
@@ -84,7 +83,7 @@ public class PurgeLocalRepositoryMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
-    
+
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
 
@@ -93,7 +92,7 @@ public class PurgeLocalRepositoryMojo
      * repository. Note that using this parameter will deactivate the normal process for purging the current project
      * dependency tree. If this parameter is used, only the included artifacts will be purged. The manualIncludes
      * parameter should not be used in combination with the includes/excludes parameters.
-     * 
+     *
      * @since 2.6
      */
     @Parameter
@@ -103,7 +102,7 @@ public class PurgeLocalRepositoryMojo
      * Comma-separated list of groupId:artifactId entries, which should be used to manually include artifacts for
      * deletion. This is a command-line alternative to the <code>manualIncludes</code> parameter, since List parameters
      * are not currently compatible with CLI specification.
-     * 
+     *
      * @since 2.6
      */
     @Parameter( property = "manualInclude" )
@@ -111,7 +110,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * The list of dependencies in the form of groupId:artifactId which should BE deleted/refreshed.
-     * 
+     *
      * @since 2.6
      */
     @Parameter
@@ -121,7 +120,7 @@ public class PurgeLocalRepositoryMojo
      * Comma-separated list of groupId:artifactId entries, which should be used to include artifacts for
      * deletion/refresh. This is a command-line alternative to the <code>includes</code> parameter, since List
      * parameters are not currently compatible with CLI specification.
-     * 
+     *
      * @since 2.6
      */
     @Parameter( property = "include" )
@@ -159,7 +158,7 @@ public class PurgeLocalRepositoryMojo
      */
     @Component
     private DependencyResolver dependencyResolver;
-    
+
     /**
      * The artifact resolver used to re-resolve dependencies, if that option is enabled.
      */
@@ -192,7 +191,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Whether to purge only snapshot artifacts.
-     * 
+     *
      * @since 2.4
      */
     @Parameter( property = "snapshotsOnly", defaultValue = "false" )
@@ -219,7 +218,7 @@ public class PurgeLocalRepositoryMojo
 
         /**
          * Default constructor
-         * 
+         *
          * @param directDependencyArtifacts Set of Artifact objects which represent the direct dependencies of the
          *            project
          */
@@ -232,7 +231,7 @@ public class PurgeLocalRepositoryMojo
         @Override
         public boolean accept( Node node, List<Node> parents )
         {
-            
+
             if ( artifactsGAMatch( node, projectArtifact ) )
             {
                 return true;
@@ -355,7 +354,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Purge/Delete artifacts from the local repository according to the given patterns.
-     * 
+     *
      * @param inclusionPatterns
      * @throws MojoExecutionException
      */
@@ -394,7 +393,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Convert a groupId:artifactId:version to a file system path
-     * 
+     *
      * @param gav, the groupId:artifactId:version string
      * @return
      */
@@ -420,7 +419,7 @@ public class PurgeLocalRepositoryMojo
     /**
      * Create the includes exclude filter to use when resolving and purging dependencies Also excludes any "system"
      * scope dependencies
-     * 
+     *
      * @param dependencyArtifacts The dependency artifacts to use as a reference if we're excluding transitive
      *            dependencies
      * @return
@@ -466,7 +465,7 @@ public class PurgeLocalRepositoryMojo
 
     /**
      * Convert comma separated list of includes to List object
-     * 
+     *
      * @param include
      * @return the includes list
      */
@@ -492,8 +491,8 @@ public class PurgeLocalRepositoryMojo
                 dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(),
                                                         project.getModel(), filter );
 
-            Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
-            
+            Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>();
+
             for ( ArtifactResult artResult : results )
             {
                 resolvedArtifacts.add( artResult.getArtifact() );
@@ -509,9 +508,9 @@ public class PurgeLocalRepositoryMojo
         }
 
         Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>();
-        
+
         ArtifactFilter artifactFilter = filter.transform( new ArtifactIncludeFilterTransformer() );
-        
+
         // Resolve the only poms here instead of the actual artifacts, because the files will be deleted during the
         // purge anyway
         for ( Artifact artifact : artifacts )
@@ -522,7 +521,7 @@ public class PurgeLocalRepositoryMojo
                 {
                     ArtifactResult artifactResult =
                         artifactResolver.resolveArtifact( session.getProjectBuildingRequest(), artifact );
-                    
+
                     resolvedArtifacts.add( artifactResult.getArtifact() );
                 }
                 catch ( ArtifactResolverException e )

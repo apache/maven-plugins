@@ -23,8 +23,8 @@ import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -320,12 +320,12 @@ public abstract class AbstractAnalyzeMojo
             analysis = analysis.ignoreNonCompile();
         }
 
-        Set<Artifact> usedDeclared = new HashSet<Artifact>( analysis.getUsedDeclaredArtifacts() );
-        Set<Artifact> usedUndeclared = new HashSet<Artifact>( analysis.getUsedUndeclaredArtifacts() );
-        Set<Artifact> unusedDeclared = new HashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
+        Set<Artifact> usedDeclared = new LinkedHashSet<Artifact>( analysis.getUsedDeclaredArtifacts() );
+        Set<Artifact> usedUndeclared = new LinkedHashSet<Artifact>( analysis.getUsedUndeclaredArtifacts() );
+        Set<Artifact> unusedDeclared = new LinkedHashSet<Artifact>( analysis.getUnusedDeclaredArtifacts() );
 
-        Set<Artifact> ignoredUsedUndeclared = new HashSet<Artifact>();
-        Set<Artifact> ignoredUnusedDeclared = new HashSet<Artifact>();
+        Set<Artifact> ignoredUsedUndeclared = new LinkedHashSet<Artifact>();
+        Set<Artifact> ignoredUnusedDeclared = new LinkedHashSet<Artifact>();
 
         ignoredUsedUndeclared.addAll( filterDependencies( usedUndeclared, ignoredDependencies ) );
         ignoredUsedUndeclared.addAll( filterDependencies( usedUndeclared, ignoredUsedUndeclaredDependencies ) );
