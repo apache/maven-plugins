@@ -21,7 +21,7 @@ package org.apache.maven.plugins.dependency.analyze;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,7 +151,7 @@ public class AnalyzeDepMgt
 
             // get dependencies for the project (including transitive)
             Set<Artifact> allDependencyArtifacts =
-                new HashSet<Artifact>( project.getArtifacts() );
+                new LinkedHashSet<Artifact>( project.getArtifacts() );
 
             // don't warn if a dependency that is directly listed overrides
             // depMgt. That's ok.

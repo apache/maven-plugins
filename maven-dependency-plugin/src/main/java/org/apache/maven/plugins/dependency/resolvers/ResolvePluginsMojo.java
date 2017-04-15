@@ -22,7 +22,7 @@ package org.apache.maven.plugins.dependency.resolvers;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -112,7 +112,7 @@ public class ResolvePluginsMojo
                     pluginCoordinate.setGroupId( plugin.getGroupId() );
                     pluginCoordinate.setArtifactId( plugin.getArtifactId() );
                     pluginCoordinate.setVersion( plugin.getVersion() );
-                    
+
                     for ( final Artifact artifact : resolveArtifactDependencies( pluginCoordinate ) )
                     {
                         logStr =
@@ -165,8 +165,8 @@ public class ResolvePluginsMojo
      * This method resolves the plugin artifacts from the project.
      *
      * @return set of resolved plugin artifacts.
-     * @throws ArtifactFilterException 
-     * @throws ArtifactResolverException 
+     * @throws ArtifactFilterException
+     * @throws ArtifactResolverException
      */
     protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactFilterException, ArtifactResolverException
@@ -174,16 +174,16 @@ public class ResolvePluginsMojo
         final Set<Artifact> plugins = getProject().getPluginArtifacts();
         final Set<Artifact> reports = getProject().getReportArtifacts();
 
-        Set<Artifact> artifacts = new HashSet<Artifact>();
+        Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
         artifacts.addAll( reports );
         artifacts.addAll( plugins );
 
         final FilterArtifacts filter = getPluginArtifactsFilter();
         artifacts = filter.filter( artifacts );
-        
-        Set<Artifact> resolvedArtifacts = new HashSet<Artifact>( artifacts.size() );
+
+        Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>( artifacts.size() );
         //        final ArtifactFilter filter = getPluginFilter();
-        for ( final Artifact artifact : new HashSet<Artifact>( artifacts ) )
+        for ( final Artifact artifact : new LinkedHashSet<Artifact>( artifacts ) )
         {
             // if ( !filter.include( artifact ) )
             // {
@@ -201,9 +201,9 @@ public class ResolvePluginsMojo
 
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            
+
             buildingRequest.setRemoteRepositories( this.remotePluginRepositories );
-            
+
             // resolve the new artifact
             resolvedArtifacts.add( getArtifactResolver().resolveArtifact( buildingRequest, artifact ) .getArtifact() );
         }

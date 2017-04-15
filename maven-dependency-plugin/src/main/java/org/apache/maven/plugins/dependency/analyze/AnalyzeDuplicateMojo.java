@@ -21,8 +21,9 @@ package org.apache.maven.plugins.dependency.analyze;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -96,13 +97,13 @@ public class AnalyzeDuplicateMojo
             IOUtil.close( reader );
         }
 
-        Set<String> duplicateDependencies = new HashSet<String>();
+        Set<String> duplicateDependencies = Collections.emptySet();
         if ( model.getDependencies() != null )
         {
             duplicateDependencies = findDuplicateDependencies( model.getDependencies() );
         }
 
-        Set<String> duplicateDependenciesManagement = new HashSet<String>();
+        Set<String> duplicateDependenciesManagement = Collections.emptySet();
         if ( model.getDependencyManagement() != null && model.getDependencyManagement().getDependencies() != null )
         {
             duplicateDependenciesManagement =
@@ -167,7 +168,7 @@ public class AnalyzeDuplicateMojo
             modelDependencies2.add( dep.getManagementKey() );
         }
 
-        return new HashSet<String>(
-            CollectionUtils.disjunction( modelDependencies2, new HashSet<String>( modelDependencies2 ) ) );
+        return new LinkedHashSet<String>(
+            CollectionUtils.disjunction( modelDependencies2, new LinkedHashSet<String>( modelDependencies2 ) ) );
     }
 }

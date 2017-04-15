@@ -19,7 +19,7 @@ package org.apache.maven.plugins.dependency.utils.filters;
  * under the License.
  */
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -65,8 +65,8 @@ public class MarkerFileFilter
     public Set<Artifact> filter( Set<Artifact> artifacts )
         throws ArtifactFilterException
     {
-        Set<Artifact> result = new HashSet<Artifact>();
-        
+        Set<Artifact> result = new LinkedHashSet<Artifact>();
+
         for ( Artifact artifact : artifacts )
         {
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )

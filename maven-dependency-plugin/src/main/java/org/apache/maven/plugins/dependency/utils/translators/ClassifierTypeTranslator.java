@@ -19,7 +19,7 @@ package org.apache.maven.plugins.dependency.utils.translators;
  * under the License.
  */
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -43,7 +43,7 @@ public class ClassifierTypeTranslator
     private String type;
 
     /**
-     * 
+     *
      * @param artifactHanderManager TODO
      * @param theClassifier
      * @param theType
@@ -58,7 +58,7 @@ public class ClassifierTypeTranslator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.mojo.dependency.utils.translators.ArtifactTranslator#translate(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
@@ -68,7 +68,7 @@ public class ClassifierTypeTranslator
         Set<ArtifactCoordinate> results;
 
         log.debug( "Translating Artifacts using Classifier: " + this.classifier + " and Type: " + this.type );
-        results = new HashSet<ArtifactCoordinate>();
+        results = new LinkedHashSet<ArtifactCoordinate>();
         for ( Artifact artifact : artifacts )
         {
             // this translator must pass both type and classifier here so we
@@ -83,9 +83,9 @@ public class ClassifierTypeTranslator
             {
                 useType = artifact.getType();
             }
-            
+
             ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler( useType );
-            
+
             final String extension;
             if ( artifactHandler != null )
             {
@@ -112,7 +112,7 @@ public class ClassifierTypeTranslator
             coordinate.setVersion( artifact.getVersion() );
             coordinate.setClassifier( useClassifier );
             coordinate.setExtension( extension );
-            
+
 //            // Create a new artifact
 //            Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
 //                .getArtifactId(), artifact.getVersion(), useType, useClassifier );
@@ -121,7 +121,7 @@ public class ClassifierTypeTranslator
 //            // should
 //            // reset it here so that it will pass other filters if needed
 //            newArtifact.setScope( artifact.getScope() );
-//            
+//
 //            if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
 //            {
 //                File baseDir = repositoryManager.getLocalRepositoryBasedir( buildingRequest );

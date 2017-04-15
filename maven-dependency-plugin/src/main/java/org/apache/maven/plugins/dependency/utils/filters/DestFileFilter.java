@@ -16,11 +16,11 @@ package org.apache.maven.plugins.dependency.utils.filters;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -53,7 +53,7 @@ public class DestFileFilter
     private boolean useRepositoryLayout;
 
     private boolean removeVersion;
-    
+
     private boolean removeClassifier;
 
     private boolean prependGroupId;
@@ -87,7 +87,7 @@ public class DestFileFilter
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
      *      org.apache.maven.plugin.logging.Log)
      */
@@ -95,8 +95,8 @@ public class DestFileFilter
     public Set<Artifact> filter( Set<Artifact> artifacts )
         throws ArtifactFilterException
     {
-        Set<Artifact> result = new HashSet<Artifact>();
-        
+        Set<Artifact> result = new LinkedHashSet<Artifact>();
+
         for ( Artifact artifact : artifacts )
         {
             if ( isArtifactIncluded( new ArtifactItem( artifact ) ) )
@@ -191,7 +191,7 @@ public class DestFileFilter
     {
         this.removeVersion = removeVersion;
     }
-    
+
     /**
      * @return Returns the removeClassifier.
      */
@@ -244,7 +244,7 @@ public class DestFileFilter
     }
 
     /**
-     * 
+     *
      * @return Returns the useRepositoryLayout
      */
     public boolean isUseRepositoryLayout()
@@ -253,7 +253,7 @@ public class DestFileFilter
     }
 
     /**
-     * 
+     *
      * @param useRepositoryLayout
      *            the useRepositoryLayout to set
      */

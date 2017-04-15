@@ -20,7 +20,7 @@ package org.apache.maven.plugins.dependency.resolvers;
  */
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -75,9 +75,9 @@ public abstract class AbstractResolveMojo
     protected boolean appendOutput;
 
     /**
-     * Don't resolve plugins that are in the current reactor. 
+     * Don't resolve plugins that are in the current reactor.
      * Only works for plugins at the moment.
-     * 
+     *
      * @since 2.7
      */
     @Parameter( property = "excludeReactor", defaultValue = "true" )
@@ -159,7 +159,7 @@ public abstract class AbstractResolveMojo
         Iterable<ArtifactResult> artifactResults =
             getDependencyResolver().resolveDependencies( buildingRequest, artifact, null );
 
-        Set<Artifact> artifacts = new HashSet<Artifact>();
+        Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
 
         for ( final ArtifactResult artifactResult : artifactResults )
         {

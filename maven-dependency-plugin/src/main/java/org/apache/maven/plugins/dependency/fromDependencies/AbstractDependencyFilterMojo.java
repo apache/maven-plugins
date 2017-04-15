@@ -22,7 +22,7 @@ package org.apache.maven.plugins.dependency.fromDependencies;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -74,7 +74,7 @@ public abstract class AbstractDependencyFilterMojo
 
     @Component
     private RepositoryManager repositoryManager;
-    
+
     /**
      * Overwrite release artifacts
      *
@@ -135,7 +135,7 @@ public abstract class AbstractDependencyFilterMojo
      * <li><code>provided</code> scope just gives provided dependencies,</li>
      * <li><code>system</code> scope just gives system dependencies.</li>
      * </ul>
-     * 
+     *
      * @since 2.0
      */
     @Parameter( property = "includeScope", defaultValue = "" )
@@ -242,10 +242,10 @@ public abstract class AbstractDependencyFilterMojo
 
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
-    
+
     /**
      * Return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
-     * 
+     *
      * @return an {@link ArtifactsFilter} indicating which artifacts must be filtered out.
      */
     protected abstract ArtifactsFilter getMarkedArtifactFilter();
@@ -253,7 +253,7 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Retrieves dependencies, either direct only or all including transitive.
      *
-     * @return A HashSet of artifacts
+     * @return A set of artifacts
      * @throws MojoExecutionException
      */
     protected Set<Artifact> getResolvedDependencies( boolean stopOnFailure )
@@ -287,7 +287,7 @@ public abstract class AbstractDependencyFilterMojo
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
 
-        filter.addFilter( new ProjectTransitivityFilter( getProject().getDependencyArtifacts(), 
+        filter.addFilter( new ProjectTransitivityFilter( getProject().getDependencyArtifacts(),
                                                          this.excludeTransitive ) );
 
         filter.addFilter( new ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
@@ -375,7 +375,7 @@ public abstract class AbstractDependencyFilterMojo
 
                 Artifact resolvedArtifact =
                     artifactResolver.resolveArtifact( buildingRequest, project.getArtifact() ).getArtifact();
-                
+
                 artifacts.add( resolvedArtifact );
             }
             catch ( ArtifactResolverException e )
@@ -396,7 +396,7 @@ public abstract class AbstractDependencyFilterMojo
     protected DependencyStatusSets getClassifierTranslatedDependencies( Set<Artifact> artifacts, boolean stopOnFailure )
         throws MojoExecutionException
     {
-        Set<Artifact> unResolvedArtifacts = new HashSet<Artifact>();
+        Set<Artifact> unResolvedArtifacts = new LinkedHashSet<Artifact>();
         Set<Artifact> resolvedArtifacts = artifacts;
         DependencyStatusSets status = new DependencyStatusSets();
 
@@ -415,7 +415,7 @@ public abstract class AbstractDependencyFilterMojo
             artifacts = status.getResolvedDependencies();
 
             // resolve the rest of the artifacts
-            resolvedArtifacts = resolve( new HashSet<ArtifactCoordinate>( coordinates ), stopOnFailure );
+            resolvedArtifacts = resolve( new LinkedHashSet<ArtifactCoordinate>( coordinates ), stopOnFailure );
 
             // calculate the artifacts not resolved.
             unResolvedArtifacts.addAll( artifacts );
@@ -455,20 +455,20 @@ public abstract class AbstractDependencyFilterMojo
         }
 
         // calculate the skipped artifacts
-        Set<Artifact> skippedArtifacts = new HashSet<Artifact>();
+        Set<Artifact> skippedArtifacts = new LinkedHashSet<Artifact>();
         skippedArtifacts.addAll( artifacts );
         skippedArtifacts.removeAll( unMarkedArtifacts );
 
         return new DependencyStatusSets( unMarkedArtifacts, null, skippedArtifacts );
     }
 
-    
+
     protected Set<Artifact> resolve( Set<ArtifactCoordinate> coordinates, boolean stopOnFailure )
                     throws MojoExecutionException
     {
         ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
-        
-        Set<Artifact> resolvedArtifacts = new HashSet<Artifact>();
+
+        Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>();
         for ( ArtifactCoordinate coordinate : coordinates )
         {
             try
@@ -523,7 +523,7 @@ public abstract class AbstractDependencyFilterMojo
     {
         this.prependGroupId = prependGroupId;
     }
-    
+
     protected final ArtifactResolver getArtifactResolver()
     {
         return artifactResolver;
