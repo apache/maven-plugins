@@ -66,6 +66,15 @@ public abstract class AbstractDeployMojo
     @Parameter( property = "retryFailedDeploymentCount", defaultValue = "1" )
     private int retryFailedDeploymentCount;
 
+    /**
+     * Parameter used to control how much time (in seconds) a failed deployment will be retried after a failed
+     * connection.
+     *
+     * @since 2.9
+     */
+    @Parameter( property = "retryFailedDeploymentDelay", defaultValue = "20" )
+    private int retryFailedDeploymentDelay;
+
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
     
@@ -101,6 +110,11 @@ public abstract class AbstractDeployMojo
     int getRetryFailedDeploymentCount()
     {
         return retryFailedDeploymentCount;
+    }
+
+    int getRetryFailedDeploymentDelay()
+    {
+        return retryFailedDeploymentDelay;
     }
 
     protected ArtifactRepository createDeploymentArtifactRepository( String id, String url,
