@@ -219,6 +219,11 @@ public abstract class AbstractDependencyMojo
             logUnpack( file, location, includes, excludes );
 
             location.mkdirs();
+            if ( !location.exists() )
+            {
+                throw new MojoExecutionException(
+                    "Location to write unpacked files to could not be created: " + location );
+            }
 
             if ( file.isDirectory() )
             {

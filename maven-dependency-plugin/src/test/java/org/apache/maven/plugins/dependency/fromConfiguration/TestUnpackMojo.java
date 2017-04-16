@@ -173,6 +173,41 @@ public class TestUnpackMojo
         assertMarkerFiles( list, true );
     }
 
+    public void testUnpackToLocationWhereLocationCannotBeCreatedThrowsException()
+        throws Exception
+    {
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
+        ArtifactItem item = list.get( 0 );
+        item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
+
+        mojo.setArtifactItems( list );
+        final File currentFile = mojo.getOutputDirectory();
+
+        // pretend that the output directory cannot be found event after mkdirs has been called by the mojo
+        // ifor instance in the case when the outputDirectory cannot be created because of permissions on the
+        // parent of the output directory
+        mojo.setOutputDirectory( new File( currentFile.getAbsolutePath() ) {
+
+            private static final long serialVersionUID = -8559876942040177020L;
+
+            @Override
+            public boolean exists()
+            {
+                //this file will always report that it does not exist
+                return false;
+            }
+       });
+        try
+        {
+            mojo.execute();
+            fail( "Expected Exception Here." );
+        }
+        catch ( MojoExecutionException e )
+        {
+            // caught the expected exception.
+        }
+    }
+
     public void testMissingVersionNotFound()
         throws Exception
     {
