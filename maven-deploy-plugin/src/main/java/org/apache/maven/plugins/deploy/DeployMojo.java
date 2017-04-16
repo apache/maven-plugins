@@ -239,7 +239,7 @@ public class DeployMojo
             if ( !matcher.matches() )
             {
                 throw new MojoFailureException( altDeploymentRepo, "Invalid syntax for repository.",
-                                                "Invalid syntax for alternative repository. Use \"id::layout::url\"." );
+                                                "Invalid syntax for alternative repository. Use \"id::url\"." );
             }
             else
             {
