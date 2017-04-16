@@ -94,7 +94,7 @@ public class ResolvePluginsMojo
 
             for ( final Artifact plugin : plugins )
             {
-                String logStr = "Plugin Resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
+                String logStr = "Plugin resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
                 if ( !isSilent() )
                 {
                     this.getLog().info( logStr );
@@ -116,7 +116,7 @@ public class ResolvePluginsMojo
                     for ( final Artifact artifact : resolveArtifactDependencies( pluginCoordinate ) )
                     {
                         logStr =
-                            "    Plugin Dependency Resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
+                            "    Plugin dependency resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
 
                         if ( !isSilent() )
                         {
