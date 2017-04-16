@@ -19,9 +19,7 @@ package org.apache.maven.plugins.dependency.resolvers;
  * under the License.
  */
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +39,6 @@ import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Goal that resolves all project plugins and reports and their dependencies.
@@ -62,12 +59,6 @@ public class ResolvePluginsMojo
     private List<ArtifactRepository> remotePluginRepositories;
 
     /**
-     * If we should exclude transitive dependencies
-     */
-    @Parameter( property = "excludeTransitive", defaultValue = "false" )
-    private boolean excludeTransitive;
-
-    /**
      * Main entry into mojo. Gets the list of dependencies and iterates through
      * displaying the resolved version.
      *
@@ -77,88 +68,99 @@ public class ResolvePluginsMojo
     protected void doExecute()
         throws MojoExecutionException
     {
-        Writer outputWriter = null;
-
         try
         {
             // ideally this should either be DependencyCoordinates or DependencyNode
             final Set<Artifact> plugins = resolvePluginArtifacts();
 
-            if ( this.outputFile != null )
+            StringBuilder sb = new StringBuilder();
+            sb.append( "\n" );
+            sb.append( "The following plugins have been resolved:\n" );
+            if ( plugins == null || plugins.isEmpty() )
             {
-                outputFile.getParentFile()
-                          .mkdirs();
-
-                outputWriter = new FileWriter( outputFile );
+                sb.append( "   none\n" );
             }
-
-            for ( final Artifact plugin : plugins )
+            else
             {
-                String logStr = "Plugin resolved: " + DependencyUtil.getFormattedFileName( plugin, false );
-                if ( !isSilent() )
+                for ( Artifact plugin : plugins )
                 {
-                    this.getLog().info( logStr );
-                }
-
-                if ( outputWriter != null )
-                {
-                    outputWriter.write( logStr );
-                    outputWriter.write( "\n" );
-                }
-
-                if ( !excludeTransitive )
-                {
-                    DefaultDependableCoordinate pluginCoordinate = new DefaultDependableCoordinate();
-                    pluginCoordinate.setGroupId( plugin.getGroupId() );
-                    pluginCoordinate.setArtifactId( plugin.getArtifactId() );
-                    pluginCoordinate.setVersion( plugin.getVersion() );
-
-                    for ( final Artifact artifact : resolveArtifactDependencies( pluginCoordinate ) )
+                    String artifactFilename = null;
+                    if ( outputAbsoluteArtifactFilename )
                     {
-                        logStr =
-                            "    Plugin dependency resolved: " + DependencyUtil.getFormattedFileName( artifact, false );
-
-                        if ( !isSilent() )
+                        try
                         {
-                            this.getLog().info( logStr );
+                            // we want to print the absolute file name here
+                            artifactFilename = plugin.getFile().getAbsoluteFile().getPath();
                         }
-
-                        if ( outputWriter != null )
+                        catch ( NullPointerException e )
                         {
-                            outputWriter.write( logStr );
-                            outputWriter.write( "\n" );
+                            // ignore the null pointer, we'll output a null string
+                            artifactFilename = null;
+                        }
+                    }
+
+                    String id = plugin.toString();
+                    sb.append( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" ) + "\n" );
+
+                    if ( !excludeTransitive )
+                    {
+                        DefaultDependableCoordinate pluginCoordinate = new DefaultDependableCoordinate();
+                        pluginCoordinate.setGroupId( plugin.getGroupId() );
+                        pluginCoordinate.setArtifactId( plugin.getArtifactId() );
+                        pluginCoordinate.setVersion( plugin.getVersion() );
+
+                        for ( final Artifact artifact : resolveArtifactDependencies( pluginCoordinate ) )
+                        {
+                            artifactFilename = null;
+                            if ( outputAbsoluteArtifactFilename )
+                            {
+                                try
+                                {
+                                    // we want to print the absolute file name here
+                                    artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
+                                }
+                                catch ( NullPointerException e )
+                                {
+                                    // ignore the null pointer, we'll output a null string
+                                    artifactFilename = null;
+                                }
+                            }
+
+                            id = artifact.toString();
+                            sb.append( "      " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
+                                       + "\n" );
                         }
                     }
                 }
-            }
+                sb.append( "\n" );
 
-            if ( outputWriter != null )
-            {
-                outputWriter.close();
-                outputWriter = null;
+                String output = sb.toString();
+                if ( outputFile == null )
+                {
+                    DependencyUtil.log( output, getLog() );
+                }
+                else
+                {
+                    DependencyUtil.write( output, outputFile, appendOutput, getLog() );
+                }
             }
         }
         catch ( final IOException e )
         {
-            throw new MojoExecutionException( "Nested:", e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( final ArtifactFilterException e )
         {
-            throw new MojoExecutionException( "Nested:", e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( ArtifactResolverException e )
         {
-            throw new MojoExecutionException( "Nested:", e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( DependencyResolverException e )
         {
-            throw new MojoExecutionException( "Nested:", e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
-        finally
-        {
-            IOUtil.close( outputWriter );
-        }
-
     }
 
     /**
