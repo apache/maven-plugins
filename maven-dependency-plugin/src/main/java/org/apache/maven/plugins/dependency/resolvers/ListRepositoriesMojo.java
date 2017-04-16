@@ -62,8 +62,8 @@ public class ListRepositoriesMojo
                 dependencyCollector.collectDependencies( session.getProjectBuildingRequest(),
                                                          getProject().getModel() );
 
-            this.getLog().info( "Repositories Used by this build:" );
-            
+            this.getLog().info( "Repositories used by this build:" );
+
             for ( ArtifactRepository repo : collectResult.getRemoteRepositories() )
             {
                 this.getLog().info( repo.toString() );
