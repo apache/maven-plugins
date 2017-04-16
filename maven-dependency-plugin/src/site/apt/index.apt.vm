@@ -118,8 +118,6 @@ ${project.name}
 
   The following examples show how to use the dependency plugin in more advanced use-cases:
 
-  * {{{./examples/preparing-dependencies.html}Instructions on how to prepare your dependencies for upgrade to Maven 2.0.6 / 2.1}}.
-
   * {{{./examples/copying-artifacts.html}Copying Specific Artifacts}}
 
   * {{{./examples/copying-project-dependencies.html}Copying Project Dependencies}}

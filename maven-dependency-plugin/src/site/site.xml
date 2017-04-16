@@ -33,7 +33,6 @@ under the License.
       <item name="Download" href="download.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Preparing dependencies for Maven 2.0.6 / 2.1" href="examples/preparing-dependencies.html"/>
       <item name="Copying specific artifacts" href="examples/copying-artifacts.html"/>
       <item name="Copying project dependencies" href="examples/copying-project-dependencies.html"/>
       <item name="Unpacking specific artifacts" href="examples/unpacking-artifacts.html"/>
