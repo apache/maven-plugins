@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -596,19 +595,16 @@ public class DeployMojoTest
     {
         DeployMojo mojo = spy( new DeployMojo() );
 
-        ArtifactRepositoryLayout repositoryLayout = mock( ArtifactRepositoryLayout.class );
-        setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
-
         ArtifactRepository repository = mock( ArtifactRepository.class );
-        when( mojo.createDeploymentArtifactRepository( "altSnapshotDeploymentRepository", "http://localhost",
-                                                       repositoryLayout ) ).thenReturn( repository );
+        when( mojo.createDeploymentArtifactRepository( "altSnapshotDeploymentRepository", "http://localhost"
+                                                       ) ).thenReturn( repository );
 
         project.setVersion( "1.0-SNAPSHOT" );
 
         ProjectDeployerRequest pdr =
                         new ProjectDeployerRequest()
                             .setProject( project )
-                            .setAltDeploymentRepository( "altSnapshotDeploymentRepository::default::http://localhost" );
+                            .setAltDeploymentRepository( "altSnapshotDeploymentRepository::http://localhost" );
         assertEquals( repository,
                       mojo.getDeploymentRepository( pdr ));
     }
@@ -618,19 +614,15 @@ public class DeployMojoTest
     {
         DeployMojo mojo = spy( new DeployMojo() );
 
-        ArtifactRepositoryLayout repositoryLayout = mock( ArtifactRepositoryLayout.class );
-        setVariableValueToObject( mojo, "repositoryLayouts", Collections.singletonMap( "default", repositoryLayout ) );
-
         ArtifactRepository repository = mock( ArtifactRepository.class );
-        when( mojo.createDeploymentArtifactRepository( "altReleaseDeploymentRepository", "http://localhost",
-                                                       repositoryLayout ) ).thenReturn( repository );
+        when( mojo.createDeploymentArtifactRepository( "altReleaseDeploymentRepository", "http://localhost" ) ).thenReturn( repository );
 
         project.setVersion( "1.0" );
 
         ProjectDeployerRequest pdr =
                         new ProjectDeployerRequest()
                             .setProject( project )
-                            .setAltReleaseDeploymentRepository( "altReleaseDeploymentRepository::default::http://localhost" );
+                            .setAltReleaseDeploymentRepository( "altReleaseDeploymentRepository::http://localhost" );
 
         assertEquals( repository,
                       mojo.getDeploymentRepository( pdr ));

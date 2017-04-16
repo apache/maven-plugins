@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -55,7 +54,7 @@ public class DeployMojo
     extends AbstractDeployMojo
 {
 
-    private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)::(.+)" );
+    private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)" );
 
     /**
      * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready
@@ -91,12 +90,10 @@ public class DeployMojo
      * <dl>
      * <dt>id</dt>
      * <dd>The id can be used to pick up the correct credentials from the settings.xml</dd>
-     * <dt>layout</dt>
-     * <dd>Either <code>default</code> for the Maven2 layout or <code>legacy</code> for the Maven1 layout. Maven3 also
-     * uses the <code>default</code> layout.</dd>
      * <dt>url</dt>
      * <dd>The location of the repository</dd>
      * </dl>
+     * <b>Note: Since 3.0.0 the layout part has been removed.</b>
      */
     @Parameter( property = "altDeploymentRepository" )
     private String altDeploymentRepository;
@@ -247,12 +244,9 @@ public class DeployMojo
             else
             {
                 String id = matcher.group( 1 ).trim();
-                String layout = matcher.group( 2 ).trim();
-                String url = matcher.group( 3 ).trim();
+                String url = matcher.group( 2 ).trim();
 
-                ArtifactRepositoryLayout repoLayout = getLayout( layout );
-
-                repo = createDeploymentArtifactRepository( id, url, repoLayout );
+                repo = createDeploymentArtifactRepository( id, url );
             }
         }
 

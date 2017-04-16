@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.ModelBuildingException;
@@ -153,13 +152,6 @@ public class DeployFileMojo
      */
     @Parameter( property = "repositoryId", defaultValue = "remote-repository", required = true )
     private String repositoryId;
-
-    /**
-     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
-     */
-    @Deprecated
-    @Parameter( property = "repositoryLayout", defaultValue = "default" )
-    private String repositoryLayout;
 
     /**
      * URL where the artifact will be deployed. <br/>
@@ -341,9 +333,7 @@ public class DeployFileMojo
 
         initProperties();
 
-        ArtifactRepositoryLayout layout = getLayout( repositoryLayout );
-
-        ArtifactRepository deploymentRepository = createDeploymentArtifactRepository( repositoryId, url, layout );
+        ArtifactRepository deploymentRepository = createDeploymentArtifactRepository( repositoryId, url );
 
         String protocol = deploymentRepository.getProtocol();
 

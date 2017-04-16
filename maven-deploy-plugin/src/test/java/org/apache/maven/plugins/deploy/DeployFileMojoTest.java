@@ -267,31 +267,31 @@ public class DeployFileMojoTest
         assertTrue( file.exists() );
     }
 
-    public void testDeployIfRepositoryLayoutIsLegacy()
-        throws Exception
-    {
-        File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-legacy-repository-layout/plugin-config.xml" );
-
-        AbstractDeployMojo mojo = (AbstractDeployMojo) lookupMojo( "deploy-file", testPom );
-
-        assertNotNull( mojo );
-
-        String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
-
-        assertEquals( "legacy", repositoryLayout );
-
-        try
-        {
-            mojo.execute();
-            fail( "legacy is not supported anymore" );
-        }
-        catch ( MojoExecutionException e )
-        {
-            assertEquals( "Invalid repository layout: legacy", e.getMessage() );
-        }
-
-    }
-
+//    public void testDeployIfRepositoryLayoutIsLegacy()
+//        throws Exception
+//    {
+//        File testPom = new File( getBasedir(), "target/test-classes/unit/deploy-file-legacy-repository-layout/plugin-config.xml" );
+//
+//        AbstractDeployMojo mojo = (AbstractDeployMojo) lookupMojo( "deploy-file", testPom );
+//
+//        assertNotNull( mojo );
+//
+//        String repositoryLayout = (String) getVariableValueFromObject(  mojo, "repositoryLayout" );
+//
+//        assertEquals( "legacy", repositoryLayout );
+//
+//        try
+//        {
+//            mojo.execute();
+//            fail( "legacy is not supported anymore" );
+//        }
+//        catch ( MojoExecutionException e )
+//        {
+//            assertEquals( "Invalid repository layout: legacy", e.getMessage() );
+//        }
+//
+//    }
+//
     private void addFileToList( File file, List<String> fileList )
     {
         if ( !file.isDirectory() )

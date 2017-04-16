@@ -19,17 +19,13 @@ package org.apache.maven.plugins.deploy;
  * under the License.
  */
 
-import java.util.Map;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
@@ -38,12 +34,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 public abstract class AbstractDeployMojo
     extends AbstractMojo
 {
-
-    /**
-     * Map that contains the layouts.
-     */
-    @Component( role = ArtifactRepositoryLayout.class )
-    private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     /**
      * Flag whether Maven is currently in online/offline mode.
@@ -80,19 +70,6 @@ public abstract class AbstractDeployMojo
         }
     }
 
-    ArtifactRepositoryLayout getLayout( String id )
-        throws MojoExecutionException
-    {
-        ArtifactRepositoryLayout layout = repositoryLayouts.get( id );
-
-        if ( layout == null )
-        {
-            throw new MojoExecutionException( "Invalid repository layout: " + id );
-        }
-
-        return layout;
-    }
-
     boolean isUpdateReleaseInfo()
     {
         return updateReleaseInfo;
@@ -103,10 +80,9 @@ public abstract class AbstractDeployMojo
         return retryFailedDeploymentCount;
     }
 
-    protected ArtifactRepository createDeploymentArtifactRepository( String id, String url,
-                                                                     ArtifactRepositoryLayout layout )
+    protected ArtifactRepository createDeploymentArtifactRepository( String id, String url )
     {
-        return new MavenArtifactRepository( id, url, layout, new ArtifactRepositoryPolicy(),
+        return new MavenArtifactRepository( id, url, new DefaultRepositoryLayout(), new ArtifactRepositoryPolicy(),
                                             new ArtifactRepositoryPolicy() );
     }
     
