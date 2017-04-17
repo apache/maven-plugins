@@ -232,6 +232,10 @@ under the License.
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
+          <!--
+            ! Can be removed if we have updated to ASF parent version 19. 
+           -->
+          <version>0.12</version>
           <configuration>
             <excludes combine.children="append">
               <exclude>src/it/staging-dependencies/repo/**/*</exclude>
