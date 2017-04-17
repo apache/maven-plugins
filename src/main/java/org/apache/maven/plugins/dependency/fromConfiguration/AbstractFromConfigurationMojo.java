@@ -106,15 +106,15 @@ public abstract class AbstractFromConfigurationMojo
 
     @Component
     private ArtifactResolver artifactResolver;
-    
+
     @Component
     private RepositoryManager repositoryManager;
-    
+
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
-    
+
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
-    
+
     // artifactItems is filled by either field injection or by setArtifact()
     protected void verifyRequirements() throws MojoFailureException
     {
@@ -142,7 +142,7 @@ public abstract class AbstractFromConfigurationMojo
         boolean removeVersion = processArtifactItemsRequest.isRemoveVersion(), prependGroupId =
             processArtifactItemsRequest.isPrependGroupId(), useBaseVersion =
             processArtifactItemsRequest.isUseBaseVersion();
-        
+
         boolean removeClassifier = processArtifactItemsRequest.isRemoveClassifier();
 
         if ( artifactItems == null || artifactItems.size() < 1 )
@@ -218,9 +218,9 @@ public abstract class AbstractFromConfigurationMojo
              * artifactResolutionResult.getArtifactResolutionNodes().iterator(); while ( iter.hasNext() ) {
              * ResolutionNode node = (ResolutionNode) iter.next(); artifact = node.getArtifact(); }
              */
-            
+
             ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
-            
+
             if ( localRepositoryDirectory != null )
             {
                 buildingRequest =
@@ -233,7 +233,7 @@ public abstract class AbstractFromConfigurationMojo
             coordinate.setArtifactId( artifactItem.getArtifactId() );
             coordinate.setVersion( artifactItem.getVersion() );
             coordinate.setClassifier( artifactItem.getClassifier() );
-            
+
             final String extension;
             ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler( artifactItem.getType() );
             if ( artifactHandler != null )
@@ -245,7 +245,7 @@ public abstract class AbstractFromConfigurationMojo
                 extension = artifactItem.getType();
             }
             coordinate.setExtension( extension );
-            
+
             artifact = artifactResolver.resolveArtifact( buildingRequest, coordinate ).getArtifact();
         }
         catch ( ArtifactResolverException e )
@@ -407,7 +407,7 @@ public abstract class AbstractFromConfigurationMojo
             if ( tokens.length < 3 || tokens.length > 5 )
             {
                 throw new MojoFailureException(
-                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging][:classifier] "
+                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging[:classifier]] "
                         + artifact );
             }
             String groupId = tokens[0];
@@ -425,14 +425,14 @@ public abstract class AbstractFromConfigurationMojo
             {
                 classifier = null;
             }
-    
+
             ArtifactItem artifactItem = new ArtifactItem();
             artifactItem.setGroupId( groupId );
             artifactItem.setArtifactId( artifactId );
             artifactItem.setVersion( version );
             artifactItem.setType( packaging );
             artifactItem.setClassifier( classifier );
-            
+
             setArtifactItems( Collections.singletonList( artifactItem ) );
         }
     }
