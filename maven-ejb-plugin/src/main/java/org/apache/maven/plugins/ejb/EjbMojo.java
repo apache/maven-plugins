@@ -66,9 +66,17 @@ public class EjbMojo
     private static final List<String> DEFAULT_INCLUDES_LIST =
         Collections.unmodifiableList( Lists.newArrayList( "**/**" ) );
 
+    //@formatter:off
     private static final List<String> DEFAULT_CLIENT_EXCLUDES_LIST =
-        Collections.unmodifiableList( Lists.newArrayList( "**/*Bean.class", "**/*CMP.class", "**/*Session.class",
-                                                          "**/package.html" ) );
+        Collections.unmodifiableList( 
+            Lists.newArrayList( 
+              "**/*Bean.class", 
+              "**/*CMP.class", 
+              "**/*Session.class",
+              "**/package.html" 
+            )
+        );
+    //@formatter:on
 
     /**
      * Default value for {@link #clientClassifier}
@@ -295,7 +303,7 @@ public class EjbMojo
                 throw new MojoExecutionException( message );
             }
 
-            //TODO: We should check the attached artifacts to be sure we don't attach 
+            // TODO: We should check the attached artifacts to be sure we don't attach
             // the same file twice...
             projectHelper.attachArtifact( project, EJB_TYPE, getClassifier(), jarFile );
         }
