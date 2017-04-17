@@ -72,41 +72,46 @@ public class TestCopyMojo
     public ArtifactItem getSingleArtifactItem( boolean removeVersion, boolean useBaseVersion )
         throws MojoExecutionException
     {
-        List<ArtifactItem> list = mojo.getProcessedArtifactItems(new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion, false ));
+        List<ArtifactItem> list =
+            mojo.getProcessedArtifactItems( new ProcessArtifactItemsRequest( removeVersion, false, useBaseVersion,
+                                                                             false ) );
         return list.get( 0 );
     }
 
-    public void testSetArtifactWithoutPackaging() throws Exception
+    public void testSetArtifactWithoutPackaging()
+        throws Exception
     {
-        mojo.setArtifact("a:b:c");
-        ArtifactItem item = mojo.getArtifactItems().get(0);
-        assertEquals("a", item.getGroupId());
-        assertEquals("b", item.getArtifactId());
-        assertEquals("c", item.getVersion());
-        assertEquals("jar", item.getType());
-        assertNull(item.getClassifier());
+        mojo.setArtifact( "a:b:c" );
+        ArtifactItem item = mojo.getArtifactItems().get( 0 );
+        assertEquals( "a", item.getGroupId() );
+        assertEquals( "b", item.getArtifactId() );
+        assertEquals( "c", item.getVersion() );
+        assertEquals( "jar", item.getType() );
+        assertNull( item.getClassifier() );
     }
 
-    public void testSetArtifactWithoutClassifier() throws Exception
+    public void testSetArtifactWithoutClassifier()
+        throws Exception
     {
-        mojo.setArtifact("a:b:c:d");
-        ArtifactItem item = mojo.getArtifactItems().get(0);
-        assertEquals("a", item.getGroupId());
-        assertEquals("b", item.getArtifactId());
-        assertEquals("c", item.getVersion());
-        assertEquals("d", item.getType());
-        assertNull(item.getClassifier());
+        mojo.setArtifact( "a:b:c:d" );
+        ArtifactItem item = mojo.getArtifactItems().get( 0 );
+        assertEquals( "a", item.getGroupId() );
+        assertEquals( "b", item.getArtifactId() );
+        assertEquals( "c", item.getVersion() );
+        assertEquals( "d", item.getType() );
+        assertNull( item.getClassifier() );
     }
 
-    public void testSetArtifact() throws Exception
+    public void testSetArtifact()
+        throws Exception
     {
-        mojo.setArtifact("a:b:c:d:e");
-        ArtifactItem item = mojo.getArtifactItems().get(0);
-        assertEquals("a", item.getGroupId());
-        assertEquals("b", item.getArtifactId());
-        assertEquals("c", item.getVersion());
-        assertEquals("d", item.getType());
-        assertEquals("e", item.getClassifier());
+        mojo.setArtifact( "a:b:c:d:e" );
+        ArtifactItem item = mojo.getArtifactItems().get( 0 );
+        assertEquals( "a", item.getGroupId() );
+        assertEquals( "b", item.getArtifactId() );
+        assertEquals( "c", item.getVersion() );
+        assertEquals( "d", item.getType() );
+        assertEquals( "e", item.getClassifier() );
     }
 
     public void testGetArtifactItems()
@@ -254,22 +259,23 @@ public class TestCopyMojo
     }
 
     public void testCopyStripClassifierSetInMojo()
-            throws Exception
-        {
-            List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-            
-            ArtifactItem item = list.get( 0 );
-            item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
-            mojo.setStripClassifier( true );
+        throws Exception
+    {
+        List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
-            mojo.setArtifactItems( createArtifactItemArtifacts( list ) );
+        ArtifactItem item = list.get( 0 );
+        item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
+        mojo.setStripClassifier( true );
 
-            mojo.execute();
-            assertEquals( DependencyUtil.getFormattedFileName( item.getArtifact(), false, false, false, true ), item.getDestFileName() );
+        mojo.setArtifactItems( createArtifactItemArtifacts( list ) );
 
-            assertFilesExist( list, true );
-        }
-    
+        mojo.execute();
+        assertEquals( DependencyUtil.getFormattedFileName( item.getArtifact(), false, false, false, true ),
+                      item.getDestFileName() );
+
+        assertFilesExist( list, true );
+    }
+
     public void testNonClassifierStrip()
         throws Exception
     {
@@ -771,7 +777,9 @@ public class TestCopyMojo
        
     }    
 
-    private List<Dependency> createDependencyArtifacts( List<Dependency> items ) throws IOException {
+    private List<Dependency> createDependencyArtifacts( List<Dependency> items )
+        throws IOException
+    {
         stubFactory.setCreateFiles( true );
         for ( Dependency item : items )
         {
@@ -793,7 +801,8 @@ public class TestCopyMojo
         return items;
     }
 
-    private ArtifactItem createArtifact( ArtifactItem item ) throws IOException
+    private ArtifactItem createArtifact( ArtifactItem item )
+        throws IOException
     {
         stubFactory.setCreateFiles( true );
         
