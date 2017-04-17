@@ -52,9 +52,10 @@ public class UnpackMojo
     private File markersDirectory;
 
     /**
-     * A comma separated list of file patterns to include when unpacking the artifact. i.e. **\/*.xml,**\/*.properties
-     * NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name
-     * );)
+     * A comma separated list of file patterns to include when unpacking the artifact. i.e.
+     * <code>**&#47;*.xml,**&#47;*.properties</code>
+     * NOTE: Excludes patterns override the includes.
+     * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
      * @since 2.0-alpha-5
      */
@@ -63,8 +64,9 @@ public class UnpackMojo
 
     /**
      * A comma separated list of file patterns to exclude when unpacking the artifact. i.e. **\/*.xml,**\/*.properties
-     * NOTE: Excludes patterns override the includes. (component code = return isIncluded( name ) AND !isExcluded( name
-     * );)
+     * <code>**&#47;*.xml,**&#47;*.properties</code>
+     * NOTE: Excludes patterns override the includes.
+     * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
      * @since 2.0-alpha-5
      */
@@ -73,7 +75,7 @@ public class UnpackMojo
 
     /**
      * The artifact to unpack from command line. A string of the form
-     * groupId:artifactId:version[:packaging[:classifier]]. Use {@link #artifactItems} within the
+     * <code>groupId:artifactId:version[:packaging[:classifier]]</code>. Use {@link #artifactItems} within the
      * POM configuration.
      */
     @SuppressWarnings( "unused" ) //marker-field, setArtifact(String) does the magic

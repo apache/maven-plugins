@@ -128,9 +128,7 @@ public abstract class AbstractFromConfigurationMojo
      * Preprocesses the list of ArtifactItems. This method defaults the outputDirectory if not set and creates the
      * output Directory if it doesn't exist.
      *
-     * @param removeVersion remove the version from the filename.
-     * @param prependGroupId prepend the groupId to the filename.
-     * @param useBaseVersion use the baseVersion of the artifact instead of version for the filename.
+     * @param processArtifactItemsRequest preprocessing instructions
      * @return An ArrayList of preprocessed ArtifactItems
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem

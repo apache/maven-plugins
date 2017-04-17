@@ -163,11 +163,10 @@ public class BuildClasspathMojo
     private RepositoryManager repositoryManager; 
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
+     * Main entry into mojo. Gets the list of dependencies and iterates to create a classpath.
      *
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see #getDependencies
-     * @see #copyArtifact(Artifact, boolean)
+     * @see #getResolvedDependencies(boolean)
      */
     @Override
     protected void doExecute()
@@ -429,7 +428,7 @@ public class BuildClasspathMojo
     }
 
     /**
-     * @param theCpFile the outputFile to set
+     * @param outputFile the outputFile to set
      */
     public void setOutputFile( File outputFile )
     {

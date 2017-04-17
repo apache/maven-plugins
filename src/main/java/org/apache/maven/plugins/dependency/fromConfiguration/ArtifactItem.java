@@ -156,7 +156,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param artifactId
+     * @param artifact
      *            The artifactId to set.
      */
     public void setArtifactId( String artifact )
@@ -263,8 +263,8 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param location
-     *            The location to set.
+     * @param outputDirectory
+     *            The outputDirectory to set.
      */
     public void setOutputDirectory( File outputDirectory )
     {
@@ -314,8 +314,8 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param overWriteSnapshots
-     *            The overWriteSnapshots to set.
+     * @param overWrite
+     *            The overWrite to set.
      */
     public void setOverWrite( String overWrite )
     {

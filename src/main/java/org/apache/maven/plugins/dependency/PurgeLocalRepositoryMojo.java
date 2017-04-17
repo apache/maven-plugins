@@ -395,7 +395,7 @@ public class PurgeLocalRepositoryMojo
      * Convert a groupId:artifactId:version to a file system path
      *
      * @param gav, the groupId:artifactId:version string
-     * @return
+     * @return the corresponding path
      */
     private String gavToPath( String gav )
     {
@@ -422,7 +422,7 @@ public class PurgeLocalRepositoryMojo
      *
      * @param dependencyArtifacts The dependency artifacts to use as a reference if we're excluding transitive
      *            dependencies
-     * @return
+     * @return the created filter
      */
     private TransformableFilter createPurgeArtifactsFilter( Set<Artifact> dependencyArtifacts )
     {
