@@ -72,8 +72,9 @@ public class UnpackMojo
     private String excludes;
 
     /**
-     * The artifact to unpack from commandLine.
-     * Use {@link #artifactItems} within the pom-configuration.
+     * The artifact to unpack from command line. A string of the form
+     * groupId:artifactId:version[:packaging[:classifier]]. Use {@link #artifactItems} within the
+     * POM configuration.
      */
     @SuppressWarnings( "unused" ) //marker-field, setArtifact(String) does the magic
     @Parameter( property = "artifact" )
@@ -96,7 +97,7 @@ public class UnpackMojo
         {
             return;
         }
-        
+
         verifyRequirements();
 
         List<ArtifactItem> processedItems = getProcessedArtifactItems( false );
@@ -124,7 +125,7 @@ public class UnpackMojo
         throws MojoExecutionException
     {
         MarkerHandler handler = new UnpackFileMarkerHandler( artifactItem, this.markersDirectory );
-        
+
         unpack( artifactItem.getArtifact(), artifactItem.getType(), artifactItem.getOutputDirectory(),
                 artifactItem.getIncludes(), artifactItem.getExcludes(), artifactItem.getEncoding() );
         handler.setMarker();

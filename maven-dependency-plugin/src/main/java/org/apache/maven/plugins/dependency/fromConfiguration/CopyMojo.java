@@ -53,7 +53,7 @@ public class CopyMojo
      */
     @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
     private boolean stripClassifier = false;
-    
+
     /**
      * Prepend artifact groupId during copy
      * @since 2.7
@@ -69,8 +69,9 @@ public class CopyMojo
     private boolean useBaseVersion = false;
 
     /**
-     * The artifact to copy from commandLine.
-     * Use {@link #artifactItems} within the pom-configuration.
+     * The artifact to copy from command line. A string of the form
+     * groupId:artifactId:version[:packaging[:classifier]]. Use {@link #artifactItems} within the
+     * POM configuration.
      */
     @SuppressWarnings( "unused" ) //marker-field, setArtifact(String) does the magic
     @Parameter( property = "artifact" )
@@ -160,7 +161,7 @@ public class CopyMojo
     {
         this.stripVersion = stripVersion;
     }
-    
+
     /**
      * @return Returns the stripClassifier.
      */

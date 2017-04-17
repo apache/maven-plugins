@@ -76,6 +76,39 @@ public class TestCopyMojo
         return list.get( 0 );
     }
 
+    public void testSetArtifactWithoutPackaging() throws Exception
+    {
+        mojo.setArtifact("a:b:c");
+        ArtifactItem item = mojo.getArtifactItems().get(0);
+        assertEquals("a", item.getGroupId());
+        assertEquals("b", item.getArtifactId());
+        assertEquals("c", item.getVersion());
+        assertEquals("jar", item.getType());
+        assertNull(item.getClassifier());
+    }
+
+    public void testSetArtifactWithoutClassifier() throws Exception
+    {
+        mojo.setArtifact("a:b:c:d");
+        ArtifactItem item = mojo.getArtifactItems().get(0);
+        assertEquals("a", item.getGroupId());
+        assertEquals("b", item.getArtifactId());
+        assertEquals("c", item.getVersion());
+        assertEquals("d", item.getType());
+        assertNull(item.getClassifier());
+    }
+
+    public void testSetArtifact() throws Exception
+    {
+        mojo.setArtifact("a:b:c:d:e");
+        ArtifactItem item = mojo.getArtifactItems().get(0);
+        assertEquals("a", item.getGroupId());
+        assertEquals("b", item.getArtifactId());
+        assertEquals("c", item.getVersion());
+        assertEquals("d", item.getType());
+        assertEquals("e", item.getClassifier());
+    }
+
     public void testGetArtifactItems()
         throws Exception
     {
