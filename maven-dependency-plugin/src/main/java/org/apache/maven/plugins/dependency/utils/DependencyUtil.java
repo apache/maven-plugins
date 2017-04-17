@@ -47,7 +47,7 @@ public final class DependencyUtil
      * @param artifact File to be formatted.
      * @param removeVersion Specifies if the version should be removed from the file name.
      * @return Formatted file name in the format artifactId-[version]-[classifier].[type]
-     * @see {@link #getFormattedFileName(Artifact, boolean, boolean)}.
+     * @see #getFormattedFileName(Artifact, boolean, boolean)
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion )
     {

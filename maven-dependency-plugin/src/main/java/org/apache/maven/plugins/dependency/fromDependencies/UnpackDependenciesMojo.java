@@ -48,7 +48,7 @@ public class UnpackDependenciesMojo
 {
     /**
      * A comma separated list of file patterns to include when unpacking the
-     * artifact.  i.e. <code>**\/*.xml,**\/*.properties</code>
+     * artifact.  i.e. <code>**&#47;*.xml,**&#47;*.properties</code>
      * NOTE: Excludes patterns override the includes.
      * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
@@ -59,7 +59,7 @@ public class UnpackDependenciesMojo
 
     /**
      * A comma separated list of file patterns to exclude when unpacking the
-     * artifact.  i.e. <code>**\/*.xml,**\/*.properties</code>
+     * artifact.  i.e. <code>**&#47;*.xml,**&#47;*.properties</code>
      * NOTE: Excludes patterns override the includes.
      * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
@@ -80,9 +80,8 @@ public class UnpackDependenciesMojo
      * through each one passing it to DependencyUtil.unpackFile().
      *
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see #getDependencies
-     * @see DependencyUtil#unpackFile(Artifact, File, File, ArchiverManager,
-     *      Log)
+     * @see #getDependencySets(boolean)
+     * @see #unpack(Artifact, File, String)
      */
     @Override
     protected void doExecute()

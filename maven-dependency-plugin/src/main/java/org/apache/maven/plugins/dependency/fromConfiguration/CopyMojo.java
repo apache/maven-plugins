@@ -125,8 +125,7 @@ public class CopyMojo
      *
      * @param artifactItem containing the information about the Artifact to copy.
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see DependencyUtil#copyFile(File, File, Log)
-     * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
+     * @see #copyFile(File, File)
      */
     protected void copyArtifact( ArtifactItem artifactItem )
         throws MojoExecutionException

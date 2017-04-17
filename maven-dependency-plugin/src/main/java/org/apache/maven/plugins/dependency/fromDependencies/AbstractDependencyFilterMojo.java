@@ -433,7 +433,7 @@ public abstract class AbstractDependencyFilterMojo
      * Filter the marked dependencies
      *
      * @param artifacts
-     * @return
+     * @return status set
      * @throws MojoExecutionException
      */
     protected DependencyStatusSets filterMarkedDependencies( Set<Artifact> artifacts )

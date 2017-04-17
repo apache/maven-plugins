@@ -108,8 +108,8 @@ public class CopyDependenciesMojo
      * calling copyArtifact.
      *
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see #getDependencies
-     * @see #copyArtifact(Artifact, boolean)
+     * @see #getDependencySets(boolean, boolean)
+     * @see #copyArtifact(Artifact, boolean, boolean, boolean, boolean)
      */
     @Override
     protected void doExecute()
@@ -210,8 +210,7 @@ public class CopyDependenciesMojo
      * @param prependGroupId specifies if the groupId should be prepend to the file while copying.
      * @param useBaseVersion specifies if the baseVersion of the artifact should be used instead of the version.
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see DependencyUtil#copyFile(File, File, Log)
-     * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
+     * @see #copyArtifact(Artifact, boolean, boolean, boolean, boolean)
      */
     protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId,
                                  boolean useBaseVersion )
@@ -232,8 +231,8 @@ public class CopyDependenciesMojo
      * @param useBaseVersion specifies if the baseVersion of the artifact should be used instead of the version.
      * @param removeClassifier specifies if the classifier should be removed from the file name when copying.
      * @throws MojoExecutionException with a message if an error occurs.
-     * @see DependencyUtil#copyFile(File, File, Log)
-     * @see DependencyUtil#getFormattedFileName(Artifact, boolean)
+     * @see #copyFile(File, File)
+     * @see DependencyUtil#getFormattedOutputDirectory(boolean, boolean, boolean, boolean, boolean, File, Artifact)
      */
     protected void copyArtifact( Artifact artifact, boolean removeVersion, boolean prependGroupId,
                                  boolean useBaseVersion, boolean removeClassifier )
