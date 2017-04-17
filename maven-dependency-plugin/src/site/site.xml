@@ -45,7 +45,7 @@ under the License.
       <item name="Purging local repository dependencies" href="examples/purging-local-repository.html"/>
     </menu>
     <menu name="Resources">
-      <item name="Dependency Mechanism" href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html"/>
+      <item name="Dependency Mechanism" href="/guides/introduction/introduction-to-dependency-mechanism.html"/>
     </menu>
   </body>
 </project>
