@@ -170,13 +170,14 @@ public class WarProjectPackagingTask
         else if ( !context.getWebappSourceDirectory().getAbsolutePath().equals( context.getWebappDirectory().getPath() ) )
         {
             context.getLog().info( "Copying webapp resources [" + context.getWebappSourceDirectory() + "]" );
+            context.getLog().debug( "isFilteringDeploymentDescriptors: [" + context.isFilteringDeploymentDescriptors() + "]" );
             final PathSet sources =
                 getFilesToIncludes( context.getWebappSourceDirectory(), context.getWebappSourceIncludes(),
                                     context.getWebappSourceExcludes(), context.isWebappSourceIncludeEmptyDirectories() );
 
             try
             {
-                copyFiles( id, context, context.getWebappSourceDirectory(), sources, false );
+                 copyFiles( id, context, context.getWebappSourceDirectory(), sources, context.isFilteringDeploymentDescriptors() );
             }
             catch ( IOException e )
             {
