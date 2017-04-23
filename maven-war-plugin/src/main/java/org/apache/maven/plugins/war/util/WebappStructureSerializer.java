@@ -20,7 +20,16 @@ package org.apache.maven.plugins.war.util;
  */
 
 import com.thoughtworks.xstream.XStream;
+import static com.thoughtworks.xstream.XStream.PRIORITY_NORMAL;
+import static com.thoughtworks.xstream.XStream.PRIORITY_VERY_LOW;
+import com.thoughtworks.xstream.converters.basic.IntConverter;
+import com.thoughtworks.xstream.converters.basic.StringConverter;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
+import com.thoughtworks.xstream.converters.collections.MapConverter;
+import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
+import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.mapper.Mapper;
 import org.apache.maven.model.Dependency;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -44,8 +53,21 @@ public class WebappStructureSerializer
 
     static
     {
-        XSTREAM = new XStream( new DomDriver() );
-
+        XSTREAM = new XStream( new DomDriver() )
+        {
+            @Override
+            protected void setupConverters()
+            {
+                Mapper mapper = getMapper();
+                ReflectionProvider reflectionProvider = getReflectionProvider();
+                registerConverter(
+                    new ReflectionConverter( mapper, reflectionProvider ), PRIORITY_VERY_LOW );
+                registerConverter( new StringConverter(), PRIORITY_NORMAL );
+                registerConverter( new IntConverter(), PRIORITY_NORMAL );
+                registerConverter( new CollectionConverter( mapper ), PRIORITY_NORMAL );
+                registerConverter( new MapConverter( mapper ), PRIORITY_NORMAL );
+            }
+        };
         // Register aliases
         XSTREAM.alias( "webapp-structure", WebappStructure.class );
         XSTREAM.alias( "path-set", PathSet.class );
