@@ -85,7 +85,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <!-- because i don't know your distribution management, deployments will be written to ${basedir}/target -->
-          <altDeploymentRepository>mine::default::file://${basedir}/target</altDeploymentRepository>
+          <altDeploymentRepository>mine::file://${basedir}/target</altDeploymentRepository>
         </configuration>
       </plugin>
     </plugins>
