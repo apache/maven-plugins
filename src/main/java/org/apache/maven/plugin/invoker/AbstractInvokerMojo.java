@@ -80,6 +80,7 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.scriptinterpreter.RunErrorException;
 import org.apache.maven.shared.scriptinterpreter.RunFailureException;
 import org.apache.maven.shared.scriptinterpreter.ScriptRunner;
+import org.apache.maven.shared.utils.logging.MessageBuilder;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
@@ -107,6 +108,11 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 public abstract class AbstractInvokerMojo
     extends AbstractMojo
 {
+    /**
+     * The zero-based column index where to print the invoker result.
+     */
+    private static final int RESULT_COLUMN = 60;
+
     /**
      * Flag used to suppress certain invocations. This is useful in tailoring the build using profiles.
      *
@@ -1517,7 +1523,8 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + buffer().success( "SUCCESS " ) + formatTime( buildJob.getTime() ) );
+                        getLog().info( pad( buildJob ).success( "SUCCESS" ).a( ' ' )
+                            + formatTime( buildJob.getTime() ) );
                     }
                 }
                 else
@@ -1526,7 +1533,8 @@ public abstract class AbstractInvokerMojo
 
                     if ( !suppressSummaries )
                     {
-                        getLog().info( ".." + buffer().warning( "SKIPPED " ) + formatTime( buildJob.getTime() ) );
+                        getLog().info( pad( buildJob ).warning( "SKIPPED" ).a( ' ' )
+                            + formatTime( buildJob.getTime() ) );
                     }
                 }
             }
@@ -1565,7 +1573,7 @@ public abstract class AbstractInvokerMojo
 
                 if ( !suppressSummaries )
                 {
-                    getLog().info( ".." + buffer().warning( "SKIPPED " ) + " due to " + message.toString() );
+                    getLog().info( pad( buildJob ).warning( "SKIPPED" ) + " due to " + message.toString() );
                 }
 
                 // Abuse failureMessage, the field in the report which should contain the reason for skipping
@@ -1580,7 +1588,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + buffer().failure( "ERROR " ) + formatTime( buildJob.getTime() ) );
+                getLog().info( pad( buildJob ).failure( "ERROR" ).a( ' ' ) + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
@@ -1591,7 +1599,7 @@ public abstract class AbstractInvokerMojo
 
             if ( !suppressSummaries )
             {
-                getLog().info( ".." + buffer().failure( "FAILED " ) + formatTime( buildJob.getTime() ) );
+                getLog().info( pad( buildJob ).failure( "FAILED" ).a( ' ' ) + formatTime( buildJob.getTime() ) );
                 getLog().info( "  " + e.getMessage() );
             }
         }
@@ -1600,6 +1608,27 @@ public abstract class AbstractInvokerMojo
             deleteInterpolatedPomFile( interpolatedPomFile );
             writeBuildReport( buildJob );
         }
+    }
+
+    private MessageBuilder pad( BuildJob buildJob )
+    {
+        MessageBuilder buffer = buffer( 128 );
+
+        buffer.a( "          " );
+        buffer.a( buildJob.getProject() );
+        buffer.a( ' ' );
+
+        int l = 11 + buildJob.getProject().length();
+
+        if ( l < RESULT_COLUMN )
+        {
+            for ( int i = RESULT_COLUMN - l; i > 0; i-- )
+            {
+                buffer.a( '.' );
+            }
+        }
+
+        return buffer.a( ' ' );
     }
 
     /**
