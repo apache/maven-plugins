@@ -58,13 +58,13 @@
                 org.apache.maven.plugins:maven-resources-plugin:3.0.2:resources
               </process-resources>
               <compile>
-                org.apache.maven.plugins:maven-compiler-plugin:3.6.0:compile
+                org.apache.maven.plugins:maven-compiler-plugin:3.5.1:compile
               </compile>
               <process-test-resources>
                 org.apache.maven.plugins:maven-resources-plugin:3.0.2:testResources
               </process-test-resources>
               <test-compile>
-                org.apache.maven.plugins:maven-compiler-plugin:3.6.0:testCompile
+                org.apache.maven.plugins:maven-compiler-plugin:3.5.1:testCompile
               </test-compile>
               <test>
                 org.apache.maven.plugins:maven-surefire-plugin:2.19.1:test
