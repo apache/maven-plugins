@@ -146,13 +146,6 @@ public class EarMojo
     private boolean skipClassPathModification;
 
     /**
-     * The location of the manifest file to be used within the EAR file. If no value if specified, the default location
-     * in the workDirectory is taken. If the file does not exist, a manifest will be generated automatically.
-     */
-    @Parameter
-    private File manifestFile;
-
-    /**
      * The location of a custom application.xml file to be used within the EAR file.
      */
     @Parameter
@@ -379,9 +372,6 @@ public class EarMojo
             archiver.setArchiver( theJarArchiver );
             archiver.setOutputFile( earFile );
 
-            // Include custom manifest if necessary
-            includeCustomManifestFile();
-
             getLog().debug( "Excluding " + Arrays.asList( getPackagingExcludes() ) + " from the generated EAR." );
             getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
 
@@ -600,24 +590,6 @@ public class EarMojo
     private static File buildDestinationFile( File buildDir, String uri )
     {
         return new File( buildDir, uri );
-    }
-
-    private void includeCustomManifestFile()
-    {
-        if ( manifestFile == null )
-        {
-            manifestFile = new File( getWorkDirectory(), "META-INF/MANIFEST.MF" );
-        }
-
-        if ( !manifestFile.exists() )
-        {
-            getLog().info( "Could not find manifest file: " + manifestFile + " - Generating one" );
-        }
-        else
-        {
-            getLog().info( "Including custom manifest file [" + manifestFile + "]" );
-            archive.setManifestFile( manifestFile );
-        }
     }
 
     /**
