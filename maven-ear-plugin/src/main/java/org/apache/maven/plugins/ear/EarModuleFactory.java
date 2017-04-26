@@ -19,13 +19,13 @@ package org.apache.maven.plugins.ear;
  * under the License.
  */
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.plugins.ear.util.JavaEEVersion;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Builds an {@link EarModule} based on an <tt>Artifact</tt>.
@@ -38,23 +38,9 @@ public final class EarModuleFactory
     /**
      * The list of artifact types.
      */
-    public static final List<String> STANDARD_ARTIFACT_TYPE;
-
-    static
-    {
-        List<String> temp = new ArrayList<String>();
-        temp.add( "jar" );
-        temp.add( "ejb" );
-        temp.add( "par" );
-        temp.add( "ejb-client" );
-        temp.add( "app-client" );
-        temp.add( "rar" );
-        temp.add( "war" );
-        temp.add( "sar" );
-        temp.add( "wsr" );
-        temp.add( "har" );
-        STANDARD_ARTIFACT_TYPE = Collections.unmodifiableList( temp );
-    }
+    public static final List<String> STANDARD_ARTIFACT_TYPE =
+        Collections.unmodifiableList( Arrays.asList( "jar", "ejb", "par", "ejb-client", "app-client", "rar", "war",
+                                                     "sar", "wsr", "har" ) );
 
     /**
      * Creates a new {@link EarModule} based on the specified {@link Artifact} and the specified execution
@@ -71,8 +57,9 @@ public final class EarModuleFactory
      */
     // CHECKSTYLE_OFF: LineLength
     public static EarModule newEarModule( Artifact artifact, JavaEEVersion javaEEVersion, String defaultLibBundleDir,
-                                          Boolean includeInApplicationXml, ArtifactTypeMappingService typeMappingService )
-    // CHECKSTYLE_ON: LineLength
+                                          Boolean includeInApplicationXml,
+                                          ArtifactTypeMappingService typeMappingService )
+        // CHECKSTYLE_ON: LineLength
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)
