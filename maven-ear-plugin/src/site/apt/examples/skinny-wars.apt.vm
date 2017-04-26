@@ -114,9 +114,3 @@ Creating Skinny WARs
  Also, if you inspect the <<<MANIFEST.MF>>> of the WARs you will notice that the
  <<<Class-Path>>> entry has been modified and now has a reference to
  <<<lib/shared-jar-1.0.0.jar>>>.
-
-
-* Alternatives
-
- Our users have submitted information about how to deal with skinny wars using Maven on
- {{{http://docs.codehaus.org/display/MAVENUSER/Solving+the+Skinny+Wars+problem}the Wiki}}.
