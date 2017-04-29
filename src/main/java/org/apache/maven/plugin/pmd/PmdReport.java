@@ -182,6 +182,29 @@ public class PmdReport
     private boolean skipPmdError;
 
     /**
+     * Enables the analysis cache, which speeds up PMD. This
+     * requires a cache file, that contains the results of the last
+     * PMD run. Thus the cache is only effective, if this file is
+     * not cleaned between runs.
+     *
+     * @since 3.8
+     */
+    @Parameter( property = "pmd.analysisCache", defaultValue = "false" )
+    private boolean analysisCache;
+
+    /**
+     * The location of the analysis cache, if it is enabled.
+     * This file contains the results of the last PMD run and must not be cleaned
+     * between consecutive PMD runs. Otherwise the cache is not in use.
+     * If the file doesn't exist, PMD executes as if there is no cache enabled and
+     * all files are analyzed. Otherwise only changed files will be analyzed again.
+     *
+     * @since 3.8
+     */
+    @Parameter( property = "pmd.analysisCacheLocation", defaultValue = "${project.build.directory}/pmd/pmd.cache" )
+    private String analysisCacheLocation;
+
+    /**
      * {@inheritDoc}
      */
     public String getName( Locale locale )
@@ -622,6 +645,12 @@ public class PmdReport
         }
 
         configuration.setBenchmark( benchmark );
+
+        if ( analysisCache )
+        {
+            configuration.setAnalysisCacheLocation( analysisCacheLocation );
+            getLog().debug( "Using analysis cache location: " + analysisCacheLocation );
+        }
 
         return configuration;
     }

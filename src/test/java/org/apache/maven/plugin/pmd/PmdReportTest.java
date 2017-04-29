@@ -91,6 +91,24 @@ public class PmdReportTest
         assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L45" ) );
     }
 
+    public void testDefaultConfigurationWithAnalysisCache()
+            throws Exception
+    {
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/default-configuration/jxr-files" ),
+                                          new File( getBasedir(), "target/test/unit/pmd-with-analysis-cache-plugin-config/target/site" ) );
+
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-with-analysis-cache-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // check if the PMD analysis cache file has been generated
+        File cacheFile = new File( getBasedir(), "target/test/unit/pmd-with-analysis-cache-plugin-config/target/pmd/pmd.cache" );
+        assertTrue( FileUtils.fileExists( cacheFile.getAbsolutePath() ) );
+    }
+
     public void testJavascriptConfiguration()
         throws Exception
     {
