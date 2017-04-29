@@ -445,8 +445,8 @@ public class PmdReport
     private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources )
             throws MavenReportException
     {
-        RuleSetFactory ruleSetFactory = new RuleSetFactory();
-        ruleSetFactory.setMinimumPriority( RulePriority.valueOf( this.minimumPriority ) );
+        RuleSetFactory ruleSetFactory = new RuleSetFactory( RuleSetFactory.class.getClassLoader(),
+                RulePriority.valueOf( this.minimumPriority ), false, true );
         RuleContext ruleContext = new RuleContext();
 
         try

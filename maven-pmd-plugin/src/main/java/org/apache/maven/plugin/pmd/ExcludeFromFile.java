@@ -33,7 +33,7 @@ public interface ExcludeFromFile<D>
      * @param excludeFromFailureFile the path to the properties file
      * @throws MojoExecutionException if the properties file couldn't be loaded
      */
-    void loadExcludeFromFailuresData( final String excludeFromFailureFile ) throws MojoExecutionException;
+    void loadExcludeFromFailuresData( String excludeFromFailureFile ) throws MojoExecutionException;
 
     /**
      * Determines how many exclusions are considered.
@@ -48,6 +48,6 @@ public interface ExcludeFromFile<D>
      * @param errorDetail the violation to check
      * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
      */
-    boolean isExcludedFromFailure( final D errorDetail );
+    boolean isExcludedFromFailure( D errorDetail );
 
 }
