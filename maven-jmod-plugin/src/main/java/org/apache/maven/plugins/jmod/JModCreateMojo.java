@@ -213,16 +213,6 @@ public class JModCreateMojo
             cmd.createArg().setValue( SystemUtils.OS_NAME );
         }
 
-        cmd.createArg().setValue( "--os-version" );
-        if ( osVersion != null )
-        {
-            cmd.createArg().setValue( osVersion );
-        }
-        else
-        {
-            cmd.createArg().setValue( SystemUtils.OS_VERSION );
-        }
-
         if ( classPath != null )
         {
             cmd.createArg().setValue( "--class-path" );
