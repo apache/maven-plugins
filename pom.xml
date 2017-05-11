@@ -212,7 +212,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-tree</artifactId>
-      <version>3.0</version>
+      <version>3.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -222,7 +222,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-artifact-transfer</artifactId>
-      <version>0.9.1-SNAPSHOT</version>
+      <version>0.9.1</version>
     </dependency>
 
     <dependency>
