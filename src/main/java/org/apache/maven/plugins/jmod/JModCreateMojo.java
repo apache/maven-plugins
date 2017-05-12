@@ -91,12 +91,6 @@ public class JModCreateMojo
     private String osName;
 
     /**
-     * <code>--os-version &lt;os-version&gt;</code> Operating system version.
-     */
-    @Parameter
-    private String osVersion;
-
-    /**
      * Define the modulepath for the <code>jmod</code> call. <code>--module-path &lt;path&gt;</code>
      */
     // TODO: check if this target/classes folder?
