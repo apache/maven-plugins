@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.invoker;
+package org.apache.maven.plugins.invoker;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,6 +22,8 @@ package org.apache.maven.plugin.invoker;
 import static org.junit.Assert.assertEquals;
 import java.util.Properties;
 
+import org.apache.maven.plugins.invoker.InvokerProperties;
+import org.apache.maven.plugins.invoker.Selector;
 import org.junit.Test;
 
 public class SelectorTest
