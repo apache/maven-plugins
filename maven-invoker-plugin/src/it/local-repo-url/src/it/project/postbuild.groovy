@@ -24,7 +24,7 @@ File interpolatedSettings = new File( basedir, "../interpolated-settings.xml" )
 assert interpolatedSettings.isFile()
 
 def filename = new File( basedir, "../../../../../local-repo" ).canonicalPath
-// Convert URL, see org.apache.maven.plugin.invoker.AbstractInvokerMojo.toUrl(String)
+// Convert URL, see org.apache.maven.plugins.invoker.AbstractInvokerMojo.toUrl(String)
 String url = "file://" + new File(  filename  ).toURI().path
 if ( url.endsWith( "/" ) )
 {

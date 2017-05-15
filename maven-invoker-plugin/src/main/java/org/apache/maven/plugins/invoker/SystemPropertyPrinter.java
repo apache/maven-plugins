@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.invoker;
+package org.apache.maven.plugins.invoker;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

@@ -32,7 +32,7 @@ under the License.
   <defaults>
     <default>
       <key>package</key>
-      <value>org.apache.maven.plugin.invoker.model</value>
+      <value>org.apache.maven.plugins.invoker.model</value>
     </default>
   </defaults>
   <versionDefinition>
