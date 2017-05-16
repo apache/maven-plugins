@@ -19,8 +19,6 @@ package org.apache.maven.plugins.deploy;
  * under the License.
  */
 
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -193,10 +191,6 @@ public class DeployMojo
         try
         {
             projectDeployer.deploy( pbr, pir, repo );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoFailureException( "IOException", e );
         }
         catch ( NoFileAssignedException e )
         {
