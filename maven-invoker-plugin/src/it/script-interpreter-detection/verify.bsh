@@ -24,10 +24,10 @@ import java.util.regex.*;
 try
 {
     String[] files = {
-            "src/it/beanshell/target/prebuild.bsh",
-            "src/it/beanshell/target/postbuild.bsh",
-            "src/it/groovy/target/prebuild.groovy",
-            "src/it/groovy/target/postbuild.groovy",
+            "target/its/beanshell/target/prebuild.bsh",
+            "target/its/beanshell/target/postbuild.bsh",
+            "target/its/groovy/target/prebuild.groovy",
+            "target/its/groovy/target/postbuild.groovy",
       };
     for ( String file : files )
     {

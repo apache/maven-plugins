@@ -26,8 +26,8 @@ import org.codehaus.plexus.util.*;
 try
 {
     String[] expected = {
-            "src/it/script-ret-true/target/touch.txt",
-            "src/it/script-ret-quiet/target/touch.txt",
+            "target/its/script-ret-true/target/touch.txt",
+            "target/its/script-ret-quiet/target/touch.txt",
       };
     for ( String file : expected )
     {
@@ -41,9 +41,9 @@ try
     }
 
     String[] unexpected = {
-            "src/it/script-ret-false/target/touch.txt",
-            "src/it/script-ret-other/target/touch.txt",
-            "src/it/script-throws/target/touch.txt",
+            "target/its/script-ret-false/target/touch.txt",
+            "target/its/script-ret-other/target/touch.txt",
+            "target/its/script-throws/target/touch.txt",
       };
     for ( String file : unexpected )
     {

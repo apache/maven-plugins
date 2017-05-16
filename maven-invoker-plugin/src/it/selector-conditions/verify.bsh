@@ -24,8 +24,8 @@ import java.util.regex.*;
 try
 {
     String[] expected = {
-            "src/it/jre-version-match/target/touch.txt",
-            "src/it/os-family-match/target/touch.txt",
+            "target/its/jre-version-match/target/touch.txt",
+            "target/its/os-family-match/target/touch.txt",
       };
     for ( String file : expected )
     {
@@ -39,8 +39,8 @@ try
     }
 
     String[] unexpected = {
-            "src/it/jre-version-mismatch/target/touch.txt",
-            "src/it/os-family-mismatch/target/touch.txt",
+            "target/its/jre-version-mismatch/target/touch.txt",
+            "target/its/os-family-mismatch/target/touch.txt",
       };
     for ( String file : unexpected )
     {

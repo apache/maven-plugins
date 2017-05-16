@@ -37,7 +37,7 @@ try
     File localRepoPathOfThisBuild = new File( basedir.getParentFile().getParentFile(), "local-repo" );
     System.out.println("Local repository of this build: " + localRepoPathOfThisBuild);
 
-    File textFile = new File( basedir, "src/it/project/target/local-repo-path.txt" );
+    File textFile = new File( basedir, "target/its/project/target/local-repo-path.txt" );
     BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( textFile ), "UTF-8" ) );
     File localRepoPathOfSubBuild = new File( reader.readLine() );
     reader.close();
