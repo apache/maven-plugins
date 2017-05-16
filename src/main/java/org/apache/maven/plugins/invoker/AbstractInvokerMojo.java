@@ -169,13 +169,13 @@ public abstract class AbstractInvokerMojo
     private boolean disableReports;
 
     /**
-     * Directory to which projects should be cloned prior to execution. If not specified, each integration test will be
-     * run in the directory in which the corresponding IT POM was found. In this case, you most likely want to configure
-     * your SCM to ignore <code>target</code> and <code>build.log</code> in the test's base directory.
+     * Directory to which projects should be cloned prior to execution. If set to {@code null}, each integration test 
+     * will be run in the directory in which the corresponding IT POM was found. In this case, you most likely want to
+     * configure your SCM to ignore <code>target</code> and <code>build.log</code> in the test's base directory.
      *
      * @since 1.1
      */
-    @Parameter
+    @Parameter( defaultValue = "${project.build.directory}/its" )
     private File cloneProjectsTo;
 
     // CHECKSTYLE_OFF: LineLength
@@ -198,7 +198,7 @@ public abstract class AbstractInvokerMojo
      *
      * @since 1.6
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter( defaultValue = "true" )
     private boolean cloneClean;
 
     /**
