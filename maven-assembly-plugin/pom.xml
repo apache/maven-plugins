@@ -368,7 +368,7 @@ under the License.
 
       <properties>
         <!-- See https://issues.apache.org/jira/browse/MINVOKER-213 -->
-        <invokerPluginVersion>3.0.0-SNAPSHOT</invokerPluginVersion>
+        <invokerPluginVersion>3.0.0</invokerPluginVersion>
         <test.remote.repo.url>file://${project.build.testOutputDirectory}/remote-repository</test.remote.repo.url>
         <it.streamLogs>false</it.streamLogs>
         <testVersion>${project.version}</testVersion>

@@ -23,8 +23,8 @@ boolean result = true;
 
 try
 {
-    File a = new File( basedir, "assembly/target/assembly-1-bin/file.txt");
-    File b = new File( basedir, "assembly/target/assembly-1-bin/b/file.txt");
+    File a = new File( basedir, "target/its/target/assembly-1-bin/file.txt");
+    File b = new File( basedir, "target/its/target/assembly-1-bin/b/file.txt");
     
     if(result && !a.exists() ) {
         System.out.println( "File: " + a + " should have been generated, but was not." );
