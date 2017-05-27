@@ -373,8 +373,9 @@ public class DefaultCheckstyleExecutor
             Thread.currentThread().setContextClassLoader( checkstyleClassLoader );
             String configFile = getConfigFile( request );
             Properties overridingProperties = getOverridingProperties( request );
-            Configuration config = ConfigurationLoader
-                .loadConfiguration( configFile, new PropertiesExpander( overridingProperties ) );
+            Configuration config =
+                ConfigurationLoader.loadConfiguration( configFile, new PropertiesExpander( overridingProperties ),
+                                                       request.isOmitIgnoredModules() );
             String effectiveEncoding = StringUtils.isNotEmpty( request.getEncoding() ) ? request.getEncoding() : System
                 .getProperty( "file.encoding", "UTF-8" );
             

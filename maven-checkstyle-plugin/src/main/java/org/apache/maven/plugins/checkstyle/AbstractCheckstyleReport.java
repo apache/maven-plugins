@@ -416,6 +416,15 @@ public abstract class AbstractCheckstyleReport
     private List<String> treeWalkerNames;
 
     /**
+     * Specifies whether modules with a configured severity of <code>ignore</code> should be omitted during Checkstyle
+     * invocation.
+     * 
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean omitIgnoredModules;
+
+    /**
      */
     @Component
     protected ResourceManager locator;
@@ -470,7 +479,8 @@ public abstract class AbstractCheckstyleReport
         try
         {
             CheckstyleExecutorRequest request = createRequest().setLicenseArtifacts( collectArtifacts( "license" ) )
-                            .setConfigurationArtifacts( collectArtifacts( "configuration" ) );
+                            .setConfigurationArtifacts( collectArtifacts( "configuration" ) )
+                            .setOmitIgnoredModules( omitIgnoredModules );
 
             CheckstyleResults results = checkstyleExecutor.executeCheckstyle( request );
 

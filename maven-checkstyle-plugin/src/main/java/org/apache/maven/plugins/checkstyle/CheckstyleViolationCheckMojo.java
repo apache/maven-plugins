@@ -474,6 +474,15 @@ public class CheckstyleViolationCheckMojo
                     defaultValue = "${project.build.directory}/checkstyle-rules.xml" )
     private File rulesFiles;
 
+    /**
+     * Specifies whether modules with a configured severity of <code>ignore</code> should be omitted during Checkstyle
+     * invocation.
+     * 
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean omitIgnoredModules;
+
     private ByteArrayOutputStream stringOutputStream;
 
     /** {@inheritDoc} */
@@ -535,7 +544,8 @@ public class CheckstyleViolationCheckMojo
                     .setPropertyExpansion( propertyExpansion )
                     .setHeaderLocation( headerLocation ).setLicenseArtifacts( collectArtifacts( "license" ) )
                     .setCacheFile( cacheFile ).setSuppressionsFileExpression( suppressionsFileExpression )
-                    .setEncoding( encoding ).setPropertiesLocation( propertiesLocation );
+                    .setEncoding( encoding ).setPropertiesLocation( propertiesLocation )
+                    .setOmitIgnoredModules( omitIgnoredModules );
                 checkstyleExecutor.executeCheckstyle( request );
 
             }
