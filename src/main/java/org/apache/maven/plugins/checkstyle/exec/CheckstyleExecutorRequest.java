@@ -122,7 +122,12 @@ public class CheckstyleExecutorRequest
      * @since 2.12.1
      */
     private List<Artifact> configurationArtifacts;
-    
+
+    /**
+     * @since 3.0.0
+     */
+    private boolean omitIgnoredModules;
+
     /**
      * Constructor.
      */
@@ -383,9 +388,10 @@ public class CheckstyleExecutorRequest
         return propertiesLocation;
     }
 
-    public void setPropertiesLocation( String propertiesLocation )
+    public CheckstyleExecutorRequest setPropertiesLocation( String propertiesLocation )
     {
         this.propertiesLocation = propertiesLocation;
+        return this;
     }
 
     /**
@@ -503,6 +509,26 @@ public class CheckstyleExecutorRequest
     public CheckstyleExecutorRequest setIncludeTestResources( boolean includeTestResources )
     {
         this.includeTestResources = includeTestResources;
+        return this;
+    }
+
+    /**
+     * Returns true if ignored modules (modules with severity 'ignore') should be omitted.
+     *
+     * @return <code>true</code> if ignored modules should be omitted.
+     */
+    public boolean isOmitIgnoredModules()
+    {
+        return omitIgnoredModules;
+    }
+
+    /**
+     * @param omitIgnoredModules Whether to omit ignored modules (modules with severity 'ignore').
+     * @return This object.
+     */
+    public CheckstyleExecutorRequest setOmitIgnoredModules( boolean omitIgnoredModules )
+    {
+        this.omitIgnoredModules = omitIgnoredModules;
         return this;
     }
 }
