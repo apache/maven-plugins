@@ -75,9 +75,19 @@ public class AntRunMojo
     public static final String MAVEN_REFID_PREFIX = "maven.";
 
     /**
-     * The refid used to store the Maven project object in the Ant build.
+     * The refid used to store the Maven project object in the Ant build. If this reference is retrieved in a custom
+     * task, note that this will be a clone of the Maven project, and not the project itself, when the task is called
+     * through an <code>ant</code> task.
      */
     public static final String DEFAULT_MAVEN_PROJECT_REFID = MAVEN_REFID_PREFIX + "project";
+
+    /**
+     * The refid used to store an object of type {@link MavenAntRunProject} containing the Maven project object in the
+     * Ant build. This is useful when a custom task needs to change the Maven project, because, unlike
+     * {@link #DEFAULT_MAVEN_PROJECT_REFID}, this makes sure to reference the same instance of the Maven project in all
+     * cases.
+     */
+    public static final String DEFAULT_MAVEN_PROJECT_REF_REFID = MAVEN_REFID_PREFIX + "project.ref";
 
     /**
      * The refid used to store the Maven project object in the Ant build.
@@ -251,7 +261,7 @@ public class AntRunMojo
 
         try
         {
-            Project antProject = new MavenAntRunProject();
+            Project antProject = new Project();
             File antBuildFile = this.writeTargetToProjectFile();
             ProjectHelper.configureProject( antProject, antBuildFile );
             antProject.init();
@@ -301,7 +311,8 @@ public class AntRunMojo
             antProject.addReference( MAVEN_REFID_PREFIX + "plugin.classpath",
                                      getPathFromArtifacts( pluginArtifacts, antProject ) );
 
-            antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, getMavenProject() );
+            antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, mavenProject );
+            antProject.addReference( DEFAULT_MAVEN_PROJECT_REF_REFID, new MavenAntRunProject( mavenProject ) );
             antProject.addReference( DEFAULT_MAVEN_PROJECT_HELPER_REFID, projectHelper );
             antProject.addReference( MAVEN_REFID_PREFIX + "local.repository", localRepository );
             initMavenTasks( antProject );

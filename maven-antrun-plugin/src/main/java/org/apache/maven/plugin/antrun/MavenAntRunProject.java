@@ -19,36 +19,28 @@ package org.apache.maven.plugin.antrun;
  * under the License.
  */
 
-import java.util.Map;
-
-import org.apache.tools.ant.Project;
+import org.apache.maven.project.MavenProject;
 
 /**
- * Extension of the Ant's Project representation, where all sub-projects created from this project also share the same
- * Maven references.
- * <p>
- * When Ant is performing some tasks (e.g. invoking the <code>ant</code> taskdef), it works from a temporary sub-project
- * created from the main project. Since Maven is adding references to the main project, they need to be copied to any
- * sub-projects so that built-in antrun tasks still work correctly, even in a sub-project. An example of this is using
- * the <code>attachartifact</code> task in an external Ant <code>build.xml</code> called from the plugin.
+ * Encapsulates a Maven project with an unsupported clone operation. This makes sure that, when used as a reference in
+ * an Ant project, it is passed by reference to sub-projects when <code>inheritRefs</code> is set to <code>true</code>
+ * (which would otherwise pass a clone).
  * 
  * @author gboue
  */
-class MavenAntRunProject
-    extends Project
+public class MavenAntRunProject
 {
 
-    @Override
-    public void initSubProject( Project subProject )
+    private MavenProject mavenProject;
+
+    public MavenAntRunProject( MavenProject mavenProject )
     {
-        super.initSubProject( subProject );
-        for ( Map.Entry<String, Object> entry : getCopyOfReferences().entrySet() )
-        {
-            if ( entry.getKey().startsWith( AntRunMojo.MAVEN_REFID_PREFIX ) )
-            {
-                subProject.addReference( entry.getKey(), entry.getValue() );
-            }
-        }
+        this.mavenProject = mavenProject;
+    }
+
+    public MavenProject getMavenProject()
+    {
+        return mavenProject;
     }
 
 }

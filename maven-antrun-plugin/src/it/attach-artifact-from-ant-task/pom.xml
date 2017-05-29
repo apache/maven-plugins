@@ -45,7 +45,7 @@ under the License.
             </goals>
             <configuration>
               <target>
-                <ant antfile="build.xml" target="mytarget" />
+                <ant antfile="build.xml" target="mytarget" inheritrefs="true" />
                 <attachartifact file="test.txt" classifier="from-pom" />
               </target>
             </configuration>

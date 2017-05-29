@@ -20,6 +20,7 @@ package org.apache.maven.ant.tasks;
  */
 
 import org.apache.maven.plugin.antrun.AntRunMojo;
+import org.apache.maven.plugin.antrun.MavenAntRunProject;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.tools.ant.BuildException;
@@ -39,7 +40,7 @@ public class AttachArtifactTask
     /**
      * The refId of the Maven project.
      */
-    private String mavenProjectRefId = AntRunMojo.DEFAULT_MAVEN_PROJECT_REFID;
+    private String mavenProjectRefId = AntRunMojo.DEFAULT_MAVEN_PROJECT_REF_REFID;
 
     /**
      * The refId of the Maven project helper component.
@@ -84,7 +85,8 @@ public class AttachArtifactTask
             type = FileUtils.getExtension( file.getName() );
         }
 
-        MavenProject mavenProject = (MavenProject) this.getProject().getReference( mavenProjectRefId );
+        MavenProject mavenProject =
+            ( (MavenAntRunProject) this.getProject().getReference( mavenProjectRefId ) ).getMavenProject();
 
         if ( this.getProject().getReference( mavenProjectHelperRefId ) == null )
         {
