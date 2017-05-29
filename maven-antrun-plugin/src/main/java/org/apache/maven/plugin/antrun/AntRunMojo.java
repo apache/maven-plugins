@@ -68,15 +68,21 @@ import org.codehaus.plexus.util.StringUtils;
 public class AntRunMojo
     extends AbstractMojo
 {
+
     /**
-     * The refid used to store the Maven project object in the Ant build.
+     * The prefix of all refid used by the plugin.
      */
-    public static final String DEFAULT_MAVEN_PROJECT_REFID = "maven.project";
+    public static final String MAVEN_REFID_PREFIX = "maven.";
 
     /**
      * The refid used to store the Maven project object in the Ant build.
      */
-    public static final String DEFAULT_MAVEN_PROJECT_HELPER_REFID = "maven.project.helper";
+    public static final String DEFAULT_MAVEN_PROJECT_REFID = MAVEN_REFID_PREFIX + "project";
+
+    /**
+     * The refid used to store the Maven project object in the Ant build.
+     */
+    public static final String DEFAULT_MAVEN_PROJECT_HELPER_REFID = MAVEN_REFID_PREFIX + "project.helper";
 
     /**
      * The default target name.
@@ -245,7 +251,7 @@ public class AntRunMojo
 
         try
         {
-            Project antProject = new Project();
+            Project antProject = new MavenAntRunProject();
             File antBuildFile = this.writeTargetToProjectFile();
             ProjectHelper.configureProject( antProject, antBuildFile );
             antProject.init();
@@ -280,23 +286,24 @@ public class AntRunMojo
             p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
 
             /* maven.dependency.classpath it's deprecated as it's equal to maven.compile.classpath */
-            antProject.addReference( "maven.dependency.classpath", p );
-            antProject.addReference( "maven.compile.classpath", p );
+            antProject.addReference( MAVEN_REFID_PREFIX + "dependency.classpath", p );
+            antProject.addReference( MAVEN_REFID_PREFIX + "compile.classpath", p );
 
             p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
-            antProject.addReference( "maven.runtime.classpath", p );
+            antProject.addReference( MAVEN_REFID_PREFIX + "runtime.classpath", p );
 
             p = new Path( antProject );
             p.setPath( StringUtils.join( mavenProject.getTestClasspathElements().iterator(), File.pathSeparator ) );
-            antProject.addReference( "maven.test.classpath", p );
+            antProject.addReference( MAVEN_REFID_PREFIX + "test.classpath", p );
 
             /* set maven.plugin.classpath with plugin dependencies */
-            antProject.addReference( "maven.plugin.classpath", getPathFromArtifacts( pluginArtifacts, antProject ) );
+            antProject.addReference( MAVEN_REFID_PREFIX + "plugin.classpath",
+                                     getPathFromArtifacts( pluginArtifacts, antProject ) );
 
             antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, getMavenProject() );
             antProject.addReference( DEFAULT_MAVEN_PROJECT_HELPER_REFID, projectHelper );
-            antProject.addReference( "maven.local.repository", localRepository );
+            antProject.addReference( MAVEN_REFID_PREFIX + "local.repository", localRepository );
             initMavenTasks( antProject );
 
             // The Ant project needs actual properties vs. using expression evaluator when calling an external build
