@@ -44,7 +44,7 @@ under the License.
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
 
                 <dependencyfilesets prefix="test."/>
                 <mkdir dir="target/dependencies"/>
@@ -58,7 +58,7 @@ under the License.
                   <fileset refid="test.maven.project.dependencies"/>
                 </copy>
 
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

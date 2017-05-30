@@ -53,13 +53,13 @@ under the License.
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
 
                 <ant antfile="${basedir}/build.xml" inheritRefs="true">
                   <target name="test"/>
                 </ant>
 
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

@@ -35,6 +35,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -57,7 +58,7 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Maven AntRun Mojo. <br/>
  * This plugin provides the capability of calling Ant tasks from a POM by running the nested Ant tasks inside the
- * &lt;tasks/&gt; parameter. It is encouraged to move the actual tasks to a separate build.xml file and call that file
+ * &lt;target/&gt; parameter. It is encouraged to move the actual tasks to a separate build.xml file and call that file
  * with an &lt;ant/&gt; task.
  *
  * @author <a href="mailto:kenney@apache.org">Kenney Westerhof</a>
@@ -172,8 +173,10 @@ public class AntRunMojo
      * The XML for the Ant task. You can add anything you can add between &lt;target&gt; and &lt;/target&gt; in a
      * build.xml.
      *
-     * @deprecated Use target instead
+     * @deprecated Use {@link #target} instead. For version 3.0.0, this parameter is only defined to break the build if
+     *             you use it!
      */
+    @Deprecated
     @Parameter
     private PlexusConfiguration tasks;
 
@@ -190,8 +193,10 @@ public class AntRunMojo
      * This folder is added to the list of those folders containing source to be compiled. Use this if your Ant script
      * generates source code.
      *
-     * @deprecated Use the build-helper-maven-plugin to bind source directories
+     * @deprecated Use the <code>build-helper-maven-plugin</code> to bind source directories. For version 3.0.0, this
+     *             parameter is only defined to break the build if you use it!
      */
+    @Deprecated
     @Parameter( property = "sourceRoot" )
     private File sourceRoot;
 
@@ -199,8 +204,10 @@ public class AntRunMojo
      * This folder is added to the list of those folders containing source to be compiled for testing. Use this if your
      * Ant script generates test source code.
      *
-     * @deprecated Use the build-helper-maven-plugin to bind test source directories
+     * @deprecated Use the <code>build-helper-maven-plugin</code> to bind test source directories. For version 3.0.0,
+     *             this parameter is only defined to break the build if you use it!
      */
+    @Deprecated
     @Parameter( property = "testSourceRoot" )
     private File testSourceRoot;
 
@@ -232,8 +239,11 @@ public class AntRunMojo
 
     /** {@inheritDoc} */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
+        checkDeprecatedParameterUsage( tasks, "tasks", "target" );
+        checkDeprecatedParameterUsage( sourceRoot, "sourceRoot", "the build-helper-maven-plugin" );
+        checkDeprecatedParameterUsage( testSourceRoot, "testSourceRoot", "the build-helper-maven-plugin" );
         if ( skip )
         {
             getLog().info( "Skipping Antrun execution" );
@@ -241,12 +251,6 @@ public class AntRunMojo
         }
 
         MavenProject mavenProject = getMavenProject();
-
-        if ( tasks != null )
-        {
-            getLog().warn( "Parameter tasks is deprecated, use target instead" );
-            target = tasks;
-        }
 
         if ( target == null )
         {
@@ -362,17 +366,16 @@ public class AntRunMojo
         {
             throw new MojoExecutionException( "Error executing Ant tasks: " + e.getMessage(), e );
         }
+    }
 
-        if ( sourceRoot != null )
+    private void checkDeprecatedParameterUsage( Object parameter, String name, String replacement )
+        throws MojoFailureException
+    {
+        if ( parameter != null )
         {
-            getLog().info( "Registering compile source root " + sourceRoot );
-            getMavenProject().addCompileSourceRoot( sourceRoot.toString() );
-        }
-
-        if ( testSourceRoot != null )
-        {
-            getLog().info( "Registering compile test source root " + testSourceRoot );
-            getMavenProject().addTestCompileSourceRoot( testSourceRoot.toString() );
+            throw new MojoFailureException( "You are using '" + name + "' which has been removed"
+                + " from the maven-antrun-plugin. Please use '" + replacement
+                + "' and refer to the >>Major Version Upgrade to version 3.0.0<< " + "on the plugin site." );
         }
     }
 
@@ -465,15 +468,6 @@ public class AntRunMojo
             versionsBuffer.append( artifact.getVersion() ).append( File.pathSeparator );
         }
         antProject.setProperty( versionsPropertyName, versionsBuffer.toString() );
-
-        // Add properties in deprecated format to depenedency artifacts
-        // This should be removed in future versions of the antrun plugin.
-        for ( Artifact artifact : depArtifacts )
-        {
-            String propName = getDependencyArtifactPropertyName( artifact );
-
-            antProject.setProperty( propName, artifact.getFile().getPath() );
-        }
     }
 
     /**
@@ -506,28 +500,6 @@ public class AntRunMojo
             }
             mavenProperties.setProperty( key, (String) entry.getValue() );
         }
-    }
-
-    /**
-     * Prefix for legacy property format.
-     *
-     * @deprecated This should only be used for generating the old property format.
-     */
-    public static final String DEPENDENCY_PREFIX = "maven.dependency.";
-
-    /**
-     * Returns a property name for a dependency artifact. The name is in the format
-     * maven.dependency.groupId.artifactId[.classifier].type.path
-     *
-     * @param artifact {@link Artifact}
-     * @return property name
-     * @deprecated The dependency conflict ID should be used as the property name.
-     */
-    public static String getDependencyArtifactPropertyName( Artifact artifact )
-    {
-        return DEPENDENCY_PREFIX + artifact.getGroupId() + "." + artifact.getArtifactId()
-            + ( artifact.getClassifier() != null ? "." + artifact.getClassifier() : "" )
-            + ( artifact.getType() != null ? "." + artifact.getType() : "" ) + ".path";
     }
 
     /**
@@ -570,10 +542,6 @@ public class AntRunMojo
         xmlWriter.write( target, writer );
 
         StringBuilder antProjectConfig = new StringBuilder( writer.getBuffer() );
-
-        // replace deprecated tasks tag with standard Ant target
-        stringReplace( antProjectConfig, "<tasks", "<target" );
-        stringReplace( antProjectConfig, "</tasks", "</target" );
 
         antTargetName = target.getAttribute( "name" );
 

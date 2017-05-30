@@ -45,8 +45,8 @@ Referencing the Maven Classpaths
 <echo message="${D}{org.apache:common-util:jar:jdk14}"/> 
 ------
  
- <<Note:>> the old format "maven.dependency.groupId.artifactId[.classifier].type.path" has 
- been deprecated and should no longer be used.
+ <<Note:>> the old format "maven.dependency.groupId.artifactId[.classifier].type.path" is not supported as of version 
+ 3.0.0 of the plugin.
  
  You can also use these classpath references:
   

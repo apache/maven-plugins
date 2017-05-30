@@ -46,7 +46,7 @@ under the License.
           <execution>
             <phase>test</phase>
             <configuration>
-              <tasks>
+              <target>
 
                 <ant antfile="${basedir}/build.xml" inheritAll="true" inheritRefs="true">
                   <target name="test"/>
@@ -81,7 +81,7 @@ under the License.
                     </or>
                   </condition>
                 </fail>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

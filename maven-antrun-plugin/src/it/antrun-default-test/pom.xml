@@ -45,9 +45,9 @@ under the License.
         <artifactId>maven-antrun-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <tasks>
+          <target>
             <echo message="Hello World!"/>
-          </tasks>
+          </target>
         </configuration>
       </plugin>
     </plugins>

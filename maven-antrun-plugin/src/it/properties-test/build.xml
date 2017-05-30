@@ -42,9 +42,6 @@ under the License.
     <!-- Dependency artifact properties -->
     <echo message="junit:junit:jar : ${junit:junit:jar}"/>
     <fail unless="junit:junit:jar" message="Property not set \${junit:junit:jar}"/>
-    <echo message="maven.dependency.junit.junit.jar.path : ${maven.dependency.junit.junit.jar.path}"/>
-    <fail unless="maven.dependency.junit.junit.jar.path"
-          message="Property not set \${maven.dependency.junit.junit.jar.path}"/>
 
     <!-- Check that the build output dir is pointing to the correct location -->
     <property name="outputDir" location="./target/classes"/>

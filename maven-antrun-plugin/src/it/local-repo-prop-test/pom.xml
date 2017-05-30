@@ -45,7 +45,7 @@ under the License.
         <artifactId>maven-antrun-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <tasks>
+          <target>
             <echo message="${localRepository}"/>
             <fail message="localRepository property not set">
               <condition>
@@ -62,7 +62,7 @@ under the License.
                 </not>
               </condition>
             </fail>
-          </tasks>
+          </target>
         </configuration>
       </plugin>
     </plugins>

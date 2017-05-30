@@ -49,8 +49,7 @@ under the License.
             <id>compile</id>
             <phase>compile</phase>
             <configuration>
-              <sourceRoot>target/generated/src/main/java</sourceRoot>
-              <tasks>
+              <target>
 
                 <path id="classpath">
                   <path refid="maven.compile.classpath"/>
@@ -67,7 +66,7 @@ under the License.
                   <target name="test"/>
                 </ant>
 
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

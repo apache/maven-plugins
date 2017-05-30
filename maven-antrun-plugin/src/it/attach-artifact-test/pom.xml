@@ -44,14 +44,14 @@ under the License.
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <zip destfile="junk.zip"
                      basedir="."
                      includes="*.xml"
                     />
                 <attachartifact file="junk.zip" classifier="foo" type="zip"/>
                 <attachartifact file="junk.zip" type="zip"/>
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

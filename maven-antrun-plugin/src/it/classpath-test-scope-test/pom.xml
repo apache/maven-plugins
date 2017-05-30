@@ -48,7 +48,7 @@ under the License.
           <execution>
             <phase>test</phase>
             <configuration>
-              <tasks>
+              <target>
                 <property name="test.classpath" refid="maven.test.classpath"/>
                 <echo>${test.classpath}</echo>
                 <fail message="Test classpath doesn't contain test scoped dependencies">
@@ -58,7 +58,7 @@ under the License.
                     </not>
                   </condition>
                 </fail>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

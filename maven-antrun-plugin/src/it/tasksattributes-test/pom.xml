@@ -43,9 +43,9 @@ under the License.
             <id>if</id>
             <phase>compile</phase>
             <configuration>
-              <tasks if="maven.test.skip">
+              <target if="maven.test.skip">
                 <echo>[ANTRUN-OUTPUT-MARKER:IF]</echo>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
@@ -55,9 +55,9 @@ under the License.
             <id>unless</id>
             <phase>compile</phase>
             <configuration>
-              <tasks unless="maven.test.skip">
+              <target unless="maven.test.skip">
                 <echo>[ANTRUN-OUTPUT-MARKER:UNLESS]</echo>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

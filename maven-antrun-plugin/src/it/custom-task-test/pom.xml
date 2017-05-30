@@ -47,7 +47,7 @@ under the License.
           <execution>
             <phase>test</phase>
             <configuration>
-              <tasks>
+              <target>
 
                 <echo message="basedir:${basedir}"/>
                 <echo message="sourceDirectory:${project.build.sourceDirectory}"/>
@@ -59,7 +59,7 @@ under the License.
                 </taskdef>
                 <test/>
 
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

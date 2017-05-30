@@ -44,11 +44,11 @@ under the License.
             <id>compile</id>
             <phase>compile</phase>
             <configuration>
-              <tasks>
+              <target>
                 <ant antfile="${basedir}/build.xml" inheritRefs="true">
                   <target name="test"/>
                 </ant>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

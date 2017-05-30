@@ -101,8 +101,8 @@ Usage
 
   If your Ant tasks generate additional source code that needs to be added 
   to the build, you can use the 
-  {{{http://mojo.codehaus.org/build-helper-maven-plugin/}build-helper-maven-plugin}}.  
-  The sourceRoot and testSourceRoot options of the antrun plugin have been deprecated.
+  {{{http://www.mojohaus.org/build-helper-maven-plugin/}build-helper-maven-plugin}}.  
+  The <<<sourceRoot>>> and <<<testSourceRoot>>> options of the antrun plugin are removed as of version 3.0.0.
 
 * Using Maven properties
 

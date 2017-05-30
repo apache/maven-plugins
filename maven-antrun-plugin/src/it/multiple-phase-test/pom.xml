@@ -43,9 +43,9 @@ under the License.
             </goals>
             <phase>validate</phase>
             <configuration>
-              <tasks>
+              <target>
                 <echo message="validate-phase" file="phase-1.txt"/>
-              </tasks>
+              </target>
             </configuration>
           </execution>
           <execution>
@@ -55,9 +55,9 @@ under the License.
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <tasks>
+              <target>
                 <echo message="generate-resources-phase" file="phase-2.txt"/>
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

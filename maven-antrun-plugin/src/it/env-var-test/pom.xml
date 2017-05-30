@@ -48,7 +48,7 @@ under the License.
           <execution>
             <phase>test</phase>
             <configuration>
-              <tasks>
+              <target>
                 <echo>user.home = ${user.home}</echo>
                 <fail message="user.home is not set">
                   <condition>
@@ -60,7 +60,7 @@ under the License.
                 <ant antfile="${basedir}/build.xml" inheritAll="true" inheritRefs="true">
                   <target name="test"/>
                 </ant>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

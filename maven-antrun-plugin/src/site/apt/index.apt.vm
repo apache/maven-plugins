@@ -45,6 +45,20 @@ ${project.name}
 
   * {{{./run-mojo.html}antrun:run}} runs Ant tasks for Maven.
 
+* Major Version Upgrade to version 3.0.0
+
+  Please note that the following parameters have been completely removed from the plugin configuration:
+
+   * <<<tasks>>>: use <<<target>>> instead;
+
+   * <<<sourceRoot>>> and <<<testSourceRoot>>>: you can use the 
+   {{{http://www.mojohaus.org/build-helper-maven-plugin/}build-helper-maven-plugin}} instead, with its 
+   {{{http://www.mojohaus.org/build-helper-maven-plugin/add-source-mojo.html}add-source}} and 
+   {{{http://www.mojohaus.org/build-helper-maven-plugin/add-test-source-mojo.html}add-test-source}} goals.
+
+  The format <<<maven.dependency.groupId.artifactId[.classifier].type.path>>> to reference the path of a project
+  dependency as an Ant property has been removed: use <<<groupId:artifactId:type[:classifier]>>> instead.
+
 * Usage
 
   General instructions on how to use the AntRun Plugin can be found on the {{{./usage.html}usage page}}. Some more

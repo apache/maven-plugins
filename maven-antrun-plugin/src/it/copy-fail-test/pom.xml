@@ -37,7 +37,7 @@ under the License.
         <artifactId>maven-antrun-plugin</artifactId>
         <version>@pom.version@</version>
         <configuration>
-          <tasks>
+          <target>
 
             <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy.xml" overwrite="true"
                   verbose="true" failonerror="true"/>
@@ -49,7 +49,7 @@ under the License.
             </copy>
             <copy file="${basedir}/pom.xml" tofile="${project.build.directory}/pom-copy2.xml"/>
 
-          </tasks>
+          </target>
         </configuration>
       </plugin>
     </plugins>

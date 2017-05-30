@@ -38,9 +38,9 @@ under the License.
         <version>@pom.version@</version>
         <configuration>
           <failOnError>false</failOnError>
-          <tasks>
+          <target>
             <fail>This is a failure</fail>
-          </tasks>
+          </target>
         </configuration>
       </plugin>
     </plugins>

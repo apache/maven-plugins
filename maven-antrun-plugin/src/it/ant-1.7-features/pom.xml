@@ -37,11 +37,11 @@
           <execution>
             <phase>test</phase>
             <configuration>
-              <tasks>
+              <target>
                 <echoxml file="echo.xml">
                   <test/>
                 </echoxml>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
