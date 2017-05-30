@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.antrun;
+package org.apache.maven.plugins.antrun;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -450,7 +450,6 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "settings.localRepository" ), localRepository.getBasedir() );
 
         // Add properties for depenedency artifacts
-        @SuppressWarnings( "unchecked" )
         Set<Artifact> depArtifacts = mavenProject.getArtifacts();
         for ( Artifact artifact : depArtifacts )
         {
@@ -565,7 +564,7 @@ public class AntRunMojo
     private File writeTargetToProjectFile()
         throws IOException, PlexusConfigurationException
     {
-        // Have to use an XML writer because in Maven 2.x the PlexusConfig toString() method loses XML attributes
+        // Have to use an XML writer because the PlexusConfig toString() method does not properly escape XML attributes
         StringWriter writer = new StringWriter();
         AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
         xmlWriter.write( target, writer );

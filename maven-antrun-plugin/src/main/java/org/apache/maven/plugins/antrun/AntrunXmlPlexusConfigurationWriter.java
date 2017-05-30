@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.antrun;
+package org.apache.maven.plugins.antrun;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,9 +27,8 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Write a plexus configuration to a stream
- * Note: This class was originally copied from plexus-container-default.  It is duplicated here
- * to maintain compatibility with both Maven 2.x and Maven 3.x.
+ * Write a plexus configuration to a stream Note: This class was originally copied from plexus-container-default. It is
+ * not possible to rely on {@link PlexusConfiguration#toString()} because it doesn't properly escape XML attributes.
  */
 public class AntrunXmlPlexusConfigurationWriter
 {

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.antrun;
+package org.apache.maven.plugins.antrun;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

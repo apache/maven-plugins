@@ -24,7 +24,7 @@ import org.apache.maven.ant.tasks.support.TypesArtifactFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
-import org.apache.maven.plugin.antrun.AntRunMojo;
+import org.apache.maven.plugins.antrun.AntRunMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -109,7 +109,7 @@ public class DependencyFilesetsTask
         MavenProject mavenProject = (MavenProject) this.getProject().getReference( "maven.project" );
 
         // Add filesets for depenedency artifacts
-        @SuppressWarnings( "unchecked" ) Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
+        Set<Artifact> depArtifacts = filterArtifacts( mavenProject.getArtifacts() );
 
         FileSet dependenciesFileSet = new FileSet();
         dependenciesFileSet.setProject( getProject() );

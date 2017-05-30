@@ -19,8 +19,8 @@ package org.apache.maven.ant.tasks;
  * under the License.
  */
 
-import org.apache.maven.plugin.antrun.AntRunMojo;
-import org.apache.maven.plugin.antrun.MavenAntRunProject;
+import org.apache.maven.plugins.antrun.AntRunMojo;
+import org.apache.maven.plugins.antrun.MavenAntRunProject;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.tools.ant.BuildException;

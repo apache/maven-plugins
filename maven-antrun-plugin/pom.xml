@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-antrun-plugin</artifactId>
-  <version>1.9-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven AntRun Plugin</name>
@@ -57,7 +57,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenVersion>3.0</mavenVersion>
   </properties>
 
   <dependencies>
@@ -68,7 +68,7 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
+      <artifactId>maven-core</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
