@@ -56,7 +56,8 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Maven AntRun Mojo. <br/>
+ * Maven AntRun Mojo.
+ * <p>
  * This plugin provides the capability of calling Ant tasks from a POM by running the nested Ant tasks inside the
  * &lt;target/&gt; parameter. It is encouraged to move the actual tasks to a separate build.xml file and call that file
  * with an &lt;ant/&gt; task.

@@ -28,7 +28,7 @@ import java.io.Writer;
 
 /**
  * Write a plexus configuration to a stream Note: This class was originally copied from plexus-container-default. It is
- * not possible to rely on {@link PlexusConfiguration#toString()} because it doesn't properly escape XML attributes.
+ * not possible to rely on PlexusConfiguration.toString() because it doesn't properly escape XML attributes.
  */
 public class AntrunXmlPlexusConfigurationWriter
 {
