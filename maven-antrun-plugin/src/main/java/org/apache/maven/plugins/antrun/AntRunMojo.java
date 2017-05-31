@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -126,6 +127,12 @@ public class AntRunMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
+
+    /**
+     * The Maven session object
+     */
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    private MavenSession session;
 
     /**
      * The Maven project helper object
@@ -421,9 +428,11 @@ public class AntRunMojo
     public void copyProperties( MavenProject mavenProject, Project antProject )
     {
         Properties mavenProps = mavenProject.getProperties();
-        for ( Map.Entry<?, ?> entry : mavenProps.entrySet() )
+        Properties userProps = session.getUserProperties();
+        for ( String key : mavenProps.stringPropertyNames() )
         {
-            antProject.setProperty( (String) entry.getKey(), (String) entry.getValue() );
+            String value = userProps.getProperty( key, mavenProps.getProperty( key ) );
+            antProject.setProperty( key, value );
         }
 
         // Set the POM file as the ant.file for the tasks run directly in Maven.
