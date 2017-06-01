@@ -716,7 +716,7 @@ public class ShadeMojo
         coordinate.setExtension( "jar" );
         coordinate.setClassifier( "sources" );
         
-        Artifact resolvedArtifact = null;
+        Artifact resolvedArtifact;
         try
         {
             resolvedArtifact =
@@ -725,6 +725,7 @@ public class ShadeMojo
         catch ( ArtifactResolverException e )
         {
             getLog().warn( "Could not get sources for " + artifact );
+            return null;
         }
 
         if ( resolvedArtifact.isResolved() )
