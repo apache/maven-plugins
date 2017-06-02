@@ -210,15 +210,29 @@ public class DefaultDependencyResolver
                                                final AssemblerConfigurationSource configSource )
         throws DependencyResolutionException
     {
+        /*
+         * Do not try to resolve artifacts that correspond to reactor projects.
+         */
+
+        final Set<Artifact> withoutReactors = new HashSet<Artifact>(dependencyArtifacts);
+        for (final MavenProject reactorProject : configSource.getReactorProjects()) {
+            final Artifact artifact = reactorProject.getArtifact();
+            if (artifact.isResolved()) {
+                throw new DependencyResolutionException("The given reactor artifact has not been resolved: " + artifact.getId(),
+                                                        null);
+            }
+            withoutReactors.remove(artifact);
+        }
+
         final MavenProject project = configSource.getProject();
 
-        ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+        final ArtifactResolutionRequest req = new ArtifactResolutionRequest();
         req.setLocalRepository( configSource.getLocalRepository() );
         req.setResolveRoot( false );
         req.setRemoteRepositories( repos );
         req.setResolveTransitively( true );
         req.setArtifact( project.getArtifact() );
-        req.setArtifactDependencies( dependencyArtifacts );
+        req.setArtifactDependencies( withoutReactors );
         req.setManagedVersionMap( project.getManagedVersionMap() );
         req.setCollectionFilter( filter );
         req.setOffline( configSource.getMavenSession().isOffline() );
@@ -227,9 +241,7 @@ public class DefaultDependencyResolver
         req.setMirrors( configSource.getMavenSession().getRequest().getMirrors() );
         req.setProxies( configSource.getMavenSession().getRequest().getProxies() );
 
-        ArtifactResolutionResult result;
-
-        result = resolver.resolve( req );
+        final ArtifactResolutionResult result = resolver.resolve( req );
         if ( result.hasExceptions() )
         {
             throw new DependencyResolutionException( "Failed to resolve dependencies for assembly: ",
@@ -240,7 +252,16 @@ public class DefaultDependencyResolver
 
         FilterUtils.reportFilteringStatistics( Collections.singleton( filter ), getLogger() );
 
-        return result.getArtifacts();
+        /*
+         * Add the original reactor artifacts to the resolved dependencies.
+         */
+
+        final Set<Artifact> results = new HashSet<Artifact>(result.getArtifacts());
+        for (final MavenProject reactorProject : configSource.getReactorProjects()) {
+            results.add(reactorProject.getArtifact());
+        }
+
+        return results;
     }
 
     void updateRepositoryResolutionRequirements( final Assembly assembly, final ResolutionManagementInfo requirements )
