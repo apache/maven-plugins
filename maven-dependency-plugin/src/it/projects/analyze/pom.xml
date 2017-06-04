@@ -60,9 +60,6 @@
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
           <configuration>
-            <usedDependencies>
-              <usedDependency>org.apache.maven:maven-artifact</usedDependency>
-            </usedDependencies>
            <outputXML>true</outputXML>
            <scriptableOutput>true</scriptableOutput>
            <verbose>true</verbose>
