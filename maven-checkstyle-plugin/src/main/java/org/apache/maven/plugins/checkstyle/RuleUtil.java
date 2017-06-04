@@ -161,7 +161,7 @@ public final class RuleUtil
     {
         private final String rule;
 
-        public RuleMatcher( String rule )
+        RuleMatcher( String rule )
         {
             this.rule = rule;
         }
@@ -177,7 +177,7 @@ public final class RuleUtil
     {
         private final String packageName;
 
-        public PackageMatcher( String packageName )
+        PackageMatcher( String packageName )
         {
             this.packageName = packageName;
         }

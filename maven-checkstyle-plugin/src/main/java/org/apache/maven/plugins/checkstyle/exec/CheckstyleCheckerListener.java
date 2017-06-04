@@ -93,7 +93,7 @@ public class CheckstyleCheckerListener
     }
 
     /**
-     * @param severityLevel
+     * @param severityLevel The severity level of the events to listen to.
      */
     public void setSeverityLevelFilter( SeverityLevel severityLevel )
     {
@@ -101,7 +101,7 @@ public class CheckstyleCheckerListener
     }
 
     /**
-     * @return
+     * @return The severity level of the events to listen to.
      */
     public SeverityLevel getSeverityLevelFilter()
     {
@@ -173,7 +173,7 @@ public class CheckstyleCheckerListener
     }
 
     /**
-     * @return
+     * @return The results of Checkstyle invocation.
      */
     public CheckstyleResults getResults()
     {
@@ -182,7 +182,7 @@ public class CheckstyleCheckerListener
     }
 
     /**
-     * @param results
+     * @param results The results of Checkstyle invocation.
      */
     public void setResults( CheckstyleResults results )
     {
@@ -191,6 +191,7 @@ public class CheckstyleCheckerListener
 
     /**
      * @since 2.5
+     * @return The configuration of Checkstyle to use.
      */
     public Configuration getCheckstyleConfiguration()
     {
@@ -198,6 +199,7 @@ public class CheckstyleCheckerListener
     }
 
     /**
+     * @param checkstyleConfiguration The configuration of Checkstyle to use.
      * @since 2.5
      */
     public void setCheckstyleConfiguration( Configuration checkstyleConfiguration )

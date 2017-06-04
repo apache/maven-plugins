@@ -33,8 +33,8 @@ public interface CheckstyleExecutor
     /**
      * @param request {@link CheckstyleExecutorRequest}
      * @return {@link CheckstyleResults}
-     * @throws CheckstyleExecutorException
-     * @throws CheckstyleException
+     * @throws CheckstyleExecutorException in case of an error during plugin execution.
+     * @throws CheckstyleException in case of an error raised by Checkstyle.
      */
     CheckstyleResults executeCheckstyle( CheckstyleExecutorRequest request )
         throws CheckstyleExecutorException, CheckstyleException;
