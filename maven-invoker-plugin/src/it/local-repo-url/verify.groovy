@@ -17,4 +17,4 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[INFO] run script postbuild.groovy' ) 
+assert buildLog.text.contains( '[INFO] run post-build script postbuild.groovy' ) 
