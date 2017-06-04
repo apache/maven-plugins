@@ -26,6 +26,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugins.checkstyle.CheckstyleViolationCheckMojo;
@@ -65,7 +66,7 @@ public class CheckstyleViolationCheckMojoTest
         }
     }
 
-    public void testInvalidFormat()
+    public void testInvalidFormatWithSkipExec()
         throws Exception
     {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/check-plugin-config.xml" );
@@ -104,6 +105,46 @@ public class CheckstyleViolationCheckMojoTest
         setVariableValueToObject( mojo, "outputFile", new File( "target/NoSuchFile.xml" ) );
 
         mojo.execute();
+    }
+
+    private void doTestPlainOutputFile( boolean failsOnError )
+        throws Exception
+    {
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/check-plugin-plain-output.xml" );
+
+        Mojo mojo = lookupMojo( "check", pluginXmlFile );
+
+        assertNotNull( "Mojo found.", mojo );
+
+        PluginDescriptor descriptorStub = new PluginDescriptor();
+        descriptorStub.setGroupId( "org.apache.maven.plugins" );
+        descriptorStub.setArtifactId( "maven-checkstyle-plugin" );
+        setVariableValueToObject( mojo, "plugin", descriptorStub );
+
+        setVariableValueToObject( mojo, "failsOnError", failsOnError );
+
+        mojo.execute();
+    }
+
+    public void testPlainOutputFileFailOnError()
+        throws Exception
+    {
+        try
+        {
+            doTestPlainOutputFile( true );
+
+            fail( "Must fail on violations" );
+        }
+        catch ( MojoExecutionException e )
+        {
+            // expected
+        }
+    }
+
+    public void testPlainOutputFile()
+        throws Exception
+    {
+        doTestPlainOutputFile( false );
     }
 
     public void testNoFail()

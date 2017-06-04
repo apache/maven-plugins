@@ -485,6 +485,8 @@ public class CheckstyleViolationCheckMojo
 
     private ByteArrayOutputStream stringOutputStream;
 
+    private File outputXmlFile;
+
     /** {@inheritDoc} */
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -495,6 +497,8 @@ public class CheckstyleViolationCheckMojo
         {
             return;
         }
+
+        outputXmlFile = outputFile;
 
         if ( !skipExec )
         {
@@ -564,19 +568,19 @@ public class CheckstyleViolationCheckMojo
             }
         }
 
-        if ( !"xml".equals( outputFileFormat ) )
+        if ( !"xml".equals( outputFileFormat ) && skipExec )
         {
             throw new MojoExecutionException( "Output format is '" + outputFileFormat
-                + "', checkstyle:check requires format to be 'xml'." );
+                + "', checkstyle:check requires format to be 'xml' when using skipExec." );
         }
 
-        if ( !outputFile.exists() )
+        if ( !outputXmlFile.exists() )
         {
             getLog().info( "Unable to perform checkstyle:check, unable to find checkstyle:checkstyle outputFile." );
             return;
         }
 
-        try ( Reader reader = new BufferedReader( ReaderFactory.newXmlReader( outputFile ) ) )
+        try ( Reader reader = new BufferedReader( ReaderFactory.newXmlReader( outputXmlFile ) ) )
         {
             XmlPullParser xpp = new MXParser();
             xpp.setInput( reader );
@@ -601,8 +605,8 @@ public class CheckstyleViolationCheckMojo
         }
         catch ( IOException | XmlPullParserException e )
         {
-            throw new MojoExecutionException( "Unable to read Checkstyle results xml: " + outputFile.getAbsolutePath(),
-                                              e );
+            throw new MojoExecutionException( "Unable to read Checkstyle results xml: "
+                + outputXmlFile.getAbsolutePath(), e );
         }
     }
 
@@ -799,7 +803,22 @@ public class CheckstyleViolationCheckMojo
             }
             else if ( "plain".equals( outputFileFormat ) )
             {
-                listener = new DefaultLogger( out, true );
+                try
+                {
+                    // Write a plain output file to the standard output file,
+                    // and write an XML output file to the temp directory that can be used to count violations
+                    outputXmlFile = File.createTempFile( "checkstyle-result", ".xml" );
+                    outputXmlFile.deleteOnExit();
+                    OutputStream xmlOut = getOutputStream( outputXmlFile );
+                    CompositeAuditListener compoundListener = new CompositeAuditListener();
+                    compoundListener.addListener( new XMLLogger( xmlOut, true ) );
+                    compoundListener.addListener( new DefaultLogger( out, true ) );
+                    listener = compoundListener;
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Unable to create temporary file", e );
+                }
             }
             else
             {
