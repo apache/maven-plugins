@@ -838,7 +838,7 @@ public class CheckstyleReportGenerator
         private final long violations;
         private final int count;
 
-        public ConfReference( String category, Configuration configuration,
+        ConfReference( String category, Configuration configuration,
                               ChainedItem<Configuration> parentConfiguration, long violations, int count )
         {
             this.category = category;
@@ -865,7 +865,7 @@ public class CheckstyleReportGenerator
 
         private final T value;
 
-        public ChainedItem( T value, ChainedItem<T> parent )
+        ChainedItem( T value, ChainedItem<T> parent )
         {
             this.parent = parent;
             this.value = value;

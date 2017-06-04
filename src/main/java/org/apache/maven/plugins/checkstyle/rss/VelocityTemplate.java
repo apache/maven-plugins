@@ -35,12 +35,9 @@ import java.io.Writer;
 /**
  * <p>
  * A component to work with VelocityTemplates from within plugins.
- * </p>
- *
- * <p/>
+ * <p>
  * You will need to reference the velocity component as a parameter
  * in your plugin.  Like this:
- * </p>
  * <pre>
  * /&#042;&#042;
  *  &#042; Velocity Component
@@ -83,8 +80,8 @@ public class VelocityTemplate
      * @param template       the velocity template to use.
      * @param context        the velocity context map.
      * @throws VelocityException if the template was not found or any other Velocity exception.
-     * @throws MojoExecutionException
-     * @throws IOException
+     * @throws MojoExecutionException if merging the velocity template failed.
+     * @throws IOException if there was an error when writing to the output file.
      */
     public void generate( String outputFilename, String template, Context context )
         throws VelocityException, MojoExecutionException, IOException

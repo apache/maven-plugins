@@ -451,7 +451,7 @@ public class CheckstyleExecutorRequest
     /**
      * Sets a list of license artifacts, which may contain the license.
      * 
-     * @param licenseArtifacts
+     * @param licenseArtifacts List of license artifacts.
      * @return This object.
      */
     public CheckstyleExecutorRequest setLicenseArtifacts( List<Artifact> licenseArtifacts )
@@ -473,7 +473,7 @@ public class CheckstyleExecutorRequest
     /**
      * Sets a list of artifacts, which may contain the checkstyle configuration.
      * 
-     * @param configArtifacts
+     * @param configArtifacts List of artifacts.
      * @return This object.
      */
     public CheckstyleExecutorRequest setConfigurationArtifacts( List<Artifact> configArtifacts )

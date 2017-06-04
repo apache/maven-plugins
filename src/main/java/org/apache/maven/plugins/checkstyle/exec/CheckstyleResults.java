@@ -30,10 +30,10 @@ import java.util.Map;
 
 /**
  * Object holding the references to the CheckstyleResults.
+ * TODO: provide fallback to disk based storage if too many results.
  *
  * @author <a href="mailto:joakim@erdfelt.net">Joakim Erdfelt</a>
  * @version $Id$
- * @todo provide fallback to disk based storage if too many results.
  */
 public class CheckstyleResults
 {

@@ -47,9 +47,7 @@ public class DefaultCheckstyleRssGenerator
     @Requirement
     private VelocityComponent velocityComponent;
 
-    /**
-     * @see org.apache.maven.plugins.checkstyle.rss.CheckstyleRssGenerator#generateRSS(org.apache.maven.plugins.checkstyle.exec.CheckstyleResults)
-     */
+    @Override
     public void generateRSS( CheckstyleResults results, CheckstyleRssGeneratorRequest checkstyleRssGeneratorRequest )
         throws MavenReportException
     {

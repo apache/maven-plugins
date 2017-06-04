@@ -39,7 +39,7 @@ public class CheckstyleExecutorException
     }
 
     /**
-     * @param message
+     * @param message Message of the exception.
      */
     public CheckstyleExecutorException( String message )
     {
@@ -47,7 +47,7 @@ public class CheckstyleExecutorException
     }
 
     /**
-     * @param cause
+     * @param cause Cause of the exception.
      */
     public CheckstyleExecutorException( Throwable cause )
     {
@@ -55,8 +55,8 @@ public class CheckstyleExecutorException
     }
 
     /**
-     * @param message
-     * @param cause
+     * @param message Message of the exception.
+     * @param cause Cause of the exception.
      */
     public CheckstyleExecutorException( String message, Throwable cause )
     {

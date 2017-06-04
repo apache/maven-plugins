@@ -179,26 +179,19 @@ public class CheckstyleViolationCheckMojo
     /**
      * <p>
      * Specifies the location of the XML configuration to use.
-     * </p>
-     * <p/>
      * <p>
      * Potential values are a filesystem path, a URL, or a classpath resource.
      * This parameter expects that the contents of the location conform to the
      * xml format (Checkstyle <a
      * href="http://checkstyle.sourceforge.net/config.html#Modules">Checker
      * module</a>) configuration of rulesets.
-     * </p>
-     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the configuration is copied into the
      * <code>${project.build.directory}/checkstyle-configuration.xml</code>
      * file before being passed to Checkstyle as a configuration.
-     * </p>
-     * <p/>
      * <p>
      * There are 2 predefined rulesets.
-     * </p>
      * <ul>
      * <li><code>sun_checks.xml</code>: Sun Checks.</li>
      * <li><code>google_checks.xml</code>: Google Checks.</li>
@@ -212,21 +205,16 @@ public class CheckstyleViolationCheckMojo
     /**
      * <p>
      * Specifies the location of the properties file.
-     * </p>
-     * <p/>
      * <p>
      * This parameter is resolved as URL, File then resource. If successfully
      * resolved, the contents of the properties location is copied into the
      * <code>${project.build.directory}/checkstyle-checker.properties</code>
      * file before being passed to Checkstyle for loading.
-     * </p>
-     * <p/>
      * <p>
      * The contents of the <code>propertiesLocation</code> will be made
      * available to Checkstyle for specifying values for parameters within the
      * xml configuration (specified in the <code>configLocation</code>
      * parameter).
-     * </p>
      *
      * @since 2.5
      */
@@ -244,21 +232,16 @@ public class CheckstyleViolationCheckMojo
      * Specifies the location of the License file (a.k.a. the header file) that
      * can be used by Checkstyle to verify that source code has the correct
      * license header.
-     * </p>
      * <p>
-     * You need to use ${checkstyle.header.file} in your Checkstyle xml
+     * You need to use <code>${checkstyle.header.file}</code> in your Checkstyle xml
      * configuration to reference the name of this header file.
-     * </p>
      * <p>
      * For instance:
-     * </p>
-     * <p>
-     * <code>
-     * &lt;module name="RegexpHeader">
-     * &lt;property name="headerFile" value="${checkstyle.header.file}"/>
-     * &lt;/module>
-     * </code>
-     * </p>
+     * <pre>
+     * &lt;module name="RegexpHeader"&gt;
+     *   &lt;property name="headerFile" value="${checkstyle.header.file}"/&gt;
+     * &lt;/module&gt;
+     * </pre>
      *
      * @since 2.0-beta-2
      */
@@ -282,19 +265,14 @@ public class CheckstyleViolationCheckMojo
     /**
      * <p>
      * Specifies the location of the suppressions XML file to use.
-     * </p>
-     * <p/>
      * <p>
      * This parameter is resolved as resource, URL, then file. If successfully
      * resolved, the contents of the suppressions XML is copied into the
      * <code>${project.build.directory}/checkstyle-suppressions.xml</code> file
      * before being passed to Checkstyle for loading.
-     * </p>
-     * <p/>
      * <p>
      * See <code>suppressionsFileExpression</code> for the property that will
      * be made available to your Checkstyle configuration.
-     * </p>
      *
      * @since 2.0-beta-2
      */
@@ -468,7 +446,7 @@ public class CheckstyleViolationCheckMojo
     private PlexusConfiguration checkstyleRules;
 
     /**
-     * dump file for inlined Checkstyle rules 
+     * Dump file for inlined Checkstyle rules. 
      */
     @Parameter( property = "checkstyle.output.rules.file",
                     defaultValue = "${project.build.directory}/checkstyle-rules.xml" )
