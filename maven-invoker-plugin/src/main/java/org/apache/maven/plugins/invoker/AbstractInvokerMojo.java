@@ -1616,15 +1616,20 @@ public abstract class AbstractInvokerMojo
 
         buffer.a( "          " );
         buffer.a( buildJob.getProject() );
-        buffer.a( ' ' );
 
-        int l = 11 + buildJob.getProject().length();
+        int l = 10 + buildJob.getProject().length();
 
         if ( l < RESULT_COLUMN )
         {
-            for ( int i = RESULT_COLUMN - l; i > 0; i-- )
+            buffer.a( ' ' );
+            l++;
+
+            if ( l < RESULT_COLUMN )
             {
-                buffer.a( '.' );
+                for ( int i = RESULT_COLUMN - l; i > 0; i-- )
+                {
+                    buffer.a( '.' );
+                }
             }
         }
 
