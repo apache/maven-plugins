@@ -29,11 +29,17 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -88,6 +94,12 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JLinkMojo
     extends AbstractJLinkMojo
 {
+    private static final String JMOD_PACKAGING = "jmod";
+
+    private static final String JMODS = "jmods";
+
+    private static final String JAR_PACKAGING = "jar";
+
     /**
      * <code>-G, --strip-debug</code> strip debug information.
      */
@@ -124,6 +136,9 @@ public class JLinkMojo
      */
     // TODO: is this a good final location?
     @Parameter( defaultValue = "${project.build.directory}/jlink" )
+    private File outputDirectoryImage;
+
+    @Parameter( defaultValue = "${project.build.directory}" )
     private File outputDirectory;
 
     /**
@@ -179,6 +194,30 @@ public class JLinkMojo
     @Parameter( defaultValue = "false" )
     private boolean verbose;
 
+    /**
+     * The JAR archiver needed for archiving the environments.
+     */
+    @Component( role = Archiver.class, hint = "zip" )
+    private ZipArchiver zipArchiver;
+
+    @Component
+    private ArchiverManager manager;
+
+    /**
+     * The kind of archive we should produce.
+     */
+    @Parameter( defaultValue = "zip", required = true )
+    private String archiveType;
+
+    @Component
+    private MavenProjectHelper projectHelper;
+
+    /**
+     * Name of the generated JAR.
+     */
+    @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
+    private String finalName;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -198,9 +237,9 @@ public class JLinkMojo
         // TODO: Find a more better and cleaner way?
         File jLinkExecuteable = new File( jLinkExec );
 
-        // Really Hacky...
+        // Really Hacky...do we have a better solution?
         File jLinkParent = jLinkExecuteable.getParentFile().getParentFile();
-        File jmodsFolder = new File( jLinkParent, "jmods" );
+        File jmodsFolder = new File( jLinkParent, JMODS );
 
         getLog().debug( " Parent: " + jLinkParent.getAbsolutePath() );
         getLog().debug( " jmodsFolder: " + jmodsFolder.getAbsolutePath() );
@@ -209,54 +248,27 @@ public class JLinkMojo
 
         deleteOutputDirectoryIfItAlreadyExists();
 
-        List<MavenProject> sortedProjects = getSession().getProjectDependencyGraph().getSortedProjects();
-        for ( MavenProject mavenProject : sortedProjects )
-        {
-            getLog().info( "MavenProject: " + mavenProject.getBasedir() );
-        }
-
         List<Dependency> dependencies = getSession().getCurrentProject().getDependencies();
 
         List<MavenProject> modulesToAdd = new ArrayList<>();
+        getLog().info( "The following dependencies will be linked into the runtime image:" );
         for ( Dependency dependency : dependencies )
         {
-            // Should we only take care of module which have packaging "jmod"
-            // what about other modules/packaging types like "jar" ?
-            if ( "jmod".equals( dependency.getType() ) )
+            // We will support "jmod" as well as "jar"
+            if ( JAR_PACKAGING.equals( dependency.getType() ) || JMOD_PACKAGING.equals( dependency.getType() ) )
             {
                 MavenProject mp = findDependencyInProjects( dependency );
+                getLog().info( " -> " + mp.getId() );
                 // TODO: What about module name != artifactId which has been
                 // defined in module-info.java file!
                 modulesToAdd.add( mp );
             }
         }
 
-        if ( addModules == null )
-        {
-            addModules = new ArrayList<>();
-        }
+        handleAddModules( modulesToAdd );
 
-        for ( MavenProject mavenProject : modulesToAdd )
-        {
-            addModules.add( mavenProject.getArtifactId() );
-        }
+        handleModulePath( jmodsFolder, modulesToAdd );
 
-        if ( modulePaths == null )
-        {
-            modulePaths = new ArrayList<>();
-        }
-
-        // JDK mods folder
-        modulePaths.add( jmodsFolder.getAbsolutePath() );
-
-        for ( MavenProject mavenProject : modulesToAdd )
-        {
-            File output = new File( mavenProject.getBuild().getDirectory(), "jmods" );
-            modulePaths.add( output.getAbsolutePath() );
-        }
-
-        // Synopsis
-        // Usage: jlink <options> --module-path <modulepath> --add-modules <mods> --output <path>
         Commandline cmd;
         try
         {
@@ -268,8 +280,80 @@ public class JLinkMojo
         }
         cmd.setExecutable( jLinkExec );
 
-        executeCommand( cmd, outputDirectory );
+        executeCommand( cmd, outputDirectoryImage );
 
+        File createZipArchiveFromImage = createZipArchiveFromImage( outputDirectory, outputDirectoryImage );
+
+        // Set main artifact.
+        getProject().getArtifact().setFile( createZipArchiveFromImage );
+        // artifact.setFile( createZipArchiveFromImage );
+        // getProject().setFile( createZipArchiveFromImage );
+        // packaging is something different than type..
+        // projectHelper.attachArtifact( getProject(), "image", "image", createZipArchiveFromImage );
+
+    }
+
+    private File createZipArchiveFromImage( File outputDirectory, File outputDirectoryImage )
+        throws MojoExecutionException
+    {
+        zipArchiver.addDirectory( outputDirectoryImage );
+
+        File resultArchive = getArchiveFile( outputDirectory, finalName, null, "zip" );
+
+        zipArchiver.setDestFile( resultArchive );
+        try
+        {
+            zipArchiver.createArchive();
+        }
+        catch ( ArchiverException e )
+        {
+            getLog().error( e.getMessage(), e );
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            getLog().error( e.getMessage(), e );
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        return resultArchive;
+
+    }
+
+    private void handleAddModules( List<MavenProject> modulesToAdd )
+    {
+        if ( addModules == null )
+        {
+            addModules = new ArrayList<>();
+        }
+
+        for ( MavenProject mavenProject : modulesToAdd )
+        {
+            // TODO: Check if this is the correct way?
+            // This implies the artifactId is equal to moduleName.
+            addModules.add( mavenProject.getArtifactId() );
+        }
+    }
+
+    /**
+     * @param jmodsFolder The folder where to find the jmods of the JDK.
+     * @param modulesToAdd The modules to be added.
+     */
+    private void handleModulePath( File jmodsFolder, List<MavenProject> modulesToAdd )
+    {
+        if ( modulePaths == null )
+        {
+            modulePaths = new ArrayList<>();
+        }
+
+        // The jmods directory of the JDK
+        modulePaths.add( jmodsFolder.getAbsolutePath() );
+
+        for ( MavenProject mavenProject : modulesToAdd )
+        {
+            File output = new File( mavenProject.getBuild().getDirectory(), JMODS );
+            modulePaths.add( output.getAbsolutePath() );
+        }
     }
 
     private MavenProject findDependencyInProjects( Dependency dep )
@@ -315,28 +399,28 @@ public class JLinkMojo
     private void deleteOutputDirectoryIfItAlreadyExists()
         throws MojoExecutionException
     {
-        if ( outputDirectory.exists() )
+        if ( outputDirectoryImage.exists() )
         {
             // Delete the output folder of JLink before we start
             // otherwise JLink will fail with a message "Error: directory already exists: ..."
             try
             {
-                getLog().debug( "Deleting existing " + outputDirectory.getAbsolutePath() );
-                FileUtils.forceDelete( outputDirectory );
+                getLog().debug( "Deleting existing " + outputDirectoryImage.getAbsolutePath() );
+                FileUtils.forceDelete( outputDirectoryImage );
             }
             catch ( IOException e )
             {
                 getLog().error( "IOException", e );
-                throw new MojoExecutionException( "Failure during deletion of " + outputDirectory.getAbsolutePath()
+                throw new MojoExecutionException( "Failure during deletion of " + outputDirectoryImage.getAbsolutePath()
                     + " occured." );
             }
         }
     }
 
-    Commandline createJLinkCommandLine()
+    private Commandline createJLinkCommandLine()
         throws IOException
     {
-        File file = new File( outputDirectory.getParentFile(), "jlinkArgs" );
+        File file = new File( outputDirectoryImage.getParentFile(), "jlinkArgs" );
         if ( !getLog().isDebugEnabled() )
         {
             file.deleteOnExit();
@@ -388,23 +472,25 @@ public class JLinkMojo
             argsFile.println( "--no-man-pages" );
         }
 
-        if ( suggestProviders != null && !suggestProviders.isEmpty() )
+        if ( hasSuggestProviders() )
         {
             argsFile.println( "--suggest-providers" );
             StringBuilder sb = getCommaSeparatedList( suggestProviders );
             argsFile.println( sb.toString() );
         }
 
-        if ( limitModules != null && !limitModules.isEmpty() )
+        if ( hasLimitModules() )
         {
             argsFile.println( "--limit-modules" );
             StringBuilder sb = getCommaSeparatedList( limitModules );
             argsFile.println( sb.toString() );
         }
 
-        if ( addModules != null && !addModules.isEmpty() )
+        if ( hasModules() )
         {
             argsFile.println( "--add-modules" );
+            // This must be name of the module and *NOT* the name of the
+            // file!
             StringBuilder sb = getCommaSeparatedList( addModules );
             argsFile.println( sb.toString() );
         }
@@ -412,7 +498,7 @@ public class JLinkMojo
         if ( outputDirectory != null )
         {
             argsFile.println( "--output" );
-            argsFile.println( outputDirectory );
+            argsFile.println( outputDirectoryImage );
         }
 
         if ( verbose )
@@ -425,6 +511,21 @@ public class JLinkMojo
         cmd.createArg().setValue( '@' + file.getAbsolutePath() );
 
         return cmd;
+    }
+
+    private boolean hasSuggestProviders()
+    {
+        return suggestProviders != null && !suggestProviders.isEmpty();
+    }
+
+    private boolean hasLimitModules()
+    {
+        return limitModules != null && !limitModules.isEmpty();
+    }
+
+    private boolean hasModules()
+    {
+        return addModules != null && !addModules.isEmpty();
     }
 
     private String getColonSeparateList( List<String> modulePaths )
