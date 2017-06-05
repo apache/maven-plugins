@@ -79,18 +79,6 @@ public class JModCreateMojo
     private String moduleVersion;
 
     /**
-     * <code>--os-arch &lt;os-arch&gt;</code> Operating system architecture.
-     */
-    @Parameter
-    private String osArch;
-
-    /**
-     * <code>--os-name &lt;os-name&gt;</code> Operating system name.
-     */
-    @Parameter
-    private String osName;
-
-    /**
      * Define the modulepath for the <code>jmod</code> call. <code>--module-path &lt;path&gt;</code>
      */
     // TODO: check if this target/classes folder?
@@ -185,26 +173,6 @@ public class JModCreateMojo
         {
             cmd.createArg().setValue( "--module-version" );
             cmd.createArg().setValue( moduleVersion );
-        }
-
-        cmd.createArg().setValue( "--os-arch" );
-        if ( osArch != null )
-        {
-            cmd.createArg().setValue( osArch );
-        }
-        else
-        {
-            cmd.createArg().setValue( SystemUtils.OS_ARCH );
-        }
-
-        cmd.createArg().setValue( "--os-name" );
-        if ( osName != null )
-        {
-            cmd.createArg().setValue( osName );
-        }
-        else
-        {
-            cmd.createArg().setValue( SystemUtils.OS_NAME );
         }
 
         if ( classPath != null )
