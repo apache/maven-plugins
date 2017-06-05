@@ -20,26 +20,6 @@ package org.apache.maven.plugins.jlink;
  */
 
 import java.io.File;
-
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -122,6 +102,7 @@ public class JLinkMojo
      * <code>--output &lt;path&gt;</code>
      * </p>
      */
+    // TODO: is this a good final location?
     @Parameter( defaultValue = "${project.build.directory}/jlink" )
     private File outputDirectory;
 
@@ -177,6 +158,8 @@ public class JLinkMojo
         List<MavenProject> modulesToAdd = new ArrayList<>();
         for ( Dependency dependency : dependencies )
         {
+            // Should we only take care of module which have packaging "jmod"
+            // what about other modules/packaging types like "jar" ?
             if ( "jmod".equals( dependency.getType() ) )
             {
                 MavenProject mp = findDependencyInProjects( dependency );
@@ -190,7 +173,7 @@ public class JLinkMojo
         {
             addModules = new ArrayList<>();
         }
-        
+
         for ( MavenProject mavenProject : modulesToAdd )
         {
             addModules.add( mavenProject.getArtifactId() );
@@ -288,7 +271,8 @@ public class JLinkMojo
         }
     }
 
-    Commandline createJLinkCommandLine() throws IOException
+    Commandline createJLinkCommandLine()
+        throws IOException
     {
         File file = new File( outputDirectory.getParentFile(), "jlinkArgs" );
         if ( !getLog().isDebugEnabled() )
@@ -297,9 +281,9 @@ public class JLinkMojo
         }
         file.getParentFile().mkdirs();
         file.createNewFile();
-        
+
         PrintStream argsFile = new PrintStream( file );
-        
+
         if ( stripDebug )
         {
             argsFile.println( "--strip-debug" );
@@ -314,9 +298,7 @@ public class JLinkMojo
         if ( modulePaths != null )
         {
             argsFile.println( "--module-path" );
-            argsFile.append( '"' )
-                    .append( getColonSeparateList( modulePaths ).replace( "\\", "\\\\" ) )
-                    .println( '"' );
+            argsFile.append( '"' ).append( getColonSeparateList( modulePaths ).replace( "\\", "\\\\" ) ).println( '"' );
         }
 
         if ( limitModules != null && !limitModules.isEmpty() )
@@ -338,7 +320,7 @@ public class JLinkMojo
             argsFile.println( "--output" );
             argsFile.println( outputDirectory );
         }
-        
+
         argsFile.close();
 
         Commandline cmd = new Commandline();
