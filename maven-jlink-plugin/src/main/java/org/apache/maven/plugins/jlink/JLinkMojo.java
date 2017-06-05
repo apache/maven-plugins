@@ -39,22 +39,42 @@ import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * <pre>
- * Usage: jlink &lt;options&gt; --module-path &lt;modulepath&gt; --add-modules &lt;mods&gt; --output &lt;path&gt;
+ * Usage: jlink &lt;options&gt; --module-path &lt;modulepath&gt; --add-modules &lt;module&gt;[,&lt;module&gt;...]
  * Possible options include:
- *  -h, --help                        Print this help message
- *  -p &lt;modulepath&gt;
- *  --module-path &lt;modulepath&gt;        Module path
- *  --limit-modules &lt;mod&gt;[,&lt;mod&gt;...]  Limit the universe of observable modules
- *  --add-modules &lt;mod&gt;[,&lt;mod&gt;...]    Root modules to resolve
- *  --output &lt;path&gt;                   Location of output path
- *  --endian &lt;little|big&gt;             Byte order of generated jimage (default:native)
- *  --version                         Version information
- *  --save-opts &lt;filename&gt;            Save jlink options in the given file
- *  -G, --strip-debug                 Strip debug information
- *  -c, --compress=&lt;0|1|2&gt;            Enable compression of resources (level 2)
- *  --plugin-module-path &lt;modulepath&gt; Custom plugin module path
- *  --list-plugins                    List available plugins
- *  &#64;&lt;filename&gt;                       Read options from file
+ *       --add-modules &lt;mod&gt;[,&lt;mod&gt;...]    Root modules to resolve
+ *       --bind-services                   Link in service provider modules and
+ *                                         their dependences
+ *   -c, --compress=&lt;0|1|2&gt;                Enable compression of resources:
+ *                                           Level 0: No compression
+ *                                           Level 1: Constant string sharing
+ *                                           Level 2: ZIP
+ *       --disable-plugin &lt;pluginname&gt;     Disable the plugin mentioned
+ *       --endian &lt;little|big&gt;             Byte order of generated jimage
+ *                                         (default:native)
+ *   -h, --help                            Print this help message
+ *       --ignore-signing-information      Suppress a fatal error when signed
+ *                                         modular JARs are linked in the image.
+ *                                         The signature related files of the
+ *                                         signed modular JARs are not copied to
+ *                                         the runtime image.
+ *       --launcher &lt;name&gt;=&lt;module&gt;[/&lt;mainclass&gt;]
+ *                                         Add a launcher command of the given
+ *                                         name for the module and the main class
+ *                                         if specified
+ *       --limit-modules &lt;mod&gt;[,&lt;mod&gt;...]  Limit the universe of observable
+ *                                         modules
+ *       --list-plugins                    List available plugins
+ *   -p, --module-path &lt;path&gt;              Module path
+ *       --no-header-files                 Exclude include header files
+ *       --no-man-pages                    Exclude man pages
+ *       --output &lt;path&gt;                   Location of output path
+ *       --save-opts &lt;filename&gt;            Save jlink options in the given file
+ *   -G, --strip-debug                     Strip debug information
+ *       --suggest-providers [&lt;name&gt;,...]  Suggest providers that implement the
+ *                                         given service types from the module path
+ *   -v, --verbose                         Enable verbose tracing
+ *       --version                         Version information
+ *       &#64;&lt;filename&gt;                       Read options from file
  * </pre>
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
@@ -116,6 +136,48 @@ public class JLinkMojo
 
     @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
     private List<String> modulePaths;
+
+    /**
+     * Add the option <code>--bind-services</code> or not.
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean bindServices;
+
+    /**
+     * --disable-plugin pluginName.
+     */
+    @Parameter
+    private String disablePlugin;
+
+    /**
+     * <code>--ignore-signing-information</code>
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean ignoreSigningInformation;
+
+    /**
+     * <code>--no-header-files</code>
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean noHeaderFiles;
+
+    /**
+     * <code>--no-man-pages</code>
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean noManPages;
+
+    /**
+     * --suggest-providers [<name>,...] Suggest providers that implement the given service types from the module path
+     */
+    @Parameter
+    private List<String> suggestProviders;
+
+    /**
+     * <code>--verbose</code>
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean verbose;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -289,16 +351,48 @@ public class JLinkMojo
             argsFile.println( "--strip-debug" );
         }
 
+        if ( bindServices )
+        {
+            argsFile.println( "--bind-services" );
+        }
+
+        if ( ignoreSigningInformation )
+        {
+            argsFile.println( "--ignore-signing-information" );
+        }
         if ( compression != null )
         {
             argsFile.println( "--compression" );
             argsFile.println( compression );
         }
 
+        if ( disablePlugin != null )
+        {
+            argsFile.println( "--disable-plugin" );
+            argsFile.append( '"' ).append( disablePlugin ).println( '"' );
+
+        }
         if ( modulePaths != null )
         {
             argsFile.println( "--module-path" );
             argsFile.append( '"' ).append( getColonSeparateList( modulePaths ).replace( "\\", "\\\\" ) ).println( '"' );
+        }
+
+        if ( noHeaderFiles )
+        {
+            argsFile.println( "--no-header-files" );
+        }
+
+        if ( noManPages )
+        {
+            argsFile.println( "--no-man-pages" );
+        }
+
+        if ( suggestProviders != null && !suggestProviders.isEmpty() )
+        {
+            argsFile.println( "--suggest-providers" );
+            StringBuilder sb = getCommaSeparatedList( suggestProviders );
+            argsFile.println( sb.toString() );
         }
 
         if ( limitModules != null && !limitModules.isEmpty() )
@@ -321,6 +415,10 @@ public class JLinkMojo
             argsFile.println( outputDirectory );
         }
 
+        if ( verbose )
+        {
+            argsFile.println( "--verbose" );
+        }
         argsFile.close();
 
         Commandline cmd = new Commandline();
