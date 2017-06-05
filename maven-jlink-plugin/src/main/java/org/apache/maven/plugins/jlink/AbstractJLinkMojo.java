@@ -42,20 +42,17 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public abstract class AbstractJLinkMojo
     extends AbstractMojo
 {
     /**
      * <p>
-     * Specify the requirements for this jdk toolchain.
-     * This overrules the toolchain selected by the maven-toolchain-plugin.
+     * Specify the requirements for this jdk toolchain. This overrules the toolchain selected by the
+     * maven-toolchain-plugin.
      * </p>
      * <strong>note:</strong> requires at least Maven 3.3.1
-     * 
      */
     @Parameter
     private Map<String, String> jdkToolchain;
@@ -65,11 +62,12 @@ public abstract class AbstractJLinkMojo
 
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
-    
+
     @Component
     private ToolchainManager toolchainManager;
-    
-    protected String getJLinkExecutable() throws IOException
+
+    protected String getJLinkExecutable()
+        throws IOException
     {
         Toolchain tc = getToolchain();
 
@@ -99,8 +97,7 @@ public abstract class AbstractJLinkMojo
 
             if ( !jLinkExe.isFile() )
             {
-                throw new IOException( "The jlink executable '" + jLinkExe
-                    + "' doesn't exist or is not a file." );
+                throw new IOException( "The jlink executable '" + jLinkExe + "' doesn't exist or is not a file." );
             }
             return jLinkExe.getAbsolutePath();
         }
@@ -110,7 +107,7 @@ public abstract class AbstractJLinkMojo
         // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
         // should be in the JDK_HOME
         // ----------------------------------------------------------------------
-        // For IBM's JDK 1.2 
+        // For IBM's JDK 1.2
         // Really ?
         if ( SystemUtils.IS_OS_AIX )
         {
@@ -159,8 +156,9 @@ public abstract class AbstractJLinkMojo
 
         return jLinkExe.getAbsolutePath();
     }
-    
-    protected void executeCommand ( Commandline cmd, File outputDirectory ) throws MojoExecutionException
+
+    protected void executeCommand( Commandline cmd, File outputDirectory )
+        throws MojoExecutionException
     {
         if ( getLog().isDebugEnabled() )
         {
@@ -180,7 +178,7 @@ public abstract class AbstractJLinkMojo
             {
                 if ( StringUtils.isNotEmpty( output ) )
                 {
-                    //Reconsider to use WARN / ERROR ?
+                    // Reconsider to use WARN / ERROR ?
                     getLog().error( output );
                 }
 
@@ -207,24 +205,22 @@ public abstract class AbstractJLinkMojo
         }
 
     }
-    
+
     private Toolchain getToolchain()
     {
         Toolchain tc = null;
-        
+
         if ( jdkToolchain != null )
         {
             // Maven 3.3.1 has plugin execution scoped Toolchain Support
             try
             {
-                Method getToolchainsMethod =
-                    toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class, String.class,
-                                                           Map.class );
+                Method getToolchainsMethod = toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class,
+                                                                                    String.class, Map.class );
 
                 @SuppressWarnings( "unchecked" )
                 List<Toolchain> tcs =
-                    (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
-                                                                  jdkToolchain );
+                    (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk", jdkToolchain );
 
                 if ( tcs != null && tcs.size() > 0 )
                 {
@@ -252,12 +248,12 @@ public abstract class AbstractJLinkMojo
                 // ignore
             }
         }
-        
+
         if ( tc == null )
         {
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
-        
+
         return tc;
     }
 
@@ -271,5 +267,60 @@ public abstract class AbstractJLinkMojo
         return session;
     }
 
+    /**
+     * Returns the archive file to generate, based on an optional classifier.
+     *
+     * @param basedir the output directory
+     * @param finalName the name of the ear file
+     * @param classifier an optional classifier
+     * @return the file to generate
+     */
+    protected File getArchiveFile( File basedir, String finalName, String classifier, String archiveExt )
+    {
+        if ( basedir == null )
+        {
+            throw new IllegalArgumentException( "basedir is not allowed to be null" );
+        }
+        if ( finalName == null )
+        {
+            throw new IllegalArgumentException( "finalName is not allowed to be null" );
+        }
+        if ( archiveExt == null )
+        {
+            throw new IllegalArgumentException( "archiveExt is not allowed to be null" );
+        }
+
+        if ( finalName.isEmpty() )
+        {
+            throw new IllegalArgumentException( "finalName is not allowed to be empty." );
+        }
+        if ( archiveExt.isEmpty() )
+        {
+            throw new IllegalArgumentException( "archiveExt is not allowed to be empty." );
+        }
+
+        StringBuilder fileName = new StringBuilder( finalName );
+
+        if ( hasClassifier( classifier ) )
+        {
+            fileName.append( "-" ).append( classifier );
+        }
+
+        fileName.append( '.' );
+        fileName.append( archiveExt );
+
+        return new File( basedir, fileName.toString() );
+    }
+
+    protected boolean hasClassifier( String classifier )
+    {
+        boolean result = false;
+        if ( classifier != null && classifier.trim().length() > 0 )
+        {
+            result = true;
+        }
+
+        return result;
+    }
 
 }
