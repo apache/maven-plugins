@@ -195,8 +195,7 @@ public class DefaultAssemblyReader
                                                             throws AssemblyReadException,
                                                             InvalidAssemblerConfigurationException
     {
-        final InputStream resourceAsStream =
-            Thread.currentThread().getContextClassLoader().getResourceAsStream( "assemblies/" + ref + ".xml" );
+        final InputStream resourceAsStream = getClass().getResourceAsStream( "/assemblies/" + ref + ".xml" );
 
         if ( resourceAsStream == null )
         {
