@@ -70,7 +70,6 @@ under the License.
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <version>${testVersion}</version>
-            <extensions>true</extensions>
           </plugin>
           <plugin>
              <artifactId>maven-jar-plugin</artifactId>
