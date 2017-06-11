@@ -25,6 +25,7 @@ import java.io.LineNumberReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -495,12 +496,12 @@ public class AntRunMojo
         }
 
         getLog().debug( "Propagated Ant properties to Maven properties" );
-        Map<?, ?> antProps = antProject.getProperties();
+        Hashtable<String, Object> antProps = antProject.getProperties();
         Properties mavenProperties = mavenProject.getProperties();
 
-        for ( Map.Entry<?, ?> entry : antProps.entrySet() )
+        for ( Map.Entry<String, Object> entry : antProps.entrySet() )
         {
-            String key = (String) entry.getKey();
+            String key = entry.getKey();
             if ( mavenProperties.getProperty( key ) != null )
             {
                 getLog().debug( "Ant property '" + key + "=" + mavenProperties.getProperty( key )
@@ -508,7 +509,8 @@ public class AntRunMojo
                                     + "SKIPPING this Ant property propagation." );
                 continue;
             }
-            mavenProperties.setProperty( key, (String) entry.getValue() );
+            // it is safe to call toString directly since the value cannot be null in Hashtable
+            mavenProperties.setProperty( key, entry.getValue().toString() );
         }
     }
 
