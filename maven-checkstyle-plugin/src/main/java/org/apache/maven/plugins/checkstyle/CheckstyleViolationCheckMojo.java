@@ -41,7 +41,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -74,7 +73,6 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
  */
 @Mojo( name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST,
        threadSafe = true )
-@Execute( goal = "checkstyle" )
 public class CheckstyleViolationCheckMojo
     extends AbstractMojo
 {

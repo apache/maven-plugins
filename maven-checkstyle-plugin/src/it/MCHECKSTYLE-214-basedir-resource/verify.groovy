@@ -20,8 +20,7 @@
 def buildLog = new File( basedir, 'build.log' )
 
 // LICENSE.txt has 2 errors, src/main/resources/README.txt has 1 error
-// MCHECKSTYLE-314 added 2 errors from target/checkstyle-header.txt
-assert buildLog.text.contains( "[INFO] There are 5 errors reported by Checkstyle" )
+assert buildLog.text.contains( "[INFO] There are 3 errors reported by Checkstyle" )
 
 def checkstyle = new XmlSlurper().parse( new File( basedir, "target/checkstyle-result.xml" ) )
-assert 3 == checkstyle.file.size()
+assert 2 == checkstyle.file.size()
