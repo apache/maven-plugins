@@ -57,6 +57,7 @@ under the License.
   </distributionManagement>
 
   <properties>
+    <javaVersion>7</javaVersion>
     <mdoVersion>2.0.0</mdoVersion>
     <mavenArchiverVersion>3.1.1</mavenArchiverVersion>
     <mavenFilteringVersion>3.1.1</mavenFilteringVersion>
@@ -131,7 +132,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
-      <version>3.4</version>
+      <version>3.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -156,7 +157,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-io</artifactId>
-      <version>2.7.1</version>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
