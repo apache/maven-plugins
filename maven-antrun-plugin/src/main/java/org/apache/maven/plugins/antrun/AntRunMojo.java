@@ -50,12 +50,12 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.taskdefs.Typedef;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
+ * <p>
  * Maven AntRun Mojo.
  * <p>
  * This plugin provides the capability of calling Ant tasks from a POM by running the nested Ant tasks inside the
@@ -120,7 +120,7 @@ public class AntRunMojo
      * The Maven project object
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    private MavenProject project;
+    private MavenProject mavenProject;
 
     /**
      * The Maven session object
@@ -230,16 +230,16 @@ public class AntRunMojo
     private boolean exportAntProperties;
 
     /**
-     * Specifies whether a failure in the Ant build leads to a failure of the Maven build. If this
-     * value is {@code false}, the Maven build will proceed even if the Ant build fails. If it is
-     * {@code true}, then the Maven build fails if the Ant build fails.
+     * Specifies whether a failure in the Ant build leads to a failure of the Maven build. If this value is
+     * {@code false}, the Maven build will proceed even if the Ant build fails. If it is {@code true}, then the Maven
+     * build fails if the Ant build fails.
      *
      * @since 1.7
      */
     @Parameter( defaultValue = "true" )
     private boolean failOnError;
 
-    /** {@inheritDoc} */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -251,8 +251,6 @@ public class AntRunMojo
             getLog().info( "Skipping Antrun execution" );
             return;
         }
-
-        MavenProject mavenProject = getMavenProject();
 
         if ( target == null )
         {
@@ -268,85 +266,28 @@ public class AntRunMojo
         String antTargetName = target.getAttribute( "name", DEFAULT_ANT_TARGET_NAME );
         target.setAttribute( "name", antTargetName );
 
+        Project antProject = new Project();
+        antProject.addBuildListener( getConfiguredBuildLogger() );
         try
         {
-            Project antProject = new Project();
             File antBuildFile = writeTargetToProjectFile( antTargetName );
             ProjectHelper.configureProject( antProject, antBuildFile );
             antProject.init();
 
-            DefaultLogger antLogger = new MavenLogger( getLog() );
-
-            if ( getLog().isDebugEnabled() )
-            {
-                antLogger.setMessageOutputLevel( Project.MSG_DEBUG );
-            }
-            else if ( getLog().isInfoEnabled() )
-            {
-                antLogger.setMessageOutputLevel( Project.MSG_INFO );
-            }
-            else if ( getLog().isWarnEnabled() )
-            {
-                antLogger.setMessageOutputLevel( Project.MSG_WARN );
-            }
-            else if ( getLog().isErrorEnabled() )
-            {
-                antLogger.setMessageOutputLevel( Project.MSG_ERR );
-            }
-            else
-            {
-                antLogger.setMessageOutputLevel( Project.MSG_VERBOSE );
-            }
-
-            antProject.addBuildListener( antLogger );
             antProject.setBaseDir( mavenProject.getBasedir() );
 
-            Path p = new Path( antProject );
-            p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
-
-            /* maven.dependency.classpath it's deprecated as it's equal to maven.compile.classpath */
-            antProject.addReference( MAVEN_REFID_PREFIX + "dependency.classpath", p );
-            antProject.addReference( MAVEN_REFID_PREFIX + "compile.classpath", p );
-
-            p = new Path( antProject );
-            p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
-            antProject.addReference( MAVEN_REFID_PREFIX + "runtime.classpath", p );
-
-            p = new Path( antProject );
-            p.setPath( StringUtils.join( mavenProject.getTestClasspathElements().iterator(), File.pathSeparator ) );
-            antProject.addReference( MAVEN_REFID_PREFIX + "test.classpath", p );
-
-            /* set maven.plugin.classpath with plugin dependencies */
-            antProject.addReference( MAVEN_REFID_PREFIX + "plugin.classpath",
-                                     getPathFromArtifacts( pluginArtifacts, antProject ) );
-
-            antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, mavenProject );
-            antProject.addReference( DEFAULT_MAVEN_PROJECT_REF_REFID, new MavenAntRunProject( mavenProject ) );
-            antProject.addReference( DEFAULT_MAVEN_PROJECT_HELPER_REFID, projectHelper );
-            antProject.addReference( MAVEN_REFID_PREFIX + "local.repository", localRepository );
+            addAntProjectReferences( mavenProject, antProject );
             initMavenTasks( antProject );
 
             // The Ant project needs actual properties vs. using expression evaluator when calling an external build
             // file.
             copyProperties( mavenProject, antProject );
 
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Executing tasks" );
-            }
-
+            getLog().info( "Executing tasks" );
             antProject.executeTarget( antTargetName );
-
-            if ( getLog().isInfoEnabled() )
-            {
-                getLog().info( "Executed tasks" );
-            }
+            getLog().info( "Executed tasks" );
 
             copyProperties( antProject, mavenProject );
-        }
-        catch ( DependencyResolutionRequiredException e )
-        {
-            throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
         }
         catch ( BuildException e )
         {
@@ -384,14 +325,67 @@ public class AntRunMojo
         }
     }
 
+    private DefaultLogger getConfiguredBuildLogger()
+    {
+        DefaultLogger antLogger = new MavenLogger( getLog() );
+        if ( getLog().isDebugEnabled() )
+        {
+            antLogger.setMessageOutputLevel( Project.MSG_DEBUG );
+        }
+        else if ( getLog().isInfoEnabled() )
+        {
+            antLogger.setMessageOutputLevel( Project.MSG_INFO );
+        }
+        else if ( getLog().isWarnEnabled() )
+        {
+            antLogger.setMessageOutputLevel( Project.MSG_WARN );
+        }
+        else if ( getLog().isErrorEnabled() )
+        {
+            antLogger.setMessageOutputLevel( Project.MSG_ERR );
+        }
+        else
+        {
+            antLogger.setMessageOutputLevel( Project.MSG_VERBOSE );
+        }
+        return antLogger;
+    }
+
+    private void addAntProjectReferences( MavenProject mavenProject, Project antProject )
+        throws DependencyResolutionRequiredException
+    {
+        Path p = new Path( antProject );
+        p.setPath( StringUtils.join( mavenProject.getCompileClasspathElements().iterator(), File.pathSeparator ) );
+
+        /* maven.dependency.classpath it's deprecated as it's equal to maven.compile.classpath */
+        antProject.addReference( MAVEN_REFID_PREFIX + "dependency.classpath", p );
+        antProject.addReference( MAVEN_REFID_PREFIX + "compile.classpath", p );
+
+        p = new Path( antProject );
+        p.setPath( StringUtils.join( mavenProject.getRuntimeClasspathElements().iterator(), File.pathSeparator ) );
+        antProject.addReference( MAVEN_REFID_PREFIX + "runtime.classpath", p );
+
+        p = new Path( antProject );
+        p.setPath( StringUtils.join( mavenProject.getTestClasspathElements().iterator(), File.pathSeparator ) );
+        antProject.addReference( MAVEN_REFID_PREFIX + "test.classpath", p );
+
+        /* set maven.plugin.classpath with plugin dependencies */
+        antProject.addReference( MAVEN_REFID_PREFIX + "plugin.classpath",
+                                 getPathFromArtifacts( pluginArtifacts, antProject ) );
+
+        antProject.addReference( DEFAULT_MAVEN_PROJECT_REFID, mavenProject );
+        antProject.addReference( DEFAULT_MAVEN_PROJECT_REF_REFID, new MavenAntRunProject( mavenProject ) );
+        antProject.addReference( DEFAULT_MAVEN_PROJECT_HELPER_REFID, projectHelper );
+        antProject.addReference( MAVEN_REFID_PREFIX + "local.repository", localRepository );
+    }
+
     /**
      * @param artifacts {@link Artifact} collection.
      * @param antProject {@link Project}
      * @return {@link Path}
      * @throws DependencyResolutionRequiredException In case of a failure.
-     *
      */
-    public Path getPathFromArtifacts( Collection<Artifact> artifacts, Project antProject )
+    private Path getPathFromArtifacts( Collection<Artifact> artifacts, Project antProject )
         throws DependencyResolutionRequiredException
     {
         if ( artifacts == null )
@@ -459,7 +453,7 @@ public class AntRunMojo
         antProject.setProperty( ( propertyPrefix + "localRepository" ), localRepository.toString() );
         antProject.setProperty( ( propertyPrefix + "settings.localRepository" ), localRepository.getBasedir() );
 
-        // Add properties for depenedency artifacts
+        // Add properties for dependency artifacts
         Set<Artifact> depArtifacts = mavenProject.getArtifacts();
         for ( Artifact artifact : depArtifacts )
         {
@@ -480,7 +474,7 @@ public class AntRunMojo
     /**
      * Copy properties from the Ant project to the Maven project.
      *
-     * @param antProject   not null
+     * @param antProject not null
      * @param mavenProject not null
      * @since 1.7
      */
@@ -501,23 +495,12 @@ public class AntRunMojo
             if ( mavenProperties.getProperty( key ) != null )
             {
                 getLog().debug( "Ant property '" + key + "=" + mavenProperties.getProperty( key )
-                                    + "' clashs with an existing Maven property, "
-                                    + "SKIPPING this Ant property propagation." );
+                    + "' clashs with an existing Maven property, SKIPPING this Ant property propagation." );
                 continue;
             }
             // it is safe to call toString directly since the value cannot be null in Hashtable
             mavenProperties.setProperty( key, entry.getValue().toString() );
         }
-    }
-
-    /**
-     * Get the current Maven project
-     *
-     * @return current Maven project
-     */
-    public MavenProject getMavenProject()
-    {
-        return this.project;
     }
 
     /**
@@ -545,7 +528,7 @@ public class AntRunMojo
         throws IOException
     {
         // The fileName should probably use the plugin executionId instead of the targetName
-        File buildFile = new File( project.getBuild().getDirectory(), "antrun/build-" + targetName + ".xml" );
+        File buildFile = new File( mavenProject.getBuild().getDirectory(), "antrun/build-" + targetName + ".xml" );
         // noinspection ResultOfMethodCallIgnored
         buildFile.getParentFile().mkdirs();
 
@@ -553,38 +536,6 @@ public class AntRunMojo
         xmlWriter.write( target, buildFile, customTaskPrefix, targetName );
 
         return buildFile;
-    }
-
-    /**
-     * Replace text in a StringBuilder. If the match text is not found, the StringBuilder is returned unchanged.
-     *
-     * @param text  The string buffer containing the text
-     * @param match The string to match and remove
-     * @param with  The string to insert
-     */
-    public void stringReplace( StringBuilder text, String match, String with )
-    {
-        int index = text.indexOf( match );
-        if ( index != -1 )
-        {
-            text.replace( index, index + match.length(), with );
-        }
-    }
-
-    /**
-     * @param antTargetConfig {@link PlexusConfiguration}
-     * @return The target name.
-     * @throws PlexusConfigurationException in case of not existing attribute.
-     */
-    public String checkTargetName( PlexusConfiguration antTargetConfig )
-        throws PlexusConfigurationException
-    {
-        String targetName = antTargetConfig.getAttribute( "name" );
-        if ( targetName == null )
-        {
-            targetName = DEFAULT_ANT_TARGET_NAME;
-        }
-        return targetName;
     }
 
     /**
@@ -616,8 +567,7 @@ public class AntRunMojo
                 if ( reader.getLineNumber() == buildException.getLocation().getLineNumber() )
                 {
                     return "around Ant part ..." + line.trim() + "... @ " + buildException.getLocation().getLineNumber()
-                               + ":" + buildException.getLocation().getColumnNumber() + " in "
-                               + antFile.getAbsolutePath();
+                        + ":" + buildException.getLocation().getColumnNumber() + " in " + antFile.getAbsolutePath();
 
                 }
             }
