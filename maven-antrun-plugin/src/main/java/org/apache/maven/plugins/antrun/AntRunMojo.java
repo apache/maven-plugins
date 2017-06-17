@@ -22,7 +22,6 @@ package org.apache.maven.plugins.antrun;
 import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -52,7 +51,6 @@ import org.apache.tools.ant.taskdefs.Typedef;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -107,11 +105,6 @@ public class AntRunMojo
      * The default encoding to use for the generated Ant build.
      */
     public static final String UTF_8 = "UTF-8";
-
-    /**
-     * The name used for the Ant target
-     */
-    private String antTargetName;
 
     /**
      * The path to The XML file containing the definition of the Maven tasks.
@@ -272,10 +265,13 @@ public class AntRunMojo
             propertyPrefix = "";
         }
 
+        String antTargetName = target.getAttribute( "name", DEFAULT_ANT_TARGET_NAME );
+        target.setAttribute( "name", antTargetName );
+
         try
         {
             Project antProject = new Project();
-            File antBuildFile = this.writeTargetToProjectFile();
+            File antBuildFile = writeTargetToProjectFile( antTargetName );
             ProjectHelper.configureProject( antProject, antBuildFile );
             antProject.init();
 
@@ -533,7 +529,7 @@ public class AntRunMojo
         Typedef typedef = new Typedef();
         typedef.setProject( antProject );
         typedef.setResource( ANTLIB );
-        if ( !customTaskPrefix.equals( "" ) )
+        if ( !customTaskPrefix.isEmpty() )
         {
             typedef.setURI( TASK_URI );
         }
@@ -543,49 +539,19 @@ public class AntRunMojo
     /**
      * Write the Ant target and surrounding tags to a temporary file
      *
-     * @throws PlexusConfigurationException
+     * @throws IOException
      */
-    private File writeTargetToProjectFile()
-        throws IOException, PlexusConfigurationException
+    private File writeTargetToProjectFile( String targetName )
+        throws IOException
     {
-        // Have to use an XML writer because the PlexusConfig toString() method does not properly escape XML attributes
-        StringWriter writer = new StringWriter();
-        AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
-        xmlWriter.write( target, writer );
-
-        StringBuilder antProjectConfig = new StringBuilder( writer.getBuffer() );
-
-        antTargetName = target.getAttribute( "name" );
-
-        if ( antTargetName == null )
-        {
-            antTargetName = DEFAULT_ANT_TARGET_NAME;
-            stringReplace( antProjectConfig, "<target", "<target name=\"" + DEFAULT_ANT_TARGET_NAME + "\"" );
-        }
-
-        String xmlns = "";
-        if ( !customTaskPrefix.trim().equals( "" ) )
-        {
-            xmlns = "xmlns:" + customTaskPrefix + "=\"" + TASK_URI + "\"";
-        }
-
-        final String xmlHeader = "<?xml version=\"1.0\" encoding=\"" + UTF_8 + "\" ?>\n";
-        antProjectConfig.insert( 0, xmlHeader );
-        final String projectOpen =
-            "<project name=\"maven-antrun-\" default=\"" + antTargetName + "\" " + xmlns + " >\n";
-        int index = antProjectConfig.indexOf( "<target" );
-        antProjectConfig.insert( index, projectOpen );
-
-        final String projectClose = "\n</project>";
-        antProjectConfig.append( projectClose );
-
         // The fileName should probably use the plugin executionId instead of the targetName
-        String fileName = "build-" + antTargetName + ".xml";
-        File buildFile = new File( project.getBuild().getDirectory(), "/antrun/" + fileName );
-
-        //noinspection ResultOfMethodCallIgnored
+        File buildFile = new File( project.getBuild().getDirectory(), "antrun/build-" + targetName + ".xml" );
+        // noinspection ResultOfMethodCallIgnored
         buildFile.getParentFile().mkdirs();
-        FileUtils.fileWrite( buildFile.getAbsolutePath(), UTF_8, antProjectConfig.toString() );
+
+        AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
+        xmlWriter.write( target, buildFile, customTaskPrefix, targetName );
+
         return buildFile;
     }
 

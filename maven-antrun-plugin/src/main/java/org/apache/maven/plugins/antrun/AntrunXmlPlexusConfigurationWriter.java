@@ -20,82 +20,103 @@ package org.apache.maven.plugins.antrun;
  */
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.Xpp3DomUtils;
+import org.codehaus.plexus.util.xml.pull.MXSerializer;
+import org.codehaus.plexus.util.xml.pull.XmlSerializer;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Write a plexus configuration to a stream Note: This class was originally copied from plexus-container-default. It is
- * not possible to rely on PlexusConfiguration.toString() because it doesn't properly escape XML attributes.
+ * Write the Ant target Plexus configuration to an XML file.
  */
-public class AntrunXmlPlexusConfigurationWriter
+class AntrunXmlPlexusConfigurationWriter
 {
+
+    private static final Set<String> EXCLUDED_ATTRIBUTES =
+        new HashSet<String>( Arrays.asList( Xpp3DomUtils.CHILDREN_COMBINATION_MODE_ATTRIBUTE,
+                                            Xpp3DomUtils.SELF_COMBINATION_MODE_ATTRIBUTE ) );
 
     /**
      * @param configuration {@link PlexusConfiguration}
-     * @param writer {@link Writer}
+     * @param file File to write the Plexus configuration to.
+     * @param customTaskPrefix Prefix to use for the custom Ant tasks. Empty if no prefix should be used.
+     * @param antTargetName Name of the default Ant target.
      * @throws IOException In case of problems.
      */
-    public void write( PlexusConfiguration configuration, Writer writer )
+    public void write( PlexusConfiguration configuration, File file, String customTaskPrefix, String antTargetName )
         throws IOException
     {
-        final int depth = 0;
-
-        PrettyPrintXMLWriter xmlWriter = new PrettyPrintXMLWriter( writer );
-        write( configuration, xmlWriter, depth );
+        MXSerializer serializer = new MXSerializer();
+        serializer.setProperty( "http://xmlpull.org/v1/doc/properties.html#serializer-line-separator",
+                                System.getProperty( "line.separator" ) );
+        serializer.setProperty( "http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "  " );
+        BufferedOutputStream bos = new BufferedOutputStream( new FileOutputStream( file ) );
+        try
+        {
+            serializer.setOutput( bos, AntRunMojo.UTF_8 );
+            serializer.startDocument( AntRunMojo.UTF_8, null );
+            if ( !customTaskPrefix.isEmpty() )
+            {
+                serializer.setPrefix( customTaskPrefix, AntRunMojo.TASK_URI );
+            }
+            serializer.startTag( null, "project" );
+            serializer.attribute( null, "name", "maven-antrun-" );
+            serializer.attribute( null, "default", antTargetName );
+            write( configuration, serializer );
+            serializer.endTag( null, "project" );
+            serializer.endDocument();
+        }
+        finally
+        {
+            IOUtil.close( bos );
+        }
     }
 
-    private void write( PlexusConfiguration c, XMLWriter w, int depth )
+    private void write( PlexusConfiguration c, XmlSerializer serializer )
         throws IOException
     {
-        int count = c.getChildCount();
+        serializer.startTag( null, c.getName() );
+        writeAttributes( c, serializer );
 
+        int count = c.getChildCount();
         if ( count == 0 )
         {
-            writeTag( c, w, depth );
+            String value = c.getValue();
+            if ( value != null )
+            {
+                serializer.text( value );
+            }
         }
         else
         {
-            w.startElement( c.getName() );
-            writeAttributes( c, w );
-
             for ( int i = 0; i < count; i++ )
             {
                 PlexusConfiguration child = c.getChild( i );
-
-                write( child, w, depth + 1 );
+                write( child, serializer );
             }
-
-            w.endElement();
-        }
-    }
-
-    private void writeTag( PlexusConfiguration c, XMLWriter w, int depth )
-        throws IOException
-    {
-        w.startElement( c.getName() );
-
-        writeAttributes( c, w );
-
-        String value = c.getValue( null );
-        if ( value != null )
-        {
-            w.writeText( value );
         }
 
-        w.endElement();
+        serializer.endTag( null, c.getName() );
     }
 
-    private void writeAttributes( PlexusConfiguration c, XMLWriter w )
+    private void writeAttributes( PlexusConfiguration c, XmlSerializer serializer )
         throws IOException
     {
         String[] names = c.getAttributeNames();
 
         for ( String name : names )
         {
-            w.addAttribute( name, c.getAttribute( name, null ) );
+            if ( !EXCLUDED_ATTRIBUTES.contains( name ) )
+            {
+                serializer.attribute( null, name, c.getAttribute( name ) );
+            }
         }
     }
 

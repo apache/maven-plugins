@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main" xmlns:mvn="antlib:org.apache.maven.ant.tasks">
+  <target name="main">
+    <mvn:foo attr1="val1">The first value.</mvn:foo>
+    <bar attr2="val2">The second value.</bar>
+  </target>
+</project>
