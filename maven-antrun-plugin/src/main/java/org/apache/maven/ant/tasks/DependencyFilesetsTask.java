@@ -116,6 +116,14 @@ public class DependencyFilesetsTask
         ArtifactRepository localRepository = (ArtifactRepository) getProject().getReference( "maven.local.repository" );
         dependenciesFileSet.setDir( new File( localRepository.getBasedir() ) );
 
+        if ( depArtifacts.isEmpty() )
+        {
+            // For performance reasons in case of huge local repo, tell Ant to include a single thing, otherwise the
+            // whole directory is scanned (even though ** is excluded).
+            dependenciesFileSet.createInclude().setName( "." );
+            dependenciesFileSet.createExclude().setName( "**" );
+        }
+
         for ( Artifact artifact : depArtifacts )
         {
             String relativeArtifactPath = localRepository.pathOf( artifact );
