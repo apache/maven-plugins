@@ -42,12 +42,12 @@ public class IT_RunOnlyAtExecutionRoot
 
         Verifier verifier;
 
-        verifier = new Verifier( new File( dir, "resource-projects" ).getAbsolutePath() );
+        verifier = TestUtils.newVerifier( new File( dir, "resource-projects" ) );
         verifier.executeGoal( "deploy" );
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
 
-        verifier = new Verifier( dir.getAbsolutePath() );
+        verifier = TestUtils.newVerifier( dir );
 
         // I'm not sure what exactly the intention of the test was.
         // Based on the name i assumed to be sure the remote-resources-plugin

@@ -43,7 +43,7 @@ public class IT_SupplementalArtifact
 
         Verifier verifier;
 
-        verifier = new Verifier( resources.getAbsolutePath() );
+        verifier = TestUtils.newVerifier( resources );
         
         verifier.deleteArtifacts( "org.apache.maven.plugin.rresource.it.mrr43" );
 
@@ -51,7 +51,7 @@ public class IT_SupplementalArtifact
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
 
-        verifier = new Verifier( dir.getAbsolutePath() );
+        verifier = TestUtils.newVerifier( dir );
 
         verifier.executeGoal( "generate-resources" );
         verifier.verifyErrorFreeLog();

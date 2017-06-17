@@ -25,6 +25,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.maven.it.VerificationException;
+import org.apache.maven.it.Verifier;
+
 public class TestUtils
 {
     public static File getTestDir( final String name )
@@ -53,4 +56,13 @@ public class TestUtils
             return result.getAbsoluteFile();
         }
     }
+
+    public static Verifier newVerifier( File dir )
+        throws VerificationException
+    {
+        Verifier verifier = new Verifier( dir.getAbsolutePath() );
+        verifier.setLocalRepo( System.getProperty( "localRepositoryPath" ) );
+        return verifier;
+    }
+
 }

@@ -36,7 +36,7 @@ public class IT_CustomFilterDelimiter
         throws IOException, URISyntaxException, VerificationException
     {
         File dir = TestUtils.getTestDir( "custom-filter-delim" );
-        Verifier verifier = new Verifier( dir.getAbsolutePath() );
+        Verifier verifier = TestUtils.newVerifier( dir );
         
         verifier.getCliOptions().add( "-X" );
         

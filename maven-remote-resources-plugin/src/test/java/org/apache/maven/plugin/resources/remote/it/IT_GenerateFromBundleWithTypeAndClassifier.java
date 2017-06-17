@@ -36,7 +36,7 @@ public class IT_GenerateFromBundleWithTypeAndClassifier
         throws IOException, URISyntaxException, VerificationException
     {
         File dir = TestUtils.getTestDir( "generate-from-bundle-with-type-and-classifier" );
-        Verifier verifier = new Verifier( dir.getAbsolutePath() );
+        Verifier verifier = TestUtils.newVerifier( dir );
         
         verifier.executeGoal( "generate-resources" );
         verifier.verifyErrorFreeLog();

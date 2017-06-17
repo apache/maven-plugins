@@ -42,12 +42,12 @@ public class IT_GetDependencyProjects
 
         Verifier verifier;
 
-        verifier = new Verifier( dir.getAbsolutePath() );
+        verifier = TestUtils.newVerifier( dir );
         verifier.executeGoal( "deploy" );
         verifier.verifyErrorFreeLog();
         verifier.resetStreams();
 
-        verifier = new Verifier( new File( dir, "project" ).getAbsolutePath() );
+        verifier = TestUtils.newVerifier( new File( dir, "project" ) );
 
         verifier.deleteArtifacts( "org.apache.maven.plugin.rresource.it.gdp" );
 

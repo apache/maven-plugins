@@ -40,9 +40,7 @@ public class IT_BadDependencyPoms
     {
         File dir = TestUtils.getTestDir( "bad-dependency-poms" );
 
-        Verifier verifier;
-
-        verifier = new Verifier( dir.getAbsolutePath() );
+        Verifier verifier = TestUtils.newVerifier( dir );
         verifier.deleteArtifacts( "test" );
         verifier.getSystemProperties().setProperty( "it.dir", dir.getAbsolutePath() );
         

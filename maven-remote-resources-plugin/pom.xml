@@ -350,8 +350,12 @@ under the License.
                 </goals>
                 <configuration>
                   <systemPropertyVariables>
-                    <!-- Pass this through to the tests (if set!) to have them pick the right repository -->
-                    <maven.repo.local>${project.build.directory}/it-repo</maven.repo.local>
+                    <!--
+                      The tests have to pick the right repository.
+                      SUREFIRE-1385: Cannot set maven.repo.local directly because it might have been set by the user 
+                      on the CLI directly (and it would be preferred)
+                    -->
+                    <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

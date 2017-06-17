@@ -36,7 +36,7 @@ public class IT_FilterLocalOverride
         throws IOException, URISyntaxException, VerificationException
     {
         File dir = TestUtils.getTestDir( "filter-local-override" );
-        Verifier verifier = new Verifier( dir.getAbsolutePath() );
+        Verifier verifier = TestUtils.newVerifier( dir );
         
         verifier.executeGoal( "generate-resources" );
         verifier.verifyErrorFreeLog();

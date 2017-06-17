@@ -38,7 +38,7 @@ public class BootstrapInstaller
         {
             File bootstrapDir = TestUtils.getTestDir( "bootstrap" );
             
-            Verifier verifier = new Verifier( bootstrapDir.getAbsolutePath() );
+            Verifier verifier = TestUtils.newVerifier( bootstrapDir );
             
             verifier.executeGoal( "deploy" );
             
