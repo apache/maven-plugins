@@ -258,27 +258,28 @@ public class DependencyStatusSets
         try
         {
             // Use Java9 code to get moduleName, don't try to do it better with own implementation
-            Class moduleFinderClass = Class.forName( "java.lang.module.ModuleFinder" );
+            Class<?> moduleFinderClass = Class.forName( "java.lang.module.ModuleFinder" );
 
             java.nio.file.Path path = artifactFile.toPath();
             
-            Method ofMethod = moduleFinderClass.getDeclaredMethod( "of", java.nio.file.Path[].class );
+            Method ofMethod = moduleFinderClass.getMethod( "of", java.nio.file.Path[].class );
             Object moduleFinderInstance = ofMethod.invoke( null, new Object[] { new java.nio.file.Path[] { path } } );
             
-            Method findAllMethod = moduleFinderClass.getDeclaredMethod( "findAll" );
+            Method findAllMethod = moduleFinderClass.getMethod( "findAll" );
+            @SuppressWarnings( "unchecked" )
             Set<Object> moduleReferences = (Set<Object>) findAllMethod.invoke( moduleFinderInstance );
             
             Object moduleReference = moduleReferences.iterator().next();
-            Method descriptorMethod = moduleReference.getClass().getDeclaredMethod( "descriptor" );
+            Method descriptorMethod = moduleReference.getClass().getMethod( "descriptor" );
             Object moduleDescriptorInstance = descriptorMethod.invoke( moduleReference );
             
-            Method nameMethod = moduleDescriptorInstance.getClass().getDeclaredMethod( "name" );
+            Method nameMethod = moduleDescriptorInstance.getClass().getMethod( "name" );
             String name = (String) nameMethod.invoke( moduleDescriptorInstance );
             
             moduleDescriptor = new ModuleDescriptor();
             moduleDescriptor.name = name;
             
-            Method isAutomaticMethod = moduleDescriptorInstance.getClass().getDeclaredMethod( "isAutomatic" );
+            Method isAutomaticMethod = moduleDescriptorInstance.getClass().getMethod( "isAutomatic" );
             moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
         }
         catch ( ClassNotFoundException e )
