@@ -57,6 +57,7 @@ under the License.
   </distributionManagement>
 
   <properties>
+    <javaVersion>7</javaVersion>
     <mdoVersion>2.0.0</mdoVersion>
     <mavenArchiverVersion>3.1.1</mavenArchiverVersion>
     <mavenFilteringVersion>3.1.1</mavenFilteringVersion>
