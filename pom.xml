@@ -125,6 +125,7 @@ under the License.
       <!-- For plugins that require at least Java 7 to build -->
       <id>java-7</id>
       <modules>
+        <module>maven-assembly-plugin</module>
         <module>maven-checkstyle-plugin</module>
         <module>maven-pmd-plugin</module>
       </modules>
@@ -162,7 +163,6 @@ under the License.
         <jdk>[1.6,)</jdk>
       </activation>
       <modules>
-        <module>maven-assembly-plugin</module>
         <module>maven-dependency-plugin</module>
       </modules>
     </profile>
