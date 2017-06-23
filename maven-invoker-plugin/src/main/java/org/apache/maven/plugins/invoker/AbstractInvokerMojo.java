@@ -1860,12 +1860,9 @@ public abstract class AbstractInvokerMojo
                     throw new RunFailureException( "Maven invocation failed. " + e.getMessage(),
                                                    BuildJob.Result.FAILURE_BUILD );
                 }
-
+                runPostBuildHook( basedir, context, logger );
                 verify( result, invocationIndex, invokerProperties, logger );
             }
-
-            scriptRunner.run( "post-build script", basedir, postBuildHookScript, context, logger,
-                              BuildJob.Result.FAILURE_POST_HOOK, true );
         }
         catch ( IOException e )
         {
@@ -1881,6 +1878,19 @@ public abstract class AbstractInvokerMojo
         return true;
     }
 
+    private void runPostBuildHook( File basedir, Map<String, Object> context, FileLogger logger )
+        throws MojoExecutionException, RunFailureException
+    {
+        try
+        {
+            scriptRunner.run( "post-build script", basedir, postBuildHookScript, context, logger,
+                              BuildJob.Result.FAILURE_POST_HOOK, true );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
     private void setupLoggerForBuildJob( FileLogger logger, final InvocationRequest request )
     {
         if ( logger != null )
