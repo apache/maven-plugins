@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;

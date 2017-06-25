@@ -32,7 +32,7 @@ import com.thoughtworks.qdox.model.Type;
 import com.thoughtworks.qdox.model.TypeVariable;
 import com.thoughtworks.qdox.parser.ParseException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
