@@ -38,7 +38,7 @@
 
     <!--
       | Defining the phases with their appropriate plugins
-      ! and versions which will be executed during the 'default'
+      ! and versions which will be executed during the 'jlink'
       ! life cycle.
     -->
     <!--

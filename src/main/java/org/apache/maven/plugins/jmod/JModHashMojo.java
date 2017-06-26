@@ -33,7 +33,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * <pre>
- * jmod create ...
+ * jmod hash ...
  * </pre>
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>

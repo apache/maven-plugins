@@ -146,6 +146,18 @@ public abstract class AbstractJModMojo
         return jLinkExe.getAbsolutePath();
     }
     
+    protected boolean projectHasAlreadySetAnArtifact()
+    {
+        if ( getProject().getArtifact().getFile() != null )
+        {
+            return getProject().getArtifact().getFile().isFile();
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     protected void executeCommand ( Commandline cmd, File outputDirectory ) throws MojoExecutionException
     {
         if ( getLog().isDebugEnabled() )
