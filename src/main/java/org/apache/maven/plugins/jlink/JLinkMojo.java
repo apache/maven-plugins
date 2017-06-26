@@ -204,7 +204,7 @@ public class JLinkMojo
     private ArchiverManager manager;
 
     /**
-     * The kind of archive we should produce.
+     * The kind of archive we will produce.
      */
     @Parameter( defaultValue = "zip", required = true )
     private String archiveType;
@@ -246,7 +246,7 @@ public class JLinkMojo
 
         failIfParametersAreNotInTheirValidValueRanges();
 
-        deleteOutputDirectoryIfItAlreadyExists();
+        ifOutputDirectoryExistsDelteIt();
 
         List<Dependency> dependencies = getSession().getCurrentProject().getDependencies();
 
@@ -284,13 +284,25 @@ public class JLinkMojo
 
         File createZipArchiveFromImage = createZipArchiveFromImage( outputDirectory, outputDirectoryImage );
 
-        // Set main artifact.
-        getProject().getArtifact().setFile( createZipArchiveFromImage );
-        // artifact.setFile( createZipArchiveFromImage );
-        // getProject().setFile( createZipArchiveFromImage );
-        // packaging is something different than type..
-        // projectHelper.attachArtifact( getProject(), "image", "image", createZipArchiveFromImage );
+        if ( projectHasAlreadySetAnArtifact() )
+        {
+            throw new MojoExecutionException( "You have to use a classifier "
+                + "to attach supplemental artifacts to the project instead of replacing them." );
+        }
 
+        getProject().getArtifact().setFile( createZipArchiveFromImage );
+    }
+
+    private boolean projectHasAlreadySetAnArtifact()
+    {
+        if ( getProject().getArtifact().getFile() != null )
+        {
+            return getProject().getArtifact().getFile().isFile();
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private File createZipArchiveFromImage( File outputDirectory, File outputDirectoryImage )
@@ -396,7 +408,7 @@ public class JLinkMojo
         // }
     }
 
-    private void deleteOutputDirectoryIfItAlreadyExists()
+    private void ifOutputDirectoryExistsDelteIt()
         throws MojoExecutionException
     {
         if ( outputDirectoryImage.exists() )

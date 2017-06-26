@@ -251,6 +251,7 @@ public abstract class AbstractJLinkMojo
 
         if ( tc == null )
         {
+            // TODO: Check if we should make the type configurable?
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
 
