@@ -49,19 +49,21 @@ public class JModCreateMojo
 {
 
     /**
-     * <code>--class-path &lt;path&gt;</code> Application jar files|dir containing classes.
+     * <code>--class-path &lt;path&gt;</code> Application jar files/directory containing classes.
      */
     @Parameter( defaultValue = "${project.build.outputDirectory}" )
     private List<String> classPath;
 
     /**
-     * <code>--class-path &lt;path&gt;</code> Application jar files|dir containing classes.
+     * Location of native commands
      */
     @Parameter
     private List<String> cmds;
 
     /**
      * <code>--config &lt;path&gt;</code> Location of user-editable config files.
+     * TODO: Implement the handling. Should we use src/main/resources for this?
+     * or better something different? What about filtering?
      */
     @Parameter
     private File config;
@@ -72,8 +74,11 @@ public class JModCreateMojo
     @Parameter
     private String mainClass;
 
+    /**
+     * Location of native libraries. <code>--libs &lt;path&gt;</code>
+     */
     @Parameter
-    private List<File> libs;
+    private File libs;
 
     @Parameter( defaultValue = "${project.version}" )
     private String moduleVersion;
@@ -85,6 +90,9 @@ public class JModCreateMojo
     @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
     private File modulePath;
 
+    /**
+     * The moduleName. The default is to use the <code>artifactId</code>.
+     */
     @Parameter( defaultValue = "${project.artifactId}", required = true )
     private String moduleName;
 
@@ -124,6 +132,13 @@ public class JModCreateMojo
 
         executeCommand( cmd, outputDirectory );
 
+        if ( projectHasAlreadySetAnArtifact() )
+        {
+            throw new MojoExecutionException( "You have to use a classifier "
+                + "to attach supplemental artifacts to the project instead of replacing them." );
+        }
+
+        getProject().getArtifact().setFile( resultingJModFile );
     }
 
     private void deleteOutputIfAlreadyExists( File resultingJModFile )
@@ -180,6 +195,12 @@ public class JModCreateMojo
             cmd.createArg().setValue( "--class-path" );
             StringBuilder sb = getColonSeparateList( classPath );
             cmd.createArg().setValue( sb.toString() );
+        }
+
+        if ( config != null )
+        {
+            cmd.createArg().setValue( "--config" );
+            cmd.createArg().setFile( config );
         }
 
         // Can not be overwritten...
