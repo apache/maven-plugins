@@ -31,7 +31,6 @@
       <configuration>
         <type>jlink</type>
         <extension>zip</extension>
-        <!-- Need to check the following? -->
         <includesDependencies>true</includesDependencies>
         <language>java</language>
         <addedToClasspath>false</addedToClasspath>
@@ -59,8 +58,6 @@
               <package>
                 org.apache.maven.plugins:maven-jlink-plugin:${project.version}:jlink
               </package>
-              <!-- What should be installed?
-              JRE image in zip/tar format? -->
               <install>
                 org.apache.maven.plugins:maven-install-plugin:2.5.2:install
               </install>
