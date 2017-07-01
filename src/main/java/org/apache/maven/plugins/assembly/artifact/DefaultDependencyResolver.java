@@ -44,6 +44,7 @@ import org.apache.maven.plugins.assembly.model.ModuleSet;
 import org.apache.maven.plugins.assembly.model.Repository;
 import org.apache.maven.plugins.assembly.resolved.AssemblyId;
 import org.apache.maven.plugins.assembly.utils.FilterUtils;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
@@ -335,16 +336,18 @@ public class DefaultDependencyResolver
             {
                 try
                 {
+                    ProjectBuildingRequest pbr = new DefaultProjectBuildingRequest( buildingRequest );
+                    pbr.setRemoteRepositories( project.getRemoteArtifactRepositories() );
                     Iterable<ArtifactResult> artifactResults =
-                        dependencyResolver.resolveDependencies( buildingRequest, project.getModel(), scopeFilter );
-                    
+                        dependencyResolver.resolveDependencies( pbr, project.getModel(), scopeFilter );
+
                     dependencyArtifacts = new HashSet<Artifact>();
-                    
+
                     for ( ArtifactResult artifactResult : artifactResults )
                     {
                         dependencyArtifacts.add( artifactResult.getArtifact() );
                     }
-                    
+
                     project.setDependencyArtifacts( dependencyArtifacts );
                 }
                 catch ( final DependencyResolverException e )

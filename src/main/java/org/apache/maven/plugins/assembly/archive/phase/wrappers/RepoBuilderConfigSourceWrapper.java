@@ -21,6 +21,7 @@ package org.apache.maven.plugins.assembly.archive.phase.wrappers;
 
 import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugins.assembly.repository.RepositoryBuilderConfigSource;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 
@@ -47,6 +48,9 @@ public class RepoBuilderConfigSourceWrapper
     @Override
     public ProjectBuildingRequest getProjectBuildingRequest()
     {
-        return configSource.getMavenSession().getProjectBuildingRequest();
+        ProjectBuildingRequest pbr =
+            new DefaultProjectBuildingRequest( configSource.getMavenSession().getProjectBuildingRequest() );
+        pbr.setRemoteRepositories( getProject().getRemoteArtifactRepositories() );
+        return pbr;
     }
 }
