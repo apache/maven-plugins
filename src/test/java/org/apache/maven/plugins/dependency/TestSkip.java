@@ -104,7 +104,7 @@ public class TestSkip
     public void testSkipPurgeLocalRepository()
         throws Exception
     {
-        doTest( "purge-local-repository" );
+        doSpecialTest( "purge-local-repository" );
     }
 
     public void testSkipResolve()
