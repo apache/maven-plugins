@@ -104,6 +104,32 @@ public class AllProfilesMojoTest
         assertTrue( file.contains( "Profile Id: pro-2 (Active: false , Source: pom)" ) );
         assertTrue( file.contains( "Profile Id: pro-3 (Active: false , Source: pom)" ) );
     }
+
+    /**
+     * Tests the case when active profiles are present in the parent POM.
+     * 
+     * @throws Exception in case of errors.
+     */
+    public void testProfileFromParentPom()
+        throws Exception
+    {
+        File testPom = new File( getBasedir(), "target/test-classes/unit/all-profiles/plugin-config.xml" );
+
+        AllProfilesMojo mojo = (AllProfilesMojo) lookupMojo( "all-profiles", testPom );
+
+        MavenProjectStub project = new MavenProjectStub();
+        project.setParent( new MavenProjectStub() );
+        project.getParent().getModel().setProfiles( Arrays.asList( newPomProfile( "pro-1", "pom" ) ) );
+        project.getParent().setActiveProfiles( Arrays.asList( newPomProfile( "pro-1", "pom" ) ) );
+        
+        setUpMojo( mojo, Arrays.<MavenProject>asList( project ),
+                   Collections.<org.apache.maven.settings.Profile>emptyList(), "profiles-from-parent-pom.txt" );
+
+        mojo.execute();
+
+        String file = readFile( "profiles-from-parent-pom.txt" );
+        assertTrue( file.contains( "Profile Id: pro-1 (Active: true , Source: pom)" ) );
+    }
     
     /**
      * Tests the case when profiles are present in the settings.

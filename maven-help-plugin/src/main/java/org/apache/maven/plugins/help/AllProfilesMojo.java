@@ -78,8 +78,9 @@ public class AllProfilesMojo
             descriptionBuffer.append( "Listing Profiles for Project: " ).append( project.getId() ).append( LS );
             
             Map<String, Profile> allProfilesByIds = new HashMap<String, Profile>();
+            Map<String, Profile> activeProfilesByIds = new HashMap<String, Profile>();
             addSettingsProfiles( allProfilesByIds );
-            addProjectPomProfiles( project, allProfilesByIds );
+            addProjectPomProfiles( project, allProfilesByIds, activeProfilesByIds );
 
             // now display
             if ( allProfilesByIds.isEmpty() )
@@ -89,29 +90,10 @@ public class AllProfilesMojo
             else
             {
                 // active Profiles will be a subset of *all* profiles
-                List<Profile> activeProfiles = project.getActiveProfiles();
-                for ( Profile activeProfile : activeProfiles )
-                {
-                    // we already have the active profiles for the project, so remove them from the list of all
-                    // profiles.
-                    allProfilesByIds.remove( activeProfile.getId() );
-                }
+                allProfilesByIds.keySet().removeAll( activeProfilesByIds.keySet() );
 
-                // display active profiles
-                for ( Profile p : activeProfiles )
-                {
-                    descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
-                    descriptionBuffer.append( " (Active: true , Source: " ).append( p.getSource() ).append( ")" );
-                    descriptionBuffer.append( LS );
-                }
-
-                // display inactive profiles
-                for ( Profile p : allProfilesByIds.values() )
-                {
-                    descriptionBuffer.append( "  Profile Id: " ).append( p.getId() );
-                    descriptionBuffer.append( " (Active: false , Source: " ).append( p.getSource() ).append( ")" );
-                    descriptionBuffer.append( LS );
-                }
+                writeProfilesDescription( descriptionBuffer, activeProfilesByIds, true );
+                writeProfilesDescription( descriptionBuffer, allProfilesByIds, false );
             }
         }
 
@@ -138,13 +120,25 @@ public class AllProfilesMojo
     // Private methods
     // ----------------------------------------------------------------------
 
+    private void writeProfilesDescription( StringBuilder sb, Map<String, Profile> profilesByIds, boolean active )
+    {
+        for ( Profile p : profilesByIds.values() )
+        {
+            sb.append( "  Profile Id: " ).append( p.getId() );
+            sb.append( " (Active: " + active + " , Source: " ).append( p.getSource() ).append( ")" );
+            sb.append( LS );
+        }
+    }
+
     /**
      * Adds the profiles from <code>pom.xml</code> and all of its parents.
      *
      * @param project could be null
      * @param allProfiles Map to add the profiles to.
+     * @param activeProfiles Map to add the active profiles to.
      */
-    private void addProjectPomProfiles( MavenProject project, Map<String, Profile> allProfiles )
+    private void addProjectPomProfiles( MavenProject project, Map<String, Profile> allProfiles,
+                                        Map<String, Profile> activeProfiles )
     {
         if ( project == null )
         {
@@ -155,19 +149,20 @@ public class AllProfilesMojo
 
         getLog().debug( "Attempting to read profiles from pom.xml..." );
 
-        for ( Profile profile : project.getModel().getProfiles() )
+        while ( project != null )
         {
-            allProfiles.put( profile.getId(), profile );
-        }
-
-        MavenProject parent = project.getParent();
-        while ( parent != null )
-        {
-            for ( Profile profile : parent.getModel().getProfiles() )
+            for ( Profile profile : project.getModel().getProfiles() )
             {
                 allProfiles.put( profile.getId(), profile );
             }
-            parent = parent.getParent();
+            if ( project.getActiveProfiles() != null )
+            {
+                for ( Profile profile : project.getActiveProfiles() )
+                {
+                    activeProfiles.put( profile.getId(), profile );
+                }
+            }
+            project = project.getParent();
         }
     }
 
