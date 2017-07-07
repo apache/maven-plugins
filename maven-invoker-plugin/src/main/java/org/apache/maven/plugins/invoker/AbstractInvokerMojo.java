@@ -524,6 +524,10 @@ public abstract class AbstractInvokerMojo
      * # A boolean value controlling the debug logging level of Maven, , defaults to &quot;false&quot;
      * # Since plugin version 1.8
      * invoker.debug = true
+     * 
+     * # Path to an alternate <code>settings.xml</code> to use for Maven invocation with this IT.
+     * # Since plugin version 3.0.1
+     * invoker.settingsFile = ../
      * </pre>
      *
      * @since 1.2
@@ -1162,7 +1166,7 @@ public abstract class AbstractInvokerMojo
         // interpolate settings file
         // -----------------------------------------------
 
-        File interpolatedSettingsFile = interpolateSettings();
+        File interpolatedSettingsFile = interpolateSettings( settingsFile );
 
         final File mergedSettingsFile = mergeSettings( interpolatedSettingsFile );
 
@@ -1246,11 +1250,12 @@ public abstract class AbstractInvokerMojo
 
     /**
      * Interpolate settings.xml file.
+     * @param settingsFile a settings file
      * 
      * @return The interpolated settings.xml file.
      * @throws MojoExecutionException in case of a problem.
      */
-    private File interpolateSettings()
+    private File interpolateSettings( File settingsFile )
         throws MojoExecutionException
     {
         File interpolatedSettingsFile = null;
@@ -1827,7 +1832,18 @@ public abstract class AbstractInvokerMojo
 
                 request.setOffline( false );
 
-                request.setUserSettingsFile( settingsFile );
+                String customSettingsFile = invokerProperties.getSettingsFile( invocationIndex );
+                if ( customSettingsFile != null )
+                {
+                    File interpolateSettingsFile = interpolateSettings( new File( customSettingsFile ) );
+                    File mergeSettingsFile = mergeSettings( interpolateSettingsFile );
+                    
+                    request.setUserSettingsFile( mergeSettingsFile );
+                }
+                else
+                {
+                    request.setUserSettingsFile( settingsFile );
+                }
 
                 Properties systemProperties =
                     getSystemProperties( basedir, invokerProperties.getSystemPropertiesFile( invocationIndex ) );
