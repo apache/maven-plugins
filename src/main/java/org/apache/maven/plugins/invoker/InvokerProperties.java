@@ -48,7 +48,8 @@ class InvokerProperties
         NON_RECURSIVE( "invoker.nonRecursive" ),
         OFFLINE( "invoker.offline" ),
         SYSTEM_PROPERTIES_FILE( "invoker.systemPropertiesFile" ),
-        DEBUG( "invoker.debug" );
+        DEBUG( "invoker.debug" ),
+        SETTINGS_FILE ( "invoker.settingsFile" );
 
         private final String key;
 
@@ -325,12 +326,23 @@ class InvokerProperties
     /**
      * Gets the path to the properties file used to set the system properties for the specified invocation.
      *
-     * @param index The index of the invocation for which to check the exit code, must not be negative.
+     * @param index The index of the invocation, must not be negative.
      * @return The path to the properties file or <code>null</code> if not set.
      */
     public String getSystemPropertiesFile( int index )
     {
         return get( InvocationProperty.SYSTEM_PROPERTIES_FILE, index );
+    }
+
+    /**
+     * Gets the settings file used for the specified invocation.
+     * 
+     * @param index The index of the invocation, must not be negative.
+     * @return the value for the settings file or <code>null</code> if not set.
+     */
+    public String getSettingsFile( int index )
+    {
+        return get( InvocationProperty.SETTINGS_FILE, index );
     }
 
     /**
