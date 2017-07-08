@@ -53,8 +53,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -287,6 +288,8 @@ public abstract class AbstractJavadocMojo
      * @since 3.0.0
      */
     private static final float SINCE_JAVADOC_1_8 = 1.8f;
+
+    private static final float JAVA_VERSION_FLOAT = JavadocUtil.parseJavadocVersion(SystemUtils.JAVA_VERSION);
 
     // ----------------------------------------------------------------------
     // Mojo components
@@ -3632,7 +3635,7 @@ public abstract class AbstractJavadocMojo
         }
         // For Apple's JDK 1.6.x (and older?) on Mac OSX
         // CHECKSTYLE_OFF: MagicNumber
-        else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
+        else if ( SystemUtils.IS_OS_MAC_OSX && !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_7) )
         // CHECKSTYLE_ON: MagicNumber
         {
             javadocExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", javadocCommand );
@@ -3693,27 +3696,27 @@ public abstract class AbstractJavadocMojo
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + JAVA_VERSION_FLOAT );
             }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+            jVersion = JAVA_VERSION_FLOAT;
         }
         catch ( CommandLineException e )
         {
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + JAVA_VERSION_FLOAT );
             }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+            jVersion = JAVA_VERSION_FLOAT;
         }
         catch ( IllegalArgumentException e )
         {
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + JAVA_VERSION_FLOAT );
             }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+            jVersion = JAVA_VERSION_FLOAT;
         }
 
         if ( StringUtils.isNotEmpty( javadocVersion ) )

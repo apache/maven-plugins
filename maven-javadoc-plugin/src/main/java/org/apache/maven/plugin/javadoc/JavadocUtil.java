@@ -19,7 +19,7 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
