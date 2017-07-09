@@ -50,7 +50,8 @@ public class JavadocVersion implements Comparable<JavadocVersion>
      * @param s the version string
      * @return the version wrapped in a JavadocVersion
      */
-    static JavadocVersion parse( String s ) {
+    static JavadocVersion parse( String s ) 
+    {
         return new JavadocVersion( s );
     }
 
