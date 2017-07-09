@@ -20,6 +20,10 @@ package org.apache.maven.plugin.javadoc;
  */
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -44,5 +48,21 @@ public class JavadocVersionTest
         assertTrue( JavadocVersion.parse( "1.4.2" ).compareTo( JavadocVersion.parse( "1.4" ) ) > 0 );
         assertTrue( JavadocVersion.parse( "1.5" ).compareTo( JavadocVersion.parse( "1.4" ) ) > 0 );
         assertTrue( JavadocVersion.parse( "9" ).compareTo( JavadocVersion.parse( "1.8" ) ) > 0 );
+    }
+    
+    @Test
+    public void testApiVersion() {
+        Pattern p = Pattern.compile( "(1\\.\\d|\\d\\d*)" );
+        Matcher m = p.matcher( "9" );
+        assertTrue(m.find());
+        assertEquals( "9", m.group( 1 ));
+
+        m = p.matcher( "1.4" );
+        assertTrue(m.find());
+        assertEquals( "1.4", m.group( 1 ));
+
+        m = p.matcher( "1.4.2" );
+        assertTrue(m.find());
+        assertEquals( "1.4", m.group( 1 ));
     }
 }

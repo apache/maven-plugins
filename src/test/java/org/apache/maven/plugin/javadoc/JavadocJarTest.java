@@ -82,12 +82,12 @@ public class JavadocJarTest
         }
 
         assertTrue( set.contains( "stylesheet.css" ) );
-        float javadocVersion = (Float) getVariableValueFromObject( mojo, "fJavadocVersion" );
-        if ( Float.compare( javadocVersion, 1.7f ) < 0 )
+        JavadocVersion javadocVersion = (JavadocVersion) getVariableValueFromObject( mojo, "javadocRuntimeVersion" );
+        if ( javadocVersion.compareTo( JavadocVersion.parse( "1.7" ) ) < 0 )
         {
             assertTrue( set.contains( "resources/inherit.gif" ) );
         }
-        else if ( Float.compare( javadocVersion, 1.8f ) < 0 )
+        else if ( javadocVersion.compareTo( JavadocVersion.parse( "1.8" ) ) < 0 )
         {
             assertTrue( set.contains( "resources/background.gif" ) /* JDK7 */);
         }

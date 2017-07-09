@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.maven.plugin.javadoc.ProxyServer.AuthAsyncProxyServlet;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -55,7 +55,7 @@ public class JavadocUtilTest
         String version = null;
         try
         {
-            JavadocUtil.parseJavadocVersion( version );
+            JavadocUtil.extractJavadocVersion( version );
             assertTrue( "Not catch null", false );
         }
         catch ( IllegalArgumentException e )
@@ -65,56 +65,59 @@ public class JavadocUtilTest
 
         // Sun JDK 1.4
         version = "java full version \"1.4.2_12-b03\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.42f, 0 );
+        assertEquals( "1.4.2", JavadocUtil.extractJavadocVersion( version ) );
 
         // Sun JDK 1.5
         version = "java full version \"1.5.0_07-164\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals(  "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         // IBM JDK 1.4
         version = "java full version \"J2RE 1.4.2 IBM Windows 32 build cn1420-20040626\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.42f, 0 );
+        assertEquals( "1.4.2", JavadocUtil.extractJavadocVersion( version ) );
 
         // IBM JDK 1.5
         version = "javadoc version complète de \"J2RE 1.5.0 IBM Windows 32 build pwi32pdev-20070426a\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         // IBM JDK 1.5
         version = "J2RE 1.5.0 IBM Windows 32 build pwi32devifx-20070323 (ifix 117674: SR4 + 116644 + 114941 + 116110 + 114881)";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         // FreeBSD
         version = "java full version \"diablo-1.5.0-b01\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         // BEA
         version = "java full version \"1.5.0_11-b03\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         // Other tests
         version = "java full version \"1.5.0_07-164\"" + System.getProperty( "line.separator" );
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
+        
         version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
+        
         version = System.getProperty( "line.separator" ) + "java full version \"1.5.0_07-164\""
             + System.getProperty( "line.separator" );
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ));
+        
         version = "java full" + System.getProperty( "line.separator" ) + " version \"1.5.0_07-164\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"1.99.123-b01\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.99123f, 0 );
+        assertEquals( "1.99.123", JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"1.5.0.07-164\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"1.4\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.4f, 0 );
+        assertEquals( "1.4" , JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"1.A.B_07-164\"";
         try
         {
-            JavadocUtil.parseJavadocVersion( version );
+            JavadocUtil.extractJavadocVersion( version );
             // does not fail since JEP 223 support addition
             //assertTrue( "Not catch wrong pattern", false );
         }
@@ -124,28 +127,31 @@ public class JavadocUtilTest
         }
 
         version = "SCO-UNIX-J2SE-1.5.0_09*FCS-UW714-OSR6*_20061114";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 1.5f, 0 );
+        assertEquals( "1.5.0", JavadocUtil.extractJavadocVersion( version ) );
 
         // Java 9 EA
         version = "java full version \"9-ea+113\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9f, 0 );
+        assertEquals( "9", JavadocUtil.extractJavadocVersion( version ) );
 
         // Java 9 EA Jigsaw
         version = "java full version \"9-ea+113-2016-04-14-161743.javare.4852.nc\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9f, 0 );
+        assertEquals( "9", JavadocUtil.extractJavadocVersion( version ) );
+
+        version = "java version \"9-ea\"";
+        assertEquals( "9", JavadocUtil.extractJavadocVersion( version ) );
 
         // JEP 223 example for future versions
         version = "java full version \"9+100\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9f, 0 );
+        assertEquals( "9", JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"9.0.1+20\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 9.01f, 0 );
+        assertEquals( "9.0.1", JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"10+100\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 10f, 0 );
+        assertEquals( "10" , JavadocUtil.extractJavadocVersion( version ) );
 
         version = "java full version \"10.0.1+20\"";
-        assertEquals( JavadocUtil.parseJavadocVersion( version ), 10.01f, 0 );
+        assertEquals( "10.0.1" , JavadocUtil.extractJavadocVersion( version ) );
     }
 
     /**

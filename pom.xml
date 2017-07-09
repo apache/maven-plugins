@@ -96,6 +96,9 @@ under the License.
       <name>Omair Majid</name>
     </contributor>
     <contributor>
+      <name>Philippe Marschall</name>
+    </contributor>
+    <contributor>
       <name>Richard Sand</name>
     </contributor>
   </contributors>
@@ -193,9 +196,9 @@ under the License.
 
     <!-- misc -->
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.5</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

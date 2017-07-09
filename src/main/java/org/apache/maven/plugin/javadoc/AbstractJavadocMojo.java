@@ -52,9 +52,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -248,7 +251,7 @@ public abstract class AbstractJavadocMojo
      *
      * @since 2.1
      */
-    private static final float SINCE_JAVADOC_1_4 = 1.4f;
+    private static final JavadocVersion SINCE_JAVADOC_1_4 = JavadocVersion.parse( "1.4" );
 
     /**
      * For Javadoc options appears since Java 1.4.2.
@@ -258,7 +261,7 @@ public abstract class AbstractJavadocMojo
      *
      * @since 2.1
      */
-    private static final float SINCE_JAVADOC_1_4_2 = 1.42f;
+    private static final JavadocVersion SINCE_JAVADOC_1_4_2 = JavadocVersion.parse( "1.4.2" );
 
     /**
      * For Javadoc options appears since Java 5.0.
@@ -268,7 +271,7 @@ public abstract class AbstractJavadocMojo
      *
      * @since 2.1
      */
-    private static final float SINCE_JAVADOC_1_5 = 1.5f;
+    private static final JavadocVersion SINCE_JAVADOC_1_5 = JavadocVersion.parse( "1.5" );
 
     /**
      * For Javadoc options appears since Java 6.0.
@@ -277,7 +280,7 @@ public abstract class AbstractJavadocMojo
      *
      * @since 2.4
      */
-    private static final float SINCE_JAVADOC_1_6 = 1.6f;
+    private static final JavadocVersion SINCE_JAVADOC_1_6 = JavadocVersion.parse( "1.6" );
 
     /**
      * For Javadoc options appears since Java 8.0.
@@ -286,7 +289,12 @@ public abstract class AbstractJavadocMojo
      *
      * @since 3.0.0
      */
-    private static final float SINCE_JAVADOC_1_8 = 1.8f;
+    private static final JavadocVersion SINCE_JAVADOC_1_8 = JavadocVersion.parse( "1.8" );
+
+    /**
+     * 
+     */
+    private static final JavadocVersion JAVA_VERSION = JavadocVersion.parse( SystemUtils.JAVA_VERSION );
 
     // ----------------------------------------------------------------------
     // Mojo components
@@ -495,9 +503,9 @@ public abstract class AbstractJavadocMojo
     private String javadocVersion;
 
     /**
-     * Version of the Javadoc Tool executable to use as float.
+     * Version of the Javadoc Tool executable to use.
      */
-    private float fJavadocVersion = 0.0f;
+    private JavadocVersion javadocRuntimeVersion;
 
     /**
      * Specifies whether the Javadoc generation should be skipped.
@@ -3632,7 +3640,7 @@ public abstract class AbstractJavadocMojo
         }
         // For Apple's JDK 1.6.x (and older?) on Mac OSX
         // CHECKSTYLE_OFF: MagicNumber
-        else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
+        else if ( SystemUtils.IS_OS_MAC_OSX && !SystemUtils.isJavaVersionAtLeast( JavaVersion.JAVA_1_7 ) )
         // CHECKSTYLE_ON: MagicNumber
         {
             javadocExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", javadocCommand );
@@ -3674,7 +3682,7 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Set a new value for <code>fJavadocVersion</code>
+     * Set a new value for <code>javadocRuntimeVersion</code>
      *
      * @param jExecutable not null
      * @throws MavenReportException if not found
@@ -3683,7 +3691,7 @@ public abstract class AbstractJavadocMojo
     private void setFJavadocVersion( File jExecutable )
         throws MavenReportException
     {
-        float jVersion;
+        JavadocVersion jVersion;
         try
         {
             jVersion = JavadocUtil.getJavadocVersion( jExecutable );
@@ -3693,48 +3701,48 @@ public abstract class AbstractJavadocMojo
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + JAVA_VERSION );
             }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+            jVersion = JAVA_VERSION;
         }
         catch ( CommandLineException e )
         {
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + JAVA_VERSION );
             }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+            jVersion = JAVA_VERSION;
         }
         catch ( IllegalArgumentException e )
         {
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn( "Unable to find the javadoc version: " + e.getMessage() );
-                getLog().warn( "Using the Java version instead of, i.e. " + SystemUtils.JAVA_VERSION_FLOAT );
+                getLog().warn( "Using the Java version instead of, i.e. " + JAVA_VERSION );
             }
-            jVersion = SystemUtils.JAVA_VERSION_FLOAT;
+            jVersion = JAVA_VERSION;
         }
 
         if ( StringUtils.isNotEmpty( javadocVersion ) )
         {
             try
             {
-                fJavadocVersion = Float.parseFloat( javadocVersion );
+                javadocRuntimeVersion = JavadocVersion.parse( javadocVersion );
             }
             catch ( NumberFormatException e )
             {
                 throw new MavenReportException( "Unable to parse javadoc version: " + e.getMessage(), e );
             }
 
-            if ( fJavadocVersion != jVersion && getLog().isWarnEnabled() )
+            if ( javadocRuntimeVersion != jVersion && getLog().isWarnEnabled() )
             {
                 getLog().warn( "Are you sure about the <javadocVersion/> parameter? It seems to be " + jVersion );
             }
         }
         else
         {
-            fJavadocVersion = jVersion;
+            javadocRuntimeVersion = jVersion;
         }
     }
 
@@ -3745,9 +3753,9 @@ public abstract class AbstractJavadocMojo
      * @return <code>true</code> if the javadoc version is equal or greater than the
      *         required version
      */
-    private boolean isJavaDocVersionAtLeast( float requiredVersion )
+    private boolean isJavaDocVersionAtLeast( JavadocVersion requiredVersion )
     {
-        return fJavadocVersion >= requiredVersion;
+        return JAVA_VERSION.compareTo( requiredVersion ) >= 0;
     }
 
     /**
@@ -3777,7 +3785,7 @@ public abstract class AbstractJavadocMojo
      * @see #addArgIf(java.util.List, boolean, String)
      * @see #isJavaDocVersionAtLeast(float)
      */
-    private void addArgIf( List<String> arguments, boolean b, String value, float requiredJavaVersion )
+    private void addArgIf( List<String> arguments, boolean b, String value, JavadocVersion requiredJavaVersion )
     {
         if ( b )
         {
@@ -3828,7 +3836,7 @@ public abstract class AbstractJavadocMojo
      * @see #isJavaDocVersionAtLeast(float)
      */
     private void addArgIfNotEmpty( List<String> arguments, String key, String value, boolean repeatKey,
-                                   boolean splitValue, float requiredJavaVersion )
+                                   boolean splitValue, JavadocVersion requiredJavaVersion )
     {
         if ( StringUtils.isNotEmpty( value ) )
         {
@@ -3920,7 +3928,8 @@ public abstract class AbstractJavadocMojo
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
      * @see #addArgIfNotEmpty(java.util.List, String, String, float, boolean)
      */
-    private void addArgIfNotEmpty( List<String> arguments, String key, String value, float requiredJavaVersion )
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value,
+                                   JavadocVersion requiredJavaVersion )
     {
         addArgIfNotEmpty( arguments, key, value, requiredJavaVersion, false );
     }
@@ -3937,7 +3946,7 @@ public abstract class AbstractJavadocMojo
      * @see #addArgIfNotEmpty(java.util.List, String, String)
      * @see #isJavaDocVersionAtLeast(float)
      */
-    private void addArgIfNotEmpty( List<String> arguments, String key, String value, float requiredJavaVersion,
+    private void addArgIfNotEmpty( List<String> arguments, String key, String value, JavadocVersion requiredJavaVersion,
                                    boolean repeatKey )
     {
         if ( StringUtils.isNotEmpty( value ) )
@@ -4391,7 +4400,7 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         File argfileFile;
-        if ( isJavaDocVersionAtLeast( SINCE_JAVADOC_1_4 ) )
+        if ( JAVA_VERSION.compareTo( SINCE_JAVADOC_1_4 ) >= 0 )
         {
             argfileFile = new File( javadocOutputDirectory, ARGFILE_FILE_NAME );
             cmd.createArg().setValue( "@" + ARGFILE_FILE_NAME );
@@ -4780,7 +4789,7 @@ public abstract class AbstractJavadocMojo
 
         if ( sourcetab > 0 )
         {
-            if ( fJavadocVersion == SINCE_JAVADOC_1_4_2 )
+            if ( javadocRuntimeVersion == SINCE_JAVADOC_1_4_2 )
             {
                 addArgIfNotEmpty( arguments, "-linksourcetab", String.valueOf( sourcetab ) );
             }
@@ -5585,7 +5594,7 @@ public abstract class AbstractJavadocMojo
      *         value of the <code>source</code> parameter in the
      *         <code>org.apache.maven.plugins:maven-compiler-plugin</code>
      *         defined in <code>${project.build.plugins}</code> or in <code>${project.build.pluginManagement}</code>,
-     *         or the {@link #fJavadocVersion}, or <code>null</code> if not defined.
+     *         or the {@link #javadocRuntimeVersion}, or <code>null</code> if not defined.
      * @see #detectJavaApiLink
      * @see #javaApiLinks
      * @see #DEFAULT_JAVA_API_LINKS
@@ -5600,13 +5609,13 @@ public abstract class AbstractJavadocMojo
         }
 
         final String pluginId = "org.apache.maven.plugins:maven-compiler-plugin";
-        float sourceVersion = fJavadocVersion;
+        JavadocVersion sourceVersion = javadocRuntimeVersion;
         String sourceConfigured = getPluginParameter( project, pluginId, "source" );
         if ( sourceConfigured != null )
         {
             try
             {
-                sourceVersion = Float.parseFloat( sourceConfigured );
+                sourceVersion = JavadocVersion.parse( sourceConfigured );
             }
             catch ( NumberFormatException e )
             {
@@ -5619,37 +5628,22 @@ public abstract class AbstractJavadocMojo
             getLog().debug( "No maven-compiler-plugin defined in ${build.plugins} or in "
                                 + "${project.build.pluginManagement} for the " + project.getId()
                                 + ". Added Javadoc API link according the javadoc executable version i.e.: "
-                                + fJavadocVersion );
+                                + javadocRuntimeVersion );
         }
 
-        // CHECKSTYLE_OFF: MagicNumber
-        String apiVersion = null;
-        if ( sourceVersion >= 1.3f && sourceVersion < 1.4f )
+        String apiVersion;
+        
+        Matcher apiMatcher = Pattern.compile( "(1\\.\\d|\\d\\d*)" ).matcher( sourceVersion.toString() );
+        if ( apiMatcher.find() )
         {
-            apiVersion = "1.3";
+            apiVersion = apiMatcher.group( 1 );
         }
-        else if ( sourceVersion >= 1.4f && sourceVersion < 1.5f )
+        else
         {
-            apiVersion = "1.4";
+            apiVersion = null;
         }
-        else if ( sourceVersion >= 1.5f && sourceVersion < 1.6f )
-        {
-            apiVersion = "1.5";
-        }
-        else if ( sourceVersion >= 1.6f && sourceVersion < 1.7f )
-        {
-            apiVersion = "1.6";
-        }
-        else if ( sourceVersion >= 1.7f && sourceVersion < 1.8f )
-        {
-            apiVersion = "1.7";
-        }
-        else if ( sourceVersion >= 1.8f )
-        {
-            apiVersion = "1.8";
-        }
+
         String javaApiLink = javaApiLinks.getProperty( "api_" + apiVersion, null );
-        // CHECKSTYLE_ON: MagicNumber
 
         if ( getLog().isDebugEnabled() )
         {

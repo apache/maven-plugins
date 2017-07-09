@@ -19,7 +19,7 @@ package org.apache.maven.plugin.javadoc;
  * under the License.
  */
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -576,9 +576,9 @@ public class JavadocUtil
      * @throws CommandLineException if any
      * @throws IllegalArgumentException if no output was found in the command line
      * @throws PatternSyntaxException if the output contains a syntax error in the regular-expression pattern.
-     * @see #parseJavadocVersion(String)
+     * @see #extractJavadocVersion(String)
      */
-    protected static float getJavadocVersion( File javadocExe )
+    protected static JavadocVersion getJavadocVersion( File javadocExe )
         throws IOException, CommandLineException, IllegalArgumentException
     {
         if ( ( javadocExe == null ) || ( !javadocExe.exists() ) || ( !javadocExe.isFile() ) )
@@ -606,11 +606,11 @@ public class JavadocUtil
 
         if ( StringUtils.isNotEmpty( err.getOutput() ) )
         {
-            return parseJavadocVersion( err.getOutput() );
+            return JavadocVersion.parse( extractJavadocVersion( err.getOutput() ) );
         }
         else if ( StringUtils.isNotEmpty( out.getOutput() ) )
         {
-            return parseJavadocVersion( out.getOutput() );
+            return JavadocVersion.parse( extractJavadocVersion( out.getOutput() ) );
         }
 
         throw new IllegalArgumentException( "No output found from the command line 'javadoc -J-version'" );
@@ -652,12 +652,12 @@ public class JavadocUtil
      * </table>
      *
      * @param output for 'javadoc -J-version'
-     * @return the version of the javadoc for the output.
+     * @return the version of the javadoc for the output, only digits and dots
      * @throws PatternSyntaxException if the output doesn't match with the output pattern
      * <tt>(?s).*?[^a-zA-Z]([0-9]+\\.?[0-9]*)(\\.([0-9]+))?.*</tt>.
      * @throws IllegalArgumentException if the output is null
      */
-    protected static float parseJavadocVersion( String output )
+    protected static String extractJavadocVersion( String output )
         throws IllegalArgumentException
     {
         if ( StringUtils.isEmpty( output ) )
@@ -665,7 +665,7 @@ public class JavadocUtil
             throw new IllegalArgumentException( "The output could not be null." );
         }
 
-        Pattern pattern = Pattern.compile( "(?s).*?[^a-zA-Z]([0-9]+\\.?[0-9]*)(\\.([0-9]+))?.*" );
+        Pattern pattern = Pattern.compile( "(?s).*?[^a-zA-Z](([0-9]+\\.?[0-9]*)(\\.[0-9]+)?).*" );
 
         Matcher matcher = pattern.matcher( output );
         if ( !matcher.matches() )
@@ -674,17 +674,7 @@ public class JavadocUtil
                                               pattern.toString().length() - 1 );
         }
 
-        String version = matcher.group( 3 );
-        if ( version == null )
-        {
-            version = matcher.group( 1 );
-        }
-        else
-        {
-            version = matcher.group( 1 ) + version;
-        }
-
-        return Float.parseFloat( version );
+        return matcher.group( 1 );
     }
 
     /**

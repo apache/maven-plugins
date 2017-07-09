@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.LegacySupport;
@@ -627,11 +627,12 @@ public class JavadocReportTest
         content = readFile( app );
         assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
 
-        float javadocVersion = (Float) getVariableValueFromObject( mojo, "fJavadocVersion" );
-        if( Float.compare( 1.8f, javadocVersion ) == 0 )
+        JavadocVersion javadocVersion = (JavadocVersion) getVariableValueFromObject( mojo, "javadocRuntimeVersion" );
+        if( javadocVersion.compareTo( JavadocVersion.parse( "1.8" ) ) >= 0  && javadocVersion.compareTo( JavadocVersion.parse( "9" ) ) < 0)
         {
             // https://bugs.openjdk.java.net/browse/JDK-8032205
-            assertTrue( "This bug appeared in JDK8 and was planned to be fixed in JDK9, see JDK-8032205", new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
+            assertTrue( "This bug appeared in JDK8 and was planned to be fixed in JDK9, see JDK-8032205",
+                        new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
         }
         else
         {
