@@ -33,8 +33,8 @@ import org.codehaus.plexus.util.IOUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -425,7 +425,7 @@ public class DefaultShader
         ClassWriter cw = new ClassWriter( 0 );
 
         final String pkg = name.substring( 0, name.lastIndexOf( '/' ) + 1 );
-        ClassVisitor cv = new RemappingClassAdapter( cw, remapper )
+        ClassVisitor cv = new ClassRemapper( cw, remapper )
         {
             @Override
             public void visitSource( final String source, final String debug )
