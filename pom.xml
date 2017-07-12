@@ -306,7 +306,7 @@ under the License.
               <!-- Javadoc package list files cannot contain a license header -->
               <exclude>**/*package-list*</exclude>
               <!-- This file is used to patch the generated Javadoc html files -->
-              <exclude>src/main/resources/org/apache/maven/plugin/javadoc/frame-injection-fix.txt</exclude>
+              <exclude>src/main/resources/org/apache/maven/plugins/javadoc/frame-injection-fix.txt</exclude>
               <!-- Original POM file that is used in a repository -->
               <exclude>src/test/resources/unit/test-javadoc-test/junit/junit/3.8.1/junit-3.8.1.pom</exclude>
               <!-- temporary file that sometimes stays after a failure then completely blocks build -->

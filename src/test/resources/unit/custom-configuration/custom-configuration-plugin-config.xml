@@ -33,7 +33,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.CustomConfigurationMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.CustomConfigurationMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/custom-configuration/target/site/apidocs</outputDirectory>
           <javadocOptionsDir>${basedir}/target/test/unit/custom-configuration/target/javadoc-bundle-options</javadocOptionsDir>
@@ -60,11 +60,11 @@ under the License.
           <groups>
             <group>
               <title>Core Packages</title>
-              <packages>org.apache.maven.plugin.javadoc.test1</packages>
+              <packages>org.apache.maven.plugins.javadoc.test1</packages>
             </group>
             <group>
               <title>Extension Packages</title>
-              <packages>org.apache.maven.plugin.javadoc.test2</packages>
+              <packages>org.apache.maven.plugins.javadoc.test2</packages>
             </group>
           </groups>
           <tags>

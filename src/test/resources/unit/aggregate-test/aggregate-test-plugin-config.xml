@@ -34,7 +34,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateTestMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.AggregateTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/aggregate-test/target/site/apidocs</outputDirectory>
           <javadocOptionsDir>${basedir}/target/test/unit/aggregate-test/target/javadoc-bundle-options</javadocOptionsDir>
@@ -64,8 +64,8 @@ under the License.
           <version>true</version>
           <windowtitle>Maven Javadoc Plugin Aggregate Test 1.0-SNAPSHOT API</windowtitle>
           <reactorProjects>
-            <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateProject1TestMavenProjectStub"/>
-            <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateProject2TestMavenProjectStub"/>
+            <project implementation="org.apache.maven.plugins.javadoc.stubs.AggregateProject1TestMavenProjectStub"/>
+            <project implementation="org.apache.maven.plugins.javadoc.stubs.AggregateProject2TestMavenProjectStub"/>
           </reactorProjects>
           <javadocDirectory>${basedir}/src/test/resources/unit/aggregate-test/src/main/javadoc</javadocDirectory>
           <debug>true</debug>

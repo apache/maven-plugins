@@ -33,7 +33,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.TagletTestMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.TagletTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/taglet-test/target/site/apidocs</outputDirectory>
           <javadocOptionsDir>${basedir}/target/test/unit/taglet-test/target/javadoc-bundle-options</javadocOptionsDir>

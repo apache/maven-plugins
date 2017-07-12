@@ -34,14 +34,14 @@ under the License.
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <encoding>ISO-8859-1</encoding>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesTestMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.AggregateResourcesTestMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/aggregate-resources-test/target/site/apidocs</outputDirectory>
           <javadocOptionsDir>${basedir}/target/test/unit/aggregate-resources-test/target/javadoc-bundle-options</javadocOptionsDir>
           <windowtitle>Maven Javadoc Plugin aggregate resources 1.0-SNAPSHOT API</windowtitle>
           <reactorProjects>
-            <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject1TestMavenProjectStub"/>
-            <project implementation="org.apache.maven.plugin.javadoc.stubs.AggregateResourcesProject2TestMavenProjectStub"/>
+            <project implementation="org.apache.maven.plugins.javadoc.stubs.AggregateResourcesProject1TestMavenProjectStub"/>
+            <project implementation="org.apache.maven.plugins.javadoc.stubs.AggregateResourcesProject2TestMavenProjectStub"/>
           </reactorProjects>
           <show>protected</show>
           <groups/>
