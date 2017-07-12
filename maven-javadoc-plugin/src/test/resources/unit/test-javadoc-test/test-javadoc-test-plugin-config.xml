@@ -39,7 +39,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.TestJavadocMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.TestJavadocMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/test-javadoc-test/target/site/apidocs</outputDirectory>
           <javadocOptionsDir>${basedir}/target/test/unit/test-javadoc-test/target/javadoc-bundle-options</javadocOptionsDir>

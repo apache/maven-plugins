@@ -33,7 +33,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.JavadocJarArchiveConfigProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.JavadocJarArchiveConfigProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <jarOutputDirectory>${basedir}/target/test/unit/javadocjar-archive-config/target</jarOutputDirectory>
           <outputDirectory>${basedir}/target/test/unit/javadocjar-archive-config/target/site/apidocs</outputDirectory>

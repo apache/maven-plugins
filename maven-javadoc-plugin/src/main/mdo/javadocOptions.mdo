@@ -30,7 +30,7 @@ under the License.
   <defaults>
     <default>
       <key>package</key>
-      <value>org.apache.maven.plugin.javadoc.options</value>
+      <value>org.apache.maven.plugins.javadoc.options</value>
     </default>
   </defaults>
   <classes>

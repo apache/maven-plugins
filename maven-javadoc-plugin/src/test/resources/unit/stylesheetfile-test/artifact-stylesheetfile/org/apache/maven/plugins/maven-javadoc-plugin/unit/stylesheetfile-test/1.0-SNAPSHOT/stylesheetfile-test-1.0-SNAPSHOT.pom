@@ -34,7 +34,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.javadoc.stubs.StylesheetFileMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.javadoc.stubs.StylesheetFileMavenProjectStub"/>
           <localRepository>${localRepository}</localRepository>
           <outputDirectory>${basedir}/target/test/unit/stylesheetfile-test/target/site/apidocs</outputDirectory>
           <javadocDirectory>${basedir}/src/test/resources/unit/stylesheetfile-test/src/main/javadoc</javadocDirectory>
