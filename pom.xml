@@ -128,7 +128,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-script-interpreter</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <exclusions>
         <!-- there's already a direct dependency to groovy-all -->
         <exclusion>
