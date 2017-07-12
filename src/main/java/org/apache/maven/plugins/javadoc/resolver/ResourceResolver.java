@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,11 +36,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.plugins.javadoc.options.JavadocOptions;
 import org.apache.maven.plugins.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
@@ -50,6 +46,8 @@ import org.apache.maven.plugins.javadoc.JavadocUtil;
 import org.apache.maven.plugins.javadoc.ResourcesBundleMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -373,9 +371,6 @@ public final class ResourceResolver extends AbstractLogEnabled
         // resolve transitively...this is just used to aggregate resolution failures into a single 
         // exception.
         final Set<Artifact> artifactSet = new LinkedHashSet<Artifact>( artifacts );
-        final Artifact pomArtifact = config.project().getArtifact();
-        final ArtifactRepository localRepo = config.localRepository();
-        final List<ArtifactRepository> remoteRepos = config.project().getRemoteArtifactRepositories();
 
         final ArtifactFilter filter;
         if ( config.filter() != null )
@@ -387,25 +382,20 @@ public final class ResourceResolver extends AbstractLogEnabled
             filter = null;
         }
         
-        ArtifactFilter resolutionFilter = null;
-        if ( filter != null )
-        {
-            // Wrap the filter in a ProjectArtifactFilter in order to always include the pomArtifact for resolution.
-            // NOTE that this is necessary, b/c the -sources artifacts are added dynamically to the pomArtifact
-            // and the resolver also checks the dependency trail with the given filter, thus the pomArtifact has
-            // to be explicitly included by the filter, otherwise the -sources artifacts won't be resolved.
-            resolutionFilter = new ProjectArtifactFilter( pomArtifact, filter );
-        }
-
-        Map<String, Artifact> managed = config.project().getManagedVersionMap();
-        
-        final ArtifactResolutionResult resolutionResult = resolver.resolveTransitively(
-                artifactSet, pomArtifact, managed, localRepo, remoteRepos, artifactMetadataSource, resolutionFilter );
-
         final List<String> result = new ArrayList<String>( artifacts.size() );
-        for ( final Artifact a : (Collection<Artifact>) resolutionResult.getArtifacts() )
+        for ( final Artifact a : artifactSet )
         {
             if ( !validClassifiers.contains( a.getClassifier() ) || ( filter != null && !filter.include( a ) ) )
+            {
+                continue;
+            }
+            
+            Artifact resolvedArtifact;
+            try
+            {
+                resolvedArtifact = resolver.resolveArtifact( config.getBuildingRequest(), a ).getArtifact();
+            }
+            catch ( ArtifactResolverException e1 )
             {
                 continue;
             }
@@ -423,7 +413,7 @@ public final class ResourceResolver extends AbstractLogEnabled
                 final UnArchiver unArchiver = archiverManager.getUnArchiver( a.getType() );
 
                 unArchiver.setDestDirectory( d );
-                unArchiver.setSourceFile( a.getFile() );
+                unArchiver.setSourceFile( resolvedArtifact.getFile() );
 
                 unArchiver.extract();
 

@@ -22,8 +22,8 @@ package org.apache.maven.plugins.javadoc.resolver;
 import java.io.File;
 import java.util.List;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
 
 /**
@@ -31,6 +31,7 @@ import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
  */
 public class SourceResolverConfig
 {
+    private ProjectBuildingRequest buildingRequest;
 
     private final MavenProject project;
 
@@ -44,18 +45,16 @@ public class SourceResolverConfig
 
     private boolean testSourceIncluded;
 
-    private final ArtifactRepository localRepository;
-
     /**
      * @param project {@link MavenProject}
-     * @param localRepository {@link ArtifactRepository}
+     * @param buoildingRequest {@link ProjectBuildingRequest}
      * @param outputBasedir The output base directory.
      */
-    public SourceResolverConfig( final MavenProject project, final ArtifactRepository localRepository,
+    public SourceResolverConfig( final MavenProject project, final ProjectBuildingRequest buildingRequest,
                                  final File outputBasedir )
     {
         this.project = project;
-        this.localRepository = localRepository;
+        this.buildingRequest = buildingRequest;
         this.outputBasedir = outputBasedir;
     }
 
@@ -124,11 +123,11 @@ public class SourceResolverConfig
     }
 
     /**
-     * @return {@link ArtifactRepository}
+     * @return {@link ProjectBuildingRequest}
      */
-    public ArtifactRepository localRepository()
+    public ProjectBuildingRequest getBuildingRequest()
     {
-        return localRepository;
+        return buildingRequest;
     }
 
     /**
