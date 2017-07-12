@@ -2405,7 +2405,7 @@ public abstract class AbstractJavadocMojo
     private SourceResolverConfig getDependencySourceResolverConfig()
     {
         return configureDependencySourceResolution(
-                        new SourceResolverConfig( project, localRepository,
+                        new SourceResolverConfig( project, session.getProjectBuildingRequest(),
                                                   sourceDependencyCacheDir ).withReactorProjects( reactorProjects ) );
     }
 
