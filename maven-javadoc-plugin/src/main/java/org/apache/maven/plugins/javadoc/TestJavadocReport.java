@@ -28,11 +28,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -310,9 +310,10 @@ public class TestJavadocReport
     }
 
     @Override
-    protected List<Artifact> getCompileArtifacts( Collection<Artifact> artifacts )
+    protected ScopeFilter getDependencyScopeFilter()
     {
-        return JavadocUtil.getCompileArtifacts( artifacts, true );
+        return ScopeFilter.including( Artifact.SCOPE_COMPILE, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_SYSTEM,
+                                      Artifact.SCOPE_TEST );
     }
 
     /**

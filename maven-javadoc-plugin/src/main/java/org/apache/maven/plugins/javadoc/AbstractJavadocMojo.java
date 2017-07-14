@@ -59,15 +59,11 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.MavenSession;
@@ -97,7 +93,6 @@ import org.apache.maven.plugins.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -107,6 +102,7 @@ import org.apache.maven.shared.artifact.filter.resolve.PatternExclusionsFilter;
 import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
+import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.dependencies.DefaultDependableCoordinate;
@@ -308,31 +304,11 @@ public abstract class AbstractJavadocMojo
     @Component
     private ArchiverManager archiverManager;
 
-    /**
-     * Factory for creating artifact objects
-     */
-    @Component
-    private ArtifactFactory factory;
-
-    /**
-     * Used to resolve artifacts of aggregated modules
-     *
-     * @since 2.1
-     */
-    @Component
-    private ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * Used for resolving artifacts
-     */
-    @Component
-    private ArtifactResolver resolver;
-
     @Component
     private ResourceResolver resourceResolver;
 
     @Component
-    private org.apache.maven.shared.artifact.resolve.ArtifactResolver artifactResolver;
+    private ArtifactResolver artifactResolver;
 
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
@@ -2428,16 +2404,6 @@ public abstract class AbstractJavadocMojo
         return canGenerate;
     }
 
-    /**
-     * @param result not null
-     * @return the compile artifacts from the result
-     * @see JavadocUtil#getCompileArtifacts(Set, boolean)
-     */
-    protected List<Artifact> getCompileArtifacts( Collection<Artifact> artifacts )
-    {
-        return JavadocUtil.getCompileArtifacts( artifacts, false );
-    }
-
     // ----------------------------------------------------------------------
     // private methods
     // ----------------------------------------------------------------------
@@ -2587,77 +2553,62 @@ public abstract class AbstractJavadocMojo
         {
             classpathElements.addAll( getProjectBuildOutputDirs( project ) );
         }
-
+        
         populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
 
         if ( isAggregator() && project.isExecutionRoot() )
         {
-            List<Artifact> reactorArtifacts = new ArrayList<Artifact>();
+            List<String> reactorArtifacts = new ArrayList<String>();
             for ( MavenProject p : reactorProjects )
             {
-                reactorArtifacts.add( p.getArtifact() );
+                reactorArtifacts.add( p.getGroupId() + ':' + p.getArtifactId() );
             }
-            try
+            
+            TransformableFilter dependencyFilter = new AndFilter( Arrays.asList( 
+                                                                     new PatternExclusionsFilter( reactorArtifacts ),
+                                                                     getDependencyScopeFilter() ) );
+
+            for ( MavenProject subProject : reactorProjects )
             {
-                for ( MavenProject subProject : reactorProjects )
+                if ( subProject != project )
                 {
-                    if ( subProject != project )
+                    classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
+
+                    if ( session != null )
                     {
-                        classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
-
-                        Set<Artifact> dependencyArtifacts = subProject.createArtifacts( factory, null, null );
-                        // do not attempt to resolve artifacts of the current reactor which may not exist yet
-                        dependencyArtifacts.removeAll( reactorArtifacts );
-                        if ( !dependencyArtifacts.isEmpty() )
+                        try
                         {
-                            ArtifactResolutionResult result = null;
-                            try
-                            {
-                                result = resolver.resolveTransitively( dependencyArtifacts, subProject.getArtifact(),
-                                                                       subProject.getManagedVersionMap(),
-                                                                       localRepository,
-                                                                       subProject.getRemoteArtifactRepositories(),
-                                                                       artifactMetadataSource );
-                            }
-                            catch ( ArtifactNotFoundException e )
-                            {
-                                throw new MavenReportException( e.getMessage(), e );
-                            }
-                            catch ( ArtifactResolutionException e )
-                            {
-                                throw new MavenReportException( e.getMessage(), e );
-                            }
+                            StringBuilder sb = new StringBuilder();
 
-                            if ( result == null )
+                            sb.append( "Compiled artifacts for " );
+                            sb.append( subProject.getGroupId() ).append( ":" );
+                            sb.append( subProject.getArtifactId() ).append( ":" );
+                            sb.append( subProject.getVersion() ).append( '\n' );
+
+                            for ( ArtifactResult artifactResult
+                                        : dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(),
+                                                                                  subProject.getDependencies(),
+                                                                                  null,
+                                                                                  dependencyFilter ) )
                             {
-                                continue;
+                                populateCompileArtifactMap( compileArtifactMap,
+                                                            Collections.singletonList( artifactResult.getArtifact() ) );
+                                
+                                sb.append( artifactResult.getArtifact().getFile() ).append( '\n' );
                             }
-
-                            populateCompileArtifactMap( compileArtifactMap,
-                                                        getCompileArtifacts( result.getArtifacts() ) );
-
+                            
                             if ( getLog().isDebugEnabled() )
                             {
-                                StringBuilder sb = new StringBuilder();
-
-                                sb.append( "Compiled artifacts for " );
-                                sb.append( subProject.getGroupId() ).append( ":" );
-                                sb.append( subProject.getArtifactId() ).append( ":" );
-                                sb.append( subProject.getVersion() ).append( '\n' );
-                                for ( Artifact a : compileArtifactMap.values() )
-                                {
-                                    sb.append( a.getFile() ).append( '\n' );
-                                }
-
                                 getLog().debug( sb.toString() );
                             }
+
+                        }
+                        catch ( DependencyResolverException e )
+                        {
+                            throw new MavenReportException( e.getMessage(), e );
                         }
                     }
                 }
-            }
-            catch ( InvalidDependencyVersionException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
             }
         }
 
@@ -2678,6 +2629,11 @@ public abstract class AbstractJavadocMojo
         }
 
         return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
+    }
+
+    protected ScopeFilter getDependencyScopeFilter()
+    {
+        return ScopeFilter.including( Artifact.SCOPE_COMPILE, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_SYSTEM );
     }
 
     /**
@@ -4591,42 +4547,6 @@ public abstract class AbstractJavadocMojo
         {
             javaApiLinks = DEFAULT_JAVA_API_LINKS;
         }
-    }
-
-    /**
-     * This method is checking to see if the artifacts that can't be resolved are all
-     * part of this reactor. This is done to prevent a chicken or egg scenario with
-     * fresh projects. See MJAVADOC-116 for more info.
-     *
-     * @param dependencyArtifacts the sibling projects in the reactor
-     * @param missing             the artifacts that can't be found
-     * @return true if ALL missing artifacts are found in the reactor.
-     */
-    private boolean checkMissingArtifactsInReactor( Collection<Artifact> dependencyArtifacts,
-                                                    Collection<Artifact> missing )
-    {
-        Set<MavenProject> foundInReactor = new HashSet<MavenProject>();
-        for ( Artifact mArtifact : missing )
-        {
-            for ( MavenProject p : reactorProjects )
-            {
-                if ( p.getArtifactId().equals( mArtifact.getArtifactId() ) && p.getGroupId().equals(
-                    mArtifact.getGroupId() ) && p.getVersion().equals( mArtifact.getVersion() ) )
-                {
-                    getLog().warn( "The dependency: [" + p.getId()
-                                       + "] can't be resolved but has been found in the reactor (probably snapshots).\n"
-                                       + "This dependency has been excluded from the Javadoc classpath. "
-                                       + "You should rerun javadoc after executing mvn install." );
-
-                    // found it, move on.
-                    foundInReactor.add( p );
-                    break;
-                }
-            }
-        }
-
-        // if all of them have been found, we can continue.
-        return foundInReactor.size() == missing.size();
     }
 
     /**
