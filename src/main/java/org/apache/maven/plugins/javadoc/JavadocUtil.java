@@ -34,7 +34,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Proxy;
@@ -83,7 +82,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -210,57 +208,6 @@ public class JavadocUtil
     }
 
     /**
-     * Copy from {@link org.apache.maven.project.MavenProject#getCompileArtifacts()}
-     * @param artifacts not null
-     * @return list of compile artifacts with compile scope
-     * @deprecated since 2.5, using {@link #getCompileArtifacts(Set, boolean)} instead of.
-     */
-    protected static List<Artifact> getCompileArtifacts( Set<Artifact> artifacts )
-    {
-        return getCompileArtifacts( artifacts, false );
-    }
-
-    /**
-     * Copy from {@link org.apache.maven.project.MavenProject#getCompileArtifacts()}
-     * @param artifacts not null
-     * @param withTestScope flag to include or not the artifacts with test scope
-     * @return list of compile artifacts with or without test scope.
-     */
-    protected static List<Artifact> getCompileArtifacts( Collection<Artifact> artifacts, boolean withTestScope )
-    {
-        List<Artifact> list = new ArrayList<Artifact>( artifacts.size() );
-
-        for ( Artifact a : artifacts )
-        {
-            // TODO: classpath check doesn't belong here - that's the other method
-            if ( a.getArtifactHandler().isAddedToClasspath() )
-            {
-                // TODO: let the scope handler deal with this
-                if ( withTestScope )
-                {
-                    if ( Artifact.SCOPE_COMPILE.equals( a.getScope() )
-                        || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
-                        || Artifact.SCOPE_SYSTEM.equals( a.getScope() )
-                        || Artifact.SCOPE_TEST.equals( a.getScope() ) )
-                    {
-                        list.add( a );
-                    }
-                }
-                else
-                {
-                    if ( Artifact.SCOPE_COMPILE.equals( a.getScope() ) || Artifact.SCOPE_PROVIDED.equals( a.getScope() )
-                        || Artifact.SCOPE_SYSTEM.equals( a.getScope() ) )
-                    {
-                        list.add( a );
-                    }
-                }
-            }
-        }
-
-        return list;
-    }
-
-    /**
      * Convenience method to wrap an argument value in single quotes (i.e. <code>'</code>). Intended for values
      * which may contain whitespaces.
      * <br/>
@@ -323,21 +270,6 @@ public class JavadocUtil
         }
 
         return path;
-    }
-
-    /**
-     * Convenience method that copy all <code>doc-files</code> directories from <code>javadocDir</code>
-     * to the <code>outputDirectory</code>.
-     *
-     * @param outputDirectory the output directory
-     * @param javadocDir the javadoc directory
-     * @throws IOException if any
-     * @deprecated since 2.5, using {@link #copyJavadocResources(File, File, String)} instead of.
-     */
-    protected static void copyJavadocResources( File outputDirectory, File javadocDir )
-        throws IOException
-    {
-        copyJavadocResources( outputDirectory, javadocDir, null );
     }
 
     /**
