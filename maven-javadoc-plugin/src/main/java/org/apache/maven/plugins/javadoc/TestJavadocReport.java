@@ -279,13 +279,6 @@ public class TestJavadocReport
     }
 
     @Override
-    protected List<Artifact> getProjectArtifacts( MavenProject p )
-    {
-        return ( p.getTestArtifacts() == null ? Collections.<Artifact>emptyList()
-                        : new LinkedList<Artifact>( p.getTestArtifacts() ) );
-    }
-
-    @Override
     protected File getJavadocDirectory()
     {
         return testJavadocDirectory;
