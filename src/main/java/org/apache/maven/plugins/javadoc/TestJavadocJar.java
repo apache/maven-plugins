@@ -199,12 +199,6 @@ public class TestJavadocJar
     }
 
     @Override
-    protected List<Artifact> getProjectArtifacts( MavenProject p )
-    {
-        return p.getTestArtifacts();
-    }
-
-    @Override
     protected ScopeFilter getDependencyScopeFilter()
     {
         return ScopeFilter.including( Artifact.SCOPE_COMPILE, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_SYSTEM,

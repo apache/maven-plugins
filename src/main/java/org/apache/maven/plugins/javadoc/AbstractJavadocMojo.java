@@ -1814,17 +1814,6 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * @param p not null maven project
-     * @return the list of artifacts for the given project
-     */
-    protected List<Artifact> getProjectArtifacts( MavenProject p )
-    {
-        return ( p.getCompileArtifacts() == null
-            ? Collections.<Artifact>emptyList()
-            : new LinkedList<Artifact>( p.getCompileArtifacts() ) );
-    }
-
-    /**
      * @return the current javadoc directory
      */
     protected File getJavadocDirectory()
@@ -2554,7 +2543,7 @@ public abstract class AbstractJavadocMojo
             classpathElements.addAll( getProjectBuildOutputDirs( project ) );
         }
         
-        populateCompileArtifactMap( compileArtifactMap, getProjectArtifacts( project ) );
+        populateCompileArtifactMap( compileArtifactMap, project.getArtifacts() );
 
         if ( isAggregator() && project.isExecutionRoot() )
         {
