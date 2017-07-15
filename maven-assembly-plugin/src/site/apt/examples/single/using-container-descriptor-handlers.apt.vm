@@ -1,0 +1,373 @@
+ ------
+  Using Container Descriptor Handlers
+ ------
+  Guillaume Boué
+ ------
+  2017-07-15
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Using Container Descriptor Handlers
+
+* Introduction
+
+  Container descriptor handlers can be used to filter dynamically the content
+  of files configured in a descriptor, for example by aggregating multiple files 
+  into a single file, or customizing the content of specific files.
+
+  This example demonstrate the use of <<<\<containerDescriptorHandlers\>>>> in
+  the assembly {{{../../assembly.html}descriptor format}}.
+
+* Built-in container descriptor handlers
+
+  The plugin comes with several handlers already defined.
+  
+    [<<<file-aggregator>>>] This handler matches the files according to the given regular
+    expression <<<filePattern>>>, aggregates their content, and stores the output 
+    in the assembly at the given <<<outputPath>>>. A sample descriptor which matches
+    all <<<file.txt>>> files configured in the assembly and aggregates them, by 
+    appending their content, into a single <<<file.txt>>> located under the base directory
+    of the assembly, is:
+
++-----
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+  ....
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>file-aggregator</handlerName>
+      <configuration>
+        <filePattern>.*/file.txt</filePattern>
+        <outputPath>file.txt</outputPath>
+      </configuration>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+</assembly>
++-----
+
+    [<<<metaInf-services>>>] This handler matches every <<<META-INF/services>>> file and
+    aggregates them into a single <<<META-INF/services>>>. The content of the files
+    are appended together.
+
++-----
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+  ....
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>metaInf-services</handlerName>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+</assembly>
++-----
+
+    [<<<metaInf-spring>>>] This handler is similar to <<<metaInf-services>>>. It matches
+    every file with a name starting with <<<META-INF/spring.>>>.
+
++-----
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+  ....
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>metaInf-spring</handlerName>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+</assembly>
++-----
+
+    [<<<plexus>>>] This handler matches every <<<META-INF/plexus/components.xml>>> file and
+    aggregates them into a single valid <<<META-INF/plexus/components.xml>>>.
+
++-----
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/${mdoVersion}"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/${mdoVersion} http://maven.apache.org/xsd/assembly-${mdoVersion}.xsd">
+  ....
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>plexus</handlerName>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+</assembly>
++-----
+
+    []
+
+* Custom container descriptor handlers
+
+  You can create your own container descriptor handler by creating a class implementing 
+  <<<ContainerDescriptorHandler>>>. As an example, let's create a handler that will prepend 
+  a configured comment to every properties file configured in an assembly descriptor. 
+
+  We start by creating a new Maven project named <<<custom-container-descriptor-handler>>>
+  with the following POM:
+
++-----
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.test</groupId>
+  <artifactId>custom-container-descriptor-handler</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+        <version>1.7.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
++-----
+
+  This POM declares a dependency on the Assembly Plugin so that we can create
+  our handler, and generates a Plexus configuration file so that it can be
+  found through dependency injection during assembling.
+
+  Implementing <<<ContainerDescriptorHandler>>> requires defining a couple of 
+  methods:
+  
+    [<<<isSelected>>>] Tells whether a given file or directory, configured in the
+    assembly descriptor, should be added to the final assembly. A typical
+    set-up would be to prevent the addition of certain files, and let the
+    handler do its work on them.
+    
+    [<<<getVirtualFiles>>>] Returns the list of file paths, from the root of the assembly,
+    of each file this handler will add.
+    
+    [<<<finalizeArchiveCreation>>>] Callback that is invoked when an assembly is going
+    to be created. This method can be used to add files that resulted from the
+    handler's work on each selected file. <<Cave-at:>> Because of the way archive
+    finalization is performed, we need to loop through each resource in the archive
+    before doing anything.
+    
+    [<<<finalizeArchiveExtraction>>>] Callback that is invoked when an assembly has been
+    extracted into a directory. This method can be used to process files that resulted
+    from the handler's work on each selected file.
+
+    []
+    
+  Our handler that prepends a comment to each properties file could look like the following
+  (using here Java 8 features):
+
++-----
+package com.test;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.maven.plugins.assembly.filter.ContainerDescriptorHandler;
+import org.apache.maven.plugins.assembly.utils.AssemblyFileUtils;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.components.io.fileselectors.FileInfo;
+
+@Component(role = ContainerDescriptorHandler.class, hint = "custom")
+public class MyCustomDescriptorHandler implements ContainerDescriptorHandler {
+
+    private String comment;
+
+    private Map<String, List<String>> catalog = new HashMap<>();
+
+    private boolean excludeOverride = false;
+
+    @Override
+    public void finalizeArchiveCreation(Archiver archiver) throws ArchiverException {
+        archiver.getResources().forEachRemaining(a -> {}); // necessary to prompt the isSelected() call
+
+        for (Map.Entry<String, List<String>> entry : catalog.entrySet())
+        {
+            String name = entry.getKey();
+            String fname = new File(name).getName();
+
+            Path p;
+            try {
+                p = Files.createTempFile("assembly-" + fname, ".tmp");
+            } catch (IOException e) {
+                throw new ArchiverException("Cannot create temporary file to finalize archive creation", e);
+            }
+
+            try (BufferedWriter writer = Files.newBufferedWriter(p, StandardCharsets.ISO_8859_1)) {
+                writer.write("# " + comment);
+                for (String line : entry.getValue()) {
+                    writer.newLine();
+                    writer.write(line);
+                }
+            } catch (IOException e) {
+                throw new ArchiverException("Error adding content of " + fname + " to finalize archive creation", e);
+            }
+
+            File file = p.toFile();
+            file.deleteOnExit();
+            excludeOverride = true;
+            archiver.addFile(file, name);
+            excludeOverride = false;
+        }
+    }
+
+    @Override
+    public void finalizeArchiveExtraction(UnArchiver unarchiver) throws ArchiverException { }
+
+    @Override
+    public List<String> getVirtualFiles() {
+        return new ArrayList<>(catalog.keySet());
+    }
+
+    @Override
+    public boolean isSelected(FileInfo fileInfo) throws IOException {
+        if (excludeOverride) {
+            return true;
+        }
+        String name = AssemblyFileUtils.normalizeFileInfo(fileInfo);
+        if (fileInfo.isFile() && AssemblyFileUtils.isPropertyFile(name)) {
+            catalog.put(name, readLines(fileInfo));
+            return false;
+        }
+        return true;
+    }
+
+    private List<String> readLines(FileInfo fileInfo) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(fileInfo.getContents(), StandardCharsets.ISO_8859_1))) {
+            return reader.lines().collect(Collectors.toList());
+        }
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+}
++-----
+
+  It is a Plexus component, having the <<<ContainerDescriptorHandler>>> role,
+  that is distinguished from the other handlers with its <<<hint>>> of <<<custom>>>.
+
+  It selects each properties file and stores their content into a catalog map,
+  where the key is the name of the file and the value is a list of its lines.
+  Those matched files are not added to the assembly, because the handler needs
+  to process them first. During assembly creation, it creates temporary files
+  whose content are the previously read lines, prepended by a custom comment.
+  They are then added back into the archive with their previous name. Note that
+  this simple handler does not aggregate files with the same name - it could be
+  enhanced to do it. When the temporary files are added to the archive, the 
+  <<<isSelected>>> method is automatically called, hence we need to set a boolean 
+  <<<excludeOverride>>> to <<<true>>> to make sure the catalog processing part is not done.
+
+  The last ingredient is using our custom handler in an assembly descriptor of
+  some Maven project. Suppose there is a <<<src/samples>>> directory in this project,
+  containing an XML file named <<<test.xml>>> and a properties file named 
+  <<<test.properties>>>. With the following descriptor format
+
++-----
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+  <id>dist</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <containerDescriptorHandlers>
+    <containerDescriptorHandler>
+      <handlerName>custom</handlerName>
+      <configuration>
+        <comment>A comment</comment>
+      </configuration>
+    </containerDescriptorHandler>
+  </containerDescriptorHandlers>
+  <fileSets>
+    <fileSet>
+      <directory>src/samples</directory>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>
++-----
+
+  and the following Assembly plugin configuration
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assemble/assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.test</groupId>
+            <artifactId>custom-container-descriptor-handler</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+  [...]
+</project>
++-----
+
+  the resulting assembly would contain both <<<test.xml>>> and <<<test.properties>>>
+  under the base directory, with only the latter starting with <<<# A comment>>>.

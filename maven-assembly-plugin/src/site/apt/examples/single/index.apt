@@ -40,3 +40,5 @@ Single Project Examples
   * {{{./using-components.html}Using Component Descriptors}}
 
   * {{{./using-repositories.html}Using Repositories}}
+
+  * {{{./using-container-descriptor-handlers.html}Using Container Descriptor Handlers}}
