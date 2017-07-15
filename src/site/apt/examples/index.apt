@@ -43,6 +43,8 @@ Examples
 
     * {{{./single/using-repositories.html}Using Repositories}}
 
+    * {{{./single/using-container-descriptor-handlers.html}Using Container Descriptor Handlers}}
+
     []
 
   * {{{./multimodule/index.html}Working with Multi-Module Projects}}

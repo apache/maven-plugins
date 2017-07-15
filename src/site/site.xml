@@ -53,6 +53,7 @@ under the License.
         <item name="Including/Excluding Artifacts" href="./examples/single/including-and-excluding-artifacts.html"/>
         <item name="Using Component Descriptors" href="./examples/single/using-components.html"/>
         <item name="Using Repositories" href="./examples/single/using-repositories.html"/>
+        <item name="Using Container Descriptor Handlers" href="./examples/single/using-container-descriptor-handlers.html"/>
       </item>
       <item name="Multimodule Projects" collapse="false" href="./examples/multimodule/index.html">
         <item name="Include Module Artifacts" href="./examples/multimodule/module-binary-inclusion-simple.html"/>
