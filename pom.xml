@@ -85,7 +85,6 @@ under the License.
     <module>maven-invoker-plugin</module>-->
     <!-- <module>maven-jar-plugin</module> -->
     <module>maven-jarsigner-plugin</module>
-    <module>maven-javadoc-plugin</module>
     <module>maven-jdeps-plugin</module>
     <module>maven-linkcheck-plugin</module>
     <module>maven-patch-plugin</module>
@@ -127,6 +126,7 @@ under the License.
       <modules>
         <module>maven-assembly-plugin</module>
         <module>maven-checkstyle-plugin</module>
+		<module>maven-javadoc-plugin</module>
         <module>maven-pmd-plugin</module>
       </modules>
       <activation>
