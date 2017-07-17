@@ -1755,6 +1755,7 @@ public abstract class AbstractInvokerMojo
         Map<String, Object> context = new LinkedHashMap<String, Object>();
 
         FileLogger logger = setupBuildLogFile( basedir );
+        boolean selectorResult = true;
         try
         {
             try
@@ -1764,10 +1765,12 @@ public abstract class AbstractInvokerMojo
             }
             catch ( RunErrorException e )
             {
+                selectorResult = false;
                 throw e;
             }
             catch ( RunFailureException e )
             {
+                selectorResult = false;
                 return false;
             }
 
@@ -1876,7 +1879,6 @@ public abstract class AbstractInvokerMojo
                     throw new RunFailureException( "Maven invocation failed. " + e.getMessage(),
                                                    BuildJob.Result.FAILURE_BUILD );
                 }
-                runPostBuildHook( basedir, context, logger );
                 verify( result, invocationIndex, invokerProperties, logger );
             }
         }
@@ -1886,6 +1888,10 @@ public abstract class AbstractInvokerMojo
         }
         finally
         {
+            if ( selectorResult )
+            {
+                runPostBuildHook( basedir, context, logger );
+            }
             if ( logger != null )
             {
                 logger.close();

@@ -17,11 +17,25 @@
  * under the License.
  */
 
-import org.apache.commons.io.FileUtils
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
-// Previous potential target 'content' has impact on IT execution
-// (Some new file should be created by verify.sh) 
-FileUtils.deleteQuietly( new File( basedir, "target/invoker-reports" ) );
-FileUtils.deleteQuietly( new File( basedir, "src/it/script-ret-quiet/target" ) );
-FileUtils.deleteQuietly( new File( basedir, "src/it/script-ret-true/target" ) );
+try
+{
+    // make sure the Invoker Plugin was indeed run and the build didn't fail somewhere else
+    File touchFile = new File( basedir, "target/it/project/target/touch.txt" );
+    System.out.println( "Checking for existence of touch file: " + touchFile );
+    if ( !touchFile.exists() )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+}
+catch( Throwable t )
+{
+    t.printStackTrace();
+    return false;
+}
+
 return true;
