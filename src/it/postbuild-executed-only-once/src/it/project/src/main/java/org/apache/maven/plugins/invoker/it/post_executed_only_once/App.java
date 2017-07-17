@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.invoker.it.post_executed_only_once;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -6,9 +8,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,11 +19,18 @@
  * under the License.
  */
 
-import org.apache.commons.io.FileUtils
+import java.io.File;
 
-// Previous potential target 'content' has impact on IT execution
-// (Some new file should be created by verify.sh) 
-FileUtils.deleteQuietly( new File( basedir, "target/invoker-reports" ) );
-FileUtils.deleteQuietly( new File( basedir, "src/it/script-ret-quiet/target" ) );
-FileUtils.deleteQuietly( new File( basedir, "src/it/script-ret-true/target" ) );
-return true;
+public class App
+{
+    public boolean createFile()
+        throws Exception
+    {
+        if ( Boolean.getBoolean( "create_touch_file" ) )
+        {
+            File touch = new File( System.getProperty( "touch_file_path" ), "touch.txt" );
+            return touch.createNewFile();
+        }
+        return false;
+    }
+}

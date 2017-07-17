@@ -51,7 +51,7 @@ try
         System.out.println( "Checking for absence of: " + touchFile );
         if ( touchFile.exists() )
         {
-            System.out.println( "FAILED!" );
+            System.out.println( file  + " should not be here -> FAILED!" );
             return false;
         }
     }
@@ -67,7 +67,7 @@ try
          String xml = FileUtils.fileRead( resultFile, "UTF-8" );
          if ( xml.indexOf("result=\"success\"") < 0 && xml.indexOf("result='success'") < 0 )
          {
-             System.out.println( "FAILED!" );
+             System.out.println( resultFile + " not success -> FAILED!" );
              return false;
          }
     }
@@ -83,7 +83,7 @@ try
          String xml = FileUtils.fileRead( resultFile, "UTF-8" );
          if ( xml.indexOf("result=\"skipped\"") < 0 && xml.indexOf("result='skipped'") < 0 )
          {
-             System.out.println( "FAILED!" );
+             System.out.println( resultFile + " not skipped -> FAILED!" );
              return false;
          }
     }
@@ -99,7 +99,7 @@ try
          String xml = FileUtils.fileRead( resultFile, "UTF-8" );
          if ( xml.indexOf("result=\"error\"") < 0 && xml.indexOf("result='error'") < 0 )
          {
-             System.out.println( "FAILED!" );
+             System.out.println( resultFile + " not failed -> FAILED!" );
              return false;
          }
     }
