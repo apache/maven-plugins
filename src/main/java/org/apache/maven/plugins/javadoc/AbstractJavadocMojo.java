@@ -290,7 +290,8 @@ public abstract class AbstractJavadocMojo
     /**
      * 
      */
-    private static final JavadocVersion JAVA_VERSION = JavadocVersion.parse( SystemUtils.JAVA_VERSION );
+    // JAVA_VERSION can have -ea suffix, which is not supported (yet)
+    private static final JavadocVersion JAVA_VERSION = JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION );
 
     // ----------------------------------------------------------------------
     // Mojo components
