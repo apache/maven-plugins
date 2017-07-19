@@ -58,48 +58,48 @@ public abstract class AbstractJModMojo
     {
         Toolchain tc = getToolchain();
 
-        String jLinkExecutable = null;
+        String jModExecutable = null;
         if ( tc != null )
         {
-            jLinkExecutable = tc.findTool( "jmod" );
+            jModExecutable = tc.findTool( "jmod" );
         }
 
-        String jLinkCommand = "jmod" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
+        String jModCommand = "jmod" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
 
-        File jLinkExe;
+        File jModExe;
 
-        if ( StringUtils.isNotEmpty( jLinkExecutable ) )
+        if ( StringUtils.isNotEmpty( jModExecutable ) )
         {
-            jLinkExe = new File( jLinkExecutable );
+            jModExe = new File( jModExecutable );
 
-            if ( jLinkExe.isDirectory() )
+            if ( jModExe.isDirectory() )
             {
-                jLinkExe = new File( jLinkExe, jLinkCommand );
+                jModExe = new File( jModExe, jModCommand );
             }
 
-            if ( SystemUtils.IS_OS_WINDOWS && jLinkExe.getName().indexOf( '.' ) < 0 )
+            if ( SystemUtils.IS_OS_WINDOWS && jModExe.getName().indexOf( '.' ) < 0 )
             {
-                jLinkExe = new File( jLinkExe.getPath() + ".exe" );
+                jModExe = new File( jModExe.getPath() + ".exe" );
             }
 
-            if ( !jLinkExe.isFile() )
+            if ( !jModExe.isFile() )
             {
-                throw new IOException( "The jlink executable '" + jLinkExe + "' doesn't exist or is not a file." );
+                throw new IOException( "The jmod executable '" + jModExe + "' doesn't exist or is not a file." );
             }
-            return jLinkExe.getAbsolutePath();
+            return jModExe.getAbsolutePath();
         }
 
         // ----------------------------------------------------------------------
-        // Try to find jlink from System.getProperty( "java.home" )
+        // Try to find jmod from System.getProperty( "java.home" )
         // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
         // should be in the JDK_HOME
         // ----------------------------------------------------------------------
-        jLinkExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jLinkCommand );
+        jModExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jModCommand );
 
         // ----------------------------------------------------------------------
-        // Try to find jlink from JAVA_HOME environment variable
+        // Try to find jmod from JAVA_HOME environment variable
         // ----------------------------------------------------------------------
-        if ( !jLinkExe.exists() || !jLinkExe.isFile() )
+        if ( !jModExe.exists() || !jModExe.isFile() )
         {
             Properties env = CommandLineUtils.getSystemEnvVars();
             String javaHome = env.getProperty( "JAVA_HOME" );
@@ -114,16 +114,16 @@ public abstract class AbstractJModMojo
                     + " doesn't exist or is not a valid directory." );
             }
 
-            jLinkExe = new File( javaHome + File.separator + "bin", jLinkCommand );
+            jModExe = new File( javaHome + File.separator + "bin", jModCommand );
         }
 
-        if ( !jLinkExe.getCanonicalFile().exists() || !jLinkExe.getCanonicalFile().isFile() )
+        if ( !jModExe.getCanonicalFile().exists() || !jModExe.getCanonicalFile().isFile() )
         {
-            throw new IOException( "The jlink executable '" + jLinkExe
+            throw new IOException( "The jmod executable '" + jModExe
                 + "' doesn't exist or is not a file. Verify the JAVA_HOME environment variable." );
         }
 
-        return jLinkExe.getAbsolutePath();
+        return jModExe.getAbsolutePath();
     }
 
     protected boolean projectHasAlreadySetAnArtifact()
