@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,9 +38,7 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public abstract class AbstractJModMojo
     extends AbstractMojo
@@ -54,8 +52,9 @@ public abstract class AbstractJModMojo
 
     @Component
     private ToolchainManager toolchainManager;
-    
-    protected String getJModExecutable() throws IOException
+
+    protected String getJModExecutable()
+        throws IOException
     {
         Toolchain tc = getToolchain();
 
@@ -85,8 +84,7 @@ public abstract class AbstractJModMojo
 
             if ( !jLinkExe.isFile() )
             {
-                throw new IOException( "The jlink executable '" + jLinkExe
-                    + "' doesn't exist or is not a file." );
+                throw new IOException( "The jlink executable '" + jLinkExe + "' doesn't exist or is not a file." );
             }
             return jLinkExe.getAbsolutePath();
         }
@@ -96,25 +94,7 @@ public abstract class AbstractJModMojo
         // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
         // should be in the JDK_HOME
         // ----------------------------------------------------------------------
-        // For IBM's JDK 1.2 
-        // Really ?
-        if ( SystemUtils.IS_OS_AIX )
-        {
-            jLinkExe =
-                new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh", jLinkCommand );
-        }
-        // For Apple's JDK 1.6.x (and older?) on Mac OSX
-        // CHECKSTYLE_OFF: MagicNumber
-        else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
-        // CHECKSTYLE_ON: MagicNumber
-        {
-            jLinkExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", jLinkCommand );
-        }
-        else
-        {
-            jLinkExe =
-                new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jLinkCommand );
-        }
+        jLinkExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jLinkCommand );
 
         // ----------------------------------------------------------------------
         // Try to find jlink from JAVA_HOME environment variable
@@ -145,7 +125,7 @@ public abstract class AbstractJModMojo
 
         return jLinkExe.getAbsolutePath();
     }
-    
+
     protected boolean projectHasAlreadySetAnArtifact()
     {
         if ( getProject().getArtifact().getFile() != null )
@@ -157,8 +137,9 @@ public abstract class AbstractJModMojo
             return false;
         }
     }
-    
-    protected void executeCommand ( Commandline cmd, File outputDirectory ) throws MojoExecutionException
+
+    protected void executeCommand( Commandline cmd, File outputDirectory )
+        throws MojoExecutionException
     {
         if ( getLog().isDebugEnabled() )
         {
@@ -178,7 +159,7 @@ public abstract class AbstractJModMojo
             {
                 if ( StringUtils.isNotEmpty( output ) )
                 {
-                    //Reconsider to use WARN / ERROR ?
+                    // Reconsider to use WARN / ERROR ?
                     getLog().info( output );
                 }
 
@@ -205,7 +186,7 @@ public abstract class AbstractJModMojo
         }
 
     }
-    
+
     private Toolchain getToolchain()
     {
         Toolchain tc = null;
@@ -226,6 +207,5 @@ public abstract class AbstractJModMojo
     {
         return session;
     }
-
 
 }
