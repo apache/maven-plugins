@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -107,25 +107,7 @@ public abstract class AbstractJLinkMojo
         // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
         // should be in the JDK_HOME
         // ----------------------------------------------------------------------
-        // For IBM's JDK 1.2
-        // Really ?
-        if ( SystemUtils.IS_OS_AIX )
-        {
-            jLinkExe =
-                new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh", jLinkCommand );
-        }
-        // For Apple's JDK 1.6.x (and older?) on Mac OSX
-        // CHECKSTYLE_OFF: MagicNumber
-        else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
-        // CHECKSTYLE_ON: MagicNumber
-        {
-            jLinkExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", jLinkCommand );
-        }
-        else
-        {
-            jLinkExe =
-                new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jLinkCommand );
-        }
+        jLinkExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jLinkCommand );
 
         // ----------------------------------------------------------------------
         // Try to find javadocExe from JAVA_HOME environment variable
