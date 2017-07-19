@@ -25,7 +25,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -547,7 +546,7 @@ public class JLinkMojo
         {
             if ( sb.length() > 0 )
             {
-                sb.append( SystemUtils.PATH_SEPARATOR );
+                sb.append( File.pathSeparator );
             }
             sb.append( module );
         }
