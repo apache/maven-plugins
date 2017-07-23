@@ -161,16 +161,16 @@ public class TestJavadocJar
     }
 
     @Override
-    protected List<String> getProjectBuildOutputDirs( MavenProject p )
+    protected List<File> getProjectBuildOutputDirs( MavenProject p )
     {
-        List<String> dirs = new ArrayList<>();
+        List<File> dirs = new ArrayList<>();
         if ( StringUtils.isNotEmpty( p.getBuild().getOutputDirectory() ) )
         {
-            dirs.add( p.getBuild().getOutputDirectory() );
+            dirs.add( new File( p.getBuild().getOutputDirectory() ) );
         }
         if ( StringUtils.isNotEmpty( p.getBuild().getTestOutputDirectory() ) )
         {
-            dirs.add( p.getBuild().getTestOutputDirectory() );
+            dirs.add( new File( p.getBuild().getTestOutputDirectory() ) );
         }
 
         return dirs;

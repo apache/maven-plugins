@@ -1772,14 +1772,14 @@ public abstract class AbstractJavadocMojo
      * @return the list of directories where compiled classes are placed for the given project. These dirs are
      *         added in the javadoc classpath.
      */
-    protected List<String> getProjectBuildOutputDirs( MavenProject p )
+    protected List<File> getProjectBuildOutputDirs( MavenProject p )
     {
         if ( StringUtils.isEmpty( p.getBuild().getOutputDirectory() ) )
         {
             return Collections.emptyList();
         }
 
-        return Collections.singletonList( p.getBuild().getOutputDirectory() );
+        return Collections.singletonList( new File( p.getBuild().getOutputDirectory() ) );
     }
 
     /**
@@ -2523,20 +2523,19 @@ public abstract class AbstractJavadocMojo
     }
 
     /**
-     * Method that sets the classpath elements that will be specified in the javadoc <code>-classpath</code>
-     * parameter. Since we have all the sources of the current reactor, it is sufficient to consider the
+     * Method that gets the classpath and modulepath elements that will be specified in the javadoc
+     * <code>-classpath</code> and <code>--module-path</code> parameter. 
+     * Since we have all the sources of the current reactor, it is sufficient to consider the
      * dependencies of the reactor modules, excluding the module artifacts which may not yet be available
      * when the reactor project is built for the first time.
      *
-     * @return a String that contains the concatenated classpath elements, separated by the System pathSeparator
-     *         string (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
+     * @return all classpath elements
      * @throws MavenReportException if any.
-     * @see File#pathSeparator
      */
-    private String getClasspath()
+    private List<File> getPathElements()
         throws MavenReportException
     {
-        List<String> classpathElements = new ArrayList<>();
+        List<File> classpathElements = new ArrayList<>();
         Map<String, Artifact> compileArtifactMap = new HashMap<>();
 
         if ( isTest() )
@@ -2604,7 +2603,7 @@ public abstract class AbstractJavadocMojo
 
         for ( Artifact a : compileArtifactMap.values() )
         {
-            classpathElements.add( a.getFile().toString() );
+            classpathElements.add( a.getFile() );
         }
 
         if ( additionalDependencies != null )
@@ -2612,13 +2611,12 @@ public abstract class AbstractJavadocMojo
             for ( Dependency dependency : additionalDependencies )
             {
                 Artifact artifact = resolveDependency( dependency );
-                String path = artifact.getFile().toString();
-                getLog().debug( "add additional artifact with path " + path );
-                classpathElements.add( path );
+                getLog().debug( "add additional artifact with path " + artifact.getFile() );
+                classpathElements.add( artifact.getFile() );
             }
         }
 
-        return StringUtils.join( classpathElements.iterator(), File.pathSeparator );
+        return classpathElements;
     }
 
     protected ScopeFilter getDependencyScopeFilter()
@@ -4579,7 +4577,8 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
         }
 
-        addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( getClasspath() ) );
+        String classpath = StringUtils.join( getPathElements().iterator(), File.pathSeparator );
+        addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( classpath ) );
 
         if ( StringUtils.isNotEmpty( doclet ) )
         {
