@@ -56,24 +56,27 @@ public class Jdk5TestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/jdk5-test/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir().getAbsolutePath() );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public Scm getScm()
     {
         return scm;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/jdk5-test/" );

@@ -65,7 +65,7 @@ public class JavadocJarArchiveConfigProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/javadocjar-archive-config/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/javadocjar/def" );
         setCompileSourceRoots( compileSourceRoots );
     }
@@ -73,6 +73,7 @@ public class JavadocJarArchiveConfigProjectStub
     /**
      * {@inheritDoc}
      */
+    @Override
     public Scm getScm()
     {
         return scm;
@@ -81,6 +82,7 @@ public class JavadocJarArchiveConfigProjectStub
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setScm(Scm scm)
     {
         this.scm = scm;
@@ -89,6 +91,7 @@ public class JavadocJarArchiveConfigProjectStub
     /**
      * {@inheritDoc}
      */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/javadocjar-archive-config" );

@@ -33,6 +33,7 @@ public class SettingsStub
     extends Settings
 {
     /** {@inheritDoc} */
+    @Override
     public synchronized Proxy getActiveProxy()
     {
         Proxy proxy = new Proxy();
@@ -47,6 +48,7 @@ public class SettingsStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<Proxy> getProxies()
     {
         return Collections.singletonList( getActiveProxy() );

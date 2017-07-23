@@ -31,6 +31,7 @@ public class DefaultArtifactHandlerStub
     private String language;
 
     /** {@inheritDoc} */
+    @Override
     public String getLanguage()
     {
         if ( language == null )
@@ -44,6 +45,7 @@ public class DefaultArtifactHandlerStub
     /**
      * @param language
      */
+    @Override
     public void setLanguage( String language )
     {
         this.language = language;

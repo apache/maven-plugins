@@ -104,9 +104,9 @@ public final class ResourceResolver extends AbstractLogEnabled
     public List<JavadocBundle> resolveDependencyJavadocBundles( final SourceResolverConfig config )
         throws IOException
     {
-        final List<JavadocBundle> bundles = new ArrayList<JavadocBundle>();
+        final List<JavadocBundle> bundles = new ArrayList<>();
 
-        final Map<String, MavenProject> projectMap = new HashMap<String, MavenProject>();
+        final Map<String, MavenProject> projectMap = new HashMap<>();
         if ( config.reactorProjects() != null )
         {
             for ( final MavenProject p : config.reactorProjects() )
@@ -117,7 +117,7 @@ public final class ResourceResolver extends AbstractLogEnabled
 
         final List<Artifact> artifacts = config.project().getTestArtifacts();
 
-        final List<Artifact> forResourceResolution = new ArrayList<Artifact>( artifacts.size() );
+        final List<Artifact> forResourceResolution = new ArrayList<>( artifacts.size() );
         for ( final Artifact artifact : artifacts )
         {
             final String key = key( artifact.getGroupId(), artifact.getArtifactId() );
@@ -146,9 +146,9 @@ public final class ResourceResolver extends AbstractLogEnabled
     public List<String> resolveDependencySourcePaths( final SourceResolverConfig config )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        final List<String> dirs = new ArrayList<String>();
+        final List<String> dirs = new ArrayList<>();
 
-        final Map<String, MavenProject> projectMap = new HashMap<String, MavenProject>();
+        final Map<String, MavenProject> projectMap = new HashMap<>();
         if ( config.reactorProjects() != null )
         {
             for ( final MavenProject p : config.reactorProjects() )
@@ -159,7 +159,7 @@ public final class ResourceResolver extends AbstractLogEnabled
 
         final List<Artifact> artifacts = config.project().getTestArtifacts();
 
-        final List<Artifact> forResourceResolution = new ArrayList<Artifact>( artifacts.size() );
+        final List<Artifact> forResourceResolution = new ArrayList<>( artifacts.size() );
         for ( final Artifact artifact : artifacts )
         {
             final String key = key( artifact.getGroupId(), artifact.getArtifactId() );
@@ -182,9 +182,9 @@ public final class ResourceResolver extends AbstractLogEnabled
     private static List<JavadocBundle> resolveBundleFromProject( SourceResolverConfig config, MavenProject project,
                                                            Artifact artifact ) throws IOException
     {
-        List<JavadocBundle> bundles = new ArrayList<JavadocBundle>();
+        List<JavadocBundle> bundles = new ArrayList<>();
         
-        List<String> classifiers = new ArrayList<String>();
+        List<String> classifiers = new ArrayList<>();
         if ( config.includeCompileSources() )
         {
             classifiers.add( AbstractJavadocMojo.JAVADOC_RESOURCES_ATTACHMENT_CLASSIFIER );
@@ -237,7 +237,7 @@ public final class ResourceResolver extends AbstractLogEnabled
                                                                     final List<Artifact> artifacts )
         throws IOException
     {
-        final List<Artifact> toResolve = new ArrayList<Artifact>( artifacts.size() );
+        final List<Artifact> toResolve = new ArrayList<>( artifacts.size() );
 
         for ( final Artifact artifact : artifacts )
         {
@@ -282,7 +282,7 @@ public final class ResourceResolver extends AbstractLogEnabled
             }
         }
         
-        List<JavadocBundle> result = new ArrayList<JavadocBundle>();
+        List<JavadocBundle> result = new ArrayList<>();
 
         if ( dirs != null )
         {
@@ -325,7 +325,7 @@ public final class ResourceResolver extends AbstractLogEnabled
                                                       final List<Artifact> artifacts )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        final List<Artifact> toResolve = new ArrayList<Artifact>( artifacts.size() );
+        final List<Artifact> toResolve = new ArrayList<>( artifacts.size() );
 
         for ( final Artifact artifact : artifacts )
         {
@@ -370,7 +370,7 @@ public final class ResourceResolver extends AbstractLogEnabled
         // NOTE: Since these are '-sources' and '-test-sources' artifacts, they won't actually 
         // resolve transitively...this is just used to aggregate resolution failures into a single 
         // exception.
-        final Set<Artifact> artifactSet = new LinkedHashSet<Artifact>( artifacts );
+        final Set<Artifact> artifactSet = new LinkedHashSet<>( artifacts );
 
         final ArtifactFilter filter;
         if ( config.filter() != null )
@@ -382,7 +382,7 @@ public final class ResourceResolver extends AbstractLogEnabled
             filter = null;
         }
         
-        final List<String> result = new ArrayList<String>( artifacts.size() );
+        final List<String> result = new ArrayList<>( artifacts.size() );
         for ( final Artifact a : artifactSet )
         {
             if ( !validClassifiers.contains( a.getClassifier() ) || ( filter != null && !filter.include( a ) ) )
@@ -442,7 +442,7 @@ public final class ResourceResolver extends AbstractLogEnabled
     private static List<String> resolveFromProject( final SourceResolverConfig config,
                                                     final MavenProject reactorProject, final Artifact artifact )
     {
-        final List<String> dirs = new ArrayList<String>();
+        final List<String> dirs = new ArrayList<>();
 
         if ( config.filter() == null
             || new ArtifactIncludeFilterTransformer().transform( config.filter() ).include( artifact ) )

@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
-import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
@@ -40,7 +39,7 @@ import java.util.Set;
 public class ProxyTestMavenProjectStub
     extends MavenProjectStub
 {
-    private Set<Artifact> dependencyArtifacts = new HashSet<Artifact>();
+    private Set<Artifact> dependencyArtifacts = new HashSet<>();
 
     public ProxyTestMavenProjectStub()
     {
@@ -59,7 +58,7 @@ public class ProxyTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/proxy-test/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
 
@@ -79,11 +78,13 @@ public class ProxyTestMavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/proxy-test" );
     }
 
+    @Override
     public Set<Artifact> getDependencyArtifacts()
     {
         return dependencyArtifacts;

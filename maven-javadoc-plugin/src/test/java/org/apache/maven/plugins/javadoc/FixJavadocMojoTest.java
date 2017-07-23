@@ -62,6 +62,7 @@ public class FixJavadocMojoTest
     private static boolean TEST_REPO_CREATED = false;
 
     /** {@inheritDoc} */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -676,7 +677,7 @@ public class FixJavadocMojoTest
     private void invokeCompileGoal( File testPom, Log log )
         throws MavenInvocationException
     {
-        List<String> goals = new ArrayList<String>();
+        List<String> goals = new ArrayList<>();
         goals.add( "clean" );
         goals.add( "compile" );
         File invokerDir = new File( getBasedir(), "target/invoker" );

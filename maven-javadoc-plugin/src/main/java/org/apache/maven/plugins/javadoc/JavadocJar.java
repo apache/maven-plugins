@@ -100,6 +100,7 @@ public class JavadocJar
      *
      * @deprecated
      */
+    @Deprecated
     @Parameter( property = "destDir" )
     private File destDir;
 
@@ -158,6 +159,7 @@ public class JavadocJar
     private String classifier;
 
     /** {@inheritDoc} */
+    @Override
     public void doExecute()
         throws MojoExecutionException
     {

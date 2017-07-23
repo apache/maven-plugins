@@ -1795,7 +1795,7 @@ public abstract class AbstractJavadocMojo
 
         return ( p.getCompileSourceRoots() == null
             ? Collections.<String>emptyList()
-            : new LinkedList<String>( p.getCompileSourceRoots() ) );
+            : new LinkedList<>( p.getCompileSourceRoots() ) );
     }
 
     /**
@@ -1811,7 +1811,7 @@ public abstract class AbstractJavadocMojo
 
         return ( p.getExecutionProject().getCompileSourceRoots() == null
             ? Collections.<String>emptyList()
-            : new LinkedList<String>( p.getExecutionProject().getCompileSourceRoots() ) );
+            : new LinkedList<>( p.getExecutionProject().getCompileSourceRoots() ) );
     }
 
     /**
@@ -2019,7 +2019,7 @@ public abstract class AbstractJavadocMojo
             }
         }
 
-        List<String> arguments = new ArrayList<String>();
+        List<String> arguments = new ArrayList<>();
 
         // ----------------------------------------------------------------------
         // Wrap Javadoc options
@@ -2153,7 +2153,7 @@ public abstract class AbstractJavadocMojo
     protected List<String> getFiles( List<String> sourcePaths )
         throws MavenReportException
     {
-        List<String> files = new ArrayList<String>();
+        List<String> files = new ArrayList<>();
         if ( StringUtils.isEmpty( subpackages ) )
         {
             String[] excludedPackages = getExcludedPackages();
@@ -2184,7 +2184,7 @@ public abstract class AbstractJavadocMojo
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList<String>( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
+            sourcePaths = new ArrayList<>( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
 
             if ( project.getExecutionProject() != null )
             {
@@ -2250,7 +2250,7 @@ public abstract class AbstractJavadocMojo
         }
         else
         {
-            sourcePaths = new ArrayList<String>( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
+            sourcePaths = new ArrayList<>( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
             sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
@@ -2301,7 +2301,7 @@ public abstract class AbstractJavadocMojo
 
         final SourceResolverConfig config = getDependencySourceResolverConfig();
 
-        final List<TransformableFilter> andFilters = new ArrayList<TransformableFilter>();
+        final List<TransformableFilter> andFilters = new ArrayList<>();
 
         final List<String> dependencyIncludes = dependencySourceIncludes;
         final List<String> dependencyExcludes = dependencySourceExcludes;
@@ -2353,7 +2353,7 @@ public abstract class AbstractJavadocMojo
     {
         Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
 
-        List<String> artifactPatterns = new ArrayList<String>( dependencyArtifacts.size() );
+        List<String> artifactPatterns = new ArrayList<>( dependencyArtifacts.size() );
         for ( Artifact artifact : dependencyArtifacts )
         {
             artifactPatterns.add( artifact.getGroupId() + ":" + artifact.getArtifactId() );
@@ -2459,7 +2459,7 @@ public abstract class AbstractJavadocMojo
     private String[] getExcludedPackages()
         throws MavenReportException
     {
-        Set<String> excluded = new LinkedHashSet<String>();
+        Set<String> excluded = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -2509,7 +2509,7 @@ public abstract class AbstractJavadocMojo
 
     private static List<String> trimValues( List<String> items )
     {
-        List<String> result = new ArrayList<String>( items.size() );
+        List<String> result = new ArrayList<>( items.size() );
         for ( String item : items )
         {
             String trimmed = item.trim();
@@ -2536,8 +2536,8 @@ public abstract class AbstractJavadocMojo
     private String getClasspath()
         throws MavenReportException
     {
-        List<String> classpathElements = new ArrayList<String>();
-        Map<String, Artifact> compileArtifactMap = new HashMap<String, Artifact>();
+        List<String> classpathElements = new ArrayList<>();
+        Map<String, Artifact> compileArtifactMap = new HashMap<>();
 
         if ( isTest() )
         {
@@ -2548,7 +2548,7 @@ public abstract class AbstractJavadocMojo
 
         if ( isAggregator() && project.isExecutionRoot() )
         {
-            List<String> reactorArtifacts = new ArrayList<String>();
+            List<String> reactorArtifacts = new ArrayList<>();
             for ( MavenProject p : reactorProjects )
             {
                 reactorArtifacts.add( p.getGroupId() + ':' + p.getArtifactId() );
@@ -2879,7 +2879,7 @@ public abstract class AbstractJavadocMojo
     {
         Set<BootclasspathArtifact> bootclasspathArtifacts = collectBootClasspathArtifacts();
 
-        List<String> bootclassPath = new ArrayList<String>();
+        List<String> bootclassPath = new ArrayList<>();
         for ( BootclasspathArtifact aBootclasspathArtifact : bootclasspathArtifacts )
         {
             if ( ( StringUtils.isNotEmpty( aBootclasspathArtifact.getGroupId() ) ) && ( StringUtils.isNotEmpty(
@@ -2919,7 +2919,7 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         Set<DocletArtifact> docletArtifacts = collectDocletArtifacts();
-        List<String> pathParts = new ArrayList<String>();
+        List<String> pathParts = new ArrayList<>();
 
         for ( DocletArtifact docletArtifact : docletArtifacts )
         {
@@ -2975,7 +2975,7 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         Set<TagletArtifact> tArtifacts = collectTagletArtifacts();
-        List<String> pathParts = new ArrayList<String>();
+        List<String> pathParts = new ArrayList<>();
 
         for ( TagletArtifact tagletArtifact : tArtifacts )
         {
@@ -3026,7 +3026,7 @@ public abstract class AbstractJavadocMojo
     private Set<String> collectLinks()
         throws MavenReportException
     {
-        Set<String> links = new LinkedHashSet<String>();
+        Set<String> links = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3066,7 +3066,7 @@ public abstract class AbstractJavadocMojo
     private Set<Group> collectGroups()
         throws MavenReportException
     {
-        Set<Group> groups = new LinkedHashSet<Group>();
+        Set<Group> groups = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3104,7 +3104,7 @@ public abstract class AbstractJavadocMojo
     private Set<ResourcesArtifact> collectResourcesArtifacts()
         throws MavenReportException
     {
-        Set<ResourcesArtifact> result = new LinkedHashSet<ResourcesArtifact>();
+        Set<ResourcesArtifact> result = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3142,7 +3142,7 @@ public abstract class AbstractJavadocMojo
     private Set<BootclasspathArtifact> collectBootClasspathArtifacts()
         throws MavenReportException
     {
-        Set<BootclasspathArtifact> result = new LinkedHashSet<BootclasspathArtifact>();
+        Set<BootclasspathArtifact> result = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3180,7 +3180,7 @@ public abstract class AbstractJavadocMojo
     private Set<OfflineLink> collectOfflineLinks()
         throws MavenReportException
     {
-        Set<OfflineLink> result = new LinkedHashSet<OfflineLink>();
+        Set<OfflineLink> result = new LinkedHashSet<>();
 
         OfflineLink javaApiLink = getDefaultJavadocApiLink();
         if ( javaApiLink != null )
@@ -3224,7 +3224,7 @@ public abstract class AbstractJavadocMojo
     private Set<Tag> collectTags()
         throws MavenReportException
     {
-        Set<Tag> tags = new LinkedHashSet<Tag>();
+        Set<Tag> tags = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3262,7 +3262,7 @@ public abstract class AbstractJavadocMojo
     private Set<TagletArtifact> collectTagletArtifacts()
         throws MavenReportException
     {
-        Set<TagletArtifact> tArtifacts = new LinkedHashSet<TagletArtifact>();
+        Set<TagletArtifact> tArtifacts = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3305,7 +3305,7 @@ public abstract class AbstractJavadocMojo
     private Set<DocletArtifact> collectDocletArtifacts()
         throws MavenReportException
     {
-        Set<DocletArtifact> dArtifacts = new LinkedHashSet<DocletArtifact>();
+        Set<DocletArtifact> dArtifacts = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3348,7 +3348,7 @@ public abstract class AbstractJavadocMojo
     private Set<Taglet> collectTaglets()
         throws MavenReportException
     {
-        Set<Taglet> result = new LinkedHashSet<Taglet>();
+        Set<Taglet> result = new LinkedHashSet<>();
 
         if ( includeDependencySources )
         {
@@ -3399,7 +3399,7 @@ public abstract class AbstractJavadocMojo
             return Collections.emptyList();
         }
 
-        List<String> path = new ArrayList<String>();
+        List<String> path = new ArrayList<>();
 
         try
         {
@@ -4140,7 +4140,7 @@ public abstract class AbstractJavadocMojo
                 resourceResolver.resolveDependencyJavadocBundles( getDependencySourceResolverConfig() );
             if ( dependencyJavadocBundles == null )
             {
-                dependencyJavadocBundles = new ArrayList<JavadocBundle>();
+                dependencyJavadocBundles = new ArrayList<>();
             }
         }
     }
@@ -4236,7 +4236,7 @@ public abstract class AbstractJavadocMojo
     private List<String> getPackageNamesOrFilesWithUnnamedPackages( List<String> sourcePaths, List<String> files,
                                                                     boolean onlyPackageName )
     {
-        List<String> returnList = new ArrayList<String>();
+        List<String> returnList = new ArrayList<>();
 
         if ( !StringUtils.isEmpty( sourcepath ) )
         {
@@ -4881,7 +4881,7 @@ public abstract class AbstractJavadocMojo
     private void addTagletsFromTagletArtifacts( List<String> arguments )
         throws MavenReportException
     {
-        Set<TagletArtifact> tArtifacts = new LinkedHashSet<TagletArtifact>();
+        Set<TagletArtifact> tArtifacts = new LinkedHashSet<>();
         if ( tagletArtifacts != null && tagletArtifacts.length > 0 )
         {
             tArtifacts.addAll( Arrays.asList( tagletArtifacts ) );
@@ -4917,7 +4917,7 @@ public abstract class AbstractJavadocMojo
             return;
         }
 
-        List<String> tagletsPath = new ArrayList<String>();
+        List<String> tagletsPath = new ArrayList<>();
 
         for ( TagletArtifact aTagletArtifact : tArtifacts )
         {
@@ -5176,7 +5176,7 @@ public abstract class AbstractJavadocMojo
             inputResourceName = inputResourceName.replaceFirst( "//*", "" );
         }
 
-        List<String> classPath = new ArrayList<String>();
+        List<String> classPath = new ArrayList<>();
         classPath.add( project.getBuild().getSourceDirectory() );
 
         URL resourceURL = getResource( classPath, inputResourceName );
@@ -5269,7 +5269,7 @@ public abstract class AbstractJavadocMojo
      */
     private URL getResource( final List<String> classPath, final String resource )
     {
-        List<URL> urls = new ArrayList<URL>( classPath.size() );
+        List<URL> urls = new ArrayList<>( classPath.size() );
         for ( String filename : classPath )
         {
             try
@@ -5362,14 +5362,14 @@ public abstract class AbstractJavadocMojo
 
         getLog().debug( "Trying to add links for modules..." );
 
-        Set<String> dependencyArtifactIds = new HashSet<String>();
+        Set<String> dependencyArtifactIds = new HashSet<>();
         final Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
         for ( Artifact artifact : dependencyArtifacts )
         {
             dependencyArtifactIds.add( artifact.getId() );
         }
 
-        List<OfflineLink> modulesLinks = new ArrayList<OfflineLink>();
+        List<OfflineLink> modulesLinks = new ArrayList<>();
         String javadocDirRelative = PathUtils.toRelative( project.getBasedir(), getOutputDirectory() );
         for ( MavenProject p : reactorProjects )
         {
@@ -5463,7 +5463,7 @@ public abstract class AbstractJavadocMojo
 
         getLog().debug( "Trying to add links for dependencies..." );
 
-        List<String> dependenciesLinks = new ArrayList<String>();
+        List<String> dependenciesLinks = new ArrayList<>();
 
         final Set<Artifact> dependencies = project.getDependencyArtifacts();
         for ( Artifact artifact : dependencies )
@@ -5808,12 +5808,12 @@ public abstract class AbstractJavadocMojo
             return null;
         }
 
-        Plugin plugin = (Plugin) p.getBuild().getPluginsAsMap().get( pluginId );
+        Plugin plugin = p.getBuild().getPluginsAsMap().get( pluginId );
 
         if ( ( plugin == null ) && ( p.getBuild().getPluginManagement() != null ) && (
             p.getBuild().getPluginManagement().getPluginsAsMap() != null ) )
         {
-            plugin = (Plugin) p.getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
+            plugin = p.getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
         }
 
         return plugin;

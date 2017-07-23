@@ -77,7 +77,7 @@ public class JavadocJarTest
 
         //validate contents of jar file
         ZipFile jar = new ZipFile( generatedFile );
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
         {
             ZipEntry entry = entries.nextElement();
@@ -171,7 +171,7 @@ public class JavadocJarTest
 
         //validate contents of jar file
         ZipFile jar = new ZipFile( generatedFile );
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         for (Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
         {
             ZipEntry entry = entries.nextElement();
