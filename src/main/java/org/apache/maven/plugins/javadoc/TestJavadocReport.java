@@ -241,7 +241,7 @@ public class TestJavadocReport
     @Override
     protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
-        List<String> dirs = new ArrayList<String>();
+        List<String> dirs = new ArrayList<>();
         if ( StringUtils.isNotEmpty( p.getBuild().getOutputDirectory() ) )
         {
             dirs.add( p.getBuild().getOutputDirectory() );
@@ -263,7 +263,7 @@ public class TestJavadocReport
         }
 
         return ( p.getTestCompileSourceRoots() == null ? Collections.<String>emptyList()
-                        : new LinkedList<String>( p.getTestCompileSourceRoots() ) );
+                        : new LinkedList<>( p.getTestCompileSourceRoots() ) );
     }
 
     @Override
@@ -275,7 +275,7 @@ public class TestJavadocReport
         }
 
         return ( p.getExecutionProject().getTestCompileSourceRoots() == null ? Collections.<String>emptyList()
-                        : new LinkedList<String>( p.getExecutionProject().getTestCompileSourceRoots() ) );
+                        : new LinkedList<>( p.getExecutionProject().getTestCompileSourceRoots() ) );
     }
 
     @Override
@@ -327,7 +327,7 @@ public class TestJavadocReport
     {
         if ( links == null )
         {
-            links = new ArrayList<String>();
+            links = new ArrayList<>();
         }
 
         // TODO the prerequisite is that the main report is in apidocs

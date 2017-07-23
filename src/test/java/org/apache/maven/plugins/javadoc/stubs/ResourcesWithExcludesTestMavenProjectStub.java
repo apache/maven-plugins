@@ -49,12 +49,13 @@ public class ResourcesWithExcludesTestMavenProjectStub extends MavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/resources-with-excludes-test/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/resources-with-excludes-test" );

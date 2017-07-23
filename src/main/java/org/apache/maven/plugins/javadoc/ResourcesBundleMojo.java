@@ -91,6 +91,7 @@ extends AbstractJavadocMojo
      * {@inheritDoc}
      * @see org.apache.maven.plugin.Mojo#execute()
      */
+    @Override
     public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {

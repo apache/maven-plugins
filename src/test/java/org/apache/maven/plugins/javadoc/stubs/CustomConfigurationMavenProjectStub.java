@@ -61,7 +61,7 @@ public class CustomConfigurationMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/custom-configuration/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         String temp =  getBasedir().getAbsolutePath();
         if( !temp.startsWith( "/" ) )
         {
@@ -72,30 +72,35 @@ public class CustomConfigurationMavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public Scm getScm()
     {
         return scm;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setScm( Scm scm )
     {
         this.scm = scm;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Build getBuild()
     {
         return build;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/custom-configuration/" );

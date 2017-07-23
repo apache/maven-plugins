@@ -191,6 +191,7 @@ public class AbstractFixJavadocMojoTest
     protected class PrivateAbstractInheritableJavaEntity
         extends AbstractInheritableJavaEntity
     {
+        @Override
         public int compareTo( Object o )
         {
             return 0;

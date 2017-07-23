@@ -57,12 +57,13 @@ public class TagletArtifactsMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/tagletArtifacts-test/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         ArtifactRepository repository =
@@ -73,6 +74,7 @@ public class TagletArtifactsMavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/tagletArtifacts-test" );

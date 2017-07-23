@@ -405,6 +405,7 @@ public abstract class AbstractFixJavadocMojo
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -487,7 +488,7 @@ public abstract class AbstractFixJavadocMojo
     {
         return ( p.getCompileSourceRoots() == null
             ? Collections.<String>emptyList()
-            : new LinkedList<String>( p.getCompileSourceRoots() ) );
+            : new LinkedList<>( p.getCompileSourceRoots() ) );
     }
 
     /**
@@ -501,7 +502,7 @@ public abstract class AbstractFixJavadocMojo
     {
         return ( p.getCompileClasspathElements() == null
             ? Collections.<String>emptyList()
-            : new LinkedList<String>( p.getCompileClasspathElements() ) );
+            : new LinkedList<>( p.getCompileClasspathElements() ) );
     }
 
     /**
@@ -540,7 +541,7 @@ public abstract class AbstractFixJavadocMojo
         if ( !FIX_TAGS_ALL.equalsIgnoreCase( fixTags.trim() ) )
         {
             String[] split = StringUtils.split( fixTags, "," );
-            List<String> filtered = new LinkedList<String>();
+            List<String> filtered = new LinkedList<>();
             for ( String aSplit : split )
             {
                 String s = aSplit.trim();
@@ -740,8 +741,8 @@ public abstract class AbstractFixJavadocMojo
             getLog().info( "Clirr output file was created: " + clirrTextOutputFile.getAbsolutePath() );
         }
 
-        clirrNewClasses = new LinkedList<String>();
-        clirrNewMethods = new LinkedHashMap<String, List<String>>();
+        clirrNewClasses = new LinkedList<>();
+        clirrNewMethods = new LinkedHashMap<>();
 
         BufferedReader reader = null;
         try
@@ -787,7 +788,7 @@ public abstract class AbstractFixJavadocMojo
                         list = clirrNewMethods.get( split[2].trim() );
                         if ( list == null )
                         {
-                            list = new ArrayList<String>();
+                            list = new ArrayList<>();
                         }
                         splits2 = StringUtils.split( split[3].trim(), "'" );
                         if ( splits2.length != 3 )
@@ -802,7 +803,7 @@ public abstract class AbstractFixJavadocMojo
                         list = clirrNewMethods.get( split[2].trim() );
                         if ( list == null )
                         {
-                            list = new ArrayList<String>();
+                            list = new ArrayList<>();
                         }
                         splits2 = StringUtils.split( split[3].trim(), "'" );
                         if ( splits2.length != 3 )
@@ -878,7 +879,7 @@ public abstract class AbstractFixJavadocMojo
             return null;
         }
 
-        List<File> javaFiles = new LinkedList<File>();
+        List<File> javaFiles = new LinkedList<>();
         for ( String sourceRoot : getProjectSourceRoots( project ) )
         {
             File f = new File( sourceRoot );
@@ -941,7 +942,7 @@ public abstract class AbstractFixJavadocMojo
                 throw new MojoExecutionException( "DependencyResolutionRequiredException: " + e.getMessage(), e );
             }
 
-            List<URL> urls = new ArrayList<URL>( classPath.size() );
+            List<URL> urls = new ArrayList<>( classPath.size() );
             for ( String filename : classPath )
             {
                 try
@@ -2966,7 +2967,7 @@ public abstract class AbstractFixJavadocMojo
     {
         if ( sinceClasses == null )
         {
-            sinceClasses = new ArrayList<String>();
+            sinceClasses = new ArrayList<>();
         }
         sinceClasses.add( javaClass.getFullyQualifiedName() );
     }
@@ -3357,7 +3358,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         String[] javaClassContentLines = getLines( javaClassContent );
-        List<String> list = new LinkedList<String>();
+        List<String> list = new LinkedList<>();
         for ( int i = entity.getLineNumber() - 2; i >= 0; i-- )
         {
             String line = javaClassContentLines[i];
@@ -3467,7 +3468,7 @@ public abstract class AbstractFixJavadocMojo
             return content;
         }
 
-        List<String> linesList = new LinkedList<String>( Arrays.asList( lines ) );
+        List<String> linesList = new LinkedList<>( Arrays.asList( lines ) );
 
         Collections.reverse( linesList );
 
@@ -3546,7 +3547,7 @@ public abstract class AbstractFixJavadocMojo
     private static String[] getLines( final String content )
         throws IOException
     {
-        List<String> lines = new LinkedList<String>();
+        List<String> lines = new LinkedList<>();
 
         BufferedReader reader = new BufferedReader( new StringReader( content ) );
         String line = reader.readLine();
@@ -3624,7 +3625,7 @@ public abstract class AbstractFixJavadocMojo
         if ( params[0].trim().equals( "<" ) && params[2].trim().equals( ">" ) )
         {
             String param = params[1];
-            List<String> l = new ArrayList<String>( Arrays.asList( params ) );
+            List<String> l = new ArrayList<>( Arrays.asList( params ) );
             l.set( 1, "<" + param + ">" );
             l.remove( 0 );
             l.remove( 1 );
@@ -3673,10 +3674,10 @@ public abstract class AbstractFixJavadocMojo
         {
             this.entity = entity;
             this.isJavaMethod = isJavaMethod;
-            this.namesTags = new LinkedList<String>();
-            this.tagParams = new LinkedHashMap<String, String>();
-            this.tagThrows = new LinkedHashMap<String, String>();
-            this.unknownsTags = new LinkedList<String>();
+            this.namesTags = new LinkedList<>();
+            this.tagParams = new LinkedHashMap<>();
+            this.tagThrows = new LinkedHashMap<>();
+            this.unknownsTags = new LinkedList<>();
         }
 
         public List<String> getNamesTags()
@@ -3763,6 +3764,7 @@ public abstract class AbstractFixJavadocMojo
         /**
          * {@inheritDoc}
          */
+        @Override
         public String toString()
         {
             StringBuilder sb = new StringBuilder();

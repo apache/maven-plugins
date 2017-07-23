@@ -48,12 +48,14 @@ public class FixJdk6MavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getArtifactId()
     {
         return getModel().getArtifactId();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getGroupId()
     {
         String groupId = getModel().getGroupId();
@@ -67,6 +69,7 @@ public class FixJdk6MavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getVersion()
     {
         String version = getModel().getVersion();
@@ -80,12 +83,14 @@ public class FixJdk6MavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getPackaging()
     {
         return getModel().getPackaging();
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         // Using unit test dir
@@ -93,6 +98,7 @@ public class FixJdk6MavenProjectStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getFile()
     {
         return new File( getBasedir(), "pom.xml" );

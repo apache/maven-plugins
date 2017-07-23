@@ -163,7 +163,7 @@ public class TestJavadocJar
     @Override
     protected List<String> getProjectBuildOutputDirs( MavenProject p )
     {
-        List<String> dirs = new ArrayList<String>();
+        List<String> dirs = new ArrayList<>();
         if ( StringUtils.isNotEmpty( p.getBuild().getOutputDirectory() ) )
         {
             dirs.add( p.getBuild().getOutputDirectory() );

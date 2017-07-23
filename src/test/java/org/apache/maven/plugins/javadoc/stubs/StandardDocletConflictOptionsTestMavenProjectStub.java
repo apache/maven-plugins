@@ -49,12 +49,13 @@ public class StandardDocletConflictOptionsTestMavenProjectStub extends MavenProj
         build.setDirectory( super.getBasedir() + "/target/test/unit/validate-options-test/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/validate-options-test" );

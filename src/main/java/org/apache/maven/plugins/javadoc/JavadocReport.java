@@ -98,6 +98,7 @@ public class JavadocReport
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @Override
     public String getName( Locale locale )
     {
         if ( StringUtils.isEmpty( name ) )
@@ -109,6 +110,7 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getDescription( Locale locale )
     {
         if ( StringUtils.isEmpty( description ) )
@@ -120,6 +122,7 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
+    @Override
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
@@ -148,12 +151,14 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getOutputName()
     {
         return destDir + "/index";
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isExternalReport()
     {
         return true;
@@ -223,6 +228,7 @@ public class JavadocReport
      *    </tbody>
      *  </table>
      */
+    @Override
     public boolean canGenerateReport()
     {
         boolean canGenerate = false;
@@ -252,12 +258,14 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_REPORTS;
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getReportOutputDirectory()
     {
         if ( reportOutputDirectory == null )
@@ -273,6 +281,7 @@ public class JavadocReport
      *
      * @param reportOutputDirectory the directory file to be set
      */
+    @Override
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         updateReportOutputDirectory( reportOutputDirectory, destDir );
@@ -301,6 +310,7 @@ public class JavadocReport
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doExecute()
         throws MojoExecutionException, MojoFailureException
     {

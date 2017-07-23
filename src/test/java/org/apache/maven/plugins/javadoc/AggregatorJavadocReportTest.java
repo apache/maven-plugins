@@ -45,6 +45,7 @@ public class AggregatorJavadocReportTest
     private File localRepo;
 
     /** {@inheritDoc} */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -186,7 +187,7 @@ public class AggregatorJavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "aggregate-test/aggregate-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/aggregate-test/target/site/apidocs/" );
@@ -213,7 +214,7 @@ public class AggregatorJavadocReportTest
         throws Exception
     {
         File testPom = new File( unit, "aggregate-resources-test/aggregate-resources-test-plugin-config.xml" );
-        JavadocReport mojo = (JavadocReport) lookupMojo( testPom );
+        JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
 
         File apidocs = new File( getBasedir(), "target/test/unit/aggregate-resources-test/target/site/apidocs" );

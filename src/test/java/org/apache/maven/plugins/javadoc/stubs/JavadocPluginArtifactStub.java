@@ -54,36 +54,42 @@ public class JavadocPluginArtifactStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setGroupId( String groupId )
     {
         this.groupId = groupId;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getGroupId()
     {
         return groupId;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setArtifactId( String artifactId )
     {
         this.artifactId = artifactId;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getArtifactId()
     {
         return artifactId;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setVersion( String version )
     {
         this.version = version;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getVersion()
     {
         return version;
@@ -106,36 +112,42 @@ public class JavadocPluginArtifactStub
     }
 
     /** {@inheritDoc} */
+    @Override
     public VersionRange getVersionRange()
     {
         return versionRange;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setVersionRange( VersionRange versionRange )
     {
         this.versionRange = versionRange;
     }
 
     /** {@inheritDoc} */
+    @Override
     public ArtifactHandler getArtifactHandler()
     {
         return handler;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setArtifactHandler( ArtifactHandler handler )
     {
         this.handler = handler;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getBaseVersion()
     {
         return baseVersion;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setBaseVersion( String string )
     {
         this.baseVersion = string;

@@ -70,6 +70,7 @@ public class JavadocReportTest
     private File localRepo;
 
     /** {@inheritDoc} */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -862,7 +863,7 @@ public class JavadocReportTest
         }
 
         // auth proxy
-        Map<String, String> authentications = new HashMap<String, String>();
+        Map<String, String> authentications = new HashMap<>();
         authentications.put( "foo", "bar" );
         try
         {

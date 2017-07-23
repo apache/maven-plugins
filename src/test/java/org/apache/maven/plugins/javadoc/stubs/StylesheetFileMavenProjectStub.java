@@ -59,18 +59,20 @@ public class StylesheetFileMavenProjectStub extends MavenProjectStub
         build.setPlugins( getModel().getBuild().getPlugins() );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/stylesheetfile-test" );
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
         ArtifactRepository repository =

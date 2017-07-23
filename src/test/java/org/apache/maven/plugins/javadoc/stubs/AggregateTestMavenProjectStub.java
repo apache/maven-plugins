@@ -52,30 +52,34 @@ public class AggregateTestMavenProjectStub
         build.setFinalName( getModel().getArtifactId() );
         build.setDirectory( super.getBasedir() + "/target/test/unit/aggregate-test/target" );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public Build getBuild()
     {
         return build;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setBuild( Build build )
     {
         this.build = build;
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-test" );
     }
 
     /** {@inheritDoc} */
+    @Override
     public MavenProject getExecutionProject()
     {
         return this;

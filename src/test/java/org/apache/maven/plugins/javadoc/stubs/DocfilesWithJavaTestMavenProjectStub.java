@@ -47,12 +47,13 @@ public class DocfilesWithJavaTestMavenProjectStub
         build.setDirectory( super.getBasedir() + "/target/test/unit/docfiles-with-java-test/target" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/docfiles-with-java-test/src/main" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir(), "/src/test/resources/unit/docfiles-with-java-test" );

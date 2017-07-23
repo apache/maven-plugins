@@ -53,16 +53,17 @@ public class PomMavenProjectStub
         build.setTestOutputDirectory( super.getBasedir() + "/target/test/unit/pom-test/target/test-classes" );
         setBuild( build );
 
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( getBasedir() + "/src/main/java" );
         setCompileSourceRoots( compileSourceRoots );
 
-        List<String> testCompileSourceRoots = new ArrayList<String>();
+        List<String> testCompileSourceRoots = new ArrayList<>();
         testCompileSourceRoots.add( getBasedir() + "/src/test/java" );
         setTestCompileSourceRoots( testCompileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/pom-test" );

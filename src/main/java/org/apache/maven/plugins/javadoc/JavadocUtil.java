@@ -117,7 +117,7 @@ public class JavadocUtil
      */
     public static List<String> pruneDirs( MavenProject project, List<String> dirs )
     {
-        List<String> pruned = new ArrayList<String>( dirs.size() );
+        List<String> pruned = new ArrayList<>( dirs.size() );
         for ( String dir : dirs )
         {
             if ( dir == null )
@@ -149,7 +149,7 @@ public class JavadocUtil
      */
     protected static List<String> pruneFiles( List<String> files )
     {
-        List<String> pruned = new ArrayList<String>( files.size() );
+        List<String> pruned = new ArrayList<>( files.size() );
         for ( String f : files )
         {
             if ( !shouldPruneFile( f, pruned ) )
@@ -194,7 +194,7 @@ public class JavadocUtil
     protected static List<String> getExcludedNames( List<String> sourcePaths, String[] subpackagesList,
                                                     String[] excludedPackages )
     {
-        List<String> excludedNames = new ArrayList<String>();
+        List<String> excludedNames = new ArrayList<>();
         for ( String path : sourcePaths )
         {
             for ( String aSubpackagesList : subpackagesList )
@@ -290,7 +290,7 @@ public class JavadocUtil
             return;
         }
 
-        List<String> excludes = new ArrayList<String>();
+        List<String> excludes = new ArrayList<>();
         excludes.addAll( Arrays.asList( FileUtils.getDefaultExcludes() ) );
 
         if ( StringUtils.isNotEmpty( excludedocfilessubdir ) )
@@ -342,7 +342,7 @@ public class JavadocUtil
      */
     protected static List<String> getIncludedFiles( File sourceDirectory, String[] fileList, String[] excludePackages )
     {
-        List<String> files = new ArrayList<String>();
+        List<String> files = new ArrayList<>();
 
         for ( String aFileList : fileList )
         {
@@ -416,7 +416,7 @@ public class JavadocUtil
      */
     protected static List<String> getExcludedPackages( String sourceDirectory, String[] excludePackagenames )
     {
-        List<String> files = new ArrayList<String>();
+        List<String> files = new ArrayList<>();
         for ( String excludePackagename : excludePackagenames )
         {
             String[] fileList = FileUtils.getFilesFromExtension( sourceDirectory, new String[] { "java" } );
@@ -436,7 +436,7 @@ public class JavadocUtil
             }
         }
 
-        List<String> excluded = new ArrayList<String>();
+        List<String> excluded = new ArrayList<>();
         for ( String file : files )
         {
             int idx = file.lastIndexOf( File.separatorChar );
@@ -783,7 +783,7 @@ public class JavadocUtil
             cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() }, null );
         }
 
-        List<String> tagletClasses = new ArrayList<String>();
+        List<String> tagletClasses = new ArrayList<>();
 
         Class<?> tagletClass = cl.loadClass( "com.sun.tools.doclets.Taglet" );
         for ( String s : classes )
@@ -1021,7 +1021,7 @@ public class JavadocUtil
             return null;
         }
 
-        List<String> subpaths = new ArrayList<String>();
+        List<String> subpaths = new ArrayList<>();
         PathTokenizer pathTokenizer = new PathTokenizer( path );
         while ( pathTokenizer.hasMoreTokens() )
         {
@@ -1074,7 +1074,7 @@ public class JavadocUtil
             throw new IOException( "The jar '" + jarFile + "' doesn't exist or is not a file." );
         }
 
-        List<String> classes = new ArrayList<String>();
+        List<String> classes = new ArrayList<>();
         JarInputStream jarStream = null;
 
         try
@@ -1503,7 +1503,7 @@ public class JavadocUtil
             return null;
         }
         
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         StringTokenizer st = new StringTokenizer( src, "[,:;]" );
         StringBuilder sb = new StringBuilder( 256 );
@@ -1540,7 +1540,7 @@ public class JavadocUtil
             return null;
         }
         
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         if ( single != null )
         {
             result.add( single );

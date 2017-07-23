@@ -53,18 +53,20 @@ public class AggregateProject1TestMavenProjectStub
         setBuild( build );
 
         String basedir = getBasedir().getAbsolutePath();
-        List<String> compileSourceRoots = new ArrayList<String>();
+        List<String> compileSourceRoots = new ArrayList<>();
         compileSourceRoots.add( basedir + "/aggregate/test/project1" );
         setCompileSourceRoots( compileSourceRoots );
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getBasedir()
     {
         return new File( super.getBasedir() + "/src/test/resources/unit/aggregate-test/project1" );
     }
 
     /** {@inheritDoc} */
+    @Override
     public MavenProject getExecutionProject()
     {
         return this;
