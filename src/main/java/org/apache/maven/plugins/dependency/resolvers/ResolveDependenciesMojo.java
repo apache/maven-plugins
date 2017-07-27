@@ -33,7 +33,8 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import java.io.IOException;
 
 /**
- * Goal that resolves the project dependencies from the repository.
+ * Goal that resolves the project dependencies from the repository. 
+ * When using this goal while running on Java 9 the module names will be visible as well. 
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$

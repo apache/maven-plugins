@@ -80,7 +80,8 @@ ${project.name}
   *{{{./purge-local-repository-mojo.html}dependency:purge-local-repository}} tells Maven to clear dependency artifact
   files out of the local repository, and optionally re-resolve them.
 
-  *{{{./resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version.
+  *{{{./resolve-mojo.html}dependency:resolve}} tells Maven to resolve all dependencies and displays the version. <<JAVA 9 NOTE:>> <will display the
+  module name when running with Java 9.>
 
   *{{{./resolve-plugins-mojo.html}dependency:resolve-plugins}} tells Maven to resolve plugins and their dependencies.
 
