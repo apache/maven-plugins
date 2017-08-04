@@ -269,18 +269,22 @@ public class DependencyStatusSets
             @SuppressWarnings( "unchecked" )
             Set<Object> moduleReferences = (Set<Object>) findAllMethod.invoke( moduleFinderInstance );
             
-            Object moduleReference = moduleReferences.iterator().next();
-            Method descriptorMethod = moduleReference.getClass().getMethod( "descriptor" );
-            Object moduleDescriptorInstance = descriptorMethod.invoke( moduleReference );
-            
-            Method nameMethod = moduleDescriptorInstance.getClass().getMethod( "name" );
-            String name = (String) nameMethod.invoke( moduleDescriptorInstance );
-            
-            moduleDescriptor = new ModuleDescriptor();
-            moduleDescriptor.name = name;
-            
-            Method isAutomaticMethod = moduleDescriptorInstance.getClass().getMethod( "isAutomatic" );
-            moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
+            // moduleReferences can be empty when referring to target/classes without module-info.class
+            if ( !moduleReferences.isEmpty() )
+            {
+                Object moduleReference = moduleReferences.iterator().next();
+                Method descriptorMethod = moduleReference.getClass().getMethod( "descriptor" );
+                Object moduleDescriptorInstance = descriptorMethod.invoke( moduleReference );
+                
+                Method nameMethod = moduleDescriptorInstance.getClass().getMethod( "name" );
+                String name = (String) nameMethod.invoke( moduleDescriptorInstance );
+                
+                moduleDescriptor = new ModuleDescriptor();
+                moduleDescriptor.name = name;
+                
+                Method isAutomaticMethod = moduleDescriptorInstance.getClass().getMethod( "isAutomatic" );
+                moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
+            }
         }
         catch ( ClassNotFoundException e )
         {
