@@ -19,11 +19,6 @@ package org.apache.maven.plugins.dependency.utils;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
 
 public class TestDependencyStatusSets
@@ -56,68 +51,5 @@ public class TestDependencyStatusSets
          * DependencyStatusSets( r, u, s ); assertSame( r, dss.getResolvedDependencies() ); assertSame( u,
          * dss.getUnResolvedDependencies() ); assertSame( s, dss.getSkippedDependencies() );
          */
-    }
-
-    public void testDependencyStatusLog()
-        throws IOException
-    {
-        Set<Artifact> artifacts = this.stubFactory.getMixedArtifacts();
-        doTestDependencyStatusLog( artifacts );
-    }
-
-    public void testDependencyStatusLogNullFiles()
-        throws IOException
-    {
-        this.stubFactory.setCreateFiles( false );
-        Set<Artifact> artifacts = this.stubFactory.getMixedArtifacts();
-        doTestDependencyStatusLog( artifacts );
-    }
-
-    public void testDependencyStatusEmptySet()
-    {
-        doTestDependencyStatusLog( new HashSet<Artifact>() );
-    }
-
-    public void doTestDependencyStatusLog( Set<Artifact> artifacts )
-    {
-        // TODO: implement logger to check correct output
-        // this test is just looking for unexpected exceptions.
-
-        DependencyStatusSets dss = new DependencyStatusSets();
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( artifacts, null, null );
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( null, artifacts, null );
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( null, null, artifacts );
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( artifacts, artifacts, null );
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( null, artifacts, artifacts );
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( artifacts, null, artifacts );
-        dss.getOutput( false );
-        dss.getOutput( true );
-
-        dss = new DependencyStatusSets( artifacts, artifacts, artifacts );
-        dss.getOutput( false );
-        dss.getOutput( true );
-        dss.getOutput( false, true );
-        dss.getOutput( true, true );
-        dss.getOutput( false, false );
-        dss.getOutput( true, false );
-
     }
 }
