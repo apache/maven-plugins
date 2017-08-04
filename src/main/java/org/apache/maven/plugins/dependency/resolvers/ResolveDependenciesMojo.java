@@ -19,6 +19,8 @@ package org.apache.maven.plugins.dependency.resolvers;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.dependency.utils.DependencyStatusSets;
 import org.apache.maven.plugins.dependency.utils.DependencyUtil;
@@ -30,7 +32,15 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Goal that resolves the project dependencies from the repository. 
@@ -88,7 +98,7 @@ public class ResolveDependenciesMojo
         // get sets of dependencies
         results = this.getDependencySets( false, includeParents );
 
-        String output = results.getOutput( outputAbsoluteArtifactFilename, outputScope, sort );
+        String output = getOutput( outputAbsoluteArtifactFilename, outputScope, sort );
         try
         {
             if ( outputFile == null )
@@ -118,5 +128,179 @@ public class ResolveDependenciesMojo
     protected ArtifactsFilter getMarkedArtifactFilter()
     {
         return new ResolveFileFilter( new SourcesFileMarkerHandler( this.markersDirectory ) );
+    }
+    
+    public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope, boolean sort )
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append( "\n" );
+        sb.append( "The following files have been resolved:\n" );
+        if ( results.getResolvedDependencies() == null || results.getResolvedDependencies().isEmpty() )
+        {
+            sb.append( "   none\n" );
+        }
+        else
+        {
+            sb.append( buildArtifactListOutput( results.getResolvedDependencies(), outputAbsoluteArtifactFilename,
+                                                outputScope, sort ) );
+        }
+
+        if ( results.getSkippedDependencies() != null && !results.getSkippedDependencies().isEmpty() )
+        {
+            sb.append( "\n" );
+            sb.append( "The following files were skipped:\n" );
+            Set<Artifact> skippedDependencies = new LinkedHashSet<Artifact>();
+            skippedDependencies.addAll( results.getSkippedDependencies() );
+            sb.append( buildArtifactListOutput( skippedDependencies, outputAbsoluteArtifactFilename,
+                                                outputScope, sort ) );
+        }
+
+        if ( results.getUnResolvedDependencies() != null && !results.getUnResolvedDependencies().isEmpty() )
+        {
+            sb.append( "\n" );
+            sb.append( "The following files have NOT been resolved:\n" );
+            Set<Artifact> unResolvedDependencies = new LinkedHashSet<Artifact>();
+            unResolvedDependencies.addAll( results.getUnResolvedDependencies() );
+            sb.append( buildArtifactListOutput( unResolvedDependencies, outputAbsoluteArtifactFilename,
+                                                outputScope, sort ) );
+        }
+        sb.append( "\n" );
+
+        return sb.toString();
+    }
+    
+    private StringBuilder buildArtifactListOutput( Set<Artifact> artifacts, boolean outputAbsoluteArtifactFilename,
+                                                   boolean outputScope, boolean sort )
+    {
+        StringBuilder sb = new StringBuilder();
+        List<String> artifactStringList = new ArrayList<String>();
+        for ( Artifact artifact : artifacts )
+        {
+            String artifactFilename = null;
+            if ( outputAbsoluteArtifactFilename )
+            {
+                try
+                {
+                    // we want to print the absolute file name here
+                    artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
+                }
+                catch ( NullPointerException e )
+                {
+                    // ignore the null pointer, we'll output a null string
+                    artifactFilename = null;
+                }
+            }
+
+            String id = outputScope ? artifact.toString() : artifact.getId();
+            String optionalMarker = "";
+            if ( outputScope && artifact.isOptional() )
+            {
+                optionalMarker = " (optional) ";
+            }
+
+            String moduleNameMarker = "";
+
+            // dependencies:collect won't download jars
+            if ( artifact.getFile() != null )
+            {
+                ModuleDescriptor moduleDescriptor = getModuleDescriptor( artifact.getFile() );
+                if ( moduleDescriptor != null )
+                {
+                    moduleNameMarker = " -- module " + moduleDescriptor.name;
+
+                    if ( moduleDescriptor.automatic )
+                    {
+                        moduleNameMarker += " (auto)";
+                    }
+                }
+            }
+
+            artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
+                + optionalMarker
+                + moduleNameMarker
+                + "\n" );
+        }
+        if ( sort )
+        {
+            Collections.sort( artifactStringList );
+        }
+        for ( String artifactString : artifactStringList )
+        {
+            sb.append( artifactString );
+        }
+        return sb;
+    }
+    
+    private ModuleDescriptor getModuleDescriptor( File artifactFile )
+    {
+        ModuleDescriptor moduleDescriptor = null;
+        try
+        {
+            // Use Java9 code to get moduleName, don't try to do it better with own implementation
+            Class<?> moduleFinderClass = Class.forName( "java.lang.module.ModuleFinder" );
+
+            java.nio.file.Path path = artifactFile.toPath();
+            
+            Method ofMethod = moduleFinderClass.getMethod( "of", java.nio.file.Path[].class );
+            Object moduleFinderInstance = ofMethod.invoke( null, new Object[] { new java.nio.file.Path[] { path } } );
+            
+            Method findAllMethod = moduleFinderClass.getMethod( "findAll" );
+            @SuppressWarnings( "unchecked" )
+            Set<Object> moduleReferences = (Set<Object>) findAllMethod.invoke( moduleFinderInstance );
+            
+            // moduleReferences can be empty when referring to target/classes without module-info.class
+            if ( !moduleReferences.isEmpty() )
+            {
+                Object moduleReference = moduleReferences.iterator().next();
+                Method descriptorMethod = moduleReference.getClass().getMethod( "descriptor" );
+                Object moduleDescriptorInstance = descriptorMethod.invoke( moduleReference );
+                
+                Method nameMethod = moduleDescriptorInstance.getClass().getMethod( "name" );
+                String name = (String) nameMethod.invoke( moduleDescriptorInstance );
+                
+                moduleDescriptor = new ModuleDescriptor();
+                moduleDescriptor.name = name;
+                
+                Method isAutomaticMethod = moduleDescriptorInstance.getClass().getMethod( "isAutomatic" );
+                moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
+            }
+        }
+        catch ( ClassNotFoundException e )
+        {
+            // do nothing
+        }
+        catch ( NoSuchMethodException e )
+        {
+            e.printStackTrace();
+        }
+        catch ( SecurityException e )
+        {
+            // do nothing
+        }
+        catch ( IllegalAccessException e )
+        {
+            // do nothing
+        }
+        catch ( IllegalArgumentException e )
+        {
+            // do nothing
+        }
+        catch ( InvocationTargetException e )
+        {
+            Throwable cause = e.getCause();
+            while ( cause.getCause() != null )
+            {
+                cause = cause.getCause();
+            }
+            getLog().info( "Can't extract module name from " + artifactFile.getName() + ": " + cause.getMessage() );
+        }
+        return moduleDescriptor;
+    }
+    
+    private class ModuleDescriptor
+    {
+        String name;
+        
+        boolean automatic = true;
     }
 }
