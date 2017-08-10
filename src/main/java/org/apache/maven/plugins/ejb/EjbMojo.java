@@ -103,13 +103,13 @@ public class EjbMojo
     /**
      * The name of the EJB file to generate.
      */
-    @Parameter( property = "maven.ejb.jarName", defaultValue = "${project.build.finalName}" )
+    @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     private String jarName;
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      */
-    @Parameter( property = "maven.ejb.classifier" )
+    @Parameter
     private String classifier;
 
     /**
@@ -117,19 +117,19 @@ public class EjbMojo
      * 
      * @since 3.0.0
      */
-    @Parameter( property = "maven.ejb.clientClassifier", defaultValue = DEFAULT_CLIENT_CLASSIFIER )
+    @Parameter( defaultValue = DEFAULT_CLIENT_CLASSIFIER )
     private String clientClassifier;
 
     /**
      * You can define the location of <code>ejb-jar.xml</code> file.
      */
-    @Parameter( property = "maven.ejb.ejbJar", defaultValue = DEFAULT_EJBJAR )
+    @Parameter( defaultValue = DEFAULT_EJBJAR )
     private String ejbJar;
 
     /**
      * Whether the EJB client jar should be generated or not.
      */
-    @Parameter( property = "maven.ejb.generateClient", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean generateClient;
 
     /**
@@ -208,7 +208,7 @@ public class EjbMojo
      * 
      * @since 2.1
      */
-    @Parameter( property = "maven.ejb.ejbVersion", defaultValue = "3.1" )
+    @Parameter( defaultValue = "3.1" )
     private String ejbVersion;
 
     /**
@@ -235,7 +235,7 @@ public class EjbMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.ejb.escapeBackslashesInFilePath", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean escapeBackslashesInFilePath;
 
     /**
@@ -243,7 +243,7 @@ public class EjbMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.ejb.escapeString" )
+    @Parameter
     protected String escapeString;
 
     /**
@@ -251,7 +251,7 @@ public class EjbMojo
      *
      * @since 2.3
      */
-    @Parameter( property = "maven.ejb.filterDeploymentDescriptor", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean filterDeploymentDescriptor;
 
     /**
