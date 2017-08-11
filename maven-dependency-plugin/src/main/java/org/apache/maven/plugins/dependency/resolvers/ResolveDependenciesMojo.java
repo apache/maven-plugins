@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 /**
  * Goal that resolves the project dependencies from the repository. 
@@ -210,7 +211,14 @@ public class ResolveDependenciesMojo
 
                     if ( moduleDescriptor.automatic )
                     {
-                        moduleNameMarker += " (auto)";
+                        if ( "MANIFEST".equals( moduleDescriptor.moduleNameSource ) )
+                        {
+                            moduleNameMarker += " [auto]";
+                        }
+                        else
+                        {
+                            moduleNameMarker += " (auto)";
+                        }
                     }
                 }
             }
@@ -263,6 +271,45 @@ public class ResolveDependenciesMojo
                 
                 Method isAutomaticMethod = moduleDescriptorInstance.getClass().getMethod( "isAutomatic" );
                 moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
+                
+                if ( moduleDescriptor.automatic )
+                {
+                    if ( artifactFile.isFile() )
+                    {
+                        JarFile jarFile = null;
+                        try
+                        {
+                            jarFile = new JarFile( artifactFile );
+                            
+                            if ( jarFile.getManifest().getMainAttributes().getValue( "Automatic-Module-Name" ) != null )
+                            {
+                                moduleDescriptor.moduleNameSource = "MANIFEST";
+                            }
+                            else
+                            {
+                                moduleDescriptor.moduleNameSource = "FILENAME";
+                            }
+                        }
+                        catch ( IOException e )
+                        {
+                            // noop
+                        }
+                        finally 
+                        {
+                            if ( jarFile != null )
+                            {
+                                try
+                                {
+                                    jarFile.close();
+                                }
+                                catch ( IOException e )
+                                {
+                                 // noop
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         catch ( ClassNotFoundException e )
@@ -302,5 +349,7 @@ public class ResolveDependenciesMojo
         String name;
         
         boolean automatic = true;
+
+        String moduleNameSource;
     }
 }
