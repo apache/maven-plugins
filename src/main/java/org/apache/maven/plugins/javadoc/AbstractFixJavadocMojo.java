@@ -19,18 +19,25 @@ package org.apache.maven.plugins.javadoc;
  * under the License.
  */
 
-import com.thoughtworks.qdox.JavaDocBuilder;
-import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
-import com.thoughtworks.qdox.model.AbstractJavaEntity;
-import com.thoughtworks.qdox.model.Annotation;
+import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.library.ClassLibraryBuilder;
+import com.thoughtworks.qdox.library.OrderedClassLibraryBuilder;
 import com.thoughtworks.qdox.model.DocletTag;
+import com.thoughtworks.qdox.model.JavaAnnotatedElement;
+import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaConstructor;
+import com.thoughtworks.qdox.model.JavaExecutable;
 import com.thoughtworks.qdox.model.JavaField;
+import com.thoughtworks.qdox.model.JavaGenericDeclaration;
+import com.thoughtworks.qdox.model.JavaMember;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaParameter;
-import com.thoughtworks.qdox.model.Type;
-import com.thoughtworks.qdox.model.TypeVariable;
+import com.thoughtworks.qdox.model.JavaType;
+import com.thoughtworks.qdox.model.JavaTypeVariable;
 import com.thoughtworks.qdox.parser.ParseException;
+import com.thoughtworks.qdox.type.TypeResolver;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.maven.artifact.Artifact;
@@ -64,6 +71,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -451,7 +459,7 @@ public abstract class AbstractFixJavadocMojo
         // run qdox and process
         try
         {
-            JavaClass[] javaClasses = getQdoxClasses();
+            Collection<JavaClass> javaClasses = getQdoxClasses();
 
             if ( javaClasses != null )
             {
@@ -506,13 +514,12 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * @param javaMethod not null
+     * @param javaExecutable not null
      * @return the fully qualify name of javaMethod with signature
      */
-    protected static String getJavaMethodAsString( JavaMethod javaMethod )
+    protected static String getJavaMethodAsString( JavaExecutable javaExecutable )
     {
-
-        return javaMethod.getParentClass().getFullyQualifiedName() + "#" + javaMethod.getCallSignature();
+        return javaExecutable.getDeclaringClass().getFullyQualifiedName() + "#" + javaExecutable.getCallSignature();
     }
 
     // ----------------------------------------------------------------------
@@ -870,7 +877,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws IOException            if any
      * @throws MojoExecutionException if any
      */
-    private JavaClass[] getQdoxClasses()
+    private Collection<JavaClass> getQdoxClasses()
         throws IOException, MojoExecutionException
     {
         if ( "pom".equalsIgnoreCase( project.getPackaging() ) )
@@ -896,8 +903,10 @@ public abstract class AbstractFixJavadocMojo
             }
         }
 
-        JavaDocBuilder builder = new JavaDocBuilder();
-        builder.getClassLibrary().addClassLoader( getProjectClassLoader() );
+        ClassLibraryBuilder classLibraryBuilder = new OrderedClassLibraryBuilder();
+        classLibraryBuilder.appendClassLoader( getProjectClassLoader() );
+
+        JavaProjectBuilder builder = new JavaProjectBuilder( classLibraryBuilder );
         builder.setEncoding( encoding );
         for ( File f : javaFiles )
         {
@@ -1001,23 +1010,20 @@ public abstract class AbstractFixJavadocMojo
 
                 // fixing classes
                 if ( javaClass.getComment() == null && javaClass.getAnnotations() != null
-                    && javaClass.getAnnotations().length != 0 )
+                    && !javaClass.getAnnotations().isEmpty() )
                 {
-                    if ( lineNumber == javaClass.getAnnotations()[0].getLineNumber() )
+                    if ( lineNumber == javaClass.getAnnotations().get( 0 ).getLineNumber() )
                     {
                         changeDetected |= fixClassComment( stringWriter, originalContent, javaClass, indent );
 
                         takeCareSingleComment( stringWriter, originalContent, javaClass );
                     }
                 }
-                else
+                else if ( lineNumber == javaClass.getLineNumber() )
                 {
-                    if ( lineNumber == javaClass.getLineNumber() )
-                    {
-                        changeDetected |= fixClassComment( stringWriter, originalContent, javaClass, indent );
+                    changeDetected |= fixClassComment( stringWriter, originalContent, javaClass, indent );
 
-                        takeCareSingleComment( stringWriter, originalContent, javaClass );
-                    }
+                    takeCareSingleComment( stringWriter, originalContent, javaClass );
                 }
 
                 // fixing fields
@@ -1031,11 +1037,11 @@ public abstract class AbstractFixJavadocMojo
                         }
                     }
                 }
-
+                
                 // fixing methods
-                if ( javaClass.getMethods() != null )
+                if ( javaClass.getConstructors() != null )
                 {
-                    for ( JavaMethod method :  javaClass.getMethods() )
+                    for ( JavaConstructor method :  javaClass.getConstructors() )
                     {
                         if ( lineNumber == method.getLineNumber() )
                         {
@@ -1043,6 +1049,28 @@ public abstract class AbstractFixJavadocMojo
 
                             takeCareSingleComment( stringWriter, originalContent, method );
                         }
+                    }
+                }
+                
+
+                // fixing methods
+                for ( JavaMethod method :  javaClass.getMethods() )
+                {
+                    int methodLineNumber;
+                    if ( method.getComment() == null && !method.getAnnotations().isEmpty() )
+                    {
+                        methodLineNumber = method.getAnnotations().get( 0 ).getLineNumber();
+                    }
+                    else
+                    {
+                        methodLineNumber = method.getLineNumber();
+                    }
+                    
+                    if ( lineNumber == methodLineNumber )
+                    {
+                        changeDetected |= fixMethodComment( stringWriter, originalContent, method, indent );
+
+                        takeCareSingleComment( stringWriter, originalContent, method );
                     }
                 }
 
@@ -1117,7 +1145,7 @@ public abstract class AbstractFixJavadocMojo
      * @see #extractOriginalJavadoc(String, AbstractJavaEntity)
      */
     private void takeCareSingleComment( final StringWriter stringWriter, final String originalContent,
-                                        final AbstractInheritableJavaEntity entity )
+                                        final JavaAnnotatedElement entity )
         throws IOException
     {
         if ( entity.getComment() == null )
@@ -1181,23 +1209,21 @@ public abstract class AbstractFixJavadocMojo
      * @param modifiers list of modifiers (public, private, protected, package)
      * @return <code>true</code> if modifier is align with <code>level</code>.
      */
-    private boolean isInLevel( String[] modifiers )
+    private boolean isInLevel( List<String> modifiers )
     {
-        List<String> modifiersAsList = Arrays.asList( modifiers );
-
         if ( LEVEL_PUBLIC.equalsIgnoreCase( level.trim() ) )
         {
-            return modifiersAsList.contains( LEVEL_PUBLIC );
+            return modifiers.contains( LEVEL_PUBLIC );
         }
 
         if ( LEVEL_PROTECTED.equalsIgnoreCase( level.trim() ) )
         {
-            return ( modifiersAsList.contains( LEVEL_PUBLIC ) || modifiersAsList.contains( LEVEL_PROTECTED ) );
+            return ( modifiers.contains( LEVEL_PUBLIC ) || modifiers.contains( LEVEL_PROTECTED ) );
         }
 
         if ( LEVEL_PACKAGE.equalsIgnoreCase( level.trim() ) )
         {
-            return !modifiersAsList.contains( LEVEL_PRIVATE );
+            return !modifiers.contains( LEVEL_PRIVATE );
         }
 
         // should be private (shows all classes and members)
@@ -1341,7 +1367,7 @@ public abstract class AbstractFixJavadocMojo
 
         if ( StringUtils.isNotEmpty( field.getInitializationExpression() ) )
         {
-            String qualifiedName = field.getType().getJavaClass().getFullyQualifiedName();
+            String qualifiedName = field.getType().getFullyQualifiedName();
 
             if ( qualifiedName.equals( Byte.TYPE.toString() ) || qualifiedName.equals( Short.TYPE.toString() )
                 || qualifiedName.equals( Integer.TYPE.toString() ) || qualifiedName.equals( Long.TYPE.toString() )
@@ -1402,14 +1428,14 @@ public abstract class AbstractFixJavadocMojo
      *
      * @param stringWriter    not null
      * @param originalContent not null
-     * @param javaMethod      not null
+     * @param javaExecutable      not null
      * @param indent          not null
      * @return {@code true} if comment was updated, otherwise {@code false}
      * @throws MojoExecutionException if any
      * @throws IOException            if any
      */
     private boolean fixMethodComment( final StringWriter stringWriter, final String originalContent,
-                                   final JavaMethod javaMethod, final String indent )
+                                   final JavaExecutable javaExecutable, final String indent )
         throws MojoExecutionException, IOException
     {
         if ( !fixMethodComment )
@@ -1417,20 +1443,20 @@ public abstract class AbstractFixJavadocMojo
             return false;
         }
 
-        if ( !javaMethod.getParentClass().isInterface() && !isInLevel( javaMethod.getModifiers() ) )
+        if ( !javaExecutable.getDeclaringClass().isInterface() && !isInLevel( javaExecutable.getModifiers() ) )
         {
             return false;
         }
 
         // add
-        if ( javaMethod.getComment() == null )
+        if ( javaExecutable.getComment() == null )
         {
-            addDefaultMethodComment( stringWriter, javaMethod, indent );
+            addDefaultMethodComment( stringWriter, javaExecutable, indent );
             return true;
         }
 
         // update
-        return updateEntityComment( stringWriter, originalContent, javaMethod, indent );
+        return updateEntityComment( stringWriter, originalContent, javaExecutable, indent );
     }
 
     /**
@@ -1465,20 +1491,20 @@ public abstract class AbstractFixJavadocMojo
      * </code>
      *
      * @param buffer     not null
-     * @param javaMethod not null
+     * @param javaExecutable not null
      * @param indent     not null
      * @throws MojoExecutionException if any
      * @see #getDefaultMethodJavadocComment(JavaMethod)
      * @see #appendDefaultSinceTag(StringBuilder, String)
      */
-    private void addDefaultMethodComment( final StringWriter stringWriter, final JavaMethod javaMethod,
+    private void addDefaultMethodComment( final StringWriter stringWriter, final JavaExecutable javaExecutable,
                                           final String indent )
         throws MojoExecutionException
     {
         StringBuilder sb = new StringBuilder();
 
         // special case
-        if ( isInherited( javaMethod ) )
+        if ( isInherited( javaExecutable ) )
         {
             sb.append( indent ).append( INHERITED_JAVADOC );
             sb.append( EOL );
@@ -1490,46 +1516,45 @@ public abstract class AbstractFixJavadocMojo
         sb.append( indent ).append( START_JAVADOC );
         sb.append( EOL );
         sb.append( indent ).append( SEPARATOR_JAVADOC );
-        sb.append( getDefaultMethodJavadocComment( javaMethod ) );
+        sb.append( getDefaultMethodJavadocComment( javaExecutable ) );
         sb.append( EOL );
 
         boolean separatorAdded = false;
         if ( fixTag( PARAM_TAG ) )
         {
-            if ( javaMethod.getParameters() != null )
+            if ( javaExecutable.getParameters() != null )
             {
-                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+                for ( JavaParameter javaParameter : javaExecutable.getParameters() )
                 {
-                    JavaParameter javaParameter = javaMethod.getParameters()[i];
-
                     separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, javaParameter );
                 }
             }
             // is generic?
-            if ( javaMethod.getTypeParameters() != null )
+            if ( javaExecutable.getTypeParameters() != null )
             {
-                for ( int i = 0; i < javaMethod.getTypeParameters().length; i++ )
+                for ( JavaTypeVariable<JavaGenericDeclaration> typeParam : javaExecutable.getTypeParameters() )
                 {
-                    TypeVariable typeParam = javaMethod.getTypeParameters()[i];
-
                     separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, typeParam );
                 }
             }
         }
-        if ( fixTag( RETURN_TAG ) && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
+        if ( javaExecutable instanceof JavaMethod )
         {
-            separatorAdded = appendDefaultReturnTag( sb, indent, separatorAdded, javaMethod );
-        }
-        if ( fixTag( THROWS_TAG ) && javaMethod.getExceptions() != null && javaMethod.getExceptions().length > 0 )
-        {
-            for ( int i = 0; i < javaMethod.getExceptions().length; i++ )
+            JavaMethod javaMethod = (JavaMethod) javaExecutable;
+            if ( fixTag( RETURN_TAG ) && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
             {
-                Type exception = javaMethod.getExceptions()[i];
-
+                separatorAdded = appendDefaultReturnTag( sb, indent, separatorAdded, javaMethod );
+            }
+            
+        }
+        if ( fixTag( THROWS_TAG ) && javaExecutable.getExceptions() != null )
+        {
+            for ( JavaType exception : javaExecutable.getExceptions() )
+            {
                 separatorAdded = appendDefaultThrowsTag( sb, indent, separatorAdded, exception );
             }
         }
-        if ( fixTag( SINCE_TAG ) && isNewMethodFromLastRevision( javaMethod ) )
+        if ( fixTag( SINCE_TAG ) && isNewMethodFromLastRevision( javaExecutable ) )
         {
             separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
         }
@@ -1551,7 +1576,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws IOException            if any
      */
     private boolean updateEntityComment( final StringWriter stringWriter, final String originalContent,
-                                         final AbstractInheritableJavaEntity entity, final String indent )
+                                         final JavaAnnotatedElement entity, final String indent )
         throws MojoExecutionException, IOException
     {
         boolean changeDetected = false;
@@ -1597,26 +1622,26 @@ public abstract class AbstractFixJavadocMojo
      * @throws IOException            if any
      */
     private void updateJavadocComment( final StringWriter stringWriter, final String originalContent,
-                                       final AbstractInheritableJavaEntity entity, final String indent )
+                                       final JavaAnnotatedElement entity, final String indent )
         throws MojoExecutionException, IOException
     {
-        if ( entity.getComment() == null && ( entity.getTags() == null || entity.getTags().length == 0 ) )
+        if ( entity.getComment() == null && ( entity.getTags() == null || entity.getTags().isEmpty() ) )
         {
             return;
         }
 
-        boolean isJavaMethod = false;
-        if ( entity instanceof JavaMethod )
+        boolean isJavaExecutable = false;
+        if ( entity instanceof JavaExecutable )
         {
-            isJavaMethod = true;
+            isJavaExecutable = true;
         }
 
         StringBuilder sb = new StringBuilder();
 
         // special case for inherited method
-        if ( isJavaMethod )
+        if ( isJavaExecutable )
         {
-            JavaMethod javaMethod = (JavaMethod) entity;
+            JavaExecutable javaMethod = (JavaExecutable) entity;
 
             if ( isInherited( javaMethod ) )
             {
@@ -1633,7 +1658,7 @@ public abstract class AbstractFixJavadocMojo
 
                 // case: /** {@inheritDoc} */ or no tags
                 if ( hasInheritedTag( javadoc ) && ( javaMethod.getTags() == null
-                    || javaMethod.getTags().length == 0 ) )
+                    || javaMethod.getTags().isEmpty() ) )
                 {
                     sb.append( indent ).append( INHERITED_JAVADOC );
                     sb.append( EOL );
@@ -1664,10 +1689,8 @@ public abstract class AbstractFixJavadocMojo
                 sb.append( EOL );
                 if ( javaMethod.getTags() != null )
                 {
-                    for ( int i = 0; i < javaMethod.getTags().length; i++ )
+                    for ( DocletTag docletTag : javaMethod.getTags() )
                     {
-                        DocletTag docletTag = javaMethod.getTags()[i];
-
                         // Voluntary ignore these tags
                         if ( JavadocUtil.equals( docletTag.getName(), PARAM_TAG, RETURN_TAG, THROWS_TAG ) )
                         {
@@ -1708,17 +1731,17 @@ public abstract class AbstractFixJavadocMojo
         }
         else
         {
-            addDefaultJavadocComment( sb, entity, indent, isJavaMethod );
+            addDefaultJavadocComment( sb, entity, indent, isJavaExecutable );
         }
 
         // tags
-        if ( entity.getTags() != null && entity.getTags().length > 0 )
+        if ( entity.getTags() != null && !entity.getTags().isEmpty() )
         {
-            updateJavadocTags( sb, originalContent, entity, indent, isJavaMethod );
+            updateJavadocTags( sb, originalContent, entity, indent, isJavaExecutable );
         }
         else
         {
-            addDefaultJavadocTags( sb, entity, indent, isJavaMethod );
+            addDefaultJavadocTags( sb, entity, indent, isJavaExecutable );
         }
 
         sb = new StringBuilder( removeLastEmptyJavadocLines( sb.toString() ) ).append( EOL );
@@ -1737,7 +1760,7 @@ public abstract class AbstractFixJavadocMojo
      * @throws IOException if any
      */
     private void updateJavadocComment( final StringBuilder sb, final String originalContent,
-                                       final AbstractInheritableJavaEntity entity, final String indent )
+                                       final JavaAnnotatedElement entity, final String indent )
         throws IOException
     {
         String comment = getJavadocComment( originalContent, entity );
@@ -1767,7 +1790,7 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private static String replaceLinkTags( String comment, AbstractInheritableJavaEntity entity )
+    static String replaceLinkTags( String comment, JavaAnnotatedElement entity )
     {
         StringBuilder resolvedComment = new StringBuilder();
         // scan comment for {@link someClassName} and try to resolve this
@@ -1796,11 +1819,21 @@ public abstract class AbstractFixJavadocMojo
                     String typeName;
                     if ( entity instanceof JavaClass )
                     {
-                        typeName = ( (JavaClass) entity ).resolveType( name.trim() );
+                        JavaClass clazz = (JavaClass) entity;
+                        typeName =
+                            TypeResolver.byClassName( clazz.getBinaryName(), clazz.getJavaClassLibrary(),
+                                                      clazz.getSource().getImports() ).resolveType( name.trim() );
+                    }
+                    else if ( entity instanceof JavaMember )
+                    {
+                        JavaClass clazz = ( (JavaMember) entity ).getDeclaringClass();
+                        typeName =
+                            TypeResolver.byClassName( clazz.getBinaryName(), clazz.getJavaClassLibrary(),
+                                                      clazz.getSource().getImports() ).resolveType( name.trim() );
                     }
                     else
                     {
-                        typeName = entity.getParentClass().resolveType( name.trim() );
+                        typeName = null;
                     }
 
                     if ( typeName == null )
@@ -1835,15 +1868,15 @@ public abstract class AbstractFixJavadocMojo
      * @param sb           not null
      * @param entity       not null
      * @param indent       not null
-     * @param isJavaMethod
+     * @param isJavaExecutable
      */
-    private void addDefaultJavadocComment( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
-                                           final String indent, final boolean isJavaMethod )
+    private void addDefaultJavadocComment( final StringBuilder sb, final JavaAnnotatedElement entity,
+                                           final String indent, final boolean isJavaExecutable )
     {
         sb.append( indent ).append( SEPARATOR_JAVADOC );
-        if ( isJavaMethod )
+        if ( isJavaExecutable )
         {
-            sb.append( getDefaultMethodJavadocComment( (JavaMethod) entity ) );
+            sb.append( getDefaultMethodJavadocComment( (JavaExecutable) entity ) );
         }
         else
         {
@@ -1857,25 +1890,25 @@ public abstract class AbstractFixJavadocMojo
      * @param originalContent not null
      * @param entity          not null
      * @param indent          not null
-     * @param isJavaMethod
+     * @param isJavaExecutable
      * @throws IOException            if any
      * @throws MojoExecutionException if any
      */
     private void updateJavadocTags( final StringBuilder sb, final String originalContent,
-                                    final AbstractInheritableJavaEntity entity, final String indent,
-                                    final boolean isJavaMethod )
+                                    final JavaAnnotatedElement entity, final String indent,
+                                    final boolean isJavaExecutable )
         throws IOException, MojoExecutionException
     {
         appendSeparator( sb, indent );
 
         // parse tags
-        JavaEntityTags javaEntityTags = parseJavadocTags( originalContent, entity, indent, isJavaMethod );
+        JavaEntityTags javaEntityTags = parseJavadocTags( originalContent, entity, indent, isJavaExecutable );
 
         // update and write tags
-        updateJavadocTags( sb, entity, isJavaMethod, javaEntityTags );
+        updateJavadocTags( sb, entity, isJavaExecutable, javaEntityTags );
 
         // add missing tags...
-        addMissingJavadocTags( sb, entity, indent, isJavaMethod, javaEntityTags );
+        addMissingJavadocTags( sb, entity, indent, isJavaExecutable, javaEntityTags );
     }
 
     /**
@@ -1888,15 +1921,13 @@ public abstract class AbstractFixJavadocMojo
      * @return an instance of {@link JavaEntityTags}
      * @throws IOException if any
      */
-    JavaEntityTags parseJavadocTags( final String originalContent, final AbstractInheritableJavaEntity entity,
+    JavaEntityTags parseJavadocTags( final String originalContent, final JavaAnnotatedElement entity,
                                              final String indent, final boolean isJavaMethod )
         throws IOException
     {
         JavaEntityTags javaEntityTags = new JavaEntityTags( entity, isJavaMethod );
-        for ( int i = 0; i < entity.getTags().length; i++ )
+        for ( DocletTag docletTag : entity.getTags() )
         {
-            DocletTag docletTag = entity.getTags()[i];
-
             String originalJavadocTag = getJavadocComment( originalContent, entity, docletTag );
             originalJavadocTag = removeLastEmptyJavadocLines( originalJavadocTag );
             originalJavadocTag = alignIndentationJavadocLines( originalJavadocTag, indent );
@@ -1905,14 +1936,13 @@ public abstract class AbstractFixJavadocMojo
 
             if ( isJavaMethod )
             {
-                String[] params = docletTag.getParameters();
-                if ( params.length < 1 )
+                List<String> params = docletTag.getParameters();
+                if ( params.size() < 1 )
                 {
                     continue;
                 }
 
-                params = fixQdox173( params );
-                String paramName = params[0];
+                String paramName = params.get( 0 );
                 if ( docletTag.getName().equals( PARAM_TAG ) )
                 {
                     javaEntityTags.putJavadocParamTag( paramName, originalJavadocTag );
@@ -1944,37 +1974,35 @@ public abstract class AbstractFixJavadocMojo
      *
      * @param sb             not null
      * @param entity         not null
-     * @param isJavaMethod
+     * @param isJavaExecutable
      * @param javaEntityTags not null
      */
-    private void updateJavadocTags( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
-                                    final boolean isJavaMethod, final JavaEntityTags javaEntityTags )
+    private void updateJavadocTags( final StringBuilder sb, final JavaAnnotatedElement entity,
+                                    final boolean isJavaExecutable, final JavaEntityTags javaEntityTags )
     {
-        for ( int i = 0; i < entity.getTags().length; i++ )
+        for ( DocletTag docletTag : entity.getTags() )
         {
-            DocletTag docletTag = entity.getTags()[i];
-
-            if ( isJavaMethod )
+            if ( isJavaExecutable )
             {
-                JavaMethod javaMethod = (JavaMethod) entity;
+                JavaExecutable javaExecutable = (JavaExecutable) entity;
 
-                String[] params = docletTag.getParameters();
-                if ( params.length < 1 )
+                List<String> params = docletTag.getParameters();
+                if ( params.size() < 1 )
                 {
                     continue;
                 }
 
                 if ( docletTag.getName().equals( PARAM_TAG ) )
                 {
-                    writeParamTag( sb, javaMethod, javaEntityTags, params );
+                    writeParamTag( sb, javaExecutable, javaEntityTags, params );
                 }
-                else if ( docletTag.getName().equals( RETURN_TAG ) )
+                else if ( docletTag.getName().equals( RETURN_TAG ) && javaExecutable instanceof JavaMethod )
                 {
-                    writeReturnTag( sb, javaMethod, javaEntityTags );
+                    writeReturnTag( sb, (JavaMethod) javaExecutable, javaEntityTags );
                 }
                 else if ( docletTag.getName().equals( THROWS_TAG ) )
                 {
-                    writeThrowsTag( sb, javaMethod, javaEntityTags, params );
+                    writeThrowsTag( sb, javaExecutable, javaEntityTags, params );
                 }
                 else
                 {
@@ -2018,12 +2046,10 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    private void writeParamTag( final StringBuilder sb, final JavaMethod javaMethod,
-                                final JavaEntityTags javaEntityTags, String[] params )
+    private void writeParamTag( final StringBuilder sb, final JavaExecutable javaExecutable,
+                                final JavaEntityTags javaEntityTags, List<String> params )
     {
-        params = fixQdox173( params );
-
-        String paramName = params[0];
+        String paramName = params.get( 0 );
 
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2037,12 +2063,12 @@ public abstract class AbstractFixJavadocMojo
         }
 
         boolean found = false;
-        JavaParameter javaParam = javaMethod.getParameterByName( paramName );
+        JavaParameter javaParam = javaExecutable.getParameterByName( paramName );
         if ( javaParam == null )
         {
             // is generic?
-            TypeVariable[] typeParams = javaMethod.getTypeParameters();
-            for ( TypeVariable typeParam : typeParams )
+            List<JavaTypeVariable<JavaGenericDeclaration>> typeParams = javaExecutable.getTypeParameters();
+            for ( JavaTypeVariable<JavaGenericDeclaration> typeParam : typeParams )
             {
                 if ( typeParam.getGenericValue().equals( paramName ) )
                 {
@@ -2060,7 +2086,7 @@ public abstract class AbstractFixJavadocMojo
             if ( getLog().isWarnEnabled() )
             {
                 getLog().warn(
-                    "Fixed unknown param '" + paramName + "' defined in " + getJavaMethodAsString( javaMethod ) );
+                    "Fixed unknown param '" + paramName + "' defined in " + getJavaMethodAsString( javaExecutable ) );
             }
 
             if ( sb.toString().endsWith( EOL ) )
@@ -2078,7 +2104,7 @@ public abstract class AbstractFixJavadocMojo
                 if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().endsWith( s ) )
                 {
                     sb.append( " " );
-                    sb.append( getDefaultJavadocForType( javaParam.getType() ) );
+                    sb.append( getDefaultJavadocForType( javaParam.getJavaClass() ) );
                 }
             }
         }
@@ -2112,10 +2138,10 @@ public abstract class AbstractFixJavadocMojo
         }
     }
 
-    void writeThrowsTag( final StringBuilder sb, final JavaMethod javaMethod,
-                                 final JavaEntityTags javaEntityTags, final String[] params )
+    void writeThrowsTag( final StringBuilder sb, final JavaExecutable javaExecutable,
+                                 final JavaEntityTags javaEntityTags, final List<String> params )
     {
-        String exceptionClassName = params[0];
+        String exceptionClassName = params.get( 0 );
 
         String originalJavadocTag = javaEntityTags.getJavadocThrowsTag( exceptionClassName );
         if ( originalJavadocTag == null )
@@ -2130,16 +2156,14 @@ public abstract class AbstractFixJavadocMojo
             return;
         }
 
-        if ( javaMethod.getExceptions() != null )
+        if ( javaExecutable.getExceptions() != null )
         {
-            for ( int j = 0; j < javaMethod.getExceptions().length; j++ )
+            for ( JavaType exception : javaExecutable.getExceptions() )
             {
-                Type exception = javaMethod.getExceptions()[j];
-
                 if ( exception.getValue().endsWith( exceptionClassName ) )
                 {
-                    originalJavadocTag =
-                        StringUtils.replace( originalJavadocTag, exceptionClassName, exception.getValue() );
+                    originalJavadocTag = StringUtils.replace( originalJavadocTag, exceptionClassName,
+                                                              exception.getFullyQualifiedName() );
                     if ( StringUtils.removeDuplicateWhitespace( originalJavadocTag ).trim().endsWith(
                         "@" + THROWS_TAG + " " + exception.getValue() ) )
                     {
@@ -2156,7 +2180,7 @@ public abstract class AbstractFixJavadocMojo
             }
         }
 
-        Class<?> clazz = getClass( javaMethod.getParentClass(), exceptionClassName );
+        Class<?> clazz = getClass( javaExecutable.getDeclaringClass(), exceptionClassName );
         
         if ( clazz != null )
         {
@@ -2170,7 +2194,7 @@ public abstract class AbstractFixJavadocMojo
             else if ( ClassUtils.isAssignable( clazz, Throwable.class ) )
             {
                 getLog().debug( "Removing '" + originalJavadocTag + "'; Throwable not specified by "
-                    + getJavaMethodAsString( javaMethod ) + " and it is not a RuntimeException." );
+                    + getJavaMethodAsString( javaExecutable ) + " and it is not a RuntimeException." );
             }
             else
             {
@@ -2180,16 +2204,16 @@ public abstract class AbstractFixJavadocMojo
         else if ( removeUnknownThrows )
         {
             getLog().warn( "Ignoring unknown throws '" + exceptionClassName + "' defined on "
-                    + getJavaMethodAsString( javaMethod ) );
+                    + getJavaMethodAsString( javaExecutable ) );
         }
         else
         {
             getLog().warn( "Found unknown throws '" + exceptionClassName + "' defined on "
-                    + getJavaMethodAsString( javaMethod ) );
+                    + getJavaMethodAsString( javaExecutable ) );
             
             sb.append( originalJavadocTag );
             
-            if ( params.length == 1 )
+            if ( params.size() == 1 )
             {
                 sb.append( " if any." );
             }
@@ -2204,27 +2228,25 @@ public abstract class AbstractFixJavadocMojo
      * @param sb             not null
      * @param entity         not null
      * @param indent         not null
-     * @param isJavaMethod
+     * @param isJavaExecutable
      * @param javaEntityTags not null
      * @throws MojoExecutionException if any
      */
-    private void addMissingJavadocTags( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
-                                        final String indent, final boolean isJavaMethod,
+    private void addMissingJavadocTags( final StringBuilder sb, final JavaAnnotatedElement entity,
+                                        final String indent, final boolean isJavaExecutable,
                                         final JavaEntityTags javaEntityTags )
         throws MojoExecutionException
     {
-        if ( isJavaMethod )
+        if ( isJavaExecutable )
         {
-            JavaMethod javaMethod = (JavaMethod) entity;
+            JavaExecutable javaExecutable = (JavaExecutable) entity;
 
             if ( fixTag( PARAM_TAG ) )
             {
-                if ( javaMethod.getParameters() != null )
+                if ( javaExecutable.getParameters() != null )
                 {
-                    for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+                    for ( JavaParameter javaParameter : javaExecutable.getParameters() )
                     {
-                        JavaParameter javaParameter = javaMethod.getParameters()[i];
-
                         if ( javaEntityTags.getJavadocParamTag( javaParameter.getName(), true ) == null )
                         {
                             appendDefaultParamTag( sb, indent, javaParameter );
@@ -2232,12 +2254,10 @@ public abstract class AbstractFixJavadocMojo
                     }
                 }
                 // is generic?
-                if ( javaMethod.getTypeParameters() != null )
+                if ( javaExecutable.getTypeParameters() != null )
                 {
-                    for ( int i = 0; i < javaMethod.getTypeParameters().length; i++ )
+                    for ( JavaTypeVariable<JavaGenericDeclaration> typeParam : javaExecutable.getTypeParameters() )
                     {
-                        TypeVariable typeParam = javaMethod.getTypeParameters()[i];
-
                         if ( javaEntityTags.getJavadocParamTag( "<" + typeParam.getName() + ">", true ) == null )
                         {
                             appendDefaultParamTag( sb, indent, typeParam );
@@ -2246,18 +2266,20 @@ public abstract class AbstractFixJavadocMojo
                 }
             }
 
-            if ( fixTag( RETURN_TAG ) && StringUtils.isEmpty( javaEntityTags.getJavadocReturnTag() )
-                && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
+            if ( javaExecutable instanceof JavaMethod )
             {
-                appendDefaultReturnTag( sb, indent, javaMethod );
+                JavaMethod javaMethod = (JavaMethod) javaExecutable; 
+                if ( fixTag( RETURN_TAG ) && StringUtils.isEmpty( javaEntityTags.getJavadocReturnTag() )
+                    && javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
+                {
+                    appendDefaultReturnTag( sb, indent, javaMethod );
+                }
             }
 
-            if ( fixTag( THROWS_TAG ) && javaMethod.getExceptions() != null )
+            if ( fixTag( THROWS_TAG ) && javaExecutable.getExceptions() != null )
             {
-                for ( int i = 0; i < javaMethod.getExceptions().length; i++ )
+                for ( JavaType exception : javaExecutable.getExceptions() )
                 {
-                    Type exception = javaMethod.getExceptions()[i];
-
                     if ( javaEntityTags.getJavadocThrowsTag( exception.getValue(), true ) == null )
                     {
                         appendDefaultThrowsTag( sb, indent, exception );
@@ -2276,9 +2298,10 @@ public abstract class AbstractFixJavadocMojo
                 appendDefaultVersionTag( sb, indent );
             }
         }
+
         if ( fixTag( SINCE_TAG ) && !javaEntityTags.getNamesTags().contains( SINCE_TAG ) )
         {
-            if ( !isJavaMethod )
+            if ( !isJavaExecutable )
             {
                 if ( !ignoreClirr )
                 {
@@ -2297,14 +2320,20 @@ public abstract class AbstractFixJavadocMojo
             {
                 if ( !ignoreClirr )
                 {
-                    if ( isNewMethodFromLastRevision( (JavaMethod) entity ) )
+                    if ( isNewMethodFromLastRevision( (JavaExecutable) entity ) )
                     {
                         appendDefaultSinceTag( sb, indent );
                     }
                 }
-                else
+                else if ( sinceClasses != null )
                 {
-                    if ( sinceClasses != null && !sinceClassesContains( entity.getParentClass() ) )
+                    if ( entity instanceof JavaMember
+                        && !sinceClassesContains( ( (JavaMember) entity ).getDeclaringClass() ) )
+                    {
+                        appendDefaultSinceTag( sb, indent );
+                    }
+                    else if ( entity instanceof JavaClass
+                        && !sinceClassesContains( ( (JavaClass) entity ).getDeclaringClass() ) )
                     {
                         appendDefaultSinceTag( sb, indent );
                     }
@@ -2317,42 +2346,39 @@ public abstract class AbstractFixJavadocMojo
      * @param sb           not null
      * @param entity       not null
      * @param indent       not null
-     * @param isJavaMethod
+     * @param isJavaExecutable
      * @throws MojoExecutionException if any
      */
-    private void addDefaultJavadocTags( final StringBuilder sb, final AbstractInheritableJavaEntity entity,
-                                        final String indent, final boolean isJavaMethod )
+    private void addDefaultJavadocTags( final StringBuilder sb, final JavaAnnotatedElement entity,
+                                        final String indent, final boolean isJavaExecutable )
         throws MojoExecutionException
     {
         boolean separatorAdded = false;
-        if ( isJavaMethod )
+        if ( isJavaExecutable )
         {
-            JavaMethod javaMethod = (JavaMethod) entity;
+            JavaExecutable javaExecutable = (JavaExecutable) entity;
 
-            if ( fixTag( PARAM_TAG ) && javaMethod.getParameters() != null )
+            if ( fixTag( PARAM_TAG ) && javaExecutable.getParameters() != null )
             {
-                for ( int i = 0; i < javaMethod.getParameters().length; i++ )
+                for ( JavaParameter javaParameter : javaExecutable.getParameters() )
                 {
-                    JavaParameter javaParameter = javaMethod.getParameters()[i];
-
                     separatorAdded = appendDefaultParamTag( sb, indent, separatorAdded, javaParameter );
                 }
             }
 
-            if ( fixTag( RETURN_TAG ) )
+            if ( javaExecutable instanceof JavaMethod && fixTag( RETURN_TAG ) )
             {
+                JavaMethod javaMethod = (JavaMethod) javaExecutable;
                 if ( javaMethod.getReturns() != null && !javaMethod.getReturns().isVoid() )
                 {
                     separatorAdded = appendDefaultReturnTag( sb, indent, separatorAdded, javaMethod );
                 }
             }
 
-            if ( fixTag( THROWS_TAG ) && javaMethod.getExceptions() != null )
+            if ( fixTag( THROWS_TAG ) && javaExecutable.getExceptions() != null )
             {
-                for ( int i = 0; i < javaMethod.getExceptions().length; i++ )
+                for ( JavaType exception : javaExecutable.getExceptions() )
                 {
-                    Type exception = javaMethod.getExceptions()[i];
-
                     separatorAdded = appendDefaultThrowsTag( sb, indent, separatorAdded, exception );
                 }
             }
@@ -2366,7 +2392,7 @@ public abstract class AbstractFixJavadocMojo
 
         if ( fixTag( SINCE_TAG ) )
         {
-            if ( !isJavaMethod )
+            if ( !isJavaExecutable )
             {
                 JavaClass javaClass = (JavaClass) entity;
 
@@ -2386,18 +2412,18 @@ public abstract class AbstractFixJavadocMojo
             }
             else
             {
-                JavaMethod javaMethod = (JavaMethod) entity;
+                JavaExecutable javaExecutable = (JavaExecutable) entity;
 
                 if ( !ignoreClirr )
                 {
-                    if ( isNewMethodFromLastRevision( javaMethod ) )
+                    if ( isNewMethodFromLastRevision( javaExecutable ) )
                     {
                         separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
                     }
                 }
                 else
                 {
-                    if ( sinceClasses != null && !sinceClassesContains( javaMethod.getParentClass() ) )
+                    if ( sinceClasses != null && !sinceClassesContains( javaExecutable.getDeclaringClass() ) )
                     {
                         separatorAdded = appendDefaultSinceTag( sb, indent, separatorAdded );
                     }
@@ -2527,11 +2553,11 @@ public abstract class AbstractFixJavadocMojo
      * @param sb             not null
      * @param indent         not null
      * @param separatorAdded
-     * @param javaParameter  not null
+     * @param typeParam  not null
      * @return true if separator has been added.
      */
     private boolean appendDefaultParamTag( final StringBuilder sb, final String indent, boolean separatorAdded,
-                                           final JavaParameter javaParameter )
+                                           final JavaParameter typeParam )
     {
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2544,7 +2570,7 @@ public abstract class AbstractFixJavadocMojo
             separatorAdded = true;
         }
 
-        appendDefaultParamTag( sb, indent, javaParameter );
+        appendDefaultParamTag( sb, indent, typeParam );
         return separatorAdded;
     }
 
@@ -2556,7 +2582,7 @@ public abstract class AbstractFixJavadocMojo
      * @return true if separator has been added.
      */
     private boolean appendDefaultParamTag( final StringBuilder sb, final String indent, boolean separatorAdded,
-                                           final TypeVariable typeParameter )
+                                           final JavaTypeVariable<JavaGenericDeclaration> typeParameter )
     {
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2576,9 +2602,9 @@ public abstract class AbstractFixJavadocMojo
     /**
      * @param sb            not null
      * @param indent        not null
-     * @param javaParameter not null
+     * @param typeParam not null
      */
-    private void appendDefaultParamTag( final StringBuilder sb, final String indent, final JavaParameter javaParameter )
+    private void appendDefaultParamTag( final StringBuilder sb, final String indent, final JavaParameter typeParam )
     {
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2586,9 +2612,9 @@ public abstract class AbstractFixJavadocMojo
         }
 
         sb.append( indent ).append( " * @" ).append( PARAM_TAG ).append( " " );
-        sb.append( javaParameter.getName() );
+        sb.append( typeParam.getName() );
         sb.append( " " );
-        sb.append( getDefaultJavadocForType( javaParameter.getType() ) );
+        sb.append( getDefaultJavadocForType( typeParam.getJavaClass() ) );
         sb.append( EOL );
     }
 
@@ -2597,7 +2623,8 @@ public abstract class AbstractFixJavadocMojo
      * @param indent        not null
      * @param typeParameter not null
      */
-    private void appendDefaultParamTag( final StringBuilder sb, final String indent, final TypeVariable typeParameter )
+    private void appendDefaultParamTag( final StringBuilder sb, final String indent,
+                                        final JavaTypeVariable<JavaGenericDeclaration> typeParameter )
     {
         if ( !fixTag( PARAM_TAG ) )
         {
@@ -2661,7 +2688,7 @@ public abstract class AbstractFixJavadocMojo
      * @return true if separator has been added.
      */
     private boolean appendDefaultThrowsTag( final StringBuilder sb, final String indent, boolean separatorAdded,
-                                            final Type exception )
+                                            final JavaType exception )
     {
         if ( !fixTag( THROWS_TAG ) )
         {
@@ -2683,7 +2710,7 @@ public abstract class AbstractFixJavadocMojo
      * @param indent    not null
      * @param exception not null
      */
-    private void appendDefaultThrowsTag( final StringBuilder sb, final String indent, final Type exception )
+    private void appendDefaultThrowsTag( final StringBuilder sb, final String indent, final JavaType exception )
     {
         if ( !fixTag( THROWS_TAG ) )
         {
@@ -2691,7 +2718,7 @@ public abstract class AbstractFixJavadocMojo
         }
 
         sb.append( indent ).append( " * @" ).append( THROWS_TAG ).append( " " );
-        sb.append( exception.getJavaClass().getFullyQualifiedName() );
+        sb.append( exception.getFullyQualifiedName() );
         sb.append( " if any." );
         sb.append( EOL );
     }
@@ -2714,15 +2741,13 @@ public abstract class AbstractFixJavadocMojo
      * @return <code>true</code> if the method is inherited, <code>false</code> otherwise.
      * @throws MojoExecutionException if any
      */
-    private boolean isInherited( JavaMethod javaMethod )
+    private boolean isInherited( JavaExecutable javaMethod )
         throws MojoExecutionException
     {
         if ( javaMethod.getAnnotations() != null )
         {
-            for ( int i = 0; i < javaMethod.getAnnotations().length; i++ )
+            for ( JavaAnnotation annotation : javaMethod.getAnnotations() )
             {
-                Annotation annotation = javaMethod.getAnnotations()[i];
-
                 if ( annotation.toString().equals( "@java.lang.Override()" ) )
                 {
                     return true;
@@ -2730,7 +2755,7 @@ public abstract class AbstractFixJavadocMojo
             }
         }
 
-        Class<?> clazz = getClass( javaMethod.getParentClass().getFullyQualifiedName() );
+        Class<?> clazz = getClass( javaMethod.getDeclaringClass().getFullyQualifiedName() );
 
         List<Class<?>> interfaces = ClassUtils.getAllInterfaces( clazz );
         for ( Class<?> intface : interfaces )
@@ -2760,7 +2785,7 @@ public abstract class AbstractFixJavadocMojo
      *         <code>false</code> otherwise.
      * @see #isInherited(JavaMethod)
      */
-    private boolean isInherited( Class<?> clazz, JavaMethod javaMethod )
+    private boolean isInherited( Class<?> clazz, JavaExecutable javaMethod )
     {
         for ( Method method : clazz.getDeclaredMethods() )
         {
@@ -2769,7 +2794,7 @@ public abstract class AbstractFixJavadocMojo
                 continue;
             }
 
-            if ( method.getParameterTypes().length != javaMethod.getParameters().length )
+            if ( method.getParameterTypes().length != javaMethod.getParameters().size() )
             {
                 continue;
             }
@@ -2779,7 +2804,7 @@ public abstract class AbstractFixJavadocMojo
             for ( Class<?> paramType : method.getParameterTypes() )
             {
                 String name1 = paramType.getName();
-                String name2 = javaMethod.getParameters()[j++].getType().getFullQualifiedName();
+                String name2 = javaMethod.getParameters().get( j++ ).getType().getFullyQualifiedName();
                 found = name1.equals( name2 ); // TODO check algo, seems broken (only takes in account the last param)
             }
 
@@ -2790,51 +2815,63 @@ public abstract class AbstractFixJavadocMojo
     }
 
     /**
-     * @param type
+     * @param clazz
      * @return
      */
-    private String getDefaultJavadocForType( Type type )
+    private String getDefaultJavadocForType( JavaClass clazz )
     {
         StringBuilder sb = new StringBuilder();
 
-        if ( !TypeVariable.class.isAssignableFrom( type.getClass() ) && type.isPrimitive() )
+        if ( !JavaTypeVariable.class.isAssignableFrom( clazz.getClass() ) && clazz.isPrimitive() )
         {
-            if ( type.isArray() )
+            if ( clazz.isArray() )
             {
-                sb.append( "an array of " );
+                sb.append( "an array of " ).append( clazz.getComponentType().getCanonicalName() );
             }
             else
             {
-                sb.append( "a " );
+                sb.append( "a " ).append( clazz.getCanonicalName() );
             }
-            return sb.append( type.getJavaClass().getFullyQualifiedName() ).append( "." ).toString();
+            return sb.append( "." ).toString();
         }
 
         StringBuilder javadocLink = new StringBuilder();
         try
         {
-            getClass( type.getJavaClass().getFullyQualifiedName() );
+            getClass( clazz.getCanonicalName() );
 
-            String s = type.getJavaClass().getFullyQualifiedName();
-            s = StringUtils.replace( s, "$", "." );
-
-            javadocLink.append( "{@link " ).append( s ).append( "}" );
+            javadocLink.append( "{@link " );
+            
+            if ( clazz.isArray() )
+            {
+                javadocLink.append( clazz.getComponentType().getCanonicalName() );
+            }
+            else
+            {
+                javadocLink.append( clazz.getCanonicalName() );
+            }
+            javadocLink.append( "}" );
         }
         catch ( Exception e )
         {
-            javadocLink.append( type.getJavaClass().getFullyQualifiedName() );
+            javadocLink.append( clazz.getValue() );
         }
 
-        if ( type.isArray() )
+        if ( clazz.isArray() )
         {
-            sb.append( "an array of " ).append( javadocLink.toString() ).append( " objects." );
+            sb.append( "an array of " ).append( javadocLink ).append( " objects." );
         }
         else
         {
-            sb.append( "a " ).append( javadocLink.toString() ).append( " object." );
+            sb.append( "a " ).append( javadocLink ).append( " object." );
         }
 
         return sb.toString();
+    }
+    
+    private String getDefaultJavadocForType( JavaTypeVariable<JavaGenericDeclaration> typeParameter )
+    {
+        return "a " + typeParameter.getName() + " object.";
     }
 
     /**
@@ -2852,12 +2889,12 @@ public abstract class AbstractFixJavadocMojo
     /**
      * Check under Clirr if this given method is newer from the last version.
      *
-     * @param javaMethod a given method not null
+     * @param javaExecutable a given method not null
      * @return <code>true</code> if Clirr said that this method is added from the last version,
      *         <code>false</code> otherwise or if {@link #clirrNewMethods} is null.
      * @throws MojoExecutionException if any
      */
-    private boolean isNewMethodFromLastRevision( JavaMethod javaMethod )
+    private boolean isNewMethodFromLastRevision( JavaExecutable javaExecutable )
         throws MojoExecutionException
     {
         if ( clirrNewMethods == null )
@@ -2865,7 +2902,7 @@ public abstract class AbstractFixJavadocMojo
             return false;
         }
 
-        List<String> clirrMethods = clirrNewMethods.get( javaMethod.getParentClass().getFullyQualifiedName() );
+        List<String> clirrMethods = clirrNewMethods.get( javaExecutable.getDeclaringClass().getFullyQualifiedName() );
         if ( clirrMethods == null )
         {
             return false;
@@ -2875,20 +2912,20 @@ public abstract class AbstractFixJavadocMojo
         {
             // see net.sf.clirr.core.internal.checks.MethodSetCheck#getMethodId(JavaType clazz, Method method)
             String retrn = "";
-            if ( javaMethod.getReturns() != null )
+            if ( javaExecutable instanceof JavaMethod && ( (JavaMethod) javaExecutable ).getReturns() != null )
             {
-                retrn = javaMethod.getReturns().getFullQualifiedName();
+                retrn = ( (JavaMethod) javaExecutable ).getReturns().getFullyQualifiedName();
             }
             StringBuilder params = new StringBuilder();
-            for ( JavaParameter parameter : javaMethod.getParameters() )
+            for ( JavaParameter parameter : javaExecutable.getParameters() )
             {
                 if ( params.length() > 0 )
                 {
                     params.append( ", " );
                 }
-                params.append( parameter.getResolvedValue() );
+                params.append( parameter.getResolvedFullyQualifiedName() );
             }
-            if ( clirrMethod.contains( retrn + " " ) && clirrMethod.contains( javaMethod.getName() + "(" )
+            if ( clirrMethod.contains( retrn + " " ) && clirrMethod.contains( javaExecutable.getName() + "(" )
                 && clirrMethod.contains( "(" + params.toString() + ")" ) )
             {
                 return true;
@@ -3062,7 +3099,7 @@ public abstract class AbstractFixJavadocMojo
         StringBuilder sb = new StringBuilder();
 
         sb.append( "<p>" );
-        if ( Arrays.asList( javaClass.getModifiers() ).contains( "abstract" ) )
+        if ( javaClass.isAbstract() )
         {
             sb.append( "Abstract " );
         }
@@ -3086,36 +3123,36 @@ public abstract class AbstractFixJavadocMojo
     /**
      * Default comment for method with taking care of getter/setter in the javaMethod name.
      *
-     * @param javaMethod not null
+     * @param javaExecutable not null
      * @return a default comment for method.
      */
-    private static String getDefaultMethodJavadocComment( final JavaMethod javaMethod )
+    private static String getDefaultMethodJavadocComment( final JavaExecutable javaExecutable )
     {
-        if ( javaMethod.isConstructor() )
+        if ( javaExecutable instanceof JavaConstructor )
         {
-            return "<p>Constructor for " + javaMethod.getName() + ".</p>";
+            return "<p>Constructor for " + javaExecutable.getName() + ".</p>";
         }
-
-        if ( javaMethod.getName().length() > 3 && ( javaMethod.getName().startsWith( "get" )
-            || javaMethod.getName().startsWith( "set" ) ) )
+        
+        if ( javaExecutable.getName().length() > 3 && ( javaExecutable.getName().startsWith( "get" )
+            || javaExecutable.getName().startsWith( "set" ) ) )
         {
-            String field = StringUtils.lowercaseFirstLetter( javaMethod.getName().substring( 3 ) );
+            String field = StringUtils.lowercaseFirstLetter( javaExecutable.getName().substring( 3 ) );
 
-            JavaClass clazz = javaMethod.getParentClass();
+            JavaClass clazz = javaExecutable.getDeclaringClass();
 
             if ( clazz.getFieldByName( field ) == null )
             {
-                return "<p>" + javaMethod.getName() + ".</p>";
+                return "<p>" + javaExecutable.getName() + ".</p>";
             }
 
             StringBuilder sb = new StringBuilder();
 
             sb.append( "<p>" );
-            if ( javaMethod.getName().startsWith( "get" ) )
+            if ( javaExecutable.getName().startsWith( "get" ) )
             {
                 sb.append( "Getter " );
             }
-            else if ( javaMethod.getName().startsWith( "set" ) )
+            else if ( javaExecutable.getName().startsWith( "set" ) )
             {
                 sb.append( "Setter " );
             }
@@ -3124,7 +3161,7 @@ public abstract class AbstractFixJavadocMojo
             return sb.toString();
         }
 
-        return "<p>" + javaMethod.getName() + ".</p>";
+        return "<p>" + javaExecutable.getName() + ".</p>";
     }
 
     /**
@@ -3187,7 +3224,7 @@ public abstract class AbstractFixJavadocMojo
      * @return the javadoc comment for the entity without any tags.
      * @throws IOException if any
      */
-    private static String getJavadocComment( final String javaClassContent, final AbstractJavaEntity entity )
+    static String getJavadocComment( final String javaClassContent, final JavaAnnotatedElement entity )
         throws IOException
     {
         if ( entity.getComment() == null )
@@ -3253,19 +3290,19 @@ public abstract class AbstractFixJavadocMojo
      * @return the javadoc comment for the entity without Javadoc tags.
      * @throws IOException if any
      */
-    private String getJavadocComment( final String javaClassContent, final AbstractInheritableJavaEntity entity,
+    String getJavadocComment( final String javaClassContent, final JavaAnnotatedElement entity,
                                       final DocletTag docletTag )
         throws IOException
     {
-        if ( docletTag.getValue() == null || docletTag.getParameters().length == 0 )
+        if ( docletTag.getValue() == null || docletTag.getParameters().isEmpty() )
         {
             return "";
         }
 
         String originalJavadoc = extractOriginalJavadocContent( javaClassContent, entity );
 
-        String[] params = fixQdox173( docletTag.getParameters() );
-        String paramValue = params[0];
+        List<String> params = docletTag.getParameters();
+        String paramValue = params.get( 0 );
 
         StringBuilder sb = new StringBuilder();
         BufferedReader lr = new BufferedReader( new StringReader( originalJavadoc ) );
@@ -3349,7 +3386,7 @@ public abstract class AbstractFixJavadocMojo
      * @return return the original javadoc as String for the current entity
      * @throws IOException if any
      */
-    private static String extractOriginalJavadoc( final String javaClassContent, final AbstractJavaEntity entity )
+    static String extractOriginalJavadoc( final String javaClassContent, final JavaAnnotatedElement entity )
         throws IOException
     {
         if ( entity.getComment() == null )
@@ -3416,8 +3453,8 @@ public abstract class AbstractFixJavadocMojo
      * @return return the original javadoc as String for the current entity
      * @throws IOException if any
      */
-    private static String extractOriginalJavadocContent( final String javaClassContent,
-                                                         final AbstractJavaEntity entity )
+    static String extractOriginalJavadocContent( final String javaClassContent,
+                                                         final JavaAnnotatedElement entity )
         throws IOException
     {
         if ( entity.getComment() == null )
@@ -3452,7 +3489,7 @@ public abstract class AbstractFixJavadocMojo
      * @param content not null
      * @return the content without last lines containing javadoc separator (ie <code> * </code>)
      * @throws IOException if any
-     * @see #getJavadocComment(String, AbstractInheritableJavaEntity, DocletTag)
+     * @see #getJavadocComment(String, JavaAnnotatedElement, DocletTag)
      */
     private static String removeLastEmptyJavadocLines( final String content )
         throws IOException
@@ -3495,7 +3532,7 @@ public abstract class AbstractFixJavadocMojo
      * @param content not null
      * @return the javadoc comment with the given indentation
      * @throws IOException if any
-     * @see #getJavadocComment(String, AbstractInheritableJavaEntity, DocletTag)
+     * @see #getJavadocComment(String, JavaAnnotatedElement, DocletTag)
      */
     private static String alignIndentationJavadocLines( final String content, final String indent )
         throws IOException
@@ -3609,39 +3646,13 @@ public abstract class AbstractFixJavadocMojo
         return text.substring( 0, text.indexOf( textTrimmed ) + textTrimmed.length() );
     }
 
-    /**
-     * Workaroung for QDOX-173 about generic.
-     *
-     * @param params not null
-     * @return the wanted params.
-     */
-    private static String[] fixQdox173( String[] params )
-    {
-        if ( params == null || params.length == 0 || params.length < 3 )
-        {
-            return params;
-        }
-
-        if ( params[0].trim().equals( "<" ) && params[2].trim().equals( ">" ) )
-        {
-            String param = params[1];
-            List<String> l = new ArrayList<>( Arrays.asList( params ) );
-            l.set( 1, "<" + param + ">" );
-            l.remove( 0 );
-            l.remove( 1 );
-
-            return l.toArray( new String[l.size()] );
-        }
-
-        return params;
-    }
 
     /**
      * Wrapper class for the entity's tags.
      */
     class JavaEntityTags
     {
-        private final AbstractInheritableJavaEntity entity;
+        private final JavaAnnotatedElement entity;
 
         private final boolean isJavaMethod;
 
@@ -3670,7 +3681,7 @@ public abstract class AbstractFixJavadocMojo
          */
         private List<String> unknownsTags;
 
-        public JavaEntityTags( AbstractInheritableJavaEntity entity, boolean isJavaMethod )
+        public JavaEntityTags( JavaAnnotatedElement entity, boolean isJavaMethod )
         {
             this.entity = entity;
             this.isJavaMethod = isJavaMethod;
