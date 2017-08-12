@@ -9,7 +9,7 @@ package org.apache.maven.plugins.javadoc;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,35 +19,34 @@ package org.apache.maven.plugins.javadoc;
  * under the License.
  */
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import java.io.StringReader;
 
-import org.apache.maven.plugins.javadoc.AbstractFixJavadocMojo;
+import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaSource;
 
 import junit.framework.TestCase;
-import junitx.util.PrivateAccessor;
-
-import com.thoughtworks.qdox.model.AbstractInheritableJavaEntity;
-import com.thoughtworks.qdox.model.DocletTag;
-import com.thoughtworks.qdox.model.IndentBuffer;
-import com.thoughtworks.qdox.model.JavaClass;
 
 public class AbstractFixJavadocMojoTest
     extends TestCase
 {
+    private JavaSource getJavaSource( String source )
+    {
+        return new JavaProjectBuilder().addSource( new StringReader( source ) );
+    }
 
     public void testReplaceLinkTags_noLinkTag()
         throws Throwable
     {
         String comment = "/** @see ConnectException */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class NoLinkTag {}";
+                    
+        JavaClass clazz = getJavaSource( source ).getClassByName( "NoLinkTag" );
+
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
+            
         assertEquals( "/** @see ConnectException */", newComment );
     }
 
@@ -55,13 +54,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link ConnectException} */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class OneLinkTag {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "OneLinkTag" );
+
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link java.net.ConnectException} */", newComment );
     }
 
@@ -69,14 +68,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link ConnectException */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
-
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class MissingEndBrace {}";
+                    
+        JavaClass clazz = getJavaSource( source ).getClassByName( "MissingEndBrace" );
+                    
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link ConnectException */", newComment );
     }
 
@@ -84,14 +82,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link     ConnectException} */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
-
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class SpacesAfterLinkTag {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "SpacesAfterLinkTag" );
+        
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link java.net.ConnectException} */", newComment );
     }
 
@@ -99,14 +96,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link ConnectException       } */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
-
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class SpacesAfterClassName {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "SpacesAfterClassName" );
+        
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link java.net.ConnectException} */", newComment );
     }
 
@@ -114,14 +110,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link ConnectException#getMessage()       } */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class SpacesAfterMethod {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "SpacesAfterMethod" );
 
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link java.net.ConnectException#getMessage()} */", newComment );
     }
 
@@ -129,14 +124,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link ConnectException#getMessage()} */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class ContainingHashes {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "ContainingHashes" );
 
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link java.net.ConnectException#getMessage()} */", newComment );
     }
 
@@ -144,14 +138,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** {@link ConnectException} ##important## */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class FollowedByHash {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "FollowedByHash" );
 
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** {@link java.net.ConnectException} ##important## */", newComment );
     }
 
@@ -159,15 +152,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** Use {@link ConnectException} instead of {@link Exception} */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        when( clazz.resolveType( "Exception" ) ).thenReturn( "java.lang.Exception" );
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class TwoLinks {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "TwoLinks" );
 
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** Use {@link java.net.ConnectException} instead of {@link java.lang.Exception} */", newComment );
     }
 
@@ -175,37 +166,13 @@ public class AbstractFixJavadocMojoTest
         throws Throwable
     {
         String comment = "/** There's a {@link #getClass()} but no setClass() */";
-        AbstractInheritableJavaEntity entity = spy( new PrivateAbstractInheritableJavaEntity() );
-        JavaClass clazz = mock( JavaClass.class );
-        when( entity.getParentClass() ).thenReturn( clazz );
-        when( clazz.resolveType( "ConnectException" ) ).thenReturn( "java.net.ConnectException" );
-        when( clazz.resolveType( "Exception" ) ).thenReturn( "java.lang.Exception" );
+        String source = "import java.net.ConnectException;\n"
+                        + comment + "\n"
+                        + "public class OnlyAnchor {}";
+        
+        JavaClass clazz = getJavaSource( source ).getClassByName( "OnlyAnchor" );
 
-        String newComment =
-            (String) PrivateAccessor.invoke( AbstractFixJavadocMojo.class, "replaceLinkTags", new Class[] {
-                String.class, AbstractInheritableJavaEntity.class }, new Object[] { comment, entity } );
-
+        String newComment = AbstractFixJavadocMojo.replaceLinkTags( comment, clazz );
         assertEquals( "/** There's a {@link #getClass()} but no setClass() */", newComment );
-    }
-
-    protected class PrivateAbstractInheritableJavaEntity
-        extends AbstractInheritableJavaEntity
-    {
-        @Override
-        public int compareTo( Object o )
-        {
-            return 0;
-        }
-
-        @Override
-        public DocletTag[] getTagsByName( String arg0, boolean arg1 )
-        {
-            return null;
-        }
-
-        @Override
-        protected void writeBody( IndentBuffer arg0 )
-        {
-        }
     }
 }
