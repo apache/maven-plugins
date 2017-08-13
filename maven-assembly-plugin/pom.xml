@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-assembly-plugin</artifactId>
-  <version>3.1.1-SNAPSHOT</version>
+  <version>3.1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven Assembly Plugin</name>
