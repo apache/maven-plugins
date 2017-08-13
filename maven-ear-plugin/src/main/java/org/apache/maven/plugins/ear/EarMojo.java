@@ -122,7 +122,7 @@ public class EarMojo
      * 
      * @since 2.3.2
      */
-    @Parameter( property = "maven.ear.escapedBackslashesInFilePath", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean escapedBackslashesInFilePath;
 
     /**
@@ -130,7 +130,7 @@ public class EarMojo
      * 
      * @since 2.3.2
      */
-    @Parameter( property = "maven.ear.escapeString" )
+    @Parameter
     protected String escapeString;
 
     /**
@@ -160,7 +160,7 @@ public class EarMojo
     /**
      * The name of the EAR file to generate.
      */
-    @Parameter( alias = "earName", defaultValue = "${project.build.finalName}", required = true )
+    @Parameter( defaultValue = "${project.build.finalName}", required = true )
     private String finalName;
 
     /**
@@ -201,7 +201,7 @@ public class EarMojo
      * 
      * @since 2.7
      */
-    @Parameter( property = "maven.ear.skinnyWars", defaultValue = "false" )
+    @Parameter( defaultValue = "false" )
     private boolean skinnyWars;
 
     /**
@@ -261,7 +261,7 @@ public class EarMojo
     /**
      * @since 2.9
      */
-    @Parameter( property = "maven.ear.useJvmChmod", defaultValue = "true" )
+    @Parameter( defaultValue = "true" )
     private boolean useJvmChmod = true;
 
     /**
