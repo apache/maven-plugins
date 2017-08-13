@@ -47,7 +47,7 @@ under the License.
     <component>
       <role>org.codehaus.plexus.component.configurator.converters.ConfigurationConverter</role>
       <role-hint>ToolchainsRequirement</role-hint>
-      <implementation>org.apache.maven.plugin.toolchain.ToolchainConverter</implementation>
+      <implementation>org.apache.maven.plugins.toolchain.ToolchainConverter</implementation>
     </component>
   </components>
 </plexus>

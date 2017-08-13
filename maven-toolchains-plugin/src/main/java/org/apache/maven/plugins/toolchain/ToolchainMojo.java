@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.toolchain;
+package org.apache.maven.plugins.toolchain;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
