@@ -75,7 +75,7 @@
   </contributors>
 
   <properties>
-    <mavenArchiverVersion>3.1.1</mavenArchiverVersion>
+    <mavenArchiverVersion>3.2.0</mavenArchiverVersion>
     <mavenFilteringVersion>3.1.1</mavenFilteringVersion>
     <mavenVersion>3.0</mavenVersion>
   </properties>
