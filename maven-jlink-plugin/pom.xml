@@ -35,7 +35,8 @@
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven JLink Plugin</name>
-  <description>JLink http://openjdk.java.net/jeps/282, http://openjdk.java.net/jeps/220</description>
+  <description>The Maven JLink Plugin is intended to create Modular Run-Time Images.
+   http://openjdk.java.net/jeps/282, http://openjdk.java.net/jeps/220</description>
   <inceptionYear>2016</inceptionYear>
 
   <prerequisites>
