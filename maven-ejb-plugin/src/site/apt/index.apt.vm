@@ -55,8 +55,9 @@ ${project.name}
   {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{/guides/development/guide-helping.html}guide to helping with Maven}}.
   
-  Important Note: Starting with version 3.0.0 of the plugin all properties have been removed. The configuration
-  of the plugin should be done in the <<<pom.xml>>> file and not via command line.
+  Important Note: Starting with version 3.0.0 of the plugin all user properties have been removed which means
+  you can't use a property on the command line anymore to configure maven-ejb-plugin. The configuration
+  of the plugin has be done in the <<<pom.xml>>> file instead.
 
 * Examples
 
