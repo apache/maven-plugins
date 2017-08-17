@@ -77,6 +77,7 @@ public abstract class AbstractJLinkMojo
             jLinkExecutable = tc.findTool( "jlink" );
         }
 
+        //TODO: Check if there exist a more elegant way?
         String jLinkCommand = "jlink" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
 
         File jLinkExe;
