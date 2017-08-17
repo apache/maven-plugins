@@ -31,7 +31,7 @@
 
 ${project.name}
 
-  This plugin generates J2EE Enterprise Javabean (EJB) file as well as the associated client jar.
+  This plugin generates Java Enterprise JavaBean (EJB) file as well as the associated client jar.
 
 * Goals Overview
 

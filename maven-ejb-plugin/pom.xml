@@ -34,7 +34,7 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven EJB Plugin</name>
-  <description>Generates a J2EE Enterprise JavaBean (EJB) file as well as the associated client JAR.</description>
+  <description>Generates a Java Enterprise JavaBean (EJB) file as well as the associated client JAR.</description>
 
   <prerequisites>
     <maven>${mavenVersion}</maven>
