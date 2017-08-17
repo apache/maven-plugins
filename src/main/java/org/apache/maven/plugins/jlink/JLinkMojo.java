@@ -112,7 +112,7 @@ public class JLinkMojo
     private Integer compression;
 
     /**
-     * Limit the univers of observable modules. <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
+     * Limit the universe of observable modules. <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
      */
     @Parameter
     private List<String> limitModules;
@@ -143,7 +143,6 @@ public class JLinkMojo
     /**
      * Byte order of generated jimage (default:native). <code>--endian &lt;little|big&gt;</code>.
      * </p>
-     * TODO: Reconsider setting the default value? Hasn't that been set already?
      */
     @Parameter( defaultValue = "native" )
     private String endian;
@@ -221,22 +220,14 @@ public class JLinkMojo
         throws MojoExecutionException, MojoFailureException
     {
 
-        String jLinkExec;
-        try
-        {
-            jLinkExec = getJLinkExecutable();
-        }
-        catch ( IOException e )
-        {
-            throw new MojoFailureException( "Unable to find jlink command: " + e.getMessage(), e );
-        }
+        String jLinkExec = getExecutable();
 
         getLog().info( "Toolchain in maven-jlink-plugin: jlink [ " + jLinkExec + " ]" );
 
         // TODO: Find a more better and cleaner way?
         File jLinkExecuteable = new File( jLinkExec );
 
-        // Really Hacky...do we have a better solution?
+        // Really Hacky...do we have a better solution to find the jmods directory of the JDK?
         File jLinkParent = jLinkExecuteable.getParentFile().getParentFile();
         File jmodsFolder = new File( jLinkParent, JMODS );
 
@@ -250,16 +241,22 @@ public class JLinkMojo
         List<Dependency> dependencies = getSession().getCurrentProject().getDependencies();
 
         List<MavenProject> modulesToAdd = new ArrayList<>();
+        if ( dependencies.isEmpty() )
+        {
+            
+        }
         getLog().info( "The following dependencies will be linked into the runtime image:" );
         for ( Dependency dependency : dependencies )
         {
             // We will support "jmod" as well as "jar"
+            // TODO: Think about jmod's cause they can contain config files etc. ? What todo with them?
             if ( JAR_PACKAGING.equals( dependency.getType() ) || JMOD_PACKAGING.equals( dependency.getType() ) )
             {
                 MavenProject mp = findDependencyInProjects( dependency );
                 getLog().info( " -> " + mp.getId() );
                 // TODO: What about module name != artifactId which has been
                 // defined in module-info.java file!
+                // This would mean to read the module-info information from the jmod file for example...
                 modulesToAdd.add( mp );
             }
         }
@@ -290,6 +287,21 @@ public class JLinkMojo
         }
 
         getProject().getArtifact().setFile( createZipArchiveFromImage );
+    }
+
+    private String getExecutable()
+        throws MojoFailureException
+    {
+        String jLinkExec;
+        try
+        {
+            jLinkExec = getJLinkExecutable();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoFailureException( "Unable to find jlink command: " + e.getMessage(), e );
+        }
+        return jLinkExec;
     }
 
     private boolean projectHasAlreadySetAnArtifact()
