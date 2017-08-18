@@ -89,7 +89,7 @@ public class JarsignerSignMojo
      * </a>
      * for more info.
      * 
-     * @since TODO
+     * @since 1.5
      */
     @Parameter( property = "jarsigner.certchain", readonly = true, required = false )
     private File certchain;
