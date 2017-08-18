@@ -80,6 +80,19 @@ public class JarsignerSignMojo
      */
     @Parameter( property = "jarsigner.tsacert" )
     private String tsacert;
+    
+    /**
+     * Location of the extra certchain file.
+     * See 
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html#Options">
+     *   Java SE 7 documentation
+     * </a>
+     * for more info.
+     * 
+     * @since TODO
+     */
+    @Parameter( property = "jarsigner.certchain", readonly = true, required = false )
+    private File certchain;
 
     @Override
     protected String getCommandlineInfo( final Commandline commandLine )
@@ -121,6 +134,7 @@ public class JarsignerSignMojo
         request.setSigfile( sigfile );
         request.setTsaLocation( tsa );
         request.setTsaAlias( tsacert );
+        request.setCertchain( certchain );
 
         // Special handling for passwords through the Maven Security Dispatcher
         request.setKeypass( decrypt( keypass ) );
