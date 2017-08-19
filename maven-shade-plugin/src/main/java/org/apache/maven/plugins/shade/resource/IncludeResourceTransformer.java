@@ -75,4 +75,10 @@ public class IncludeResourceTransformer
             IOUtil.close( in );
         }
     }
+    
+    @Override
+    public String toString()
+    {
+        return "IncludeResourceTransformer {resource: '" + resource + "'}";
+    }
 }
