@@ -55,19 +55,19 @@
             <!-- START SNIPPET: jmod-lifecycle -->
             <phases>
               <process-resources>
-                org.apache.maven.plugins:maven-resources-plugin:3.0.1:resources
+                org.apache.maven.plugins:maven-resources-plugin:3.0.2:resources
               </process-resources>
               <compile>
-                org.apache.maven.plugins:maven-compiler-plugin:3.5.1:compile
+                org.apache.maven.plugins:maven-compiler-plugin:3.6.2:compile
               </compile>
               <process-test-resources>
-                org.apache.maven.plugins:maven-resources-plugin:3.0.1:testResources
+                org.apache.maven.plugins:maven-resources-plugin:3.0.2:testResources
               </process-test-resources>
               <test-compile>
-                org.apache.maven.plugins:maven-compiler-plugin:3.5.1:testCompile
+                org.apache.maven.plugins:maven-compiler-plugin:3.6.2:testCompile
               </test-compile>
               <test>
-                org.apache.maven.plugins:maven-surefire-plugin:2.19.1:test
+                org.apache.maven.plugins:maven-surefire-plugin:2.20:test
               </test>
               <package>
                 org.apache.maven.plugins:maven-jmod-plugin:${project.version}:create
