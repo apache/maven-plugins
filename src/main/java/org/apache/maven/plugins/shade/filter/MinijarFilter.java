@@ -102,6 +102,10 @@ public class MinijarFilter
             }
 
             removable = cp.getClazzes();
+            if ( removable.remove( new Clazz( "module-info" ) ) )
+            {
+                log.warn( "Removing module-info from " + artifactFile.getName() );
+            }
             removePackages( artifactUnit );
             removable.removeAll( artifactUnit.getClazzes() );
             removable.removeAll( artifactUnit.getTransitiveDependencies() );
