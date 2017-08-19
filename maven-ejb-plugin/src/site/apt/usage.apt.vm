@@ -64,7 +64,7 @@ Usage
 
 * Specifying the EJB version to use
 
-  The plugin generates according to the EJB version specified by the {{{./ejb-mojo.html#ejbVersion}ejbVersion}}
+  The plugin generates according to the EJB version specified by the {{{./ejb-mojo.html#ejbVersion}<<<ejbVersion>>>}}
   parameter. To use some other version than the default, configure the plugin as in the example below:
 
 +--------
