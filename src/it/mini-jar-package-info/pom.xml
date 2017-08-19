@@ -19,15 +19,26 @@ under the License.
 -->
 <project>
     <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+      <groupId>org.apache.maven.plugins.shade.its</groupId>
+      <artifactId>shade-parent</artifactId>
+      <version>1.0</version>
+      <relativePath>../setup-parent</relativePath>
+    </parent>
+    
     <groupId>org.apache.maven.its.shade.mjpi</groupId>
     <artifactId>test-package-info</artifactId>
     <version>1</version>
     <packaging>pom</packaging>
     <name>mini-jar-with-package-info</name>
     <description>Test for minimizeJar keeping package-info around.</description>
+    
     <properties>
-        <shade-version>@project.version@</shade-version>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
     </properties>
+    
     <modules>
         <module>jar-with-package-info</module>
         <module>test</module>
@@ -39,15 +50,11 @@ under the License.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
-                    <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>${shade-version}</version>
+                    <version>@project.version@</version>
                 </plugin>
             </plugins>
         </pluginManagement>
