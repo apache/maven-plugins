@@ -22,6 +22,13 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.apache.maven.plugins.shade.its</groupId>
+    <artifactId>shade-parent</artifactId>
+    <version>1.0</version>
+    <relativePath>../setup-parent</relativePath>
+  </parent>
+
   <groupId>org.apache.maven.its.shade.mj</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
@@ -33,6 +40,11 @@ under the License.
     contains the referenced classes.
   </description>
 
+  <properties>
+    <maven.compiler.source>1.4</maven.compiler.source>
+    <maven.compiler.target>1.4</maven.compiler.target>
+  </properties>
+  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -47,10 +59,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.0.2</version>
-        <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
