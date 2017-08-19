@@ -64,20 +64,22 @@ Usage
 
 * Specifying the EJB version to use
 
-  In EJB3, the <<<ejb-jar.xml>>> deployment descriptor is not mandatory anymore. By default
-  the plugin assumes version 2.1. To use another version, configure the plugin as follows:
+  The plugin generates according to the EJB version specified by the {{{./ejb-mojo.html#ejbVersion}ejbVersion}}
+  parameter. To use some other version than the default, configure the plugin as in the example below:
 
 +--------
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ejb-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <ejbVersion>3.0</ejbVersion>
-        </configuration>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-ejb-plugin</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <ejbVersion>3.0</ejbVersion>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 +---------
