@@ -19,23 +19,6 @@ package org.apache.maven.plugins.shade;
  * under the License.
  */
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.shade.filter.Filter;
-import org.apache.maven.plugins.shade.relocation.Relocator;
-import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
-import org.apache.maven.plugins.shade.resource.ResourceTransformer;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.IOUtil;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,6 +41,25 @@ import java.util.jar.JarOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipException;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.shade.filter.Filter;
+import org.apache.maven.plugins.shade.relocation.Relocator;
+import org.apache.maven.plugins.shade.resource.ManifestResourceTransformer;
+import org.apache.maven.plugins.shade.resource.ResourceTransformer;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.IOUtil;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
+
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * @author Jason van Zyl
@@ -173,6 +175,13 @@ public class DefaultShader
                         // we cannot allow the jar indexes to be copied over or the
                         // jar is useless. Ideally, we could create a new one
                         // later
+                        continue;
+                    }
+                    
+                    if ( "module-info.class".equals( name ) )
+                    {
+                        getLogger().warn( "Discovered module-info.class. "
+                            + "Shading will break its strong encapsulation." );
                         continue;
                     }
 
@@ -425,7 +434,7 @@ public class DefaultShader
         ClassWriter cw = new ClassWriter( 0 );
 
         final String pkg = name.substring( 0, name.lastIndexOf( '/' ) + 1 );
-        ClassVisitor cv = new RemappingClassAdapter( cw, remapper )
+        ClassVisitor cv = new ClassRemapper( cw, remapper )
         {
             @Override
             public void visitSource( final String source, final String debug )
