@@ -33,6 +33,7 @@ under the License.
       <item name="Download" href="download.html"/>
     </menu>
     <menu name="Examples">
+      <item name="Upgrading PMD at Runtime" href="examples/upgrading-PMD-at-runtime.html"/>
       <item name="Multimodule Configuration" href="examples/multi-module-config.html"/>
       <item name="Remove Report" href="examples/removeReport.html"/>
       <item name="Target JDK" href="examples/targetJdk.html"/>

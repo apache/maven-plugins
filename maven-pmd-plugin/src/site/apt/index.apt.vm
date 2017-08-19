@@ -73,6 +73,8 @@ ${project.name}
   To provide you with better understanding of some usages of the Maven PMD Plugin, you can take a look into the
   following examples:
 
+  * {{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}}
+
   * {{{./examples/multi-module-config.html}Multimodule Configuration}}
 
   * {{{./examples/removeReport.html}Remove Report}}
