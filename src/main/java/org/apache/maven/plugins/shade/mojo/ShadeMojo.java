@@ -627,7 +627,14 @@ public class ShadeMojo
                 File file = resolveArtifactSources( artifact );
                 if ( file != null )
                 {
-                    sourceArtifacts.add( file );
+                    if ( file.length() > 0 )
+                    {
+                        sourceArtifacts.add( file );
+                    }
+                    else
+                    {
+                        getLog().warn( "Skipping empty source jar " + artifact.getId() + "." );
+                    }
                 }
             }
         }
