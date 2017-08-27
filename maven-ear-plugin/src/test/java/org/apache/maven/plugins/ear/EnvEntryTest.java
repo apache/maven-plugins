@@ -40,48 +40,55 @@ public class EnvEntryTest
 
     public static final String VALUE = "34";
 
+    public static final String LOOKUP_NAME = "lookupName";
+
     @Test
     public void createComplete()
     {
-        final EnvEntry envEntry = new EnvEntry( DESCRIPTION, NAME, TYPE, VALUE );
-        assertEnvEntry( envEntry, DESCRIPTION, NAME, TYPE, VALUE );
+        final EnvEntry envEntry = new EnvEntry( DESCRIPTION, NAME, TYPE, VALUE, LOOKUP_NAME );
+        assertEnvEntry( envEntry, DESCRIPTION, NAME, TYPE, VALUE, LOOKUP_NAME );
     }
 
     @Test
     public void createWithoutTypeButValue()
     {
-        final EnvEntry envEntry = new EnvEntry( null, NAME, null, VALUE );
-        assertEnvEntry( envEntry, null, NAME, null, VALUE );
+        final EnvEntry envEntry = new EnvEntry( null, NAME, null, VALUE, LOOKUP_NAME );
+        assertEnvEntry( envEntry, null, NAME, null, VALUE, LOOKUP_NAME );
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void createWithoutName()
     {
-        new EnvEntry( DESCRIPTION, null, TYPE, VALUE );
+        new EnvEntry( DESCRIPTION, null, TYPE, VALUE, LOOKUP_NAME );
 
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void createWithEmptyName()
     {
-        new EnvEntry( DESCRIPTION, "", TYPE, VALUE );
+        new EnvEntry( DESCRIPTION, "", TYPE, VALUE, LOOKUP_NAME );
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void createWithNullTypeAndNoValue()
     {
-        new EnvEntry( DESCRIPTION, NAME, null, null );
-
+        new EnvEntry( DESCRIPTION, NAME, null, null, LOOKUP_NAME );
     }
 
     @Test( expected = IllegalArgumentException.class )
     public void createWithEmptyTypeAndNoValue()
     {
-        new EnvEntry( DESCRIPTION, NAME, "", null );
-
+        new EnvEntry( DESCRIPTION, NAME, "", null, LOOKUP_NAME );
     }
 
-    private void assertEnvEntry( EnvEntry actual, String description, String name, String type, String value )
+    @Test
+    public void createWithEmptyLookupName()
+    {
+        new EnvEntry( DESCRIPTION, NAME, TYPE, VALUE, null );
+    }
+
+    private void assertEnvEntry( EnvEntry actual, String description, String name, String type, String value,
+                                 String lookupName )
     {
         assertNotNull( "Env entry could not be null", actual );
         assertNotNull( "ToString could not be null", actual.toString() );
@@ -89,6 +96,7 @@ public class EnvEntryTest
         assertEquals( "Wrong env entry name for [" + actual + "]", name, actual.getName() );
         assertEquals( "Wrong env entry type for [" + actual + "]", type, actual.getType() );
         assertEquals( "Wrong env entry value for [" + actual + "]", value, actual.getValue() );
+        assertEquals( "Wrong env entry value for [" + actual + "]", lookupName, actual.getLookupName() );
 
     }
 }

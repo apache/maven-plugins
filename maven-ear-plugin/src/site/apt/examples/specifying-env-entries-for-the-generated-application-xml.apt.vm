@@ -4,7 +4,7 @@
   Stephane Nicoll
   <snicoll@apache.org>
   ------
-  January 25, 2012
+  August 27, 2017
 
 ~~ Copyright 2006 The Apache Software Foundation.
 ~~
@@ -45,6 +45,7 @@ Specifying Environment entries For The Generated application.xml
                <env-entry-name>complete</env-entry-name>
                <env-entry-type>java.lang.Integer</env-entry-type>
                <env-entry-value>4</env-entry-value>
+               <lookup-name>java:global/Example</lookup-name>
              </env-entry>
              <env-entry>
                <env-entry-name>no-type</env-entry-name>

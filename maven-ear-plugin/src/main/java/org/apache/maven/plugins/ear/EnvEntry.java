@@ -41,6 +41,8 @@ class EnvEntry
 
     static final String ENV_ENTRY_VALUE = "env-entry-value";
 
+    static final String ENV_LOOKUP_NAME = "lookup-name";
+
     private final String description;
 
     private final String name;
@@ -49,7 +51,9 @@ class EnvEntry
 
     private final String value;
 
-    public EnvEntry( String description, String name, String type, String value )
+    private final String lookupName;
+
+    public EnvEntry( String description, String name, String type, String value, String lookupName )
     {
         if ( StringUtils.isEmpty( name ) )
         {
@@ -66,6 +70,7 @@ class EnvEntry
         this.name = name;
         this.type = type;
         this.value = value;
+        this.lookupName = lookupName;
     }
 
     public String getDescription()
@@ -86,6 +91,11 @@ class EnvEntry
     public String getValue()
     {
         return value;
+    }
+
+    public String getLookupName()
+    {
+        return lookupName;
     }
 
     /**
@@ -119,6 +129,12 @@ class EnvEntry
             doWriteElement( writer, ENV_ENTRY_VALUE, getValue() );
         }
 
+        // lookup-name
+        if ( getLookupName() != null )
+        {
+            doWriteElement( writer, ENV_LOOKUP_NAME, getLookupName() );
+        }
+
         // end of env-entry
         writer.endElement();
     }
@@ -132,7 +148,8 @@ class EnvEntry
 
     public String toString()
     {
-        return "env-entry [name=" + getName() + ", type=" + getType() + ", value=" + getValue() + "]";
+        return "env-entry [name=" + getName() + ", type=" + getType() + ", value=" + getValue() + ", lookup-name="
+            + getLookupName() + "]";
     }
 
 }

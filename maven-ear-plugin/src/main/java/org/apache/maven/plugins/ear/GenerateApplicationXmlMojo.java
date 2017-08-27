@@ -356,6 +356,8 @@ public class GenerateApplicationXmlMojo
 
             final PlexusConfiguration[] allEnvEntries = envEntries.getChildren( EnvEntry.ENV_ENTRY );
 
+            getLog().debug( "buildEnvEntries: allEnvEntries:" + allEnvEntries );
+            getLog().debug( "buildEnvEntries: allEnvEntries size:" + allEnvEntries.length );
             for ( PlexusConfiguration envEntry : allEnvEntries )
             {
                 // CHECKSTYLE_OFF: LineLength
@@ -367,12 +369,14 @@ public class GenerateApplicationXmlMojo
                     interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_TYPE ).getValue() );
                 final String childEnvEntryValue =
                     interpolate( ssi, envEntry.getChild( EnvEntry.ENV_ENTRY_VALUE ).getValue() );
+                final String childEnvLookupNameValue =
+                    interpolate( ssi, envEntry.getChild( EnvEntry.ENV_LOOKUP_NAME ).getValue() );
                 // CHECKSTYLE_ON: LineLength
 
                 try
                 {
                     result.add( new EnvEntry( childDescription, childEnvEntryName, childEnvEntryType,
-                                              childEnvEntryValue ) );
+                                              childEnvEntryValue, childEnvLookupNameValue ) );
                 }
                 catch ( IllegalArgumentException e )
                 {
