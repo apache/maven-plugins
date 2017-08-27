@@ -33,9 +33,11 @@ import org.codehaus.plexus.util.xml.XMLWriter;
 final class ApplicationXmlWriter
     extends AbstractXmlWriter
 {
-    public static final String DOCTYPE_1_3 = "application PUBLIC\n"
-        + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n"
-        + "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
+    //@formatter:off
+    public static final String DOCTYPE_1_3 = "application PUBLIC\n" 
+            + "\t\"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN\"\n"
+            + "\t\"http://java.sun.com/dtd/application_1_3.dtd\"";
+    //@formatter:on
 
     private static final String APPLICATION_ELEMENT = "application";
 
@@ -133,6 +135,10 @@ final class ApplicationXmlWriter
             for ( EjbRef ejbEntry : context.getEjbEntries() )
             {
                 ejbEntry.appendEjbRefEntry( writer );
+            }
+            for ( ResourceRef resourceEntry : context.getResourceRefs() )
+            {
+                resourceEntry.appendResourceRefEntry( writer );
             }
         }
 

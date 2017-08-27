@@ -40,8 +40,10 @@ class ApplicationXmlWriterContext
     private final List<SecurityRole> securityRoles;
 
     private final List<EnvEntry> envEntries;
-    
+
     private final List<EjbRef> ejbEntries;
+
+    private final List<ResourceRef> resourceRefs;
 
     private final String displayName;
 
@@ -55,15 +57,16 @@ class ApplicationXmlWriterContext
 
     public ApplicationXmlWriterContext( File destinationFile, List<EarModule> earModules,
                                         List<SecurityRole> securityRoles, List<EnvEntry> envEntries,
-                                        List<EjbRef> ejbEntries,
-                                        String displayName, String description, String libraryDirectory,
-                                        String applicationName, Boolean initializeInOrder )
+                                        List<EjbRef> ejbEntries, List<ResourceRef> resourceRefs, String displayName,
+                                        String description, String libraryDirectory, String applicationName,
+                                        Boolean initializeInOrder )
     {
         this.destinationFile = destinationFile;
         this.earModules = earModules;
         this.securityRoles = securityRoles;
         this.envEntries = envEntries;
         this.ejbEntries = ejbEntries;
+        this.resourceRefs = resourceRefs;
         this.displayName = displayName;
         this.description = description;
         this.libraryDirectory = libraryDirectory;
@@ -130,6 +133,16 @@ class ApplicationXmlWriterContext
     public List<EjbRef> getEjbEntries()
     {
         return ejbEntries;
+    }
+
+    /**
+     * Returns the list of {@link ResourceRef}.
+     * 
+     * @return the resource-ref elements.
+     */
+    public List<ResourceRef> getResourceRefs()
+    {
+        return resourceRefs;
     }
 
     /**

@@ -152,6 +152,12 @@ public class GenerateApplicationXmlMojo
     private PlexusConfiguration ejbRefs;
 
     /**
+     * The {@code resource-ref} entries.
+     */
+    @Parameter
+    private PlexusConfiguration resourceRefs;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -241,8 +247,9 @@ public class GenerateApplicationXmlMojo
         final ApplicationXmlWriter writer = new ApplicationXmlWriter( javaEEVersion, encoding, generateModuleId );
         final ApplicationXmlWriterContext context =
             new ApplicationXmlWriterContext( descriptor, getModules(), buildSecurityRoles(), buildEnvEntries(),
-                                             buildEjbEntries(), displayName, description, getActualLibraryDirectory(),
-                                             applicationName, initializeInOrder ).setApplicationId( applicationId );
+                                             buildEjbEntries(), buildResourceRefs(), displayName, description,
+                                             getActualLibraryDirectory(), applicationName,
+                                             initializeInOrder ).setApplicationId( applicationId );
         writer.write( context );
     }
 
@@ -422,6 +429,63 @@ public class GenerateApplicationXmlMojo
                 catch ( IllegalArgumentException e )
                 {
                     throw new EarPluginException( "Invalid ejb-ref [" + ejbEntry + "]", e );
+                }
+            }
+            return result;
+        }
+        catch ( InterpolationException e )
+        {
+            throw new EarPluginException( "Interpolation exception:", e );
+        }
+
+    }
+
+    /**
+     * Builds the <code>resource-ref</code> based on the configuration.
+     * 
+     * @return a list of ResourceRef object(s)
+     * @throws EarPluginException if the configuration is invalid
+     */
+    private List<ResourceRef> buildResourceRefs()
+        throws EarPluginException
+    {
+        final List<ResourceRef> result = new ArrayList<ResourceRef>();
+        if ( resourceRefs == null )
+        {
+            return result;
+        }
+        try
+        {
+            getLog().debug( "Resources found" );
+            StringSearchInterpolator ssi = new StringSearchInterpolator();
+            ValueSource vs = new MapBasedValueSource( project.getProperties() );
+            ssi.addValueSource( vs );
+
+            // TODO: Check if this is a good idea hard code that here? Better idea?
+            final PlexusConfiguration[] allResourceRefEntries = resourceRefs.getChildren( "resourceRef" );
+
+            getLog().debug( "allResourceRefEntries: " + allResourceRefEntries );
+            getLog().debug( "allResourceRefEntries length: " + allResourceRefEntries.length );
+            for ( PlexusConfiguration resEntry : allResourceRefEntries )
+            {
+                getLog().debug( "Resources resEntry:" + resEntry.getName() );
+
+                // CHECKSTYLE_OFF: LineLength
+                final String childResRefName =
+                    interpolate( ssi, resEntry.getChild( ResourceRef.RESOURCE_REF_NAME ).getValue() );
+                final String childResType =
+                    interpolate( ssi, resEntry.getChild( ResourceRef.RESOURCE_TYPE ).getValue() );
+                final String childResRefAuth =
+                    interpolate( ssi, resEntry.getChild( ResourceRef.RESOURCE_AUTH ).getValue() );
+                // CHECKSTYLE_ON: LineLength
+
+                try
+                {
+                    result.add( new ResourceRef( childResRefName, childResType, childResRefAuth ) );
+                }
+                catch ( IllegalArgumentException e )
+                {
+                    throw new EarPluginException( "Invalid resource-ref [" + resEntry + "]", e );
                 }
             }
             return result;
