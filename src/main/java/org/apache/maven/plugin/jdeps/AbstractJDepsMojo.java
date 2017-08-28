@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -382,29 +382,7 @@ public abstract class AbstractJDepsMojo
             return jdepsExe.getAbsolutePath();
         }
 
-        // ----------------------------------------------------------------------
-        // Try to find jdepsExe from System.getProperty( "java.home" )
-        // By default, System.getProperty( "java.home" ) = JRE_HOME and JRE_HOME
-        // should be in the JDK_HOME
-        // ----------------------------------------------------------------------
-        // For IBM's JDK 1.2
-        if ( SystemUtils.IS_OS_AIX )
-        {
-            jdepsExe =
-                new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh", jdepsCommand );
-        }
-        // For Apple's JDK 1.6.x (and older?) on Mac OSX
-        // CHECKSTYLE_OFF: MagicNumber
-        else if ( SystemUtils.IS_OS_MAC_OSX && SystemUtils.JAVA_VERSION_FLOAT < 1.7f )
-        // CHECKSTYLE_ON: MagicNumber
-        {
-            jdepsExe = new File( SystemUtils.getJavaHome() + File.separator + "bin", jdepsCommand );
-        }
-        else
-        {
-            jdepsExe =
-                new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", jdepsCommand );
-        }
+        jdepsExe = new File( SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "sh", jdepsCommand );
 
         // ----------------------------------------------------------------------
         // Try to find jdepsExe from JAVA_HOME environment variable
