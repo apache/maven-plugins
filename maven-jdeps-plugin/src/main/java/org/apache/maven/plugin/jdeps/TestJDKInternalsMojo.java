@@ -19,13 +19,16 @@ package org.apache.maven.plugin.jdeps;
  * under the License.
  */
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Check if test classes depend on internal JDK classes
@@ -47,8 +50,16 @@ public class TestJDKInternalsMojo
     }
     
     @Override
-    protected String getClassPath() throws DependencyResolutionRequiredException
+    protected Collection<Path> getClassPath()
+        throws DependencyResolutionRequiredException
     {
-        return StringUtils.join( getProject().getTestClasspathElements().iterator(), File.pathSeparator );
+        Set<Path> classPath = new LinkedHashSet<>( getProject().getTestClasspathElements().size() );
+
+        for ( String elm : getProject().getTestClasspathElements() )
+        {
+            classPath.add( Paths.get( elm ) );
+        }
+
+        return classPath;
     }
 }

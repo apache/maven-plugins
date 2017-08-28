@@ -23,10 +23,16 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -204,8 +210,10 @@ public abstract class AbstractJDepsMojo
 //      jdeps [options] classes ...
         Commandline cmd = new Commandline();
         cmd.setExecutable( jExecutable );
-        addJDepsOptions( cmd );
-        addJDepsClasses( cmd );
+        
+        Set<Path> dependenciesToAnalyze = getDependenciesToAnalyze();
+        addJDepsOptions( cmd, dependenciesToAnalyze );
+        addJDepsClasses( cmd, dependenciesToAnalyze );
         
         JDepsConsumer consumer = new JDepsConsumer();
         executeJDepsCommandLine( cmd, outputDirectory, consumer );
@@ -230,7 +238,7 @@ public abstract class AbstractJDepsMojo
         }
     }
 
-    protected void addJDepsOptions( Commandline cmd )
+    protected void addJDepsOptions( Commandline cmd, Set<Path> dependenciesToAnalyze )
         throws MojoFailureException
     {
         if ( dotOutput != null )
@@ -262,8 +270,23 @@ public abstract class AbstractJDepsMojo
         
         try
         {
-            cmd.createArg().setValue( "-cp" );
-            cmd.createArg().setValue( getClassPath() );
+            Collection<Path> cp = new ArrayList<>();
+            
+            for ( Path path : getClassPath() )
+            {
+                if ( !dependenciesToAnalyze.contains( path ) )
+                {
+                    cp.add( path );
+                }
+            }
+            
+            if ( !cp.isEmpty() )
+            {
+                cmd.createArg().setValue( "-cp" );
+
+                cmd.createArg().setValue( StringUtils.join( cp.iterator(), File.pathSeparator ) );
+            }
+            
         }
         catch ( DependencyResolutionRequiredException e )
         {
@@ -314,11 +337,12 @@ public abstract class AbstractJDepsMojo
         // cmd.createArg().setValue( "-version" );
     }
     
-    protected void addJDepsClasses( Commandline cmd )
+    protected Set<Path> getDependenciesToAnalyze()
     {
-        // <classes> can be a pathname to a .class file, a directory, a JAR file, or a fully-qualified class name.
-        cmd.createArg().setFile( new File( getClassesDirectory() ) );
-
+        Set<Path> jdepsClasses = new LinkedHashSet<>();
+        
+        jdepsClasses.add( Paths.get( getClassesDirectory() ) );
+        
         if ( dependenciesToAnalyzeIncludes != null )
         {
             MatchPatterns includes = MatchPatterns.from( dependenciesToAnalyzeIncludes );
@@ -340,9 +364,20 @@ public abstract class AbstractJDepsMojo
                 if ( includes.matchesPatternStart( versionlessKey, true ) 
                     && !excludes.matchesPatternStart( versionlessKey, true ) )
                 {
-                    cmd.createArg().setFile( artifact.getFile() );
+                    jdepsClasses.add( artifact.getFile().toPath() );
                 }
             }
+        }
+        
+        return jdepsClasses;
+    }
+    
+    protected void addJDepsClasses( Commandline cmd, Set<Path> dependenciesToAnalyze )
+    {
+        // <classes> can be a pathname to a .class file, a directory, a JAR file, or a fully-qualified class name.
+        for ( Path dependencyToAnalyze : dependenciesToAnalyze )
+        {
+            cmd.createArg().setFile( dependencyToAnalyze.toFile() );
         }
     }
 
@@ -421,7 +456,7 @@ public abstract class AbstractJDepsMojo
         if ( getLog().isDebugEnabled() )
         {
             // no quoted arguments
-            getLog().debug( CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
+            getLog().debug( "Executing: " + CommandLineUtils.toString( cmd.getCommandline() ).replaceAll( "'", "" ) );
         }
 
         
@@ -544,5 +579,5 @@ public abstract class AbstractJDepsMojo
 
     protected abstract String getClassesDirectory();
     
-    protected abstract String getClassPath() throws DependencyResolutionRequiredException;
+    protected abstract Collection<Path> getClassPath() throws DependencyResolutionRequiredException;
 }
