@@ -1,4 +1,3 @@
-package org.apache.maven.plugin.jdeps;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -18,26 +17,21 @@ package org.apache.maven.plugin.jdeps;
  * specific language governing permissions and limitations
  * under the License.
  */
+ 
+def buildLog = new File( basedir, 'build.log' )
 
-import java.nio.file.Path;
-import java.util.Set;
+def found = false;
 
-import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.cli.Commandline;
+assert buildLog.readLines().each { String line -> 
 
-/**
- * Abstract Mojo for verifying code with jdkinternals
- *  
- * @author Robert Scholte
- */
-public abstract class AbstractJDKInternalsMojo extends AbstractJDepsMojo
-{
+  if ( line.startsWith( '[DEBUG] Executing: ' ) )
+  {
+    assert line.count( "classes" ) == 1 : "invalid classes count: " + line.count( "classes" )
 
-    @Override
-    protected void addJDepsOptions( Commandline cmd, Set<Path> dependenciesToAnalyze )
-        throws MojoFailureException
-    {
-        super.addJDepsOptions( cmd, dependenciesToAnalyze );
-        cmd.createArg().setValue( "-jdkinternals" );
-    }
+    assert line.count( "plexus-utils-3.0.24.jar" ) == 1 : "invalid plexus-utils-3.0.24.jar count: " + line.count( "plexus-utils-3.0.24.jar" )
+    
+    found = true;
+  }
 }
+
+assert found == true : "Executing line not found"
