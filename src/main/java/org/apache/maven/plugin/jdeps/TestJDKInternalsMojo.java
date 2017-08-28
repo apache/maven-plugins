@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @Mojo( name = "test-jdkinternals", 
        requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES )
+       defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES, threadSafe = true )
 public class TestJDKInternalsMojo
     extends AbstractJDepsMojo
 {

@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @Mojo( name = "jdkinternals", 
        requiresDependencyResolution = ResolutionScope.COMPILE,
-       defaultPhase = LifecyclePhase.PROCESS_CLASSES )
+       defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true )
 public class JDKInternalsMojo
     extends AbstractJDepsMojo
 {
