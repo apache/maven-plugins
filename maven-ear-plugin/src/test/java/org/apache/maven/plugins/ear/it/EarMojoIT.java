@@ -892,4 +892,12 @@ public class EarMojoIT
         doTestProject( "project-086", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
     }
 
+    /**
+     * Builds an EAR with resource-ref entries.
+     */
+    public void testProject087()
+        throws Exception
+    {
+        doTestProject( "project-087", new String[] { "ejb-sample-one-1.0.jar", "ejb-sample-two-1.0.jar" } );
+    }
 }
