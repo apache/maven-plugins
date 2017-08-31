@@ -31,6 +31,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
+import org.apache.maven.shared.utils.logging.MessageBuilder;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * Goal that resolves the project dependencies from the repository. 
@@ -177,29 +180,38 @@ public class ResolveDependenciesMojo
         List<String> artifactStringList = new ArrayList<String>();
         for ( Artifact artifact : artifacts )
         {
-            String artifactFilename = null;
+            MessageBuilder messageBuilder = MessageUtils.buffer();
+            
+            messageBuilder.a( "   " );
+            
+            if ( outputScope )
+            {
+                messageBuilder.a( artifact.toString() );
+            }
+            else
+            {
+                messageBuilder.a( artifact.getId() );
+            }
+            
             if ( outputAbsoluteArtifactFilename )
             {
                 try
                 {
                     // we want to print the absolute file name here
-                    artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
+                    String artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
+                    
+                    messageBuilder.a( ':' ).a( artifactFilename );
                 }
                 catch ( NullPointerException e )
                 {
                     // ignore the null pointer, we'll output a null string
-                    artifactFilename = null;
                 }
             }
 
-            String id = outputScope ? artifact.toString() : artifact.getId();
-            String optionalMarker = "";
             if ( outputScope && artifact.isOptional() )
             {
-                optionalMarker = " (optional) ";
+                messageBuilder.a( " (optional) " );
             }
-
-            String moduleNameMarker = "";
 
             // dependencies:collect won't download jars
             if ( artifact.getFile() != null )
@@ -207,26 +219,22 @@ public class ResolveDependenciesMojo
                 ModuleDescriptor moduleDescriptor = getModuleDescriptor( artifact.getFile() );
                 if ( moduleDescriptor != null )
                 {
-                    moduleNameMarker = " -- module " + moduleDescriptor.name;
+                    messageBuilder.project( " -- module " + moduleDescriptor.name );
 
                     if ( moduleDescriptor.automatic )
                     {
                         if ( "MANIFEST".equals( moduleDescriptor.moduleNameSource ) )
                         {
-                            moduleNameMarker += " [auto]";
+                            messageBuilder.strong( " [auto]" );
                         }
                         else
                         {
-                            moduleNameMarker += " (auto)";
+                            messageBuilder.warning( " (auto)" );
                         }
                     }
                 }
             }
-
-            artifactStringList.add( "   " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
-                + optionalMarker
-                + moduleNameMarker
-                + "\n" );
+            artifactStringList.add( messageBuilder.toString() + "\n" );
         }
         if ( sort )
         {
@@ -281,7 +289,10 @@ public class ResolveDependenciesMojo
                         {
                             jarFile = new JarFile( artifactFile );
                             
-                            if ( jarFile.getManifest().getMainAttributes().getValue( "Automatic-Module-Name" ) != null )
+                            Manifest manifest = jarFile.getManifest();
+                            
+                            if ( manifest != null
+                                && manifest.getMainAttributes().getValue( "Automatic-Module-Name" ) != null )
                             {
                                 moduleDescriptor.moduleNameSource = "MANIFEST";
                             }
