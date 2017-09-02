@@ -344,9 +344,8 @@ public class JModCreateMojo
             }
         }
 
-        List<String> handleConfigurationListWithDefault =
-            handleConfigurationListWithDefault( cmds, DEFAULT_CMD_DIRECTORY );
-        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault, "cmd" );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( cmds, DEFAULT_CMD_DIRECTORY ),
+                                                 "cmd" );
         throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( configs,
                                                                                      DEFAULT_CONFIG_DIRECTORY ),
                                                  "config" );
@@ -368,7 +367,7 @@ public class JModCreateMojo
     {
         for ( String configLocation : configurations )
         {
-            File dir = new File( getProject().getBasedir(), configLocation );
+            File dir = new File( configLocation );
             if ( !dir.exists() || !dir.isDirectory() )
             {
                 String message = "The directory " + configLocation + " for " + partialMessage
@@ -414,93 +413,54 @@ public class JModCreateMojo
             argsFile.append( '"' ).append( commaSeparatedList.replace( "\\", "\\\\" ) ).println( '"' );
         }
 
-        List<String> configList = handleConfigs();
+        List<String> configList = handleConfigurationListWithDefault( configs, DEFAULT_CONFIG_DIRECTORY );
         if ( !configList.isEmpty() )
         {
-            List<String> configAbsoluteList = new ArrayList<String>();
-            for ( String realiveDirectory : configList )
-            {
-                File f = new File( getProject().getBasedir(), realiveDirectory );
-                configAbsoluteList.add( f.getCanonicalPath() );
-            }
             argsFile.println( "--config" );
-            StringBuilder sb = getPlatformSeparatedList( configAbsoluteList );
+            StringBuilder sb = getPlatformSeparatedList( configList );
             // Should we quote the paths?
             argsFile.println( sb.toString() );
         }
 
-        List<String> commands = handleCmds();
-        if ( !commands.isEmpty() )
+        List<String> cmdsList = handleConfigurationListWithDefault( cmds, DEFAULT_CMD_DIRECTORY );
+        if ( !cmdsList.isEmpty() )
         {
-            List<String> cmdsAbsoluteList = new ArrayList<String>();
-            for ( String realiveDirectory : commands )
-            {
-                File f = new File( getProject().getBasedir(), realiveDirectory );
-                cmdsAbsoluteList.add( f.getCanonicalPath() );
-            }
-
             argsFile.println( "--cmds" );
-            StringBuilder sb = getPlatformSeparatedList( cmdsAbsoluteList );
+            StringBuilder sb = getPlatformSeparatedList( cmdsList );
             argsFile.println( sb.toString() );
         }
 
-        List<String> localLibs = handleLibs();
-        if ( !localLibs.isEmpty() )
+        List<String> libsList = handleConfigurationListWithDefault( libs, DEFAULT_LIB_DIRECTORY );
+        if ( !libsList.isEmpty() )
         {
-            List<String> libsAbsoluteList = new ArrayList<String>();
-            for ( String realiveDirectory : localLibs )
-            {
-                File f = new File( getProject().getBasedir(), realiveDirectory );
-                libsAbsoluteList.add( f.getCanonicalPath() );
-            }
-
             argsFile.println( "--libs" );
-            StringBuilder sb = getPlatformSeparatedList( libsAbsoluteList );
+            StringBuilder sb = getPlatformSeparatedList( libsList );
             argsFile.println( sb.toString() );
         }
 
-        List<String> localHeaderFiles = handleHeaderFiles();
-        if ( !localHeaderFiles.isEmpty() )
+        List<String> headerFilesList =
+            handleConfigurationListWithDefault( headerFiles, DEFAULT_HEADER_FILES_DIRECTORY );
+        if ( !headerFilesList.isEmpty() )
         {
-            List<String> headFilesAbsoluteList = new ArrayList<String>();
-            for ( String realiveDirectory : localHeaderFiles )
-            {
-                File f = new File( getProject().getBasedir(), realiveDirectory );
-                headFilesAbsoluteList.add( f.getCanonicalPath() );
-            }
-
             argsFile.println( "--header-files" );
-            StringBuilder sb = getPlatformSeparatedList( headFilesAbsoluteList );
+            StringBuilder sb = getPlatformSeparatedList( headerFilesList );
             argsFile.println( sb.toString() );
         }
 
-        List<String> localLegalNotices = handleLegalNotices();
-        if ( !localLegalNotices.isEmpty() )
+        List<String> legalNoticesList =
+            handleConfigurationListWithDefault( legalNotices, DEFAULT_LEGAL_NOTICES_DIRECTORY );
+        if ( !legalNoticesList.isEmpty() )
         {
-            List<String> legalNoticesAbsoluteList = new ArrayList<String>();
-            for ( String realiveDirectory : localLegalNotices )
-            {
-                File f = new File( getProject().getBasedir(), realiveDirectory );
-                legalNoticesAbsoluteList.add( f.getCanonicalPath() );
-            }
-
             argsFile.println( "--legal-notices" );
-            StringBuilder sb = getPlatformSeparatedList( legalNoticesAbsoluteList );
+            StringBuilder sb = getPlatformSeparatedList( legalNoticesList );
             argsFile.println( sb.toString() );
         }
 
-        List<String> localManPages = handleManPages();
-        if ( !localManPages.isEmpty() )
+        List<String> manPagesList = handleConfigurationListWithDefault( manPages, DEFAULT_MAN_PAGES_DIRECTORY );
+        if ( !manPagesList.isEmpty() )
         {
-            List<String> manPagesAbsoluteList = new ArrayList<String>();
-            for ( String realiveDirectory : localManPages )
-            {
-                File f = new File( getProject().getBasedir(), realiveDirectory );
-                manPagesAbsoluteList.add( f.getCanonicalPath() );
-            }
-
             argsFile.println( "--man-pages" );
-            StringBuilder sb = getPlatformSeparatedList( manPagesAbsoluteList );
+            StringBuilder sb = getPlatformSeparatedList( manPagesList );
             argsFile.println( sb.toString() );
         }
 
@@ -549,206 +509,27 @@ public class JModCreateMojo
                 commands.add( defaultLocation );
             }
         }
+
+        commands = resolveAgainstProjectBaseDir( commands );
         return commands;
     }
 
-    /**
-     * Check if a configuration is given for cmds in pom file than take that. Otherwise check if the default location
-     * exists if yes than take that otherwise the resulting list will be emtpy.
-     * 
-     * @return
-     */
-    private List<String> handleCmds()
+    private List<String> resolveAgainstProjectBaseDir( List<String> relativeDirectories )
     {
-        List<String> commands = new ArrayList<String>();
-        if ( havingCmdsDefinedInPOM() )
-        {
-            commands.addAll( cmds );
-        }
-        else
-        {
-            if ( doCmdDefaultsExist() )
-            {
-                commands.add( DEFAULT_CMD_DIRECTORY );
-            }
-        }
-        return commands;
-    }
+        List<String> result = new ArrayList<>();
 
-    private List<String> handleConfigs()
-    {
-        List<String> commands = new ArrayList<String>();
-        if ( havingConfigsDefinedInPOM() )
+        for ( String configLocation : relativeDirectories )
         {
-            commands.addAll( configs );
+            File dir = new File( getProject().getBasedir(), configLocation );
+            result.add( dir.getAbsolutePath() );
         }
-        else
-        {
-            if ( doConfigsDefaultsExist() )
-            {
-                commands.add( DEFAULT_CONFIG_DIRECTORY );
-            }
-        }
-        return commands;
-    }
-
-    private List<String> handleLibs()
-    {
-        List<String> commands = new ArrayList<String>();
-        if ( havingLibsDefinedInPOM() )
-        {
-            commands.addAll( this.libs );
-        }
-        else
-        {
-            if ( doLibsDefaultsExist() )
-            {
-                commands.add( DEFAULT_LIB_DIRECTORY );
-            }
-        }
-        return commands;
-    }
-
-    private List<String> handleHeaderFiles()
-    {
-        List<String> commands = new ArrayList<String>();
-        if ( havingHeaderFilesDefinedInPOM() )
-        {
-            commands.addAll( headerFiles );
-        }
-        else
-        {
-            if ( doLibsDefaultsExist() )
-            {
-                commands.add( DEFAULT_HEADER_FILES_DIRECTORY );
-            }
-        }
-        return commands;
-    }
-
-    private List<String> handleLegalNotices()
-    {
-        List<String> commands = new ArrayList<String>();
-        if ( havingLegalNoticesDefinedInPOM() )
-        {
-            commands.addAll( legalNotices );
-        }
-        else
-        {
-            if ( doLegalNoticesDefaultsExist() )
-            {
-                commands.add( DEFAULT_LEGAL_NOTICES_DIRECTORY );
-            }
-        }
-        return commands;
-    }
-
-    private List<String> handleManPages()
-    {
-        List<String> commands = new ArrayList<String>();
-        if ( havingManPagesDefinedInPOM() )
-        {
-            commands.addAll( manPages );
-        }
-        else
-        {
-            if ( doManPagesDefaultsExist() )
-            {
-                commands.add( DEFAULT_MAN_PAGES_DIRECTORY );
-            }
-        }
-        return commands;
-    }
-
-    private boolean havingCmdsDefinedInPOM()
-    {
-        return cmds != null && !cmds.isEmpty();
-    }
-
-    private boolean havingConfigsDefinedInPOM()
-    {
-        return configs != null && !configs.isEmpty();
-    }
-
-    private boolean havingLibsDefinedInPOM()
-    {
-        return libs != null && !libs.isEmpty();
-    }
-
-    private boolean havingHeaderFilesDefinedInPOM()
-    {
-        return headerFiles != null && !headerFiles.isEmpty();
-    }
-
-    private boolean havingLegalNoticesDefinedInPOM()
-    {
-        return legalNotices != null && !legalNotices.isEmpty();
-    }
-
-    private boolean havingManPagesDefinedInPOM()
-    {
-        return manPages != null && !manPages.isEmpty();
+        return result;
     }
 
     private boolean doDefaultsExist( String defaultLocation )
     {
         boolean result = false;
         File dir = new File( getProject().getBasedir(), defaultLocation );
-        if ( dir.exists() && dir.isDirectory() )
-        {
-            result = true;
-        }
-        return result;
-    }
-
-    private boolean doCmdDefaultsExist()
-    {
-        boolean result = false;
-        File dir = new File( getProject().getBasedir(), DEFAULT_CMD_DIRECTORY );
-        if ( dir.exists() && dir.isDirectory() )
-        {
-            result = true;
-        }
-        return result;
-    }
-
-    private boolean doConfigsDefaultsExist()
-    {
-        boolean result = false;
-        File dir = new File( getProject().getBasedir(), DEFAULT_CONFIG_DIRECTORY );
-        if ( dir.exists() && dir.isDirectory() )
-        {
-            result = true;
-        }
-        return result;
-    }
-
-    private boolean doLibsDefaultsExist()
-    {
-        boolean result = false;
-        File dir = new File( getProject().getBasedir(), DEFAULT_LIB_DIRECTORY );
-        if ( dir.exists() && dir.isDirectory() )
-        {
-            result = true;
-        }
-        return result;
-    }
-
-    private boolean doLegalNoticesDefaultsExist()
-    {
-        boolean result = false;
-        File dir = new File( getProject().getBasedir(), DEFAULT_LEGAL_NOTICES_DIRECTORY );
-        if ( dir.exists() && dir.isDirectory() )
-        {
-            result = true;
-        }
-        return result;
-    }
-
-    private boolean doManPagesDefaultsExist()
-    {
-        boolean result = false;
-        File dir = new File( getProject().getBasedir(), DEFAULT_MAN_PAGES_DIRECTORY );
         if ( dir.exists() && dir.isDirectory() )
         {
             result = true;
