@@ -126,8 +126,10 @@ under the License.
       <modules>
         <module>maven-assembly-plugin</module>
         <module>maven-checkstyle-plugin</module>
-		<module>maven-javadoc-plugin</module>
+		    <module>maven-javadoc-plugin</module>
         <module>maven-pmd-plugin</module>
+        <module>maven-jlink-plugin</module>
+        <module>maven-jmod-plugin</module>
       </modules>
       <activation>
         <jdk>[1.7,)</jdk>
