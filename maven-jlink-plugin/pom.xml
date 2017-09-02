@@ -106,19 +106,6 @@
     </dependency>
 
     <dependency>
-      <groupId>io.takari.maven.plugins</groupId>
-      <artifactId>takari-plugin-testing</artifactId>
-      <version>2.9.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency> <!-- used by takari-plugin-testing, don't give it compile scope! -->
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
-      <version>${mavenVersion}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>1.10.19</version>
@@ -140,23 +127,4 @@
       </resource>
     </resources>
   </build>
-<!--   <build> -->
-<!--     <plugins> -->
-<!--       <plugin> -->
-<!--         <groupId>io.takari.maven.plugins</groupId> -->
-<!--         <artifactId>takari-lifecycle-plugin</artifactId> -->
-<!--         <version>1.12.1</version> -->
-<!--         <extensions>true</extensions> -->
-<!--         <executions> -->
-<!--           <execution> -->
-<!--             <id>testProperties</id> -->
-<!--             <phase>process-test-resources</phase> -->
-<!--             <goals> -->
-<!--               <goal>testProperties</goal> -->
-<!--             </goals> -->
-<!--           </execution> -->
-<!--         </executions> -->
-<!--       </plugin> -->
-<!--     </plugins> -->
-<!--   </build> -->
 </project>
