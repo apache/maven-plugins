@@ -22,6 +22,7 @@ package org.apache.maven.plugins.jmod;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -56,17 +57,29 @@ public class JModCreateMojo
     private List<String> classPath;
 
     /**
-     * Specifies one or more directories containing native commands to be copied. <code>JMod</code> command line
-     * equivalent: <code>--cmds <path></code>.
+     * Specifies one or more directories containing native commands to be copied. The given directories are relative to
+     * the current base directory. If no entry is defined the default is <code>src/main/cmds</code> used.
+     * 
+     * <pre>
+     * &lt;cmds&gt;
+     *   &lt;cmd&gt;...&lt;/cmd&gt;
+     *   &lt;cmd&gt;...&lt;/cmd&gt;
+     *   .
+     *   .
+     * &lt;/cmds&gt;
+     * </pre>
+     * 
+     * <code>JMod</code> command line equivalent: <code>--cmds &lt;path&gt;</code>.
      */
-    @Parameter( defaultValue = "${project.basedir}/src/main/cmds" )
+    @Parameter
     private List<String> cmds;
 
+    private static final String DEFAULT_CMD_DIRECTORY = "src/main/cmds";
+
     /**
-     * Specifies one or more directories containing configuration files to be copied. <code>--config &lt;path&gt;</code>
-     * Location of user-editable config files. TODO: Implement the handling. Should we use src/main/resources for this?
-     * or better something different? What about filtering? I think a first approach is to use
-     * <code>src/main/config</code>.
+     * Specifies one or more directories containing configuration files to be copied. Location of user-editable config
+     * files. If no configuration is given the <code>src/main/config</code> location is used as default. If this
+     * directory does not exist the whole will be ignored.
      * 
      * <pre>
      * &lt;configs&gt;
@@ -76,9 +89,13 @@ public class JModCreateMojo
      *   .
      * &lt;/configs&gt;
      * </pre>
+     * 
+     * jmod command line equivalent: <code>--config &lt;path&gt;</code>.
      */
     @Parameter
     private List<String> configs;
+
+    private static final String DEFAULT_CONFIG_DIRECTORY = "src/main/config";
 
     /**
      * Exclude files matching the pattern list. Each element using one the following forms: &lt;glob-pattern&gt;,
@@ -143,7 +160,7 @@ public class JModCreateMojo
      * &lt;/headerFiles&gt;
      * </pre>
      * 
-     * jmod command line equivalent <code>--header-files &lt;path&gt;</code>
+     * jmod command line equivalent <code>--header-files &lt;path&gt;</code> TODO: Define default location.
      */
     @Parameter
     private List<String> headerFiles;
@@ -160,7 +177,7 @@ public class JModCreateMojo
      * &lt;/manPages&gt;
      * </pre>
      * 
-     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code>
+     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code> TODO: Define default location.
      */
     @Parameter
     private List<String> manPages;
@@ -183,13 +200,13 @@ public class JModCreateMojo
      * &lt;/legalNotices&gt;
      * </pre>
      * 
-     * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code>
+     * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code> TODO: Define default location.
      */
     @Parameter
     private List<String> legalNotices;
 
     /**
-     * --target-platform <target-platform> Target platform
+     * <code>--target-platform &lt;target-platform&gt;</code> Target platform
      */
     @Parameter
     private String targetPlatform;
@@ -310,6 +327,32 @@ public class JModCreateMojo
 
             }
         }
+
+        List<String> commands = handleCmds();
+        for ( String cmdLocation : commands )
+        {
+            File dir = new File( getProject().getBasedir(), cmdLocation );
+            if ( !dir.exists() || !dir.isDirectory() )
+            {
+                String message =
+                    "The directory " + cmdLocation + " for cmds parameters does not exist or is not a directory. ";
+                getLog().error( message );
+                throw new MojoFailureException( message );
+            }
+        }
+
+        List<String> configsList = handleConfigs();
+        for ( String configLocation : configsList )
+        {
+            File dir = new File( getProject().getBasedir(), configLocation );
+            if ( !dir.exists() || !dir.isDirectory() )
+            {
+                String message = "The directory " + configLocation + " for configs parameters does not exist "
+                    + "or is not a directory. ";
+                getLog().error( message );
+                throw new MojoFailureException( message );
+            }
+        }
     }
 
     private Commandline createJModCreateCommandLine( File resultingJModFile )
@@ -340,10 +383,12 @@ public class JModCreateMojo
             argsFile.println( sb.toString() );
         }
 
-        if ( configs != null && !configs.isEmpty() )
+        List<String> configList = handleConfigs();
+
+        if ( !configList.isEmpty() )
         {
             argsFile.println( "--config" );
-            StringBuilder sb = getPlatformSeparatedList( configs );
+            StringBuilder sb = getPlatformSeparatedList( configList );
             // Should we quote the paths?
             argsFile.println( sb.toString() );
         }
@@ -355,10 +400,11 @@ public class JModCreateMojo
             argsFile.append( '"' ).append( commaSeparatedList.replace( "\\", "\\\\" ) ).println( '"' );
         }
 
-        if ( cmds != null && !cmds.isEmpty() )
+        List<String> commands = handleCmds();
+        if ( !commands.isEmpty() )
         {
             argsFile.println( "--cmds" );
-            StringBuilder sb = getPlatformSeparatedList( cmds );
+            StringBuilder sb = getPlatformSeparatedList( commands );
             argsFile.println( sb.toString() );
         }
 
@@ -407,6 +453,78 @@ public class JModCreateMojo
         cmd.createArg().setValue( '@' + file.getAbsolutePath() );
 
         return cmd;
+    }
+
+    /**
+     * Check if a configuration is given for cmds in pom file than take that. Otherwise check if the default location
+     * exists if yes than take that otherwise the resulting list will be emtpy.
+     * 
+     * @return
+     */
+    private List<String> handleCmds()
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingCmdsDefinedInPOM() )
+        {
+            commands.addAll( cmds );
+        }
+        else
+        {
+            if ( doCmdDefaultsExist() )
+            {
+                commands.add( DEFAULT_CMD_DIRECTORY );
+            }
+        }
+        return commands;
+    }
+
+    private List<String> handleConfigs()
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingConfigsDefinedInPOM() )
+        {
+            commands.addAll( configs );
+        }
+        else
+        {
+            if ( doConfigsDefaultsExist() )
+            {
+                commands.add( DEFAULT_CONFIG_DIRECTORY );
+            }
+        }
+        return commands;
+    }
+
+    private boolean havingCmdsDefinedInPOM()
+    {
+        return cmds != null && !cmds.isEmpty();
+    }
+
+    private boolean havingConfigsDefinedInPOM()
+    {
+        return configs != null && !configs.isEmpty();
+    }
+
+    private boolean doCmdDefaultsExist()
+    {
+        boolean result = false;
+        File dir = new File( getProject().getBasedir(), DEFAULT_CMD_DIRECTORY );
+        if ( dir.exists() && dir.isDirectory() )
+        {
+            result = true;
+        }
+        return result;
+    }
+
+    private boolean doConfigsDefaultsExist()
+    {
+        boolean result = false;
+        File dir = new File( getProject().getBasedir(), DEFAULT_CONFIG_DIRECTORY );
+        if ( dir.exists() && dir.isDirectory() )
+        {
+            result = true;
+        }
+        return result;
     }
 
     private StringBuilder getPlatformSeparatedList( List<String> paths )
