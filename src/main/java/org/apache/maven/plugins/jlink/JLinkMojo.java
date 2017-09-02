@@ -41,6 +41,10 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
+ * The JLink goal is intended to create a Java Run Time Image file.
+ * 
+ * 
+ * 
  * <pre>
  * Usage: jlink &lt;options&gt; --module-path &lt;modulepath&gt; --add-modules &lt;module&gt;[,&lt;module&gt;...]
  * Possible options include:
@@ -82,7 +86,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
-// TODO: Check things about conf files?
+// TODO: Check if the resolution scope is correct?
 // CHECKSTYLE_OFF: LineLength
 @Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
 // CHECKSTYLE_ON: LineLength
@@ -154,11 +158,13 @@ public class JLinkMojo
     private String pluginModulePath;
 
     /**
-     * The output directory for the resulting Run Time Image. This is stored in non compressed form.
+     * The output directory for the resulting Run Time Image. The created 
+     * Run Time Image is stored in non compressed form. This will later being
+     * packaged into a <code>zip</code> file.
      * <code>--output &lt;path&gt;</code>
      */
     // TODO: is this a good final location?
-    @Parameter( defaultValue = "${project.build.directory}/jlink" )
+    @Parameter( defaultValue = "${project.build.directory}/maven-jlink", required = true, readonly = true )
     private File outputDirectoryImage;
 
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )

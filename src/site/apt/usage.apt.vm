@@ -227,7 +227,9 @@ mvn clean deploy
   At the moment the resulting Java Run Time Image is packaged into a <<zip>> archive which 
   used to transport the whole structure which is created by <<jlink>> to a repository.
 
-  The basic structure of the resulting Java Run Time Image looks like this:
+  The resulting 
+  {{{https://docs.oracle.com/javase/9/install/installed-directory-structure-jdk-and-jre.htm}Java Run Time Image directory structure}}
+  looks like this:
   
 +---
 jlink/
@@ -238,4 +240,6 @@ jlink/
 ├── lib
 └── release
 +---
+
+  
 
