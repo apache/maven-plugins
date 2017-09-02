@@ -43,8 +43,6 @@ import org.codehaus.plexus.util.cli.Commandline;
 /**
  * The JLink goal is intended to create a Java Run Time Image file.
  * 
- * 
- * 
  * <pre>
  * Usage: jlink &lt;options&gt; --module-path &lt;modulepath&gt; --add-modules &lt;module&gt;[,&lt;module&gt;...]
  * Possible options include:
@@ -158,10 +156,8 @@ public class JLinkMojo
     private String pluginModulePath;
 
     /**
-     * The output directory for the resulting Run Time Image. The created 
-     * Run Time Image is stored in non compressed form. This will later being
-     * packaged into a <code>zip</code> file.
-     * <code>--output &lt;path&gt;</code>
+     * The output directory for the resulting Run Time Image. The created Run Time Image is stored in non compressed
+     * form. This will later being packaged into a <code>zip</code> file. <code>--output &lt;path&gt;</code>
      */
     // TODO: is this a good final location?
     @Parameter( defaultValue = "${project.build.directory}/maven-jlink", required = true, readonly = true )
@@ -201,13 +197,15 @@ public class JLinkMojo
     private boolean ignoreSigningInformation;
 
     /**
-     * <code>--no-header-files</code>
+     * This will suppress to have the <code>includes</code> directory in the resulting Java Run Time Image. The JLink
+     * command line equivalent is: <code>--no-header-files</code>
      */
     @Parameter( defaultValue = "false" )
     private boolean noHeaderFiles;
 
     /**
-     * <code>--no-man-pages</code>
+     * This will suppress to have the <code>man</code> directory in the resulting Java Run Time Image. The JLink command
+     * line equivalent is: <code>--no-man-pages</code>
      */
     @Parameter( defaultValue = "false" )
     private boolean noManPages;
@@ -272,24 +270,24 @@ public class JLinkMojo
         List<Dependency> dependencies = getSession().getCurrentProject().getDependencies();
 
         List<MavenProject> modulesToAdd = new ArrayList<>();
-//        if ( dependencies.isEmpty() )
-//        {
-//            // Do we need to do something if no dependencies have been defined ?
-//            // WARNING ?
-//        }
+        // if ( dependencies.isEmpty() )
+        // {
+        // // Do we need to do something if no dependencies have been defined ?
+        // // WARNING / ERROR or failure?
+        // }
         getLog().info( "The following dependencies will be linked into the runtime image:" );
         for ( Dependency dependency : dependencies )
         {
             // We will support "jmod" as well as "jar"
             // TODO: Think about jmod's cause they can contain config files etc. ? What todo with them? Are they already
-            // handled by jlink ? 
+            // handled by jlink ?
             if ( JAR_PACKAGING.equals( dependency.getType() ) || JMOD_PACKAGING.equals( dependency.getType() ) )
             {
                 MavenProject mp = findDependencyInProjects( dependency );
                 getLog().info( " -> " + mp.getId() );
                 // TODO: What about module name != artifactId which has been
                 // defined in module-info.java file!
-                // This would mean to read the module-info information from the jmod/jar file for example to 
+                // This would mean to read the module-info information from the jmod/jar file for example to
                 // get the appropriate information.
                 modulesToAdd.add( mp );
             }
