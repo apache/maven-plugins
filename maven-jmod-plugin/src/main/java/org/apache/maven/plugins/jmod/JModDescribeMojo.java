@@ -32,15 +32,15 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * This goal is to support the usage of <code>jmod list</code>.
+ * This goal is to support the usage of <code>jmod describe</code>.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
-@Mojo( name = "list", requiresDependencyResolution = ResolutionScope.NONE, defaultPhase = LifecyclePhase.NONE )
-public class JModListMojo
+@Mojo( name = "describe", requiresDependencyResolution = ResolutionScope.NONE, defaultPhase = LifecyclePhase.NONE )
+public class JModDescribeMojo
     extends AbstractJModMojo
 {
-    
+
     /**
      * Do not change this. (TODO!)
      */
@@ -52,7 +52,7 @@ public class JModListMojo
      */
     @Parameter( defaultValue = "${project.artifactId}", required = true )
     private String moduleName;
-    
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -81,7 +81,7 @@ public class JModListMojo
         Commandline cmd;
         try
         {
-            cmd = createJModListCommandLine( resultingJModFile );
+            cmd = createJModDescribeCommandLine( resultingJModFile );
         }
         catch ( IOException e )
         {
@@ -89,15 +89,15 @@ public class JModListMojo
         }
         cmd.setExecutable( jModExecutable );
 
-        getLog().info( "The following files are contained in the module file " + resultingJModFile.getAbsolutePath() );
+        getLog().info( "The following information is contained in the module file " + resultingJModFile.getAbsolutePath() );
         executeCommand( cmd, outputDirectory );
 
     }
 
-    private Commandline createJModListCommandLine( File resultingJModFile )
+    private Commandline createJModDescribeCommandLine( File resultingJModFile )
         throws IOException
     {
-        File file = new File( outputDirectory, "jmodListArgs" );
+        File file = new File( outputDirectory, "jmodDescribeArgs" );
         if ( !getLog().isDebugEnabled() )
         {
             file.deleteOnExit();
@@ -107,7 +107,7 @@ public class JModListMojo
 
         PrintStream argsFile = new PrintStream( file );
 
-        argsFile.println( "list" );
+        argsFile.println( "describe" );
 
         argsFile.println( resultingJModFile.getAbsolutePath() );
         argsFile.close();
