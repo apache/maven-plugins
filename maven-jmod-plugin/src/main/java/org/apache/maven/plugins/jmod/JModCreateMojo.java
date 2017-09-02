@@ -78,7 +78,7 @@ public class JModCreateMojo
 
     /**
      * Specifies one or more directories containing configuration files to be copied. Location of user-editable config
-     * files. If no configuration is given the <code>src/main/config</code> location is used as default. If this
+     * files. If no configuration is given the <code>src/main/configs</code> location is used as default. If this
      * directory does not exist the whole will be ignored.
      * 
      * <pre>
@@ -95,7 +95,7 @@ public class JModCreateMojo
     @Parameter
     private List<String> configs;
 
-    private static final String DEFAULT_CONFIG_DIRECTORY = "src/main/config";
+    private static final String DEFAULT_CONFIG_DIRECTORY = "src/main/configs";
 
     /**
      * Exclude files matching the pattern list. Each element using one the following forms: &lt;glob-pattern&gt;,
@@ -117,8 +117,9 @@ public class JModCreateMojo
     private String mainClass;
 
     /**
-     * Specifies one or more directories containing native libraries to be copied. Location of native libraries.
-     * <code>--libs &lt;path&gt;</code>
+     * Specifies one or more directories containing native libraries to be copied (The given directories are relative to
+     * project base directory). If no configuration is given in <<pom.xml>> file the location <code>src/main/libs</code>
+     * will be used. If the default location does not exist the whole configuration will be ignored.
      * 
      * <pre>
      * &lt;libs&gt;
@@ -130,7 +131,9 @@ public class JModCreateMojo
      * </pre>
      */
     @Parameter
-    private File libs;
+    private List<String> libs;
+
+    private static final String DEFAULT_LIB_DIRECTORY = "src/main/libs";
 
     /**
      * Define the module version of the jmod file.
@@ -145,11 +148,16 @@ public class JModCreateMojo
     @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
     private File modulePath;
 
+    /**
+     * <code>--do-not-resolve-by-default</code> Exclude from the default root set of modules
+     */
     @Parameter( defaultValue = "false" )
     private boolean doNotResolveByDefault;
 
     /**
-     * Define the locations of header files.
+     * Define the locations of header files. The default location is <code>src/main/headerfiles</code>. Best is to put
+     * the header files into the default location. If the directories do not exist the configuration will be ignored.
+     * The given directories are relative to the project base directory.
      * 
      * <pre>
      * &lt;headerFiles&gt;
@@ -165,8 +173,11 @@ public class JModCreateMojo
     @Parameter
     private List<String> headerFiles;
 
+    private static final String DEFAULT_HEADER_FILES_DIRECTORY = "src/main/headerfiles";
+
     /**
-     * Define the locations of man pages.
+     * Define the locations of man pages. The default location is <code>src/main/manpages</code>. The given man pages
+     * locations are relative to the project base directory.
      * 
      * <pre>
      * &lt;manPages&gt;
@@ -182,6 +193,8 @@ public class JModCreateMojo
     @Parameter
     private List<String> manPages;
 
+    private static final String DEFAULT_MAN_PAGES_DIRECTORY = "src/main/manpages";
+
     /**
      * The moduleName. The default is to use the <code>artifactId</code>.
      */
@@ -189,7 +202,8 @@ public class JModCreateMojo
     private String moduleName;
 
     /**
-     * Define the location of legal notices.
+     * Define the location of legal notices. The default location is <code>src/main/legalnotices</code>. The given man
+     * pages locations are relative to the project base directory.
      * 
      * <pre>
      * &lt;legalNotices&gt;
@@ -205,8 +219,10 @@ public class JModCreateMojo
     @Parameter
     private List<String> legalNotices;
 
+    private static final String DEFAULT_LEGAL_NOTICES_DIRECTORY = "src/main/legalnotices";
+
     /**
-     * <code>--target-platform &lt;target-platform&gt;</code> Target platform
+     * <code>--target-platform &lt;target-platform&gt;</code> Target platform TODO: Which values are valid?
      */
     @Parameter
     private String targetPlatform;
@@ -328,37 +344,38 @@ public class JModCreateMojo
             }
         }
 
-        List<String> commands = handleCmds();
-        for ( String cmdLocation : commands )
+        List<String> handleConfigurationListWithDefault =
+            handleConfigurationListWithDefault( cmds, DEFAULT_CMD_DIRECTORY );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault, "cmd" );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( configs,
+                                                                                     DEFAULT_CONFIG_DIRECTORY ),
+                                                 "config" );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( libs, DEFAULT_LIB_DIRECTORY ),
+                                                 "lib" );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( headerFiles,
+                                                                                     DEFAULT_HEADER_FILES_DIRECTORY ),
+                                                 "headerFile" );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( legalNotices,
+                                                                                     DEFAULT_LEGAL_NOTICES_DIRECTORY ),
+                                                 "legalNotice" );
+        throwExceptionIfNotExistOrNotADirectory( handleConfigurationListWithDefault( manPages,
+                                                                                     DEFAULT_MAN_PAGES_DIRECTORY ),
+                                                 "manPage" );
+    }
+
+    private void throwExceptionIfNotExistOrNotADirectory( List<String> configurations, String partialMessage )
+        throws MojoFailureException
+    {
+        for ( String configLocation : configurations )
         {
-            File dir = new File( getProject().getBasedir(), cmdLocation );
+            File dir = new File( getProject().getBasedir(), configLocation );
             if ( !dir.exists() || !dir.isDirectory() )
             {
-                String message =
-                    "The directory " + cmdLocation + " for cmds parameters does not exist or is not a directory. ";
+                String message = "The directory " + configLocation + " for " + partialMessage
+                    + " parameter does not exist " + "or is not a directory. ";
                 getLog().error( message );
                 throw new MojoFailureException( message );
             }
-        }
-
-        try
-        {
-            List<String> configsList = handleConfigs();
-            for ( String configLocation : configsList )
-            {
-                File dir = new File( getProject().getBasedir(), configLocation );
-                if ( !dir.exists() || !dir.isDirectory() )
-                {
-                    String message = "The directory " + configLocation + " for configs parameters does not exist "
-                        + "or is not a directory. ";
-                    getLog().error( message );
-                    throw new MojoFailureException( message );
-                }
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoFailureException( e.getMessage() );
         }
     }
 
@@ -390,8 +407,14 @@ public class JModCreateMojo
             argsFile.println( sb.toString() );
         }
 
-        List<String> configList = handleConfigs();
+        if ( excludes != null && !excludes.isEmpty() )
+        {
+            argsFile.println( "--exclude" );
+            String commaSeparatedList = getCommaSeparatedList( excludes );
+            argsFile.append( '"' ).append( commaSeparatedList.replace( "\\", "\\\\" ) ).println( '"' );
+        }
 
+        List<String> configList = handleConfigs();
         if ( !configList.isEmpty() )
         {
             List<String> configAbsoluteList = new ArrayList<String>();
@@ -404,13 +427,6 @@ public class JModCreateMojo
             StringBuilder sb = getPlatformSeparatedList( configAbsoluteList );
             // Should we quote the paths?
             argsFile.println( sb.toString() );
-        }
-
-        if ( excludes != null && !excludes.isEmpty() )
-        {
-            argsFile.println( "--exclude" );
-            String commaSeparatedList = getCommaSeparatedList( excludes );
-            argsFile.append( '"' ).append( commaSeparatedList.replace( "\\", "\\\\" ) ).println( '"' );
         }
 
         List<String> commands = handleCmds();
@@ -428,24 +444,63 @@ public class JModCreateMojo
             argsFile.println( sb.toString() );
         }
 
-        if ( headerFiles != null && !headerFiles.isEmpty() )
+        List<String> localLibs = handleLibs();
+        if ( !localLibs.isEmpty() )
         {
+            List<String> libsAbsoluteList = new ArrayList<String>();
+            for ( String realiveDirectory : localLibs )
+            {
+                File f = new File( getProject().getBasedir(), realiveDirectory );
+                libsAbsoluteList.add( f.getCanonicalPath() );
+            }
+
+            argsFile.println( "--libs" );
+            StringBuilder sb = getPlatformSeparatedList( libsAbsoluteList );
+            argsFile.println( sb.toString() );
+        }
+
+        List<String> localHeaderFiles = handleHeaderFiles();
+        if ( !localHeaderFiles.isEmpty() )
+        {
+            List<String> headFilesAbsoluteList = new ArrayList<String>();
+            for ( String realiveDirectory : localHeaderFiles )
+            {
+                File f = new File( getProject().getBasedir(), realiveDirectory );
+                headFilesAbsoluteList.add( f.getCanonicalPath() );
+            }
+
             argsFile.println( "--header-files" );
-            StringBuilder sb = getPlatformSeparatedList( headerFiles );
+            StringBuilder sb = getPlatformSeparatedList( headFilesAbsoluteList );
             argsFile.println( sb.toString() );
         }
 
-        if ( legalNotices != null && !legalNotices.isEmpty() )
+        List<String> localLegalNotices = handleLegalNotices();
+        if ( !localLegalNotices.isEmpty() )
         {
+            List<String> legalNoticesAbsoluteList = new ArrayList<String>();
+            for ( String realiveDirectory : localLegalNotices )
+            {
+                File f = new File( getProject().getBasedir(), realiveDirectory );
+                legalNoticesAbsoluteList.add( f.getCanonicalPath() );
+            }
+
             argsFile.println( "--legal-notices" );
-            StringBuilder sb = getPlatformSeparatedList( legalNotices );
+            StringBuilder sb = getPlatformSeparatedList( legalNoticesAbsoluteList );
             argsFile.println( sb.toString() );
         }
 
-        if ( manPages != null && !manPages.isEmpty() )
+        List<String> localManPages = handleManPages();
+        if ( !localManPages.isEmpty() )
         {
+            List<String> manPagesAbsoluteList = new ArrayList<String>();
+            for ( String realiveDirectory : localManPages )
+            {
+                File f = new File( getProject().getBasedir(), realiveDirectory );
+                manPagesAbsoluteList.add( f.getCanonicalPath() );
+            }
+
             argsFile.println( "--man-pages" );
-            StringBuilder sb = getPlatformSeparatedList( manPages );
+            StringBuilder sb = getPlatformSeparatedList( manPagesAbsoluteList );
             argsFile.println( sb.toString() );
         }
 
@@ -475,6 +530,28 @@ public class JModCreateMojo
         return cmd;
     }
 
+    private boolean havingConfigurationDefinedInPOM( List<String> configuration )
+    {
+        return configuration != null && !configuration.isEmpty();
+    }
+
+    private List<String> handleConfigurationListWithDefault( List<String> configuration, String defaultLocation )
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingConfigurationDefinedInPOM( configuration ) )
+        {
+            commands.addAll( configuration );
+        }
+        else
+        {
+            if ( doDefaultsExist( defaultLocation ) )
+            {
+                commands.add( defaultLocation );
+            }
+        }
+        return commands;
+    }
+
     /**
      * Check if a configuration is given for cmds in pom file than take that. Otherwise check if the default location
      * exists if yes than take that otherwise the resulting list will be emtpy.
@@ -499,7 +576,6 @@ public class JModCreateMojo
     }
 
     private List<String> handleConfigs()
-        throws IOException
     {
         List<String> commands = new ArrayList<String>();
         if ( havingConfigsDefinedInPOM() )
@@ -516,6 +592,74 @@ public class JModCreateMojo
         return commands;
     }
 
+    private List<String> handleLibs()
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingLibsDefinedInPOM() )
+        {
+            commands.addAll( this.libs );
+        }
+        else
+        {
+            if ( doLibsDefaultsExist() )
+            {
+                commands.add( DEFAULT_LIB_DIRECTORY );
+            }
+        }
+        return commands;
+    }
+
+    private List<String> handleHeaderFiles()
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingHeaderFilesDefinedInPOM() )
+        {
+            commands.addAll( headerFiles );
+        }
+        else
+        {
+            if ( doLibsDefaultsExist() )
+            {
+                commands.add( DEFAULT_HEADER_FILES_DIRECTORY );
+            }
+        }
+        return commands;
+    }
+
+    private List<String> handleLegalNotices()
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingLegalNoticesDefinedInPOM() )
+        {
+            commands.addAll( legalNotices );
+        }
+        else
+        {
+            if ( doLegalNoticesDefaultsExist() )
+            {
+                commands.add( DEFAULT_LEGAL_NOTICES_DIRECTORY );
+            }
+        }
+        return commands;
+    }
+
+    private List<String> handleManPages()
+    {
+        List<String> commands = new ArrayList<String>();
+        if ( havingManPagesDefinedInPOM() )
+        {
+            commands.addAll( manPages );
+        }
+        else
+        {
+            if ( doManPagesDefaultsExist() )
+            {
+                commands.add( DEFAULT_MAN_PAGES_DIRECTORY );
+            }
+        }
+        return commands;
+    }
+
     private boolean havingCmdsDefinedInPOM()
     {
         return cmds != null && !cmds.isEmpty();
@@ -524,6 +668,37 @@ public class JModCreateMojo
     private boolean havingConfigsDefinedInPOM()
     {
         return configs != null && !configs.isEmpty();
+    }
+
+    private boolean havingLibsDefinedInPOM()
+    {
+        return libs != null && !libs.isEmpty();
+    }
+
+    private boolean havingHeaderFilesDefinedInPOM()
+    {
+        return headerFiles != null && !headerFiles.isEmpty();
+    }
+
+    private boolean havingLegalNoticesDefinedInPOM()
+    {
+        return legalNotices != null && !legalNotices.isEmpty();
+    }
+
+    private boolean havingManPagesDefinedInPOM()
+    {
+        return manPages != null && !manPages.isEmpty();
+    }
+
+    private boolean doDefaultsExist( String defaultLocation )
+    {
+        boolean result = false;
+        File dir = new File( getProject().getBasedir(), defaultLocation );
+        if ( dir.exists() && dir.isDirectory() )
+        {
+            result = true;
+        }
+        return result;
     }
 
     private boolean doCmdDefaultsExist()
@@ -541,6 +716,39 @@ public class JModCreateMojo
     {
         boolean result = false;
         File dir = new File( getProject().getBasedir(), DEFAULT_CONFIG_DIRECTORY );
+        if ( dir.exists() && dir.isDirectory() )
+        {
+            result = true;
+        }
+        return result;
+    }
+
+    private boolean doLibsDefaultsExist()
+    {
+        boolean result = false;
+        File dir = new File( getProject().getBasedir(), DEFAULT_LIB_DIRECTORY );
+        if ( dir.exists() && dir.isDirectory() )
+        {
+            result = true;
+        }
+        return result;
+    }
+
+    private boolean doLegalNoticesDefaultsExist()
+    {
+        boolean result = false;
+        File dir = new File( getProject().getBasedir(), DEFAULT_LEGAL_NOTICES_DIRECTORY );
+        if ( dir.exists() && dir.isDirectory() )
+        {
+            result = true;
+        }
+        return result;
+    }
+
+    private boolean doManPagesDefaultsExist()
+    {
+        boolean result = false;
+        File dir = new File( getProject().getBasedir(), DEFAULT_MAN_PAGES_DIRECTORY );
         if ( dir.exists() && dir.isDirectory() )
         {
             result = true;
