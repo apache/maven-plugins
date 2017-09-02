@@ -33,7 +33,7 @@ Usage
 * Configuration of the Maven JLink Plugin
 
   To use the Maven JLink Plugin you have to configure it as an <<<extensions>>> which means
-  the configuration in your pom file looks like this:
+  the configuration in your pom file has to look like this:
   
 +-----
 <project>
@@ -179,12 +179,12 @@ Usage
     <dependency>
       <groupId>com.corporate.project</groupId>
       <artifactId>mod-1</artifactId>
-      <version>${project.version}</version>
+      <version>\${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.corporate.project</groupId>
       <artifactId>mod-2</artifactId>
-      <version>${project.version}</version>
+      <version>\${project.version}</version>
     </dependency>
   </dependencies>  
    [...]
