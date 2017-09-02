@@ -34,9 +34,9 @@ ${project.name}
 
   The JMod Plugin has currently two goals:
 
-  * {{{./jmod-mojo.html}jmod:create}} Create jmod files.
+  * {{{./create-mojo.html}jmod:create}} Create jmod files.
 
-  * {{{./help-mojo.html}install:help}} displays help information on maven-jmod-plugin.
+  * {{{./help-mojo.html}jmod:help}} displays help information on maven-jmod-plugin.
 
   At the moment support for extract, list, describe does not exist. If you need such support
   please open a {{{./issue-tracking.html}JIRA ticket}} in our issue tracker. 

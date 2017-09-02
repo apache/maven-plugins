@@ -38,11 +38,11 @@
 
     <!--
       | Defining the phases with their appropriate plugins
-      ! and versions which will be executed during the 'jlink'
+      ! and versions which will be executed during the 'jmod'
       ! life cycle.
     -->
     <!--
-     | JLINK
+     | JMOD
      |-->
     <component>
       <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>

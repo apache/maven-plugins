@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * The <code>create</code> goals is intended to create <code>jmod</code> files which can be used for later linking via
+ * The <code>create</code> goal is intended to create <code>jmod</code> files which can be used for later linking via
  * <code>maven-jlink-plugin</code>. The JMod files can not be used as usual dependencies on the classpath only in
  * relationship with maven-jlink-plugin. JMOD files can be used at compile time and link time, but not at run time.
  * 
@@ -155,9 +155,9 @@ public class JModCreateMojo
     private boolean doNotResolveByDefault;
 
     /**
-     * Define the locations of header files. The default location is <code>src/main/headerfiles</code>. Best is to put
-     * the header files into the default location. If the directories do not exist the configuration will be ignored.
-     * The given directories are relative to the project base directory.
+     * Define the locations of header files. The default location is <code>src/main/headerfiles</code>. If the the
+     * default location does not exist in the current project it will be ignored. The given directories are relative to
+     * the project base directory. If an entry is defined the definition of all locations is needed.
      * 
      * <pre>
      * &lt;headerFiles&gt;
