@@ -36,7 +36,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven JMod Plugin</name>
-  <description>http://openjdk.java.net/jeps/261</description>
+  <description>Create JMod files http://openjdk.java.net/jeps/261</description>
   <inceptionYear>2016</inceptionYear>
 
   <prerequisites>

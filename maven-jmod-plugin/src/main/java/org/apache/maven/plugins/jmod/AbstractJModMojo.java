@@ -21,6 +21,7 @@ package org.apache.maven.plugins.jmod;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -38,6 +39,9 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
+ * This contains the code to handle toolchains and execute command which is similar to code in
+ * maven-jlink-plugin (maven-jdeps-plugin?).
+ * Later we need to think to combine that code to reduce duplication.
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
 public abstract class AbstractJModMojo
@@ -53,6 +57,7 @@ public abstract class AbstractJModMojo
     @Component
     private ToolchainManager toolchainManager;
 
+    //TODO: Check how to prevent code duplication in maven-jlink, maven-jmod and maven-jdeps plugin? 
     protected String getJModExecutable()
         throws IOException
     {
@@ -185,6 +190,25 @@ public abstract class AbstractJModMojo
             throw new MojoExecutionException( "Unable to execute jmod command: " + e.getMessage(), e );
         }
 
+    }
+
+    /**
+     * Convert a list into a 
+     * @param modules The list of modules.
+     * @return The string with the module list which is separated by {@code ,}.
+     */
+    protected String getCommaSeparatedList( List<String> modules )
+    {
+        StringBuilder sb = new StringBuilder();
+        for ( String module : modules )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append( ',' );
+            }
+            sb.append( module );
+        }
+        return sb.toString();
     }
 
     private Toolchain getToolchain()
