@@ -27,13 +27,14 @@ Usage
 
 * Introduction
 
-  The Maven JLink Pluing will be used to create a Java Run-Time Image.
+  The Maven JLink plugin is used to create {{{http://openjdk.java.net/jeps/220}Modular Run-Time Images}} with
+  JDK 9.
   
-* Configuring the JLink Plugin
+* Configuration of the Maven JLink Plugin
 
-  The configuration of the JLink Plugin is a bit different from the configuration
-  of any other plugin. The configuration should look like this:
-
+  To use the Maven JLink Plugin you have to configure it as an <<<extensions>>> which means
+  the configuration in your pom file looks like this:
+  
 +-----
 <project>
   [...]
@@ -54,5 +55,187 @@ Usage
 +-----
 
   The configuration elements contains the configuration for the plugin like
-  other Maven plugins.
+  any other Maven plugins.
+
   
+* Usage of the Maven JLink Plugin
+
+  Usually you will use the Maven JLink Plugin to create a Run Time Image from one or more modules within 
+  a multi module build. In other words it is not possible to create a Run Time Image from a single Maven
+  Project within the same single Maven Project.
+  Let us assume you have a multi module structure which contains two modules <<mod-1>> and <<mod-2>> 
+  which you like to put into the resulting Run Time Image.
+
+  The parent of the multi module looks similar like this:  
+  
++-----
+<project ...>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.corporate.maven</groupId>
+    <artifactId>maven-parent</artifactId>
+    <version>2.3.1</version>
+  </parent>
+  <groupId>com.corporate.project</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+   [...]
+  <modules>
+    <module>mod-1</module>
+    <module>mod-2</module>
+  </modules>  
+   [...]
+</project>
++-----
+
+  A directory structure of such a project looks like this:
+  
++-----
+.
+├── mod-1
+│   └── src
+└── mod-2
+    └── src
++-----
+
+  The <<mod-1>> module looks similar like this:
+  
++-----
+<project ...>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.corporate.project</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>mod-1</artifactId>
+   [...]
+</project>
++-----
+
+  The <<mod-2>> module looks similar like this:
+  
++-----
+<project ...>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.corporate.project</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>mod-2</artifactId>
+   [...]
+</project>
++-----
+
+  If you like to create a Java Run Time Image of your modules the way is to create a 
+  separate module <<mod-jlink>> which contains the configuration to create the Run 
+  Time Image which looks similar like this:
+
++-----
+<project ...>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.corporate.project</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <packaging>jlink</packaging>
+  <artifactId>mod-jlink</artifactId>
+   [...]
+</project>
++-----
+
+  The directory structure now looks like this:
+  
++-----
+.
+├── mod-1
+│   └── src
+├── mod-2
+│   └── src
+└── mod-jlink
+    └── src
++-----
+
+  Before you can do this you have to add the configuration to the parent like shown 
+  in {{{Configuration_of_the_Maven_JLink_Plugin}Configuration of the Maven JLink Plugin}}.
+
+  Now you need to define which modules will be linked into the resulting Java Run Time Image which simply
+  being done by defining the modules as dependencies to your <<mod-jlink>> module like this:
+  
++-----
+<project ...>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.corporate.project</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <packaging>jlink</packaging>
+  <artifactId>mod-jlink</artifactId>
+ <dependencies>
+    <dependency>
+      <groupId>com.corporate.project</groupId>
+      <artifactId>mod-1</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.corporate.project</groupId>
+      <artifactId>mod-2</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>  
+   [...]
+</project>
++-----
+  
+  
+  After you have added the appropriate configuration you can simply create the Java Run Time Image by
+  calling from the root of your directory structure:
+  
++----
+mvn clean package
++----
+
+  There will be some output lines like this:
+
++----
+[INFO]
+[INFO] --- maven-jlink-plugin:${project.version}:jlink (default-jlink) @ mod-jlink ---
+[INFO] Toolchain in maven-jlink-plugin: jlink [ /.../jdk1.9.0_ea+181.jdk/Contents/Home/bin/jlink ]
+[INFO] The following dependencies will be linked into the runtime image:
+[INFO]  -> com.corporate.project:mod-1:jar:1.0-SNAPSHOT
+[INFO]  -> com.corporate.project:mod-2:jar:1.0-SNAPSHOT
+[INFO] Building zip: /.../mod-jlink/target/mod-jlink-1.0-SNAPSHOT.zip
+[INFO]
++----
+
+  If you like to install the resulting Java Run Time Image you can of course use:
+  
++----
+mvn clean install
++----
+  
+  or if you like to deploy the resulting artifacts to a remote repository you have to use:
+  
++----
+mvn clean deploy
++----
+  
+  At the moment the resulting Java Run Time Image is packaged into a <<zip>> archive which 
+  used to transport the whole structure which is created by <<jlink>> to a repository.
+
+  The basic structure of the resulting Java Run Time Image looks like this:
+  
++---
+jlink/
+├── bin
+├── conf
+├── include
+├── legal
+├── lib
+└── release
++---
+
