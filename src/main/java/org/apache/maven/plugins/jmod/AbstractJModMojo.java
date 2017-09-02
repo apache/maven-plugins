@@ -39,9 +39,9 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * This contains the code to handle toolchains and execute command which is similar to code in
- * maven-jlink-plugin (maven-jdeps-plugin?).
- * Later we need to think to combine that code to reduce duplication.
+ * This contains the code to handle toolchains and execute command which is similar to code in maven-jlink-plugin
+ * (maven-jdeps-plugin?). Later we need to think to combine that code to reduce duplication.
+ * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
 public abstract class AbstractJModMojo
@@ -57,7 +57,7 @@ public abstract class AbstractJModMojo
     @Component
     private ToolchainManager toolchainManager;
 
-    //TODO: Check how to prevent code duplication in maven-jlink, maven-jmod and maven-jdeps plugin? 
+    // TODO: Check how to prevent code duplication in maven-jlink, maven-jmod and maven-jdeps plugin?
     protected String getJModExecutable()
         throws IOException
     {
@@ -182,7 +182,11 @@ public abstract class AbstractJModMojo
 
             if ( StringUtils.isNotEmpty( output ) )
             {
-                getLog().info( output );
+                String[] splitLines = StringUtils.split( output, "\n" );
+                for ( String outputLine : splitLines )
+                {
+                    getLog().info( outputLine );
+                }
             }
         }
         catch ( CommandLineException e )
@@ -193,7 +197,8 @@ public abstract class AbstractJModMojo
     }
 
     /**
-     * Convert a list into a 
+     * Convert a list into a
+     * 
      * @param modules The list of modules.
      * @return The string with the module list which is separated by {@code ,}.
      */
