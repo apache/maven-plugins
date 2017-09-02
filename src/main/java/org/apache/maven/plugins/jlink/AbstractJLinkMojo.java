@@ -77,7 +77,7 @@ public abstract class AbstractJLinkMojo
             jLinkExecutable = tc.findTool( "jlink" );
         }
 
-        //TODO: Check if there exist a more elegant way?
+        // TODO: Check if there exist a more elegant way?
         String jLinkCommand = "jlink" + ( SystemUtils.IS_OS_WINDOWS ? ".exe" : "" );
 
         File jLinkExe;
@@ -121,8 +121,8 @@ public abstract class AbstractJLinkMojo
             {
                 throw new IOException( "The environment variable JAVA_HOME is not correctly set." );
             }
-            if ( ( !new File( javaHome ).getCanonicalFile().exists() )
-                || ( new File( javaHome ).getCanonicalFile().isFile() ) )
+            if ( !new File( javaHome ).getCanonicalFile().exists()
+                || new File( javaHome ).getCanonicalFile().isFile() )
             {
                 throw new IOException( "The environment variable JAVA_HOME=" + javaHome
                     + " doesn't exist or is not a valid directory." );
@@ -257,6 +257,7 @@ public abstract class AbstractJLinkMojo
      * @param basedir the output directory
      * @param finalName the name of the ear file
      * @param classifier an optional classifier
+     * @param archiveExt The extension of the file.
      * @return the file to generate
      */
     protected File getArchiveFile( File basedir, String finalName, String classifier, String archiveExt )
@@ -305,6 +306,69 @@ public abstract class AbstractJLinkMojo
         }
 
         return result;
+    }
+
+    /**
+     * This will convert a module path separated by either {@code :} or {@code ;} into a string which uses the platform
+     * depend path separator uniformly.
+     * 
+     * @param pluginModulePath The module path.
+     * @return The platform separated module path.
+     */
+    protected StringBuilder convertSeparatedModulePathToPlatformSeparatedModulePath( String pluginModulePath )
+    {
+        StringBuilder sb = new StringBuilder();
+        // Split the module path by either ":" or ";" linux/windows path separator and
+        // convert uniformly to the platform used separator.
+        String[] splitModule = pluginModulePath.split( "[;:]" );
+        for ( String module : splitModule )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append( File.pathSeparatorChar );
+            }
+            sb.append( module );
+        }
+        return sb;
+    }
+
+    /**
+     * Convert a list into a string which is separated by platform depend path separator.
+     * 
+     * @param modulePaths The list of elements.
+     * @return The string which contains the elements separated by {@link File#pathSeparatorChar}.
+     */
+    protected String getPlatformDependSeparateList( List<String> modulePaths )
+    {
+        StringBuilder sb = new StringBuilder();
+        for ( String module : modulePaths )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append( File.pathSeparatorChar );
+            }
+            sb.append( module );
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Convert a list into a 
+     * @param modules The list of modules.
+     * @return The string with the module list which is separated by {@code ,}.
+     */
+    protected String getCommaSeparatedList( List<String> modules )
+    {
+        StringBuilder sb = new StringBuilder();
+        for ( String module : modules )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append( ',' );
+            }
+            sb.append( module );
+        }
+        return sb.toString();
     }
 
 }

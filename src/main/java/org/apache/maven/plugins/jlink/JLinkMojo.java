@@ -34,10 +34,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -84,9 +82,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
-// TODO: Think if ResultionScope is needed here? May be we need to reconsider package phase?
-// May be it would be wise to put into PREPARE-PACKAGE and the generation of the final jimage in the package phase?
-// Furthermore It could make sense so we can change the conf files if needed...
+// TODO: Check things about conf files?
 // CHECKSTYLE_OFF: LineLength
 @Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
 // CHECKSTYLE_ON: LineLength
@@ -100,53 +96,83 @@ public class JLinkMojo
     private static final String JAR_PACKAGING = "jar";
 
     /**
+     * This is intended to strip debug information out. The command line equivalent of <code>jlink</code> is:
      * <code>-G, --strip-debug</code> strip debug information.
      */
     @Parameter( defaultValue = "false" )
     private boolean stripDebug;
 
     /**
-     * <code>-c, --compress=&lt;0|1|2&gt;</code> Enabled compression of resources.
+     * Here you can define the compression of the resources being used. The command line equivalent is:
+     * <code>-c, --compress=&lt;0|1|2&gt;</code>.
      */
     @Parameter
     private Integer compression;
 
     /**
-     * Limit the universe of observable modules. <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
+     * Limit the universe of observable modules. The following gives an example of the configuration which can be used
+     * in the <code>pom.xml</code> file.
+     * 
+     * <pre>
+     *   &lt;limitModules&gt;
+     *     &lt;limitModule&gt;mod1&lt;/limitModule&gt;
+     *     &lt;limitModule&gt;xyz&lt;/limitModule&gt;
+     *     .
+     *     .
+     *   &lt;/limitModules&gt;
+     * </pre>
+     * 
+     * This configuration is the equivalent of the command line option:
+     * <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
      */
     @Parameter
     private List<String> limitModules;
 
     /**
-     * Root modules to resolve. <code>--add-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
+     * By using the --add-modules you can define the root modules to be resolved. The configuration in
+     * <code>pom.xml</code> file can look like this:
+     * 
+     * <pre>
+     * &lt;addModules&gt;
+     *   &lt;addModule&gt;mod1&lt;/addModule&gt;
+     *   &lt;addModule&gt;first&lt;/addModule&gt;
+     *   .
+     *   .
+     * &lt;/addModules&gt;
+     * </pre>
+     * 
+     * The command line equivalent for jlink is: <code>--add-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>.
      */
     @Parameter
     private List<String> addModules;
 
     /**
-     * Custom plugin module path <code>--plugin-module-path &lt;modulepath&gt;</code>
+     * Define the plugin module path to be used. There can be defined multiple entries separated by either {@code ;} or
+     * {@code :}. The jlink command line equivalent is: <code>--plugin-module-path &lt;modulepath&gt;</code>
      */
     @Parameter
-    private File pluginModulePath;
+    private String pluginModulePath;
 
     /**
+     * The output directory for the resulting Run Time Image. This is stored in non compressed form.
      * <code>--output &lt;path&gt;</code>
-     * </p>
      */
     // TODO: is this a good final location?
     @Parameter( defaultValue = "${project.build.directory}/jlink" )
     private File outputDirectoryImage;
 
-    @Parameter( defaultValue = "${project.build.directory}" )
+    @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
 
     /**
-     * Byte order of generated jimage (default:native). <code>--endian &lt;little|big&gt;</code>.
-     * </p>
+     * The byte order of the generated Java Run Time image. <code>--endian &lt;little|big&gt;</code>. If the endian is
+     * not given the default is: <code>native</code>.
      */
-    @Parameter( defaultValue = "native" )
+    // TODO: Should we define either little or big as default? or should we left as it.
+    @Parameter
     private String endian;
 
+    // TODO: Check if we should allow to extend the modulePaths by manual additions in the pom file?
     @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
     private List<String> modulePaths;
 
@@ -157,7 +183,7 @@ public class JLinkMojo
     private boolean bindServices;
 
     /**
-     * --disable-plugin pluginName.
+     * You can disable a plugin by using this option. <code>--disable-plugin pluginName</code>.
      */
     @Parameter
     private String disablePlugin;
@@ -181,13 +207,24 @@ public class JLinkMojo
     private boolean noManPages;
 
     /**
-     * --suggest-providers [<name>,...] Suggest providers that implement the given service types from the module path
+     * Suggest providers that implement the given service types from the module path.
+     * 
+     * <pre>
+     * &lt;suggestProviders&gt;
+     *   &lt;suggestProvider&gt;name-a&lt;/suggestProvider&gt;
+     *   &lt;suggestProvider&gt;name-b&lt;/suggestProvider&gt;
+     *   .
+     *   .
+     * &lt;/suggestProviders&gt;
+     * </pre>
+     * 
+     * The jlink command linke equivalent: <code>--suggest-providers [&lt;name&gt;,...]</code>
      */
     @Parameter
     private List<String> suggestProviders;
 
     /**
-     * <code>--verbose</code>
+     * This will turn on verbose mode. The jlink command line equivalent is: <code>--verbose</code>
      */
     @Parameter( defaultValue = "false" )
     private boolean verbose;
@@ -198,20 +235,8 @@ public class JLinkMojo
     @Component( role = Archiver.class, hint = "zip" )
     private ZipArchiver zipArchiver;
 
-    @Component
-    private ArchiverManager manager;
-
     /**
-     * The kind of archive we will produce.
-     */
-    @Parameter( defaultValue = "zip", required = true )
-    private String archiveType;
-
-    @Component
-    private MavenProjectHelper projectHelper;
-
-    /**
-     * Name of the generated JAR.
+     * Name of the generated ZIP file.
      */
     @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     private String finalName;
@@ -241,22 +266,25 @@ public class JLinkMojo
         List<Dependency> dependencies = getSession().getCurrentProject().getDependencies();
 
         List<MavenProject> modulesToAdd = new ArrayList<>();
-        if ( dependencies.isEmpty() )
-        {
-            
-        }
+//        if ( dependencies.isEmpty() )
+//        {
+//            // Do we need to do something if no dependencies have been defined ?
+//            // WARNING ?
+//        }
         getLog().info( "The following dependencies will be linked into the runtime image:" );
         for ( Dependency dependency : dependencies )
         {
             // We will support "jmod" as well as "jar"
-            // TODO: Think about jmod's cause they can contain config files etc. ? What todo with them?
+            // TODO: Think about jmod's cause they can contain config files etc. ? What todo with them? Are they already
+            // handled by jlink ? 
             if ( JAR_PACKAGING.equals( dependency.getType() ) || JMOD_PACKAGING.equals( dependency.getType() ) )
             {
                 MavenProject mp = findDependencyInProjects( dependency );
                 getLog().info( " -> " + mp.getId() );
                 // TODO: What about module name != artifactId which has been
                 // defined in module-info.java file!
-                // This would mean to read the module-info information from the jmod file for example...
+                // This would mean to read the module-info information from the jmod/jar file for example to 
+                // get the appropriate information.
                 modulesToAdd.add( mp );
             }
         }
@@ -350,11 +378,11 @@ public class JLinkMojo
             addModules = new ArrayList<>();
         }
 
-        for ( MavenProject mavenProject : modulesToAdd )
+        for ( MavenProject module : modulesToAdd )
         {
             // TODO: Check if this is the correct way?
-            // This implies the artifactId is equal to moduleName.
-            addModules.add( mavenProject.getArtifactId() );
+            // This implies the artifactId is equal to moduleName which might not always be the case!
+            addModules.add( module.getArtifactId() );
         }
     }
 
@@ -402,6 +430,14 @@ public class JLinkMojo
         {
             String message =
                 "The given compression parameters " + compression + " is not in the valid value range from 0..2";
+            getLog().error( message );
+            throw new MojoFailureException( message );
+        }
+
+        if ( endian != null && ( !"big".equals( endian ) || !"little".equals( endian ) ) )
+        {
+            String message =
+                "The given endian parameters " + endian + " is not in the valid value either 'little' or 'big'.";
             getLog().error( message );
             throw new MojoFailureException( message );
         }
@@ -463,6 +499,11 @@ public class JLinkMojo
             argsFile.println( "--bind-services" );
         }
 
+        if ( endian != null )
+        {
+            argsFile.println( "--bind-services" );
+            argsFile.println( endian );
+        }
         if ( ignoreSigningInformation )
         {
             argsFile.println( "--ignore-signing-information" );
@@ -481,8 +522,14 @@ public class JLinkMojo
         }
         if ( modulePaths != null )
         {
+            //@formatter:off
             argsFile.println( "--module-path" );
-            argsFile.append( '"' ).append( getColonSeparateList( modulePaths ).replace( "\\", "\\\\" ) ).println( '"' );
+            argsFile
+              .append( '"' )
+              .append( getPlatformDependSeparateList( modulePaths )
+                         .replace( "\\", "\\\\" ) 
+                     ).println( '"' );
+            //@formatter:off
         }
 
         if ( noHeaderFiles )
@@ -498,24 +545,31 @@ public class JLinkMojo
         if ( hasSuggestProviders() )
         {
             argsFile.println( "--suggest-providers" );
-            StringBuilder sb = getCommaSeparatedList( suggestProviders );
-            argsFile.println( sb.toString() );
+            String sb = getCommaSeparatedList( suggestProviders );
+            argsFile.println( sb );
         }
 
         if ( hasLimitModules() )
         {
             argsFile.println( "--limit-modules" );
-            StringBuilder sb = getCommaSeparatedList( limitModules );
-            argsFile.println( sb.toString() );
+            String sb = getCommaSeparatedList( limitModules );
+            argsFile.println( sb );
         }
 
         if ( hasModules() )
         {
             argsFile.println( "--add-modules" );
             // This must be name of the module and *NOT* the name of the
-            // file!
-            StringBuilder sb = getCommaSeparatedList( addModules );
-            argsFile.println( sb.toString() );
+            // file! Can we somehow pre check this information to fail early?
+            String sb = getCommaSeparatedList( addModules );
+            argsFile.append( '"' ).append( sb.replace( "\\", "\\\\" ) ).println( '"' );
+        }
+
+        if ( pluginModulePath != null )
+        {
+            argsFile.println( "--plugin-module-path" );
+            StringBuilder sb = convertSeparatedModulePathToPlatformSeparatedModulePath( pluginModulePath );
+            argsFile.append( '"' ).append( sb.toString().replace( "\\", "\\\\" ) ).println( '"' );
         }
 
         if ( outputDirectory != null )
@@ -549,33 +603,5 @@ public class JLinkMojo
     private boolean hasModules()
     {
         return addModules != null && !addModules.isEmpty();
-    }
-
-    private String getColonSeparateList( List<String> modulePaths )
-    {
-        StringBuilder sb = new StringBuilder();
-        for ( String module : modulePaths )
-        {
-            if ( sb.length() > 0 )
-            {
-                sb.append( File.pathSeparator );
-            }
-            sb.append( module );
-        }
-        return sb.toString();
-    }
-
-    private StringBuilder getCommaSeparatedList( List<String> modules )
-    {
-        StringBuilder sb = new StringBuilder();
-        for ( String module : modules )
-        {
-            if ( sb.length() > 0 )
-            {
-                sb.append( ',' );
-            }
-            sb.append( module );
-        }
-        return sb;
     }
 }
