@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 /**
  * The <code>create</code> goal is intended to create <code>jmod</code> files which can be used for later linking via
  * <code>maven-jlink-plugin</code>. The JMod files can not be used as usual dependencies on the classpath only in
- * relationship with maven-jlink-plugin. 
+ * relationship with maven-jlink-plugin.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
@@ -51,7 +51,7 @@ public class JModCreateMojo
 
     /**
      * <code>--class-path &lt;path&gt;</code> Application jar files/directory containing classes. Specifies a class path
-     * whose content will be copied into the resulting JMOD file.
+     * whose content will be copied into the resulting <code>jmod</code> file.
      */
     @Parameter( defaultValue = "${project.build.outputDirectory}" )
     private List<String> classPath;
@@ -68,7 +68,10 @@ public class JModCreateMojo
      *   .
      * &lt;/cmds&gt;
      * </pre>
-     * 
+     * <p>
+     * All files from those directories will be copied into the resulting directory <code>bin</code> within the jmod
+     * file.
+     * </p>
      * <code>JMod</code> command line equivalent: <code>--cmds &lt;path&gt;</code>.
      */
     @Parameter
@@ -89,7 +92,10 @@ public class JModCreateMojo
      *   .
      * &lt;/configs&gt;
      * </pre>
-     * 
+     * <p>
+     * All files from those directories will be copied into the resulting directory <code>config</code> within the jmod
+     * file.
+     * </p>
      * jmod command line equivalent: <code>--config &lt;path&gt;</code>.
      */
     @Parameter
@@ -129,6 +135,10 @@ public class JModCreateMojo
      *   .
      * &lt;/libs&gt;
      * </pre>
+     * <p>
+     * All files from those directories will be copied into the resulting directory <code>lib</code> within the jmod
+     * file.
+     * </p>
      */
     @Parameter
     private List<String> libs;
@@ -167,7 +177,10 @@ public class JModCreateMojo
      *   .
      * &lt;/headerFiles&gt;
      * </pre>
-     * 
+     * <p>
+     * All files from those directories will be copied into the resulting directory <code>includes</code> within the
+     * jmod file.
+     * </p>
      * jmod command line equivalent <code>--header-files &lt;path&gt;</code> TODO: Define default location.
      */
     @Parameter
@@ -187,7 +200,10 @@ public class JModCreateMojo
      *   .
      * &lt;/manPages&gt;
      * </pre>
-     * 
+     * <p>
+     * All files from those directories will be copied into the resulting directory <code>man</code> within the jmod
+     * file.
+     * </p>
      * jmod command line equivalent <code>--man-pages &lt;path&gt;</code> TODO: Define default location.
      */
     @Parameter
@@ -213,7 +229,10 @@ public class JModCreateMojo
      *   .
      * &lt;/legalNotices&gt;
      * </pre>
-     * 
+     * <p>
+     * All files from those directories will be copied into the resulting directory <code>legal</code> within the jmod
+     * file.
+     * </p>
      * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code> TODO: Define default location.
      */
     @Parameter
@@ -247,6 +266,12 @@ public class JModCreateMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+
+        // Make sure module path exists.
+        if ( !modulePath.exists() )
+        {
+            modulePath.mkdirs();
+        }
 
         failIfParametersAreNotInTheirValidValueRanges();
 
