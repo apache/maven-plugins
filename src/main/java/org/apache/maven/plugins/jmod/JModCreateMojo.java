@@ -341,17 +341,24 @@ public class JModCreateMojo
             }
         }
 
-        List<String> configsList = handleConfigs();
-        for ( String configLocation : configsList )
+        try
         {
-            File dir = new File( getProject().getBasedir(), configLocation );
-            if ( !dir.exists() || !dir.isDirectory() )
+            List<String> configsList = handleConfigs();
+            for ( String configLocation : configsList )
             {
-                String message = "The directory " + configLocation + " for configs parameters does not exist "
-                    + "or is not a directory. ";
-                getLog().error( message );
-                throw new MojoFailureException( message );
+                File dir = new File( getProject().getBasedir(), configLocation );
+                if ( !dir.exists() || !dir.isDirectory() )
+                {
+                    String message = "The directory " + configLocation + " for configs parameters does not exist "
+                        + "or is not a directory. ";
+                    getLog().error( message );
+                    throw new MojoFailureException( message );
+                }
             }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoFailureException( e.getMessage() );
         }
     }
 
@@ -387,8 +394,14 @@ public class JModCreateMojo
 
         if ( !configList.isEmpty() )
         {
+            List<String> configAbsoluteList = new ArrayList<String>();
+            for ( String realiveDirectory : configList )
+            {
+                File f = new File( getProject().getBasedir(), realiveDirectory );
+                configAbsoluteList.add( f.getCanonicalPath() );
+            }
             argsFile.println( "--config" );
-            StringBuilder sb = getPlatformSeparatedList( configList );
+            StringBuilder sb = getPlatformSeparatedList( configAbsoluteList );
             // Should we quote the paths?
             argsFile.println( sb.toString() );
         }
@@ -403,8 +416,15 @@ public class JModCreateMojo
         List<String> commands = handleCmds();
         if ( !commands.isEmpty() )
         {
+            List<String> cmdsAbsoluteList = new ArrayList<String>();
+            for ( String realiveDirectory : commands )
+            {
+                File f = new File( getProject().getBasedir(), realiveDirectory );
+                cmdsAbsoluteList.add( f.getCanonicalPath() );
+            }
+
             argsFile.println( "--cmds" );
-            StringBuilder sb = getPlatformSeparatedList( commands );
+            StringBuilder sb = getPlatformSeparatedList( cmdsAbsoluteList );
             argsFile.println( sb.toString() );
         }
 
@@ -479,6 +499,7 @@ public class JModCreateMojo
     }
 
     private List<String> handleConfigs()
+        throws IOException
     {
         List<String> commands = new ArrayList<String>();
         if ( havingConfigsDefinedInPOM() )
