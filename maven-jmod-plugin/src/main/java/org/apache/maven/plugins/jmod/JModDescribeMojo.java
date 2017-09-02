@@ -89,7 +89,8 @@ public class JModDescribeMojo
         }
         cmd.setExecutable( jModExecutable );
 
-        getLog().info( "The following information is contained in the module file " + resultingJModFile.getAbsolutePath() );
+        getLog().info( "The following information is contained in the module file "
+            + resultingJModFile.getAbsolutePath() );
         executeCommand( cmd, outputDirectory );
 
     }
