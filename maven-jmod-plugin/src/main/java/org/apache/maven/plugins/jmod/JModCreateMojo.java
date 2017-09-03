@@ -36,8 +36,8 @@ import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * The <code>create</code> goal is intended to create <code>jmod</code> files which can be used for later linking via
- * <code>maven-jlink-plugin</code>. The JMod files can not be used as usual dependencies on the classpath only in
- * relationship with maven-jlink-plugin.
+ * <a href="https://maven.apache.org/plugins/maven-jlink-plugin/">maven-jlink-plugin</a>. The <code>jmod</code> files
+ * can not be used as usual dependencies on the classpath only in relationship with <code>maven-jlink-plugin</code>.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */

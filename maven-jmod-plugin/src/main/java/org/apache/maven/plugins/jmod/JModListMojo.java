@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * This goal is to support the usage of <code>jmod list</code>.
+ * This goal is to support the usage of <code>jmod list</code> to show the content of a <code>jmod</code> file.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
@@ -40,7 +40,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JModListMojo
     extends AbstractJModMojo
 {
-    
+
     /**
      * Do not change this. (TODO!)
      */
@@ -52,7 +52,7 @@ public class JModListMojo
      */
     @Parameter( defaultValue = "${project.artifactId}", required = true )
     private String moduleName;
-    
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
