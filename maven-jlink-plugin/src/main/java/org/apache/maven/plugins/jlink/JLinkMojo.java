@@ -41,8 +41,9 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * The JLink goal is intended to create a Java Run Time Image file based on 
- * {@link http://openjdk.java.net/jeps/282}, {@link http://openjdk.java.net/jeps/220}.
+ * The JLink goal is intended to create a Java Run Time Image file based on
+ * <a href="http://openjdk.java.net/jeps/282">http://openjdk.java.net/jeps/282</a>,
+ * <a href="http://openjdk.java.net/jeps/220">http://openjdk.java.net/jeps/220</a>.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
