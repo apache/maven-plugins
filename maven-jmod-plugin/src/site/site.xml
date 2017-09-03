@@ -37,8 +37,9 @@ under the License.
       <item name="License" href="http://www.apache.org/licenses/"/>
       <item name="Download" href="download.html"/>
     </menu>
-<!--     <menu name="Examples"> -->
-<!--       <item name="Installing Artifact with Custom POM" href="examples/custom-pom-installation.html"/> -->
-<!--     </menu> -->
+    <menu name="Examples">
+      <item name="Describe Goal" href="examples/example-describe.html"/>
+      <item name="List Goal" href="examples/example-list.html"/>
+    </menu>
   </body>
 </project>
