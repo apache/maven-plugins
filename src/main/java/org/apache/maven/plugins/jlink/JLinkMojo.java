@@ -41,46 +41,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * The JLink goal is intended to create a Java Run Time Image file.
- * 
- * <pre>
- * Usage: jlink &lt;options&gt; --module-path &lt;modulepath&gt; --add-modules &lt;module&gt;[,&lt;module&gt;...]
- * Possible options include:
- *       --add-modules &lt;mod&gt;[,&lt;mod&gt;...]    Root modules to resolve
- *       --bind-services                   Link in service provider modules and
- *                                         their dependences
- *   -c, --compress=&lt;0|1|2&gt;                Enable compression of resources:
- *                                           Level 0: No compression
- *                                           Level 1: Constant string sharing
- *                                           Level 2: ZIP
- *       --disable-plugin &lt;pluginname&gt;     Disable the plugin mentioned
- *       --endian &lt;little|big&gt;             Byte order of generated jimage
- *                                         (default:native)
- *   -h, --help                            Print this help message
- *       --ignore-signing-information      Suppress a fatal error when signed
- *                                         modular JARs are linked in the image.
- *                                         The signature related files of the
- *                                         signed modular JARs are not copied to
- *                                         the runtime image.
- *       --launcher &lt;name&gt;=&lt;module&gt;[/&lt;mainclass&gt;]
- *                                         Add a launcher command of the given
- *                                         name for the module and the main class
- *                                         if specified
- *       --limit-modules &lt;mod&gt;[,&lt;mod&gt;...]  Limit the universe of observable
- *                                         modules
- *       --list-plugins                    List available plugins
- *   -p, --module-path &lt;path&gt;              Module path
- *       --no-header-files                 Exclude include header files
- *       --no-man-pages                    Exclude man pages
- *       --output &lt;path&gt;                   Location of output path
- *       --save-opts &lt;filename&gt;            Save jlink options in the given file
- *   -G, --strip-debug                     Strip debug information
- *       --suggest-providers [&lt;name&gt;,...]  Suggest providers that implement the
- *                                         given service types from the module path
- *   -v, --verbose                         Enable verbose tracing
- *       --version                         Version information
- *       &#64;&lt;filename&gt;                       Read options from file
- * </pre>
+ * The JLink goal is intended to create a Java Run Time Image file based on 
+ * {@link http://openjdk.java.net/jeps/282}, {@link http://openjdk.java.net/jeps/220}.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
