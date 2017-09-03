@@ -28,7 +28,7 @@ Usage
 * List Goal
 
   Assuming you have configured the Maven JMod Plugin 
-  {{{/usage.html}accordingly to the usage page}} like the following:
+  {{{../usage.html}accordingly to the usage page}} like the following:
 
 +----
 <project>
