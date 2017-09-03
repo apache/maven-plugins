@@ -67,6 +67,8 @@ ${project.name}
   To provide you with better understanding on some usages of the Maven JMod Plugin,
   you can take a look into the following examples:
 
-  TODO: Add examples.
+  * {{{/examples/example-list.html}Usage of jmod:list}} goal.
+
+  * {{{/examples/example-describe.html}Usage of jmod:describe}} goal.
 
   []

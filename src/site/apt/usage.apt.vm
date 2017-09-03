@@ -132,11 +132,11 @@ mvn clean package
 
 +----
 [INFO] --- maven-surefire-plugin:2.19.1:test (default-test) @ first-jmod ---
-[INFO] Toolchain in maven-surefire-plugin: JDK[/Library/Java/JavaVirtualMachines/jdk1.9.0_ea+181.jdk/Contents/Home]
+[INFO] Toolchain in maven-surefire-plugin: JDK[/../jdk1.9.0_ea+181.jdk/Contents/Home]
 [INFO] No tests to run.
 [INFO]
 [INFO] --- maven-jmod-plugin:${project.version}:create (default-create) @ first-jmod ---
-[INFO] Toolchain in maven-jmod-plugin: jmod [ /Library/Java/JavaVirtualMachines/jdk1.9.0_ea+181.jdk/Contents/Home/bin/jmod ]
+[INFO] Toolchain in maven-jmod-plugin: jmod [ /../jdk1.9.0_ea+181.jdk/Contents/Home/bin/jmod ]
 [INFO]
 +----
 
