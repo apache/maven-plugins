@@ -42,9 +42,6 @@ ${project.name}
 
   * {{{./help-mojo.html}jmod:help}} displays help information on maven-jmod-plugin.
 
-  At the moment support for extract, list, describe does not exist. If you need such support
-  please open a {{{./issue-tracking.html}JIRA ticket}} in our issue tracker. 
-  
   []
 
 * Usage
