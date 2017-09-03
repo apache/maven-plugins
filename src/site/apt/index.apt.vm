@@ -36,6 +36,10 @@ ${project.name}
 
   * {{{./create-mojo.html}jmod:create}} Create jmod files.
 
+  * {{{./list-mojo.html}jmod:list}} List content of a jmod file.
+
+  * {{{./describe-mojo.html}jmod:describe}} List content of a jmod file (module version etc.)
+
   * {{{./help-mojo.html}jmod:help}} displays help information on maven-jmod-plugin.
 
   At the moment support for extract, list, describe does not exist. If you need such support

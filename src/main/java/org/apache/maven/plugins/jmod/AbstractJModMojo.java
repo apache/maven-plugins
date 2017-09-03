@@ -39,8 +39,8 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
- * This contains the code to handle toolchains and execute command which is similar to code in maven-jlink-plugin
- * (maven-jdeps-plugin?). Later we need to think to combine that code to reduce duplication.
+ * This contains the code to handle toolchains and the execution of the command which is similar to code in maven-jlink-plugin
+ * (maven-jdeps-plugin?). Later we need to think about a way to combine that code to reduce duplication.
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
