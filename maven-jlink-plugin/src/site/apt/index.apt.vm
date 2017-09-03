@@ -38,7 +38,7 @@ ${project.name}
 
   The JLink Plugin has two goals:
 
-  * {{{./jlink-mojo.html}jlink:jlink}} ....
+  * {{{./jlink-mojo.html}jlink:jlink}} create a Java Run Time Image from <<jar>>/<<jmod>> files.
 
   * {{{./help-mojo.html}jlink:help}} displays help information on maven-jlink-plugin.
 
