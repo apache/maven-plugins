@@ -1,0 +1,155 @@
+  ------
+  Usage
+  ------
+  Karl Heinz Marbaise <khmarbaise@apache.org>
+  ------
+  2017-09-01
+
+~~ Copyright 2006 The Apache Software Foundation.
+~~
+~~ Licensed under the Apache License, Version 2.0 (the "License");
+~~ you may not use this file except in compliance with the License.
+~~ You may obtain a copy of the License at
+~~
+~~      http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing, software
+~~ distributed under the License is distributed on an "AS IS" BASIS,
+~~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~~ See the License for the specific language governing permissions and
+~~ limitations under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+
+Usage
+
+* Introduction
+
+  The Maven JMod plugin is used to create {{{http://openjdk.java.net/jeps/261}JMod Files}} in JDK 9.
+  
+* Configuration of the Maven JMod Plugin
+
+  To use the Maven JMod Plugin you have to configure it as an <<<extensions>>> which means
+  the configuration in your pom file has to look like this:
+  
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <artifactId>maven-jmod-plugin</artifactId>
+        <version>${project.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <!-- configuration elements goes here -->
+        </configuration>
+      </plugin>
+   [...]
+</project>
++-----
+
+  The configuration elements contains the configuration for the plugin like
+  any other Maven plugins.
+
+  
+* Usage of the Maven JMod Plugin
+
+  JMod files are intended to create <<jmod>> files which can contain supplemental
+  configuration files, native libraries, legals notices, header files, man pages, 
+  native commands. The JMod files are intended to be used in relationship with 
+  {{{https://maven.apache.org/plugins/maven-jlink-plugin/}JLink}} to produce Java 
+  Run Time Images.
+  
+  An important thing to mention is that <<jmod>> files are not intended to be used
+  for run time and usual module relationships (You can't run a jvm via java using
+  jmod files). For such purposes <<jar>> files exists.
+
+  You can simply create a <<jmod>> file by defining the packaging <<jmod>> in your
+  pom file.
+  
+  The <<first-mod>> project looks similar like this (apart from the above configuration):
+  
++-----
+<project ...>
+  <modelVersion>4.0.0</modelVersion>
+   [...]
+  <groupId>com.corporate.project</groupId>
+  <artifactId>first-mod</artifactId>
+  <verison>1.0-SNAPSHOT</version>
+  <packaging>jmod</packaging>
+   [...]
+</project>
++-----
+
+  You can now put supplemental configuration files, header files, native libraries into 
+  the appropriate directories.
+  An example source tree looks like this:
+  
++----
+src/
+└── main
+    ├── cmds
+    │   ├── first.cmd
+    │   ├── first.sh
+    │   └── test.sh
+    ├── configs
+    │   ├── config.1
+    │   ├── config.2
+    │   └── sub-configuration
+    │       └── config.sub
+    ├── headerfiles
+    │   └── first.h
+    ├── java
+    │   ├── com
+    │   │   └── corporate
+    │   │       └── project
+    │   │           └── Main.java
+    │   └── module-info.java
+    ├── legalnotices
+    │   └── first.md
+    └── libs
+        └── native-lib.so
++----
+  
+  The above directories like <<cmds>>, <<configs>>, <<headerfiles>>, <<legalnotices>> and <<libs>> are
+  the default directories which are defined by the Maven JMod Plugin. If you really need different
+  directories to be used {{{./create-mojo.html}you can of course configure this}} but we don't recommend
+  this. You should follow convention over configuration paradigm.
+
+  Finally if you like to create the <<jmod>> file this can be achieved by using the usual Maven call
+  like this:
+    
++----
+mvn clean package
++----
+
+  There will be some output lines like this (This is configured using toolchains):
+
++----
+[INFO] --- maven-surefire-plugin:2.19.1:test (default-test) @ first-jmod ---
+[INFO] Toolchain in maven-surefire-plugin: JDK[/Library/Java/JavaVirtualMachines/jdk1.9.0_ea+181.jdk/Contents/Home]
+[INFO] No tests to run.
+[INFO]
+[INFO] --- maven-jmod-plugin:${project.version}:create (default-create) @ first-jmod ---
+[INFO] Toolchain in maven-jmod-plugin: jmod [ /Library/Java/JavaVirtualMachines/jdk1.9.0_ea+181.jdk/Contents/Home/bin/jmod ]
+[INFO]
++----
+
+  If you like to install the resulting <<jmod>> file you can of course use:
+  
++----
+mvn clean install
++----
+  
+  or if you like to deploy the resulting artifacts to a remote repository you have to use:
+  
++----
+mvn clean deploy
++----
+  
+  The <<jmod>> files will be really installed/deployed as <<jmod>> file with the according extension.
