@@ -86,8 +86,8 @@ Usage
 </project>
 +-----
 
-  You can now put supplemental configuration files, header files, native libraries into 
-  the appropriate directories.
+  You can now put supplemental configuration files, header files, native libraries,
+  man pages into the appropriate directories.
   An example source tree looks like this:
   
 +----
@@ -112,8 +112,10 @@ src/
     │   └── module-info.java
     ├── legalnotices
     │   └── first.md
-    └── libs
-        └── native-lib.so
+    ├── libs
+    │   └── native-lib.so
+    └── manpages
+        └── the-page.man
 +----
   
   The above directories like <<cmds>>, <<configs>>, <<headerfiles>>, <<legalnotices>> and <<libs>> are
