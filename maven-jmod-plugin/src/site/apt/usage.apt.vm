@@ -119,7 +119,7 @@ src/
 +----
   
   The above directories like <<cmds>>, <<configs>>, <<headerfiles>>, <<legalnotices>>, <<libs>>, 
-  <<<manpages>> are the default directories which are defined by the Maven JMod Plugin. If you
+  <<manpages>> are the default directories which are defined by the Maven JMod Plugin. If you
   really need different directories to be used
   {{{./create-mojo.html}you can of course configure this}} but we don't recommend
   this. You should follow convention over configuration paradigm.
