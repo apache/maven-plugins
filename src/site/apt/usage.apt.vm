@@ -65,7 +65,8 @@ Usage
 * Usage of the Maven JLink Plugin
 
   Usually you will use the Maven JLink Plugin to create a Run Time Image from one or more modules within 
-  a multi module build. In other words it is not possible to create a Run Time Image from a single Maven
+  a multi module build.
+  In other words it is not possible to create a Run Time Image from a single Maven
   Project within the same single Maven Project.
   Let us assume you have a multi module structure which contains two modules <<mod-1>> and <<mod-2>> 
   which you like to put into the resulting Run Time Image.
@@ -133,7 +134,7 @@ Usage
 </project>
 +-----
 
-  If you like to create a Java Run Time Image of your modules the way is to create a 
+  If you like to create a Java Run Time Image of your modules you have to create a 
   separate module <<mod-jlink>> which contains the configuration to create the Run 
   Time Image which looks similar like this:
 
@@ -166,8 +167,8 @@ Usage
   Before you can do this you have to add the configuration to the parent like shown 
   in {{{Configuration_of_the_Maven_JLink_Plugin}Configuration of the Maven JLink Plugin}}.
 
-  Now you need to define which modules will be linked into the resulting Java Run Time Image which simply
-  being done by defining the modules as dependencies to your <<mod-jlink>> module like this:
+  Now you need to define which modules should be linked into the resulting Java Run Time Image which simply
+  can be done by defining the modules as dependencies to your <<mod-jlink>> module like this:
   
 +-----
 <project ...>
@@ -197,26 +198,27 @@ Usage
   
   
   After you have added the appropriate configuration you can simply create the Java Run Time Image by
-  calling from the root of your directory structure:
+  calling from the root of your multi module project like this:
   
 +----
 mvn clean package
 +----
 
-  There will be some output lines like this:
+  There are some output lines similar like this:
 
 +----
 [INFO]
 [INFO] --- maven-jlink-plugin:${project.version}:jlink (default-jlink) @ mod-jlink ---
 [INFO] Toolchain in maven-jlink-plugin: jlink [ /.../jdk1.9.0_ea+181.jdk/Contents/Home/bin/jlink ]
 [INFO] The following dependencies will be linked into the runtime image:
-[INFO]  -> com.corporate.project:mod-1:jar:1.0-SNAPSHOT
-[INFO]  -> com.corporate.project:mod-2:jar:1.0-SNAPSHOT
+[INFO]  -> module: com.soebes.nine.one.jar ( /.../mod-1/target/mod-1-1.0-SNAPSHOT.jar )
+[INFO]  -> module: com.soebes.nine.two.jar ( /.../mod-2/target/mod-2-1.0-SNAPSHOT.jar )
 [INFO] Building zip: /.../mod-jlink/target/mod-jlink-1.0-SNAPSHOT.zip
 [INFO]
 +----
 
-  If you like to install the resulting Java Run Time Image you can of course use:
+  If you like to install the resulting Java Run Time Image files into your local cache
+  you can achieve this by using:
   
 +----
 mvn clean install
