@@ -53,15 +53,15 @@ Usage
 </project>
 +-----
 
-  The configuration elements contains the configuration for the plugin like
-  any other Maven plugins.
+  The configuration elements contains the configuration for the plugin 
+  {{{https://maven.apache.org/guides/mini/guide-configuring-plugins.html}}like any other Maven plugin}}.
 
   
 * Usage of the Maven JMod Plugin
 
-  JMod files are intended to create <<jmod>> files which can contain supplemental
-  configuration files, native libraries, legals notices, header files, man pages, 
-  native commands. The JMod files are intended to be used in relationship with 
+  JMod files can contain supplemental configuration files, native libraries, 
+  legals notices, header files, man pages and native commands. 
+  The JMod files are intended to be used in relationship with 
   {{{https://maven.apache.org/plugins/maven-jlink-plugin/}JLink}} to produce Java 
   Run Time Images.
   
@@ -86,7 +86,7 @@ Usage
 </project>
 +-----
 
-  You can now put supplemental configuration files, header files, native libraries,
+  You can put supplemental configuration files, header files, native libraries,
   man pages into the appropriate directories.
   An example source tree looks like this:
   
@@ -118,13 +118,14 @@ src/
         └── the-page.man
 +----
   
-  The above directories like <<cmds>>, <<configs>>, <<headerfiles>>, <<legalnotices>> and <<libs>> are
-  the default directories which are defined by the Maven JMod Plugin. If you really need different
-  directories to be used {{{./create-mojo.html}you can of course configure this}} but we don't recommend
+  The above directories like <<cmds>>, <<configs>>, <<headerfiles>>, <<legalnotices>>, <<libs>>, 
+  <<<manpages>> are the default directories which are defined by the Maven JMod Plugin. If you
+  really need different directories to be used
+  {{{./create-mojo.html}you can of course configure this}} but we don't recommend
   this. You should follow convention over configuration paradigm.
 
-  Finally if you like to create the <<jmod>> file this can be achieved by using the usual Maven call
-  like this:
+  Finally if you like to create the <<jmod>> file this can be achieved by using 
+  the following Maven call:
     
 +----
 mvn clean package
@@ -155,3 +156,4 @@ mvn clean deploy
 +----
   
   The <<jmod>> files will be really installed/deployed as <<jmod>> file with the according extension.
+  
