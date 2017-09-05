@@ -189,7 +189,7 @@ public abstract class AbstractJLinkMojo
 
     }
 
-    private Toolchain getToolchain()
+    protected Toolchain getToolchain()
     {
         Toolchain tc = null;
 
