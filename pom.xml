@@ -95,6 +95,11 @@
       <version>3.5</version>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-java</artifactId>
+      <version>0.9.3-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.6</version>
@@ -121,6 +126,35 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.5</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>enforce-bytecode-version</id>
+              <configuration>
+                <rules>
+                  <enforceBytecodeVersion>
+                    <maxJdkVersion>1.7</maxJdkVersion>
+                    <excludes>
+                      <exclude>org.ow2.asm:asm</exclude>
+                    </excludes>
+                  </enforceBytecodeVersion>
+                  <requireSameVersions />
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <resources>
       <resource>
         <directory>src/main/filtered-resources</directory>
