@@ -41,7 +41,6 @@ import org.codehaus.plexus.util.cli.Commandline;
  * 
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
-// TODO: Reconsider resolution scope.
 // CHECKSTYLE_OFF: LineLength
 @Mojo( name = "create", requiresDependencyResolution = ResolutionScope.COMPILE, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
 // CHECKSTYLE_ON: LineLength
@@ -119,6 +118,9 @@ public class JModCreateMojo
     @Parameter
     private List<String> excludes;
 
+    /**
+     * Define the main class which is recorded in the <code>module-info.class</code> file.
+     */
     @Parameter
     private String mainClass;
 
@@ -154,7 +156,6 @@ public class JModCreateMojo
     /**
      * Define the modulepath for the <code>jmod</code> call. <code>--module-path &lt;path&gt;</code>
      */
-    // TODO: check if this target/classes folder?
     @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
     private File modulePath;
 

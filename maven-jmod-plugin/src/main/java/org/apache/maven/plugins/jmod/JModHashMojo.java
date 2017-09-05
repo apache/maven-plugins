@@ -78,24 +78,6 @@ public class JModHashMojo
     private String moduleVersion;
 
     /**
-     * <code>--os-arch &lt;os-arch&gt;</code> Operating system architecture.
-     */
-    @Parameter
-    private String osArch;
-
-    /**
-     * <code>--os-name &lt;os-name&gt;</code> Operating system name.
-     */
-    @Parameter
-    private String osName;
-
-    /**
-     * <code>--os-version &lt;os-version&gt;</code> Operating system version.
-     */
-    @Parameter
-    private String osVersion;
-
-    /**
      * Define the modulepath for the <code>jmod</code> call. <code>--module-path &lt;path&gt;</code>
      * Must be a directory.
      */
