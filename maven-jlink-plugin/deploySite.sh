@@ -19,5 +19,5 @@
 # under the License.
 #
 
-mvn -Preporting site site:stage $@
+mvn -DdependencyDetailsEnabled=false -Preporting site site:stage $@
 mvn scm-publish:publish-scm $@
