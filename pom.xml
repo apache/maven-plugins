@@ -107,6 +107,7 @@
                 ! The module-info.java does not contain comments.
               -->
               <exclude>src/it/*/module-info.java</exclude>
+              <exclude>README.md</exclude>
             </excludes>
           </configuration>
         </plugin>
