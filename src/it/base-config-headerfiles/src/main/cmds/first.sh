@@ -1,0 +1,1 @@
+This first.sh should be located into bin directory into the resulting jmod file.

@@ -1,0 +1,2 @@
+Test native librariy file which will stay in lib/first.so in
+resulting jmod file.

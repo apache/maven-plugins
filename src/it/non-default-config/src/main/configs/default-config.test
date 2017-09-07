@@ -1,0 +1,2 @@
+Test configuration file which should never be put into the config/config.test in
+resulting jmod file based on the non default configuration.
