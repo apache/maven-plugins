@@ -1,0 +1,1 @@
+This first.sh should never be located into bin directory into the resulting jmod file based on the non default configuration.

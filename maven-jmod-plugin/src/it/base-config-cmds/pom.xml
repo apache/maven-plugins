@@ -23,12 +23,12 @@
 >
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-jmod-plugin-base-it</artifactId>
+  <artifactId>maven-jmod-plugin-base-config-cmds</artifactId>
   <version>99.0</version>
   <name>Maven</name>
   <packaging>jmod</packaging>
   <url>http://maven.apache.org</url>
-  <description>Test Base JMod creation</description>
+  <description>Test jmod file creation with cmds direcotry by using default configuration.</description>
   <properties>
     <maven.compiler.source>1.9</maven.compiler.source>
     <maven.compiler.target>1.9</maven.compiler.target>

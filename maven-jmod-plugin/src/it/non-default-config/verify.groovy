@@ -34,17 +34,19 @@ try
         return false;
     }
 
-    File artifact = new File( target, "jmods/maven-jmod-plugin-test-project-001.jmod" );
+    File artifact = new File( target, "jmods/maven-jmod-plugin-non-default-config.jmod" );
     if ( !artifact.exists() || artifact.isDirectory() )
     {
         System.err.println( "target file is missing or a directory." );
         return false;
     }
 
-    String[] artifactNames = new String[] { 
+    String[] artifactNames = [
+      "conf/config.test",
+      "conf/config-sub.test",
       "classes/module-info.class",
       "classes/myproject/HelloWorld.class",
-    };
+    ]
 
     Set contents = new HashSet();
 
