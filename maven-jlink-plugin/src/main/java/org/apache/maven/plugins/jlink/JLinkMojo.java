@@ -96,7 +96,7 @@ public class JLinkMojo
 
     /**
      * Here you can define the compression of the resources being used. The command line equivalent is:
-     * <code>-c, --compress=&lt;0|1|2&gt;</code>.
+     * <code>-c, --compress=level&gt;</code>. The valid values for the level are: <code>0, 1, 2</code>.
      */
     @Parameter
     private Integer compression;
@@ -121,8 +121,13 @@ public class JLinkMojo
     private List<String> limitModules;
 
     /**
+     * <p>
+     * Usually this is not necessary, cause this is handled automatically by the given dependencies.
+     * </p>
+     * <p>
      * By using the --add-modules you can define the root modules to be resolved. The configuration in
      * <code>pom.xml</code> file can look like this:
+     * </p>
      * 
      * <pre>
      * &lt;addModules&gt;
@@ -185,7 +190,7 @@ public class JLinkMojo
     private boolean ignoreSigningInformation;
 
     /**
-     * This will suppress to have the <code>includes</code> directory in the resulting Java Run Time Image. The JLink
+     * This will suppress to have an <code>includes</code> directory in the resulting Java Run Time Image. The JLink
      * command line equivalent is: <code>--no-header-files</code>
      */
     @Parameter( defaultValue = "false" )
