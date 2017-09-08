@@ -21,11 +21,19 @@ package org.apache.maven.plugins.jlink;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.Commandline;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -41,6 +49,7 @@ public class AbsractJLinkMojoTest
     public void before()
     {
         this.mojoMock = mock( AbstractJLinkMojo.class, Mockito.CALLS_REAL_METHODS );
+        when( mojoMock.getLog() ).thenReturn( mock( Log.class ) );
     }
 
     @Test
@@ -106,4 +115,25 @@ public class AbsractJLinkMojoTest
         assertThat( result ).isEqualTo( "A,B" );
     }
 
+    @Test
+    public void xxx()
+        throws MojoExecutionException, IOException, CommandLineException
+    {
+        Process p = mock( Process.class );
+
+        String b = "Error occured";
+        byte[] bytes = b.getBytes();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write( bytes );
+        
+        when (p.getOutputStream()).thenReturn( baos );
+        
+        Commandline cmd = mock( Commandline.class );
+        when (cmd.execute()).thenReturn( p );
+        
+        File outputDirectory = mock( File.class );
+
+        mojoMock.executeCommand( cmd, outputDirectory );
+
+    }
 }
