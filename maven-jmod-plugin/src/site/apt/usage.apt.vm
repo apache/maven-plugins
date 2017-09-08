@@ -53,10 +53,20 @@ Usage
 </project>
 +-----
 
-  The configuration elements contains the configuration for the plugin 
-  {{{https://maven.apache.org/guides/mini/guide-configuring-plugins.html}}like any other Maven plugin}}.
+  The configuration elements contains the configuration for the plugin
+  {{{https://maven.apache.org/guides/mini/guide-configuring-plugins.html}like any other Maven plugin}}.
+  The different elements which can be configured for this plugin can identified by the
+  {{{./plugin-info.html}goals documentation}}.
 
-  
+* Requirements
+
+  Based on the foundation of the plugin it is required to have JDK 9 installed. This means
+  either you have it configured via <<JAVA_HOME>> which means to run the whole
+  Maven build with JDK 9 or via <<Toolchains>>.
+
+  Howto configure Maven related to Toolchains can be read in the
+  {{{https://maven.apache.org/guides/mini/guide-using-toolchains.html}Toolchains documentation}}.
+
 * Usage of the Maven JMod Plugin
 
   JMod files can contain supplemental configuration files, native libraries, 

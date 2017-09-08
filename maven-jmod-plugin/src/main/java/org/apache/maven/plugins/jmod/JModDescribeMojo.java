@@ -69,9 +69,8 @@ public class JModDescribeMojo
 
         getLog().info( "Toolchain in maven-jmod-plugin: jmod [ " + jModExecutable + " ]" );
 
-        // We need to put the resulting x.jmod files into jmods folder otherwise is
-        // seemed to be not working.
-        // Check why?
+        //TODO: Need to think about if we really require to have the jmod
+        // file being located in the target directory?
         File modsFolder = new File( outputDirectory, "jmods" );
         File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
 
