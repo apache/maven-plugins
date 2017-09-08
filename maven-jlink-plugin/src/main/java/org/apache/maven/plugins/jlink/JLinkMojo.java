@@ -233,7 +233,8 @@ public class JLinkMojo
     private ZipArchiver zipArchiver;
 
     /**
-     * Name of the generated ZIP file.
+     * Name of the generated ZIP file in the <code>target</code> directory. 
+     * This will not change the name of the installed/deployed file.
      */
     @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
     private String finalName;
