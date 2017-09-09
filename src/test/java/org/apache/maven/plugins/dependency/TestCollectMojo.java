@@ -54,7 +54,7 @@ public class TestCollectMojo
         assertNotNull( mojo.getProject() );
         MavenProject project = mojo.getProject();
 
-        mojo.setSilent(true);
+        mojo.setSilent( true );
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
@@ -64,8 +64,8 @@ public class TestCollectMojo
 
         mojo.execute();
         DependencyStatusSets results = mojo.getResults();
-        assertNotNull(results);
-        assertEquals(artifacts.size(), results.getResolvedDependencies().size());
+        assertNotNull( results );
+        assertEquals( artifacts.size(), results.getResolvedDependencies().size() );
     }
 
     /**
@@ -83,13 +83,13 @@ public class TestCollectMojo
         assertNotNull( mojo.getProject() );
         MavenProject project = mojo.getProject();
 
-        mojo.setSilent(true);
+        mojo.setSilent( true );
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
 
-        project.setArtifacts(artifacts);
-        project.setDependencyArtifacts(directArtifacts);
+        project.setArtifacts( artifacts );
+        project.setDependencyArtifacts( directArtifacts );
 
         setVariableValueToObject( mojo, "excludeTransitive", Boolean.TRUE );
 
@@ -104,7 +104,7 @@ public class TestCollectMojo
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/collect-test/plugin-config.xml" );
         CollectDependenciesMojo mojo = (CollectDependenciesMojo) lookupMojo( "collect", testPom );
-        mojo.setSilent(false);
+        mojo.setSilent( false );
 
         assertFalse( mojo.getLog() instanceof SilentLog );
     } // TODO: Test skipping artifacts.

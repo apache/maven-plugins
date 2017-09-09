@@ -28,21 +28,22 @@ import org.apache.maven.plugins.dependency.fromDependencies.UnpackDependenciesMo
 import org.apache.maven.project.MavenProject;
 
 public class TestIncludeExcludeUnpackDependenciesMojo
-	extends AbstractDependencyMojoTestCase
+    extends AbstractDependencyMojoTestCase
 {
-	private final String PACKED_FILE = "test.zip";
+    private final String PACKED_FILE = "test.zip";
 
-	private final String UNPACKED_FILE_PREFIX = "test";
-	private final String UNPACKED_FILE_SUFFIX = ".txt";
+    private final String UNPACKED_FILE_PREFIX = "test";
 
-	private final String PACKED_FILE_PATH = "target/test-classes/unit/unpack-dependencies-test/" + PACKED_FILE;
+    private final String UNPACKED_FILE_SUFFIX = ".txt";
 
-	UnpackDependenciesMojo mojo;
+    private final String PACKED_FILE_PATH = "target/test-classes/unit/unpack-dependencies-test/" + PACKED_FILE;
+
+    UnpackDependenciesMojo mojo;
 
     protected void setUp()
         throws Exception
     {
-    	// required for mojo lookups to work
+        // required for mojo lookups to work
         super.setUp( "unpack-dependencies", true );
 
         File testPom = new File( getBasedir(), "target/test-classes/unit/unpack-dependencies-test/plugin-config.xml" );
@@ -51,7 +52,7 @@ public class TestIncludeExcludeUnpackDependenciesMojo
         // mojo.silent = true;
 
         // it needs to get the archivermanager
-        //stubFactory.setUnpackableFile( mojo.getArchiverManager() );
+        // stubFactory.setUnpackableFile( mojo.getArchiverManager() );
         // i'm using one file repeatedly to archive so I can test the name
         // programmatically.
         stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar + PACKED_FILE_PATH ) );
@@ -86,101 +87,107 @@ public class TestIncludeExcludeUnpackDependenciesMojo
 
     /**
      * This test will validate that only the 1 and 11 files get unpacked
-     * @throws Exception
+     * 
+     * @throws Exception in case of errors
      */
     public void testUnpackIncludesManyFiles()
-		throws Exception
-	{
+        throws Exception
+    {
         mojo.setIncludes( "**/*1" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify only the 2 file gets unpacked
-     * @throws Exception
+     * 
+     * @throws Exception in case of errors
      */
     public void testUnpackIncludesSingleFile()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setIncludes( "**/test2" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify all files get unpacked
-     * @throws Exception
+     * 
+     * @throws Exception in case of errors
      */
     public void testUnpackIncludesAllFiles()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setIncludes( "**/*" );
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will validate that only the 2 and 3 files get unpacked
-     * @throws Exception
+     * 
+     * @throws Exception in case of errors
      */
     public void testUnpackExcludesManyFiles()
-		throws Exception
-	{
+        throws Exception
+    {
         mojo.setExcludes( "**/*1" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
-     * This test will verify only the 1, 11 & 3 files get unpacked
-     * @throws Exception
+     * This test will verify only the 1, 11 &amp; 3 files get unpacked
+     * 
+     * @throws Exception in case of errors
      */
     public void testUnpackExcludesSingleFile()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setExcludes( "**/test2" + UNPACKED_FILE_SUFFIX );
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     /**
      * This test will verify no files get unpacked
-     * @throws Exception
+     * 
+     * @throws Exception in case of errors
      */
     public void testUnpackExcludesAllFiles()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.setExcludes( "**/*" );
         mojo.execute();
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( false, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 
     public void testNoIncludeExcludes()
-    	throws Exception
-	{
+        throws Exception
+    {
         mojo.execute();
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 1 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 11 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 2 + UNPACKED_FILE_SUFFIX );
         assertUnpacked( true, UNPACKED_FILE_PREFIX + 3 + UNPACKED_FILE_SUFFIX );
-	}
+    }
 }

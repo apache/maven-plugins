@@ -52,19 +52,18 @@ import org.apache.maven.shared.dependencies.resolve.DependencyResolverException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Resolves a single artifact, eventually transitively, from the specified remote repositories.
- * Caveat: will always check the central repository defined in the super pom. You could use a mirror entry in your
- * <code>settings.xml</code>
+ * Resolves a single artifact, eventually transitively, from the specified remote repositories. Caveat: will always
+ * check the central repository defined in the super pom. You could use a mirror entry in your <code>settings.xml</code>
  */
 @Mojo( name = "get", requiresProject = false, threadSafe = true )
 public class GetMojo
     extends AbstractMojo
 {
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.*)::(.+)" );
-    
+
     @Parameter( defaultValue = "${session}", required = true, readonly = true )
     private MavenSession session;
-    
+
     /**
      *
      */
@@ -74,11 +73,11 @@ public class GetMojo
     /**
     *
     */
-   @Component
-   private DependencyResolver dependencyResolver;
+    @Component
+    private DependencyResolver dependencyResolver;
 
-   @Component
-   private ArtifactHandlerManager artifactHandlerManager;
+    @Component
+    private ArtifactHandlerManager artifactHandlerManager;
 
     /**
      * Map that contains the layouts.
@@ -87,7 +86,7 @@ public class GetMojo
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
     private DefaultDependableCoordinate coordinate = new DefaultDependableCoordinate();
-    
+
     /**
      * The groupId of the artifact to download. Ignored if {@link #artifact} is used.
      */
@@ -121,8 +120,8 @@ public class GetMojo
     private String packaging = "jar";
 
     /**
-     * Repositories in the format id::[layout]::url or just url, separated by comma.
-     * ie. central::default::http://repo1.maven.apache.org/maven2,myrepo::::http://repo.acme.com,http://repo.acme2.com
+     * Repositories in the format id::[layout]::url or just url, separated by comma. ie.
+     * central::default::http://repo1.maven.apache.org/maven2,myrepo::::http://repo.acme.com,http://repo.acme2.com
      */
     @Parameter( property = "remoteRepositories" )
     private String remoteRepositories;
@@ -173,9 +172,8 @@ public class GetMojo
             String[] tokens = StringUtils.split( artifact, ":" );
             if ( tokens.length < 3 || tokens.length > 5 )
             {
-                throw new MojoFailureException(
-                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging[:classifier]] "
-                        + artifact );
+                throw new MojoFailureException( "Invalid artifact, you must specify "
+                    + "groupId:artifactId:version[:packaging[:classifier]] " + artifact );
             }
             coordinate.setGroupId( tokens[0] );
             coordinate.setArtifactId( tokens[1] );
@@ -215,7 +213,7 @@ public class GetMojo
         {
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            
+
             buildingRequest.setRemoteRepositories( repoList );
 
             if ( transitive )
@@ -300,31 +298,31 @@ public class GetMojo
     // @Parameter( alias = "groupId" )
     public void setGroupId( String groupId )
     {
-      this.coordinate.setGroupId( groupId );
+        this.coordinate.setGroupId( groupId );
     }
-    
+
     // @Parameter( alias = "artifactId" )
     public void setArtifactId( String artifactId )
     {
-      this.coordinate.setArtifactId( artifactId );
+        this.coordinate.setArtifactId( artifactId );
     }
-    
+
     // @Parameter( alias = "version" )
     public void setVersion( String version )
     {
-      this.coordinate.setVersion( version );
+        this.coordinate.setVersion( version );
     }
-    
+
     // @Parameter( alias = "classifier" )
     public void setClassifier( String classifier )
     {
-      this.coordinate.setClassifier( classifier );
+        this.coordinate.setClassifier( classifier );
     }
-    
+
     // @Parameter( alias = "packaging" )
     public void setPackaging( String type )
     {
-      this.coordinate.setType( type );
+        this.coordinate.setType( type );
     }
 
 }

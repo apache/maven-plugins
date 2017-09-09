@@ -64,7 +64,7 @@ public class TestTreeMojo
     /**
      * Tests the proper discovery and configuration of the mojo.
      *
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void _testTreeTestEnvironment()
         throws Exception
@@ -96,7 +96,7 @@ public class TestTreeMojo
     /**
      * Test the DOT format serialization
      *
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void _testTreeDotSerializing()
         throws Exception
@@ -111,8 +111,8 @@ public class TestTreeMojo
 
     /**
      * Test the GraphML format serialization
-     *
-     * @throws Exception
+     * 
+     * @throws Exception in case of an error.
      */
     public void _testTreeGraphMLSerializing()
         throws Exception
@@ -121,7 +121,8 @@ public class TestTreeMojo
 
         assertTrue( findString( contents, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" ) );
         assertTrue( findString( contents, "<y:NodeLabel>testGroupId:project:jar:1.0:compile</y:NodeLabel>" ) );
-        assertTrue( findString( contents, "<y:NodeLabel>testGroupId:snapshot:jar:2.0-SNAPSHOT:compile</y:NodeLabel>" ) );
+        assertTrue( findString( contents,
+                                "<y:NodeLabel>testGroupId:snapshot:jar:2.0-SNAPSHOT:compile</y:NodeLabel>" ) );
         assertTrue( findString( contents, "<y:NodeLabel>testGroupId:release:jar:1.0:compile</y:NodeLabel>" ) );
         assertTrue( findString( contents, "<key for=\"node\" id=\"d0\" yfiles.type=\"nodegraphics\"/>" ) );
         assertTrue( findString( contents, "<key for=\"edge\" id=\"d1\" yfiles.type=\"edgegraphics\"/>" ) );
@@ -129,8 +130,8 @@ public class TestTreeMojo
 
     /**
      * Test the TGF format serialization
-     *
-     * @throws Exception
+     * 
+     * @throws Exception in case of an error.
      */
     public void _testTreeTGFSerializing()
         throws Exception
@@ -143,12 +144,14 @@ public class TestTreeMojo
 
     /**
      * Help finding content in the given list of string
-     * @param outputFile
-     * @param format
+     * 
+     * @param outputFile the outputFile.
+     * @param format The format.
+     * @throws Exception in case of an error.
      * @return list of strings in the output file
      */
     private List<String> runTreeMojo( String outputFile, String format )
-             throws Exception
+        throws Exception
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/tree-test/plugin-config.xml" );
         String outputFileName = testDir.getAbsolutePath() + outputFile;
@@ -180,19 +183,20 @@ public class TestTreeMojo
         }
         fp1.close();
 
-        return contents ;
+        return contents;
     }
 
     /**
      * Help finding content in the given list of string
-     * @param contents
-     * @param str
+     * 
+     * @param contents The contents.
+     * @param str The content which should be checked for.
      */
     private boolean findString( List<String> contents, String str )
     {
         for ( String line : contents )
         {
-            if (line.contains(str))
+            if ( line.contains( str ) )
             {
                 // if match then return here
                 return true;

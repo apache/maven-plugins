@@ -24,8 +24,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 
 /**
- * Abstract Parent class used by mojos that get Artifact information from the
- * project dependencies.
+ * Abstract Parent class used by mojos that get Artifact information from the project dependencies.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -46,7 +45,7 @@ public abstract class AbstractFromDependenciesMojo
      */
     @Parameter( property = "mdep.stripVersion", defaultValue = "false" )
     protected boolean stripVersion = false;
-    
+
     /**
      * Strip artifact classifier during copy
      */
@@ -54,8 +53,16 @@ public abstract class AbstractFromDependenciesMojo
     protected boolean stripClassifier = false;
 
     /**
+     * <p>
      * Place each artifact in the same directory layout as a default repository.
-     * <br/>example: /outputDirectory/junit/junit/3.8.1/junit-3.8.1.jar
+     * </p>
+     * <p>
+     * example:
+     * </p>
+     * 
+     * <pre>
+     *   /outputDirectory/junit/junit/3.8.1/junit-3.8.1.jar
+     * </pre>
      *
      * @since 2.0-alpha-2
      */
@@ -63,8 +70,8 @@ public abstract class AbstractFromDependenciesMojo
     protected boolean useRepositoryLayout;
 
     /**
-     * Place each type of file in a separate subdirectory. (example
-     * /outputDirectory/runtime /outputDirectory/provided etc)
+     * Place each type of file in a separate subdirectory. (example /outputDirectory/runtime /outputDirectory/provided
+     * etc)
      *
      * @since 2.2
      */
@@ -72,8 +79,7 @@ public abstract class AbstractFromDependenciesMojo
     protected boolean useSubDirectoryPerScope;
 
     /**
-     * Place each type of file in a separate subdirectory. (example
-     * /outputDirectory/jars /outputDirectory/wars etc)
+     * Place each type of file in a separate subdirectory. (example /outputDirectory/jars /outputDirectory/wars etc)
      *
      * @since 2.0-alpha-1
      */
@@ -81,8 +87,7 @@ public abstract class AbstractFromDependenciesMojo
     protected boolean useSubDirectoryPerType;
 
     /**
-     * Place each file in a separate subdirectory. (example
-     * <code>/outputDirectory/junit-3.8.1-jar</code>)
+     * Place each file in a separate subdirectory. (example <code>/outputDirectory/junit-3.8.1-jar</code>)
      *
      * @since 2.0-alpha-1
      */
@@ -190,8 +195,7 @@ public abstract class AbstractFromDependenciesMojo
     }
 
     /**
-     * @param useRepositoryLayout -
-     *                            true if dependencies must be planted in a repository layout
+     * @param useRepositoryLayout - true if dependencies must be planted in a repository layout
      */
     public void setUseRepositoryLayout( boolean useRepositoryLayout )
     {

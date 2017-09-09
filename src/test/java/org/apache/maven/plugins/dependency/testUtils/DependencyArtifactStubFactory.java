@@ -42,10 +42,9 @@ public class DependencyArtifactStubFactory
         this.flattenedPath = flattenedPath;
     }
 
-    
     /**
-     * @param theWorkingDir
-     * @param theCreateFiles
+     * @param theWorkingDir {@link File}
+     * @param theCreateFiles true/false.
      */
     public DependencyArtifactStubFactory( File theWorkingDir, boolean theCreateFiles )
     {
@@ -67,14 +66,14 @@ public class DependencyArtifactStubFactory
         }
         return list;
     }
-    
+
     @Override
     public Artifact createArtifact( String groupId, String artifactId, VersionRange versionRange, String scope,
                                     String type, String classifier, boolean optional )
         throws IOException
     {
         File workingDir = getWorkingDir();
-        
+
         if ( !flattenedPath )
         {
             StringBuilder path = new StringBuilder( 128 );
@@ -88,11 +87,12 @@ public class DependencyArtifactStubFactory
             // don't use flatten directories, won't happen at runtime
             setWorkingDir( new File( workingDir, path.toString() ) );
         }
-        
-        Artifact artifact = super.createArtifact( groupId, artifactId, versionRange, scope, type, classifier, optional );
-        
+
+        Artifact artifact =
+            super.createArtifact( groupId, artifactId, versionRange, scope, type, classifier, optional );
+
         setWorkingDir( workingDir );
-        
+
         return artifact;
     }
- }
+}

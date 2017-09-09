@@ -168,7 +168,10 @@ public class AnalyzeDuplicateMojo
             modelDependencies2.add( dep.getManagementKey() );
         }
 
-        return new LinkedHashSet<String>(
-            CollectionUtils.disjunction( modelDependencies2, new LinkedHashSet<String>( modelDependencies2 ) ) );
+        //@formatter:off
+        return new LinkedHashSet<String>( 
+          CollectionUtils.disjunction( modelDependencies2, new LinkedHashSet<String>( modelDependencies2 ) ) 
+        );
+        //@formatter:on
     }
 }

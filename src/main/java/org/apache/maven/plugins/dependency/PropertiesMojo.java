@@ -31,16 +31,17 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Goal that sets a property pointing to the artifact file for each project dependency.
- * For each dependency (direct and transitive) a project property will be set which follows the
- * <code>groupId:artifactId:type:[classifier]</code> form and contains the path to the resolved artifact.
+ * Goal that sets a property pointing to the artifact file for each project dependency. For each dependency (direct and
+ * transitive) a project property will be set which follows the <code>groupId:artifactId:type:[classifier]</code> form
+ * and contains the path to the resolved artifact.
  *
  * @author Paul Gier
  * @version $Id$
  * @since 2.2
  */
-@Mojo( name = "properties", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true )
+//CHECKSTYLE_OFF: LineLength
+@Mojo( name = "properties", requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
 public class PropertiesMojo
     extends AbstractMojo
 {

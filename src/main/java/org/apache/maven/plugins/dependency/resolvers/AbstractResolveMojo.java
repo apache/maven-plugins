@@ -57,10 +57,8 @@ public abstract class AbstractResolveMojo
     /**
      * This method resolves the dependency artifacts from the project.
      *
-     * @param theProject
-     *            The POM.
+     * @param theProject The POM.
      * @return resolved set of dependency artifacts.
-     *
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      * @throws InvalidDependencyVersionException
@@ -75,8 +73,7 @@ public abstract class AbstractResolveMojo
     protected boolean appendOutput;
 
     /**
-     * Don't resolve plugins that are in the current reactor.
-     * Only works for plugins at the moment.
+     * Don't resolve plugins that are in the current reactor. Only works for plugins at the moment.
      *
      * @since 2.7
      */
@@ -125,9 +122,10 @@ public abstract class AbstractResolveMojo
 
         final FilterArtifacts filter = new FilterArtifacts();
 
-        filter.addFilter( new org.apache.maven.shared.artifact.filter.collection.ScopeFilter(
-                                                  DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
-                                                  DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
+        //CHECKSTYLE_OFF: LineLength
+        filter.addFilter( new org.apache.maven.shared.artifact.filter.collection.ScopeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeScope ),
+                                                                                              DependencyUtil.cleanToBeTokenizedString( this.excludeScope ) ) );
+        //CHECKSTYLE_ON: LineLength
 
         filter.addFilter( new TypeFilter( DependencyUtil.cleanToBeTokenizedString( this.includeTypes ),
                                           DependencyUtil.cleanToBeTokenizedString( this.excludeTypes ) ) );
@@ -149,7 +147,7 @@ public abstract class AbstractResolveMojo
      *
      * @param artifact the artifact used to retrieve dependencies
      * @return resolved set of dependencies
-     * @throws DependencyResolverException
+     * @throws DependencyResolverException in case of error while resolving artifacts.
      */
     protected Set<Artifact> resolveArtifactDependencies( final DependableCoordinate artifact )
         throws DependencyResolverException

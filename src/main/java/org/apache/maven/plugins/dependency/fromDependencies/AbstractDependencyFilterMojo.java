@@ -56,8 +56,7 @@ import org.apache.maven.shared.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Class that encapsulates the plugin parameters, and contains methods that
- * handle dependency filtering
+ * Class that encapsulates the plugin parameters, and contains methods that handle dependency filtering
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -108,8 +107,7 @@ public abstract class AbstractDependencyFilterMojo
     protected boolean excludeTransitive;
 
     /**
-     * Comma Separated list of Types to include. Empty String indicates include
-     * everything (default).
+     * Comma Separated list of Types to include. Empty String indicates include everything (default).
      *
      * @since 2.0
      */
@@ -117,8 +115,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeTypes;
 
     /**
-     * Comma Separated list of Types to exclude. Empty String indicates don't
-     * exclude anything (default).
+     * Comma Separated list of Types to exclude. Empty String indicates don't exclude anything (default).
      *
      * @since 2.0
      */
@@ -150,8 +147,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeScope;
 
     /**
-     * Comma Separated list of Classifiers to include. Empty String indicates
-     * include everything (default).
+     * Comma Separated list of Classifiers to include. Empty String indicates include everything (default).
      *
      * @since 2.0
      */
@@ -159,8 +155,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String includeClassifiers;
 
     /**
-     * Comma Separated list of Classifiers to exclude. Empty String indicates
-     * don't exclude anything (default).
+     * Comma Separated list of Classifiers to exclude. Empty String indicates don't exclude anything (default).
      *
      * @since 2.0
      */
@@ -176,8 +171,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String classifier;
 
     /**
-     * Specify type to look for when constructing artifact based on classifier.
-     * Example: java-source,jar,war
+     * Specify type to look for when constructing artifact based on classifier. Example: java-source,jar,war
      *
      * @since 2.0
      */
@@ -193,9 +187,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeArtifactIds;
 
     /**
-     * Comma separated list of Artifact names to include.
-     * Empty String indicates include
-     * everything (default).
+     * Comma separated list of Artifact names to include. Empty String indicates include everything (default).
      *
      * @since 2.0
      */
@@ -211,9 +203,7 @@ public abstract class AbstractDependencyFilterMojo
     protected String excludeGroupIds;
 
     /**
-     * Comma separated list of GroupIds to include.
-     * Empty String indicates include
-     * everything (default).
+     * Comma separated list of GroupIds to include. Empty String indicates include everything (default).
      *
      * @since 2.0
      */
@@ -225,8 +215,9 @@ public abstract class AbstractDependencyFilterMojo
      *
      * @since 2.0
      */
-    @Parameter( property = "markersDirectory",
-                defaultValue = "${project.build.directory}/dependency-maven-plugin-markers" )
+    //CHECKSTYLE_OFF: LineLength
+    @Parameter( property = "markersDirectory", defaultValue = "${project.build.directory}/dependency-maven-plugin-markers" )
+    //CHECKSTYLE_ON: LineLength
     protected File markersDirectory;
 
     /**
@@ -253,8 +244,9 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Retrieves dependencies, either direct only or all including transitive.
      *
+     * @param stopOnFailure true to fail if resolution does not work or false not to fail.
      * @return A set of artifacts
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException in case of errors.
      */
     protected Set<Artifact> getResolvedDependencies( boolean stopOnFailure )
         throws MojoExecutionException
@@ -265,6 +257,11 @@ public abstract class AbstractDependencyFilterMojo
         return status.getResolvedDependencies();
     }
 
+    /**
+     * @param stopOnFailure true/false.
+     * @return {@link DependencyStatusSets}
+     * @throws MojoExecutionException in case of an error.
+     */
     protected DependencyStatusSets getDependencySets( boolean stopOnFailure )
         throws MojoExecutionException
     {
@@ -272,14 +269,13 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * Method creates filters and filters the projects dependencies. This method
-     * also transforms the dependencies if classifier is set. The dependencies
-     * are filtered in least specific to most specific order
+     * Method creates filters and filters the projects dependencies. This method also transforms the dependencies if
+     * classifier is set. The dependencies are filtered in least specific to most specific order
      *
-     * @param stopOnFailure
-     * @return DependencyStatusSets - Bean of TreeSets that contains information
-     *         on the projects dependencies
-     * @throws MojoExecutionException
+     * @param stopOnFailure true to fail if artifacts can't be resolved false otherwise.
+     * @param includeParents <code>true</code> if parents should be included or not <code>false</code>.
+     * @return DependencyStatusSets - Bean of TreeSets that contains information on the projects dependencies
+     * @throws MojoExecutionException in case of errors.
      */
     protected DependencyStatusSets getDependencySets( boolean stopOnFailure, boolean includeParents )
         throws MojoExecutionException
@@ -384,14 +380,14 @@ public abstract class AbstractDependencyFilterMojo
             }
         }
     }
+
     /**
      * Transform artifacts
      *
-     * @param artifacts
-     * @param stopOnFailure
-     * @return DependencyStatusSets - Bean of TreeSets that contains information
-     *         on the projects dependencies
-     * @throws MojoExecutionException
+     * @param artifacts set of artifacts {@link Artifact}.
+     * @param stopOnFailure true/false.
+     * @return DependencyStatusSets - Bean of TreeSets that contains information on the projects dependencies
+     * @throws MojoExecutionException in case of an error.
      */
     protected DependencyStatusSets getClassifierTranslatedDependencies( Set<Artifact> artifacts, boolean stopOnFailure )
         throws MojoExecutionException
@@ -432,9 +428,9 @@ public abstract class AbstractDependencyFilterMojo
     /**
      * Filter the marked dependencies
      *
-     * @param artifacts
-     * @return status set
-     * @throws MojoExecutionException
+     * @param artifacts The artifacts set {@link Artifact}.
+     * @return status set {@link DependencyStatusSets}.
+     * @throws MojoExecutionException in case of an error.
      */
     protected DependencyStatusSets filterMarkedDependencies( Set<Artifact> artifacts )
         throws MojoExecutionException
@@ -462,9 +458,15 @@ public abstract class AbstractDependencyFilterMojo
         return new DependencyStatusSets( unMarkedArtifacts, null, skippedArtifacts );
     }
 
-
+    /**
+     * @param coordinates The set of artifact coordinates{@link ArtifactCoordinate}.
+     * @param stopOnFailure <code>true</code> if we should fail with exception if an artifact couldn't be resolved
+     *            <code>false</code> otherwise.
+     * @return the resolved artifacts. {@link Artifact}.
+     * @throws MojoExecutionException in case of error.
+     */
     protected Set<Artifact> resolve( Set<ArtifactCoordinate> coordinates, boolean stopOnFailure )
-                    throws MojoExecutionException
+        throws MojoExecutionException
     {
         ProjectBuildingRequest buildingRequest = newResolveArtifactProjectBuildingRequest();
 
@@ -489,6 +491,7 @@ public abstract class AbstractDependencyFilterMojo
         }
         return resolvedArtifacts;
     }
+
     /**
      * @return Returns the markersDirectory.
      */
@@ -516,8 +519,7 @@ public abstract class AbstractDependencyFilterMojo
     }
 
     /**
-     * @param prependGroupId -
-     *                       true if the groupId must be prepended during the copy.
+     * @param prependGroupId - true if the groupId must be prepended during the copy.
      */
     public void setPrependGroupId( boolean prependGroupId )
     {

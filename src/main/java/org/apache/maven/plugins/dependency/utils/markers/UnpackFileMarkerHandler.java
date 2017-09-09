@@ -48,10 +48,9 @@ public class UnpackFileMarkerHandler
     protected File getMarkerFile()
     {
         /**
-         * Build a hash of all include/exclude strings, to determine
-         * if an artifactItem has been unpacked using the include/exclude
-         * parameters, this will allow an artifact to be included multiple
-         * times with different include/exclude parameters
+         * Build a hash of all include/exclude strings, to determine if an artifactItem has been unpacked using the
+         * include/exclude parameters, this will allow an artifact to be included multiple times with different
+         * include/exclude parameters
          */
         File markerFile;
         if ( this.artifactItem == null || ( StringUtils.isEmpty( this.artifactItem.getIncludes() )

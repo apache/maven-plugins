@@ -38,7 +38,7 @@ public class TestPropertiesMojo
     /**
      * tests the proper discovery and configuration of the mojo
      * 
-     * @throws Exception
+     * @throws Exception in case of errors
      */
     public void testSetProperties()
         throws Exception

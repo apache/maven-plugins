@@ -42,12 +42,8 @@ public class DependencyTestUtils
     /**
      * Deletes a directory and its contents.
      *
-     * @param dir
-     * The base directory of the included and excluded files.
-     *
-     * @throws IOException
-     * @throws MojoExecutionException
-     * When a directory failed to get deleted.
+     * @param dir {@link File} The base directory of the included and excluded files.
+     * @throws IOException in case of an error. When a directory failed to get deleted.
      */
     public static void removeDirectory( File dir )
         throws IOException
@@ -79,14 +75,12 @@ public class DependencyTestUtils
     }
 
     /**
-     * convience method to set values to variables in objects that don't have
-     * setters
+     * convenience method to set values to variables in objects that don't have setters
      *
-     * @param object
-     * @param variable
-     * @param value
-     *
-     * @throws IllegalAccessException
+     * @param object {@link Object}
+     * @param variable the field name.
+     * @param value The value to be set.
+     * @throws IllegalAccessException in case of an error.
      */
     public static void setVariableValueToObject( Object object, String variable, Object value )
         throws IllegalAccessException
@@ -106,7 +100,7 @@ public class DependencyTestUtils
         long time = System.currentTimeMillis();
         time = time - ( time % 1000 );
         assertTrue( "Updating last modification time of marker file " + file.getAbsolutePath()
-                        + " failed unexpectedly.", file.setLastModified( time ) );
+            + " failed unexpectedly.", file.setLastModified( time ) );
 
         // wait at least a second for filesystems that only record to the
         // nearest second.

@@ -55,8 +55,9 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 2.0-alpha-2
  */
-@Mojo( name = "build-classpath", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
+// CHECKSTYLE_OFF: LineLength
+@Mojo( name = "build-classpath", requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
+// CHECKSTYLE_ON: LineLength
 public class BuildClasspathMojo
     extends AbstractDependencyFilterMojo
     implements Comparator<Artifact>
@@ -73,7 +74,7 @@ public class BuildClasspathMojo
      */
     @Parameter( property = "mdep.stripClassifier", defaultValue = "false" )
     private boolean stripClassifier = false;
-    
+
     /**
      * The prefix to prepend on each dependent artifact. If undefined, the paths refer to the actual files store in the
      * local repository (the stripVersion parameter does nothing then).
@@ -86,7 +87,7 @@ public class BuildClasspathMojo
      */
     @Parameter( property = "mdep.outputProperty" )
     private String outputProperty;
-    
+
     /**
      * The file to write the classpath string. If undefined, it just prints the classpath as [INFO].
      */
@@ -146,8 +147,9 @@ public class BuildClasspathMojo
     private boolean outputFilterFile;
 
     /**
-     * Either append the artifact's baseVersion or uniqueVersion to the filename.
-     * Will only be used if {@link #isStripVersion()} is {@code false}.
+     * Either append the artifact's baseVersion or uniqueVersion to the filename. Will only be used if
+     * {@link #isStripVersion()} is {@code false}.
+     * 
      * @since 2.6
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
@@ -158,9 +160,9 @@ public class BuildClasspathMojo
      */
     @Component
     private MavenProjectHelper projectHelper;
-    
+
     @Component
-    private RepositoryManager repositoryManager; 
+    private RepositoryManager repositoryManager;
 
     /**
      * Main entry into mojo. Gets the list of dependencies and iterates to create a classpath.
@@ -176,7 +178,7 @@ public class BuildClasspathMojo
         boolean isFileSepSet = StringUtils.isNotEmpty( fileSeparator );
         boolean isPathSepSet = StringUtils.isNotEmpty( pathSeparator );
 
-        //don't allow them to have absolute paths when they attach.
+        // don't allow them to have absolute paths when they attach.
         if ( attach && StringUtils.isEmpty( localRepoProperty ) )
         {
             localRepoProperty = "${M2_REPO}";
@@ -217,7 +219,7 @@ public class BuildClasspathMojo
             cpString = cpString.replaceAll( pattern, replacement );
         }
 
-        //make the string valid for filtering
+        // make the string valid for filtering
         if ( outputFilterFile )
         {
             cpString = "classpath=" + cpString;
@@ -265,8 +267,8 @@ public class BuildClasspathMojo
     /**
      * Appends the artifact path into the specified StringBuilder.
      *
-     * @param art
-     * @param sb
+     * @param art {@link Artifact}
+     * @param sb {@link StringBuilder}
      */
     protected void appendArtifactPath( Artifact art, StringBuilder sb )
     {
@@ -277,7 +279,7 @@ public class BuildClasspathMojo
             if ( StringUtils.isNotEmpty( localRepoProperty ) )
             {
                 File localBasedir = repositoryManager.getLocalRepositoryBasedir( session.getProjectBuildingRequest() );
-                
+
                 file = StringUtils.replace( file, localBasedir.getAbsolutePath(), localRepoProperty );
             }
             sb.append( file );
@@ -308,8 +310,8 @@ public class BuildClasspathMojo
         }
         catch ( Exception ex )
         {
-            this.getLog().warn(
-                "Error while reading old classpath file '" + outputFile + "' for up-to-date check: " + ex );
+            this.getLog().warn( "Error while reading old classpath file '" + outputFile + "' for up-to-date check: "
+                + ex );
 
             return false;
         }
@@ -324,7 +326,7 @@ public class BuildClasspathMojo
     private void storeClasspathFile( String cpString, File out )
         throws MojoExecutionException
     {
-        //make sure the parent path exists.
+        // make sure the parent path exists.
         out.getParentFile().mkdirs();
 
         Writer w = null;
@@ -352,15 +354,15 @@ public class BuildClasspathMojo
      * 'outputFile' is not null.
      * 
      * @return the string contained in the classpathFile, if exists, or null otherwise.
-     * @throws MojoExecutionException
+     * @throws IOException in case of an error.
      */
     protected String readClasspathFile()
         throws IOException
     {
         if ( outputFile == null )
         {
-            throw new IllegalArgumentException(
-                "The outputFile parameter cannot be null if the file is intended to be read." );
+            throw new IllegalArgumentException( "The outputFile parameter "
+                + "cannot be null if the file is intended to be read." );
         }
 
         if ( !outputFile.isFile() )
@@ -395,9 +397,9 @@ public class BuildClasspathMojo
      *
      * @param art1 first object
      * @param art2 second object
-     * @return the value <code>0</code> if the argument string is equal to this string; a value less than
-     *         <code>0</code> if this string is lexicographically less than the string argument; and a value greater
-     *         than <code>0</code> if this string is lexicographically greater than the string argument.
+     * @return the value <code>0</code> if the argument string is equal to this string; a value less than <code>0</code>
+     *         if this string is lexicographically less than the string argument; and a value greater than
+     *         <code>0</code> if this string is lexicographically greater than the string argument.
      */
     @Override
     public int compare( Artifact art1, Artifact art2 )
@@ -434,7 +436,7 @@ public class BuildClasspathMojo
     {
         this.outputFile = outputFile;
     }
-    
+
     /**
      * @param theOutputProperty the outputProperty to set
      */

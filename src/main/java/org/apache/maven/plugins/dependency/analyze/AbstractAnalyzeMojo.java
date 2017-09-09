@@ -74,12 +74,10 @@ public abstract class AbstractAnalyzeMojo
     private MavenProject project;
 
     /**
-     * Specify the project dependency analyzer to use (plexus component role-hint).
-     * By default, <a href="/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is used.
-     *
-     * To use this, you must declare a dependency for this plugin that contains the code for the
-     * analyzer. The analyzer must have a declared Plexus role name, and you specify the role name
-     * here.
+     * Specify the project dependency analyzer to use (plexus component role-hint). By default,
+     * <a href="/shared/maven-dependency-analyzer/">maven-dependency-analyzer</a> is used. To use this, you must declare
+     * a dependency for this plugin that contains the code for the analyzer. The analyzer must have a declared Plexus
+     * role name, and you specify the role name here.
      *
      * @since 2.2
      */
@@ -145,8 +143,8 @@ public abstract class AbstractAnalyzeMojo
     private File outputDirectory;
 
     /**
-     * Force dependencies as used, to override incomplete result caused by bytecode-level analysis.
-     * Dependency format is <code>groupId:artifactId</code>.
+     * Force dependencies as used, to override incomplete result caused by bytecode-level analysis. Dependency format is
+     * <code>groupId:artifactId</code>.
      *
      * @since 2.6
      */
@@ -162,70 +160,65 @@ public abstract class AbstractAnalyzeMojo
     private boolean skip;
 
     /**
-     * List of dependencies that will be ignored.
-     *
-     * Any dependency on this list will be excluded from the "declared but unused" and the "used but undeclared" list.
-     *
-     * The filter syntax is:
+     * List of dependencies that will be ignored. Any dependency on this list will be excluded from the "declared but
+     * unused" and the "used but undeclared" list. The filter syntax is:
      *
      * <pre>
      * [groupId]:[artifactId]:[type]:[version]
      * </pre>
      *
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
-     * segment is treated as an implicit wildcard.
-     * *
-     * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
-     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.</p>
+     * segment is treated as an implicit wildcard. *
+     * <p>
+     * For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
+     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.
+     * </p>
      *
      * @since 2.10
      * @see StrictPatternIncludesArtifactFilter
      */
     @Parameter
-    private String [] ignoredDependencies = new String[0];
+    private String[] ignoredDependencies = new String[0];
 
     /**
-     * List of dependencies that will be ignored if they are used but undeclared.
-     *
-     * The filter syntax is:
+     * List of dependencies that will be ignored if they are used but undeclared. The filter syntax is:
      *
      * <pre>
      * [groupId]:[artifactId]:[type]:[version]
      * </pre>
      *
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
-     * segment is treated as an implicit wildcard.
-     * *
-     * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
-     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.</p>
+     * segment is treated as an implicit wildcard. *
+     * <p>
+     * For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
+     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.
+     * </p>
      *
      * @since 2.10
      * @see StrictPatternIncludesArtifactFilter
      */
     @Parameter
-    private String [] ignoredUsedUndeclaredDependencies = new String[0];
+    private String[] ignoredUsedUndeclaredDependencies = new String[0];
 
     /**
-     * List of dependencies that will be ignored if they are declared but unused.
-     *
-     * The filter syntax is:
+     * List of dependencies that will be ignored if they are declared but unused. The filter syntax is:
      *
      * <pre>
      * [groupId]:[artifactId]:[type]:[version]
      * </pre>
      *
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
-     * segment is treated as an implicit wildcard.
-     * *
-     * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
-     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.</p>
+     * segment is treated as an implicit wildcard. *
+     * <p>
+     * For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
+     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.
+     * </p>
      *
      * @since 2.10
      * @see StrictPatternIncludesArtifactFilter
      */
     @Parameter
-    private String [] ignoredUnusedDeclaredDependencies = new String[0];
-
+    private String[] ignoredUnusedDeclaredDependencies = new String[0];
 
     // Mojo methods -----------------------------------------------------------
 
@@ -277,9 +270,8 @@ public abstract class AbstractAnalyzeMojo
         }
         catch ( Exception exception )
         {
-            throw new MojoExecutionException(
-                "Failed to instantiate ProjectDependencyAnalyser with role " + role + " / role-hint " + roleHint,
-                exception );
+            throw new MojoExecutionException( "Failed to instantiate ProjectDependencyAnalyser with role " + role
+                + " / role-hint " + roleHint, exception );
         }
     }
 
@@ -335,7 +327,6 @@ public abstract class AbstractAnalyzeMojo
 
         boolean reported = false;
         boolean warning = false;
-
 
         if ( verbose && !usedDeclared.isEmpty() )
         {
@@ -480,10 +471,20 @@ public abstract class AbstractAnalyzeMojo
                 // called because artifact will set the version to -SNAPSHOT only if I do this. MNG-2961
                 artifact.isSnapshot();
 
-                buf.append( scriptableFlag ).append( ":" ).append( pomFile ).append( ":" )
-                   .append( artifact.getDependencyConflictId() ).append( ":" ).append( artifact.getClassifier() )
-                   .append( ":" ).append( artifact.getBaseVersion() ).append( ":" ).append( artifact.getScope() )
+                //CHECKSTYLE_OFF: LineLength
+                buf.append( scriptableFlag )
+                   .append( ":" )
+                   .append( pomFile )
+                   .append( ":" )
+                   .append( artifact.getDependencyConflictId() )
+                   .append( ":" )
+                   .append( artifact.getClassifier() )
+                   .append( ":" )
+                   .append( artifact.getBaseVersion() )
+                   .append( ":" )
+                   .append( artifact.getScope() )
                    .append( "\n" );
+                //CHECKSTYLE_ON: LineLength
             }
             getLog().info( "\n" + buf );
         }

@@ -116,7 +116,8 @@ public abstract class AbstractFromConfigurationMojo
     abstract ArtifactItemFilter getMarkedArtifactFilter( ArtifactItem item );
 
     // artifactItems is filled by either field injection or by setArtifact()
-    protected void verifyRequirements() throws MojoFailureException
+    protected void verifyRequirements()
+        throws MojoFailureException
     {
         if ( artifactItems == null || artifactItems.isEmpty() )
         {
@@ -133,13 +134,13 @@ public abstract class AbstractFromConfigurationMojo
      * @throws MojoExecutionException with a message if an error occurs.
      * @see ArtifactItem
      */
-    protected List<ArtifactItem> getProcessedArtifactItems( ProcessArtifactItemsRequest processArtifactItemsRequest  )
+    protected List<ArtifactItem> getProcessedArtifactItems( ProcessArtifactItemsRequest processArtifactItemsRequest )
         throws MojoExecutionException
     {
 
-        boolean removeVersion = processArtifactItemsRequest.isRemoveVersion(), prependGroupId =
-            processArtifactItemsRequest.isPrependGroupId(), useBaseVersion =
-            processArtifactItemsRequest.isUseBaseVersion();
+        boolean removeVersion = processArtifactItemsRequest.isRemoveVersion(),
+                        prependGroupId = processArtifactItemsRequest.isPrependGroupId(),
+                        useBaseVersion = processArtifactItemsRequest.isUseBaseVersion();
 
         boolean removeClassifier = processArtifactItemsRequest.isRemoveClassifier();
 
@@ -267,18 +268,16 @@ public abstract class AbstractFromConfigurationMojo
     {
         MavenProject project = getProject();
         List<Dependency> deps = project.getDependencies();
-        List<Dependency> depMngt = project.getDependencyManagement() == null
-            ? Collections.<Dependency>emptyList()
-            : project.getDependencyManagement().getDependencies();
+        List<Dependency> depMngt = project.getDependencyManagement() == null ? Collections.<Dependency>emptyList()
+                        : project.getDependencyManagement().getDependencies();
 
         if ( !findDependencyVersion( artifact, deps, false )
             && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, false ) )
             && !findDependencyVersion( artifact, deps, true )
             && ( project.getDependencyManagement() == null || !findDependencyVersion( artifact, depMngt, true ) ) )
         {
-            throw new MojoExecutionException(
-                "Unable to find artifact version of " + artifact.getGroupId() + ":" + artifact.getArtifactId()
-                    + " in either dependency list or in project's dependency management." );
+            throw new MojoExecutionException( "Unable to find artifact version of " + artifact.getGroupId() + ":"
+                + artifact.getArtifactId() + " in either dependency list or in project's dependency management." );
         }
     }
 
@@ -286,9 +285,9 @@ public abstract class AbstractFromConfigurationMojo
      * Tries to find missing version from a list of dependencies. If found, the artifact is updated with the correct
      * version.
      *
-     * @param artifact     representing configured file.
+     * @param artifact representing configured file.
      * @param dependencies list of dependencies to search.
-     * @param looseMatch   only look at artifactId and groupId
+     * @param looseMatch only look at artifactId and groupId
      * @return the found dependency
      */
     private boolean findDependencyVersion( ArtifactItem artifact, List<Dependency> dependencies, boolean looseMatch )
@@ -404,9 +403,8 @@ public abstract class AbstractFromConfigurationMojo
             String[] tokens = StringUtils.split( artifact, ":" );
             if ( tokens.length < 3 || tokens.length > 5 )
             {
-                throw new MojoFailureException(
-                    "Invalid artifact, you must specify groupId:artifactId:version[:packaging[:classifier]] "
-                        + artifact );
+                throw new MojoFailureException( "Invalid artifact, "
+                    + "you must specify groupId:artifactId:version[:packaging[:classifier]] " + artifact );
             }
             String groupId = tokens[0];
             String artifactId = tokens[1];

@@ -296,7 +296,8 @@ public class PurgeLocalRepositoryMojo
     /**
      * Includes only snapshot artifacts
      */
-    private class SnapshotsFilter extends AbstractFilter
+    private class SnapshotsFilter
+        extends AbstractFilter
     {
         @Override
         public boolean accept( Node node, List<Node> parents )
@@ -371,8 +372,7 @@ public class PurgeLocalRepositoryMojo
     {
         List<Dependency> dependencies = project.getDependencies();
 
-        TransformableFilter dependencyFilter =
-            createPurgeArtifactsFilter( project, dependencies, purgedArtifacts );
+        TransformableFilter dependencyFilter = createPurgeArtifactsFilter( project, dependencies, purgedArtifacts );
 
         Set<Artifact> resolvedArtifactsToPurge =
             getFilteredResolvedArtifacts( project, dependencies, dependencyFilter );
@@ -524,7 +524,7 @@ public class PurgeLocalRepositoryMojo
         }
 
         List<String> exclusions = new ArrayList<String>( reactorProjects.size() );
-        // It doesn't make sense to include projects from the reactor here since they're likely not able to be resolved 
+        // It doesn't make sense to include projects from the reactor here since they're likely not able to be resolved
         for ( MavenProject reactorProject : reactorProjects )
         {
             exclusions.add( toPatternExcludes( reactorProject.getArtifact() ) );
@@ -576,8 +576,8 @@ public class PurgeLocalRepositoryMojo
         try
         {
             Iterable<ArtifactResult> results =
-                dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(),
-                                                        project.getModel(), filter );
+                dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(), project.getModel(),
+                                                        filter );
 
             Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>();
 
@@ -591,8 +591,8 @@ public class PurgeLocalRepositoryMojo
         catch ( DependencyResolverException e )
         {
             getLog().info( "Unable to resolve all dependencies for: " + project.getGroupId() + ":"
-                               + project.getArtifactId() + ":" + project.getVersion()
-                               + ". Falling back to non-transitive mode for initial artifact resolution." );
+                + project.getArtifactId() + ":" + project.getVersion()
+                + ". Falling back to non-transitive mode for initial artifact resolution." );
         }
 
         Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>();
@@ -667,8 +667,10 @@ public class PurgeLocalRepositoryMojo
         {
             try
             {
+                //CHECKSTYLE_OFF: LineLength
                 artifactResolver.resolveArtifact( session.getProjectBuildingRequest(),
-                                     org.apache.maven.shared.artifact.TransferUtils.toArtifactCoordinate( artifact ) );
+                                                  org.apache.maven.shared.artifact.TransferUtils.toArtifactCoordinate( artifact ) );
+                //CHECKSTYLE_ON: LineLength
             }
             catch ( ArtifactResolverException e )
             {

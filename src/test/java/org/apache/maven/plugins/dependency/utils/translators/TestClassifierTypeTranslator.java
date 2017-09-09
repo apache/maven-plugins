@@ -45,7 +45,6 @@ import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 /**
  * @author brianf
- * 
  */
 public class TestClassifierTypeTranslator
     extends AbstractDependencyMojoTestCase
@@ -53,21 +52,21 @@ public class TestClassifierTypeTranslator
     Set<Artifact> artifacts = new HashSet<Artifact>();
 
     ArtifactFactory artifactFactory;
-    
+
     ArtifactRepository artifactRepository;
 
     Log log = new SilentLog();
-    
+
     private RepositoryManager repoManager;
-    
+
     private ProjectBuildingRequest buildingRequest;
-    
+
     private ArtifactHandlerManager artifactHandlerManager;
 
     protected void setUp()
         throws Exception
     {
-        super.setUp( "classifiertype-translator", false);
+        super.setUp( "classifiertype-translator", false );
 
         artifactHandlerManager = new DefaultArtifactHandlerManager();
         this.setVariableValueToObject( artifactHandlerManager, "artifactHandlers", new HashMap() );
@@ -76,18 +75,17 @@ public class TestClassifierTypeTranslator
         this.setVariableValueToObject( artifactFactory, "artifactHandlerManager", artifactHandlerManager );
 
         artifactRepository = new StubArtifactRepository( null );
-        
+
         DependencyArtifactStubFactory factory = new DependencyArtifactStubFactory( null, false );
         artifacts = factory.getMixedArtifacts();
-        
+
         repoManager = lookup( RepositoryManager.class );
-        
-        MavenSession session = newMavenSession( new MavenProjectStub() ); 
+
+        MavenSession session = newMavenSession( new MavenProjectStub() );
         buildingRequest = session.getProjectBuildingRequest();
-        
+
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
-
 
     }
 
@@ -112,12 +110,12 @@ public class TestClassifierTypeTranslator
         {
             Iterator<ArtifactCoordinate> resultIter = results.iterator();
             boolean found = false;
-            while (resultIter.hasNext())
+            while ( resultIter.hasNext() )
             {
                 ArtifactCoordinate translatedArtifact = resultIter.next();
-                if (artifact.getArtifactId().equals(translatedArtifact.getArtifactId())
-                    && artifact.getGroupId().equals(translatedArtifact.getGroupId())
-                    /*&& artifact.getScope().equals(translatedArtifact.getScope())*/)
+                if ( artifact.getArtifactId().equals( translatedArtifact.getArtifactId() )
+                    && artifact.getGroupId().equals( translatedArtifact.getGroupId() )
+                /* && artifact.getScope().equals(translatedArtifact.getScope()) */ )
                 {
                     // classifier is null, should be the same as the artifact
                     assertEquals( artifact.getClassifier(), translatedArtifact.getClassifier() );
@@ -157,7 +155,7 @@ public class TestClassifierTypeTranslator
                 ArtifactCoordinate translatedArtifact = resultIter.next();
                 if ( artifact.getArtifactId() == translatedArtifact.getArtifactId()
                     && artifact.getGroupId() == translatedArtifact.getGroupId()
-                    /*&& artifact.getScope() == translatedArtifact.getScope()*/ )
+                /* && artifact.getScope() == translatedArtifact.getScope() */ )
                 {
                     // classifier is null, should be the same as the artifact
                     assertEquals( classifier, translatedArtifact.getClassifier() );
@@ -187,7 +185,7 @@ public class TestClassifierTypeTranslator
                 ArtifactCoordinate translatedArtifact = resultIter.next();
                 if ( artifact.getArtifactId() == translatedArtifact.getArtifactId()
                     && artifact.getGroupId() == translatedArtifact.getGroupId()
-                    /*&& artifact.getScope() == translatedArtifact.getScope()*/ )
+                /* && artifact.getScope() == translatedArtifact.getScope() */ )
                 {
                     assertEquals( translatedArtifact.getClassifier(), classifier );
                     assertEquals( translatedArtifact.getExtension(), type );

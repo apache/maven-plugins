@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Displays all ancestor POMs of the project. This may be useful in a continuous integration system
- * where you want to know all parent poms of the project.
+ * Displays all ancestor POMs of the project. This may be useful in a continuous integration system where you want to
+ * know all parent poms of the project.
  *
  * @author Mirko Friedenhagen
  * @since 2.9
@@ -74,8 +74,8 @@ public class DisplayAncestorsMojo
         MavenProject currentAncestor = project.getParent();
         while ( currentAncestor != null )
         {
-            final String gav = String.format( Locale.US, "%s:%s:%s",
-                    currentAncestor.getGroupId(), currentAncestor.getArtifactId(), currentAncestor.getVersion() );
+            final String gav = String.format( Locale.US, "%s:%s:%s", currentAncestor.getGroupId(),
+                                              currentAncestor.getArtifactId(), currentAncestor.getVersion() );
 
             ancestors.add( gav );
 

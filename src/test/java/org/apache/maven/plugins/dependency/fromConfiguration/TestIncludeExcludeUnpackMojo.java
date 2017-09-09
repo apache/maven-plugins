@@ -58,7 +58,7 @@ public class TestIncludeExcludeUnpackMojo
         // mojo.silent = true;
 
         // it needs to get the archivermanager
-        //stubFactory.setUnpackableFile( mojo.getArchiverManager() );
+        // stubFactory.setUnpackableFile( mojo.getArchiverManager() );
         // i'm using one file repeatedly to archive so I can test the name
         // programmatically.
         stubFactory.setSrcFile( new File( getBasedir() + File.separatorChar + PACKED_FILE_PATH ) );
@@ -73,12 +73,12 @@ public class TestIncludeExcludeUnpackMojo
 
         mojo.setMarkersDirectory( new File( this.testDir, "markers" ) );
         mojo.setArtifactItems( list );
-        
+
         MavenSession session = newMavenSession( mojo.getProject() );
         setVariableValueToObject( mojo, "session", session );
-        
+
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
-        
+
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
     }
 
@@ -120,7 +120,7 @@ public class TestIncludeExcludeUnpackMojo
     /**
      * This test will validate that only the 1 and 11 files get unpacked
      *
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public void testUnpackIncludesManyFiles()
         throws Exception
@@ -136,7 +136,7 @@ public class TestIncludeExcludeUnpackMojo
     /**
      * This test will verify only the 2 file gets unpacked
      *
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public void testUnpackIncludesSingleFile()
         throws Exception
@@ -152,7 +152,7 @@ public class TestIncludeExcludeUnpackMojo
     /**
      * This test will verify all files get unpacked
      *
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public void testUnpackIncludesAllFiles()
         throws Exception
@@ -168,7 +168,7 @@ public class TestIncludeExcludeUnpackMojo
     /**
      * This test will validate that only the 2 and 3 files get unpacked
      *
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public void testUnpackExcludesManyFiles()
         throws Exception
@@ -182,9 +182,9 @@ public class TestIncludeExcludeUnpackMojo
     }
 
     /**
-     * This test will verify only the 1, 11 & 3 files get unpacked
+     * This test will verify only the 1, 11 &amp; 3 files get unpacked
      *
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public void testUnpackExcludesSingleFile()
         throws Exception
@@ -200,7 +200,7 @@ public class TestIncludeExcludeUnpackMojo
     /**
      * This test will verify no files get unpacked
      *
-     * @throws Exception
+     * @throws Exception in case of errors.
      */
     public void testUnpackExcludesAllFiles()
         throws Exception

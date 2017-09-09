@@ -37,7 +37,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false, threadSafe = true  )
+@Mojo( name = "copy", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresProject = false, threadSafe = true )
 public class CopyMojo
     extends AbstractFromConfigurationMojo
 {
@@ -56,6 +56,7 @@ public class CopyMojo
 
     /**
      * Prepend artifact groupId during copy
+     * 
      * @since 2.7
      */
     @Parameter( property = "mdep.prependGroupId", defaultValue = "false" )
@@ -63,17 +64,17 @@ public class CopyMojo
 
     /**
      * Use artifact baseVersion during copy
+     * 
      * @since 2.7
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "false" )
     private boolean useBaseVersion = false;
 
     /**
-     * The artifact to copy from command line. A string of the form
-     * groupId:artifactId:version[:packaging[:classifier]]. Use {@link #artifactItems} within the
-     * POM configuration.
+     * The artifact to copy from command line. A string of the form groupId:artifactId:version[:packaging[:classifier]].
+     * Use {@link #artifactItems} within the POM configuration.
      */
-    @SuppressWarnings( "unused" ) //marker-field, setArtifact(String) does the magic
+    @SuppressWarnings( "unused" ) // marker-field, setArtifact(String) does the magic
     @Parameter( property = "artifact" )
     private String artifact;
 
@@ -105,8 +106,8 @@ public class CopyMojo
         verifyRequirements();
 
         List<ArtifactItem> theArtifactItems =
-            getProcessedArtifactItems( new ProcessArtifactItemsRequest( stripVersion, prependGroupId,
-                                                                        useBaseVersion, stripClassifier ) );
+            getProcessedArtifactItems( new ProcessArtifactItemsRequest( stripVersion, prependGroupId, useBaseVersion,
+                                                                        stripClassifier ) );
         for ( ArtifactItem artifactItem : theArtifactItems )
         {
             if ( artifactItem.isNeedsProcessing() )

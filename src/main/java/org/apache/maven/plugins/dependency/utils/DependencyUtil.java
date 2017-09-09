@@ -55,41 +55,30 @@ public final class DependencyUtil
     }
 
     /**
-     * Builds the file name. If removeVersion is set, then the file name must be
-     * reconstructed from the groupId (if <b>prependGroupId</b> is true) artifactId,
-     * Classifier (if used) and Type.
-     * Otherwise, this method returns the artifact file name.
+     * Builds the file name. If removeVersion is set, then the file name must be reconstructed from the groupId (if
+     * <b>prependGroupId</b> is true) artifactId, Classifier (if used) and Type. Otherwise, this method returns the
+     * artifact file name.
      * 
-     * @param artifact
-     *            File to be formatted.
-     * @param removeVersion
-     *            Specifies if the version should be removed from the file name.
-     * @param prependGroupId
-     *            Specifies if the groupId should be prepended to the file name.
-     * @return Formatted file name in the format
-     *         [groupId].artifactId-[version]-[classifier].[type]
+     * @param artifact File to be formatted.
+     * @param removeVersion Specifies if the version should be removed from the file name.
+     * @param prependGroupId Specifies if the groupId should be prepended to the file name.
+     * @return Formatted file name in the format [groupId].artifactId-[version]-[classifier].[type]
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId )
-    {   
+    {
         return getFormattedFileName( artifact, removeVersion, prependGroupId, false );
     }
 
     /**
-     * Builds the file name. If removeVersion is set, then the file name must be
-     * reconstructed from the groupId (if <b>prependGroupId</b> is true) artifactId,
-     * Classifier (if used) and Type.
-     * Otherwise, this method returns the artifact file name.
+     * Builds the file name. If removeVersion is set, then the file name must be reconstructed from the groupId (if
+     * <b>prependGroupId</b> is true) artifactId, Classifier (if used) and Type. Otherwise, this method returns the
+     * artifact file name.
      * 
-     * @param artifact
-     *            File to be formatted.
-     * @param removeVersion
-     *            Specifies if the version should be removed from the file name.
-     * @param prependGroupId
-     *            Specifies if the groupId should be prepended to the file name.
-     * @param useBaseVersion
-     *            Specifies if the baseVersion of the artifact should be used instead of the version.
-     * @return Formatted file name in the format
-     *         [groupId].artifactId-[version]-[classifier].[type]
+     * @param artifact File to be formatted.
+     * @param removeVersion Specifies if the version should be removed from the file name.
+     * @param prependGroupId Specifies if the groupId should be prepended to the file name.
+     * @param useBaseVersion Specifies if the baseVersion of the artifact should be used instead of the version.
+     * @return Formatted file name in the format [groupId].artifactId-[version]-[classifier].[type]
      */
     public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId,
                                                boolean useBaseVersion )
@@ -98,34 +87,27 @@ public final class DependencyUtil
     }
 
     /**
-     * Builds the file name. If removeVersion is set, then the file name must be
-     * reconstructed from the groupId (if <b>prependGroupId</b> is true) artifactId,
-     * Classifier (if used) and Type.
-     * Otherwise, this method returns the artifact file name.
+     * Builds the file name. If removeVersion is set, then the file name must be reconstructed from the groupId (if
+     * <b>prependGroupId</b> is true) artifactId, Classifier (if used) and Type. Otherwise, this method returns the
+     * artifact file name.
      * 
-     * @param artifact
-     *            File to be formatted.
-     * @param removeVersion
-     *            Specifies if the version should be removed from the file name.
-     * @param prependGroupId
-     *            Specifies if the groupId should be prepended to the file name.
-     * @param useBaseVersion
-     *            Specifies if the baseVersion of the artifact should be used instead of the version.
-     * @param removeClassifier
-     *            Specifies if the classifier of the artifact should be remved from the file name.
-     * @return Formatted file name in the format
-     *         [groupId].artifactId-[version]-[classifier].[type]
+     * @param artifact File to be formatted.
+     * @param removeVersion Specifies if the version should be removed from the file name.
+     * @param prependGroupId Specifies if the groupId should be prepended to the file name.
+     * @param useBaseVersion Specifies if the baseVersion of the artifact should be used instead of the version.
+     * @param removeClassifier Specifies if the classifier of the artifact should be remved from the file name.
+     * @return Formatted file name in the format [groupId].artifactId-[version]-[classifier].[type]
      */
-    public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId, 
-            boolean useBaseVersion, boolean removeClassifier )
+    public static String getFormattedFileName( Artifact artifact, boolean removeVersion, boolean prependGroupId,
+                                               boolean useBaseVersion, boolean removeClassifier )
     {
         StringBuilder destFileName = new StringBuilder();
-        
+
         if ( prependGroupId )
         {
             destFileName.append( artifact.getGroupId() ).append( "." );
         }
-        
+
         String versionString;
         if ( !removeVersion )
         {
@@ -152,13 +134,14 @@ public final class DependencyUtil
         destFileName.append( artifact.getArtifactId() ).append( versionString );
         destFileName.append( classifierString ).append( "." );
         destFileName.append( artifact.getArtifactHandler().getExtension() );
-        
+
         return destFileName.toString();
     }
-    
+
     /**
      * Formats the outputDirectory based on type.
      * 
+     * @param useSubdirsPerScope if a new sub directory should be used for each scope.
      * @param useSubdirsPerType if a new sub directory should be used for each type.
      * @param useSubdirPerArtifact if a new sub directory should be used for each artifact.
      * @param useRepositoryLayout if dependencies must be moved into a Maven repository layout, if set, other settings
@@ -236,6 +219,8 @@ public final class DependencyUtil
      * 
      * @param string the string to write
      * @param file the file to write to
+     * @param append append to existing file or not.
+     * @param log where to send the logging output.
      * @throws IOException if an I/O error occurs
      */
     public static synchronized void write( String string, File file, boolean append, Log log )
@@ -264,6 +249,7 @@ public final class DependencyUtil
      * Writes the specified string to the log at info level.
      * 
      * @param string the string to write
+     * @param log where to log information.
      * @throws IOException if an I/O error occurs
      */
     public static synchronized void log( String string, Log log )
@@ -297,7 +283,7 @@ public final class DependencyUtil
         String ret = "";
         if ( !StringUtils.isEmpty( str ) )
         {
-            // remove initial and ending spaces, plus all spaces next to commas 
+            // remove initial and ending spaces, plus all spaces next to commas
             ret = str.trim().replaceAll( "[\\s]*,[\\s]*", "," );
         }
 

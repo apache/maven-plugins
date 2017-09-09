@@ -353,7 +353,7 @@ public class DependencySilentLog
     {
         // nop
     }
-    
+
     /**
      * @return <code>null</code>
      * @see org.codehaus.plexus.logging.Logger#getName()

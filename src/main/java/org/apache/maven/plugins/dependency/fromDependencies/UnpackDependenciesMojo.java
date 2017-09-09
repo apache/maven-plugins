@@ -34,23 +34,22 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import java.io.File;
 
 /**
- * Goal that unpacks the project dependencies from the repository to a defined
- * location.
+ * Goal that unpacks the project dependencies from the repository to a defined location.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "unpack-dependencies", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true )
+//CHECKSTYLE_OFF: LineLength
+@Mojo( name = "unpack-dependencies", requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
 public class UnpackDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
     /**
-     * A comma separated list of file patterns to include when unpacking the
-     * artifact.  i.e. <code>**&#47;*.xml,**&#47;*.properties</code>
-     * NOTE: Excludes patterns override the includes.
-     * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
+     * A comma separated list of file patterns to include when unpacking the artifact. i.e.
+     * <code>**&#47;*.xml,**&#47;*.properties</code> NOTE: Excludes patterns override the includes. (component code =
+     * <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
      * @since 2.0
      */
@@ -58,10 +57,9 @@ public class UnpackDependenciesMojo
     private String includes;
 
     /**
-     * A comma separated list of file patterns to exclude when unpacking the
-     * artifact.  i.e. <code>**&#47;*.xml,**&#47;*.properties</code>
-     * NOTE: Excludes patterns override the includes.
-     * (component code = <code>return isIncluded( name ) AND !isExcluded( name );</code>)
+     * A comma separated list of file patterns to exclude when unpacking the artifact. i.e.
+     * <code>**&#47;*.xml,**&#47;*.properties</code> NOTE: Excludes patterns override the includes. (component code =
+     * <code>return isIncluded( name ) AND !isExcluded( name );</code>)
      *
      * @since 2.0
      */
@@ -70,14 +68,15 @@ public class UnpackDependenciesMojo
 
     /**
      * Encoding of artifacts.
+     * 
      * @since 3.0
      */
     @Parameter( property = "mdep.unpack.encoding" )
     private String encoding;
 
     /**
-     * Main entry into mojo. This method gets the dependencies and iterates
-     * through each one passing it to DependencyUtil.unpackFile().
+     * Main entry into mojo. This method gets the dependencies and iterates through each one passing it to
+     * DependencyUtil.unpackFile().
      *
      * @throws MojoExecutionException with a message if an error occurs.
      * @see #getDependencySets(boolean)
@@ -122,8 +121,7 @@ public class UnpackDependenciesMojo
     }
 
     /**
-     * @param excludes A comma separated list of items to exclude
-     *                 i.e. <code>**\/*.xml, **\/*.properties</code>
+     * @param excludes A comma separated list of items to exclude i.e. <code>**\/*.xml, **\/*.properties</code>
      */
     public void setExcludes( String excludes )
     {
@@ -139,8 +137,7 @@ public class UnpackDependenciesMojo
     }
 
     /**
-     * @param includes A comma separated list of items to include
-     *                 i.e. <code>**\/*.xml, **\/*.properties</code>
+     * @param includes A comma separated list of items to include i.e. <code>**\/*.xml, **\/*.properties</code>
      */
     public void setIncludes( String includes )
     {
@@ -154,7 +151,7 @@ public class UnpackDependenciesMojo
     public void setEncoding( String encoding )
     {
         this.encoding = encoding;
-    }    
+    }
 
     /**
      * @return Returns the encoding.
