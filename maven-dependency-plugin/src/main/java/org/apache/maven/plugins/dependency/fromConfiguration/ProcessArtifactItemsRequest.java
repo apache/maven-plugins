@@ -30,11 +30,11 @@ public class ProcessArtifactItemsRequest
      */
     private boolean removeVersion;
 
-    /** 
+    /**
      * remove the classifier from the filename.
      */
     private boolean removeClassifier;
-    
+
     /**
      * prepend the groupId to the filename.
      */
@@ -79,7 +79,6 @@ public class ProcessArtifactItemsRequest
         this.removeClassifier = removeClassifier;
     }
 
-    
     public ProcessArtifactItemsRequest removeVersion( boolean removeVersion )
     {
         this.removeVersion = removeVersion;

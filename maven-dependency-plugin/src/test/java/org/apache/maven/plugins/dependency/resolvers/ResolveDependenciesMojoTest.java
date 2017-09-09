@@ -27,15 +27,16 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.dependency.AbstractDependencyMojoTestCase;
 import org.apache.maven.plugins.dependency.utils.DependencyStatusSets;
 
-public class ResolveDependenciesMojoTest extends AbstractDependencyMojoTestCase
+public class ResolveDependenciesMojoTest
+    extends AbstractDependencyMojoTestCase
 {
     protected void setUp()
-                    throws Exception
+        throws Exception
     {
         // required for mojo lookups to work
         super.setUp( "dss", true );
     }
-    
+
     public void testDependencyStatusLog()
         throws IOException
     {
@@ -96,7 +97,8 @@ public class ResolveDependenciesMojoTest extends AbstractDependencyMojoTestCase
         mojo.getOutput( true, false, false );
     }
 
-    private ResolveDependenciesMojo newMojo( final DependencyStatusSets dss ) {
+    private ResolveDependenciesMojo newMojo( final DependencyStatusSets dss )
+    {
         ResolveDependenciesMojo mojo = new ResolveDependenciesMojo();
         mojo.results = dss;
         return mojo;

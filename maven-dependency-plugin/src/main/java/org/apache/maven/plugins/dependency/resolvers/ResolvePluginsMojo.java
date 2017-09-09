@@ -59,8 +59,7 @@ public class ResolvePluginsMojo
     private List<ArtifactRepository> remotePluginRepositories;
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through
-     * displaying the resolved version.
+     * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */
@@ -128,7 +127,7 @@ public class ResolvePluginsMojo
 
                             id = artifact.toString();
                             sb.append( "      " + id + ( outputAbsoluteArtifactFilename ? ":" + artifactFilename : "" )
-                                       + "\n" );
+                                + "\n" );
                         }
                     }
                 }
@@ -167,8 +166,8 @@ public class ResolvePluginsMojo
      * This method resolves the plugin artifacts from the project.
      *
      * @return set of resolved plugin artifacts.
-     * @throws ArtifactFilterException
-     * @throws ArtifactResolverException
+     * @throws ArtifactFilterException in case of an error.
+     * @throws ArtifactResolverException in case of an error.
      */
     protected Set<Artifact> resolvePluginArtifacts()
         throws ArtifactFilterException, ArtifactResolverException
@@ -184,21 +183,21 @@ public class ResolvePluginsMojo
         artifacts = filter.filter( artifacts );
 
         Set<Artifact> resolvedArtifacts = new LinkedHashSet<Artifact>( artifacts.size() );
-        //        final ArtifactFilter filter = getPluginFilter();
+        // final ArtifactFilter filter = getPluginFilter();
         for ( final Artifact artifact : new LinkedHashSet<Artifact>( artifacts ) )
         {
             // if ( !filter.include( artifact ) )
             // {
-            //     final String logStr =
-            //     String.format( "    Plugin SKIPPED: %s", DependencyUtil.getFormattedFileName( artifact, false ) );
+            // final String logStr =
+            // String.format( " Plugin SKIPPED: %s", DependencyUtil.getFormattedFileName( artifact, false ) );
             //
-            //     if ( !silent )
-            //     {
-            //         this.getLog().info( logStr );
-            //     }
+            // if ( !silent )
+            // {
+            // this.getLog().info( logStr );
+            // }
             //
-            //     artifacts.remove( artifact );
-            //     continue;
+            // artifacts.remove( artifact );
+            // continue;
             // }
 
             ProjectBuildingRequest buildingRequest =
@@ -207,7 +206,7 @@ public class ResolvePluginsMojo
             buildingRequest.setRemoteRepositories( this.remotePluginRepositories );
 
             // resolve the new artifact
-            resolvedArtifacts.add( getArtifactResolver().resolveArtifact( buildingRequest, artifact ) .getArtifact() );
+            resolvedArtifacts.add( getArtifactResolver().resolveArtifact( buildingRequest, artifact ).getArtifact() );
         }
         return artifacts;
     }

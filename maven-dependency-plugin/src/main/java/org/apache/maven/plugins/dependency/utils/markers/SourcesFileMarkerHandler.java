@@ -60,8 +60,7 @@ public class SourcesFileMarkerHandler
     /**
      * Get MarkerFile, exposed for unit testing purposes
      * 
-     * @param res
-     *            resolved or not.
+     * @param res resolved or not.
      * @return marker file for this artifact.
      */
     protected File getMarkerFile( boolean res )
@@ -80,16 +79,13 @@ public class SourcesFileMarkerHandler
     }
 
     /**
-     * Tests whether the file or directory denoted by this abstract pathname
-     * exists.
+     * Tests whether the file or directory denoted by this abstract pathname exists.
      * 
-     * @return <code>true</code> if and only if the file or directory denoted
-     *         by this abstract pathname exists; <code>false</code> otherwise
-     * 
-     * @throws MojoExecutionException
-     *             If a security manager exists and its <code>{@link
-     *          java.lang.SecurityManager#checkRead(java.lang.String)}</code>
-     *             method denies read access to the file or directory
+     * @return <code>true</code> if and only if the file or directory denoted by this abstract pathname exists;
+     *         <code>false</code> otherwise
+     * @throws MojoExecutionException If a security manager exists and its <code>{@link
+     *          java.lang.SecurityManager#checkRead(java.lang.String)}</code> method denies read access to the file or
+     *             directory
      */
     @Override
     public boolean isMarkerSet()
@@ -164,17 +160,13 @@ public class SourcesFileMarkerHandler
     }
 
     /**
-     * Deletes the file or directory denoted by this abstract pathname. If this
-     * pathname denotes a directory, then the directory must be empty in order
-     * to be deleted.
+     * Deletes the file or directory denoted by this abstract pathname. If this pathname denotes a directory, then the
+     * directory must be empty in order to be deleted.
      * 
-     * @return <code>true</code> if and only if the file or directory is
-     *         successfully deleted; <code>false</code> otherwise
-     * 
-     * @throws SecurityException
-     *             If a security manager exists and its <code>{@link
-     *          java.lang.SecurityManager#checkDelete}</code>
-     *             method denies delete access to the file
+     * @return <code>true</code> if and only if the file or directory is successfully deleted; <code>false</code>
+     *         otherwise
+     * @throws SecurityException If a security manager exists and its <code>{@link
+     *          java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
      */
     @Override
     public boolean clearMarker()
@@ -196,8 +188,7 @@ public class SourcesFileMarkerHandler
     }
 
     /**
-     * @param isResolved
-     *            The resolved to set.
+     * @param isResolved The resolved to set.
      */
     public void setResolved( boolean isResolved )
     {

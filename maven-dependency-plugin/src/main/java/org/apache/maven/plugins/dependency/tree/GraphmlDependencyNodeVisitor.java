@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.dependency.tree ;
+package org.apache.maven.plugins.dependency.tree;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,16 +39,14 @@ public class GraphmlDependencyNodeVisitor
     /**
      * Graphml xml file header. Define Schema and root element. We also define 2 key as meta data.
      */
-    private static final String GRAPHML_HEADER =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
-            + "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" "
-            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-            + "xmlns:y=\"http://www.yworks.com/xml/graphml\" "
-            + "xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns "
-            + "http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">\n"
-            + "  <key for=\"node\" id=\"d0\" yfiles.type=\"nodegraphics\"/> \n"
-            + "  <key for=\"edge\" id=\"d1\" yfiles.type=\"edgegraphics\"/> \n"
-            + "<graph id=\"dependencies\" edgedefault=\"directed\">\n";
+    private static final String GRAPHML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
+        + "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" "
+        + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " + "xmlns:y=\"http://www.yworks.com/xml/graphml\" "
+        + "xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns "
+        + "http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">\n"
+        + "  <key for=\"node\" id=\"d0\" yfiles.type=\"nodegraphics\"/> \n"
+        + "  <key for=\"edge\" id=\"d1\" yfiles.type=\"edgegraphics\"/> \n"
+        + "<graph id=\"dependencies\" edgedefault=\"directed\">\n";
 
     /**
      * Graphml xml file footer.

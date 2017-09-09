@@ -60,12 +60,12 @@ public class TestCopyMojo
         assertNotNull( mojo.getProject() );
         // MavenProject project = mojo.getProject();
         // init classifier things
-        
+
         MavenSession session = newMavenSession( mojo.getProject() );
         setVariableValueToObject( mojo, "session", session );
-        
+
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
-        
+
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
     }
 
@@ -172,7 +172,7 @@ public class TestCopyMojo
 
         assertFilesExist( list, true );
     }
-    
+
     public void testCopyFileWithBaseVersion()
         throws Exception
     {
@@ -182,16 +182,16 @@ public class TestCopyMojo
         item.setArtifactId( "artifact" );
         item.setGroupId( "groupId" );
         item.setVersion( "1.0-20130210.213424-191" );
-        list.add(item);
+        list.add( item );
 
         mojo.setArtifactItems( createArtifactItemArtifacts( list ) );
-        mojo.setUseBaseVersion(true);
+        mojo.setUseBaseVersion( true );
 
         mojo.execute();
 
         assertFilesExist( list, true );
     }
-    
+
     public void testSkip()
         throws Exception
     {
@@ -203,7 +203,7 @@ public class TestCopyMojo
         mojo.execute();
         for ( ArtifactItem item : list )
         {
-            //these will be null because no processing has occured only when everything is skipped
+            // these will be null because no processing has occured only when everything is skipped
             assertEquals( null, item.getOutputDirectory() );
             assertEquals( null, item.getDestFileName() );
         }
@@ -245,7 +245,7 @@ public class TestCopyMojo
         throws Exception
     {
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
-        
+
         ArtifactItem item = list.get( 0 );
         item.setOutputDirectory( new File( mojo.getOutputDirectory(), "testOverride" ) );
         mojo.setStripVersion( true );
@@ -382,11 +382,11 @@ public class TestCopyMojo
 
         MavenProject project = mojo.getProject();
         project.setDependencies( createDependencyArtifacts( getDependencyList( item ) ) );
-        
+
         // ensure dependency exists
         item.setClassifier( "sources" );
         item.setType( "jar" );
-        
+
         // pre-create item
         item.setVersion( "2.1" );
         createArtifact( item );
@@ -751,31 +751,31 @@ public class TestCopyMojo
 
         assertTrue( time < copiedFile.lastModified() );
     }
-    
+
     public void testCopyFileWithOverideLocalRepo()
         throws Exception
     {
         final File localRepo = stubFactory.getWorkingDir();
-        
+
         List<ArtifactItem> list = stubFactory.getArtifactItems( stubFactory.getClassifiedArtifacts() );
 
         mojo.setArtifactItems( list );
-        
-        File execLocalRepo =  new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
+
+        File execLocalRepo = new File( this.testDir.getAbsolutePath(), "executionLocalRepo" );
         assertFalse( execLocalRepo.exists() );
-        
+
         stubFactory.setWorkingDir( execLocalRepo );
         createArtifactItemArtifacts( list );
-        
+
         assertFalse( "default local repo should not exist", localRepo.exists() );
-        
+
         mojo.setLocalRepositoryDirectory( execLocalRepo );
-        
+
         mojo.execute();
 
         assertFilesExist( list, true );
-       
-    }    
+
+    }
 
     private List<Dependency> createDependencyArtifacts( List<Dependency> items )
         throws IOException
@@ -785,12 +785,12 @@ public class TestCopyMojo
         {
             String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier();
             stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(),
-                                        VersionRange.createFromVersion( item.getVersion() ), null,
-                                        item.getType(), classifier, item.isOptional() );
+                                        VersionRange.createFromVersion( item.getVersion() ), null, item.getType(),
+                                        classifier, item.isOptional() );
         }
         return items;
     }
-    
+
     private List<ArtifactItem> createArtifactItemArtifacts( List<ArtifactItem> items )
         throws IOException
     {
@@ -805,12 +805,11 @@ public class TestCopyMojo
         throws IOException
     {
         stubFactory.setCreateFiles( true );
-        
-        String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier(); 
+
+        String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier();
         String version = item.getVersion() != null ? item.getVersion() : item.getBaseVersion();
-        stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(),
-                                    version, null,
-                                    item.getType(), classifier );
+        stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(), version, null, item.getType(),
+                                    classifier );
         return item;
     }
 }

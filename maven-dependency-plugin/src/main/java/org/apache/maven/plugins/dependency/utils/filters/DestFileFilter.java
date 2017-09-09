@@ -87,9 +87,8 @@ public class DestFileFilter
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
-     *      org.apache.maven.plugin.logging.Log)
+     * org.apache.maven.plugin.logging.Log)
      */
     @Override
     public Set<Artifact> filter( Set<Artifact> artifacts )
@@ -116,8 +115,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param overWriteReleases
-     *            The overWriteReleases to set.
+     * @param overWriteReleases The overWriteReleases to set.
      */
     public void setOverWriteReleases( boolean overWriteReleases )
     {
@@ -133,8 +131,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param overWriteSnapshots
-     *            The overWriteSnapshots to set.
+     * @param overWriteSnapshots The overWriteSnapshots to set.
      */
     public void setOverWriteSnapshots( boolean overWriteSnapshots )
     {
@@ -150,8 +147,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param overWriteIfNewer
-     *            The overWriteIfNewer to set.
+     * @param overWriteIfNewer The overWriteIfNewer to set.
      */
     public void setOverWriteIfNewer( boolean overWriteIfNewer )
     {
@@ -167,8 +163,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param outputFileDirectory
-     *            The outputFileDirectory to set.
+     * @param outputFileDirectory The outputFileDirectory to set.
      */
     public void setOutputFileDirectory( File outputFileDirectory )
     {
@@ -184,8 +179,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param removeVersion
-     *            The removeVersion to set.
+     * @param removeVersion The removeVersion to set.
      */
     public void setRemoveVersion( boolean removeVersion )
     {
@@ -201,8 +195,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param removeClassifier
-     *            The removeClassifier to set.
+     * @param removeClassifier The removeClassifier to set.
      */
     public void setRemoveClassifier( boolean removeClassifier )
     {
@@ -218,8 +211,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param useSubDirectoryPerArtifact
-     *            The useSubDirectoryPerArtifact to set.
+     * @param useSubDirectoryPerArtifact The useSubDirectoryPerArtifact to set.
      */
     public void setUseSubDirectoryPerArtifact( boolean useSubDirectoryPerArtifact )
     {
@@ -235,8 +227,7 @@ public class DestFileFilter
     }
 
     /**
-     * @param useSubDirectoryPerType
-     *            The useSubDirectoryPerType to set.
+     * @param useSubDirectoryPerType The useSubDirectoryPerType to set.
      */
     public void setUseSubDirectoryPerType( boolean useSubDirectoryPerType )
     {
@@ -244,7 +235,6 @@ public class DestFileFilter
     }
 
     /**
-     *
      * @return Returns the useRepositoryLayout
      */
     public boolean isUseRepositoryLayout()
@@ -253,9 +243,7 @@ public class DestFileFilter
     }
 
     /**
-     *
-     * @param useRepositoryLayout
-     *            the useRepositoryLayout to set
+     * @param useRepositoryLayout the useRepositoryLayout to set
      */
     public void setUseRepositoryLayout( boolean useRepositoryLayout )
     {
@@ -267,8 +255,7 @@ public class DestFileFilter
     {
         Artifact artifact = item.getArtifact();
 
-        boolean overWrite =
-            ( artifact.isSnapshot() && this.overWriteSnapshots )
+        boolean overWrite = ( artifact.isSnapshot() && this.overWriteSnapshots )
             || ( !artifact.isSnapshot() && this.overWriteReleases );
 
         File destFolder = item.getOutputDirectory();
@@ -283,9 +270,8 @@ public class DestFileFilter
         File destFile;
         if ( StringUtils.isEmpty( item.getDestFileName() ) )
         {
-            String formattedFileName =
-                    DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId,
-                                                         useBaseVersion, removeClassifier );
+            String formattedFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId,
+                                                                            useBaseVersion, removeClassifier );
             destFile = new File( destFolder, formattedFileName );
         }
         else

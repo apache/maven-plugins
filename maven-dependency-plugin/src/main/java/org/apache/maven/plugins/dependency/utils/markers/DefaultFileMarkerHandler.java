@@ -58,16 +58,13 @@ public class DefaultFileMarkerHandler
     }
 
     /**
-     * Tests whether the file or directory denoted by this abstract pathname
-     * exists.
+     * Tests whether the file or directory denoted by this abstract pathname exists.
      * 
-     * @return <code>true</code> if and only if the file or directory denoted
-     *         by this abstract pathname exists; <code>false</code> otherwise
-     * 
-     * @throws SecurityException
-     *             If a security manager exists and its <code>{@link
-     *          java.lang.SecurityManager#checkRead(java.lang.String)}</code>
-     *             method denies read access to the file or directory
+     * @return <code>true</code> if and only if the file or directory denoted by this abstract pathname exists;
+     *         <code>false</code> otherwise
+     * @throws SecurityException If a security manager exists and its <code>{@link
+     *          java.lang.SecurityManager#checkRead(java.lang.String)}</code> method denies read access to the file or
+     *             directory
      */
     @Override
     public boolean isMarkerSet()
@@ -132,7 +129,7 @@ public class DefaultFileMarkerHandler
             if ( !marker.setLastModified( ts ) )
             {
                 throw new MojoExecutionException( "Unable to update last modified timestamp on marker file "
-                                                      + marker.getAbsolutePath() );
+                    + marker.getAbsolutePath() );
 
             }
         }
@@ -143,17 +140,13 @@ public class DefaultFileMarkerHandler
     }
 
     /**
-     * Deletes the file or directory denoted by this abstract pathname. If this
-     * pathname denotes a directory, then the directory must be empty in order
-     * to be deleted.
+     * Deletes the file or directory denoted by this abstract pathname. If this pathname denotes a directory, then the
+     * directory must be empty in order to be deleted.
      * 
-     * @return <code>true</code> if and only if the file or directory is
-     *         successfully deleted; <code>false</code> otherwise
-     * 
-     * @throws SecurityException
-     *             If a security manager exists and its <code>{@link
-     *          java.lang.SecurityManager#checkDelete}</code>
-     *             method denies delete access to the file
+     * @return <code>true</code> if and only if the file or directory is successfully deleted; <code>false</code>
+     *         otherwise
+     * @throws SecurityException If a security manager exists and its <code>{@link
+     *          java.lang.SecurityManager#checkDelete}</code> method denies delete access to the file
      */
     @Override
     public boolean clearMarker()
@@ -172,8 +165,7 @@ public class DefaultFileMarkerHandler
     }
 
     /**
-     * @param artifact
-     *            The artifact to set.
+     * @param artifact The artifact to set.
      */
     @Override
     public void setArtifact( Artifact artifact )
@@ -190,8 +182,7 @@ public class DefaultFileMarkerHandler
     }
 
     /**
-     * @param markerFilesDirectory
-     *            The markerFilesDirectory to set.
+     * @param markerFilesDirectory The markerFilesDirectory to set.
      */
     public void setMarkerFilesDirectory( File markerFilesDirectory )
     {

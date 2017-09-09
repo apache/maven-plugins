@@ -28,14 +28,14 @@ import org.apache.maven.shared.dependencies.DependableCoordinate;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * ArtifactItem represents information specified in the plugin configuration
- * section for each artifact.
+ * ArtifactItem represents information specified in the plugin configuration section for each artifact.
  *
  * @since 1.0
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-public class ArtifactItem implements DependableCoordinate
+public class ArtifactItem
+    implements DependableCoordinate
 {
     /**
      * Group Id of Artifact
@@ -112,14 +112,12 @@ public class ArtifactItem implements DependableCoordinate
     private Artifact artifact;
 
     /**
-     * A comma separated list of file patterns to include when unpacking the
-     * artifact.
+     * A comma separated list of file patterns to include when unpacking the artifact.
      */
     private String includes;
 
     /**
-     * A comma separated list of file patterns to exclude when unpacking the
-     * artifact.
+     * A comma separated list of file patterns to exclude when unpacking the artifact.
      */
     private String excludes;
 
@@ -156,8 +154,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param artifact
-     *            The artifactId to set.
+     * @param artifact The artifactId to set.
      */
     public void setArtifactId( String artifact )
     {
@@ -173,8 +170,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param groupId
-     *            The groupId to set.
+     * @param groupId The groupId to set.
      */
     public void setGroupId( String groupId )
     {
@@ -190,8 +186,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param type
-     *            The type to set.
+     * @param type The type to set.
      */
     public void setType( String type )
     {
@@ -207,8 +202,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param version
-     *            The version to set.
+     * @param version The version to set.
      */
     public void setVersion( String version )
     {
@@ -232,8 +226,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param classifier
-     *            Classifier.
+     * @param classifier Classifier.
      */
     public void setClassifier( String classifier )
     {
@@ -249,8 +242,8 @@ public class ArtifactItem implements DependableCoordinate
         }
         else
         {
-            return groupId + ":" + artifactId + ":" + classifier + ":" + StringUtils.defaultString( version, "?" )
-                + ":" + type;
+            return groupId + ":" + artifactId + ":" + classifier + ":" + StringUtils.defaultString( version, "?" ) + ":"
+                + type;
         }
     }
 
@@ -263,8 +256,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param outputDirectory
-     *            The outputDirectory to set.
+     * @param outputDirectory The outputDirectory to set.
      */
     public void setOutputDirectory( File outputDirectory )
     {
@@ -280,8 +272,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param destFileName
-     *            The destFileName to set.
+     * @param destFileName The destFileName to set.
      */
     public void setDestFileName( String destFileName )
     {
@@ -297,8 +288,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param needsProcessing
-     *            The needsProcessing to set.
+     * @param needsProcessing The needsProcessing to set.
      */
     public void setNeedsProcessing( boolean needsProcessing )
     {
@@ -314,8 +304,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param overWrite
-     *            The overWrite to set.
+     * @param overWrite The overWrite to set.
      */
     public void setOverWrite( String overWrite )
     {
@@ -349,8 +338,7 @@ public class ArtifactItem implements DependableCoordinate
     }
 
     /**
-     * @param artifact
-     *            The artifact to set.
+     * @param artifact The artifact to set.
      */
     public void setArtifact( Artifact artifact )
     {

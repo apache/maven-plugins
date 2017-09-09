@@ -37,7 +37,6 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 
 /**
  * @author brianf
- * 
  */
 public class TestMarkerFileFilter
     extends TestCase
@@ -69,10 +68,12 @@ public class TestMarkerFileFilter
         DependencyTestUtils.removeDirectory( outputFolder );
     }
 
-    public void testMarkerFile() throws ArtifactFilterException
-       
+    public void testMarkerFile()
+        throws ArtifactFilterException
+
     {
-        MarkerFileFilter filter = new MarkerFileFilter( true, true, false, new DefaultFileMarkerHandler( outputFolder ) );
+        MarkerFileFilter filter =
+            new MarkerFileFilter( true, true, false, new DefaultFileMarkerHandler( outputFolder ) );
         Set<Artifact> result = filter.filter( artifacts );
         assertEquals( 2, result.size() );
 
@@ -82,13 +83,15 @@ public class TestMarkerFileFilter
         assertEquals( 2, result.size() );
     }
 
-    public void testMarkerSnapshots() throws ArtifactFilterException, MojoExecutionException, IOException
-       
+    public void testMarkerSnapshots()
+        throws ArtifactFilterException, MojoExecutionException, IOException
+
     {
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( fact.getSnapshotArtifact(), outputFolder );
         handler.setMarker();
 
-        MarkerFileFilter filter = new MarkerFileFilter( true, false, false, new DefaultFileMarkerHandler( outputFolder ) );
+        MarkerFileFilter filter =
+            new MarkerFileFilter( true, false, false, new DefaultFileMarkerHandler( outputFolder ) );
         Set<Artifact> result = filter.filter( artifacts );
         assertEquals( 1, result.size() );
 
@@ -106,13 +109,13 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( fact.getReleaseArtifact(), outputFolder );
         handler.setMarker();
 
-        MarkerFileFilter filter = new MarkerFileFilter( false, false, false,
-                                                        new DefaultFileMarkerHandler( outputFolder ) );
+        MarkerFileFilter filter =
+            new MarkerFileFilter( false, false, false, new DefaultFileMarkerHandler( outputFolder ) );
         Set<Artifact> result = filter.filter( artifacts );
         assertEquals( 1, result.size() );
 
         filter.setOverWriteReleases( true );
-        result = filter.filter( artifacts);
+        result = filter.filter( artifacts );
         assertEquals( 2, result.size() );
 
         assertTrue( handler.clearMarker() );
@@ -134,7 +137,8 @@ public class TestMarkerFileFilter
         DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( snap, outputFolder );
         handler.setMarker();
         assertTrue( snap.getFile().setLastModified( snap.getFile().lastModified() + 1500 ) );
-        MarkerFileFilter filter = new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
+        MarkerFileFilter filter =
+            new MarkerFileFilter( false, false, true, new DefaultFileMarkerHandler( outputFolder ) );
         Set<Artifact> result = filter.filter( tempArtifacts );
         assertEquals( 2, result.size() );
 
@@ -142,7 +146,7 @@ public class TestMarkerFileFilter
         handler.setMarker();
         result = filter.filter( tempArtifacts );
         assertEquals( 1, result.size() );
-        
+
         // filter won't include snapshot because it is older than marker
         assertTrue( snap.getFile().setLastModified( snap.getFile().lastModified() - 10000 ) );
 
@@ -159,7 +163,8 @@ public class TestMarkerFileFilter
 
     public void testGettersSetters()
     {
-        MarkerFileFilter filter = new MarkerFileFilter( true, false, true, new DefaultFileMarkerHandler( outputFolder ) );
+        MarkerFileFilter filter =
+            new MarkerFileFilter( true, false, true, new DefaultFileMarkerHandler( outputFolder ) );
         assertEquals( true, filter.isOverWriteReleases() );
         assertEquals( false, filter.isOverWriteSnapshots() );
         assertEquals( true, filter.isOverWriteIfNewer() );

@@ -38,15 +38,15 @@ public class ClassifierTypeTranslator
     implements ArtifactTranslator
 {
     private ArtifactHandlerManager artifactHandlerManager;
+
     private String classifier;
 
     private String type;
 
     /**
-     *
-     * @param artifactHanderManager TODO
-     * @param theClassifier
-     * @param theType
+     * @param artifactHanderManager {@link ArtifactHandlerManager}.
+     * @param theClassifier The classifier to use.
+     * @param theType The type.
      */
     public ClassifierTypeTranslator( ArtifactHandlerManager artifactHanderManager, String theClassifier,
                                      String theType )
@@ -58,9 +58,8 @@ public class ClassifierTypeTranslator
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.mojo.dependency.utils.translators.ArtifactTranslator#translate(java.util.Set,
-     *      org.apache.maven.plugin.logging.Log)
+     * org.apache.maven.plugin.logging.Log)
      */
     @Override
     public Set<ArtifactCoordinate> translate( Set<Artifact> artifacts, Log log )
@@ -113,21 +112,21 @@ public class ClassifierTypeTranslator
             coordinate.setClassifier( useClassifier );
             coordinate.setExtension( extension );
 
-//            // Create a new artifact
-//            Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
-//                .getArtifactId(), artifact.getVersion(), useType, useClassifier );
-//
-//            // note the new artifacts will always have the scope set to null. We
-//            // should
-//            // reset it here so that it will pass other filters if needed
-//            newArtifact.setScope( artifact.getScope() );
-//
-//            if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
-//            {
-//                File baseDir = repositoryManager.getLocalRepositoryBasedir( buildingRequest );
-//                String path = repositoryManager.getPathForLocalArtifact( buildingRequest, newArtifact );
-//                newArtifact.setFile( new File( baseDir, path ) );
-//            }
+            // // Create a new artifact
+            // Artifact newArtifact = factory.createArtifactWithClassifier( artifact.getGroupId(), artifact
+            // .getArtifactId(), artifact.getVersion(), useType, useClassifier );
+            //
+            // // note the new artifacts will always have the scope set to null. We
+            // // should
+            // // reset it here so that it will pass other filters if needed
+            // newArtifact.setScope( artifact.getScope() );
+            //
+            // if ( Artifact.SCOPE_SYSTEM.equals( newArtifact.getScope() ) )
+            // {
+            // File baseDir = repositoryManager.getLocalRepositoryBasedir( buildingRequest );
+            // String path = repositoryManager.getPathForLocalArtifact( buildingRequest, newArtifact );
+            // newArtifact.setFile( new File( baseDir, path ) );
+            // }
 
             results.add( coordinate );
         }
@@ -144,8 +143,7 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param theType
-     *            The type to set.
+     * @param theType The type to set.
      */
     public void setType( String theType )
     {
@@ -161,8 +159,7 @@ public class ClassifierTypeTranslator
     }
 
     /**
-     * @param theClassifier
-     *            The classifier to set.
+     * @param theClassifier The classifier to set.
      */
     public void setClassifier( String theClassifier )
     {

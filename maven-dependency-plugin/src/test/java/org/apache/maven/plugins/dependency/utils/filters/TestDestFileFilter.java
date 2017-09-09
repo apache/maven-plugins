@@ -37,7 +37,6 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 
 /**
  * @author brianf
- * 
  */
 public class TestDestFileFilter
     extends TestCase
@@ -76,42 +75,44 @@ public class TestDestFileFilter
     }
 
     public File createFile( Artifact artifact, boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
-                           boolean removeVersion)
+                            boolean removeVersion )
         throws IOException
     {
-        return createFile(artifact, useSubDirectoryPerArtifact, useSubDirectoryPerType, removeVersion, false);
+        return createFile( artifact, useSubDirectoryPerArtifact, useSubDirectoryPerType, removeVersion, false );
     }
-    
-    public File createFile(Artifact artifact, boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
-            boolean removeVersion, boolean removeClassifier)
-            throws IOException
+
+    public File createFile( Artifact artifact, boolean useSubDirectoryPerArtifact, boolean useSubDirectoryPerType,
+                            boolean removeVersion, boolean removeClassifier )
+        throws IOException
     {
         File destFolder =
-                DependencyUtil.getFormattedOutputDirectory(false, useSubDirectoryPerType, useSubDirectoryPerArtifact,
-                        false, false, outputFolder, artifact);
-        File destFile = new File(destFolder, DependencyUtil.getFormattedFileName(artifact, removeVersion, false, false, removeClassifier));
+            DependencyUtil.getFormattedOutputDirectory( false, useSubDirectoryPerType, useSubDirectoryPerArtifact,
+                                                        false, false, outputFolder, artifact );
+        File destFile =
+            new File( destFolder,
+                      DependencyUtil.getFormattedFileName( artifact, removeVersion, false, false, removeClassifier ) );
 
         destFile.getParentFile().mkdirs();
-        assertTrue(destFile.createNewFile());
+        assertTrue( destFile.createNewFile() );
         return destFile;
     }
 
     public void testDestFileRelease()
-        throws  IOException, ArtifactFilterException
+        throws IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getReleaseArtifact();
 
         assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact );
-        assertFalse( filter.isArtifactIncluded( artifact) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
 
         filter.setOverWriteReleases( true );
         assertTrue( filter.isArtifactIncluded( artifact ) );
     }
 
     public void testDestFileSnapshot()
-        throws  IOException, ArtifactFilterException
+        throws IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
@@ -125,13 +126,13 @@ public class TestDestFileFilter
     }
 
     public void testDestFileStripVersion()
-        throws  IOException, ArtifactFilterException
+        throws IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
         filter.setRemoveVersion( true );
 
-        assertTrue( filter.isArtifactIncluded( artifact) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact, false, false, true );
         assertFalse( filter.isArtifactIncluded( artifact ) );
 
@@ -140,22 +141,22 @@ public class TestDestFileFilter
     }
 
     public void testDestFileStripClassifier()
-            throws IOException, ArtifactFilterException
+        throws IOException, ArtifactFilterException
     {
-        DestFileFilter filter = new DestFileFilter(outputFolder);
+        DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
-        filter.setRemoveClassifier(true);
+        filter.setRemoveClassifier( true );
 
-        assertTrue(filter.isArtifactIncluded(artifact));
-        createFile(artifact, false, false, false, true);
-        assertFalse(filter.isArtifactIncluded(artifact));
+        assertTrue( filter.isArtifactIncluded( artifact ) );
+        createFile( artifact, false, false, false, true );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
 
-        filter.setOverWriteSnapshots(true);
-        assertTrue(filter.isArtifactIncluded(artifact));
+        filter.setOverWriteSnapshots( true );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
     }
-    
+
     public void testDestFileSubPerArtifact()
-        throws  IOException, ArtifactFilterException
+        throws IOException, ArtifactFilterException
     {
         DestFileFilter filter = new DestFileFilter( outputFolder );
         Artifact artifact = fact.getSnapshotArtifact();
@@ -176,7 +177,7 @@ public class TestDestFileFilter
         Artifact artifact = fact.getSnapshotArtifact();
         filter.setUseSubDirectoryPerType( true );
 
-        assertTrue( filter.isArtifactIncluded( artifact) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
         createFile( artifact, false, true, false );
         assertFalse( filter.isArtifactIncluded( artifact ) );
 
@@ -196,7 +197,7 @@ public class TestDestFileFilter
         filter.setOverWriteIfNewer( true );
 
         // should pass because the file doesn't exist yet.
-        assertTrue( filter.isArtifactIncluded( artifact) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
 
         // create the file in the destination
         File destFile = createFile( artifact, false, false, false );

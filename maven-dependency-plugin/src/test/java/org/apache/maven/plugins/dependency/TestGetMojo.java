@@ -44,29 +44,30 @@ public class TestGetMojo
         File testPom = new File( getBasedir(), "target/test-classes/unit/get-test/plugin-config.xml" );
         assert testPom.exists();
         mojo = (GetMojo) lookupMojo( "get", testPom );
-        
+
         assertNotNull( mojo );
-        
+
         LegacySupport legacySupport = lookup( LegacySupport.class );
         legacySupport.setSession( newMavenSession( new MavenProjectStub() ) );
         DefaultRepositorySystemSession repoSession =
             (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( testDir.getAbsolutePath() ) );
-        
+
         setVariableValueToObject( mojo, "session", legacySupport.getSession() );
     }
 
     /**
      * Test transitive parameter
      * 
-     * @throws Exception
+     * @throws Exception in case of errors
      */
     public void testTransitive()
         throws Exception
     {
         // Set properties, transitive = default value = true
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
-        setVariableValueToObject( mojo, "remoteRepositories", "central::default::http://repo1.maven.apache.org/maven2" );
+        setVariableValueToObject( mojo, "remoteRepositories",
+                                  "central::default::http://repo1.maven.apache.org/maven2" );
         mojo.setGroupId( "org.apache.maven" );
         mojo.setArtifactId( "maven-model" );
         mojo.setVersion( "2.0.9" );
@@ -77,11 +78,11 @@ public class TestGetMojo
         setVariableValueToObject( mojo, "transitive", Boolean.FALSE );
         mojo.execute();
     }
-    
+
     /**
      * Test remote repositories parameter
      * 
-     * @throws Exception
+     * @throws Exception in case of errors
      */
     public void testRemoteRepositories()
         throws Exception
@@ -98,7 +99,7 @@ public class TestGetMojo
     /**
      * Test parsing of the remote repositories parameter
      * 
-     * @throws Exception
+     * @throws Exception in case of errors
      */
     public void testParseRepository()
         throws Exception

@@ -43,15 +43,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Goal that copies the project dependencies from the repository to a defined
- * location.
+ * Goal that copies the project dependencies from the repository to a defined location.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 1.0
  */
-@Mojo( name = "copy-dependencies", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true )
+//CHECKSTYLE_OFF: LineLength
+@Mojo( name = "copy-dependencies", requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
 public class CopyDependenciesMojo
     extends AbstractFromDependenciesMojo
 {
@@ -75,10 +75,10 @@ public class CopyDependenciesMojo
     @Component( role = ArtifactRepositoryLayout.class )
     private Map<String, ArtifactRepositoryLayout> repositoryLayouts;
 
-
     /**
-     * Either append the artifact's baseVersion or uniqueVersion to the filename.
-     * Will only be used if {@link #isStripVersion()} is {@code false}.
+     * Either append the artifact's baseVersion or uniqueVersion to the filename. Will only be used if
+     * {@link #isStripVersion()} is {@code false}.
+     * 
      * @since 2.6
      */
     @Parameter( property = "mdep.useBaseVersion", defaultValue = "true" )
@@ -86,6 +86,7 @@ public class CopyDependenciesMojo
 
     /**
      * Add parent poms to the list of copied dependencies (both current project pom parents and dependencies parents).
+     * 
      * @since 2.8
      */
     @Parameter( property = "mdep.addParentPoms", defaultValue = "false" )
@@ -104,8 +105,7 @@ public class CopyDependenciesMojo
     protected boolean ignorePermissions;
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through
-     * calling copyArtifact.
+     * Main entry into mojo. Gets the list of dependencies and iterates through calling copyArtifact.
      *
      * @throws MojoExecutionException with a message if an error occurs.
      * @see #getDependencySets(boolean, boolean)
@@ -141,14 +141,17 @@ public class CopyDependenciesMojo
         Set<Artifact> skippedArtifacts = dss.getSkippedDependencies();
         for ( Artifact artifact : skippedArtifacts )
         {
-            getLog().info( artifact.getId() + " already exists in destination." ) ;
+            getLog().info( artifact.getId() + " already exists in destination." );
         }
 
         if ( isCopyPom() && !useRepositoryLayout )
         {
             copyPoms( getOutputDirectory(), artifacts, this.stripVersion );
-            copyPoms( getOutputDirectory(), skippedArtifacts,
-                      this.stripVersion, this.stripClassifier );  // Artifacts that already exist may not yet have poms
+            copyPoms( getOutputDirectory(), skippedArtifacts, this.stripVersion, this.stripClassifier ); // Artifacts
+                                                                                                         // that already
+                                                                                                         // exist may
+                                                                                                         // not yet have
+                                                                                                         // poms
         }
     }
 
@@ -187,12 +190,12 @@ public class CopyDependenciesMojo
         if ( artifact.isSnapshot() && !artifact.getBaseVersion().equals( artifact.getVersion() ) )
         {
             String version = artifact.getVersion();
-            try 
+            try
             {
                 artifact.setVersion( artifact.getBaseVersion() );
                 installer.install( buildingRequest, Collections.singletonList( artifact ) );
             }
-            finally 
+            finally
             {
                 artifact.setVersion( version );
             }
@@ -200,13 +203,11 @@ public class CopyDependenciesMojo
     }
 
     /**
-     * Copies the Artifact after building the destination file name if
-     * overridden. This method also checks if the classifier is set and adds it
-     * to the destination file name if needed.
+     * Copies the Artifact after building the destination file name if overridden. This method also checks if the
+     * classifier is set and adds it to the destination file name if needed.
      *
-     * @param artifact       representing the object to be copied.
-     * @param removeVersion  specifies if the version should be removed from the file name
-     *                       when copying.
+     * @param artifact representing the object to be copied.
+     * @param removeVersion specifies if the version should be removed from the file name when copying.
      * @param prependGroupId specifies if the groupId should be prepend to the file while copying.
      * @param useBaseVersion specifies if the baseVersion of the artifact should be used instead of the version.
      * @throws MojoExecutionException with a message if an error occurs.
@@ -220,13 +221,11 @@ public class CopyDependenciesMojo
     }
 
     /**
-     * Copies the Artifact after building the destination file name if
-     * overridden. This method also checks if the classifier is set and adds it
-     * to the destination file name if needed.
+     * Copies the Artifact after building the destination file name if overridden. This method also checks if the
+     * classifier is set and adds it to the destination file name if needed.
      *
-     * @param artifact       representing the object to be copied.
-     * @param removeVersion  specifies if the version should be removed from the file name
-     *                       when copying.
+     * @param artifact representing the object to be copied.
+     * @param removeVersion specifies if the version should be removed from the file name when copying.
      * @param prependGroupId specifies if the groupId should be prepend to the file while copying.
      * @param useBaseVersion specifies if the baseVersion of the artifact should be used instead of the version.
      * @param removeClassifier specifies if the classifier should be removed from the file name when copying.
@@ -239,8 +238,8 @@ public class CopyDependenciesMojo
         throws MojoExecutionException
     {
 
-        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId, 
-                useBaseVersion, removeClassifier );
+        String destFileName = DependencyUtil.getFormattedFileName( artifact, removeVersion, prependGroupId,
+                                                                   useBaseVersion, removeClassifier );
 
         File destDir;
         destDir = DependencyUtil.getFormattedOutputDirectory( useSubDirectoryPerScope, useSubDirectoryPerType,
@@ -250,9 +249,14 @@ public class CopyDependenciesMojo
 
         copyFile( artifact.getFile(), destFile );
     }
-    
+
     /**
      * Copy the pom files associated with the artifacts.
+     * 
+     * @param destDir The destination directory {@link File}.
+     * @param artifacts The artifacts {@link Artifact}.
+     * @param removeVersion remove version or not.
+     * @throws MojoExecutionException in case of errors.
      */
     public void copyPoms( File destDir, Set<Artifact> artifacts, boolean removeVersion )
         throws MojoExecutionException
@@ -260,9 +264,15 @@ public class CopyDependenciesMojo
     {
         copyPoms( destDir, artifacts, removeVersion, false );
     }
-    
+
     /**
      * Copy the pom files associated with the artifacts.
+     * 
+     * @param destDir The destination directory {@link File}.
+     * @param artifacts The artifacts {@link Artifact}.
+     * @param removeVersion remove version or not.
+     * @param removeClassifier remove the classifier or not.
+     * @throws MojoExecutionException in case of errors.
      */
     public void copyPoms( File destDir, Set<Artifact> artifacts, boolean removeVersion, boolean removeClassifier )
         throws MojoExecutionException
@@ -293,7 +303,7 @@ public class CopyDependenciesMojo
         coordinate.setArtifactId( artifact.getArtifactId() );
         coordinate.setVersion( artifact.getVersion() );
         coordinate.setExtension( "pom" );
-        
+
         Artifact pomArtifact = null;
         // Resolve the pom artifact using repos
         try

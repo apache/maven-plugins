@@ -19,7 +19,6 @@ package org.codehaus.plexus.util.interpolation;
  * under the License.
  */
 
-
 import java.util.List;
 
 /**
@@ -42,15 +41,12 @@ public class RegexBasedInterpolator
         super( valueSources );
     }
 
-    public RegexBasedInterpolator( String startRegex,
-                                   String endRegex,
-                                   List valueSources )
+    public RegexBasedInterpolator( String startRegex, String endRegex, List valueSources )
     {
         super( startRegex, endRegex, valueSources );
     }
 
-    public RegexBasedInterpolator( String startRegex,
-                                   String endRegex )
+    public RegexBasedInterpolator( String startRegex, String endRegex )
     {
         super( startRegex, endRegex );
     }

@@ -19,11 +19,9 @@ package org.codehaus.plexus.util.interpolation;
  * under the License.
  */
 
-
 /**
- * COPIED FROM plexus-utils-1.5.15 TO SATISFY TESTS
- *
- * Interpolator interface. Based on existing RegexBasedInterpolator interface.
+ * COPIED FROM plexus-utils-1.5.15 TO SATISFY TESTS Interpolator interface. Based on existing RegexBasedInterpolator
+ * interface.
  *
  * @author cstamas
  * @deprecated Use plexus-interpolation APIs instead.

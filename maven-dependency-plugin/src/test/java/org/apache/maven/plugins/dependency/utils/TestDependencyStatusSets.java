@@ -39,8 +39,8 @@ public class TestDependencyStatusSets
          * set ); assertSame( set, dss.getResolvedDependencies() ); set = new HashSet(); dss.setUnResolvedDependencies(
          * set ); assertSame( set, dss.getUnResolvedDependencies() ); set = new HashSet(); dss.setSkippedDependencies(
          * set ); assertSame( set, dss.getSkippedDependencies() ); assertNotSame( dss.getResolvedDependencies(),
-         * dss.getSkippedDependencies() ); assertNotSame( dss.getResolvedDependencies(), dss.getUnResolvedDependencies() );
-         * assertNotSame( dss.getSkippedDependencies(), dss.getUnResolvedDependencies() );
+         * dss.getSkippedDependencies() ); assertNotSame( dss.getResolvedDependencies(), dss.getUnResolvedDependencies()
+         * ); assertNotSame( dss.getSkippedDependencies(), dss.getUnResolvedDependencies() );
          */
     }
 
