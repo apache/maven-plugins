@@ -1,4 +1,4 @@
-package org.apache.maven.plugins.dependency.tree ;
+package org.apache.maven.plugins.dependency.tree;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,6 @@ import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 
 /**
  * A dependency node visitor that serializes visited nodes to a writer using the TGF format.
- *
  * http://en.wikipedia.org/wiki/Trivial_Graph_Format
  *
  * @author <a href="mailto:jerome.creignou@gmail.com">Jerome Creignou</a>

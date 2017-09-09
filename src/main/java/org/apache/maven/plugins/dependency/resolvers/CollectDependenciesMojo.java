@@ -24,22 +24,28 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Goal that collects the project dependencies from the repository.
- * This goal requires Maven 3.0 or higher to function because it uses "requiresDependencyCollection".
- * This means that it lists the groupId:artifactId:version information by downloading the pom files
- * without downloading the actual artifacts such as jar files.
+ * <p>
+ * Goal that collects the project dependencies from the repository. This goal requires Maven 3.0 or higher to function
+ * because it uses "requiresDependencyCollection". This means that it lists the groupId:artifactId:version information
+ * by downloading the pom files without downloading the actual artifacts such as jar files.
+ * </p>
+ * <p>
  * This is very useful when full dependency resolution might fail due to projects which haven't been built yet.
- * <p/>
+ * </p>
+ * <p>
  * It is identical to {@link ResolveDependenciesMojo} except for using the requiresDependencyCollection annotation
  * attribute instead of requiresDependencyResolution.
+ * </p>
  *
  * @author <a href="mailto:epabst@gmail.com">Eric Pabst</a>
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 3.0
  */
-@Mojo( name = "collect", requiresDependencyCollection = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
-public class CollectDependenciesMojo extends ResolveDependenciesMojo
+//CHECKSTYLE_OFF: LineLength
+@Mojo( name = "collect", requiresDependencyCollection = ResolutionScope.TEST, defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
+public class CollectDependenciesMojo
+    extends ResolveDependenciesMojo
 {
 }

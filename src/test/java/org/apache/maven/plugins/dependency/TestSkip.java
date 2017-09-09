@@ -158,15 +158,14 @@ public class TestSkip
     private void doConfigTest( String mojoName, String configFile )
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/skip-test/" + configFile );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/skip-test/" + configFile );
         Mojo mojo = lookupMojo( mojoName, testPom );
         assertNotNull( mojo );
         CapturingLog log = new CapturingLog();
         mojo.setLog( log );
         mojo.execute();
 
-        assertTrue(log.getContent().contains("Skipping plugin execution"));
+        assertTrue( log.getContent().contains( "Skipping plugin execution" ) );
     }
 
     class CapturingLog
@@ -293,7 +292,7 @@ public class TestSkip
 
         private void print( String prefix, CharSequence content )
         {
-            sb.append("[").append(prefix).append("] ").append(content.toString()).append( "\n" );
+            sb.append( "[" ).append( prefix ).append( "] " ).append( content.toString() ).append( "\n" );
         }
 
         private void print( String prefix, Throwable error )
@@ -303,7 +302,7 @@ public class TestSkip
 
             error.printStackTrace( pWriter );
 
-            sb.append("[").append(prefix).append("] ").append(sWriter.toString()).append( "\n" );
+            sb.append( "[" ).append( prefix ).append( "] " ).append( sWriter.toString() ).append( "\n" );
         }
 
         private void print( String prefix, CharSequence content, Throwable error )
@@ -313,8 +312,7 @@ public class TestSkip
 
             error.printStackTrace( pWriter );
 
-            sb.append("[").append(prefix).append("] ").append(content.toString()).append( "\n\n" )
-                .append( sWriter.toString() ).append( "\n" );
+            sb.append( "[" ).append( prefix ).append( "] " ).append( content.toString() ).append( "\n\n" ).append( sWriter.toString() ).append( "\n" );
         }
 
         protected String getContent()

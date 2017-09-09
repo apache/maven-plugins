@@ -26,8 +26,7 @@ import java.io.Writer;
 import java.util.List;
 
 /**
- * A dependency node visitor that serializes visited nodes to DOT format
- * http://en.wikipedia.org/wiki/DOT_language
+ * A dependency node visitor that serializes visited nodes to DOT format http://en.wikipedia.org/wiki/DOT_language
  *
  * @author <a href="mailto:pi.songs@gmail.com">Pi Song</a>
  * @since 2.1
@@ -46,7 +45,6 @@ public class DOTDependencyNodeVisitor
     {
         super( writer );
     }
-
 
     /**
      * {@inheritDoc}

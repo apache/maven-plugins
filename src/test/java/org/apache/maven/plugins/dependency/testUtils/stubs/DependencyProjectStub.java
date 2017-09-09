@@ -60,8 +60,7 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- * very simple stub of maven project, going to take a lot of work to make it
- * useful as a stub though
+ * very simple stub of maven project, going to take a lot of work to make it useful as a stub though
  */
 public class DependencyProjectStub
     extends MavenProject
@@ -157,7 +156,7 @@ public class DependencyProjectStub
     private String defaultGoal;
 
     private Set artifacts;
-    
+
     private Properties properties;
 
     public DependencyProjectStub()
@@ -192,7 +191,8 @@ public class DependencyProjectStub
             ArtifactHandler ah = new DefaultArtifactHandlerStub( "jar", null );
 
             VersionRange vr = VersionRange.createFromVersion( "1.0" );
-            Artifact art = new DefaultArtifact( "group", "artifact", vr, Artifact.SCOPE_COMPILE, "jar", null, ah, false );
+            Artifact art =
+                new DefaultArtifact( "group", "artifact", vr, Artifact.SCOPE_COMPILE, "jar", null, ah, false );
             setArtifact( art );
         }
         return artifact;
@@ -262,10 +262,11 @@ public class DependencyProjectStub
         return dependencies;
     }
 
-    public void setDependencyManagement(DependencyManagement depMgt)
+    public void setDependencyManagement( DependencyManagement depMgt )
     {
         this.dependencyManagement = depMgt;
     }
+
     public DependencyManagement getDependencyManagement()
     {
         if ( dependencyManagement == null )

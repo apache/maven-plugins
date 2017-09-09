@@ -39,7 +39,6 @@ import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
- * 
  */
 public class TestDefaultMarkerFileHandler
     extends TestCase
@@ -80,8 +79,7 @@ public class TestDefaultMarkerFileHandler
     public void testSetMarker()
         throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifacts.get( 0 ),
-                                                                         this.outputFolder );
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifacts.get( 0 ), this.outputFolder );
         assertFalse( handler.isMarkerSet() );
         handler.setMarker();
         assertTrue( handler.isMarkerSet() );
@@ -102,8 +100,7 @@ public class TestDefaultMarkerFileHandler
     public void testMarkerFile()
         throws MojoExecutionException, IOException
     {
-        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifacts.get( 0 ),
-                                                                         this.outputFolder );
+        DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler( artifacts.get( 0 ), this.outputFolder );
 
         File handle = handler.getMarkerFile();
         assertFalse( handle.exists() );
@@ -150,8 +147,8 @@ public class TestDefaultMarkerFileHandler
     public void testMarkerFileException()
     {
         // this stub wraps the file with an object to throw exceptions
-        StubDefaultFileMarkerHandler handler = new StubDefaultFileMarkerHandler( artifacts.get( 0 ),
-                                                                                 this.outputFolder );
+        StubDefaultFileMarkerHandler handler =
+            new StubDefaultFileMarkerHandler( artifacts.get( 0 ), this.outputFolder );
         try
         {
             handler.setMarker();

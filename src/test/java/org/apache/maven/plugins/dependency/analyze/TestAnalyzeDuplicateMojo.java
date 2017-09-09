@@ -37,8 +37,7 @@ public class TestAnalyzeDuplicateMojo
     public void testDuplicate()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config.xml" );
         AnalyzeDuplicateMojo mojo = (AnalyzeDuplicateMojo) lookupMojo( "analyze-duplicate", testPom );
         assertNotNull( mojo );
         DuplicateLog log = new DuplicateLog();
@@ -53,8 +52,7 @@ public class TestAnalyzeDuplicateMojo
     public void testDuplicate2()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config2.xml" );
+        File testPom = new File( getBasedir(), "target/test-classes/unit/duplicate-dependencies/plugin-config2.xml" );
         AnalyzeDuplicateMojo mojo = (AnalyzeDuplicateMojo) lookupMojo( "analyze-duplicate", testPom );
         assertNotNull( mojo );
         DuplicateLog log = new DuplicateLog();

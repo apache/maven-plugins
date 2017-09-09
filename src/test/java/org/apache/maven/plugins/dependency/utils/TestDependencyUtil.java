@@ -38,7 +38,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author brianf
- * 
  */
 public class TestDependencyUtil
     extends TestCase
@@ -74,7 +73,8 @@ public class TestDependencyUtil
 
         ah = new DefaultArtifactHandlerStub( "war", null );
         vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        snapResolvedVersion = new DefaultArtifact( "test", "three", vr, Artifact.SCOPE_PROVIDED, "war", null, ah, false );
+        snapResolvedVersion =
+            new DefaultArtifact( "test", "three", vr, Artifact.SCOPE_PROVIDED, "war", null, ah, false );
         snapResolvedVersion.setResolvedVersion( "1.1-20121003.035531-117" );
         artifacts.add( snapResolvedVersion );
 
@@ -108,13 +108,13 @@ public class TestDependencyUtil
             + File.separatorChar + "1.1";
         assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
 
-        name = DependencyUtil.getFormattedOutputDirectory( false,  true, false, false, false, folder, artifact );
+        name = DependencyUtil.getFormattedOutputDirectory( false, true, false, false, false, folder, artifact );
         expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars";
         assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
 
-        name = DependencyUtil.getFormattedOutputDirectory( true,  false, false, false, false, folder, artifact );
+        name = DependencyUtil.getFormattedOutputDirectory( true, false, false, false, false, folder, artifact );
         expectedResult = folder.getAbsolutePath() + File.separatorChar + "compile";
-        assertEquals( expectedResult,  name.getAbsolutePath() );
+        assertEquals( expectedResult, name.getAbsolutePath() );
         assertTrue( expectedResult.equalsIgnoreCase( name.getAbsolutePath() ) );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, false, true, false, false, folder, artifact );
@@ -126,18 +126,18 @@ public class TestDependencyUtil
         assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, true, true, false, false, folder, artifact );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar
-            + "one-1.1-sources-jar";
+        expectedResult =
+            folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar + "one-1.1-sources-jar";
         assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, true, true, false, true, folder, artifact );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar
-            + "one-sources-jar";
+        expectedResult =
+            folder.getAbsolutePath() + File.separatorChar + "jars" + File.separatorChar + "one-sources-jar";
         assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( true, false, true, false, true, folder, artifact );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "compile" + File.separatorChar
-            + "one-sources-jar";
+        expectedResult =
+            folder.getAbsolutePath() + File.separatorChar + "compile" + File.separatorChar + "one-sources-jar";
         assertEquals( expectedResult, name.getAbsolutePath() );
     }
 
@@ -164,8 +164,8 @@ public class TestDependencyUtil
         assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, true, true, false, false, folder, artifact );
-        expectedResult = folder.getAbsolutePath() + File.separatorChar + "wars" + File.separatorChar
-            + "two-1.1-SNAPSHOT-war";
+        expectedResult =
+            folder.getAbsolutePath() + File.separatorChar + "wars" + File.separatorChar + "two-1.1-SNAPSHOT-war";
         assertEquals( expectedResult, name.getAbsolutePath() );
 
         name = DependencyUtil.getFormattedOutputDirectory( false, false, true, false, true, folder, artifact );
@@ -220,8 +220,8 @@ public class TestDependencyUtil
     {
         ArtifactHandler ah = new DefaultArtifactHandlerStub( "test-jar", null );
         VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "test-jar", null, ah,
-                                                 false );
+        Artifact artifact =
+            new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "test-jar", null, ah, false );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
         String expectedResult = "two-1.1-SNAPSHOT.jar";
@@ -234,8 +234,8 @@ public class TestDependencyUtil
     {
         ArtifactHandler ah = new DefaultArtifactHandlerStub( "jar", "sources" );
         VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "jar", "sources", ah,
-                                                 false );
+        Artifact artifact =
+            new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "jar", "sources", ah, false );
 
         String name = DependencyUtil.getFormattedFileName( artifact, false );
         String expectedResult = "two-1.1-SNAPSHOT-sources.jar";
@@ -244,11 +244,11 @@ public class TestDependencyUtil
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two-sources.jar";
         assertEquals( expectedResult, name );
-        
-        name = DependencyUtil.getFormattedFileName(artifact, false, false, false, true);
+
+        name = DependencyUtil.getFormattedFileName( artifact, false, false, false, true );
         expectedResult = "two-1.1-SNAPSHOT.jar";
         assertEquals( expectedResult, name );
-        
+
         ah = new DefaultArtifactHandlerStub( "war", null );
         artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
         name = DependencyUtil.getFormattedFileName( artifact, true );
@@ -265,8 +265,8 @@ public class TestDependencyUtil
         // set.
         ArtifactHandler ah = new DefaultArtifactHandlerStub( "war", "sources" );
         VersionRange vr = VersionRange.createFromVersion( "1.1-SNAPSHOT" );
-        Artifact artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah,
-                                                 false );
+        Artifact artifact =
+            new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "sources", ah, false );
         File file = new File( "/target", "test-file-name.jar" );
         artifact.setFile( file );
 
@@ -277,11 +277,11 @@ public class TestDependencyUtil
         name = DependencyUtil.getFormattedFileName( artifact, false, false, false, true );
         expectedResult = "two-1.1-SNAPSHOT.war";
         assertEquals( expectedResult, name );
-        
+
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two-sources.war";
         assertEquals( expectedResult, name );
-        
+
         artifact = new DefaultArtifact( "test", "two", vr, Artifact.SCOPE_PROVIDED, "war", "", ah, false );
         name = DependencyUtil.getFormattedFileName( artifact, true );
         expectedResult = "two.war";
@@ -295,20 +295,20 @@ public class TestDependencyUtil
         assertEquals( expectedResult, name );
 
     }
-    
+
     public void testTokenizer()
     {
-        String [] tokens = DependencyUtil.tokenizer( " alpha,bravo, charlie , delta kappa, theta" );
+        String[] tokens = DependencyUtil.tokenizer( " alpha,bravo, charlie , delta kappa, theta" );
         String[] expected = new String[] { "alpha", "bravo", "charlie", "delta kappa", "theta" };
         // easier to see in the JUnit reports
         assertEquals( StringUtils.join( expected, ", " ), StringUtils.join( tokens, ", " ) );
         assertEquals( expected.length, tokens.length );
-        
+
         tokens = DependencyUtil.tokenizer( " \r\n a, \t \n \r b \t \n \r" );
         assertEquals( 2, tokens.length );
         assertEquals( "a", tokens[0] );
         assertEquals( "b", tokens[1] );
-        
+
         tokens = DependencyUtil.tokenizer( null );
         assertEquals( 0, tokens.length );
 

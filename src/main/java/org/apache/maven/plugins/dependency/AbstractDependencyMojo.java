@@ -48,8 +48,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: AbstractDependencyMojo.java 552528
- *          2007-07-02 16:12:47Z markh $
+ * @version $Id$
  */
 public abstract class AbstractDependencyMojo
     extends AbstractMojo
@@ -65,6 +64,7 @@ public abstract class AbstractDependencyMojo
      * will use the jvm chmod, this is available for user and all level group level will be ignored
      * </p>
      * <b>since 2.6 is on by default</b>
+     * 
      * @since 2.5.1
      */
     @Parameter( property = "dependency.useJvmChmod", defaultValue = "true" )
@@ -72,6 +72,7 @@ public abstract class AbstractDependencyMojo
 
     /**
      * ignore to set file permissions when unpacking a dependency
+     * 
      * @since 2.7
      */
     @Parameter( property = "dependency.ignorePermissions", defaultValue = "false" )
@@ -82,7 +83,7 @@ public abstract class AbstractDependencyMojo
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     private MavenProject project;
-    
+
     /**
      * Remote repositories which will be searched for artifacts.
      */
@@ -100,7 +101,7 @@ public abstract class AbstractDependencyMojo
      */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
-    
+
     /**
      * If the plugin should be silent.
      *
@@ -144,7 +145,7 @@ public abstract class AbstractDependencyMojo
     }
 
     protected abstract void doExecute()
-            throws MojoExecutionException, MojoFailureException;
+        throws MojoExecutionException, MojoFailureException;
 
     /**
      * @return Returns the archiverManager.
@@ -159,8 +160,7 @@ public abstract class AbstractDependencyMojo
      *
      * @param artifact represents the file to copy.
      * @param destFile file name of destination file.
-     * @throws MojoExecutionException with a message if an
-     *                                error occurs.
+     * @throws MojoExecutionException with a message if an error occurs.
      */
     protected void copyFile( File artifact, File destFile )
         throws MojoExecutionException
@@ -168,8 +168,8 @@ public abstract class AbstractDependencyMojo
         try
         {
             getLog().info( "Copying "
-                               + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath()
-                                               : artifact.getName() ) + " to " + destFile );
+                + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() ) + " to "
+                + destFile );
 
             if ( artifact.isDirectory() )
             {
@@ -202,6 +202,7 @@ public abstract class AbstractDependencyMojo
      * @param excludes Comma separated list of file patterns to exclude i.e. <code>**&#47;*.xml,
      *                 **&#47;*.properties</code>
      * @param encoding Encoding of artifact. Set {@code null} for default encoding.
+     * @throws MojoExecutionException In case of errors.
      */
     protected void unpack( Artifact artifact, File location, String includes, String excludes, String encoding )
         throws MojoExecutionException
@@ -213,7 +214,7 @@ public abstract class AbstractDependencyMojo
                            String encoding )
         throws MojoExecutionException
     {
-        File file = artifact.getFile(); 
+        File file = artifact.getFile();
         try
         {
             logUnpack( file, location, includes, excludes );
@@ -221,8 +222,8 @@ public abstract class AbstractDependencyMojo
             location.mkdirs();
             if ( !location.exists() )
             {
-                throw new MojoExecutionException(
-                    "Location to write unpacked files to could not be created: " + location );
+                throw new MojoExecutionException( "Location to write unpacked files to could not be created: "
+                    + location );
             }
 
             if ( file.isDirectory() )
@@ -265,7 +266,7 @@ public abstract class AbstractDependencyMojo
                 // based on include/exclude parameters
                 // MDEP-47
                 IncludeExcludeFileSelector[] selectors =
-                    new IncludeExcludeFileSelector[]{ new IncludeExcludeFileSelector() };
+                    new IncludeExcludeFileSelector[] { new IncludeExcludeFileSelector() };
 
                 if ( StringUtils.isNotEmpty( excludes ) )
                 {
@@ -292,8 +293,8 @@ public abstract class AbstractDependencyMojo
         }
         catch ( ArchiverException e )
         {
-            throw new MojoExecutionException(
-                "Error unpacking file: " + file + " to: " + location + "\r\n" + e.toString(), e );
+            throw new MojoExecutionException( "Error unpacking file: " + file + " to: " + location + "\r\n"
+                + e.toString(), e );
         }
     }
 
@@ -363,18 +364,18 @@ public abstract class AbstractDependencyMojo
     {
         this.skip = skip;
     }
-    
+
     protected final boolean isSilent()
     {
         return silent;
     }
-    
+
     public void setSilent( boolean silent )
     {
         this.silent = silent;
         if ( silent )
         {
-            setLog( new DependencySilentLog() ); 
+            setLog( new DependencySilentLog() );
         }
     }
 

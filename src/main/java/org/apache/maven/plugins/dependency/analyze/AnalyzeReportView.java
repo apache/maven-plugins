@@ -34,6 +34,10 @@ public class AnalyzeReportView
 {
     /**
      * Generates the HTML report.
+     * 
+     * @param analysis {@link ProjectDependencyAnalysis}
+     * @param sink {@link Sink}
+     * @param bundle {@link ResourceBundle}
      */
     public void generateReport( ProjectDependencyAnalysis analysis, Sink sink, ResourceBundle bundle )
     {
@@ -114,6 +118,9 @@ public class AnalyzeReportView
 
     /**
      * Generate a table for the given dependencies iterator.
+     * 
+     * @param sink {@link Sink}
+     * @param iter {@link Artifact}
      */
     public void generateDependenciesTable( Sink sink, Iterator<Artifact> iter )
     {

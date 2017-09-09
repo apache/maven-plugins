@@ -107,8 +107,8 @@ public class TreeMojo
      * If specified, this parameter will cause the dependency tree to be written using the specified format. Currently
      * supported format are: <code>text</code>, <code>dot</code>, <code>graphml</code> and <code>tgf</code>.
      * <p/>
-     * These formats can be plotted to image files. An example of how to plot a dot file using
-     * pygraphviz can be found <a href="http://networkx.lanl.gov/pygraphviz/tutorial.html#layout-and-drawing">here</a>.
+     * These formats can be plotted to image files. An example of how to plot a dot file using pygraphviz can be found
+     * <a href="http://networkx.lanl.gov/pygraphviz/tutorial.html#layout-and-drawing">here</a>.
      *
      * @since 2.2
      */
@@ -116,8 +116,8 @@ public class TreeMojo
     private String outputType;
 
     /**
-     * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from
-     * all scopes. Note that this feature does not currently work due to MSHARED-4
+     * The scope to filter by when resolving the dependency tree, or <code>null</code> to include dependencies from all
+     * scopes. Note that this feature does not currently work due to MSHARED-4
      *
      * @see <a href="https://issues.apache.org/jira/browse/MSHARED-4">MSHARED-4</a>
      * @since 2.0-alpha-5
@@ -137,8 +137,8 @@ public class TreeMojo
 
     /**
      * The token set name to use when outputting the dependency tree. Possible values are <code>whitespace</code>,
-     * <code>standard</code> or <code>extended</code>, which use whitespace, standard (ie ASCII) or extended
-     * character sets respectively.
+     * <code>standard</code> or <code>extended</code>, which use whitespace, standard (ie ASCII) or extended character
+     * sets respectively.
      *
      * @since 2.0-alpha-6
      */
@@ -155,8 +155,10 @@ public class TreeMojo
      * 
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
      * segment is treated as an implicit wildcard.
-     * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
-     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.</p>
+     * <p>
+     * For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
+     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.
+     * </p>
      * 
      * @see StrictPatternIncludesArtifactFilter
      * @since 2.0-alpha-6
@@ -174,8 +176,10 @@ public class TreeMojo
      * 
      * where each pattern segment is optional and supports full and partial <code>*</code> wildcards. An empty pattern
      * segment is treated as an implicit wildcard.
-     * <p>For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
-     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.</p>
+     * <p>
+     * For example, <code>org.apache.*</code> will match all artifacts whose group id starts with
+     * <code>org.apache.</code>, and <code>:::*-SNAPSHOT</code> will match all snapshot artifacts.
+     * </p>
      *
      * @see StrictPatternExcludesArtifactFilter
      * @since 2.0-alpha-6
@@ -232,12 +236,12 @@ public class TreeMojo
                 // have already been resolved.
                 getLog().info( "Verbose not supported since maven-dependency-plugin 3.0" );
             }
-            
+
             ProjectBuildingRequest buildingRequest =
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            
+
             buildingRequest.setProject( project );
-            
+
             // non-verbose mode use dependency graph component, which gives consistent results with Maven version
             // running
             rootNode = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, artifactFilter, reactorProjects );
@@ -440,9 +444,8 @@ public class TreeMojo
         return filters.isEmpty() ? null : new AndDependencyNodeFilter( filters );
     }
 
-    //following is required because the version handling in maven code
-    //doesn't work properly. I ripped it out of the enforcer rules.
-
+    // following is required because the version handling in maven code
+    // doesn't work properly. I ripped it out of the enforcer rules.
 
     /**
      * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
@@ -450,7 +453,7 @@ public class TreeMojo
      * "[2.0.4,)"
      *
      * @param allowedRange range of allowed versions.
-     * @param theVersion   the version to be checked.
+     * @param theVersion the version to be checked.
      * @return true if the version is contained by the range.
      */
     public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )

@@ -19,7 +19,6 @@ package org.codehaus.plexus.util.interpolation;
  * under the License.
  */
 
-
 /**
  * COPIED FROM plexus-utils-1.5.15 TO SATISFY TESTS
  *
@@ -27,7 +26,8 @@ package org.codehaus.plexus.util.interpolation;
  * @deprecated Use plexus-interpolation APIs instead.
  * @version $Id: ValueSource.java 12174 2010-05-16 21:04:35Z rfscholte $
  */
-public interface ValueSource  extends org.codehaus.plexus.interpolation.ValueSource
+public interface ValueSource
+    extends org.codehaus.plexus.interpolation.ValueSource
 {
 
 }

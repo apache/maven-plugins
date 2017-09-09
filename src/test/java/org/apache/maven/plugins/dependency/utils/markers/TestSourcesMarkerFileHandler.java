@@ -39,7 +39,6 @@ import org.apache.maven.plugin.testing.SilentLog;
 
 /**
  * @author brianf
- * 
  */
 public class TestSourcesMarkerFileHandler
     extends TestCase
@@ -81,8 +80,7 @@ public class TestSourcesMarkerFileHandler
     public void testSetMarkerResolved()
         throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                         this.outputFolder, true );
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, true );
         assertFalse( handler.isMarkerSet() );
         handler.setMarker();
         assertTrue( handler.isMarkerSet() );
@@ -102,8 +100,7 @@ public class TestSourcesMarkerFileHandler
     public void testSetMarkerUnresolved()
         throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                         this.outputFolder, false );
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, false );
         assertFalse( handler.isMarkerSet() );
         handler.setMarker();
         assertTrue( handler.isMarkerSet() );
@@ -123,10 +120,9 @@ public class TestSourcesMarkerFileHandler
     public void testBothMarkers()
         throws MojoExecutionException
     {
-        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 1 ),
-                                                                         this.outputFolder, true );
-        DefaultFileMarkerHandler handler2 = new SourcesFileMarkerHandler( artifacts.get( 1 ),
-                                                                          this.outputFolder, false );
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 1 ), this.outputFolder, true );
+        DefaultFileMarkerHandler handler2 =
+            new SourcesFileMarkerHandler( artifacts.get( 1 ), this.outputFolder, false );
 
         handler.setMarker();
         assertTrue( handler.isMarkerSet() );
@@ -142,10 +138,9 @@ public class TestSourcesMarkerFileHandler
     public void testMarkerFile()
         throws MojoExecutionException, IOException
     {
-        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                         this.outputFolder, true );
-        DefaultFileMarkerHandler handler2 = new SourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                          this.outputFolder, false );
+        DefaultFileMarkerHandler handler = new SourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, true );
+        DefaultFileMarkerHandler handler2 =
+            new SourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, false );
 
         File handle = handler.getMarkerFile();
         File handle2 = handler2.getMarkerFile();
@@ -218,10 +213,10 @@ public class TestSourcesMarkerFileHandler
         theFile.createNewFile();
         Artifact theArtifact = artifacts.get( 0 );
         theArtifact.setFile( theFile );
-        SourcesFileMarkerHandler resolvedHandler = new SourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                                 this.outputFolder, resolved );
-        SourcesFileMarkerHandler unResolvedHandler = new SourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                                   this.outputFolder, !resolved );
+        SourcesFileMarkerHandler resolvedHandler =
+            new SourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, resolved );
+        SourcesFileMarkerHandler unResolvedHandler =
+            new SourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, !resolved );
 
         assertFalse( resolvedHandler.isMarkerSet() );
         assertFalse( unResolvedHandler.isMarkerSet() );
@@ -250,8 +245,8 @@ public class TestSourcesMarkerFileHandler
     public void testMarkerFileException()
     {
         // this stub wraps the file with an object to throw exceptions
-        StubSourcesFileMarkerHandler handler = new StubSourcesFileMarkerHandler( artifacts.get( 0 ),
-                                                                                 this.outputFolder, true );
+        StubSourcesFileMarkerHandler handler =
+            new StubSourcesFileMarkerHandler( artifacts.get( 0 ), this.outputFolder, true );
         try
         {
             handler.setMarker();

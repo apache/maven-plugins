@@ -32,8 +32,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @version $Id$
  * @since 2.0-alpha2
  */
-@Mojo( name = "sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-       requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+//CHECKSTYLE_OFF: LineLength
+@Mojo( name = "sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
 public class ResolveDependencySourcesMojo
     extends ResolveDependenciesMojo
 {
@@ -41,8 +42,7 @@ public class ResolveDependencySourcesMojo
     private static final String SOURCE_CLASSIFIER = "sources";
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through
-     * resolving the source jars.
+     * Main entry into mojo. Gets the list of dependencies and iterates through resolving the source jars.
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */

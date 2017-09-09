@@ -47,15 +47,16 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 /**
- * Goal that resolves the project dependencies from the repository. 
- * When using this goal while running on Java 9 the module names will be visible as well. 
+ * Goal that resolves the project dependencies from the repository. When using this goal while running on Java 9 the
+ * module names will be visible as well.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "resolve", requiresDependencyResolution = ResolutionScope.TEST,
-       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
+//CHECKSTYLE_OFF: LineLength
+@Mojo( name = "resolve", requiresDependencyResolution = ResolutionScope.TEST, defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
 public class ResolveDependenciesMojo
     extends AbstractResolveMojo
 {
@@ -74,8 +75,7 @@ public class ResolveDependenciesMojo
     DependencyStatusSets results;
 
     /**
-     * Sort the output list of resolved artifacts alphabetically.
-     * The default ordering matches the classpath order.
+     * Sort the output list of resolved artifacts alphabetically. The default ordering matches the classpath order.
      * 
      * @since 2.8
      */
@@ -133,7 +133,7 @@ public class ResolveDependenciesMojo
     {
         return new ResolveFileFilter( new SourcesFileMarkerHandler( this.markersDirectory ) );
     }
-    
+
     public String getOutput( boolean outputAbsoluteArtifactFilename, boolean outputScope, boolean sort )
     {
         StringBuilder sb = new StringBuilder();
@@ -155,8 +155,8 @@ public class ResolveDependenciesMojo
             sb.append( "The following files were skipped:\n" );
             Set<Artifact> skippedDependencies = new LinkedHashSet<Artifact>();
             skippedDependencies.addAll( results.getSkippedDependencies() );
-            sb.append( buildArtifactListOutput( skippedDependencies, outputAbsoluteArtifactFilename,
-                                                outputScope, sort ) );
+            sb.append( buildArtifactListOutput( skippedDependencies, outputAbsoluteArtifactFilename, outputScope,
+                                                sort ) );
         }
 
         if ( results.getUnResolvedDependencies() != null && !results.getUnResolvedDependencies().isEmpty() )
@@ -165,14 +165,14 @@ public class ResolveDependenciesMojo
             sb.append( "The following files have NOT been resolved:\n" );
             Set<Artifact> unResolvedDependencies = new LinkedHashSet<Artifact>();
             unResolvedDependencies.addAll( results.getUnResolvedDependencies() );
-            sb.append( buildArtifactListOutput( unResolvedDependencies, outputAbsoluteArtifactFilename,
-                                                outputScope, sort ) );
+            sb.append( buildArtifactListOutput( unResolvedDependencies, outputAbsoluteArtifactFilename, outputScope,
+                                                sort ) );
         }
         sb.append( "\n" );
 
         return sb.toString();
     }
-    
+
     private StringBuilder buildArtifactListOutput( Set<Artifact> artifacts, boolean outputAbsoluteArtifactFilename,
                                                    boolean outputScope, boolean sort )
     {
@@ -181,9 +181,9 @@ public class ResolveDependenciesMojo
         for ( Artifact artifact : artifacts )
         {
             MessageBuilder messageBuilder = MessageUtils.buffer();
-            
+
             messageBuilder.a( "   " );
-            
+
             if ( outputScope )
             {
                 messageBuilder.a( artifact.toString() );
@@ -192,14 +192,14 @@ public class ResolveDependenciesMojo
             {
                 messageBuilder.a( artifact.getId() );
             }
-            
+
             if ( outputAbsoluteArtifactFilename )
             {
                 try
                 {
                     // we want to print the absolute file name here
                     String artifactFilename = artifact.getFile().getAbsoluteFile().getPath();
-                    
+
                     messageBuilder.a( ':' ).a( artifactFilename );
                 }
                 catch ( NullPointerException e )
@@ -246,7 +246,7 @@ public class ResolveDependenciesMojo
         }
         return sb;
     }
-    
+
     private ModuleDescriptor getModuleDescriptor( File artifactFile )
     {
         ModuleDescriptor moduleDescriptor = null;
@@ -256,30 +256,30 @@ public class ResolveDependenciesMojo
             Class<?> moduleFinderClass = Class.forName( "java.lang.module.ModuleFinder" );
 
             java.nio.file.Path path = artifactFile.toPath();
-            
+
             Method ofMethod = moduleFinderClass.getMethod( "of", java.nio.file.Path[].class );
             Object moduleFinderInstance = ofMethod.invoke( null, new Object[] { new java.nio.file.Path[] { path } } );
-            
+
             Method findAllMethod = moduleFinderClass.getMethod( "findAll" );
             @SuppressWarnings( "unchecked" )
             Set<Object> moduleReferences = (Set<Object>) findAllMethod.invoke( moduleFinderInstance );
-            
+
             // moduleReferences can be empty when referring to target/classes without module-info.class
             if ( !moduleReferences.isEmpty() )
             {
                 Object moduleReference = moduleReferences.iterator().next();
                 Method descriptorMethod = moduleReference.getClass().getMethod( "descriptor" );
                 Object moduleDescriptorInstance = descriptorMethod.invoke( moduleReference );
-                
+
                 Method nameMethod = moduleDescriptorInstance.getClass().getMethod( "name" );
                 String name = (String) nameMethod.invoke( moduleDescriptorInstance );
-                
+
                 moduleDescriptor = new ModuleDescriptor();
                 moduleDescriptor.name = name;
-                
+
                 Method isAutomaticMethod = moduleDescriptorInstance.getClass().getMethod( "isAutomatic" );
                 moduleDescriptor.automatic = (Boolean) isAutomaticMethod.invoke( moduleDescriptorInstance );
-                
+
                 if ( moduleDescriptor.automatic )
                 {
                     if ( artifactFile.isFile() )
@@ -288,9 +288,9 @@ public class ResolveDependenciesMojo
                         try
                         {
                             jarFile = new JarFile( artifactFile );
-                            
+
                             Manifest manifest = jarFile.getManifest();
-                            
+
                             if ( manifest != null
                                 && manifest.getMainAttributes().getValue( "Automatic-Module-Name" ) != null )
                             {
@@ -305,7 +305,7 @@ public class ResolveDependenciesMojo
                         {
                             // noop
                         }
-                        finally 
+                        finally
                         {
                             if ( jarFile != null )
                             {
@@ -315,7 +315,7 @@ public class ResolveDependenciesMojo
                                 }
                                 catch ( IOException e )
                                 {
-                                 // noop
+                                    // noop
                                 }
                             }
                         }
@@ -354,11 +354,11 @@ public class ResolveDependenciesMojo
         }
         return moduleDescriptor;
     }
-    
+
     private class ModuleDescriptor
     {
         String name;
-        
+
         boolean automatic = true;
 
         String moduleNameSource;

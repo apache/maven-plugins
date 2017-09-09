@@ -39,7 +39,7 @@ public abstract class AbstractDependencyMojoTestCase
     {
         super();
     }
-    
+
     protected void setUp( String testDirStr, boolean createFiles )
         throws Exception
     {
@@ -51,9 +51,8 @@ public abstract class AbstractDependencyMojoTestCase
     {
         // required for mojo lookups to work
         super.setUp();
-        testDir =
-            new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar + testDirStr
-                + File.separatorChar );
+        testDir = new File( getBasedir(), "target" + File.separatorChar + "unit-tests" + File.separatorChar + testDirStr
+            + File.separatorChar );
         DependencyTestUtils.removeDirectory( testDir );
         assertFalse( testDir.exists() );
 
@@ -75,10 +74,10 @@ public abstract class AbstractDependencyMojoTestCase
                 fail( "Trying to remove directory:" + testDir + "\r\n" + e.toString() );
             }
             assertFalse( testDir.exists() );
-            
+
             testDir = null;
         }
-        
+
         stubFactory = null;
     }
 

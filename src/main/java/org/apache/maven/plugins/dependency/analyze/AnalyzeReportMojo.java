@@ -80,14 +80,15 @@ public class AnalyzeReportMojo
 
     /**
      * Ignore Runtime/Provided/Test/System scopes for unused dependency analysis
+     * 
      * @since 2.2
      */
     @Parameter( property = "ignoreNonCompile", defaultValue = "false" )
     private boolean ignoreNonCompile;
 
     /**
-     * Force dependencies as used, to override incomplete result caused by bytecode-level analysis.
-     * Dependency format is <code>groupId:artifactId</code>.
+     * Force dependencies as used, to override incomplete result caused by bytecode-level analysis. Dependency format is
+     * <code>groupId:artifactId</code>.
      * 
      * @since 2.6
      */
@@ -146,7 +147,7 @@ public class AnalyzeReportMojo
             throw new MavenReportException( "Cannot analyze dependencies", exception );
         }
 
-        //remove everything that's not in the compile scope
+        // remove everything that's not in the compile scope
         if ( ignoreNonCompile )
         {
             analysis = analysis.ignoreNonCompile();
@@ -225,6 +226,7 @@ public class AnalyzeReportMojo
 
     /**
      * @param locale the current locale
+     * @return The resource bundle {@link ResourceBundle}
      */
     protected ResourceBundle getBundle( Locale locale )
     {

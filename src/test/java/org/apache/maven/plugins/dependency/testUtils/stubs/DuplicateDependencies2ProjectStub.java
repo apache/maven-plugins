@@ -27,8 +27,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 /**
- * very simple stub of maven project, going to take a lot of work to make it
- * useful as a stub though
+ * very simple stub of maven project, going to take a lot of work to make it useful as a stub though
  */
 public class DuplicateDependencies2ProjectStub
     extends MavenProjectStub
@@ -57,7 +56,6 @@ public class DuplicateDependencies2ProjectStub
         setPackaging( model.getPackaging() );
         setFile( pom );
     }
-
 
     /**
      * @see org.apache.maven.plugin.testing.stubs.MavenProjectStub#getBasedir()

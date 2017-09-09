@@ -63,9 +63,9 @@ public class TestCopyDependenciesMojo
         setVariableValueToObject( mojo, "session", session );
 
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
-        
+
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
-        
+
         Set<Artifact> artifacts = this.stubFactory.getScopedArtifacts();
         Set<Artifact> directArtifacts = this.stubFactory.getReleaseAndSnapshotArtifacts();
         artifacts.addAll( directArtifacts );
@@ -108,7 +108,7 @@ public class TestCopyDependenciesMojo
     /**
      * tests the proper discovery and configuration of the mojo
      *
-     * @throws Exception
+     * @throws Exception in case of an error.
      */
     public void testMojo()
         throws Exception
@@ -140,22 +140,21 @@ public class TestCopyDependenciesMojo
             assertTrue( file.exists() );
         }
     }
-    
+
     public void testStripClassifier()
-            throws Exception
+        throws Exception
+    {
+        mojo.stripClassifier = true;
+        mojo.execute();
+
+        Set<Artifact> artifacts = mojo.getProject().getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            mojo.stripClassifier = true;
-            mojo.execute();
-
-            Set<Artifact> artifacts = mojo.getProject().getArtifacts();
-            for ( Artifact artifact : artifacts )
-            {
-                String fileName = DependencyUtil.getFormattedFileName( artifact, false, false, false, true );
-                File file = new File( mojo.outputDirectory, fileName );
-                assertTrue( file.exists() );
-            }
+            String fileName = DependencyUtil.getFormattedFileName( artifact, false, false, false, true );
+            File file = new File( mojo.outputDirectory, fileName );
+            assertTrue( file.exists() );
         }
-
+    }
 
     public void testUseBaseVersion()
         throws Exception
@@ -212,7 +211,7 @@ public class TestCopyDependenciesMojo
 
         mojo.includeTypes = "jar";
         mojo.excludeTypes = "jar";
-        //shouldn't get anything.
+        // shouldn't get anything.
 
         mojo.execute();
 
@@ -235,7 +234,6 @@ public class TestCopyDependenciesMojo
             assertEquals( artifact.getType().equalsIgnoreCase( "jar" ), file.exists() );
         }
     }
-
 
     public void testExcludeArtifactId()
         throws Exception
@@ -262,7 +260,7 @@ public class TestCopyDependenciesMojo
 
         mojo.includeArtifactIds = "one";
         mojo.excludeArtifactIds = "one";
-        //shouldn't get anything
+        // shouldn't get anything
 
         mojo.execute();
 
@@ -293,7 +291,7 @@ public class TestCopyDependenciesMojo
         mojo.getProject().setDependencyArtifacts( new HashSet<Artifact>() );
         mojo.includeGroupIds = "one";
         mojo.excludeGroupIds = "one";
-        //shouldn't get anything
+        // shouldn't get anything
 
         mojo.execute();
 
@@ -335,6 +333,7 @@ public class TestCopyDependenciesMojo
             assertEquals( artifact.getGroupId().equals( "one" ), !file.exists() );
         }
     }
+
     public void testExcludeMultipleGroupIds()
         throws Exception
     {
@@ -349,7 +348,8 @@ public class TestCopyDependenciesMojo
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
             File file = new File( mojo.outputDirectory, fileName );
 
-            assertEquals( artifact.getGroupId().equals( "one" ) || artifact.getGroupId().equals( "two" ), !file.exists() );
+            assertEquals( artifact.getGroupId().equals( "one" ) || artifact.getGroupId().equals( "two" ),
+                          !file.exists() );
         }
     }
 
@@ -378,7 +378,7 @@ public class TestCopyDependenciesMojo
 
         mojo.includeClassifiers = "one";
         mojo.excludeClassifiers = "one";
-        //shouldn't get anything
+        // shouldn't get anything
 
         mojo.execute();
 
@@ -415,8 +415,8 @@ public class TestCopyDependenciesMojo
         for ( Artifact artifact : artifacts )
         {
             String fileName = DependencyUtil.getFormattedFileName( artifact, false );
-            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, false, false, mojo.outputDirectory,
-                                                                      artifact );
+            File folder = DependencyUtil.getFormattedOutputDirectory( false, true, false, false, false,
+                                                                      mojo.outputDirectory, artifact );
             File file = new File( folder, fileName );
             assertTrue( file.exists() );
         }
@@ -445,13 +445,14 @@ public class TestCopyDependenciesMojo
     {
         mojo.classifier = testClassifier;
         mojo.type = testType;
-        
-        for( Artifact artifact : mojo.getProject().getArtifacts() )
+
+        for ( Artifact artifact : mojo.getProject().getArtifacts() )
         {
             String type = testType != null ? testType : artifact.getType();
-            
-            stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), artifact.getScope(), type, testClassifier );
-            
+
+            stubFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                        artifact.getScope(), type, testClassifier );
+
         }
 
         mojo.execute();
@@ -514,11 +515,9 @@ public class TestCopyDependenciesMojo
     }
 
     /*
-     * public void testOverwrite() { stubFactory.setCreateFiles( false );
-     * Artifact artifact = stubFactory.createArtifact( "test", "artifact", "1.0" );
-     *
-     * File testFile = new File( getBasedir() + File.separatorChar +
-     * "target/test-classes/unit/copy-dependencies-test/test.zip" ); }
+     * public void testOverwrite() { stubFactory.setCreateFiles( false ); Artifact artifact =
+     * stubFactory.createArtifact( "test", "artifact", "1.0" ); File testFile = new File( getBasedir() +
+     * File.separatorChar + "target/test-classes/unit/copy-dependencies-test/test.zip" ); }
      */
 
     public void testDontOverWriteRelease()
@@ -658,8 +657,8 @@ public class TestCopyDependenciesMojo
     public void testGetDependencies()
         throws MojoExecutionException
     {
-        assertEquals( mojo.getResolvedDependencies( true ).toString(), mojo.getDependencySets( true )
-            .getResolvedDependencies().toString() );
+        assertEquals( mojo.getResolvedDependencies( true ).toString(),
+                      mojo.getDependencySets( true ).getResolvedDependencies().toString() );
     }
 
     public void testExcludeProvidedScope()
@@ -770,7 +769,8 @@ public class TestCopyDependenciesMojo
 
         Set<Artifact> set = new HashSet<Artifact>();
         set.add( stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE ) );
-        stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE, "pom", null );
+        stubFactory.createArtifact( "org.apache.maven", "maven-artifact", "2.0.7", Artifact.SCOPE_COMPILE, "pom",
+                                    null );
         mojo.getProject().setArtifacts( set );
         mojo.execute();
 
@@ -782,13 +782,13 @@ public class TestCopyDependenciesMojo
             assertTrue( file + " doesn't exist", file.exists() );
         }
     }
-    
-    public void testPrependGroupId() 
+
+    public void testPrependGroupId()
         throws Exception
     {
         mojo.prependGroupId = true;
         mojo.execute();
-    
+
         Set<Artifact> artifacts = mojo.getProject().getArtifacts();
         for ( Artifact artifact : artifacts )
         {

@@ -66,8 +66,7 @@ public class DependencyStatusSets
     }
 
     /**
-     * @param resolvedDependencies
-     *            The resolvedDependencies to set.
+     * @param resolvedDependencies The resolvedDependencies to set.
      */
     public void setResolvedDependencies( Set<Artifact> resolvedDependencies )
     {
@@ -90,8 +89,7 @@ public class DependencyStatusSets
     }
 
     /**
-     * @param skippedDependencies
-     *            The skippedDependencies to set.
+     * @param skippedDependencies The skippedDependencies to set.
      */
     public void setSkippedDependencies( Set<Artifact> skippedDependencies )
     {
@@ -114,8 +112,7 @@ public class DependencyStatusSets
     }
 
     /**
-     * @param unResolvedDependencies
-     *            The unResolvedDependencies to set.
+     * @param unResolvedDependencies The unResolvedDependencies to set.
      */
     public void setUnResolvedDependencies( Set<Artifact> unResolvedDependencies )
     {

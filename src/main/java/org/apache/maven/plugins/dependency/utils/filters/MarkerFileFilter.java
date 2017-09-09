@@ -47,7 +47,7 @@ public class MarkerFileFilter
     protected final MarkerHandler handler;
 
     public MarkerFileFilter( boolean overWriteReleases, boolean overWriteSnapshots, boolean overWriteIfNewer,
-                            MarkerHandler handler )
+                             MarkerHandler handler )
     {
         this.overWriteReleases = overWriteReleases;
         this.overWriteSnapshots = overWriteSnapshots;
@@ -57,9 +57,8 @@ public class MarkerFileFilter
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.mojo.dependency.utils.filters.ArtifactsFilter#filter(java.util.Set,
-     *      org.apache.maven.plugin.logging.Log)
+     * org.apache.maven.plugin.logging.Log)
      */
     @Override
     public Set<Artifact> filter( Set<Artifact> artifacts )
@@ -79,7 +78,7 @@ public class MarkerFileFilter
 
     @Override
     public boolean isArtifactIncluded( ArtifactItem item )
-      throws ArtifactFilterException
+        throws ArtifactFilterException
     {
         Artifact artifact = item.getArtifact();
 
@@ -107,8 +106,7 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param overWriteReleases
-     *            The overWriteReleases to set.
+     * @param overWriteReleases The overWriteReleases to set.
      */
     public void setOverWriteReleases( boolean overWriteReleases )
     {
@@ -124,8 +122,7 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param overWriteSnapshots
-     *            The overWriteSnapshots to set.
+     * @param overWriteSnapshots The overWriteSnapshots to set.
      */
     public void setOverWriteSnapshots( boolean overWriteSnapshots )
     {
@@ -141,8 +138,7 @@ public class MarkerFileFilter
     }
 
     /**
-     * @param overWriteIfNewer
-     *            The overWriteIfNewer to set.
+     * @param overWriteIfNewer The overWriteIfNewer to set.
      */
     public void setOverWriteIfNewer( boolean overWriteIfNewer )
     {

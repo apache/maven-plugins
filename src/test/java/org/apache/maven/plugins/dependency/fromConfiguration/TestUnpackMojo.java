@@ -73,10 +73,10 @@ public class TestUnpackMojo
             + "target/test-classes/unit/unpack-dependencies-test/test.txt" ) );
 
         mojo.setUseJvmChmod( true );
-        
+
         MavenSession session = newMavenSession( mojo.getProject() );
         setVariableValueToObject( mojo, "session", session );
-        
+
         DefaultRepositorySystemSession repoSession = (DefaultRepositorySystemSession) session.getRepositorySession();
 
         repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( stubFactory.getWorkingDir() ) );
@@ -145,7 +145,7 @@ public class TestUnpackMojo
 
         assertMarkerFiles( list, true );
     }
-    
+
     public void testSkip()
         throws Exception
     {
@@ -186,17 +186,18 @@ public class TestUnpackMojo
         // pretend that the output directory cannot be found event after mkdirs has been called by the mojo
         // ifor instance in the case when the outputDirectory cannot be created because of permissions on the
         // parent of the output directory
-        mojo.setOutputDirectory( new File( currentFile.getAbsolutePath() ) {
+        mojo.setOutputDirectory( new File( currentFile.getAbsolutePath() )
+        {
 
             private static final long serialVersionUID = -8559876942040177020L;
 
             @Override
             public boolean exists()
             {
-                //this file will always report that it does not exist
+                // this file will always report that it does not exist
                 return false;
             }
-       });
+        } );
         try
         {
             mojo.execute();
@@ -364,7 +365,7 @@ public class TestUnpackMojo
         item.setClassifier( "classifier" );
         item.setGroupId( "groupId" );
         item.setType( "jar" );
-        
+
         MavenProject project = mojo.getProject();
         project.setDependencies( createArtifacts( getDependencyList( item ) ) );
 
@@ -375,8 +376,10 @@ public class TestUnpackMojo
         item.setGroupId( "groupId" );
         item.setType( "jar" );
 
-        stubFactory.createArtifact( "groupId", "artifactId-2", VersionRange.createFromVersion( "3.0-SNAPSHOT" ), null, "jar", "classifier", false );
-        stubFactory.createArtifact( "groupId", "artifactId-2", VersionRange.createFromVersion( "3.1" ), null, "jar", "classifier", false );
+        stubFactory.createArtifact( "groupId", "artifactId-2", VersionRange.createFromVersion( "3.0-SNAPSHOT" ), null,
+                                    "jar", "classifier", false );
+        stubFactory.createArtifact( "groupId", "artifactId-2", VersionRange.createFromVersion( "3.1" ), null, "jar",
+                                    "classifier", false );
 
         List<ArtifactItem> list = new ArrayList<ArtifactItem>();
         list.add( item );
@@ -470,7 +473,7 @@ public class TestUnpackMojo
         Artifact artifact = stubFactory.getSnapshotArtifact();
         assertTrue( artifact.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
 
-        ArtifactItem item = new ArtifactItem( createArtifact( artifact  ) );
+        ArtifactItem item = new ArtifactItem( createArtifact( artifact ) );
 
         List<ArtifactItem> list = new ArrayList<ArtifactItem>( 1 );
         list.add( item );
@@ -528,7 +531,7 @@ public class TestUnpackMojo
         throws Exception
     {
         final long now = System.currentTimeMillis();
-        
+
         mojo.setSilent( false );
         stubFactory.setCreateFiles( true );
         Artifact artifact = stubFactory.getSnapshotArtifact();
@@ -566,8 +569,8 @@ public class TestUnpackMojo
         displayFile( "marker      ", marker );
         System.out.println( "marker.lastModified() = " + marker.lastModified() );
         System.out.println( "unpackedFile.lastModified() = " + unpackedFile.lastModified() );
-        assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + marker.lastModified() + ": should be different",
-                    marker.lastModified() != unpackedFile.lastModified() );
+        assertTrue( "unpackedFile '" + unpackedFile + "' lastModified() == " + marker.lastModified()
+            + ": should be different", marker.lastModified() != unpackedFile.lastModified() );
     }
 
     private void displayFile( String description, File file )
@@ -575,7 +578,7 @@ public class TestUnpackMojo
         System.out.println( description + ' ' + DateFormatUtils.ISO_DATETIME_FORMAT.format( file.lastModified() ) + ' '
             + file.getPath().substring( getBasedir().length() ) );
     }
-    
+
     public void assertUnpacked( ArtifactItem item, boolean overWrite )
         throws Exception
     {
@@ -603,42 +606,44 @@ public class TestUnpackMojo
 
     public File getUnpackedFile( ArtifactItem item )
     {
-        File unpackedFile =
-            new File( item.getOutputDirectory(),
-                      DependencyArtifactStubFactory.getUnpackableFileName( item.getArtifact() ) );
+        File unpackedFile = new File( item.getOutputDirectory(),
+                                      DependencyArtifactStubFactory.getUnpackableFileName( item.getArtifact() ) );
 
         assertTrue( unpackedFile.exists() );
         return unpackedFile;
 
     }
-    
+
     // respects the createUnpackableFile flag of the ArtifactStubFactory
-    private List<Dependency> createArtifacts( List<Dependency> items ) throws IOException {
+    private List<Dependency> createArtifacts( List<Dependency> items )
+        throws IOException
+    {
         for ( Dependency item : items )
         {
-            String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier(); 
+            String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier();
             stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(),
-                                        VersionRange.createFromVersion( item.getVersion() ), null,
-                                        item.getType(), classifier, item.isOptional() );
+                                        VersionRange.createFromVersion( item.getVersion() ), null, item.getType(),
+                                        classifier, item.isOptional() );
         }
         return items;
     }
-    
-    private Artifact createArtifact( Artifact art ) throws IOException
+
+    private Artifact createArtifact( Artifact art )
+        throws IOException
     {
-        String classifier = "".equals( art.getClassifier() ) ? null : art.getClassifier(); 
+        String classifier = "".equals( art.getClassifier() ) ? null : art.getClassifier();
         stubFactory.createArtifact( art.getGroupId(), art.getArtifactId(),
-                                    VersionRange.createFromVersion( art.getVersion() ), null,
-                                    art.getType(), classifier, art.isOptional() );
+                                    VersionRange.createFromVersion( art.getVersion() ), null, art.getType(), classifier,
+                                    art.isOptional() );
         return art;
     }
-    
-    private ArtifactItem createArtifact( ArtifactItem item ) throws IOException
+
+    private ArtifactItem createArtifact( ArtifactItem item )
+        throws IOException
     {
-        String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier(); 
-        stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(),
-                                    item.getVersion(), null,
-                                    item.getType(), classifier );
+        String classifier = "".equals( item.getClassifier() ) ? null : item.getClassifier();
+        stubFactory.createArtifact( item.getGroupId(), item.getArtifactId(), item.getVersion(), null, item.getType(),
+                                    classifier );
         return item;
     }
 }

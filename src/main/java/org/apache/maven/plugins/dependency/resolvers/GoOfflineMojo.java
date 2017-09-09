@@ -30,8 +30,7 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactsFilter;
 import java.util.Set;
 
 /**
- * Goal that resolves all project dependencies, including plugins and reports
- * and their dependencies.
+ * Goal that resolves all project dependencies, including plugins and reports and their dependencies.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -44,8 +43,7 @@ public class GoOfflineMojo
 {
 
     /**
-     * Main entry into mojo. Gets the list of dependencies and iterates through
-     * displaying the resolved version.
+     * Main entry into mojo. Gets the list of dependencies and iterates through displaying the resolved version.
      *
      * @throws MojoExecutionException with a message if an error occurs.
      */

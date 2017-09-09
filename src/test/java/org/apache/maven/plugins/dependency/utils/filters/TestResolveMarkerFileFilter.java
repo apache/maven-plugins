@@ -40,7 +40,6 @@ import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterExceptio
 
 /**
  * @author brianf
- * 
  */
 public class TestResolveMarkerFileFilter
     extends TestCase
@@ -73,7 +72,7 @@ public class TestResolveMarkerFileFilter
     }
 
     public void testResolveFile()
-        throws  IOException, ArtifactFilterException, MojoExecutionException
+        throws IOException, ArtifactFilterException, MojoExecutionException
     {
         SourcesFileMarkerHandler handler = new SourcesFileMarkerHandler( outputFolder );
 
@@ -82,9 +81,9 @@ public class TestResolveMarkerFileFilter
 
         ResolveFileFilter filter = new ResolveFileFilter( handler );
 
-        assertTrue( filter.isArtifactIncluded( artifact) );
+        assertTrue( filter.isArtifactIncluded( artifact ) );
         handler.setMarker();
-        assertFalse( filter.isArtifactIncluded( artifact) );
+        assertFalse( filter.isArtifactIncluded( artifact ) );
     }
 
 }

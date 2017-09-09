@@ -30,8 +30,8 @@ import org.apache.maven.shared.dependencies.collect.DependencyCollector;
 import org.apache.maven.shared.dependencies.collect.DependencyCollectorException;
 
 /**
- * Goal that resolves all project dependencies and then lists the repositories
- * used by the build and by the transitive dependencies
+ * Goal that resolves all project dependencies and then lists the repositories used by the build and by the transitive
+ * dependencies
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id: GoOfflineMojo.java 728546 2008-12-21 22:56:51Z bentmann $
@@ -59,8 +59,7 @@ public class ListRepositoriesMojo
         try
         {
             CollectorResult collectResult =
-                dependencyCollector.collectDependencies( session.getProjectBuildingRequest(),
-                                                         getProject().getModel() );
+                dependencyCollector.collectDependencies( session.getProjectBuildingRequest(), getProject().getModel() );
 
             this.getLog().info( "Repositories used by this build:" );
 
