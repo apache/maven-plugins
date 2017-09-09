@@ -1,0 +1,66 @@
+ -----
+ Doxia
+ -----
+ Jason van Zyl
+ Vincent Siveton
+ ------
+ July 2007
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Maven Doxia
+
+ Doxia is a content generation framework which aims to provide its users with powerful
+ techniques for generating static and dynamic content: Doxia can be used in web-based
+ publishing context to generate static sites, in addition to being incorporated into
+ dynamic content generation systems like blogs, wikis and content management systems.
+
+ Doxia supports markup languages with simple syntaxes. Lightweight markup languages
+ are used by people who might be expected to read the document source as well as the rendered output.
+
+ Doxia is used extensively by Maven and it powers the entire documentation system of Maven.
+ It gives Maven the ability to take any document that Doxia supports and output it any format.
+
+* Brief History
+
+ Based on the {{{http://www.xmlmind.com/aptconvert.html}Aptconvert}} project developed by
+ {{{http://www.xmlmind.com/}Xmlmind}} company, Doxia was initially hosted by Codehaus, to become
+ a sub-project of Maven early in 2006.
+
+* Main Features
+
+  * Developed in Java
+
+  * Support of several markup formats: APT (Almost Plain Text), Confluence, DocBook,
+    FML (FAQ Markup Language), LaTeX, RTF, TWiki, XDoc (popular in Apache land), XHTML
+
+~~ iText should be replaced by FOP
+
+  * Easy to learn the syntax of the supported markup formats
+
+  * Macro support
+
+  * No need to have a corporate infrastructure (like wiki) to host your documentation
+
+  * Extensible framework
+
+  []
