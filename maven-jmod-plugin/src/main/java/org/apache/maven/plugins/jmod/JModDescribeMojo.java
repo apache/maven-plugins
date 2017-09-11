@@ -41,9 +41,6 @@ public class JModDescribeMojo
     extends AbstractJModMojo
 {
 
-    /**
-     * Do not change this. (TODO!)
-     */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
 

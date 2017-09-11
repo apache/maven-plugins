@@ -182,7 +182,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>includes</code> within the
      * jmod file.
      * </p>
-     * jmod command line equivalent <code>--header-files &lt;path&gt;</code> TODO: Define default location.
+     * jmod command line equivalent <code>--header-files &lt;path&gt;</code>
      */
     @Parameter
     private List<String> headerFiles;
@@ -205,7 +205,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>man</code> within the jmod
      * file.
      * </p>
-     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code> TODO: Define default location.
+     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code> 
      */
     @Parameter
     private List<String> manPages;
@@ -234,7 +234,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>legal</code> within the jmod
      * file.
      * </p>
-     * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code> TODO: Define default location.
+     * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code>
      */
     @Parameter
     private List<String> legalNotices;
@@ -258,9 +258,6 @@ public class JModCreateMojo
     @Parameter
     private String warnIfResolved;
 
-    /**
-     * Do not change this. (TODO!)
-     */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
 
@@ -516,7 +513,7 @@ public class JModCreateMojo
         return cmd;
     }
 
-    private boolean havingConfigurationDefinedInPOM( List<String> configuration )
+    private boolean isConfigurationDefinedInPOM( List<String> configuration )
     {
         return configuration != null && !configuration.isEmpty();
     }
@@ -524,7 +521,7 @@ public class JModCreateMojo
     private List<String> handleConfigurationListWithDefault( List<String> configuration, String defaultLocation )
     {
         List<String> commands = new ArrayList<String>();
-        if ( havingConfigurationDefinedInPOM( configuration ) )
+        if ( isConfigurationDefinedInPOM( configuration ) )
         {
             commands.addAll( configuration );
         }
