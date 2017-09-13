@@ -24,9 +24,9 @@ under the License.
 <application>
   <display-name>maven-ear-plugin-test-project-037</display-name>
   <module>
-    <java>ejb-sample-two-1.0-client.jar</java>
+    <java>eartest-ejb-sample-two-1.0-client.jar</java>
   </module>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
 </application>

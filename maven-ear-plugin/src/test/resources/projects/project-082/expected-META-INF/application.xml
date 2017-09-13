@@ -20,7 +20,7 @@ under the License.
 <application xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd" version="7">
   <display-name>maven-ear-plugin-test-project-082</display-name>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
 </application>
 

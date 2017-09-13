@@ -111,22 +111,30 @@ public abstract class AbstractEarMojo
     private Boolean includeLibInApplicationXml = Boolean.FALSE;
 
     /**
-     * The file name mapping to use for all dependencies included in the EAR file. The following values are valid
-     * {@code standard}, {@code no-version}, {@code full}, {@code no-version-for-ejb}. The {@code standard} means the
-     * filename is the artifactId incl. the version of the artifact. The {@code no-version} means the files is only the
-     * artifactId without the version. The {@code full} means the filename is the groupId+artifactId+version of the
-     * artifact. The {@code no-version-for-ejb} means the filename is the artifactId without the version in case of
-     * {@code EJB} type.
+     * Only here to identify migration issues. The usage of this parameter will fail the build. If you need file name
+     * mapping please use {@link #outputFileNameMapping} instead.
+     * 
+     * @deprecated
      */
     @Parameter
     private String fileNameMapping;
+
+    /**
+     * The file name mapping to use for all dependencies included in the EAR file. The mapping between artifacts and the
+     * file names which is used within the EAR file. Details see
+     * <a href="http://maven.apache.org/shared/maven-mapping/index.html">Maven Mapping Reference</a>.
+     */
+    // CHECKSTYLE_OFF: LineLength
+    @Parameter( defaultValue = "@{groupId}@-@{artifactId}@-@{version}@@{dashClassifier?}@.@{extension}@", required = true )
+    private String outputFileNameMapping;
+    // CHECKSTYLE_ON: LineLength
 
     /**
      * When using a {@link #fileNameMapping} with versions, either use the {@code baseVersion} or the {@code version}.
      * When the artifact is a SNAPSHOT, {@code version} will always return a value with a {@code -SNAPSHOT} postfix
      * instead of the possible timestamped value.
      * 
-     * @since 2.9
+     * @since 2.9 FIXME: Check what exactly this means!!!
      */
     @Parameter
     private Boolean useBaseVersion;
@@ -202,12 +210,13 @@ public abstract class AbstractEarMojo
 
         getLog().debug( "Initializing ear execution context" );
         EarExecutionContext earExecutionContext =
-            new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration, fileNameMapping,
-                                     typeMappingService );
+            new EarExecutionContext( project, mainArtifactId, defaultLibBundleDir, jbossConfiguration,
+                                     outputFileNameMapping, typeMappingService );
 
         if ( useBaseVersion != null )
         {
-            earExecutionContext.getFileNameMapping().setUseBaseVersion( useBaseVersion );
+            getLog().warn( "Using useBaseVersion not yet fixed." );
+            // earExecutionContext.getOutputFileNameMapping().setUseBaseVersion( useBaseVersion );
         }
 
         getLog().debug( "Resolving ear modules ..." );
@@ -293,7 +302,7 @@ public abstract class AbstractEarMojo
         }
         return earModules;
     }
-    
+
     /**
      * @return The list of {@link #allJarModules}. This corresponds to all JAR modules (compile + runtime).
      */
@@ -336,6 +345,14 @@ public abstract class AbstractEarMojo
     public File getTempFolder()
     {
         return tempFolder;
+    }
+
+    /**
+     * @return {@link #outputFileNameMapping}
+     */
+    public String getOutputFileNameMapping()
+    {
+        return outputFileNameMapping;
     }
 
     private static boolean isArtifactRegistered( Artifact a, List<EarModule> currentList )

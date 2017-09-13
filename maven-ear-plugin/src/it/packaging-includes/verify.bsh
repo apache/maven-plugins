@@ -32,7 +32,7 @@ if ( !jarFile.isFile() )
 JarFile jar = new JarFile( jarFile );
 
 String[] includedEntries = {
-    "commons-lang-2.5.jar",
+    "commons-lang-commons-lang-2.5.jar",
     "META-INF/application.xml",
     "META-INF/MANIFEST.MF"
 };

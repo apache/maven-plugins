@@ -23,8 +23,9 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.ear.output.FileNameMappingFactory;
 import org.apache.maven.plugins.ear.util.ArtifactRepository;
+import org.apache.maven.shared.mapping.MappingUtils;
+import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.xml.XMLWriter;
 
 /**
@@ -247,20 +248,22 @@ public abstract class AbstractEarModule
     {
         if ( bundleFileName == null )
         {
-            bundleFileName = earExecutionContext.getFileNameMapping().mapFileName( artifact );
+            try
+            {
+                String outputFileNameMapping = earExecutionContext.getOutputFileNameMapping();
+                System.out.println( "*** outputFileNameMapping:" + outputFileNameMapping );
+                bundleFileName = MappingUtils.evaluateFileNameMapping( outputFileNameMapping, artifact );
+            }
+            catch ( InterpolationException e )
+            {
+                // We currently ignore this here, cause assumption is that
+                // has already been happened before..
+                // FIXME: Should be checked first.
+            }
+
+            // bundleFileName = earExecutionContext.getFileNameMapping().mapFileName( artifact );
         }
         return bundleFileName;
-    }
-
-    /**
-     * Based on MEAR-189 we need to get back
-     * the original file name under any circumstances.
-     * 
-     * @return The original file name.
-     */
-    public String getOriginalBundleFileName()
-    {
-        return FileNameMappingFactory.getDefaultFileNameMapping().mapFileName( artifact );
     }
 
     /**
@@ -327,10 +330,11 @@ public abstract class AbstractEarModule
         else if ( generateId )
         {
             // No module id was specified but one should be generated.
+            // FIXME: Should we use the mapping using outputFileNameMapping instead
+            // of doing this on our own?
             Artifact theArtifact = getArtifact();
-            String generatedId =
-                theArtifact.getType().toUpperCase() + "_" + theArtifact.getGroupId() + "."
-                    + theArtifact.getArtifactId();
+            String generatedId = theArtifact.getType().toUpperCase() + "_" + theArtifact.getGroupId() + "."
+                + theArtifact.getArtifactId();
             if ( null != theArtifact.getClassifier() && theArtifact.getClassifier().trim().length() > 0 )
             {
                 generatedId += "-" + theArtifact.getClassifier().trim();

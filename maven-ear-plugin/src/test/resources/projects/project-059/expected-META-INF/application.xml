@@ -21,6 +21,6 @@ under the License.
   <description>A custom description</description>
   <display-name>maven-ear-plugin-test-project-059</display-name>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
 </application>

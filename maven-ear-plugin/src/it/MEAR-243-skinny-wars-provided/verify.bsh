@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.jar.*;
 import java.util.regex.*;
 
-File jarFile = new File( basedir, "ear-module/target/ear-module-1.0/war-module-1.0.war" );
+File jarFile = new File( basedir, "ear-module/target/ear-module-1.0/org.apache.maven.its.ear.skinnywars-war-module-1.0.war" );
 System.out.println( "Checking for existence of " + jarFile );
 if ( !jarFile.isFile() )
 {

@@ -21,10 +21,10 @@ under the License.
 <application xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" version="6">
   <display-name>maven-ear-plugin-test-project-073</display-name>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
   <module>
-    <java>app-client-sample-one-1.0.jar</java>
+    <java>eartest-app-client-sample-one-1.0.jar</java>
   </module>
   <library-directory>APP-INF/lib</library-directory>
 </application>

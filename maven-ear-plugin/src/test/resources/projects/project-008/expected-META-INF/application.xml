@@ -26,6 +26,6 @@ under the License.
   <description>The purpose of this application is to test the ApplicationXmlMojo execution with
             custom settings.</description>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
 </application>

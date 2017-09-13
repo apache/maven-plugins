@@ -25,6 +25,6 @@ under the License.
   <display-name>My custom display name</display-name>
   <description>Custom description</description>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
 </application>

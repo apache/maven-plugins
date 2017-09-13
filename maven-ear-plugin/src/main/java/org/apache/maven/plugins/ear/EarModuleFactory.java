@@ -55,11 +55,9 @@ public final class EarModuleFactory
      * @return an ear module for this artifact
      * @throws UnknownArtifactTypeException if the artifact is not handled
      */
-    // CHECKSTYLE_OFF: LineLength
     public static EarModule newEarModule( Artifact artifact, JavaEEVersion javaEEVersion, String defaultLibBundleDir,
                                           Boolean includeInApplicationXml,
                                           ArtifactTypeMappingService typeMappingService )
-        // CHECKSTYLE_ON: LineLength
         throws UnknownArtifactTypeException
     {
         // Get the standard artifact type based on default config and user-defined mapping(s)

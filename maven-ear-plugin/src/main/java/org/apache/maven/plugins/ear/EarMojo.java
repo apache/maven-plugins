@@ -134,11 +134,9 @@ public class EarMojo
     protected String escapeString;
 
     /**
-     * In case of using the {@link #skinnyWars} and {@link #defaultLibBundleDir} usually the
-     * classpath will be modified.
-     * By settings this option {@code true} you can change this and keep the classpath untouched.
-     * This option has been introduced to keep the backward compatibility with earlier versions
-     * of the plugin.
+     * In case of using the {@link #skinnyWars} and {@link #defaultLibBundleDir} usually the classpath will be modified.
+     * By settings this option {@code true} you can change this and keep the classpath untouched. This option has been
+     * introduced to keep the backward compatibility with earlier versions of the plugin.
      * 
      * @since 2.10
      */
@@ -296,8 +294,7 @@ public class EarMojo
             if ( duplicateArtifactsBreakTheBuild )
             {
                 // CHECKSTYLE_OFF: LineLength
-                throw new MojoExecutionException(
-                                                  "The build contains duplicate artifacts which result in unpredictable ear content." );
+                throw new MojoExecutionException( "The build contains duplicate artifacts which result in unpredictable ear content." );
                 // CHECKSTYLE_ON: LineLength
             }
         }
@@ -359,7 +356,8 @@ public class EarMojo
         if ( !ddFile.exists() && ( javaEEVersion.lt( JavaEEVersion.FIVE ) ) )
         {
             // CHECKSTYLE_OFF: LineLength
-            throw new MojoExecutionException( "Deployment descriptor: " + ddFile.getAbsolutePath() + " does not exist." );
+            throw new MojoExecutionException( "Deployment descriptor: " + ddFile.getAbsolutePath()
+                + " does not exist." );
             // CHECKSTYLE_ON: LineLength
         }
 
@@ -418,14 +416,16 @@ public class EarMojo
                 if ( destinationFile.getCanonicalPath().equals( sourceFile.getCanonicalPath() ) )
                 {
                     getLog().info( "Skipping artifact [" + module + "], as it already exists at [" + module.getUri()
-                                       + "]" );
+                        + "]" );
+                    // FIXME: Shouldn't that result in a build failure!?
                     continue;
                 }
 
                 // If the module is within the unpack list, make sure that no unpack wasn't forced (null or true)
                 // If the module is not in the unpack list, it should be true
                 // CHECKSTYLE_OFF: LineLength
-                if ( ( unpackTypesList.contains( module.getType() ) && ( module.shouldUnpack() == null || module.shouldUnpack() ) )
+                if ( ( unpackTypesList.contains( module.getType() )
+                    && ( module.shouldUnpack() == null || module.shouldUnpack() ) )
                     || ( module.shouldUnpack() != null && module.shouldUnpack() ) )
                 // CHECKSTYLE_ON: LineLength
                 {
@@ -454,7 +454,7 @@ public class EarMojo
                     else
                     {
                         getLog().debug( "Skipping artifact [" + module + "], as it is already up to date at ["
-                                            + module.getUri() + "]" );
+                            + module.getUri() + "]" );
                     }
                 }
             }
@@ -784,16 +784,29 @@ public class EarMojo
                     // We use the original name, cause in case of fileNameMapping to no-version/full
                     // we could not not delete it and it will end up in the resulting EAR and the WAR
                     // will not be cleaned up.
-                    File artifact =
-                        new File( new File( workDirectory, module.getLibDir() ), jm.getOriginalBundleFileName() );
+                    // CHECKSTYLE_OFF: LineLength
+                    File artifact = new File( new File( workDirectory, module.getLibDir() ),
+                                              module.getArtifact().getFile().getName() );
+                    // CHECKSTYLE_ON: LineLength
 
                     // MEAR-217
                     // If WAR contains files with timestamps, but EAR strips them away (useBaseVersion=true)
                     // the artifact is not found. Therefore respect the current fileNameMapping additionally.
+
+                    // FIXME: Need to check this based on the new name mapping.!
                     if ( !artifact.exists() )
                     {
-                        artifact =
-                            new File( new File( workDirectory, module.getLibDir() ), jm.getBundleFileName() );
+                        getLog().debug( "module does not exist with original file name." );
+                        artifact = new File( new File( workDirectory, module.getLibDir() ), jm.getBundleFileName() );
+                        getLog().debug( "Artifact with mapping:" + artifact.getAbsolutePath() );
+                    }
+
+                    if ( !artifact.exists() )
+                    {
+                        getLog().debug( "Artifact with mapping does not exist." );
+                        artifact = new File( new File( workDirectory, module.getLibDir() ),
+                                             jm.getArtifact().getFile().getName() );
+                        getLog().debug( "Artifact with orignal file name:" + artifact.getAbsolutePath() );
                     }
 
                     if ( artifact.exists() )

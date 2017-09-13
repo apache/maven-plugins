@@ -22,6 +22,6 @@ under the License.
   <display-name>maven-ear-plugin-test-project-070</display-name>
   <initialize-in-order>true</initialize-in-order>
   <module>
-    <ejb>ejb-sample-one-1.0.jar</ejb>
+    <ejb>eartest-ejb-sample-one-1.0.jar</ejb>
   </module>
 </application>

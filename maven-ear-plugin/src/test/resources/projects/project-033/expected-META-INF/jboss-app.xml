@@ -23,9 +23,9 @@ under the License.
 	"http://www.jboss.org/j2ee/dtd/jboss-app_4_0.dtd">
 <jboss-app>
   <module>
-    <service>sar-sample-one-1.0.sar</service>
+    <service>eartest-sar-sample-one-1.0.sar</service>
   </module>
   <module>
-    <har>har-sample-one-1.0.har</har>
+    <har>eartest-har-sample-one-1.0.har</har>
   </module>
 </jboss-app>

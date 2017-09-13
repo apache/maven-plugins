@@ -48,7 +48,8 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <version>1.3</version>
-          <fileNameMapping>no-version</fileNameMapping>
+          <outputFileNameMapping>@{groupId}@-@{artifactId}@.@{extension}@</outputFileNameMapping>
+<!--           <fileNameMapping>no-version</fileNameMapping> -->
         </configuration>
       </plugin>
     </plugins>

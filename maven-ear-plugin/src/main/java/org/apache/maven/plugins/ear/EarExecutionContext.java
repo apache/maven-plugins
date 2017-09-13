@@ -19,8 +19,6 @@ package org.apache.maven.plugins.ear;
  * under the License.
  */
 
-import org.apache.maven.plugins.ear.output.FileNameMapping;
-import org.apache.maven.plugins.ear.output.FileNameMappingFactory;
 import org.apache.maven.plugins.ear.util.ArtifactRepository;
 import org.apache.maven.plugins.ear.util.ArtifactTypeMappingService;
 import org.apache.maven.project.MavenProject;
@@ -37,7 +35,7 @@ public class EarExecutionContext
 
     private JbossConfiguration jbossConfiguration;
 
-    private FileNameMapping fileNameMapping;
+    private String outputFileNameMapping;
 
     private ArtifactRepository artifactRepository;
 
@@ -77,9 +75,9 @@ public class EarExecutionContext
     /**
      * @return {@link #fileNameMapping}
      */
-    public FileNameMapping getFileNameMapping()
+    public String getOutputFileNameMapping()
     {
-        return fileNameMapping;
+        return outputFileNameMapping;
     }
 
     /**
@@ -91,19 +89,12 @@ public class EarExecutionContext
     }
 
     private void initialize( MavenProject project, String mainArtifactId, String defaultLibBundleDir,
-                             JbossConfiguration jbossConfiguration, String fileNameMappingName,
+                             JbossConfiguration jbossConfiguration, String outputFileNameMapping,
                              ArtifactTypeMappingService typeMappingService )
     {
         this.artifactRepository = new ArtifactRepository( project.getArtifacts(), mainArtifactId, typeMappingService );
         this.defaultLibBundleDir = defaultLibBundleDir;
         this.jbossConfiguration = jbossConfiguration;
-        if ( fileNameMappingName == null || fileNameMappingName.trim().length() == 0 )
-        {
-            this.fileNameMapping = FileNameMappingFactory.getDefaultFileNameMapping();
-        }
-        else
-        {
-            this.fileNameMapping = FileNameMappingFactory.getFileNameMapping( fileNameMappingName );
-        }
+        this.outputFileNameMapping = outputFileNameMapping;
     }
 }

@@ -50,6 +50,11 @@ under the License.
         <configuration>
           <skinnyWars>true</skinnyWars>
           <defaultLibBundleDir>lib/</defaultLibBundleDir>
+          <!--
+            ! Only artifactId.extension
+            ! no groupId/version etc. 
+           -->
+          <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
           <fileNameMapping>no-version</fileNameMapping>
         </configuration>
       </plugin>

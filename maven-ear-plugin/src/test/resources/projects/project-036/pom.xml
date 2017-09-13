@@ -77,7 +77,11 @@ under the License.
         <artifactId>maven-ear-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <fileNameMapping>full</fileNameMapping>
+          <!--
+            ! We are using by default outputFileNameMapping
+            ! with groupId-artifactId-version-classifier.extension 
+           -->
+<!--           <fileNameMapping>full</fileNameMapping> -->
           <defaultLibBundleDir>libs</defaultLibBundleDir>
           <modules>
             <sarModule>

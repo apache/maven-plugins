@@ -63,6 +63,10 @@ ${project.name}
   For more information about the Java EE technology, please visit
   {{http://www.oracle.com/us/technologies/java/enterprise-edition/overview/index.html}}.
 
+  Note: Starting with version 3.0.0 the usage of <<<fileNameMapping>> has been removed. If you need
+  to use <<<fileNameMapping>> take a look at the new <<<outputFileNameMapping>>> which is more
+  flexible.
+  
 * Goals Overview
 
   EAR Plugin has two goals:

@@ -48,9 +48,14 @@ under the License.
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <!--
+            ! By default the mapping is full
+            ! using groupId, artifactId, version, classifier and extension.
+            ! So we don't need to configure something here.
+           -->
+<!--           <outputFileNameMapping>...</outputFileNameMapping> -->
           <skinnyWars>true</skinnyWars>
           <defaultLibBundleDir>lib/</defaultLibBundleDir>
-          <fileNameMapping>full</fileNameMapping>
         </configuration>
       </plugin>
     </plugins>

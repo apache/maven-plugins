@@ -28,7 +28,7 @@ under the License.
   </module>
   <module>
     <web>
-      <web-uri>war-sample-one-1.0.war</web-uri>
+      <web-uri>war-sample-one.war</web-uri>
       <context-root>/war-sample-one</context-root>
     </web>
   </module>

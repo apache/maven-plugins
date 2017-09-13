@@ -33,9 +33,9 @@ under the License.
     <ejb>eartest-ejb-sample-two-1.0.jar</ejb>
   </module>
   <module>
-    <ejb>com-foo-bar-ejb-sample-one-1.0.jar</ejb>
+    <ejb>com.foo.bar-ejb-sample-one-1.0.jar</ejb>
   </module>
   <module>
-    <ejb>com-foo-bar-ejb-sample-two-1.0.jar</ejb>
+    <ejb>com.foo.bar-ejb-sample-two-1.0.jar</ejb>
   </module>
 </application>

@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.jar.*;
 import java.util.regex.*;
 
-File jarFile = new File( basedir, "ear-module/target/ear-module-1.0/war-module-1.0.war" );
+File jarFile = new File( basedir, "ear-module/target/ear-module-1.0/org.apache.maven.its.ear.skinnywars-war-module-1.0.war" );
 System.out.println( "Checking for existence of " + jarFile );
 if ( !jarFile.isFile() )
 {
@@ -46,9 +46,9 @@ for ( String included : includedEntries )
 
 Manifest manifest = jar.getManifest();
 String manifestClassPath = manifest.getMainAttributes().getValue("Class-Path");
-if ( manifestClassPath != null && manifestClassPath.equals("lib/commons-lang-2.5.jar") )
+if ( manifestClassPath != null && manifestClassPath.equals("lib/commons-lang-commons-lang-2.5.jar") )
 {
-    throw new IllegalStateException( "Superfluous entry in war MANIFEST.MF: commons-lang-2.5.jar");
+    throw new IllegalStateException( "Superfluous entry in war MANIFEST.MF: commons-lang-commons-lang-2.5.jar");
 }
 
 String[] excludedEntries = {
