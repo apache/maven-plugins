@@ -33,9 +33,9 @@ under the License.
       <item name="Download" href="download.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Creating an Executable JAR File" href="/shared/maven-archiver/examples/classpath.html"/>
+      <item name="Creating an Executable JAR File" href="../../shared/maven-archiver/examples/classpath.html"/>
       <item name="Manifest Customization" href="examples/manifest-customization.html"/>
-      <item name="Using Your Own Manifest File" href="/shared/maven-archiver/examples/manifestFile.html"/>
+      <item name="Using Your Own Manifest File" href="../../shared/maven-archiver/examples/manifestFile.html"/>
       <item name="Additional attached JAR" href="examples/attached-jar.html"/>
       <item name="Create Test JAR" href="examples/create-test-jar.html"/>
       <item name="Include/Exclude content" href="examples/include-exclude.html"/>
