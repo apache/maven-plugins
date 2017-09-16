@@ -72,8 +72,10 @@ public class JModListMojo
         File modsFolder = new File( outputDirectory, "jmods" );
         File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
 
-        // create the jmods folder...
-        modsFolder.mkdirs();
+        if ( !resultingJModFile.exists() || !resultingJModFile.isFile() )
+        {
+            throw new MojoFailureException( "Unable to find " + resultingJModFile.getAbsolutePath() );
+        }
 
         Commandline cmd;
         try

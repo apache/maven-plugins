@@ -240,7 +240,7 @@ public class JModCreateMojo
      * This is only the name of the jmod file in the target directory.
      */
     @Parameter( defaultValue = "${project.artifactId}", required = true, readonly = true )
-    private String moduleName;
+    private String outputFileName;
 
     /**
      * Define the location of legal notices. The default location is <code>src/main/legalnotices</code>. The given man
@@ -324,7 +324,7 @@ public class JModCreateMojo
         // seemed to be not working.
         // Check why?
         File modsFolder = new File( outputDirectory, "jmods" );
-        File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
+        File resultingJModFile = new File( modsFolder, outputFileName + ".jmod" );
 
         deleteOutputIfAlreadyExists( resultingJModFile );
 
