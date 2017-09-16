@@ -28,18 +28,17 @@ boolean result = true;
 try {
     File target = new File( basedir, "target" );
     if ( !target.exists() || !target.isDirectory() ) {
-        System.err.println( "target file is missing or not a directory." );
+        System.err.println( "target directory is missing or not a directory." );
         return false;
     }
 
-    File artifact = new File( target, "jmods/maven-jmod-plugin-base-config-cmds.jmod" );
+    File artifact = new File( target, "jmods/maven-jmod-plugin-list-base-config.jmod" );
     if ( !artifact.exists() || artifact.isDirectory() ) {
-        System.err.println( "target file is missing or a directory." );
+        System.err.println( "the resulting jmod file is missing or a directory." );
         return false;
     }
 
     String[] artifactNames = [
-        "bin/first.sh",
         "conf/config.test",
         "classes/module-info.class",
         "classes/myproject/HelloWorld.class",
@@ -61,12 +60,25 @@ try {
         System.err.println( "jar content size is different from the expected content size" );
         return false;
     }
+
     for ( int i = 0; i < artifactNames.length; i++ ) {
         String artifactName = artifactNames[i];
         if ( !contents.contains( artifactName ) ) {
             System.err.println( "Artifact[" + artifactName + "] not found in jar archive" );
             return false;
         }
+    }
+
+    def buildLog = new File (basedir, "build.log")
+
+    if (!buildLog.text.contains("[INFO] classes/module-info.class")) {
+        return false;
+    }
+    if (!buildLog.text.contains("[INFO] classes/myproject/HelloWorld.class")) {
+        return false;
+    }
+    if (!buildLog.text.contains("[INFO] conf/config.test")) {
+        return false;
     }
 }
 catch( Throwable e ) {
