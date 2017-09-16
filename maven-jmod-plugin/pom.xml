@@ -30,7 +30,7 @@
   </parent>
 
   <artifactId>maven-jmod-plugin</artifactId>
-  <version>3.0.0-alpha-1-SNAPSHOT</version>
+  <version>3.0.0-alpha-1</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven JMod Plugin</name>
@@ -42,10 +42,10 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-jmod-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-jmod-plugin/
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-jmod-plugin-3.0.0-alpha-1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-jmod-plugin-3.0.0-alpha-1
     </developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/maven-jmod-plugin/</url>
+    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-jmod-plugin-3.0.0-alpha-1</url>
   </scm>
   <issueManagement>
     <system>jira</system>
