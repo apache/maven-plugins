@@ -237,9 +237,9 @@ public class JModCreateMojo
     private static final String DEFAULT_MAN_PAGES_DIRECTORY = "src/main/manpages";
 
     /**
-     * The moduleName. The default is to use the package name as name space.
+     * This is only the name of the jmod file in the target directory.
      */
-    @Parameter
+    @Parameter( defaultValue = "${project.artifactId}", required = true, readonly = true )
     private String moduleName;
 
     /**
@@ -576,8 +576,7 @@ public class JModCreateMojo
         if ( classPath != null )
         {
             argsFile.println( "--class-path" );
-            StringBuilder sb = getPlatformSeparatedList( classPath );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( classPath ) );
         }
 
         if ( excludes != null && !excludes.isEmpty() )
@@ -591,25 +590,22 @@ public class JModCreateMojo
         if ( !configList.isEmpty() )
         {
             argsFile.println( "--config" );
-            StringBuilder sb = getPlatformSeparatedList( configList );
             // Should we quote the paths?
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( configList ) );
         }
 
         List<String> cmdsList = handleConfigurationListWithDefault( cmds, DEFAULT_CMD_DIRECTORY );
         if ( !cmdsList.isEmpty() )
         {
             argsFile.println( "--cmds" );
-            StringBuilder sb = getPlatformSeparatedList( cmdsList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( cmdsList ) );
         }
 
         List<String> libsList = handleConfigurationListWithDefault( libs, DEFAULT_LIB_DIRECTORY );
         if ( !libsList.isEmpty() )
         {
             argsFile.println( "--libs" );
-            StringBuilder sb = getPlatformSeparatedList( libsList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( libsList ) );
         }
 
         List<String> headerFilesList =
@@ -617,8 +613,7 @@ public class JModCreateMojo
         if ( !headerFilesList.isEmpty() )
         {
             argsFile.println( "--header-files" );
-            StringBuilder sb = getPlatformSeparatedList( headerFilesList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( headerFilesList ) );
         }
 
         List<String> legalNoticesList =
@@ -626,16 +621,14 @@ public class JModCreateMojo
         if ( !legalNoticesList.isEmpty() )
         {
             argsFile.println( "--legal-notices" );
-            StringBuilder sb = getPlatformSeparatedList( legalNoticesList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( legalNoticesList ) );
         }
 
         List<String> manPagesList = handleConfigurationListWithDefault( manPages, DEFAULT_MAN_PAGES_DIRECTORY );
         if ( !manPagesList.isEmpty() )
         {
             argsFile.println( "--man-pages" );
-            StringBuilder sb = getPlatformSeparatedList( manPagesList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( manPagesList ) );
         }
 
         if ( modulePaths != null )
@@ -644,7 +637,8 @@ public class JModCreateMojo
             argsFile.println( "--module-path" );
             argsFile
               .append( '"' )
-              .append( getPlatformSeparatedList( modulePaths ) ).println( '"' );
+              .append( getPlatformSeparatedList( modulePaths ).replace( "\\", "\\\\" ) ) 
+              .println( '"' );
             //@formatter:off
         }
 
@@ -721,7 +715,7 @@ public class JModCreateMojo
         return result;
     }
 
-    private StringBuilder getPlatformSeparatedList( List<String> paths )
+    private String getPlatformSeparatedList( List<String> paths )
     {
         StringBuilder sb = new StringBuilder();
         for ( String module : paths )
@@ -732,7 +726,7 @@ public class JModCreateMojo
             }
             sb.append( module );
         }
-        return sb;
+        return sb.toString();
     }
 
     private void writeBoxedWarning( String message )
